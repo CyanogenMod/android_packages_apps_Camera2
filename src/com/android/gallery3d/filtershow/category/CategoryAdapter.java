@@ -149,6 +149,9 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
     }
 
     public void reflectImagePreset(ImagePreset preset) {
+        if (preset == null) {
+            return;
+        }
         int selected = 0; // if nothing found, select "none" (first element)
         FilterRepresentation rep = null;
         if (mCategory == MainPanel.LOOKS) {

@@ -24,6 +24,8 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.android.gallery3d.filtershow.data.FilterStackDBHelper.FilterStack;
+import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,7 @@ import java.util.List;
 public class FilterStackSource {
     private static final String LOGTAG = "FilterStackSource";
 
-    private SQLiteDatabase database = null;;
+    private SQLiteDatabase database = null;
     private final FilterStackDBHelper dbHelper;
 
     public FilterStackSource(Context context) {
@@ -66,12 +68,25 @@ public class FilterStackSource {
         return ret;
     }
 
-    public boolean removeStack(String stackName) {
+    public void updateStackName(int id, String stackName) {
+        ContentValues val = new ContentValues();
+        val.put(FilterStack.STACK_ID, stackName);
+        database.beginTransaction();
+        try {
+            database.update(FilterStack.TABLE, val, FilterStack._ID + " = ?",
+                    new String[] { "" + id});
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    public boolean removeStack(int id) {
         boolean ret = true;
         database.beginTransaction();
         try {
-            ret = (0 != database.delete(FilterStack.TABLE, FilterStack.STACK_ID + " = ?",
-                    new String[] { stackName}));
+            ret = (0 != database.delete(FilterStack.TABLE, FilterStack._ID + " = ?",
+                    new String[] { "" + id }));
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
@@ -108,6 +123,45 @@ public class FilterStackSource {
             }
             database.endTransaction();
         }
+        return ret;
+    }
+
+    public ArrayList<FilterUserPresetRepresentation> getAllUserPresets() {
+        ArrayList<FilterUserPresetRepresentation> ret =
+                new ArrayList<FilterUserPresetRepresentation>();
+
+        Cursor c = null;
+        database.beginTransaction();
+        try {
+            c = database.query(FilterStack.TABLE,
+                    new String[] { FilterStack._ID,
+                            FilterStack.STACK_ID,
+                            FilterStack.FILTER_STACK },
+                    null, null, null, null, null, null);
+            if (c != null) {
+                boolean loopCheck = c.moveToFirst();
+                while (loopCheck) {
+                    int id = c.getInt(0);
+                    String name = (c.isNull(1)) ?  null : c.getString(1);
+                    byte[] b = (c.isNull(2)) ? null : c.getBlob(2);
+                    String json = new String(b);
+
+                    ImagePreset preset = new ImagePreset();
+                    preset.readJsonFromString(json);
+                    FilterUserPresetRepresentation representation =
+                            new FilterUserPresetRepresentation(name, preset, id);
+                    ret.add(representation);
+                    loopCheck = c.moveToNext();
+                }
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+            database.endTransaction();
+        }
+
         return ret;
     }
 

@@ -36,6 +36,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -59,6 +60,9 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.editors.EditorGrad;
+import com.android.gallery3d.filtershow.data.FilterStackSource;
+import com.android.gallery3d.filtershow.data.UserPresetsManager;
+import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
 import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.category.Action;
@@ -88,6 +92,8 @@ import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.imageshow.Spline;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.pipeline.ProcessingService;
+import com.android.gallery3d.filtershow.presets.PresetManagementDialog;
+import com.android.gallery3d.filtershow.presets.UserPresetsAdapter;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.state.StateAdapter;
 import com.android.gallery3d.filtershow.tools.SaveImage;
@@ -143,6 +149,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     private Uri mSelectedImageUri = null;
 
+    private UserPresetsManager mUserPresetsManager = null;
+    private UserPresetsAdapter mUserPresetsAdapter = null;
     private CategoryAdapter mCategoryLooksAdapter = null;
     private CategoryAdapter mCategoryBordersAdapter = null;
     private CategoryAdapter mCategoryGeometryAdapter = null;
@@ -208,6 +216,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private void setupPipeline() {
         doBindService();
         ImageFilter.setActivityForMemoryToasts(this);
+        mUserPresetsManager = new UserPresetsManager(this);
+        mUserPresetsAdapter = new UserPresetsAdapter(this);
+        mCategoryLooksAdapter = new CategoryAdapter(this);
     }
 
     public void updateUIAfterServiceStarted() {
@@ -321,6 +332,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public void fillCategories() {
         fillLooks();
+        loadUserPresets();
         fillBorders();
         fillTools();
         fillEffects();
@@ -437,6 +449,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             }
             mCategoryBordersAdapter.add(new Action(this, representation, Action.FULL_VIEW));
         }
+    }
+
+    public UserPresetsAdapter getUserPresetsAdapter() {
+        return mUserPresetsAdapter;
     }
 
     public CategoryAdapter getCategoryLooksAdapter() {
@@ -662,6 +678,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         if (mLoadBitmapTask != null) {
             mLoadBitmapTask.cancel(false);
         }
+        mUserPresetsManager.close();
         doUnbindService();
         super.onDestroy();
     }
@@ -829,8 +846,68 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 saveImage();
                 return true;
             }
+            case R.id.manageUserPresets: {
+                manageUserPresets();
+                return true;
+            }
         }
         return false;
+    }
+
+    private void manageUserPresets() {
+        DialogFragment dialog = new PresetManagementDialog();
+        dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
+    }
+
+    public void updateUserPresetsFromAdapter(UserPresetsAdapter adapter) {
+        ArrayList<FilterUserPresetRepresentation> representations =
+                adapter.getDeletedRepresentations();
+        for (FilterUserPresetRepresentation representation : representations) {
+            deletePreset(representation.getId());
+        }
+        ArrayList<FilterUserPresetRepresentation> changedRepresentations =
+                adapter.getChangedRepresentations();
+        for (FilterUserPresetRepresentation representation : changedRepresentations) {
+            updatePreset(representation);
+        }
+        adapter.clearDeletedRepresentations();
+        adapter.clearChangedRepresentations();
+        loadUserPresets();
+    }
+
+    public void loadUserPresets() {
+        mUserPresetsManager.load();
+    }
+
+    public void updateUserPresetsFromManager() {
+        ArrayList<FilterUserPresetRepresentation> presets = mUserPresetsManager.getRepresentations();
+        if (presets == null) {
+            return;
+        }
+        if (mCategoryLooksAdapter != null) {
+            fillLooks();
+        }
+        mUserPresetsAdapter.clear();
+        for (int i = 0; i < presets.size(); i++) {
+            FilterUserPresetRepresentation representation = presets.get(i);
+            mCategoryLooksAdapter.add(
+                    new Action(this, representation, Action.FULL_VIEW));
+            mUserPresetsAdapter.add(new Action(this, representation, Action.FULL_VIEW));
+        }
+        mCategoryLooksAdapter.notifyDataSetInvalidated();
+
+    }
+
+    public void saveCurrentImagePreset() {
+        mUserPresetsManager.save(MasterImage.getImage().getPreset());
+    }
+
+    private void deletePreset(int id) {
+        mUserPresetsManager.delete(id);
+    }
+
+    private void updatePreset(FilterUserPresetRepresentation representation) {
+        mUserPresetsManager.update(representation);
     }
 
     public void enableSave(boolean enable) {
@@ -843,7 +920,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         FiltersManager filtersManager = FiltersManager.getManager();
         ArrayList<FilterRepresentation> filtersRepresentations = filtersManager.getLooks();
 
-        mCategoryLooksAdapter = new CategoryAdapter(this);
+        mCategoryLooksAdapter.clear();
         int verticalItemHeight = (int) getResources().getDimension(R.dimen.action_item_height);
         mCategoryLooksAdapter.setItemHeight(verticalItemHeight);
         for (FilterRepresentation representation : filtersRepresentations) {

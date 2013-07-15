@@ -24,6 +24,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
 import com.android.gallery3d.filtershow.pipeline.RenderingRequest;
 import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -37,7 +40,7 @@ public class Action implements RenderingRequestCaller {
     private String mName;
     private Rect mImageFrame;
     private Bitmap mImage;
-    private CategoryAdapter mAdapter;
+    private ArrayAdapter mAdapter;
     public static final int FULL_VIEW = 0;
     public static final int CROP_VIEW = 1;
     private int mType = CROP_VIEW;
@@ -100,7 +103,7 @@ public class Action implements RenderingRequestCaller {
         mImage = image;
     }
 
-    public void setAdapter(CategoryAdapter adapter) {
+    public void setAdapter(ArrayAdapter adapter) {
         mAdapter = adapter;
     }
 

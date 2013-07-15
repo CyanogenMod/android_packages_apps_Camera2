@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
 
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManagerInterface;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 
@@ -128,6 +129,12 @@ public class FilterEnvironment {
     }
 
     public Bitmap applyRepresentation(FilterRepresentation representation, Bitmap bitmap) {
+        if (representation instanceof FilterUserPresetRepresentation) {
+            // we allow instances of FilterUserPresetRepresentation in a preset only to know if one
+            // has been applied (so we can show this in the UI). But as all the filters in them are
+            // applied directly they do not themselves need to do any kind of filtering.
+            return bitmap;
+        }
         ImageFilter filter = mFiltersManager.getFilterForRepresentation(representation);
         filter.useRepresentation(representation);
         filter.setEnvironment(this);

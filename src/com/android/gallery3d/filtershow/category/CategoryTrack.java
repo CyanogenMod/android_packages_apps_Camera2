@@ -35,6 +35,11 @@ public class CategoryTrack extends LinearLayout {
             super.onChanged();
             invalidate();
         }
+        @Override
+        public void onInvalidated() {
+            super.onInvalidated();
+            fillContent();
+        }
     };
 
     public CategoryTrack(Context context, AttributeSet attrs) {
@@ -45,14 +50,14 @@ public class CategoryTrack extends LinearLayout {
 
     public void setAdapter(CategoryAdapter adapter) {
         mAdapter = adapter;
-        mAdapter.setItemWidth(mElemSize);
-        mAdapter.setItemHeight(LayoutParams.MATCH_PARENT);
         mAdapter.registerDataSetObserver(mDataSetObserver);
         fillContent();
     }
 
     public void fillContent() {
         removeAllViews();
+        mAdapter.setItemWidth(mElemSize);
+        mAdapter.setItemHeight(LayoutParams.MATCH_PARENT);
         int n = mAdapter.getCount();
         for (int i = 0; i < n; i++) {
             View view = mAdapter.getView(i, null, this);
