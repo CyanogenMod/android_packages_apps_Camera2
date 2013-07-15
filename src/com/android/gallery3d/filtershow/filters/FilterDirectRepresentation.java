@@ -22,8 +22,4 @@ public class FilterDirectRepresentation extends FilterRepresentation {
         super(name);
     }
 
-    public boolean isNil() {
-        return true;
-    }
-
 }
