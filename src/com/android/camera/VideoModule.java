@@ -49,7 +49,6 @@ import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
@@ -115,7 +114,7 @@ public class VideoModule implements CameraModule,
     private int mCameraId;
     private Parameters mParameters;
 
-    private Boolean mCameraOpened = false;
+    private boolean mCameraOpened = false;
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
 
@@ -125,6 +124,9 @@ public class VideoModule implements CameraModule,
 
     private ComboPreferences mPreferences;
     private PreferenceGroup mPreferenceGroup;
+    // Preference must be read before starting preview. We check this before starting
+    // preview.
+    private boolean mPreferenceRead;
 
     private boolean mIsVideoCaptureIntent;
     private boolean mQuickCapture;
@@ -226,11 +228,9 @@ public class VideoModule implements CameraModule,
 
     private void openCamera() {
         try {
-            synchronized(mCameraOpened) {
-                if (!mCameraOpened) {
-                    mCameraDevice = Util.openCamera(mActivity, mCameraId);
-                    mCameraOpened = true;
-                }
+            if (!mCameraOpened) {
+                mCameraDevice = Util.openCamera(mActivity, mCameraId);
+                mCameraOpened = true;
             }
             mParameters = mCameraDevice.getParameters();
         } catch (CameraHardwareException e) {
@@ -667,6 +667,7 @@ public class VideoModule implements CameraModule,
         if (mCaptureTimeLapse) quality += 1000;
         mProfile = CamcorderProfile.get(mCameraId, quality);
         getDesiredPreviewSize();
+        mPreferenceRead = true;
     }
 
     private void writeDefaultEffectToPrefs()  {
@@ -752,16 +753,7 @@ public class VideoModule implements CameraModule,
             }
             readVideoPreferences();
             resizeForPreviewAspectRatio();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (mCameraOpened) {
-                        if (mCameraOpened) {
-                            startPreview();
-                        }
-                    }
-                }
-            }).start();
+            startPreview();
         } else {
             // preview already started
             mUI.enableShutter(true);
@@ -818,8 +810,12 @@ public class VideoModule implements CameraModule,
         if (p != null) return p.getZoom();
         return index;
     }
+
     private void startPreview() {
         Log.v(TAG, "startPreview");
+
+        SurfaceTexture surfaceTexture = mUI.getSurfaceTexture();
+        if (!mPreferenceRead || surfaceTexture == null || mPaused == true) return;
 
         mCameraDevice.setErrorCallback(mErrorCallback);
         if (mPreviewing == true) {
@@ -836,10 +832,6 @@ public class VideoModule implements CameraModule,
 
         try {
             if (!effectsActive()) {
-                SurfaceTexture surfaceTexture = mUI.getSurfaceTexture();
-                if (surfaceTexture == null) {
-                    return; // The texture has been destroyed (pause, etc)
-                }
                 mCameraDevice.setPreviewTextureAsync(surfaceTexture);
                 mCameraDevice.startPreviewAsync();
                 mPreviewing = true;
@@ -854,16 +846,11 @@ public class VideoModule implements CameraModule,
             closeCamera();
             throw new RuntimeException("startPreview failed", ex);
         } finally {
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mOpenCameraFail) {
-                        Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-                    } else if (mCameraDisabled) {
-                        Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
-                    }
-                }
-            });
+            if (mOpenCameraFail) {
+                Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
+            } else if (mCameraDisabled) {
+                Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
+            }
         }
 
     }
@@ -924,13 +911,11 @@ public class VideoModule implements CameraModule,
         if (closeEffectsAlso) closeEffects();
         mCameraDevice.setZoomChangeListener(null);
         mCameraDevice.setErrorCallback(null);
-        synchronized(mCameraOpened) {
-            if (mCameraOpened) {
-                CameraHolder.instance().release();
-            }
-            mCameraOpened = false;
-            mCameraDevice = null;
+        if (mCameraOpened) {
+            CameraHolder.instance().release();
         }
+        mCameraOpened = false;
+        mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
     }
@@ -984,6 +969,7 @@ public class VideoModule implements CameraModule,
         mHandler.removeMessages(SWITCH_CAMERA_START_ANIMATION);
         mPendingSwitchCameraId = -1;
         mSwitchingCamera = false;
+        mPreferenceRead = false;
         // Call onPause after stopping video recording. So the camera can be
         // released as soon as possible.
     }
@@ -2245,5 +2231,15 @@ public class VideoModule implements CameraModule,
     @Override
     public void onMediaSaveServiceConnected(MediaSaveService s) {
         // do nothing.
+    }
+
+    @Override
+    public void onPreviewUIReady() {
+        startPreview();
+    }
+
+    @Override
+    public void onPreviewUIDestroyed() {
+        stopPreview();
     }
 }

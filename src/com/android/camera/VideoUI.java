@@ -57,7 +57,7 @@ public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
         CameraRootView.MyDisplayListener,
         SurfaceTextureListener, SurfaceHolder.Callback {
-    private final static String TAG = "CAM_VideoUI";
+    private static final String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
     // module fields
     private CameraActivity mActivity;
@@ -653,31 +653,20 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public SurfaceTexture getSurfaceTexture() {
-        synchronized (mLock) {
-            if (mSurfaceTexture == null) {
-                try {
-                    mLock.wait();
-                } catch (InterruptedException e) {
-                    Log.w(TAG, "Unexpected interruption when waiting to get surface texture");
-                }
-            }
-        }
         return mSurfaceTexture;
     }
 
     // SurfaceTexture callbacks
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        synchronized (mLock) {
-            mSurfaceTexture = surface;
-            mLock.notifyAll();
-        }
+        mSurfaceTexture = surface;
+        mController.onPreviewUIReady();
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         mSurfaceTexture = null;
-        mController.stopPreview();
+        mController.onPreviewUIDestroyed();
         Log.d(TAG, "surfaceTexture is destroyed");
         return true;
     }
