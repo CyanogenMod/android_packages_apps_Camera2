@@ -58,12 +58,34 @@ public class FilterCurvesRepresentation extends FilterRepresentation {
         mSplines = spline;
     }
 
+    @Override
     public boolean isNil() {
         for (int i = 0; i < MAX_SPLINE_NUMBER; i++) {
             if (getSpline(i) != null && !getSpline(i).isOriginal()) {
                 return false;
             }
         }
+        return true;
+    }
+
+    @Override
+    public boolean equals(FilterRepresentation representation) {
+        if (!super.equals(representation)) {
+            return false;
+        }
+
+        if (!(representation instanceof FilterCurvesRepresentation)) {
+            return false;
+        } else {
+            FilterCurvesRepresentation curve =
+                    (FilterCurvesRepresentation) representation;
+            for (int i = 0; i < MAX_SPLINE_NUMBER; i++) {
+                if (!getSpline(i).sameValues(curve.getSpline(i))) {
+                    return false;
+                }
+            }
+        }
+        // Every spline matches, therefore they are the same.
         return true;
     }
 
@@ -81,6 +103,7 @@ public class FilterCurvesRepresentation extends FilterRepresentation {
     public void setSpline(int splineIndex, Spline s) {
         mSplines[splineIndex] = s;
     }
+
     public Spline getSpline(int splineIndex) {
         return mSplines[splineIndex];
     }
