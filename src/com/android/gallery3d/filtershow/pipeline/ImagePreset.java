@@ -33,6 +33,7 @@ import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRotateRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterStraightenRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
@@ -52,8 +53,6 @@ public class ImagePreset {
 
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
 
-    protected boolean mIsFxPreset = false;
-
     private boolean mDoApplyGeometry = true;
     private boolean mDoApplyFilters = true;
 
@@ -65,7 +64,6 @@ public class ImagePreset {
     }
 
     public ImagePreset(ImagePreset source) {
-
         for (int i = 0; i < source.mFilters.size(); i++) {
             FilterRepresentation representation = null;
             FilterRepresentation sourceRepresentation = source.mFilters.elementAt(i);
@@ -77,9 +75,8 @@ public class ImagePreset {
             } else {
                 representation = sourceRepresentation.copy();
             }
-            addFilter(representation);
+            mFilters.add(representation);
         }
-
     }
 
     public FilterRepresentation getFilterRepresentation(int position) {
@@ -340,7 +337,21 @@ public class ImagePreset {
             setGeometry((GeometryMetadata) representation);
             return;
         }
-
+        if (representation instanceof FilterUserPresetRepresentation) {
+            ImagePreset preset = ((FilterUserPresetRepresentation) representation).getImagePreset();
+            // user preset replace everything but geometry
+            GeometryMetadata geometry = getGeometry();
+            mFilters.clear();
+            mFilters.add(geometry);
+            for (int i = 0; i < preset.nbFilters(); i++) {
+                FilterRepresentation rep = preset.getFilterRepresentation(i);
+                if (!(representation instanceof GeometryMetadata)) {
+                    addFilter(rep);
+                }
+            }
+            mFilters.add(representation);
+            return;
+        }
         if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
             removeFilter(representation);
             if (!isNoneBorderFilter(representation)) {
@@ -349,7 +360,8 @@ public class ImagePreset {
         } else if (representation.getFilterType() == FilterRepresentation.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
-                int type = mFilters.elementAt(i).getFilterType();
+                FilterRepresentation current = mFilters.elementAt(i);
+                int type = current.getFilterType();
                 if (found) {
                     if (type != FilterRepresentation.TYPE_VIGNETTE) {
                         mFilters.remove(i);
@@ -357,9 +369,33 @@ public class ImagePreset {
                     }
                 }
                 if (type == FilterRepresentation.TYPE_FX) {
-                    mFilters.remove(i);
-                    if (!isNoneFxFilter(representation)) {
-                        mFilters.add(i, representation);
+                    if (current instanceof FilterUserPresetRepresentation) {
+                        ImagePreset preset = ((FilterUserPresetRepresentation) current)
+                                .getImagePreset();
+                        // If we had an existing user preset, let's remove all the presets that
+                        // were added by it
+                        for (int j = 0; j < preset.nbFilters(); j++) {
+                            FilterRepresentation rep = preset.getFilterRepresentation(j);
+                            int pos = getPositionForRepresentation(rep);
+                            if (pos != -1) {
+                                mFilters.remove(pos);
+                            }
+                        }
+                        int pos = getPositionForRepresentation(current);
+                        if (pos != -1) {
+                            mFilters.remove(pos);
+                        } else {
+                            pos = 0;
+                        }
+                        if (!isNoneFxFilter(representation)) {
+                            mFilters.add(pos, representation);
+                        }
+
+                    } else {
+                        mFilters.remove(i);
+                        if (!isNoneFxFilter(representation)) {
+                            mFilters.add(i, representation);
+                        }
                     }
                     found = true;
                 }
@@ -535,6 +571,10 @@ public class ImagePreset {
                 // TODO: supports Geometry representations in the state panel.
                 continue;
             }
+            if (filter instanceof FilterUserPresetRepresentation) {
+                // do not show the user preset itself in the state panel
+                continue;
+            }
             State state = new State(filter.getName());
             state.setFilterRepresentation(filter);
             states.add(state);
@@ -583,6 +623,9 @@ public class ImagePreset {
             writer.beginObject();
             for (int i = 0; i < numFilters; i++) {
                 FilterRepresentation filter = mFilters.get(i);
+                if (filter instanceof FilterUserPresetRepresentation) {
+                    continue;
+                }
                 String sname = filter.getSerializationName();
                 if (DEBUG) {
                     Log.v(LOGTAG, "Serialization: " + sname);

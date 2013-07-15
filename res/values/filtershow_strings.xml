@@ -221,4 +221,11 @@
     <!-- Label for the notification message [CHAR LIMIT=50] -->
     <string name="filtershow_notification_message">Processing...</string>
 
+    <!-- Label for the save preset menu [CHAR LIMIT=30] -->
+    <string name="filtershow_save_preset">Save current preset</string>
+    <!-- Label for the manage preset menu [CHAR LIMIT=30] -->
+    <string name="filtershow_manage_preset">Manage user presets</string>
+    <!-- Label for newly created user preset [CHAR LIMIT=30] -->
+    <string name="filtershow_new_preset">New Preset</string>
+
 </resources>
