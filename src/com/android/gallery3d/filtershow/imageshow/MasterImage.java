@@ -198,7 +198,7 @@ public class MasterImage implements RenderingRequestCaller {
             return false;
         }
         int sw = SMALL_BITMAP_DIM;
-        int sh = (int) (sw * (float) mOriginalBitmapLarge.getHeight() / (float) mOriginalBitmapLarge
+        int sh = (int) (sw * (float) mOriginalBitmapLarge.getHeight() / mOriginalBitmapLarge
                 .getWidth());
         mOriginalBitmapSmall = Bitmap.createScaledBitmap(mOriginalBitmapLarge, sw, sh, true);
         mZoomOrientation = mOrientation;
@@ -325,7 +325,7 @@ public class MasterImage implements RenderingRequestCaller {
             if (loadedPreset == null) {
                 return mPreset.hasModifications();
             } else {
-                return !mPreset.equals(getLoadedPreset());
+                return !mPreset.equals(loadedPreset);
             }
         }
     }

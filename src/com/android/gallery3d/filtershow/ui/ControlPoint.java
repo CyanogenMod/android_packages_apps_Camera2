@@ -30,6 +30,23 @@ public class ControlPoint implements Comparable {
         y = point.y;
     }
 
+    public boolean sameValues(ControlPoint other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+
+        if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+            return false;
+        }
+        if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+            return false;
+        }
+        return true;
+    }
+
     public ControlPoint copy() {
         return new ControlPoint(x, y);
     }
