@@ -43,12 +43,16 @@ public class FilterFxRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public synchronized FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterFxRepresentation representation = (FilterFxRepresentation) super.clone();
-        representation.setName(getName());
-        representation.setBitmapResource(getBitmapResource());
-        representation.setNameResource(getNameResource());
+    public FilterRepresentation copy() {
+        FilterFxRepresentation representation = new FilterFxRepresentation(getName(),0,0);
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     @Override

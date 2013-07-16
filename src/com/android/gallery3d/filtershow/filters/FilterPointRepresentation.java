@@ -31,11 +31,12 @@ public abstract class FilterPointRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterPointRepresentation representation = (FilterPointRepresentation) super
-                .clone();
-        representation.mCandidates = (Vector<FilterPoint>) mCandidates.clone();
-        return representation;
+    public abstract FilterRepresentation copy();
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     public boolean hasCandidates() {

@@ -33,10 +33,16 @@ public class FilterCurvesRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterCurvesRepresentation rep = new FilterCurvesRepresentation();
-        rep.useParametersFrom(this);
-        return rep;
+    public FilterRepresentation copy() {
+        FilterCurvesRepresentation representation = new FilterCurvesRepresentation();
+        copyAllParameters(representation);
+        return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     @Override

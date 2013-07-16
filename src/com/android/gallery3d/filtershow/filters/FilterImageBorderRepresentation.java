@@ -37,11 +37,17 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterImageBorderRepresentation representation = (FilterImageBorderRepresentation) super.clone();
-        representation.setName(getName());
-        representation.setDrawableResource(getDrawableResource());
+    public FilterRepresentation copy() {
+        FilterImageBorderRepresentation representation =
+                new FilterImageBorderRepresentation(mDrawableResource);
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     public void useParametersFrom(FilterRepresentation a) {
