@@ -37,12 +37,16 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterTinyPlanetRepresentation representation = (FilterTinyPlanetRepresentation) super
-                .clone();
-        representation.mAngle = mAngle;
-        representation.setZoom(getZoom());
+    public FilterRepresentation copy() {
+        FilterTinyPlanetRepresentation representation = new FilterTinyPlanetRepresentation();
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     @Override

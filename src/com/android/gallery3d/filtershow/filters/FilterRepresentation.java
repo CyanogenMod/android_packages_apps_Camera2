@@ -25,7 +25,7 @@ import com.android.gallery3d.filtershow.editors.BasicEditor;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FilterRepresentation implements Cloneable {
+public class FilterRepresentation {
     private static final String LOGTAG = "FilterRepresentation";
     private static final boolean DEBUG = false;
     private String mName;
@@ -51,9 +51,13 @@ public class FilterRepresentation implements Cloneable {
         mName = name;
     }
 
-    @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterRepresentation representation = (FilterRepresentation) super.clone();
+    public FilterRepresentation copy(){
+        FilterRepresentation representation = new FilterRepresentation(mName);
+        representation.useParametersFrom(this);
+        return representation;
+    }
+
+    protected void copyAllParameters(FilterRepresentation representation) {
         representation.setName(getName());
         representation.setFilterClass(getFilterClass());
         representation.setFilterType(getFilterType());
@@ -65,10 +69,6 @@ public class FilterRepresentation implements Cloneable {
         representation.setShowParameterValue(showParameterValue());
         representation.mSerializationName = mSerializationName;
 
-        if (DEBUG) {
-            Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
-        }
-        return representation;
     }
 
     public boolean equals(FilterRepresentation representation) {

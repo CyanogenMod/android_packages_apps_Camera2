@@ -68,7 +68,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
 
     public FilterRepresentation createFilterFromName(String name) {
         try {
-            return mRepresentationLookup.get(name).clone();
+            return mRepresentationLookup.get(name).copy();
         } catch (Exception e) {
             Log.v(LOGTAG, "unable to generate a filter representation for \"" + name + "\"");
             e.printStackTrace();

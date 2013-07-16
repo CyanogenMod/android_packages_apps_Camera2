@@ -40,14 +40,16 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        setFilterClass(ImageFilterParametricBorder.class);
-        FilterColorBorderRepresentation representation = (FilterColorBorderRepresentation) super.clone();
-        representation.setName(getName());
-        representation.setColor(getColor());
-        representation.setBorderSize(getBorderSize());
-        representation.setBorderRadius(getBorderRadius());
+    public FilterRepresentation copy() {
+        FilterColorBorderRepresentation representation = new FilterColorBorderRepresentation(0,0,0);
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     public void useParametersFrom(FilterRepresentation a) {

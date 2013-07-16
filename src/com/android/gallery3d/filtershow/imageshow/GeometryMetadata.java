@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.crop.CropExtras;
@@ -31,11 +30,7 @@ import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 public class GeometryMetadata extends FilterRepresentation {
     public static final String SERIALIZATION_NAME = "GEOM";
@@ -515,10 +510,16 @@ public class GeometryMetadata extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        GeometryMetadata representation = (GeometryMetadata) super.clone();
-        representation.useParametersFrom(this);
+    public FilterRepresentation copy() {
+        GeometryMetadata representation = new GeometryMetadata();
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     private static final String[] sParams = {

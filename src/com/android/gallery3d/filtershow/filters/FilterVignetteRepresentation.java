@@ -51,13 +51,16 @@ public class FilterVignetteRepresentation extends FilterBasicRepresentation impl
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterVignetteRepresentation representation = (FilterVignetteRepresentation) super
-                .clone();
-        representation.mCenterX = mCenterX;
-        representation.mCenterY = mCenterY;
-
+    public FilterRepresentation copy() {
+        FilterVignetteRepresentation representation = new FilterVignetteRepresentation();
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     @Override

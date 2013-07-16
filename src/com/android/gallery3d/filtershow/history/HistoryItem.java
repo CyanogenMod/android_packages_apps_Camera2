@@ -29,12 +29,8 @@ public class HistoryItem {
 
     public HistoryItem(ImagePreset preset, FilterRepresentation representation) {
         mImagePreset = new ImagePreset(preset);
-        try {
-            if (representation != null) {
-                mFilterRepresentation = representation.clone();
-            }
-        } catch (CloneNotSupportedException e) {
-            Log.e(LOGTAG, "clone not supported", e);
+        if (representation != null) {
+            mFilterRepresentation = representation.copy();
         }
     }
 

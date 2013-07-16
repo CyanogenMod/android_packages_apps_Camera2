@@ -61,33 +61,28 @@ public class ImagePreset {
     }
 
     public ImagePreset(ImagePreset source) {
-        try {
-            for (int i = 0; i < source.mFilters.size(); i++) {
-                FilterRepresentation representation = null;
-                FilterRepresentation sourceRepresentation = source.mFilters.elementAt(i);
-                if (sourceRepresentation instanceof GeometryMetadata) {
-                    GeometryMetadata geoData = new GeometryMetadata();
-                    GeometryMetadata srcGeo = (GeometryMetadata) sourceRepresentation;
-                    geoData.set(srcGeo);
-                    representation = geoData;
-                } else {
-                    // TODO: get rid of clone()...
-                    representation = sourceRepresentation.clone();
-                }
-                addFilter(representation);
+
+        for (int i = 0; i < source.mFilters.size(); i++) {
+            FilterRepresentation representation = null;
+            FilterRepresentation sourceRepresentation = source.mFilters.elementAt(i);
+            if (sourceRepresentation instanceof GeometryMetadata) {
+                GeometryMetadata geoData = new GeometryMetadata();
+                GeometryMetadata srcGeo = (GeometryMetadata) sourceRepresentation;
+                geoData.set(srcGeo);
+                representation = geoData;
+            } else {
+                representation = sourceRepresentation.copy();
             }
-        } catch (java.lang.CloneNotSupportedException e) {
-            Log.v(LOGTAG, "Exception trying to clone: " + e);
+            addFilter(representation);
         }
+
     }
 
     public FilterRepresentation getFilterRepresentation(int position) {
         FilterRepresentation representation = null;
-        try {
-            representation = mFilters.elementAt(position).clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+
+        representation = mFilters.elementAt(position).copy();
+
         return representation;
     }
 
@@ -129,11 +124,7 @@ public class ImagePreset {
         }
         FilterRepresentation representation = mFilters.elementAt(position);
         if (representation != null) {
-            try {
-                representation = representation.clone();
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+            representation = representation.copy();
         }
         return representation;
     }

@@ -74,9 +74,16 @@ public class FilterDrawRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterDrawRepresentation representation = (FilterDrawRepresentation) super.clone();
+    public FilterRepresentation copy() {
+        FilterDrawRepresentation representation = new FilterDrawRepresentation();
+        copyAllParameters(representation);
         return representation;
+    }
+
+    @Override
+    protected void copyAllParameters(FilterRepresentation representation) {
+        super.copyAllParameters(representation);
+        representation.useParametersFrom(this);
     }
 
     @Override
