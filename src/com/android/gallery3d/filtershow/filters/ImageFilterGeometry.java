@@ -79,17 +79,6 @@ public class ImageFilterGeometry extends ImageFilter {
             Log.w(LOGTAG, "Cannot apply geometry: geometry metadata has not been initialized");
             return bitmap;
         }
-        CropExtras extras = mGeometry.getCropExtras();
-        boolean useExtras = mGeometry.getUseCropExtrasFlag();
-        int outputX = 0;
-        int outputY = 0;
-        boolean s = false;
-        if (extras != null && useExtras){
-            outputX = extras.getOutputX();
-            outputY = extras.getOutputY();
-            s = extras.getScaleUp();
-        }
-
 
         Rect cropBounds = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         RectF crop = mGeometry.getCropBounds(bitmap);
@@ -105,20 +94,8 @@ public class ImageFilterGeometry extends ImageFilter {
             height = temp;
         }
 
-        if(outputX <= 0 || outputY <= 0){
-            outputX = width;
-            outputY = height;
-        }
-
-        float scaleX = 1;
-        float scaleY = 1;
-        if (s){
-                scaleX = (float) outputX / width;
-                scaleY = (float) outputY / height;
-        }
-
         Bitmap temp = null;
-        temp = Bitmap.createBitmap(outputX, outputY, mConfig);
+        temp = Bitmap.createBitmap(width, height, mConfig);
 
         float[] displayCenter = {
                 temp.getWidth() / 2f, temp.getHeight() / 2f
@@ -126,7 +103,7 @@ public class ImageFilterGeometry extends ImageFilter {
 
         Matrix m1 = mGeometry.buildTotalXform(bitmap.getWidth(), bitmap.getHeight(), displayCenter);
 
-        m1.postScale(scaleX, scaleY, displayCenter[0], displayCenter[1]);
+        m1.postScale(1, 1, displayCenter[0], displayCenter[1]);
 
         Canvas canvas = new Canvas(temp);
         Paint paint = new Paint();

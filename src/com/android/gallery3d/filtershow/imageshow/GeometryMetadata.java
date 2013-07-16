@@ -18,71 +18,37 @@ package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.JsonReader;
+import android.util.JsonWriter;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.crop.CropExtras;
 import com.android.gallery3d.filtershow.editors.EditorCrop;
 import com.android.gallery3d.filtershow.editors.EditorFlip;
 import com.android.gallery3d.filtershow.editors.EditorRotate;
 import com.android.gallery3d.filtershow.editors.EditorStraighten;
+import com.android.gallery3d.filtershow.filters.FilterCropRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation.Mirror;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRotateRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRotateRepresentation.Rotation;
+import com.android.gallery3d.filtershow.filters.FilterStraightenRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
 import java.util.HashMap;
+import java.io.IOException;
 
 public class GeometryMetadata extends FilterRepresentation {
     public static final String SERIALIZATION_NAME = "GEOM";
+    public static final String SERIALIZATION_VALUE_SCALE = "scalevalue";
     private static final String LOGTAG = "GeometryMetadata";
     private float mScaleFactor = 1.0f;
-    private float mRotation = 0;
-    private float mStraightenRotation = 0;
-    private final RectF mCropBounds = new RectF();
-    private final RectF mPhotoBounds = new RectF();
-    private FLIP mFlip = FLIP.NONE;
 
-    public enum FLIP {
-        NONE("N"), VERTICAL("V"), HORIZONTAL("H"), BOTH("B");
-        String mValue;
-
-        FLIP(String name) {
-            mValue = name;
-        }
-
-        public static FLIP parse(String name){
-            switch (name.charAt(0)) {
-                case 'N':
-                    return NONE;
-                case 'V':
-                    return VERTICAL;
-                case 'H':
-                    return HORIZONTAL;
-                case 'B':
-                    return BOTH;
-            };
-            return NONE;
-        }
-    }
-
-    // Output format data from intent extras
-    private boolean mUseCropExtras = false;
-    private CropExtras mCropExtras = null;
-    public void setUseCropExtrasFlag(boolean f){
-        mUseCropExtras = f;
-    }
-
-    public boolean getUseCropExtrasFlag(){
-        return mUseCropExtras;
-    }
-
-    public void setCropExtras(CropExtras e){
-        mCropExtras = e;
-    }
-
-    public CropExtras getCropExtras(){
-        return mCropExtras;
-    }
+    private FilterRotateRepresentation mRotationRep = new FilterRotateRepresentation();
+    private FilterStraightenRepresentation mStraightenRep = new FilterStraightenRepresentation();
+    private FilterCropRepresentation mCropRep = new FilterCropRepresentation();
+    private FilterMirrorRepresentation mMirrorRep = new FilterMirrorRepresentation();
 
     public GeometryMetadata() {
         super("GeometryMetadata");
@@ -112,18 +78,16 @@ public class GeometryMetadata extends FilterRepresentation {
         if (mScaleFactor != 1.0f) {
             return true;
         }
-        if (mRotation != 0) {
+        if (!mRotationRep.isNil()) {
             return true;
         }
-        if (mStraightenRotation != 0) {
+        if (!mStraightenRep.isNil()) {
             return true;
         }
-        Rect cropBounds = GeometryMath.roundNearest(mCropBounds);
-        Rect photoBounds = GeometryMath.roundNearest(mPhotoBounds);
-        if (!cropBounds.equals(photoBounds)) {
+        if (!mCropRep.isNil()) {
             return true;
         }
-        if (!mFlip.equals(FLIP.NONE)) {
+        if (!mMirrorRep.isNil()) {
             return true;
         }
         return false;
@@ -131,132 +95,82 @@ public class GeometryMetadata extends FilterRepresentation {
 
     public void set(GeometryMetadata g) {
         mScaleFactor = g.mScaleFactor;
-        mRotation = g.mRotation;
-        mStraightenRotation = g.mStraightenRotation;
-        mCropBounds.set(g.mCropBounds);
-        mPhotoBounds.set(g.mPhotoBounds);
-        mFlip = g.mFlip;
-
-        mUseCropExtras = g.mUseCropExtras;
-        if (g.mCropExtras != null){
-            mCropExtras = new CropExtras(g.mCropExtras);
-        }
+        mRotationRep.set(g.mRotationRep);
+        mStraightenRep.set(g.mStraightenRep);
+        mCropRep.set(g.mCropRep);
+        mMirrorRep.set(g.mMirrorRep);
     }
 
     public float getScaleFactor() {
         return mScaleFactor;
     }
 
-    public float getRotation() {
-        return mRotation;
+    public int getRotation() {
+        return mRotationRep.getRotation().value();
     }
 
     public float getStraightenRotation() {
-        return mStraightenRotation;
+        return mStraightenRep.getStraighten();
     }
 
     public RectF getPreviewCropBounds() {
-        return new RectF(mCropBounds);
+        return mCropRep.getCrop();
     }
 
     public RectF getCropBounds(Bitmap bitmap) {
         float scale = 1.0f;
-        scale = GeometryMath.scale(mPhotoBounds.width(), mPhotoBounds.height(), bitmap.getWidth(),
+        RectF photoBounds = mCropRep.getImage();
+        RectF cropBounds = mCropRep.getCrop();
+        scale = GeometryMath.scale(photoBounds.width(), photoBounds.height(), bitmap.getWidth(),
                 bitmap.getHeight());
-        RectF croppedRegion = new RectF(mCropBounds.left * scale, mCropBounds.top * scale,
-                mCropBounds.right * scale, mCropBounds.bottom * scale);
+        RectF croppedRegion = new RectF(cropBounds.left * scale, cropBounds.top * scale,
+                cropBounds.right * scale, cropBounds.bottom * scale);
 
         // If no crop has been applied, make sure to use the exact size values.
         // Multiplying using scale will introduce rounding errors that modify
         // even un-cropped images.
-        if (mCropBounds.left == 0 && mCropBounds.right == mPhotoBounds.right) {
+        if (cropBounds.left == 0 && cropBounds.right == photoBounds.right) {
             croppedRegion.left = 0;
             croppedRegion.right = bitmap.getWidth();
         }
-        if (mCropBounds.top == 0 && mCropBounds.bottom == mPhotoBounds.bottom) {
+        if (cropBounds.top == 0 && cropBounds.bottom == photoBounds.bottom) {
             croppedRegion.top = 0;
             croppedRegion.bottom = bitmap.getHeight();
         }
         return croppedRegion;
     }
 
-    public FLIP getFlipType() {
-        return mFlip;
+    public Mirror getMirrorType() {
+        return mMirrorRep.getMirror();
+    }
+
+    public void setMirrorType(Mirror m) {
+        mMirrorRep.setMirror(m);
     }
 
     public RectF getPhotoBounds() {
-        return new RectF(mPhotoBounds);
+        return mCropRep.getImage();
     }
 
     public void setScaleFactor(float scale) {
         mScaleFactor = scale;
     }
 
-    public void setFlipType(FLIP flip) {
-        mFlip = flip;
-    }
-
-    public void setRotation(float rotation) {
-        mRotation = rotation;
+    public void setRotation(int rotation) {
+        Rotation r = Rotation.fromValue(rotation % 360);
+        mRotationRep.setRotation((r == null) ? Rotation.ZERO : r);
     }
 
     public void setStraightenRotation(float straighten) {
-        mStraightenRotation = straighten;
+        mStraightenRep.setStraighten(straighten);
     }
 
     public void setCropBounds(RectF newCropBounds) {
-        mCropBounds.set(newCropBounds);
+        mCropRep.setCrop(newCropBounds);
     }
 
     public void setPhotoBounds(RectF newPhotoBounds) {
-        mPhotoBounds.set(newPhotoBounds);
-    }
-
-    public boolean cropFitsInPhoto(RectF cropBounds) {
-        return mPhotoBounds.contains(cropBounds);
-    }
-
-    private boolean compareRectF(RectF a, RectF b) {
-        return ((int) a.left == (int) b.left)
-                && ((int) a.right == (int) b.right)
-                && ((int) a.top == (int) b.top)
-                && ((int) a.bottom == (int) b.bottom);
-    }
-
-    @Override
-    public boolean equals(FilterRepresentation o) {
-        if (this == o)
-            return true;
-        if (o == null || !(o instanceof GeometryMetadata))
-            return false;
-
-        GeometryMetadata d = (GeometryMetadata) o;
-        return (mScaleFactor == d.mScaleFactor
-                && mRotation == d.mRotation
-                && mStraightenRotation == d.mStraightenRotation
-                && mFlip == d.mFlip
-                && compareRectF(mCropBounds, d.mCropBounds)
-                && compareRectF(mPhotoBounds, d.mPhotoBounds));
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 23;
-        result = 31 * result + Float.floatToIntBits(mRotation);
-        result = 31 * result + Float.floatToIntBits(mStraightenRotation);
-        result = 31 * result + Float.floatToIntBits(mScaleFactor);
-        result = 31 * result + mFlip.hashCode();
-        result = 31 * result + mCropBounds.hashCode();
-        result = 31 * result + mPhotoBounds.hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName() + "[" + "scale=" + mScaleFactor
-                + ",rotation=" + mRotation + ",flip=" + mFlip + ",straighten="
-                + mStraightenRotation + ",cropRect=" + mCropBounds.toShortString()
-                + ",photoRect=" + mPhotoBounds.toShortString() + "]";
+        mCropRep.setImage(newPhotoBounds);
     }
 
     protected static void concatHorizontalMatrix(Matrix m, float width) {
@@ -269,19 +183,18 @@ public class GeometryMetadata extends FilterRepresentation {
         m.postTranslate(0, height);
     }
 
-
-    public static void concatMirrorMatrix(Matrix m, float width, float height, FLIP type) {
-        if (type == FLIP.HORIZONTAL) {
+    public static void concatMirrorMatrix(Matrix m, float width, float height, Mirror type) {
+        if (type == Mirror.HORIZONTAL) {
             concatHorizontalMatrix(m, width);
-        } else if (type == FLIP.VERTICAL) {
+        } else if (type == Mirror.VERTICAL) {
             concatVerticalMatrix(m, height);
-        } else if (type == FLIP.BOTH) {
+        } else if (type == Mirror.BOTH) {
             concatVerticalMatrix(m, height);
             concatHorizontalMatrix(m, width);
         }
     }
 
-    public Matrix getMatrixOriginalOrientation(int orientation, float originalWidth,
+    public static Matrix getMatrixOriginalOrientation(int orientation, float originalWidth,
             float originalHeight) {
         Matrix imageRotation = new Matrix();
         switch (orientation) {
@@ -360,7 +273,7 @@ public class GeometryMetadata extends FilterRepresentation {
                 viewWidth / 2f, viewHeight / 2f
         };
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
-                getRotation(), getStraightenRotation(), getFlipType(), displayCenter);
+                getRotation(), getStraightenRotation(), getMirrorType(), displayCenter);
         float[] cropCenter = {
                 scaledCrop.centerX(), scaledCrop.centerY()
         };
@@ -375,11 +288,11 @@ public class GeometryMetadata extends FilterRepresentation {
     }
 
     public boolean hasSwitchedWidthHeight() {
-        return (((int) (mRotation / 90)) % 2) != 0;
+        return (((int) (mRotationRep.getRotation().value() / 90)) % 2) != 0;
     }
 
     public static Matrix buildPhotoMatrix(RectF photo, RectF crop, float rotation,
-            float straighten, FLIP type) {
+            float straighten, Mirror type) {
         Matrix m = new Matrix();
         m.setRotate(straighten, photo.centerX(), photo.centerY());
         concatMirrorMatrix(m, photo.right, photo.bottom, type);
@@ -429,7 +342,7 @@ public class GeometryMetadata extends FilterRepresentation {
 
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
                 getRotation(), getStraightenRotation(),
-                getFlipType(), displayCenter);
+                getMirrorType(), displayCenter);
         float[] cropCenter = {
                 scaledCrop.centerX(), scaledCrop.centerY()
         };
@@ -455,7 +368,7 @@ public class GeometryMetadata extends FilterRepresentation {
      * @return
      */
     public static Matrix buildCenteredPhotoMatrix(RectF photo, RectF crop, float rotation,
-            float straighten, FLIP type, float[] newCenter) {
+            float straighten, Mirror type, float[] newCenter) {
         Matrix m = buildPhotoMatrix(photo, crop, rotation, straighten, type);
         float[] center = {
                 photo.centerX(), photo.centerY()
@@ -497,7 +410,7 @@ public class GeometryMetadata extends FilterRepresentation {
      * @return
      */
     public static Matrix buildWanderingCropMatrix(RectF photo, RectF crop, float rotation,
-            float straighten, FLIP type, float[] newCenter) {
+            float straighten, Mirror type, float[] newCenter) {
         Matrix m = buildCenteredPhotoMatrix(photo, crop, rotation, straighten, type, newCenter);
         m.preRotate(-straighten, photo.centerX(), photo.centerY());
         return m;
@@ -522,86 +435,40 @@ public class GeometryMetadata extends FilterRepresentation {
         representation.useParametersFrom(this);
     }
 
-    private static final String[] sParams = {
-            "Name", "ScaleFactor", "Rotation", "StraightenRotation", "CropBoundsLeft",
-            "CropBoundsTop", "CropBoundsRight", "CropBoundsBottom", "PhotoBoundsLeft",
-            "PhotoBoundsTop", "PhotoBoundsRight", "PhotoBoundsBottom", "Flip"
-    };
-
     @Override
-    public String[][] serializeRepresentation() {
-        String[][] ret = {
-                { "Name", getName() },
-                { "ScaleFactor", Float.toString(mScaleFactor) },
-                { "Rotation", Float.toString(mRotation) },
-                { "StraightenRotation", Float.toString(mStraightenRotation) },
-                { "CropBoundsLeft", Float.toString(mCropBounds.left) },
-                { "CropBoundsTop", Float.toString(mCropBounds.top) },
-                { "CropBoundsRight", Float.toString(mCropBounds.right) },
-                { "CropBoundsBottom", Float.toString(mCropBounds.bottom) },
-                { "PhotoBoundsLeft", Float.toString(mPhotoBounds.left) },
-                { "PhotoBoundsTop", Float.toString(mPhotoBounds.top) },
-                { "PhotoBoundsRight", Float.toString(mPhotoBounds.right) },
-                { "PhotoBoundsBottom", Float.toString(mPhotoBounds.bottom) },
-                { "Flip", mFlip.mValue } };
-        return ret;
+    public void serializeRepresentation(JsonWriter writer) throws IOException {
+        writer.beginObject();
+        writer.name(FilterRotateRepresentation.SERIALIZATION_NAME);
+        mRotationRep.serializeRepresentation(writer);
+        writer.name(FilterMirrorRepresentation.SERIALIZATION_NAME);
+        mMirrorRep.serializeRepresentation(writer);
+        writer.name(FilterStraightenRepresentation.SERIALIZATION_NAME);
+        mStraightenRep.serializeRepresentation(writer);
+        writer.name(FilterCropRepresentation.SERIALIZATION_NAME);
+        mCropRep.serializeRepresentation(writer);
+        writer.name(SERIALIZATION_VALUE_SCALE).value(mScaleFactor);
+        writer.endObject();
     }
 
     @Override
-    public void deSerializeRepresentation(String[][] rep) {
-        HashMap<String, Integer> map = new HashMap<String, Integer>();
-        for (int i = 0; i < sParams.length; i++) {
-            map.put(sParams[i], i);
-        }
-        for (int i = 0; i < rep.length; i++) {
-            String key = rep[i][0];
-            String value = rep[i][1];
-
-            switch (map.get(key)) {
-                case -1: // Unknown
-                    break;
-                case 0:
-                    if (!getName().equals(value)) {
-                        throw new IllegalArgumentException("Not a "+getName());
-                    }
-                    break;
-                case 1: // "ScaleFactor", Float
-                    mScaleFactor = Float.parseFloat(value);
-                    break;
-                case 2: // "Rotation", Float
-                    mRotation = Float.parseFloat(value);
-                    break;
-                case 3: // "StraightenRotation", Float
-                    mStraightenRotation = Float.parseFloat(value);
-                    break;
-                case 4: // "mCropBoundsLeft", Float
-                    mCropBounds.left = Float.parseFloat(value);
-                    break;
-                case 5: // "mCropBoundsTop", Float
-                    mCropBounds.top = Float.parseFloat(value);
-                    break;
-                case 6: // "mCropBoundsRight", Float
-                    mCropBounds.right = Float.parseFloat(value);
-                    break;
-                case 7: // "mCropBoundsBottom", Float
-                    mCropBounds.bottom = Float.parseFloat(value);
-                    break;
-                case 8: // "mPhotoBoundsLeft", Float
-                    mPhotoBounds.left = Float.parseFloat(value);
-                    break;
-                case 9: // "mPhotoBoundsTop", Float
-                    mPhotoBounds.top = Float.parseFloat(value);
-                    break;
-                case 10: // "mPhotoBoundsRight", Float
-                    mPhotoBounds.right = Float.parseFloat(value);
-                    break;
-                case 11: // "mPhotoBoundsBottom", Float
-                    mPhotoBounds.bottom = Float.parseFloat(value);
-                    break;
-                case 12: // "Flip", enum
-                    mFlip = FLIP.parse(value);
-                    break;
+    public void deSerializeRepresentation(JsonReader reader) throws IOException {
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+            if (FilterRotateRepresentation.SERIALIZATION_NAME.equals(name)) {
+                mRotationRep.deSerializeRepresentation(reader);
+            } else if (FilterMirrorRepresentation.SERIALIZATION_NAME.equals(name)) {
+                mMirrorRep.deSerializeRepresentation(reader);
+            } else if (FilterStraightenRepresentation.SERIALIZATION_NAME.equals(name)) {
+                mStraightenRep.deSerializeRepresentation(reader);
+            } else if (FilterCropRepresentation.SERIALIZATION_NAME.equals(name)) {
+                mCropRep.deSerializeRepresentation(reader);
+            } else if (SERIALIZATION_VALUE_SCALE.equals(name)) {
+                mScaleFactor = (float) reader.nextDouble();
+            } else {
+                reader.skipValue();
             }
         }
+        reader.endObject();
     }
 }

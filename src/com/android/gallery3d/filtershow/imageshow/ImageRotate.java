@@ -53,7 +53,7 @@ public class ImageRotate extends ImageGeometry {
         mAngle += 90;
         mAngle = snappedAngle(mAngle);
         mAngle %= 360;
-        setLocalRotation(mAngle);
+        setLocalRotation((int) mAngle);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ImageRotate extends ImageGeometry {
     protected void setActionMove(float x, float y) {
         super.setActionMove(x, y);
         computeValue();
-        setLocalRotation(mAngle % 360);
+        setLocalRotation((int) mAngle % 360);
     }
 
     @Override

@@ -197,7 +197,7 @@ public class ImageCrop extends ImageGeometry {
         RectF scaledPhoto = new RectF();
         float scale = getTransformState(scaledPhoto, scaledCrop, displayCenter);
         Matrix m = GeometryMetadata.buildCenteredPhotoMatrix(scaledPhoto, scaledCrop,
-                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+                getLocalRotation(), getLocalStraighten(), getLocalMirror(), displayCenter);
         m.preScale(scale, scale);
         return m;
     }
@@ -208,7 +208,7 @@ public class ImageCrop extends ImageGeometry {
         RectF scaledPhoto = new RectF();
         float scale = getTransformState(scaledPhoto, scaledCrop, displayCenter);
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
-                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+                getLocalRotation(), getLocalStraighten(), getLocalMirror(), displayCenter);
         m1.preScale(scale, scale);
         return m1;
     }

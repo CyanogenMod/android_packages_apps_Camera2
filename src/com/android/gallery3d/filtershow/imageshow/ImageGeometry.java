@@ -29,9 +29,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.android.gallery3d.filtershow.history.HistoryItem;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation.Mirror;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
+import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 public abstract class ImageGeometry extends ImageShow {
@@ -133,7 +133,7 @@ public abstract class ImageGeometry extends ImageShow {
         setLocalRotation(0);
         setLocalStraighten(0);
         setLocalCropBounds(getLocalPhotoBounds());
-        setLocalFlip(FLIP.NONE);
+        setLocalMirror(Mirror.NONE);
         saveAndSetPreset();
         invalidate();
     }
@@ -179,7 +179,7 @@ public abstract class ImageGeometry extends ImageShow {
         setLocalScale(zoom);
     }
 
-    protected void setLocalRotation(float r) {
+    protected void setLocalRotation(int r) {
         mLocalGeometry.setRotation(r);
         updateScale();
     }
@@ -207,12 +207,12 @@ public abstract class ImageGeometry extends ImageShow {
         updateScale();
     }
 
-    protected FLIP getLocalFlip() {
-        return mLocalGeometry.getFlipType();
+    protected Mirror getLocalMirror() {
+        return mLocalGeometry.getMirrorType();
     }
 
-    protected void setLocalFlip(FLIP flip) {
-        mLocalGeometry.setFlipType(flip);
+    protected void setLocalMirror(Mirror flip) {
+        mLocalGeometry.setMirrorType(flip);
     }
 
     protected float getTotalLocalRotation() {
@@ -458,10 +458,10 @@ public abstract class ImageGeometry extends ImageShow {
         RectF scaledPhoto = new RectF();
         float scale = getTransformState(scaledPhoto, scaledCrop, displayCenter);
         Matrix m = GeometryMetadata.buildCenteredPhotoMatrix(scaledPhoto, scaledCrop,
-                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+                getLocalRotation(), getLocalStraighten(), getLocalMirror(), displayCenter);
 
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
-                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+                getLocalRotation(), getLocalStraighten(), getLocalMirror(), displayCenter);
         m1.mapRect(scaledCrop);
         Path path = new Path();
         scaledCrop.offset(-offset[0], -offset[1]);
@@ -502,7 +502,7 @@ public abstract class ImageGeometry extends ImageShow {
                 getWidth() / 2f, getHeight() / 2f
         };
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
-                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+                getLocalRotation(), getLocalStraighten(), getLocalMirror(), displayCenter);
         float[] cropCenter = {
                 scaledCrop.centerX(), scaledCrop.centerY()
         };

@@ -25,14 +25,14 @@ import android.util.AttributeSet;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.EditorFlip;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation.Mirror;
 
 public class ImageFlip extends ImageGeometry {
 
     private static final Paint gPaint = new Paint();
-    private static final float MIN_FLICK_DIST_FOR_FLIP = 0.1f;
+    private static final float MIN_FLICK_DIST_FOR_FLIP= 0.1f;
     private static final String LOGTAG = "ImageFlip";
-    private FLIP mNextFlip = FLIP.NONE;
+    private Mirror mNextFlip = Mirror.NONE;
     private EditorFlip mEditorFlip;
 
     public ImageFlip(Context context, AttributeSet attrs) {
@@ -54,10 +54,10 @@ public class ImageFlip extends ImageGeometry {
     }
 
     public void flip() {
-        FLIP flip = getLocalFlip();
+        Mirror flip = getLocalMirror();
         boolean next = true;
-        // Picks next flip in order from enum FLIP (wrapping)
-        for (FLIP f : FLIP.values()) {
+        // Picks next flip in order from enum Mirror (wrapping)
+        for (Mirror f : Mirror.values()) {
             if (next) {
                 mNextFlip = f;
                 next = false;
@@ -66,7 +66,7 @@ public class ImageFlip extends ImageGeometry {
                 next = true;
             }
         }
-        setLocalFlip(mNextFlip);
+        setLocalMirror(mNextFlip);
     }
 
     @Override
@@ -83,44 +83,44 @@ public class ImageFlip extends ImageGeometry {
         }
         if (Math.abs(diffx) >= flick) {
             // flick moving left/right
-            FLIP flip = getLocalFlip();
+            Mirror flip = getLocalMirror();
             switch (flip) {
                 case NONE:
-                    flip = FLIP.HORIZONTAL;
+                    flip = Mirror.HORIZONTAL;
                     break;
                 case HORIZONTAL:
-                    flip = FLIP.NONE;
+                    flip = Mirror.NONE;
                     break;
                 case VERTICAL:
-                    flip = FLIP.BOTH;
+                    flip = Mirror.BOTH;
                     break;
                 case BOTH:
-                    flip = FLIP.VERTICAL;
+                    flip = Mirror.VERTICAL;
                     break;
                 default:
-                    flip = FLIP.NONE;
+                    flip = Mirror.NONE;
                     break;
             }
             mNextFlip = flip;
         }
         if (Math.abs(diffy) >= flick) {
             // flick moving up/down
-            FLIP flip = getLocalFlip();
+            Mirror flip = getLocalMirror();
             switch (flip) {
                 case NONE:
-                    flip = FLIP.VERTICAL;
+                    flip = Mirror.VERTICAL;
                     break;
                 case VERTICAL:
-                    flip = FLIP.NONE;
+                    flip = Mirror.NONE;
                     break;
                 case HORIZONTAL:
-                    flip = FLIP.BOTH;
+                    flip = Mirror.BOTH;
                     break;
                 case BOTH:
-                    flip = FLIP.HORIZONTAL;
+                    flip = Mirror.HORIZONTAL;
                     break;
                 default:
-                    flip = FLIP.NONE;
+                    flip = Mirror.NONE;
                     break;
             }
             mNextFlip = flip;
@@ -130,13 +130,13 @@ public class ImageFlip extends ImageGeometry {
     @Override
     protected void setActionUp() {
         super.setActionUp();
-        setLocalFlip(mNextFlip);
+        setLocalMirror(mNextFlip);
     }
 
     @Override
     public void resetParameter() {
         super.resetParameter();
-        mNextFlip = FLIP.NONE;
+        mNextFlip = Mirror.NONE;
     }
 
     private float getScaledMinFlick() {
