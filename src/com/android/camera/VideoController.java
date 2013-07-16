@@ -35,4 +35,8 @@ public interface VideoController extends OnShutterButtonListener {
     public void stopPreview();
 
     public void updateCameraOrientation();
+
+    // Callbacks for camera preview UI events.
+    public void onPreviewUIReady();
+    public void onPreviewUIDestroyed();
 }
