@@ -26,9 +26,13 @@ import android.util.Log;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
+import com.android.gallery3d.filtershow.filters.FilterCropRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRotateRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterStraightenRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
@@ -659,8 +663,17 @@ public class ImagePreset {
     }
 
     FilterRepresentation creatFilterFromName(String name) {
+        // TODO: move these to FiltersManager pattern.
         if (GeometryMetadata.SERIALIZATION_NAME.equalsIgnoreCase(name)) {
             return new GeometryMetadata();
+        } else if (FilterRotateRepresentation.SERIALIZATION_NAME.equals(name)) {
+            return new FilterRotateRepresentation();
+        } else if (FilterMirrorRepresentation.SERIALIZATION_NAME.equals(name)) {
+            return new FilterMirrorRepresentation();
+        } else if (FilterStraightenRepresentation.SERIALIZATION_NAME.equals(name)) {
+            return new FilterStraightenRepresentation();
+        } else if (FilterCropRepresentation.SERIALIZATION_NAME.equals(name)) {
+            return new FilterCropRepresentation();
         }
         FiltersManager filtersManager = FiltersManager.getManager();
         return filtersManager.createFilterFromName(name);
