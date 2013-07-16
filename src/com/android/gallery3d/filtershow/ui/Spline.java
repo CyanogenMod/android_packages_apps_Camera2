@@ -83,6 +83,28 @@ public class Spline {
         return Color.WHITE;
     }
 
+    public boolean sameValues(Spline other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+
+        if (getNbPoints() != other.getNbPoints()) {
+            return false;
+        }
+
+        for (int i = 0; i < getNbPoints(); i++) {
+            ControlPoint p = mPoints.elementAt(i);
+            ControlPoint otherPoint = other.mPoints.elementAt(i);
+            if (!p.sameValues(otherPoint)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void didMovePoint(ControlPoint point) {
         mCurrentControlPoint = point;
     }
