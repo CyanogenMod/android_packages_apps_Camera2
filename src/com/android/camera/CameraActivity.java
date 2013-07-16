@@ -68,6 +68,7 @@ public class CameraActivity extends Activity
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
     private CameraDataAdapter mDataAdapter;
+    private PanoramaStitchingManager mPanoramaManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
     private View mRootView;
@@ -149,6 +150,22 @@ public class CameraActivity extends Activity
             }
         };
 
+    private ImageTaskManager.TaskListener mStitchingListener =
+            new ImageTaskManager.TaskListener() {
+                @Override
+                public void onTaskQueued(String filePath, Uri imageUri) {
+                }
+
+                @Override
+                public void onTaskDone(String filePath, Uri imageUri) {
+                }
+
+                @Override
+                public void onTaskProgress(
+                        String filePath, Uri imageUri, int progress) {
+                }
+            };
+
     public MediaSaveService getMediaSaveService() {
         return mMediaSaveService;
     }
@@ -219,6 +236,8 @@ public class CameraActivity extends Activity
             IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
             registerReceiver(mScreenOffReceiver, filter);
         }
+        mPanoramaManager = new PanoramaStitchingManager(CameraActivity.this);
+        mPanoramaManager.addTaskListener(mStitchingListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mRootView = rootLayout.findViewById(R.id.camera_app_root);
@@ -277,6 +296,13 @@ public class CameraActivity extends Activity
         super.onResume();
         mCurrentModule.onResumeAfterSuper();
 
+        setSwipingEnabled(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         // The loading is done in background and will update the filmstrip later.
         if (!mSecureCamera) {
             mDataAdapter.requestLoad(getContentResolver());
@@ -293,7 +319,6 @@ public class CameraActivity extends Activity
                             v.getDrawable().getIntrinsicHeight(),
                             0, 0));
         }
-        setSwipingEnabled(true);
     }
 
     @Override
