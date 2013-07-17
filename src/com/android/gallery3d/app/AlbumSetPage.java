@@ -554,7 +554,7 @@ public class AlbumSetPage extends ActivityState implements
 
             FilterUtils.setupMenuItems(mActionBar, mMediaSet.getPath(), false);
 
-            Intent helpIntent = HelpUtils.getHelpIntent(activity, R.string.help_url_gallery_main);
+            Intent helpIntent = HelpUtils.getHelpIntent(activity);
 
             MenuItem helpItem = menu.findItem(R.id.action_general_help);
             helpItem.setVisible(helpIntent != null);
