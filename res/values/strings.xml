@@ -492,9 +492,6 @@
     <!-- The title of the menu item which display online help in browser. [CHAR LIMIT=20]-->
     <string name="help">Help</string>
 
-    <!-- Web address for gallery help.  DO NOT TRANSLATE -->
-    <string name="help_url_gallery_main" translatable="false"></string>
-
     <!-- The tilte of a dialog showing there is no external storage. [CHAR LIMIT=20] -->
     <string name="no_external_storage_title">No Storage</string>
 
