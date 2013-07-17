@@ -36,15 +36,16 @@ import java.io.File;
  * Service for saving images in the background thread.
  */
 public class MediaSaveService extends Service {
-    private static final int SAVE_TASK_LIMIT = 3;
-    private static final String TAG = MediaSaveService.class.getSimpleName();
+    // The memory limit for unsaved image is 20MB.
+    private static final int SAVE_TASK_MEMORY_LIMIT = 20 * 1024 * 1024;
+    private static final String TAG = "CAM_" + MediaSaveService.class.getSimpleName();
 
     private final IBinder mBinder = new LocalBinder();
-    private int mTaskNumber;
     private Listener mListener;
+    // Memory used by the total queued save request, in bytes.
+    private long mMemoryUse;
 
     interface Listener {
-
         public void onQueueStatus(boolean full);
     }
 
@@ -74,14 +75,13 @@ public class MediaSaveService extends Service {
 
     @Override
     public void onCreate() {
-        mTaskNumber = 0;
+        mMemoryUse = 0;
     }
 
     public boolean isQueueFull() {
-        return (mTaskNumber >= SAVE_TASK_LIMIT);
+        return (mMemoryUse >= SAVE_TASK_MEMORY_LIMIT);
     }
 
-    // Runs in main thread
     public void addImage(final byte[] data, String title, long date, Location loc,
             int width, int height, int orientation, ExifInterface exif,
             OnMediaSavedListener l, ContentResolver resolver) {
@@ -93,11 +93,18 @@ public class MediaSaveService extends Service {
                 (loc == null) ? null : new Location(loc),
                 width, height, orientation, exif, resolver, l);
 
-        mTaskNumber++;
+        mMemoryUse += data.length;
         if (isQueueFull()) {
             onQueueFull();
         }
         t.execute();
+    }
+
+    public void addImage(final byte[] data, String title, Location loc,
+            int width, int height, int orientation, ExifInterface exif,
+            OnMediaSavedListener l, ContentResolver resolver) {
+        addImage(data, title, System.currentTimeMillis(), loc, width, height,
+                orientation, exif, l, resolver);
     }
 
     public void addVideo(String path, long duration, ContentValues values,
@@ -161,8 +168,9 @@ public class MediaSaveService extends Service {
         @Override
         protected void onPostExecute(Uri uri) {
             if (listener != null) listener.onMediaSaved(uri);
-            mTaskNumber--;
-            if (mTaskNumber == SAVE_TASK_LIMIT - 1) onQueueAvailable();
+            boolean previouslyFull = isQueueFull();
+            mMemoryUse -= data.length;
+            if (isQueueFull() != previouslyFull) onQueueAvailable();
         }
     }
 
