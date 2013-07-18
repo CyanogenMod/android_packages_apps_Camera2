@@ -17,6 +17,7 @@
 package com.android.gallery3d.util;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -81,5 +82,19 @@ public class LightCycleHelper {
 
     public static StitchingProgressManager createStitchingManagerInstance(GalleryApp app) {
         return null;
+    }
+
+    /**
+     * Get the file path from a Media storage URI.
+     */
+    public static String getPathFromURI(ContentResolver contentResolver, Uri contentUri) {
+        return null;
+    }
+
+    /**
+     * Get the modified time from a Media storage URI.
+     */
+    public static long getModifiedTimeFromURI(ContentResolver contentResolver, Uri contentUri) {
+        return 0;
     }
 }
