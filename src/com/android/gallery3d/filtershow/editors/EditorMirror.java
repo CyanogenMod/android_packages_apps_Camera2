@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,27 +25,45 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.imageshow.ImageFlip;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.imageshow.ImageMirror;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
-public class EditorFlip extends Editor implements EditorInfo {
-    public static final String LOGTAG = "EditorFlip";
+public class EditorMirror extends Editor implements EditorInfo {
+    public static final String TAG = EditorMirror.class.getSimpleName();
     public static final int ID = R.id.editorFlip;
-    ImageFlip mImageFlip;
+    ImageMirror mImageMirror;
 
-    public EditorFlip() {
+    public EditorMirror() {
         super(ID);
+        mChangesGeometry = true;
     }
 
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        if (mImageFlip == null) {
-            mImageFlip = new ImageFlip(context);
+        if (mImageMirror == null) {
+            mImageMirror = new ImageMirror(context);
         }
-        mView = mImageShow = mImageFlip;
-        mImageFlip.bindAsImageLoadListener();
-        mImageFlip.setEditor(this);
-        mImageFlip.syncLocalToMasterGeometry();
+        mView = mImageShow = mImageMirror;
+        mImageMirror.setEditor(this);
+    }
+
+    @Override
+    public void reflectCurrentFilter() {
+        MasterImage master = MasterImage.getImage();
+        master.setCurrentFilterRepresentation(master.getPreset()
+                .getFilterWithSerializationName(FilterMirrorRepresentation.SERIALIZATION_NAME));
+        super.reflectCurrentFilter();
+        FilterRepresentation rep = getLocalRepresentation();
+        if (rep == null || rep instanceof FilterMirrorRepresentation) {
+            mImageMirror.setFilterMirrorRepresentation((FilterMirrorRepresentation) rep);
+        } else {
+            Log.w(TAG, "Could not reflect current filter, not of type: "
+                    + FilterMirrorRepresentation.class.getSimpleName());
+        }
+        mImageMirror.invalidate();
     }
 
     @Override
@@ -53,10 +72,14 @@ public class EditorFlip extends Editor implements EditorInfo {
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                mImageFlip.flip();
-                mImageFlip.saveAndSetPreset();
+                mImageMirror.flip();
             }
         });
+    }
+
+    @Override
+    public void finalApplyCalled() {
+        commitLocalRepresentation(mImageMirror.getFinalRepresentation());
     }
 
     @Override

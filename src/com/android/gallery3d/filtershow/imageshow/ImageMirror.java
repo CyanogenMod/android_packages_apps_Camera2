@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,34 +22,34 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.android.gallery3d.filtershow.editors.EditorRotate;
-import com.android.gallery3d.filtershow.filters.FilterRotateRepresentation;
+import com.android.gallery3d.filtershow.editors.EditorMirror;
+import com.android.gallery3d.filtershow.filters.FilterMirrorRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryMathUtils.GeometryHolder;
 
-public class ImageRotate extends ImageShow {
-    private EditorRotate mEditorRotate;
-    private static final String TAG = ImageRotate.class.getSimpleName();
-    private FilterRotateRepresentation mLocalRep = new FilterRotateRepresentation();
+public class ImageMirror extends ImageShow {
+    private static final String TAG = ImageMirror.class.getSimpleName();
+    private EditorMirror mEditorMirror;
+    private FilterMirrorRepresentation mLocalRep = new FilterMirrorRepresentation();
     private GeometryHolder mDrawHolder = new GeometryHolder();
 
-    public ImageRotate(Context context, AttributeSet attrs) {
+    public ImageMirror(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ImageRotate(Context context) {
+    public ImageMirror(Context context) {
         super(context);
     }
 
-    public void setFilterRotateRepresentation(FilterRotateRepresentation rep) {
-        mLocalRep = (rep == null) ? new FilterRotateRepresentation() : rep;
+    public void setFilterMirrorRepresentation(FilterMirrorRepresentation rep) {
+        mLocalRep = (rep == null) ? new FilterMirrorRepresentation() : rep;
     }
 
-    public void rotate() {
-        mLocalRep.rotateCW();
+    public void flip() {
+        mLocalRep.cycle();
         invalidate();
     }
 
-    public FilterRotateRepresentation getFinalRepresentation() {
+    public FilterMirrorRepresentation getFinalRepresentation() {
         return mLocalRep;
     }
 
@@ -57,10 +57,6 @@ public class ImageRotate extends ImageShow {
     public boolean onTouchEvent(MotionEvent event) {
         // Treat event as handled.
         return true;
-    }
-
-    public int getLocalValue() {
-        return mLocalRep.getRotation().value();
     }
 
     @Override
@@ -71,11 +67,12 @@ public class ImageRotate extends ImageShow {
             return;
         }
         GeometryMathUtils.initializeHolder(mDrawHolder, mLocalRep);
-        GeometryMathUtils.drawTransformedCropped(mDrawHolder, canvas, image, canvas.getWidth(),
-                canvas.getHeight());
+        GeometryMathUtils.drawTransformedCropped(mDrawHolder, canvas, image, getWidth(),
+                getHeight());
     }
 
-    public void setEditor(EditorRotate editorRotate) {
-        mEditorRotate = editorRotate;
+    public void setEditor(EditorMirror editorFlip) {
+        mEditorMirror = editorFlip;
     }
+
 }

@@ -44,26 +44,21 @@ public class EditorPlaceHolder {
             return null;
         }
 
-        try {
-            editor.createEditor(mActivity, mContainer);
-            editor.getImageShow().bindAsImageLoadListener();
-            mContainer.setVisibility(View.VISIBLE);
-            mContainer.removeAllViews();
-            View eview = editor.getTopLevelView();
-            ViewParent parent = eview.getParent();
+        editor.createEditor(mActivity, mContainer);
+        editor.getImageShow().bindAsImageLoadListener();
+        mContainer.setVisibility(View.VISIBLE);
+        mContainer.removeAllViews();
+        View eview = editor.getTopLevelView();
+        ViewParent parent = eview.getParent();
 
-            if (parent != null && parent instanceof FrameLayout) {
-                ((FrameLayout) parent).removeAllViews();
-            }
-
-            mContainer.addView(eview);
-            hideOldViews();
-            editor.setVisibility(View.VISIBLE);
-            return editor;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (parent != null && parent instanceof FrameLayout) {
+            ((FrameLayout) parent).removeAllViews();
         }
-        return null;
+
+        mContainer.addView(eview);
+        hideOldViews();
+        editor.setVisibility(View.VISIBLE);
+        return editor;
     }
 
     public void setOldViews(Vector<ImageShow> views) {

@@ -17,24 +17,26 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
-import android.view.View;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterStraightenRepresentation;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorStraighten extends Editor implements EditorInfo {
+    public static final String TAG = EditorStraighten.class.getSimpleName();
     public static final int ID = R.id.editorStraighten;
     ImageStraighten mImageStraighten;
-    GeometryMetadata mGeometryMetadata;
 
     public EditorStraighten() {
         super(ID);
         mShowParameter = SHOW_VALUE_INT;
+        mChangesGeometry = true;
     }
 
-    // TODO use filter reflection like
     @Override
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
         String apply = context.getString(R.string.apply_effect);
@@ -49,9 +51,29 @@ public class EditorStraighten extends Editor implements EditorInfo {
             mImageStraighten = new ImageStraighten(context);
         }
         mView = mImageShow = mImageStraighten;
-        mImageStraighten.bindAsImageLoadListener();
         mImageStraighten.setEditor(this);
-        mImageStraighten.syncLocalToMasterGeometry();
+    }
+
+    @Override
+    public void reflectCurrentFilter() {
+        MasterImage master = MasterImage.getImage();
+        master.setCurrentFilterRepresentation(master.getPreset().getFilterWithSerializationName(
+                FilterStraightenRepresentation.SERIALIZATION_NAME));
+        super.reflectCurrentFilter();
+        FilterRepresentation rep = getLocalRepresentation();
+        if (rep == null || rep instanceof FilterStraightenRepresentation) {
+            mImageStraighten
+                    .setFilterStraightenRepresentation((FilterStraightenRepresentation) rep);
+        } else {
+            Log.w(TAG, "Could not reflect current filter, not of type: "
+                    + FilterStraightenRepresentation.class.getSimpleName());
+        }
+        mImageStraighten.invalidate();
+    }
+
+    @Override
+    public void finalApplyCalled() {
+        commitLocalRepresentation(mImageStraighten.getFinalRepresentation());
     }
 
     @Override

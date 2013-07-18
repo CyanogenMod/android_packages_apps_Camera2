@@ -28,14 +28,13 @@ import java.io.IOException;
 public class FilterCropRepresentation extends FilterRepresentation {
     public static final String SERIALIZATION_NAME = "CROP";
     public static final String[] BOUNDS = {
-            "C0", "C1", "C2", "C3", "I0", "I1", "I2", "I3"
+            "C0", "C1", "C2", "C3"
     };
     private static final String TAG = FilterCropRepresentation.class.getSimpleName();
 
-    RectF mCrop = new RectF();
-    RectF mImage = new RectF();
+    RectF mCrop = getNil();
 
-    public FilterCropRepresentation(RectF crop, RectF image) {
+    public FilterCropRepresentation(RectF crop) {
         super(FilterCropRepresentation.class.getSimpleName());
         setSerializationName(SERIALIZATION_NAME);
         setShowParameterValue(true);
@@ -44,20 +43,18 @@ public class FilterCropRepresentation extends FilterRepresentation {
         setTextId(R.string.crop);
         setEditorId(EditorCrop.ID);
         setCrop(crop);
-        setImage(image);
     }
 
     public FilterCropRepresentation(FilterCropRepresentation m) {
-        this(m.getCrop(), m.getImage());
+        this(m.mCrop);
     }
 
     public FilterCropRepresentation() {
-        this(new RectF(), new RectF());
+        this(sNilRect);
     }
 
     public void set(FilterCropRepresentation r) {
         mCrop.set(r.mCrop);
-        mImage.set(r.mImage);
     }
 
     @Override
@@ -69,11 +66,7 @@ public class FilterCropRepresentation extends FilterRepresentation {
         if (mCrop.bottom != crop.mCrop.bottom
             || mCrop.left != crop.mCrop.left
             || mCrop.right != crop.mCrop.right
-            || mCrop.top != crop.mCrop.top
-            || mImage.bottom != crop.mImage.bottom
-            || mImage.left != crop.mImage.left
-            || mImage.right != crop.mImage.right
-            || mImage.top != crop.mImage.top) {
+            || mCrop.top != crop.mCrop.top) {
             return false;
         }
         return true;
@@ -94,19 +87,26 @@ public class FilterCropRepresentation extends FilterRepresentation {
         mCrop.set(crop);
     }
 
-    public RectF getImage() {
-        return new RectF(mImage);
+    /**
+     * Takes a crop rect contained by [0, 0, 1, 1] and scales it by the height
+     * and width of the image rect.
+     */
+    public static void findScaledCrop(RectF crop, int bitmapWidth, int bitmapHeight) {
+        crop.left *= bitmapWidth;
+        crop.top *= bitmapHeight;
+        crop.right *= bitmapWidth;
+        crop.bottom *= bitmapHeight;
     }
 
-    public void getImage(RectF r) {
-        r.set(mImage);
-    }
-
-    public void setImage(RectF image) {
-        if (image == null) {
-            throw new IllegalArgumentException("Argument to setImage is null");
-        }
-        mImage.set(image);
+    /**
+     * Takes crop rect and normalizes it by scaling down by the height and width
+     * of the image rect.
+     */
+    public static void findNormalizedCrop(RectF crop, int bitmapWidth, int bitmapHeight) {
+        crop.left /= bitmapWidth;
+        crop.top /= bitmapHeight;
+        crop.right /= bitmapWidth;
+        crop.bottom /= bitmapHeight;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class FilterCropRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public FilterRepresentation copy(){
+    public FilterRepresentation copy() {
         return new FilterCropRepresentation(this);
     }
 
@@ -134,12 +134,17 @@ public class FilterCropRepresentation extends FilterRepresentation {
             throw new IllegalArgumentException("calling useParametersFrom with incompatible types!");
         }
         setCrop(((FilterCropRepresentation) a).mCrop);
-        setImage(((FilterCropRepresentation) a).mImage);
     }
+
+    private static final RectF sNilRect = new RectF(0, 0, 1, 1);
 
     @Override
     public boolean isNil() {
-        return mCrop.equals(mImage);
+        return mCrop.equals(sNilRect);
+    }
+
+    public static RectF getNil() {
+        return new RectF(sNilRect);
     }
 
     @Override
@@ -149,10 +154,6 @@ public class FilterCropRepresentation extends FilterRepresentation {
         writer.name(BOUNDS[1]).value(mCrop.top);
         writer.name(BOUNDS[2]).value(mCrop.right);
         writer.name(BOUNDS[3]).value(mCrop.bottom);
-        writer.name(BOUNDS[4]).value(mImage.left);
-        writer.name(BOUNDS[5]).value(mImage.top);
-        writer.name(BOUNDS[6]).value(mImage.right);
-        writer.name(BOUNDS[7]).value(mImage.bottom);
         writer.endObject();
     }
 
@@ -169,14 +170,6 @@ public class FilterCropRepresentation extends FilterRepresentation {
                 mCrop.right = (float) reader.nextDouble();
             } else if (BOUNDS[3].equals(name)) {
                 mCrop.bottom = (float) reader.nextDouble();
-            } else if (BOUNDS[4].equals(name)) {
-                mImage.left = (float) reader.nextDouble();
-            } else if (BOUNDS[5].equals(name)) {
-                mImage.top = (float) reader.nextDouble();
-            } else if (BOUNDS[6].equals(name)) {
-                mImage.right = (float) reader.nextDouble();
-            } else if (BOUNDS[7].equals(name)) {
-                mImage.bottom = (float) reader.nextDouble();
             } else {
                 reader.skipValue();
             }

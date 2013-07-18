@@ -88,17 +88,8 @@ public class EditorPanel extends Fragment {
                 activity.backToMain();
             }
         });
-        applyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MasterImage.getImage().invalidateFiltersOnly();
-                FilterShowActivity activity = (FilterShowActivity) getActivity();
-                activity.backToMain();
-            }
-        });
 
         Button toggleState = (Button) mMainView.findViewById(R.id.toggle_state);
-
         mEditor = activity.getEditor(mEditorID);
         if (mEditor != null) {
             mEditor.setUpEditorUI(actionControl, editControl, editTitle, toggleState);
@@ -107,6 +98,14 @@ public class EditorPanel extends Fragment {
                 mEditor.openUtilityPanel((LinearLayout) actionControl);
             }
         }
+        applyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FilterShowActivity activity = (FilterShowActivity) getActivity();
+                mEditor.finalApplyCalled();
+                activity.backToMain();
+            }
+        });
 
         showImageStatePanel(activity.isShowingImageStatePanel());
         return mMainView;

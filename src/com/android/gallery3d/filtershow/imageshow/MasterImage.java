@@ -82,9 +82,6 @@ public class MasterImage implements RenderingRequestCaller {
 
     private Vector<ImageShow> mObservers = new Vector<ImageShow>();
     private FilterRepresentation mCurrentFilterRepresentation;
-    private Vector<GeometryListener> mGeometryListeners = new Vector<GeometryListener>();
-
-    private GeometryMetadata mPreviousGeometry = null;
 
     private float mScaleFactor = 1.0f;
     private float mMaxScaleFactor = 3.0f; // TODO: base this on the current view / image
@@ -94,20 +91,6 @@ public class MasterImage implements RenderingRequestCaller {
     private Point mImageShowSize = new Point();
 
     private boolean mShowsOriginal;
-
-    final private static int NEW_GEOMETRY = 1;
-
-    private final Handler mHandler = new Handler() {
-            @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case NEW_GEOMETRY: {
-                hasNewGeometry();
-                break;
-            }
-            }
-        }
-    };
 
     private MasterImage() {
     }
@@ -243,37 +226,13 @@ public class MasterImage implements RenderingRequestCaller {
             preset.showFilters();
         }
         mPreset = preset;
-        setGeometry();
         mPreset.fillImageStateAdapter(mState);
         if (addToHistory) {
             HistoryItem historyItem = new HistoryItem(mPreset, change);
             mHistory.addHistoryItem(historyItem);
         }
         updatePresets(true);
-        GeometryMetadata geo = mPreset.getGeometry();
-        if (!geo.equals(mPreviousGeometry)) {
-            notifyGeometryChange();
-        }
-        mPreviousGeometry = new GeometryMetadata(geo);
         mActivity.updateCategories();
-    }
-
-    private void setGeometry() {
-        Bitmap image = getOriginalBitmapLarge();
-        if (image == null) {
-            return;
-        }
-        float w = image.getWidth();
-        float h = image.getHeight();
-        GeometryMetadata geo = mPreset.getGeometry();
-        RectF pb = geo.getPhotoBounds();
-        if (w == pb.width() && h == pb.height()) {
-            return;
-        }
-        RectF r = new RectF(0, 0, w, h);
-        geo.setPhotoBounds(r);
-        geo.setCropBounds(r);
-        mPreset.setGeometry(geo);
     }
 
     public void onHistoryItemClick(int position) {
@@ -335,16 +294,6 @@ public class MasterImage implements RenderingRequestCaller {
 
     public SharedPreset getPreviewPreset() {
         return mPreviewPreset;
-    }
-
-    public void setOriginalGeometry(Bitmap originalBitmapLarge) {
-        GeometryMetadata geo = getPreset().getGeometry();
-        float w = originalBitmapLarge.getWidth();
-        float h = originalBitmapLarge.getHeight();
-        RectF r = new RectF(0, 0, w, h);
-        geo.setPhotoBounds(r);
-        geo.setCropBounds(r);
-        getPreset().setGeometry(geo);
     }
 
     public Bitmap getFilteredImage() {
@@ -450,14 +399,16 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     private Matrix getImageToScreenMatrix(boolean reflectRotation) {
-        GeometryMetadata geo = mPreset.getGeometry();
-        if (geo == null || getOriginalBounds() == null
-                || mImageShowSize.x == 0) {
+        if (getOriginalBounds() == null || mImageShowSize.x == 0 || mImageShowSize.y == 0) {
             return new Matrix();
         }
-        Matrix m = geo.getOriginalToScreen(reflectRotation,
-                getOriginalBounds().width(),
-                getOriginalBounds().height(), mImageShowSize.x, mImageShowSize.y);
+        Matrix m = GeometryMathUtils.getImageToScreenMatrix(mPreset.getGeometryFilters(),
+                reflectRotation, getOriginalBounds(), mImageShowSize.x, mImageShowSize.y);
+        if (m == null) {
+            m = new Matrix();
+            m.reset();
+            return m;
+        }
         Point translate = getTranslation();
         float scaleFactor = getScaleFactor();
         m.postTranslate(translate.x, translate.y);
@@ -516,6 +467,7 @@ public class MasterImage implements RenderingRequestCaller {
         }
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyBitmap = request.getBitmap();
+            notifyObservers();
             needsCheckModification = true;
         }
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING
@@ -536,24 +488,6 @@ public class MasterImage implements RenderingRequestCaller {
 
     public static void reset() {
         sMasterImage = null;
-    }
-
-    public void addGeometryListener(GeometryListener listener) {
-        mGeometryListeners.add(listener);
-    }
-
-    public void notifyGeometryChange() {
-        if (mHandler.hasMessages(NEW_GEOMETRY)) {
-            return;
-        }
-        mHandler.sendEmptyMessage(NEW_GEOMETRY);
-    }
-
-    public void hasNewGeometry() {
-        updatePresets(true);
-        for (GeometryListener listener : mGeometryListeners) {
-            listener.geometryChanged();
-        }
     }
 
     public float getScaleFactor() {

@@ -22,10 +22,9 @@ import android.graphics.Matrix;
 import android.support.v8.renderscript.Allocation;
 import android.widget.Toast;
 
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.imageshow.GeometryMathUtils;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.FilterEnvironment;
-import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 public abstract class ImageFilter implements Cloneable {
     private FilterEnvironment mEnvironment = null;
@@ -89,13 +88,8 @@ public abstract class ImageFilter implements Cloneable {
     }
 
     protected Matrix getOriginalToScreenMatrix(int w, int h) {
-        ImagePreset preset = getEnvironment().getImagePreset();
-        GeometryMetadata geo = getEnvironment().getImagePreset().getGeometry();
-        Matrix originalToScreen = geo.getOriginalToScreen(true,
-                MasterImage.getImage().getOriginalBounds().width(),
-                MasterImage.getImage().getOriginalBounds().height(),
-                w, h);
-        return originalToScreen;
+        return GeometryMathUtils.getImageToScreenMatrix(getEnvironment().getImagePreset()
+                .getGeometryFilters(), true, MasterImage.getImage().getOriginalBounds(), w, h);
     }
 
     public void setEnvironment(FilterEnvironment environment) {

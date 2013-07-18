@@ -36,7 +36,7 @@ import com.android.gallery3d.filtershow.filters.FilterStraightenRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.imageshow.GeometryMathUtils;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.state.State;
 import com.android.gallery3d.filtershow.state.StateAdapter;
@@ -45,6 +45,8 @@ import com.android.gallery3d.util.UsageStatistics;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Vector;
 
 public class ImagePreset {
@@ -65,17 +67,8 @@ public class ImagePreset {
 
     public ImagePreset(ImagePreset source) {
         for (int i = 0; i < source.mFilters.size(); i++) {
-            FilterRepresentation representation = null;
             FilterRepresentation sourceRepresentation = source.mFilters.elementAt(i);
-            if (sourceRepresentation instanceof GeometryMetadata) {
-                GeometryMetadata geoData = new GeometryMetadata();
-                GeometryMetadata srcGeo = (GeometryMetadata) sourceRepresentation;
-                geoData.set(srcGeo);
-                representation = geoData;
-            } else {
-                representation = sourceRepresentation.copy();
-            }
-            mFilters.add(representation);
+            mFilters.add(sourceRepresentation.copy());
         }
     }
 
@@ -91,9 +84,24 @@ public class ImagePreset {
         return representation;
     }
 
+    private static boolean sameSerializationName(String a, String b) {
+        if (a != null && b != null) {
+            return a.equals(b);
+        } else {
+            return a == null && b == null;
+        }
+    }
+
+    public static boolean sameSerializationName(FilterRepresentation a, FilterRepresentation b) {
+        if (a == null || b == null) {
+            return false;
+        }
+        return sameSerializationName(a.getSerializationName(), b.getSerializationName());
+    }
+
     public int getPositionForRepresentation(FilterRepresentation representation) {
         for (int i = 0; i < mFilters.size(); i++) {
-            if (mFilters.elementAt(i).getFilterClass() == representation.getFilterClass()) {
+            if (sameSerializationName(mFilters.elementAt(i), representation)) {
                 return i;
             }
         }
@@ -118,7 +126,8 @@ public class ImagePreset {
         return -1;
     }
 
-    public FilterRepresentation getFilterRepresentationCopyFrom(FilterRepresentation filterRepresentation) {
+    public FilterRepresentation getFilterRepresentationCopyFrom(
+            FilterRepresentation filterRepresentation) {
         // TODO: add concept of position in the filters (to allow multiple instances)
         if (filterRepresentation == null) {
             return null;
@@ -134,22 +143,19 @@ public class ImagePreset {
         return representation;
     }
 
-    public void updateFilterRepresentation(FilterRepresentation representation) {
-        if (representation == null) {
-            return;
+    public void updateFilterRepresentations(Collection<FilterRepresentation> reps) {
+        for (FilterRepresentation r : reps) {
+            updateOrAddFilterRepresentation(r);
         }
-        if (representation instanceof GeometryMetadata) {
-            setGeometry((GeometryMetadata) representation);
+    }
+
+    public void updateOrAddFilterRepresentation(FilterRepresentation rep) {
+        int pos = getPositionForRepresentation(rep);
+        if (pos != -1) {
+            mFilters.elementAt(pos).useParametersFrom(rep);
         } else {
-            int position = getPositionForRepresentation(representation);
-            if (position == -1) {
-                return;
-            }
-            FilterRepresentation old = mFilters.elementAt(position);
-            old.useParametersFrom(representation);
+            addFilter(rep.copy());
         }
-        MasterImage.getImage().invalidatePreview();
-        fillImageStateAdapter(MasterImage.getImage().getState());
     }
 
     public void setDoApplyGeometry(boolean value) {
@@ -164,25 +170,10 @@ public class ImagePreset {
         return mDoApplyFilters;
     }
 
-    public GeometryMetadata getGeometry() {
-        for (FilterRepresentation representation : mFilters) {
-            if (representation instanceof GeometryMetadata) {
-                return (GeometryMetadata) representation;
-            }
-        }
-        GeometryMetadata geo = new GeometryMetadata();
-        mFilters.add(0, geo); // Hard Requirement for now -- Geometry ought to be first.
-        return geo;
-    }
-
     public boolean hasModifications() {
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation filter = mFilters.elementAt(i);
-            if (filter instanceof GeometryMetadata) {
-                if (((GeometryMetadata) filter).hasModifications()) {
-                    return true;
-                }
-            } else if (!filter.isNil()) {
+            if (!filter.isNil()) {
                 return true;
             }
         }
@@ -191,10 +182,9 @@ public class ImagePreset {
 
     public boolean isPanoramaSafe() {
         for (FilterRepresentation representation : mFilters) {
-            if (representation instanceof GeometryMetadata) {
-                if (((GeometryMetadata) representation).hasModifications()) {
-                    return false;
-                }
+            if (representation.getFilterType() == FilterRepresentation.TYPE_GEOMETRY
+                    && !representation.isNil()) {
+                return false;
             }
             if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER
                     && !representation.isNil()) {
@@ -207,29 +197,6 @@ public class ImagePreset {
             if (representation.getFilterType() == FilterRepresentation.TYPE_TINYPLANET
                     && !representation.isNil()) {
                 return false;
-            }
-        }
-        return true;
-    }
-
-    public void setGeometry(GeometryMetadata representation) {
-        GeometryMetadata geoData = getGeometry();
-        if (geoData != representation) {
-            geoData.set(representation);
-        }
-    }
-
-    public boolean equals(ImagePreset preset) {
-        if (!same(preset)) {
-            return false;
-        }
-        if (mDoApplyFilters && preset.mDoApplyFilters) {
-            for (int i = 0; i < preset.mFilters.size(); i++) {
-                FilterRepresentation a = preset.mFilters.elementAt(i);
-                FilterRepresentation b = mFilters.elementAt(i);
-                if (!a.equals(b)) {
-                    return false;
-                }
             }
         }
         return true;
@@ -248,10 +215,6 @@ public class ImagePreset {
             return false;
         }
 
-        if (mDoApplyGeometry && !getGeometry().equals(preset.getGeometry())) {
-            return false;
-        }
-
         if (mDoApplyFilters != preset.mDoApplyFilters) {
             if (mFilters.size() > 0 || preset.mFilters.size() > 0) {
                 return false;
@@ -262,10 +225,7 @@ public class ImagePreset {
             for (int i = 0; i < preset.mFilters.size(); i++) {
                 FilterRepresentation a = preset.mFilters.elementAt(i);
                 FilterRepresentation b = mFilters.elementAt(i);
-                if (a instanceof GeometryMetadata) {
-                    // Note: Geometry will always be at the same place
-                    continue;
-                }
+
                 if (!a.same(b)) {
                     return false;
                 }
@@ -276,10 +236,6 @@ public class ImagePreset {
     }
 
     public int similarUpTo(ImagePreset preset) {
-        if (!getGeometry().equals(preset.getGeometry())) {
-            return -1;
-        }
-
         for (int i = 0; i < preset.mFilters.size(); i++) {
             FilterRepresentation a = preset.mFilters.elementAt(i);
             if (i < mFilters.size()) {
@@ -316,17 +272,16 @@ public class ImagePreset {
 
     public void removeFilter(FilterRepresentation filterRepresentation) {
         if (filterRepresentation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
-            for (int i = 0; i < mFilters.size();i++) {
+            for (int i = 0; i < mFilters.size(); i++) {
                 if (mFilters.elementAt(i).getFilterType()
-                        == filterRepresentation.getFilterType()) {
+                == filterRepresentation.getFilterType()) {
                     mFilters.remove(i);
                     break;
                 }
             }
         } else {
             for (int i = 0; i < mFilters.size(); i++) {
-                if (mFilters.elementAt(i).getFilterClass()
-                        == filterRepresentation.getFilterClass()) {
+                if (sameSerializationName(mFilters.elementAt(i), filterRepresentation)) {
                     mFilters.remove(i);
                     break;
                 }
@@ -334,29 +289,27 @@ public class ImagePreset {
         }
     }
 
-    // If the filter is an "None" effect or border, then just don't add this
-    // filter.
+    // If the filter is an "None" effect or border, then just don't add this filter.
     public void addFilter(FilterRepresentation representation) {
-        if (representation instanceof GeometryMetadata) {
-            setGeometry((GeometryMetadata) representation);
-            return;
-        }
         if (representation instanceof FilterUserPresetRepresentation) {
             ImagePreset preset = ((FilterUserPresetRepresentation) representation).getImagePreset();
             // user preset replace everything but geometry
-            GeometryMetadata geometry = getGeometry();
             mFilters.clear();
-            mFilters.add(geometry);
             for (int i = 0; i < preset.nbFilters(); i++) {
-                FilterRepresentation rep = preset.getFilterRepresentation(i);
-                if (!(representation instanceof GeometryMetadata)) {
-                    addFilter(rep);
-                }
+                addFilter(preset.getFilterRepresentation(i));
             }
             mFilters.add(representation);
-            return;
-        }
-        if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
+        } else if (representation.getFilterType() == FilterRepresentation.TYPE_GEOMETRY) {
+            // Add geometry filter, removing duplicates and do-nothing operations.
+            for (int i = 0; i < mFilters.size(); i++) {
+                if (sameSerializationName(representation, mFilters.elementAt(i))) {
+                    mFilters.remove(i);
+                }
+            }
+            if (!representation.isNil()) {
+                mFilters.add(representation);
+            }
+        } else if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
             removeFilter(representation);
             if (!isNoneBorderFilter(representation)) {
                 mFilters.add(representation);
@@ -421,13 +374,13 @@ public class ImagePreset {
 
     private boolean isNoneFxFilter(FilterRepresentation representation) {
         return representation instanceof FilterFxRepresentation &&
-                ((FilterFxRepresentation)representation).getNameResource() == R.string.none;
+                ((FilterFxRepresentation) representation).getNameResource() == R.string.none;
     }
 
     public FilterRepresentation getRepresentation(FilterRepresentation filterRepresentation) {
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation representation = mFilters.elementAt(i);
-            if (representation.getFilterClass() == filterRepresentation.getFilterClass()) {
+            if (sameSerializationName(representation, filterRepresentation)) {
                 return representation;
             }
         }
@@ -440,12 +393,32 @@ public class ImagePreset {
         return applyBorder(bitmap, environment);
     }
 
+    public Collection<FilterRepresentation> getGeometryFilters() {
+        ArrayList<FilterRepresentation> geometry = new ArrayList<FilterRepresentation>();
+        for (FilterRepresentation r : mFilters) {
+            if (r.getFilterType() == FilterRepresentation.TYPE_GEOMETRY) {
+                geometry.add(r);
+            }
+        }
+        return geometry;
+    }
+
+    public FilterRepresentation getFilterWithSerializationName(String serializationName) {
+        for (FilterRepresentation r : mFilters) {
+            if (r != null) {
+                if (sameSerializationName(r.getSerializationName(), serializationName)) {
+                    return r.copy();
+                }
+            }
+        }
+        return null;
+    }
+
     public Bitmap applyGeometry(Bitmap bitmap, FilterEnvironment environment) {
         // Apply any transform -- 90 rotate, flip, straighten, crop
         // Returns a new bitmap.
         if (mDoApplyGeometry) {
-            GeometryMetadata geoData = getGeometry();
-            bitmap = environment.applyRepresentation(geoData, bitmap);
+            bitmap = GeometryMathUtils.applyGeometryRepresentations(getGeometryFilters(), bitmap);
         }
         return bitmap;
     }
@@ -482,12 +455,13 @@ public class ImagePreset {
             }
             for (int i = from; i < to; i++) {
                 FilterRepresentation representation = mFilters.elementAt(i);
-                if (representation instanceof GeometryMetadata) {
+                if (representation.getFilterType() == FilterRepresentation.TYPE_GEOMETRY) {
                     // skip the geometry as it's already applied.
                     continue;
                 }
                 if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
-                    // for now, let's skip the border as it will be applied in applyBorder()
+                    // for now, let's skip the border as it will be applied in
+                    // applyBorder()
                     // TODO: might be worth getting rid of applyBorder.
                     continue;
                 }
@@ -506,7 +480,7 @@ public class ImagePreset {
     }
 
     public void applyBorder(Allocation in, Allocation out,
-                            boolean copyOut, FilterEnvironment environment) {
+            boolean copyOut, FilterEnvironment environment) {
         FilterRepresentation border = getFilterRepresentationForType(
                 FilterRepresentation.TYPE_BORDER);
         if (border != null && mDoApplyGeometry) {
@@ -522,7 +496,7 @@ public class ImagePreset {
     }
 
     public void applyFilters(int from, int to, Allocation in, Allocation out,
-                             FilterEnvironment environment) {
+            FilterEnvironment environment) {
         if (mDoApplyFilters) {
             if (from < 0) {
                 from = 0;
@@ -532,12 +506,8 @@ public class ImagePreset {
             }
             for (int i = from; i < to; i++) {
                 FilterRepresentation representation = mFilters.elementAt(i);
-                if (representation instanceof GeometryMetadata) {
-                    // skip the geometry as it's already applied.
-                    continue;
-                }
-                if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
-                    // for now, let's skip the border as it will be applied in applyBorder()
+                if (representation.getFilterType() == FilterRepresentation.TYPE_GEOMETRY
+                        || representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
                     continue;
                 }
                 if (i > from) {
@@ -554,8 +524,8 @@ public class ImagePreset {
         }
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation representation = mFilters.elementAt(i);
-            if (representation instanceof GeometryMetadata
-                && ((GeometryMetadata) representation).hasModifications()) {
+            if (representation.getFilterType() == FilterRepresentation.TYPE_GEOMETRY
+                    && !representation.isNil()) {
                 return false;
             }
             if (!representation.supportsPartialRendering()) {
@@ -571,7 +541,7 @@ public class ImagePreset {
         }
         Vector<State> states = new Vector<State>();
         for (FilterRepresentation filter : mFilters) {
-            if (filter instanceof GeometryMetadata) {
+            if (filter.getFilterType() == FilterRepresentation.TYPE_GEOMETRY) {
                 // TODO: supports Geometry representations in the state panel.
                 continue;
             }
@@ -622,7 +592,7 @@ public class ImagePreset {
     }
 
     public void writeJson(JsonWriter writer, String name) {
-        int numFilters =  mFilters.size();
+        int numFilters = mFilters.size();
         try {
             writer.beginObject();
             for (int i = 0; i < numFilters; i++) {
@@ -649,12 +619,13 @@ public class ImagePreset {
 
     /**
      * populates preset from JSON string
+     *
      * @param filterString a JSON string
      * @return true on success if false ImagePreset is undefined
      */
     public boolean readJsonFromString(String filterString) {
         if (DEBUG) {
-            Log.v(LOGTAG,"reading preset: \""+filterString+"\"");
+            Log.v(LOGTAG, "reading preset: \"" + filterString + "\"");
         }
         StringReader sreader = new StringReader(filterString);
         try {
@@ -666,7 +637,7 @@ public class ImagePreset {
             }
             reader.close();
         } catch (Exception e) {
-            Log.e(LOGTAG,"parsing the filter parameters:",e);
+            Log.e(LOGTAG, "parsing the filter parameters:", e);
             return false;
         }
         return true;
@@ -674,6 +645,7 @@ public class ImagePreset {
 
     /**
      * populates preset from JSON stream
+     *
      * @param sreader a JSON string
      * @return true on success if false ImagePreset is undefined
      */
@@ -684,7 +656,7 @@ public class ImagePreset {
             String name = sreader.nextName();
             FilterRepresentation filter = creatFilterFromName(name);
             if (filter == null) {
-                Log.w(LOGTAG,"UNKNOWN FILTER! "+name);
+                Log.w(LOGTAG, "UNKNOWN FILTER! " + name);
                 return false;
             }
             filter.deSerializeRepresentation(sreader);
@@ -695,10 +667,7 @@ public class ImagePreset {
     }
 
     FilterRepresentation creatFilterFromName(String name) {
-        // TODO: move these to FiltersManager pattern.
-        if (GeometryMetadata.SERIALIZATION_NAME.equalsIgnoreCase(name)) {
-            return new GeometryMetadata();
-        } else if (FilterRotateRepresentation.SERIALIZATION_NAME.equals(name)) {
+        if (FilterRotateRepresentation.SERIALIZATION_NAME.equals(name)) {
             return new FilterRotateRepresentation();
         } else if (FilterMirrorRepresentation.SERIALIZATION_NAME.equals(name)) {
             return new FilterMirrorRepresentation();

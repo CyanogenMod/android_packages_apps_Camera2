@@ -58,12 +58,6 @@ public abstract class ImagePoint extends ImageShow {
     }
 
     @Override
-    public void updateImage() {
-        super.updateImage();
-        invalidate();
-    }
-
-    @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Paint paint = new Paint();

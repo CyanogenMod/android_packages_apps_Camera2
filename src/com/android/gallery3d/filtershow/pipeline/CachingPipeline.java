@@ -26,8 +26,7 @@ import android.util.Log;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
-import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.imageshow.GeometryMathUtils;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 import java.util.Vector;
@@ -39,7 +38,6 @@ public class CachingPipeline implements PipelineInterface {
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
     private static volatile RenderScript sRS = null;
-    private static volatile Resources sResources = null;
 
     private FiltersManager mFiltersManager = null;
     private volatile Bitmap mOriginalBitmap = null;
@@ -57,12 +55,9 @@ public class CachingPipeline implements PipelineInterface {
     private volatile int mWidth = 0;
     private volatile int mHeight = 0;
 
-    private volatile GeometryMetadata mPreviousGeometry = null;
     private volatile float mPreviewScaleFactor = 1.0f;
     private volatile float mHighResPreviewScaleFactor = 1.0f;
     private volatile String mName = "";
-
-    private ImageFilterGeometry mGeometry = null;
 
     public CachingPipeline(FiltersManager filtersManager, String name) {
         mFiltersManager = filtersManager;
@@ -79,7 +74,6 @@ public class CachingPipeline implements PipelineInterface {
             destroyRenderScriptContext();
         }
         sRS = RenderScript.create(context);
-        sResources = context.getResources();
     }
 
     public static synchronized void destroyRenderScriptContext() {
@@ -87,7 +81,6 @@ public class CachingPipeline implements PipelineInterface {
             sRS.destroy();
         }
         sRS = null;
-        sResources = null;
     }
 
     public void stop() {
@@ -112,7 +105,6 @@ public class CachingPipeline implements PipelineInterface {
                 mFiltersOnlyOriginalAllocation.destroy();
                 mFiltersOnlyOriginalAllocation = null;
             }
-            mPreviousGeometry = null;
             mPreviewScaleFactor = 1.0f;
             mHighResPreviewScaleFactor = 1.0f;
 
@@ -190,15 +182,6 @@ public class CachingPipeline implements PipelineInterface {
             return false;
         }
 
-        GeometryMetadata geometry = preset.getGeometry();
-        if (mPreviousGeometry != null && geometry.equals(mPreviousGeometry)) {
-            return false;
-        }
-
-        if (DEBUG) {
-            Log.v(LOGTAG, "geometry has changed");
-        }
-
         RenderScript RS = getRenderScriptContext();
 
         Allocation filtersOnlyOriginalAllocation = mFiltersOnlyOriginalAllocation;
@@ -216,7 +199,6 @@ public class CachingPipeline implements PipelineInterface {
             originalAllocation.destroy();
         }
 
-        mPreviousGeometry = new GeometryMetadata(geometry);
         return true;
     }
 
@@ -333,14 +315,7 @@ public class CachingPipeline implements PipelineInterface {
     }
 
     public Bitmap renderGeometryIcon(Bitmap bitmap, ImagePreset preset) {
-        // Called by RenderRequest on the main thread
-        // TODO: change this -- we should reuse a pool of bitmaps instead...
-        if (mGeometry == null) {
-            mGeometry = new ImageFilterGeometry();
-        }
-        mGeometry.useRepresentation(preset.getGeometry());
-        return mGeometry.apply(bitmap, mPreviewScaleFactor,
-                FilterEnvironment.QUALITY_PREVIEW);
+        return GeometryMathUtils.applyGeometryRepresentations(preset.getGeometryFilters(), bitmap);
     }
 
     public void compute(SharedBuffer buffer, ImagePreset preset, int type) {

@@ -90,7 +90,9 @@ public class CacheProcessing {
             cacheBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
             if (findBaseImageIndex > -1) {
                 FilterRepresentation representation = filters.elementAt(findBaseImageIndex);
-                cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+                if (representation.getFilterType() != FilterRepresentation.TYPE_GEOMETRY) {
+                    cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+                }
                 mSteps.elementAt(findBaseImageIndex).representation = representation.copy();
                 mSteps.elementAt(findBaseImageIndex).cache = cacheBitmap;
             }
@@ -115,7 +117,9 @@ public class CacheProcessing {
             }
             for (int i = findBaseImageIndex; i <= similarUpToIndex; i++) {
                 FilterRepresentation representation = filters.elementAt(i);
-                cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+                if (representation.getFilterType() != FilterRepresentation.TYPE_GEOMETRY) {
+                    cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+                }
                 if (DEBUG) {
                     Log.v(LOGTAG, " - " + i  + " => apply " + representation.getName());
                 }
@@ -134,7 +138,9 @@ public class CacheProcessing {
             FilterRepresentation representation = filters.elementAt(i);
             CacheStep currentStep = mSteps.elementAt(i);
             cacheBitmap = cacheBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+            if (representation.getFilterType() != FilterRepresentation.TYPE_GEOMETRY) {
+                cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+            }
             currentStep.representation = representation.copy();
             currentStep.cache = cacheBitmap;
             if (DEBUG) {

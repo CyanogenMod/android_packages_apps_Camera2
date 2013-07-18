@@ -17,6 +17,8 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,43 +28,77 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.crop.CropExtras;
+import com.android.gallery3d.filtershow.filters.FilterCropRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorCrop extends Editor implements EditorInfo {
+    public static final String TAG = EditorCrop.class.getSimpleName();
     public static final int ID = R.id.editorCrop;
-    private static final String LOGTAG = "EditorCrop";
 
-    ImageCrop mImageCrop;
+    // Holder for an aspect ratio it's string id
+    protected static final class AspectInfo {
+        int mAspectX;
+        int mAspectY;
+        int mStringId;
+        AspectInfo(int stringID, int x, int y) {
+            mStringId = stringID;
+            mAspectX = x;
+            mAspectY = y;
+        }
+    };
+
+    // Mapping from menu id to aspect ratio
+    protected static final SparseArray<AspectInfo> sAspects;
+    static {
+        sAspects = new SparseArray<AspectInfo>();
+        sAspects.put(R.id.crop_menu_1to1, new AspectInfo(R.string.aspect1to1_effect, 1, 1));
+        sAspects.put(R.id.crop_menu_4to3, new AspectInfo(R.string.aspect4to3_effect, 4, 3));
+        sAspects.put(R.id.crop_menu_3to4, new AspectInfo(R.string.aspect3to4_effect, 3, 4));
+        sAspects.put(R.id.crop_menu_5to7, new AspectInfo(R.string.aspect5to7_effect, 5, 7));
+        sAspects.put(R.id.crop_menu_7to5, new AspectInfo(R.string.aspect7to5_effect, 7, 5));
+        sAspects.put(R.id.crop_menu_none, new AspectInfo(R.string.aspectNone_effect, 0, 0));
+        sAspects.put(R.id.crop_menu_original, new AspectInfo(R.string.aspectOriginal_effect, 0, 0));
+    }
+
+    protected ImageCrop mImageCrop;
     private String mAspectString = "";
-    private boolean mCropActionFlag = false;
-    private CropExtras mCropExtras = null;
 
     public EditorCrop() {
         super(ID);
+        mChangesGeometry = true;
     }
 
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
         if (mImageCrop == null) {
-            // TODO: need this for now because there's extra state in ImageCrop.
-            // all the state instead should be in the representation.
-            // Same thing for the other geometry editors.
             mImageCrop = new ImageCrop(context);
         }
         mView = mImageShow = mImageCrop;
-        mImageCrop.bindAsImageLoadListener();
         mImageCrop.setEditor(this);
-        mImageCrop.syncLocalToMasterGeometry();
-        mImageCrop.setCropActionFlag(mCropActionFlag);
-        if (mCropActionFlag) {
-            mImageCrop.setExtras(mCropExtras);
-            mImageCrop.setAspectString(mAspectString);
-            mImageCrop.clear();
+    }
+
+    @Override
+    public void reflectCurrentFilter() {
+        MasterImage master = MasterImage.getImage();
+        master.setCurrentFilterRepresentation(master.getPreset()
+                .getFilterWithSerializationName(FilterCropRepresentation.SERIALIZATION_NAME));
+        super.reflectCurrentFilter();
+        FilterRepresentation rep = getLocalRepresentation();
+        if (rep == null || rep instanceof FilterCropRepresentation) {
+            mImageCrop.setFilterCropRepresentation((FilterCropRepresentation) rep);
         } else {
-            mImageCrop.setExtras(null);
+            Log.w(TAG, "Could not reflect current filter, not of type: "
+                    + FilterCropRepresentation.class.getSimpleName());
         }
+        mImageCrop.invalidate();
+    }
+
+    @Override
+    public void finalApplyCalled() {
+        commitLocalRepresentation(mImageCrop.getFinalRepresentation());
     }
 
     @Override
@@ -70,27 +106,36 @@ public class EditorCrop extends Editor implements EditorInfo {
         Button view = (Button) accessoryViewList.findViewById(R.id.applyEffect);
         view.setText(mContext.getString(R.string.crop));
         view.setOnClickListener(new OnClickListener() {
-
-                @Override
+            @Override
             public void onClick(View arg0) {
                 showPopupMenu(accessoryViewList);
             }
         });
     }
 
-    private void showPopupMenu(LinearLayout accessoryViewList) {
-        final Button button = (Button) accessoryViewList.findViewById(
-                R.id.applyEffect);
-        if (button == null) {
-            return;
+    private void changeCropAspect(int itemId) {
+        AspectInfo info = sAspects.get(itemId);
+        if (info == null) {
+            throw new IllegalArgumentException("Invalid resource ID: " + itemId);
         }
+        if (itemId == R.id.crop_menu_original) {
+            mImageCrop.applyOriginalAspect();
+        } else if (itemId == R.id.crop_menu_none) {
+            mImageCrop.applyFreeAspect();
+        } else {
+            mImageCrop.applyAspect(info.mAspectX, info.mAspectY);
+        }
+        setAspectString(mContext.getString(info.mStringId));
+    }
+
+    private void showPopupMenu(LinearLayout accessoryViewList) {
+        final Button button = (Button) accessoryViewList.findViewById(R.id.applyEffect);
         final PopupMenu popupMenu = new PopupMenu(mImageShow.getActivity(), button);
         popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_crop, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                mImageCrop.setAspectButton(item.getItemId());
+                changeCropAspect(item.getItemId());
                 return true;
             }
         });
@@ -117,16 +162,7 @@ public class EditorCrop extends Editor implements EditorInfo {
         return true;
     }
 
-    public void setExtras(CropExtras cropExtras) {
-        mCropExtras = cropExtras;
-    }
-
-    public void setAspectString(String s) {
+    private void setAspectString(String s) {
         mAspectString = s;
     }
-
-    public void setCropActionFlag(boolean b) {
-        mCropActionFlag = b;
-    }
-
 }

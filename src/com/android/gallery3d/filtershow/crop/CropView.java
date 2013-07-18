@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -50,8 +49,8 @@ public class CropView extends View {
 
     private NinePatchDrawable mShadow;
     private CropObject mCropObj = null;
-    private final Drawable mCropIndicator;
-    private final int mIndicatorSize;
+    private Drawable mCropIndicator;
+    private int mIndicatorSize;
     private int mRotation = 0;
     private boolean mMovingBlock = false;
     private Matrix mDisplayMatrix = null;
@@ -80,8 +79,22 @@ public class CropView extends View {
 
     private Mode mState = Mode.NONE;
 
+    public CropView(Context context) {
+        super(context);
+        setup(context);
+    }
+
     public CropView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setup(context);
+    }
+
+    public CropView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        setup(context);
+    }
+
+    private void setup(Context context) {
         Resources rsc = context.getResources();
         mShadow = (NinePatchDrawable) rsc.getDrawable(R.drawable.geometry_shadow);
         mCropIndicator = rsc.getDrawable(R.drawable.camera_crop);

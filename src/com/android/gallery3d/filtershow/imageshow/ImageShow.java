@@ -37,7 +37,6 @@ import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveImage;
@@ -86,10 +85,6 @@ public class ImageShow extends View implements OnGestureListener,
         MOVE
     }
     InteractionMode mInteractionMode = InteractionMode.NONE;
-
-    protected GeometryMetadata getGeometry() {
-        return new GeometryMetadata(getImagePreset().getGeometry());
-    }
 
     private FilterShowActivity mActivity = null;
 
@@ -154,16 +149,6 @@ public class ImageShow extends View implements OnGestureListener,
         return MasterImage.getImage().getCurrentFilter();
     }
 
-    public Rect getImageBounds() {
-        Rect dst = new Rect();
-        getImagePreset().getGeometry().getPhotoBounds().roundOut(dst);
-        return dst;
-    }
-
-    public Rect getImageCropBounds() {
-        return GeometryMath.roundNearest(getImagePreset().getGeometry().getPreviewCropBounds());
-    }
-
     /* consider moving the following 2 methods into a subclass */
     /**
      * This function calculates a Image to Screen Transformation matrix
@@ -172,16 +157,14 @@ public class ImageShow extends View implements OnGestureListener,
      * @return Image to Screen transformation matrix
      */
     protected Matrix getImageToScreenMatrix(boolean reflectRotation) {
-        GeometryMetadata geo = getImagePreset().getGeometry();
-        if (geo == null
-                || MasterImage.getImage().getOriginalBounds() == null) {
+        MasterImage master = MasterImage.getImage();
+        if (master.getOriginalBounds() == null) {
             return new Matrix();
         }
-        Matrix m = geo.getOriginalToScreen(reflectRotation,
-                MasterImage.getImage().getOriginalBounds().width(),
-                MasterImage.getImage().getOriginalBounds().height(), getWidth(), getHeight());
-        Point translate = MasterImage.getImage().getTranslation();
-        float scaleFactor = MasterImage.getImage().getScaleFactor();
+        Matrix m = GeometryMathUtils.getImageToScreenMatrix(master.getPreset().getGeometryFilters(),
+                reflectRotation, master.getOriginalBounds(), getWidth(), getHeight());
+        Point translate = master.getTranslation();
+        float scaleFactor = master.getScaleFactor();
         m.postTranslate(translate.x, translate.y);
         m.postScale(scaleFactor, scaleFactor, getWidth() / 2.0f, getHeight() / 2.0f);
         return m;
@@ -237,7 +220,7 @@ public class ImageShow extends View implements OnGestureListener,
         drawImage(canvas, getFilteredImage(), true);
         Bitmap highresPreview = MasterImage.getImage().getHighresImage();
         if (highresPreview != null) {
-            drawImage(canvas, highresPreview, false);
+            drawImage(canvas, highresPreview, true);
         }
         canvas.restore();
 
@@ -278,7 +261,7 @@ public class ImageShow extends View implements OnGestureListener,
             Rect s = new Rect(0, 0, image.getWidth(),
                     image.getHeight());
 
-            float scale = GeometryMath.scale(image.getWidth(), image.getHeight(), getWidth(),
+            float scale = GeometryMathUtils.scale(image.getWidth(), image.getHeight(), getWidth(),
                     getHeight());
 
             float w = image.getWidth() * scale;
@@ -360,33 +343,12 @@ public class ImageShow extends View implements OnGestureListener,
         MasterImage.getImage().addListener(this);
     }
 
-    private void imageSizeChanged(Bitmap image) {
-        if (image == null || getImagePreset() == null)
-            return;
-        float w = image.getWidth();
-        float h = image.getHeight();
-        GeometryMetadata geo = getImagePreset().getGeometry();
-        RectF pb = geo.getPhotoBounds();
-        if (w == pb.width() && h == pb.height()) {
-            return;
-        }
-        RectF r = new RectF(0, 0, w, h);
-        geo.setPhotoBounds(r);
-        geo.setCropBounds(r);
-        getImagePreset().setGeometry(geo);
-    }
-
     public void updateImage() {
         invalidate();
-        Bitmap bitmap = MasterImage.getImage().getOriginalBitmapLarge();
-        if (bitmap != null) {
-            imageSizeChanged(bitmap);
-        }
     }
 
     public void imageLoaded() {
         updateImage();
-        invalidate();
     }
 
     public void saveImage(FilterShowActivity filterShowActivity, File file) {

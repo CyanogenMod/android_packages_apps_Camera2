@@ -20,7 +20,10 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.editors.EditorCrop;
+import com.android.gallery3d.filtershow.editors.EditorMirror;
+import com.android.gallery3d.filtershow.editors.EditorRotate;
+import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 import java.util.ArrayList;
@@ -138,7 +141,6 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         filters.add(ImageFilterFx.class);
         filters.add(ImageFilterBorder.class);
         filters.add(ImageFilterParametricBorder.class);
-        filters.add(ImageFilterGeometry.class);
     }
 
     public ArrayList<FilterRepresentation> getLooks() {
@@ -238,8 +240,13 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
     }
 
     public void addTools(Context context) {
-        GeometryMetadata geo = new GeometryMetadata();
-        int[] editorsId = geo.getEditorIds();
+
+        int[] editorsId = {
+                EditorCrop.ID,
+                EditorStraighten.ID,
+                EditorRotate.ID,
+                EditorMirror.ID
+        };
 
         int[] textId = {
                 R.string.crop,
@@ -255,9 +262,16 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
                 R.drawable.filtershow_button_geometry_flip
         };
 
+        FilterRepresentation[] geometryFilters = {
+                new FilterCropRepresentation(),
+                new FilterStraightenRepresentation(),
+                new FilterRotateRepresentation(),
+                new FilterMirrorRepresentation()
+        };
+
         for (int i = 0; i < editorsId.length; i++) {
             int editorId = editorsId[i];
-            GeometryMetadata geometry = new GeometryMetadata(geo);
+            FilterRepresentation geometry = geometryFilters[i];
             geometry.setEditorId(editorId);
             geometry.setTextId(textId[i]);
             geometry.setOverlayId(overlayId[i]);

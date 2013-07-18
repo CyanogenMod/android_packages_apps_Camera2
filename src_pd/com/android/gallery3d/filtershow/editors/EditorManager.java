@@ -30,7 +30,7 @@ public class EditorManager {
         editorPlaceHolder.addEditor(new EditorTinyPlanet());
         editorPlaceHolder.addEditor(new EditorDraw());
         editorPlaceHolder.addEditor(new EditorVignette());
-        editorPlaceHolder.addEditor(new EditorFlip());
+        editorPlaceHolder.addEditor(new EditorMirror());
         editorPlaceHolder.addEditor(new EditorRotate());
         editorPlaceHolder.addEditor(new EditorStraighten());
         editorPlaceHolder.addEditor(new EditorCrop());

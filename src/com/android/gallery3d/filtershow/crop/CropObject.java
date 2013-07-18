@@ -19,10 +19,9 @@ package com.android.gallery3d.filtershow.crop;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-import com.android.gallery3d.filtershow.imageshow.GeometryMath;
+import com.android.gallery3d.filtershow.imageshow.GeometryMathUtils;
 
 public class CropObject {
-
     private BoundedRect mBoundedRect;
     private float mAspectWidth = 1;
     private float mAspectHeight = 1;
@@ -234,8 +233,8 @@ public class CropObject {
                 float[] disp = {
                         dx, dy
                 };
-                float[] bUnit = GeometryMath.normalize(b);
-                float sp = GeometryMath.scalarProjection(disp, bUnit);
+                float[] bUnit = GeometryMathUtils.normalize(b);
+                float sp = GeometryMathUtils.scalarProjection(disp, bUnit);
                 dx = sp * bUnit[0];
                 dy = sp * bUnit[1];
                 RectF newCrop = fixedCornerResize(crop, movingEdges, dx, dy);

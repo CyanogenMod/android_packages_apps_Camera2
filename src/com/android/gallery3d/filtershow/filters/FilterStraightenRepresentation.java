@@ -29,6 +29,8 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
     public static final String SERIALIZATION_NAME = "STRAIGHTEN";
     public static final String SERIALIZATION_STRAIGHTEN_VALUE = "value";
     private static final String TAG = FilterStraightenRepresentation.class.getSimpleName();
+    public static final int MAX_STRAIGHTEN_ANGLE = 45;
+    public static final int MIN_STRAIGHTEN_ANGLE = -45;
 
     float mStraighten;
 
@@ -48,7 +50,7 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
     }
 
     public FilterStraightenRepresentation() {
-        this(0);
+        this(getNil());
     }
 
     public void set(FilterStraightenRepresentation r) {
@@ -73,7 +75,7 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
 
     public void setStraighten(float straighten) {
         if (!rangeCheck(straighten)) {
-            straighten = Math.min(Math.max(straighten, -45), 45);
+            straighten = Math.min(Math.max(straighten, MIN_STRAIGHTEN_ANGLE), MAX_STRAIGHTEN_ANGLE);
         }
         mStraighten = straighten;
     }
@@ -107,7 +109,11 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
 
     @Override
     public boolean isNil() {
-        return mStraighten == 0;
+        return mStraighten == getNil();
+    }
+
+    public static float getNil() {
+        return 0;
     }
 
     @Override
@@ -124,7 +130,7 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
         while (reader.hasNext()) {
             String name = reader.nextName();
             if (SERIALIZATION_STRAIGHTEN_VALUE.equals(name)) {
-                int s = reader.nextInt();
+                float s = (float) reader.nextDouble();
                 if (rangeCheck(s)) {
                     setStraighten(s);
                     unset = false;
@@ -139,7 +145,7 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
         reader.endObject();
     }
 
-    private boolean rangeCheck(float s) {
+    private boolean rangeCheck(double s) {
         if (s < -45 || s > 45) {
             return false;
         }

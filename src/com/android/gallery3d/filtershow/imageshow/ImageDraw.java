@@ -72,12 +72,6 @@ public class ImageDraw extends ImageShow {
         return (int) mCurrentSize;
     }
 
-    @Override
-    public void updateImage() {
-        super.updateImage();
-        invalidate();
-    }
-
     float[] mTmpPoint = new float[2]; // so we do not malloc
     @Override
     public boolean onTouchEvent(MotionEvent event) {

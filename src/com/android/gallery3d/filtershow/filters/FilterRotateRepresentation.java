@@ -30,7 +30,7 @@ public class FilterRotateRepresentation extends FilterRepresentation {
     public static final String SERIALIZATION_ROTATE_VALUE = "value";
     private static final String TAG = FilterRotateRepresentation.class.getSimpleName();
 
-    Rotation mRotation = Rotation.ZERO;
+    Rotation mRotation;
 
     public enum Rotation {
         ZERO(0), NINETY(90), ONE_EIGHTY(180), TWO_SEVENTY(270);
@@ -76,11 +76,28 @@ public class FilterRotateRepresentation extends FilterRepresentation {
     }
 
     public FilterRotateRepresentation() {
-        this(Rotation.ZERO);
+        this(getNil());
     }
 
     public Rotation getRotation() {
         return mRotation;
+    }
+
+    public void rotateCW() {
+        switch(mRotation) {
+            case ZERO:
+                mRotation = Rotation.NINETY;
+                break;
+            case NINETY:
+                mRotation = Rotation.ONE_EIGHTY;
+                break;
+            case ONE_EIGHTY:
+                mRotation = Rotation.TWO_SEVENTY;
+                break;
+            case TWO_SEVENTY:
+                mRotation = Rotation.ZERO;
+                break;
+        }
     }
 
     public void set(FilterRotateRepresentation r) {
@@ -123,7 +140,11 @@ public class FilterRotateRepresentation extends FilterRepresentation {
 
     @Override
     public boolean isNil() {
-        return mRotation == Rotation.ZERO;
+        return mRotation == getNil();
+    }
+
+    public static Rotation getNil() {
+        return Rotation.ZERO;
     }
 
     @Override

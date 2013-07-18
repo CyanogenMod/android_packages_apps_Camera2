@@ -19,7 +19,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-import com.android.gallery3d.filtershow.imageshow.GeometryMath;
+import com.android.gallery3d.filtershow.imageshow.GeometryMathUtils;
 
 import java.util.Arrays;
 
@@ -134,7 +134,7 @@ public class BoundedRect {
                 };
                 float[] nearestSide = CropMath.closestSide(badCorner, outerCorners);
                 float[] correctionVec =
-                        GeometryMath.shortestVectorFromPointToLine(badCorner, nearestSide);
+                        GeometryMathUtils.shortestVectorFromPointToLine(badCorner, nearestSide);
                 correction[0] += correctionVec[0];
                 correction[1] += correctionVec[1];
             }
@@ -195,7 +195,7 @@ public class BoundedRect {
                         newInnerCorners[i], newInnerCorners[i + 1],
                         oldInnerCorners[i], oldInnerCorners[i + 1]
                 };
-                float[] p = GeometryMath.lineIntersect(pathOfCorner, outerSide);
+                float[] p = GeometryMathUtils.lineIntersect(pathOfCorner, outerSide);
                 if (p == null) {
                     // lines are parallel or not well defined, so don't resize
                     p = new float[2];
@@ -288,7 +288,7 @@ public class BoundedRect {
                         newInnerCorners[i], newInnerCorners[i + 1],
                         oldInnerCorners[i], oldInnerCorners[i + 1]
                 };
-                float[] p = GeometryMath.lineIntersect(l1, l2);
+                float[] p = GeometryMathUtils.lineIntersect(l1, l2);
                 if (p == null) {
                     // lines are parallel or not well defined, so set to old
                     // corner

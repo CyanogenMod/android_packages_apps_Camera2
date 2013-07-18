@@ -72,7 +72,7 @@ import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.editors.EditorCrop;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
-import com.android.gallery3d.filtershow.editors.EditorFlip;
+import com.android.gallery3d.filtershow.editors.EditorMirror;
 import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.editors.EditorPanel;
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
@@ -85,7 +85,6 @@ import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.history.HistoryItem;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -394,7 +393,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mEditorPlaceHolder.addEditor(new EditorTinyPlanet());
         mEditorPlaceHolder.addEditor(new EditorRedEye());
         mEditorPlaceHolder.addEditor(new EditorCrop());
-        mEditorPlaceHolder.addEditor(new EditorFlip());
+        mEditorPlaceHolder.addEditor(new EditorMirror());
         mEditorPlaceHolder.addEditor(new EditorRotate());
         mEditorPlaceHolder.addEditor(new EditorStraighten());
     }
@@ -411,10 +410,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
         Spline.setCurveHandle(curveHandle, curveHandleSize);
         Spline.setCurveWidth((int) getPixelsFromDip(3));
-
-        ImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
-        ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
-        ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
     }
 
     private void startLoadBitmap(Uri uri) {
@@ -494,6 +489,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         FilterRepresentation representation = copy.getRepresentation(filterRepresentation);
         if (representation == null) {
             copy.addFilter(filterRepresentation);
+        } else if (filterRepresentation.getFilterType() == FilterRepresentation.TYPE_GEOMETRY) {
+            filterRepresentation = representation;
         } else {
             if (filterRepresentation.allowsSingleInstanceOnly()) {
                 // Don't just update the filter representation. Centralize the
@@ -512,14 +509,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             return;
         }
 
-        // TODO: this check is needed because the GeometryMetadata doesn't quite
-        // follow the same pattern as the other filters to update/sync their values.
-        // We thus need to not call useFilterRepresentation() for now, as it
-        // would override the current Geometry. Once GeometryMetadata is fixed,
-        // let's remove the check and call useFilterRepresentation all the time.
-        if (!(representation instanceof GeometryMetadata)) {
-            useFilterRepresentation(representation);
-        }
+        useFilterRepresentation(representation);
 
         // show representation
         Editor mCurrentEditor = mEditorPlaceHolder.showEditor(representation.getEditorId());
@@ -633,7 +623,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (!mShowingTinyPlanet) {
                 mCategoryFiltersAdapter.removeTinyPlanet();
             }
-            MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mCategoryLooksAdapter.imageLoaded();
             mCategoryBordersAdapter.imageLoaded();
             mCategoryGeometryAdapter.imageLoaded();
@@ -650,8 +639,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (mAction == TINY_PLANET_ACTION) {
                 showRepresentation(mCategoryFiltersAdapter.getTinyPlanet());
             }
-
-            MasterImage.getImage().notifyGeometryChange();
             LoadHighresBitmapTask highresLoad = new LoadHighresBitmapTask();
             highresLoad.execute();
             super.onPostExecute(result);
@@ -937,7 +924,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public void invalidateViews() {
         for (ImageShow views : mImageViews) {
-            views.invalidate();
             views.updateImage();
         }
     }

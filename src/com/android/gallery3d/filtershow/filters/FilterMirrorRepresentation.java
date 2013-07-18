@@ -21,7 +21,7 @@ import android.util.JsonWriter;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.editors.EditorFlip;
+import com.android.gallery3d.filtershow.editors.EditorMirror;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
     private static final String SERIALIZATION_MIRROR_VALUE = "value";
     private static final String TAG = FilterMirrorRepresentation.class.getSimpleName();
 
-    Mirror mMirror = Mirror.NONE;
+    Mirror mMirror;
 
     public enum Mirror {
         NONE('N'), VERTICAL('V'), HORIZONTAL('H'), BOTH('B');
@@ -67,7 +67,7 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
         setFilterClass(FilterMirrorRepresentation.class);
         setFilterType(FilterRepresentation.TYPE_GEOMETRY);
         setTextId(R.string.mirror);
-        setEditorId(EditorFlip.ID);
+        setEditorId(EditorMirror.ID);
         setMirror(mirror);
     }
 
@@ -76,7 +76,7 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
     }
 
     public FilterMirrorRepresentation() {
-        this(Mirror.NONE);
+        this(getNil());
     }
 
     @Override
@@ -85,7 +85,7 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
             return false;
         }
         FilterMirrorRepresentation mirror = (FilterMirrorRepresentation) rep;
-        if (mirror.mMirror.value() != mirror.mMirror.value()) {
+        if (mMirror != mirror.mMirror) {
             return false;
         }
         return true;
@@ -104,6 +104,23 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
             throw new IllegalArgumentException("Argument to setMirror is null");
         }
         mMirror = mirror;
+    }
+
+    public void cycle() {
+        switch (mMirror) {
+            case NONE:
+                mMirror = Mirror.HORIZONTAL;
+                break;
+            case HORIZONTAL:
+                mMirror = Mirror.VERTICAL;
+                break;
+            case VERTICAL:
+                mMirror = Mirror.BOTH;
+                break;
+            case BOTH:
+                mMirror = Mirror.NONE;
+                break;
+        }
     }
 
     @Override
@@ -135,7 +152,11 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
 
     @Override
     public boolean isNil() {
-        return mMirror == Mirror.NONE;
+        return mMirror == getNil();
+    }
+
+    public static Mirror getNil() {
+        return Mirror.NONE;
     }
 
     @Override

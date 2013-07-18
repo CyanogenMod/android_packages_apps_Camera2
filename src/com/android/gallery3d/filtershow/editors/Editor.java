@@ -31,12 +31,14 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.controller.Control;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Base class for Editors Must contain a mImageShow and a top level view
@@ -51,6 +53,7 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     protected Button mFilterTitle;
     protected int mID;
     private final String LOGTAG = "Editor";
+    protected boolean mChangesGeometry = false;
     protected FilterRepresentation mLocalRepresentation = null;
     protected byte mShowParameter = SHOW_VALUE_UNDEFINED;
     private Button mButton;
@@ -206,12 +209,50 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
         return mLocalRepresentation;
     }
 
+    /**
+     *  Call this to update the preset in MasterImage with the current representation
+     *  returned by getLocalRepresentation.  This causes the preview bitmap to be
+     *  regenerated.
+     */
     public void commitLocalRepresentation() {
+        commitLocalRepresentation(getLocalRepresentation());
+    }
+
+    /**
+     *  Call this to update the preset in MasterImage with a given representation.
+     *  This causes the preview bitmap to be regenerated.
+     */
+    public void commitLocalRepresentation(FilterRepresentation rep) {
+        ArrayList<FilterRepresentation> filter = new ArrayList<FilterRepresentation>(1);
+        filter.add(rep);
+        commitLocalRepresentation(filter);
+    }
+
+    /**
+     *  Call this to update the preset in MasterImage with a collection of FilterRepresnations.
+     *  This causes the preview bitmap to be regenerated.
+     */
+    public void commitLocalRepresentation(Collection<FilterRepresentation> reps) {
         ImagePreset preset = MasterImage.getImage().getPreset();
-        preset.updateFilterRepresentation(getLocalRepresentation());
+        preset.updateFilterRepresentations(reps);
         if (mButton != null) {
             updateText();
         }
+        if (mChangesGeometry) {
+            // Regenerate both the filtered and the geometry-only bitmaps
+            MasterImage.getImage().updatePresets(true);
+        } else {
+            // Regenerate only the filtered bitmap.
+            MasterImage.getImage().invalidateFiltersOnly();
+        }
+        preset.fillImageStateAdapter(MasterImage.getImage().getState());
+    }
+
+    /**
+     * This is called in response to a click to apply and leave the editor.
+     */
+    public void finalApplyCalled() {
+        commitLocalRepresentation();
     }
 
     protected void updateText() {
