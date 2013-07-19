@@ -80,6 +80,8 @@ public class CameraActivity extends Activity
     private PhotoModule mController;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
+    // This is a hack to speed up the start of SecureCamera.
+    private static boolean sFirstStartAfterScreenOn = true;
     private boolean mShowCameraPreview;
     private int mLastRawOrientation;
     private MyOrientationEventListener mOrientationListener;
@@ -121,6 +123,22 @@ public class CameraActivity extends Activity
             finish();
         }
     };
+
+    private static BroadcastReceiver sScreenOffReceiver;
+    private static class ScreenOffReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sFirstStartAfterScreenOn = true;
+        }
+    }
+
+    public static boolean isFirstStartAfterScreenOn() {
+        return sFirstStartAfterScreenOn;
+    }
+
+    public static void resetFirstStartAfterScreenOn() {
+        sFirstStartAfterScreenOn = false;
+    }
 
     private FilmStripView.Listener mFilmStripListener = new FilmStripView.Listener() {
             @Override
@@ -235,6 +253,13 @@ public class CameraActivity extends Activity
             // when screen is off.
             IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
             registerReceiver(mScreenOffReceiver, filter);
+            // TODO: This static screen off event receiver is a workaround to the
+            // double onResume() invocation (onResume->onPause->onResume). We should
+            // find a better solution to this.
+            if (sScreenOffReceiver == null) {
+                sScreenOffReceiver = new ScreenOffReceiver();
+                registerReceiver(sScreenOffReceiver, filter);
+            }
         }
         mPanoramaManager = new PanoramaStitchingManager(CameraActivity.this);
         mPanoramaManager.addTaskListener(mStitchingListener);

@@ -1301,8 +1301,8 @@ public class PhotoModule
         // To reduce the latency, keep the camera for a short time so it does
         // not need to be opened again.
         if (mCameraDevice != null && mActivity.isSecureCamera()
-                && ActivityBase.isFirstStartAfterScreenOn()) {
-            ActivityBase.resetFirstStartAfterScreenOn();
+                && CameraActivity.isFirstStartAfterScreenOn()) {
+            CameraActivity.resetFirstStartAfterScreenOn();
             CameraHolder.instance().keep(KEEP_CAMERA_TIMEOUT);
         }
         // Reset the focus first. Camera CTS does not guarantee that
@@ -1826,7 +1826,7 @@ public class PhotoModule
     public boolean isImageCaptureIntent() {
         String action = mActivity.getIntent().getAction();
         return (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
-                || ActivityBase.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
+                || CameraActivity.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
     }
 
     private void setupCaptureParams() {
