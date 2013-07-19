@@ -38,6 +38,7 @@ import android.hardware.Camera.Size;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -310,7 +311,8 @@ public class Util {
         }
     }
 
-    public static CameraManager.CameraProxy openCamera(Activity activity, int cameraId)
+    public static CameraManager.CameraProxy openCamera(
+            Activity activity, int cameraId)
             throws CameraHardwareException, CameraDisabledException {
         throwIfCameraDisabled(activity);
 

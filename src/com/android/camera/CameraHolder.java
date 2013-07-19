@@ -207,7 +207,8 @@ public class CameraHolder {
             try {
                 Log.v(TAG, "open camera " + cameraId);
                 if (mMockCameraInfo == null) {
-                    mCameraDevice = CameraManager.instance().cameraOpen(cameraId);
+                    mCameraDevice = CameraManagerFactory
+                            .getAndroidCameraManager().cameraOpen(cameraId);
                 } else {
                     if (mMockCamera == null)
                         throw new RuntimeException();

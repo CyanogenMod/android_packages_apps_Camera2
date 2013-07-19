@@ -31,7 +31,6 @@ import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.location.Location;
 import android.media.CamcorderProfile;
@@ -55,6 +54,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
@@ -114,7 +114,6 @@ public class VideoModule implements CameraModule,
     private int mCameraId;
     private Parameters mParameters;
 
-    private boolean mCameraOpened = false;
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
 
@@ -228,9 +227,8 @@ public class VideoModule implements CameraModule,
 
     private void openCamera() {
         try {
-            if (!mCameraOpened) {
+            if (mCameraDevice == null) {
                 mCameraDevice = Util.openCamera(mActivity, mCameraId);
-                mCameraOpened = true;
             }
             mParameters = mCameraDevice.getParameters();
         } catch (CameraHardwareException e) {
@@ -449,7 +447,8 @@ public class VideoModule implements CameraModule,
         mCameraDevice.setParameters(mParameters);
 
         Log.v(TAG, "Video snapshot start");
-        mCameraDevice.takePicture(null, null, null, new JpegPictureCallback(loc));
+        mCameraDevice.takePicture(mHandler,
+                null, null, null, new JpegPictureCallback(loc));
         showVideoSnapshotUI(true);
         mSnapshotInProgress = true;
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
@@ -832,8 +831,8 @@ public class VideoModule implements CameraModule,
 
         try {
             if (!effectsActive()) {
-                mCameraDevice.setPreviewTextureAsync(surfaceTexture);
-                mCameraDevice.startPreviewAsync();
+                mCameraDevice.setPreviewTexture(surfaceTexture);
+                mCameraDevice.startPreview();
                 mPreviewing = true;
                 onPreviewStarted();
             } else {
@@ -911,10 +910,7 @@ public class VideoModule implements CameraModule,
         if (closeEffectsAlso) closeEffects();
         mCameraDevice.setZoomChangeListener(null);
         mCameraDevice.setErrorCallback(null);
-        if (mCameraOpened) {
-            CameraHolder.instance().release();
-        }
-        mCameraOpened = false;
+        CameraHolder.instance().release();
         mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
@@ -1070,7 +1066,7 @@ public class VideoModule implements CameraModule,
             // We stop the preview here before unlocking the device because we
             // need to change the SurfaceTexture to SurfaceView for preview.
             stopPreview();
-            mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
+            mCameraDevice.setPreviewDisplay(mUI.getSurfaceHolder());
             // The orientation for SurfaceTexture is different from that for
             // SurfaceView. For SurfaceTexture we don't need to consider the
             // display rotation. Just consider the sensor's orientation and we
@@ -1080,7 +1076,7 @@ public class VideoModule implements CameraModule,
             // display rotation is considered.
             mCameraDevice.setDisplayOrientation(
                     Util.getDisplayOrientation(mDisplayRotation, mCameraId));
-            mCameraDevice.startPreviewAsync();
+            mCameraDevice.startPreview();
             mPreviewing = true;
             mMediaRecorder.setPreviewDisplay(mUI.getSurfaceHolder().getSurface());
         }
@@ -1124,7 +1120,6 @@ public class VideoModule implements CameraModule,
         setupMediaRecorderPreviewDisplay();
         // Unlock the camera object before passing it to media recorder.
         mCameraDevice.unlock();
-        mCameraDevice.waitDone();
         mMediaRecorder.setCamera(mCameraDevice.getCamera());
         if (!mCaptureTimeLapse) {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -1446,7 +1441,8 @@ public class VideoModule implements CameraModule,
             return;
         }
 
-        if (!mCameraDevice.waitDone()) return;
+        //??
+        //if (!mCameraDevice.waitDone()) return;
         mCurrentVideoUri = null;
         if (effectsActive()) {
             initializeEffectsRecording();
@@ -1613,7 +1609,6 @@ public class VideoModule implements CameraModule,
             releaseMediaRecorder();
             if (!mPaused) {
                 mCameraDevice.lock();
-                mCameraDevice.waitDone();
                 if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
                     stopPreview();
                     mUI.hideSurfaceView();
@@ -2129,7 +2124,7 @@ public class VideoModule implements CameraModule,
         mUI.onSwitchMode(toCamera);
     }
 
-    private final class JpegPictureCallback implements PictureCallback {
+    private final class JpegPictureCallback implements CameraPictureCallback {
         Location mLocation;
 
         public JpegPictureCallback(Location loc) {
@@ -2137,7 +2132,7 @@ public class VideoModule implements CameraModule,
         }
 
         @Override
-        public void onPictureTaken(byte [] jpegData, android.hardware.Camera camera) {
+        public void onPictureTaken(byte [] jpegData, CameraProxy camera) {
             Log.v(TAG, "onPictureTaken");
             mSnapshotInProgress = false;
             showVideoSnapshotUI(false);

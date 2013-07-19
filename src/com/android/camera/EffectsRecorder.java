@@ -30,7 +30,6 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.io.FileDescriptor;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -650,7 +649,7 @@ public class EffectsRecorder {
                 // Switching effects while running. Stop existing runner.
                 // The stop callback will take care of starting new runner.
                 mCameraDevice.stopPreview();
-                mCameraDevice.setPreviewTextureAsync(null);
+                mCameraDevice.setPreviewTexture(null);
                 invoke(mOldRunner, sGraphRunnerStop);
             }
         }
@@ -862,9 +861,9 @@ public class EffectsRecorder {
 
             mCameraDevice.stopPreview();
             if (mLogVerbose) Log.v(TAG, "Runner active, connecting effects preview");
-            mCameraDevice.setPreviewTextureAsync(mTextureSource);
+            mCameraDevice.setPreviewTexture(mTextureSource);
 
-            mCameraDevice.startPreviewAsync();
+            mCameraDevice.startPreview();
 
             // Unlock AE/AWB after preview started
             tryEnable3ALocks(false);
@@ -995,7 +994,7 @@ public class EffectsRecorder {
             return;
         }
         mCameraDevice.stopPreview();
-        mCameraDevice.setPreviewTextureAsync(null);
+        mCameraDevice.setPreviewTexture(null);
     }
 
     // Stop and release effect resources

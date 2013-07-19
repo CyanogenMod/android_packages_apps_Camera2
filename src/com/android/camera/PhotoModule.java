@@ -28,7 +28,6 @@ import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -52,7 +51,11 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.android.camera.CameraManager.CameraAFCallback;
+import com.android.camera.CameraManager.CameraAFMoveCallback;
+import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.CameraManager.CameraShutterCallback;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
@@ -623,7 +626,7 @@ public class PhotoModule
         if (mCameraDevice == null || mCameraStartUpThread != null)
             return;
 
-        mCameraDevice.setPreviewDisplayAsync(holder);
+        mCameraDevice.setPreviewDisplay(holder);
         // This happens when onConfigurationChanged arrives, surface has been
         // destroyed, and there is no onFullScreenChanged.
         if (mCameraState == PREVIEW_STOPPED) {
@@ -680,7 +683,7 @@ public class PhotoModule
     }
 
     private final class ShutterCallback
-            implements android.hardware.Camera.ShutterCallback {
+            implements CameraShutterCallback {
 
         private boolean mAnimateFlash;
 
@@ -689,7 +692,7 @@ public class PhotoModule
         }
 
         @Override
-        public void onShutter() {
+        public void onShutter(CameraProxy camera) {
             mShutterCallbackTime = System.currentTimeMillis();
             mShutterLag = mShutterCallbackTime - mCaptureStartTime;
             Log.v(TAG, "mShutterLag = " + mShutterLag + "ms");
@@ -699,10 +702,10 @@ public class PhotoModule
         }
     }
 
-    private final class PostViewPictureCallback implements PictureCallback {
+    private final class PostViewPictureCallback
+            implements CameraPictureCallback {
         @Override
-        public void onPictureTaken(
-                byte [] data, android.hardware.Camera camera) {
+        public void onPictureTaken(byte [] data, CameraProxy camera) {
             mPostViewPictureCallbackTime = System.currentTimeMillis();
             Log.v(TAG, "mShutterToPostViewCallbackTime = "
                     + (mPostViewPictureCallbackTime - mShutterCallbackTime)
@@ -710,17 +713,18 @@ public class PhotoModule
         }
     }
 
-    private final class RawPictureCallback implements PictureCallback {
+    private final class RawPictureCallback
+            implements CameraPictureCallback {
         @Override
-        public void onPictureTaken(
-                byte [] rawData, android.hardware.Camera camera) {
+        public void onPictureTaken(byte [] rawData, CameraProxy camera) {
             mRawPictureCallbackTime = System.currentTimeMillis();
             Log.v(TAG, "mShutterToRawCallbackTime = "
                     + (mRawPictureCallbackTime - mShutterCallbackTime) + "ms");
         }
     }
 
-    private final class JpegPictureCallback implements PictureCallback {
+    private final class JpegPictureCallback
+            implements CameraPictureCallback {
         Location mLocation;
 
         public JpegPictureCallback(Location loc) {
@@ -728,8 +732,7 @@ public class PhotoModule
         }
 
         @Override
-        public void onPictureTaken(
-                final byte [] jpegData, final android.hardware.Camera camera) {
+        public void onPictureTaken(final byte [] jpegData, CameraProxy camera) {
             if (mPaused) {
                 return;
             }
@@ -841,11 +844,10 @@ public class PhotoModule
         }
     }
 
-    private final class AutoFocusCallback
-            implements android.hardware.Camera.AutoFocusCallback {
+    private final class AutoFocusCallback implements CameraAFCallback {
         @Override
         public void onAutoFocus(
-                boolean focused, android.hardware.Camera camera) {
+                boolean focused, CameraProxy camera) {
             if (mPaused) return;
 
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
@@ -857,10 +859,10 @@ public class PhotoModule
 
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private final class AutoFocusMoveCallback
-            implements android.hardware.Camera.AutoFocusMoveCallback {
+            implements CameraAFMoveCallback {
         @Override
         public void onAutoFocusMoving(
-            boolean moving, android.hardware.Camera camera) {
+            boolean moving, CameraProxy camera) {
                 mFocusManager.onAutoFocusMoving(moving);
         }
     }
@@ -965,10 +967,10 @@ public class PhotoModule
         Util.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 
-        mCameraDevice.takePicture2(new ShutterCallback(!animateBefore),
+        mCameraDevice.takePicture(mHandler,
+                new ShutterCallback(!animateBefore),
                 mRawPictureCallback, mPostViewPictureCallback,
-                new JpegPictureCallback(loc), mCameraState,
-                mFocusManager.getFocusState());
+                new JpegPictureCallback(loc));
 
         mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
 
@@ -1408,7 +1410,7 @@ public class PhotoModule
     @Override
     public void autoFocus() {
         mFocusStartTime = System.currentTimeMillis();
-        mCameraDevice.autoFocus(mAutoFocusCallback);
+        mCameraDevice.autoFocus(mHandler, mAutoFocusCallback);
         setCameraState(FOCUSING);
     }
 
@@ -1558,11 +1560,11 @@ public class PhotoModule
         mUI.setPreviewSize(mParameters.getPreviewSize());
         Object st = mUI.getSurfaceTexture();
         if (st != null) {
-           mCameraDevice.setPreviewTextureAsync((SurfaceTexture) st);
+           mCameraDevice.setPreviewTexture((SurfaceTexture) st);
         }
 
         Log.v(TAG, "startPreview");
-        mCameraDevice.startPreviewAsync();
+        mCameraDevice.startPreview();
         mFocusManager.onPreviewStarted();
 
         if (mSnapshotOnIdle) {
@@ -1769,10 +1771,10 @@ public class PhotoModule
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private void updateAutoFocusMoveCallback() {
         if (mParameters.getFocusMode().equals(Util.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            mCameraDevice.setAutoFocusMoveCallback(
-                (AutoFocusMoveCallback) mAutoFocusMoveCallback);
+            mCameraDevice.setAutoFocusMoveCallback(mHandler,
+                    (CameraManager.CameraAFMoveCallback) mAutoFocusMoveCallback);
         } else {
-            mCameraDevice.setAutoFocusMoveCallback(null);
+            mCameraDevice.setAutoFocusMoveCallback(null, null);
         }
     }
 
