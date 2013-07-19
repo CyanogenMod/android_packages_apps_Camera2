@@ -14,11 +14,6 @@
   <init>(...);
 }
 
--keep class com.android.camera.ActivityBase {
-  public int getResultCode();
-  public android.content.Intent getResultData();
-}
-
 -keep class com.android.camera.CameraActivity {
   public boolean isRecording();
   public long getAutoFocusTime();
