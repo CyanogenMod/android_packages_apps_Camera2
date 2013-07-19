@@ -21,7 +21,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -32,6 +31,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.tools.SaveImage;
 
 import java.io.File;
@@ -51,6 +51,9 @@ public class ProcessingService extends Service {
 
     private ProcessingTaskController mProcessingTaskController;
     private ImageSavingTask mImageSavingTask;
+    private UpdatePreviewTask mUpdatePreviewTask;
+    private HighresRenderingRequestTask mHighresRenderingRequestTask;
+    private RenderingRequestTask mRenderingRequestTask;
 
     private final IBinder mBinder = new LocalBinder();
     private FilterShowActivity mFiltershowActivity;
@@ -60,6 +63,50 @@ public class ProcessingService extends Service {
 
     public void setFiltershowActivity(FilterShowActivity filtershowActivity) {
         mFiltershowActivity = filtershowActivity;
+    }
+
+    public void setOriginalBitmap(Bitmap originalBitmap) {
+        if (mUpdatePreviewTask == null) {
+            return;
+        }
+        mUpdatePreviewTask.setOriginal(originalBitmap);
+        mHighresRenderingRequestTask.setOriginal(originalBitmap);
+        mRenderingRequestTask.setOriginal(originalBitmap);
+    }
+
+    public void updatePreviewBuffer() {
+        mHighresRenderingRequestTask.stop();
+        mUpdatePreviewTask.updatePreview();
+    }
+
+    public void postRenderingRequest(RenderingRequest request) {
+        mRenderingRequestTask.postRenderingRequest(request);
+    }
+
+    public void postHighresRenderingRequest(ImagePreset preset, float scaleFactor,
+                                            RenderingRequestCaller caller) {
+        RenderingRequest request = new RenderingRequest();
+        // TODO: use the triple buffer preset as UpdatePreviewTask does instead of creating a copy
+        ImagePreset passedPreset = new ImagePreset(preset);
+        request.setOriginalImagePreset(preset);
+        request.setScaleFactor(scaleFactor);
+        request.setImagePreset(passedPreset);
+        request.setType(RenderingRequest.HIGHRES_RENDERING);
+        request.setCaller(caller);
+        mHighresRenderingRequestTask.postRenderingRequest(request);
+    }
+
+    public void setHighresPreviewScaleFactor(float highResPreviewScale) {
+        mHighresRenderingRequestTask.setHighresPreviewScaleFactor(highResPreviewScale);
+    }
+
+    public void setPreviewScaleFactor(float previewScale) {
+        mHighresRenderingRequestTask.setPreviewScaleFactor(previewScale);
+        mRenderingRequestTask.setPreviewScaleFactor(previewScale);
+    }
+
+    public void setOriginalBitmapHighres(Bitmap originalHires) {
+        mHighresRenderingRequestTask.setOriginalBitmapHighres(originalHires);
     }
 
     public class LocalBinder extends Binder {
@@ -89,7 +136,13 @@ public class ProcessingService extends Service {
     public void onCreate() {
         mProcessingTaskController = new ProcessingTaskController(this);
         mImageSavingTask = new ImageSavingTask(this);
+        mUpdatePreviewTask = new UpdatePreviewTask();
+        mHighresRenderingRequestTask = new HighresRenderingRequestTask();
+        mRenderingRequestTask = new RenderingRequestTask();
         mProcessingTaskController.add(mImageSavingTask);
+        mProcessingTaskController.add(mUpdatePreviewTask);
+        mProcessingTaskController.add(mHighresRenderingRequestTask);
+        mProcessingTaskController.add(mRenderingRequestTask);
         setupPipeline();
     }
 
@@ -198,11 +251,15 @@ public class ProcessingService extends Service {
         filtersManager.addBorders(this);
         filtersManager.addTools(this);
         filtersManager.addEffects();
+
+        FiltersManager highresFiltersManager = FiltersManager.getHighresManager();
+        highresFiltersManager.addLooks(this);
+        highresFiltersManager.addBorders(this);
+        highresFiltersManager.addTools(this);
+        highresFiltersManager.addEffects();
     }
 
     private void tearDownPipeline() {
-        FilteringPipeline.getPipeline().turnOnPipeline(false);
-        FilteringPipeline.reset();
         ImageFilter.resetStatics();
         FiltersManager.getPreviewManager().freeRSFilterScripts();
         FiltersManager.getManager().freeRSFilterScripts();

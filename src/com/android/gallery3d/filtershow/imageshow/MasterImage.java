@@ -32,7 +32,6 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.pipeline.Buffer;
-import com.android.gallery3d.filtershow.pipeline.FilteringPipeline;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.pipeline.RenderingRequest;
 import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
@@ -387,7 +386,7 @@ public class MasterImage implements RenderingRequestCaller {
             if (force || mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
-                RenderingRequest.post(getOriginalBitmapLarge(),
+                RenderingRequest.post(mActivity, getOriginalBitmapLarge(),
                         mGeometryOnlyPreset, RenderingRequest.GEOMETRY_RENDERING, this);
             }
         }
@@ -398,7 +397,7 @@ public class MasterImage implements RenderingRequestCaller {
             if (force || mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
-                RenderingRequest.post(MasterImage.getImage().getOriginalBitmapLarge(),
+                RenderingRequest.post(mActivity, MasterImage.getImage().getOriginalBitmapLarge(),
                         mFiltersOnlyPreset, RenderingRequest.FILTERS_RENDERING, this);
             }
         }
@@ -439,7 +438,7 @@ public class MasterImage implements RenderingRequestCaller {
         invalidateHighresPreview();
         needsUpdatePartialPreview();
         needsUpdateHighResPreview();
-        FilteringPipeline.getPipeline().updatePreviewBuffer();
+        mActivity.getProcessingService().updatePreviewBuffer();
     }
 
     public void setImageShowSize(int w, int h) {
@@ -477,7 +476,11 @@ public class MasterImage implements RenderingRequestCaller {
         if (!mSupportsHighRes) {
             return;
         }
-        RenderingRequest.post(null, mPreset, RenderingRequest.HIGHRES_RENDERING, this);
+        if (mActivity.getProcessingService() == null) {
+            return;
+        }
+        mActivity.getProcessingService().postHighresRenderingRequest(mPreset,
+                getScaleFactor(), this);
         invalidateHighresPreview();
     }
 
@@ -495,7 +498,7 @@ public class MasterImage implements RenderingRequestCaller {
         m.mapRect(dest, r);
         Rect bounds = new Rect();
         dest.roundOut(bounds);
-        RenderingRequest.post(null, mPreset, RenderingRequest.PARTIAL_RENDERING,
+        RenderingRequest.post(mActivity, null, mPreset, RenderingRequest.PARTIAL_RENDERING,
                 this, bounds, new Rect(0, 0, mImageShowSize.x, mImageShowSize.y));
         invalidatePartialPreview();
     }

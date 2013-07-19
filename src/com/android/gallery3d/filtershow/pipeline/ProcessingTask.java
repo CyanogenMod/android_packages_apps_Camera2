@@ -25,15 +25,29 @@ public abstract class ProcessingTask {
     private Handler mProcessingHandler;
     private Handler mResultHandler;
     private int mType;
+    private static final int DELAY = 300;
 
     static interface Request {}
     static interface Update {}
     static interface Result {}
 
-    public void postRequest(Request message) {
+    public boolean postRequest(Request message) {
         Message msg = mProcessingHandler.obtainMessage(mType);
         msg.obj = message;
-        mProcessingHandler.sendMessage(msg);
+        if (isPriorityTask()) {
+            if (mProcessingHandler.hasMessages(getType())) {
+                return false;
+            }
+            mProcessingHandler.sendMessageAtFrontOfQueue(msg);
+        } else if (isDelayedTask()) {
+            if (mProcessingHandler.hasMessages(getType())) {
+                mProcessingHandler.removeMessages(getType());
+            }
+            mProcessingHandler.sendMessageDelayed(msg, DELAY);
+        } else {
+            mProcessingHandler.sendMessage(msg);
+        }
+        return true;
     }
 
     public void postUpdate(Update message) {
@@ -69,4 +83,6 @@ public abstract class ProcessingTask {
     public abstract Result doInBackground(Request message);
     public abstract void onResult(Result message);
     public void onUpdate(Update message) {}
+    public boolean isPriorityTask() { return false; }
+    public boolean isDelayedTask() { return false; }
 }
