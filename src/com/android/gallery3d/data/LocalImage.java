@@ -173,15 +173,17 @@ public class LocalImage extends LocalMediaItem {
 
     @Override
     public Job<Bitmap> requestImage(int type) {
-        return new LocalImageRequest(mApplication, mPath, type, filePath);
+        return new LocalImageRequest(mApplication, mPath, dateModifiedInSec,
+                type, filePath);
     }
 
     public static class LocalImageRequest extends ImageCacheRequest {
         private String mLocalFilePath;
 
-        LocalImageRequest(GalleryApp application, Path path, int type,
-                String localFilePath) {
-            super(application, path, type, MediaItem.getTargetSize(type));
+        LocalImageRequest(GalleryApp application, Path path, long timeModified,
+                int type, String localFilePath) {
+            super(application, path, timeModified, type,
+                    MediaItem.getTargetSize(type));
             mLocalFilePath = localFilePath;
         }
 

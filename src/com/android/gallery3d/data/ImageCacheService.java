@@ -46,7 +46,8 @@ public class ImageCacheService {
     }
 
     /**
-     * Gets the cached image data for the given <code>path</code> and <code>type</code>.
+     * Gets the cached image data for the given <code>path</code>,
+     *  <code>timeModified</code> and <code>type</code>.
      *
      * The image data will be stored in <code>buffer.data</code>, started from
      * <code>buffer.offset</code> for <code>buffer.length</code> bytes. If the
@@ -54,8 +55,8 @@ public class ImageCacheService {
      *
      * @return true if the image data is found; false if not found.
      */
-    public boolean getImageData(Path path, int type, BytesBuffer buffer) {
-        byte[] key = makeKey(path, type);
+    public boolean getImageData(Path path, long timeModified, int type, BytesBuffer buffer) {
+        byte[] key = makeKey(path, timeModified, type);
         long cacheKey = Utils.crc64Long(key);
         try {
             LookupRequest request = new LookupRequest();
@@ -76,8 +77,8 @@ public class ImageCacheService {
         return false;
     }
 
-    public void putImageData(Path path, int type, byte[] value) {
-        byte[] key = makeKey(path, type);
+    public void putImageData(Path path, long timeModified, int type, byte[] value) {
+        byte[] key = makeKey(path, timeModified, type);
         long cacheKey = Utils.crc64Long(key);
         ByteBuffer buffer = ByteBuffer.allocate(key.length + value.length);
         buffer.put(key);
@@ -91,8 +92,8 @@ public class ImageCacheService {
         }
     }
 
-    public void clearImageData(Path path, int type) {
-        byte[] key = makeKey(path, type);
+    public void clearImageData(Path path, long timeModified, int type) {
+        byte[] key = makeKey(path, timeModified, type);
         long cacheKey = Utils.crc64Long(key);
         synchronized (mCache) {
             try {
@@ -103,8 +104,8 @@ public class ImageCacheService {
         }
     }
 
-    private static byte[] makeKey(Path path, int type) {
-        return GalleryUtils.getBytes(path.toString() + "+" + type);
+    private static byte[] makeKey(Path path, long timeModified, int type) {
+        return GalleryUtils.getBytes(path.toString() + "+" + timeModified + "+" + type);
     }
 
     private static boolean isSameKey(byte[] key, byte[] buffer) {

@@ -152,15 +152,17 @@ public class LocalVideo extends LocalMediaItem {
 
     @Override
     public Job<Bitmap> requestImage(int type) {
-        return new LocalVideoRequest(mApplication, getPath(), type, filePath);
+        return new LocalVideoRequest(mApplication, getPath(), dateModifiedInSec,
+                type, filePath);
     }
 
     public static class LocalVideoRequest extends ImageCacheRequest {
         private String mLocalFilePath;
 
-        LocalVideoRequest(GalleryApp application, Path path, int type,
-                String localFilePath) {
-            super(application, path, type, MediaItem.getTargetSize(type));
+        LocalVideoRequest(GalleryApp application, Path path, long timeModified,
+                int type, String localFilePath) {
+            super(application, path, timeModified, type,
+                    MediaItem.getTargetSize(type));
             mLocalFilePath = localFilePath;
         }
 

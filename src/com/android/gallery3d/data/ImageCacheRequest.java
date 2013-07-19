@@ -32,17 +32,19 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
     private Path mPath;
     private int mType;
     private int mTargetSize;
+    private long mTimeModified;
 
     public ImageCacheRequest(GalleryApp application,
-            Path path, int type, int targetSize) {
+            Path path, long timeModified, int type, int targetSize) {
         mApplication = application;
         mPath = path;
         mType = type;
         mTargetSize = targetSize;
+        mTimeModified = timeModified;
     }
 
     private String debugTag() {
-        return mPath + "," +
+        return mPath + "," + mTimeModified + "," +
                 ((mType == MediaItem.TYPE_THUMBNAIL) ? "THUMB" :
                 (mType == MediaItem.TYPE_MICROTHUMBNAIL) ? "MICROTHUMB" : "?");
     }
@@ -53,7 +55,7 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
 
         BytesBuffer buffer = MediaItem.getBytesBufferPool().get();
         try {
-            boolean found = cacheService.getImageData(mPath, mType, buffer);
+            boolean found = cacheService.getImageData(mPath, mTimeModified, mType, buffer);
             if (jc.isCancelled()) return null;
             if (found) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -92,7 +94,7 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
         byte[] array = BitmapUtils.compressToBytes(bitmap);
         if (jc.isCancelled()) return null;
 
-        cacheService.putImageData(mPath, mType, array);
+        cacheService.putImageData(mPath, mTimeModified, mType, array);
         return bitmap;
     }
 

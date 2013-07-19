@@ -29,8 +29,6 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -75,11 +73,6 @@ public class SaveImage {
     private static final String POSTFIX_JPG = ".jpg";
     private static final String AUX_DIR_NAME = ".aux";
 
-    // When this is true, the source file will be saved into auxiliary directory
-    // and hidden from MediaStore. Otherwise, the source will be kept as the
-    // same.
-    private static final boolean USE_AUX_DIR = true;
-
     private final Context mContext;
     private final Uri mSourceUri;
     private final Callback mCallback;
@@ -119,8 +112,6 @@ public class SaveImage {
     // names starting with "local." will be deleted.
     // This pattern will facilitate the multiple images deletion in the auxiliary
     // directory.
-    //
-    // TODO: Move the saving into a background service.
 
     /**
      * @param context
@@ -292,9 +283,8 @@ public class SaveImage {
             // create a local copy as usual.
             if (srcFile != null) {
                 srcFile.renameTo(mDestinationFile);
-                uri = SaveImage.insertContent(mContext, mSelectedImageUri, mDestinationFile,
-                        System.currentTimeMillis());
-                removeSelectedImage();
+                uri = SaveImage.updateUriContent(mContext, mSelectedImageUri,
+                        mDestinationFile, System.currentTimeMillis());
             }
         }
         return uri;
@@ -326,12 +316,8 @@ public class SaveImage {
         // If necessary, move the source file into the auxiliary directory,
         // newSourceUri is then pointing to the new location.
         // If no file is moved, newSourceUri will be the same as mSourceUri.
-        Uri newSourceUri;
-        if (USE_AUX_DIR) {
-            newSourceUri = moveSrcToAuxIfNeeded(mSourceUri, mDestinationFile);
-        } else {
-            newSourceUri = mSourceUri;
-        }
+        Uri newSourceUri = moveSrcToAuxIfNeeded(mSourceUri, mDestinationFile);
+
         // Stopgap fix for low-memory devices.
         while (noBitmap) {
             try {
@@ -349,39 +335,35 @@ public class SaveImage {
                 bitmap = pipeline.renderFinalImage(bitmap, preset);
                 updateProgress();
 
-                Object xmp = getPanoramaXMPData(mSelectedImageUri, preset);
-                ExifInterface exif = getExifData(mSelectedImageUri);
+                Object xmp = getPanoramaXMPData(newSourceUri, preset);
+                ExifInterface exif = getExifData(newSourceUri);
 
+                updateProgress();
                 // Set tags
                 long time = System.currentTimeMillis();
                 exif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME, time,
                         TimeZone.getDefault());
                 exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
                         ExifInterface.Orientation.TOP_LEFT));
-
                 // Remove old thumbnail
                 exif.removeCompressedThumbnail();
+
+                updateProgress();
 
                 // If we succeed in writing the bitmap as a jpeg, return a uri.
                 if (putExifData(mDestinationFile, exif, bitmap)) {
                     putPanoramaXMPData(mDestinationFile, xmp);
-                    uri = SaveImage.insertContent(mContext, mSelectedImageUri, mDestinationFile,
-                            time);
+                    // mDestinationFile will save the newSourceUri info in the XMP.
+                    XmpPresets.writeFilterXMP(mContext, newSourceUri,
+                            mDestinationFile, preset);
+
+                    // After this call, mSelectedImageUri will be actually
+                    // pointing at the new file mDestinationFile.
+                    uri = SaveImage.updateUriContent(mContext, mSelectedImageUri,
+                            mDestinationFile, time);
                 }
                 updateProgress();
 
-                // mDestinationFile will save the newSourceUri info in the XMP.
-                XmpPresets.writeFilterXMP(mContext, newSourceUri, mDestinationFile, preset);
-                updateProgress();
-
-                // Since we have a new image inserted to media store, we can
-                // safely remove the old one which is selected by the user.
-                // TODO: we should fix that, do an update instead of insert+remove,
-                //       as well as asking Gallery to update its cached version of the image
-                if (USE_AUX_DIR) {
-                    removeSelectedImage();
-                }
-                updateProgress();
                 noBitmap = false;
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
                         "SaveComplete", null);
@@ -396,15 +378,6 @@ public class SaveImage {
             }
         }
         return uri;
-    }
-
-    private void removeSelectedImage() {
-        String scheme = mSelectedImageUri.getScheme();
-        if (scheme != null && scheme.equals(ContentResolver.SCHEME_CONTENT)) {
-            if (mSelectedImageUri.getAuthority().equals(MediaStore.AUTHORITY)) {
-                mContext.getContentResolver().delete(mSelectedImageUri, null, null);
-            }
-        }
     }
 
     /**
@@ -463,7 +436,7 @@ public class SaveImage {
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(time));
         File saveDirectory = getFinalSaveDirectory(context, sourceUri);
         File file = new File(saveDirectory, filename  + ".JPG");
-        return insertContent(context, sourceUri, file, time);
+        return updateUriContent(context, sourceUri, file, time);
     }
 
     public static void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
@@ -583,12 +556,14 @@ public class SaveImage {
     }
 
     /**
-     * Insert the content (saved file) with proper source photo properties.
+     * Update the content Uri with the new file and proper source properties.
+     * The old file will be removed if it is local.
      */
-    public static Uri insertContent(Context context, Uri sourceUri, File file, long time) {
-        time /= 1000;
-
+    public static Uri updateUriContent(Context context, Uri sourceUri, File file, long time) {
+        File oldSelectedFile = getLocalFileFromUri(context, sourceUri);
         final ContentValues values = new ContentValues();
+
+        time /= 1000;
         values.put(Images.Media.TITLE, file.getName());
         values.put(Images.Media.DISPLAY_NAME, file.getName());
         values.put(Images.Media.MIME_TYPE, "image/jpeg");
@@ -621,8 +596,13 @@ public class SaveImage {
                     }
                 });
 
-        return context.getContentResolver().insert(
-                Images.Media.EXTERNAL_CONTENT_URI, values);
+        context.getContentResolver().update(sourceUri, values, null, null);
+
+        if (oldSelectedFile != null && oldSelectedFile.exists()) {
+            oldSelectedFile.delete();
+        }
+
+        return sourceUri;
     }
 
 }
