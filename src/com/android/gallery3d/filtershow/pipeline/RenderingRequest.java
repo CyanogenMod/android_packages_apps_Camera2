@@ -16,9 +16,11 @@
 
 package com.android.gallery3d.filtershow.pipeline;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
@@ -43,11 +45,12 @@ public class RenderingRequest {
 
     private static final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
 
-    public static void post(Bitmap source, ImagePreset preset, int type, RenderingRequestCaller caller) {
-        RenderingRequest.post(source, preset, type, caller, null, null);
+    public static void post(Context context, Bitmap source, ImagePreset preset,
+                            int type, RenderingRequestCaller caller) {
+        RenderingRequest.post(context, source, preset, type, caller, null, null);
     }
 
-    public static void post(Bitmap source, ImagePreset preset, int type,
+    public static void post(Context context, Bitmap source, ImagePreset preset, int type,
                             RenderingRequestCaller caller, Rect bounds, Rect destination) {
         if (((type != PARTIAL_RENDERING && type != HIGHRES_RENDERING) && source == null)
                 || preset == null || caller == null) {
@@ -82,11 +85,15 @@ public class RenderingRequest {
         request.setImagePreset(passedPreset);
         request.setType(type);
         request.setCaller(caller);
-        request.post();
+        request.post(context);
     }
 
-    public void post() {
-        FilteringPipeline.getPipeline().postRenderingRequest(this);
+    public void post(Context context) {
+        if (context instanceof FilterShowActivity) {
+            FilterShowActivity activity = (FilterShowActivity) context;
+            ProcessingService service = activity.getProcessingService();
+            service.postRenderingRequest(this);
+        }
     }
 
     public void markAvailable() {

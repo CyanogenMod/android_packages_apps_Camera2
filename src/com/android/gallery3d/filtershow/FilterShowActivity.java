@@ -59,7 +59,6 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
-import com.android.gallery3d.filtershow.pipeline.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.category.Action;
 import com.android.gallery3d.filtershow.category.CategoryAdapter;
@@ -546,6 +545,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                         master.getOrientation(), bounds);
                 master.setOriginalBounds(bounds);
                 master.setOriginalBitmapHighres(originalHires);
+                mBoundService.setOriginalBitmapHighres(originalHires);
                 master.warnListeners();
             }
             return true;
@@ -555,10 +555,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         protected void onPostExecute(Boolean result) {
             Bitmap highresBitmap = MasterImage.getImage().getOriginalBitmapHighres();
             if (highresBitmap != null) {
-                FilteringPipeline pipeline = FilteringPipeline.getPipeline();
                 float highResPreviewScale = (float) highresBitmap.getWidth()
                         / (float) MasterImage.getImage().getOriginalBounds().width();
-                pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
+                mBoundService.setHighresPreviewScaleFactor(highResPreviewScale);
             }
         }
     }
@@ -611,15 +610,14 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             imageShow.setVisibility(View.VISIBLE);
 
             Bitmap largeBitmap = MasterImage.getImage().getOriginalBitmapLarge();
-            FilteringPipeline pipeline = FilteringPipeline.getPipeline();
-            pipeline.setOriginal(largeBitmap);
+            mBoundService.setOriginalBitmap(largeBitmap);
+
             float previewScale = (float) largeBitmap.getWidth()
                     / (float) MasterImage.getImage().getOriginalBounds().width();
-            pipeline.setPreviewScaleFactor(previewScale);
+            mBoundService.setPreviewScaleFactor(previewScale);
             if (!mShowingTinyPlanet) {
                 mCategoryFiltersAdapter.removeTinyPlanet();
             }
-            pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mCategoryLooksAdapter.imageLoaded();
             mCategoryBordersAdapter.imageLoaded();

@@ -37,7 +37,6 @@ public class ProcessingTaskController implements Handler.Callback {
     public final static int UPDATE = 2;
 
     private final Handler mResultHandler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             ProcessingTask task = mTasks.get(msg.what);

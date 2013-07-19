@@ -112,7 +112,7 @@ public class Action implements RenderingRequestCaller {
         if (bitmap != null && mRepresentation != null) {
             ImagePreset preset = new ImagePreset();
             preset.addFilter(mRepresentation);
-            RenderingRequest.post(bitmap,
+            RenderingRequest.post(mContext, bitmap,
                     preset, RenderingRequest.ICON_RENDERING, this);
         }
     }
