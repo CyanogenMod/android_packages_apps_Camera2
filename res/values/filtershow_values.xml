@@ -33,4 +33,11 @@
     <!-- Category Panel Text Size -->
     <dimen name="category_panel_margin">4dip</dimen>
 
+    <!-- Grad filter dot size -->
+    <dimen name="gradcontrol_dot_size">20dip</dimen>
+
+    <!-- Grad filter minimum touch distance -->
+    <dimen name="gradcontrol_min_touch_dist">40dip</dimen>
+
+
 </resources>
