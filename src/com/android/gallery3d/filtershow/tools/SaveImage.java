@@ -283,7 +283,7 @@ public class SaveImage {
             // create a local copy as usual.
             if (srcFile != null) {
                 srcFile.renameTo(mDestinationFile);
-                uri = SaveImage.updateUriContent(mContext, mSelectedImageUri,
+                uri = SaveImage.linkNewFileToUri(mContext, mSelectedImageUri,
                         mDestinationFile, System.currentTimeMillis());
             }
         }
@@ -359,7 +359,7 @@ public class SaveImage {
 
                     // After this call, mSelectedImageUri will be actually
                     // pointing at the new file mDestinationFile.
-                    uri = SaveImage.updateUriContent(mContext, mSelectedImageUri,
+                    uri = SaveImage.linkNewFileToUri(mContext, mSelectedImageUri,
                             mDestinationFile, time);
                 }
                 updateProgress();
@@ -436,7 +436,7 @@ public class SaveImage {
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(time));
         File saveDirectory = getFinalSaveDirectory(context, sourceUri);
         File file = new File(saveDirectory, filename  + ".JPG");
-        return updateUriContent(context, sourceUri, file, time);
+        return linkNewFileToUri(context, sourceUri, file, time);
     }
 
     public static void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
@@ -556,10 +556,16 @@ public class SaveImage {
     }
 
     /**
-     * Update the content Uri with the new file and proper source properties.
-     * The old file will be removed if it is local.
+     * If the <code>sourceUri</code> is a local content Uri, update the
+     * <code>sourceUri</code> to point to the <code>file</code>.
+     * At the same time, the old file <code>sourceUri</code> used to point to
+     * will be removed if it is local.
+     * If the <code>sourceUri</code> is not a local content Uri, then the
+     * <code>file</code> will be inserted as a new content Uri.
+     * @return the final Uri referring to the <code>file</code>.
      */
-    public static Uri updateUriContent(Context context, Uri sourceUri, File file, long time) {
+    public static Uri linkNewFileToUri(Context context, Uri sourceUri,
+            File file, long time) {
         File oldSelectedFile = getLocalFileFromUri(context, sourceUri);
         final ContentValues values = new ContentValues();
 
@@ -596,13 +602,18 @@ public class SaveImage {
                     }
                 });
 
-        context.getContentResolver().update(sourceUri, values, null, null);
-
-        if (oldSelectedFile != null && oldSelectedFile.exists()) {
-            oldSelectedFile.delete();
+        Uri result = sourceUri;
+        if (oldSelectedFile == null) {
+            result = context.getContentResolver().insert(
+                    Images.Media.EXTERNAL_CONTENT_URI, values);
+        } else {
+            context.getContentResolver().update(sourceUri, values, null, null);
+            if (oldSelectedFile.exists()) {
+                oldSelectedFile.delete();
+            }
         }
 
-        return sourceUri;
+        return result;
     }
 
 }
