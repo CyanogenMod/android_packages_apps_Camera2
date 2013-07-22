@@ -17,13 +17,12 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.ui.ImageCurves;
+import com.android.gallery3d.filtershow.imageshow.ImageCurves;
 
 public class EditorCurves extends Editor {
     public static final int ID = R.id.imageCurves;

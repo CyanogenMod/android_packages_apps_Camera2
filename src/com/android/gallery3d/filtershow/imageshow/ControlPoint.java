@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.ui;
+package com.android.gallery3d.filtershow.imageshow;
 
 public class ControlPoint implements Comparable {
     public float x;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.ui;
+package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -39,7 +39,6 @@ import com.android.gallery3d.filtershow.editors.EditorCurves;
 import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
-import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 import java.util.HashMap;
