@@ -18,7 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
-import com.android.gallery3d.filtershow.ui.Spline;
+import com.android.gallery3d.filtershow.imageshow.Spline;
 
 public class ImageFilterCurves extends ImageFilter {
 

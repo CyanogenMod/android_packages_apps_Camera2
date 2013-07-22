@@ -5,8 +5,8 @@ import android.util.JsonWriter;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.ui.ControlPoint;
-import com.android.gallery3d.filtershow.ui.Spline;
+import com.android.gallery3d.filtershow.imageshow.ControlPoint;
+import com.android.gallery3d.filtershow.imageshow.Spline;
 
 import java.io.IOException;
 
