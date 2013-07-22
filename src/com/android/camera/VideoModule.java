@@ -754,10 +754,10 @@ public class VideoModule implements CameraModule,
     public void onResumeAfterSuper() {
         if (mActivity.mOpenCameraFail || mActivity.mCameraDisabled)
             return;
-        mUI.enableShutter(false);
         mZoomValue = 0;
 
         showVideoSnapshotUI(false);
+        mUI.enableShutter(false);
 
         if (!mPreviewing) {
             resetEffect();
