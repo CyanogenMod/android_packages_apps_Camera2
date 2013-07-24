@@ -55,8 +55,6 @@ public class ImageShow extends View implements OnGestureListener,
     protected int mTextSize;
     protected int mTextPadding;
 
-    protected ImageLoader mImageLoader = null;
-
     protected int mBackgroundColor;
 
     private GestureDetector mGestureDetector = null;
@@ -175,7 +173,7 @@ public class ImageShow extends View implements OnGestureListener,
      */
     protected Matrix getImageToScreenMatrix(boolean reflectRotation) {
         GeometryMetadata geo = getImagePreset().getGeometry();
-        if (geo == null || mImageLoader == null
+        if (geo == null
                 || MasterImage.getImage().getOriginalBounds() == null) {
             return new Matrix();
         }
@@ -260,9 +258,6 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void resetImageCaches(ImageShow caller) {
-        if (mImageLoader == null) {
-            return;
-        }
         MasterImage.getImage().updatePresets(true);
     }
 
