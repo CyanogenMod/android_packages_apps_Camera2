@@ -49,10 +49,12 @@ public class CameraSwitcher extends RotateImageView
     public static final int PHOTO_MODULE_INDEX = 0;
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int LIGHTCYCLE_MODULE_INDEX = 2;
+    public static final int REFOCUS_MODULE_INDEX = 3;
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
-            R.drawable.ic_switch_photosphere
+            R.drawable.ic_switch_photosphere,
+            R.drawable.ic_switch_refocus
     };
     public interface CameraSwitchListener {
         public void onCameraSelected(int i);
@@ -185,6 +187,10 @@ public class CameraSwitcher extends RotateImageView
                 case R.drawable.ic_switch_photosphere:
                     item.setContentDescription(getContext().getResources().getString(
                             R.string.accessibility_switch_to_new_panorama));
+                    break;
+                case R.drawable.ic_switch_refocus:
+                    item.setContentDescription(getContext().getResources().getString(
+                            R.string.accessibility_switch_to_refocus));
                     break;
                 default:
                     break;

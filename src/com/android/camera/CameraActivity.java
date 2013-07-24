@@ -50,6 +50,7 @@ import com.android.camera.ui.FilmStripView;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.LightCycleHelper;
+import com.android.gallery3d.util.RefocusHelper;
 
 public class CameraActivity extends Activity
     implements CameraSwitchListener {
@@ -476,6 +477,9 @@ public class CameraActivity extends Activity
                 break;
             case CameraSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = LightCycleHelper.createPanoramaModule();
+                break;
+            case CameraSwitcher.REFOCUS_MODULE_INDEX:
+                mCurrentModule = RefocusHelper.createRefocusModule();
                 break;
            default:
                break;
