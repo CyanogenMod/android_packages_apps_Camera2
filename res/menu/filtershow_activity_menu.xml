@@ -24,4 +24,9 @@
         android:showAsAction="never"
         android:visible="true"
         android:title="@string/show_imagestate_panel" />
+    <item
+        android:id="@+id/exportFlattenButton"
+        android:showAsAction="never"
+        android:visible="true"
+        android:title="@string/export_flattened" />
 </menu>

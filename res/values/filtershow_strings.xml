@@ -47,6 +47,9 @@
     <string name="show_imagestate_panel">Show Applied Effects</string>
     <!--  Text for the image state panel menu item [CHAR LIMIT=30] -->
     <string name="hide_imagestate_panel">Hide Applied Effects</string>
+    <!--  Text for the menu item to export a flattened photo[CHAR LIMIT=30] -->
+    <string name="export_flattened">Export Flattened Image</string>
+
     <!--  Name for the overflow menu item for settings [CHAR LIMIT=20] -->
     <string name="menu_settings">Settings</string>
 
