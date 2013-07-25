@@ -48,6 +48,7 @@ public class ProcessingService extends Service {
     private static final String SELECTED_URI = "selectedUri";
     private static final String DESTINATION_FILE = "destinationFile";
     private static final String SAVING = "saving";
+    private static final String FLATTEN = "flatten";
 
     private ProcessingTaskController mProcessingTaskController;
     private ImageSavingTask mImageSavingTask;
@@ -116,7 +117,7 @@ public class ProcessingService extends Service {
     }
 
     public static Intent getSaveIntent(Context context, ImagePreset preset, File destination,
-                                        Uri selectedImageUri, Uri sourceImageUri) {
+                                        Uri selectedImageUri, Uri sourceImageUri, boolean doFlatten) {
         Intent processIntent = new Intent(context, ProcessingService.class);
         processIntent.putExtra(ProcessingService.SOURCE_URI,
                 sourceImageUri.toString());
@@ -128,6 +129,9 @@ public class ProcessingService extends Service {
         processIntent.putExtra(ProcessingService.PRESET,
                 preset.getJsonString(context.getString(R.string.saved)));
         processIntent.putExtra(ProcessingService.SAVING, true);
+        if (doFlatten) {
+            processIntent.putExtra(ProcessingService.FLATTEN, true);
+        }
         return processIntent;
     }
 
@@ -162,6 +166,7 @@ public class ProcessingService extends Service {
             String source = intent.getStringExtra(SOURCE_URI);
             String selected = intent.getStringExtra(SELECTED_URI);
             String destination = intent.getStringExtra(DESTINATION_FILE);
+            boolean flatten = intent.getBooleanExtra(FLATTEN, false);
             Uri sourceUri = Uri.parse(source);
             Uri selectedUri = null;
             if (selected != null) {
@@ -175,7 +180,7 @@ public class ProcessingService extends Service {
             preset.readJsonFromString(presetJson);
             mNeedsAlive = false;
             mSaving = true;
-            handleSaveRequest(sourceUri, selectedUri, destinationFile, preset);
+            handleSaveRequest(sourceUri, selectedUri, destinationFile, preset, flatten);
         }
         return START_REDELIVER_INTENT;
     }
@@ -193,7 +198,7 @@ public class ProcessingService extends Service {
     }
 
     public void handleSaveRequest(Uri sourceUri, Uri selectedUri,
-                                  File destinationFile, ImagePreset preset) {
+                                  File destinationFile, ImagePreset preset, boolean flatten) {
         mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         mNotificationId++;
@@ -210,7 +215,7 @@ public class ProcessingService extends Service {
 
         // Process the image
 
-        mImageSavingTask.saveImage(sourceUri, selectedUri, destinationFile, preset);
+        mImageSavingTask.saveImage(sourceUri, selectedUri, destinationFile, preset, flatten);
     }
 
     public void updateNotificationWithBitmap(Bitmap bitmap) {

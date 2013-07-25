@@ -815,6 +815,14 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                         mShowingImageStatePanel ? "ShowPanel" : "HidePanel");
                 return true;
             }
+            case R.id.exportFlattenButton: {
+                Uri sourceUri = MasterImage.getImage().getUri();
+                File dest = SaveImage.getNewFile(this, sourceUri);
+                Intent processIntent = ProcessingService.getSaveIntent(this, MasterImage.getImage()
+                        .getPreset(), dest, getSelectedImageUri(), sourceUri, true);
+                startService(processIntent);
+                return true;
+            }
             case android.R.id.home: {
                 saveImage();
                 return true;

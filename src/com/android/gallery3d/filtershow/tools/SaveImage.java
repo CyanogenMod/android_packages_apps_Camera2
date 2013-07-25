@@ -270,7 +270,7 @@ public class SaveImage {
         return ret;
     }
 
-    private Uri resetToOriginalImageIfNeeded(ImagePreset preset) {
+    private Uri resetToOriginalImageIfNeeded(ImagePreset preset, boolean doAuxBackup) {
         Uri uri = null;
         if (!preset.hasModifications()) {
             // This can happen only when preset has no modification but save
@@ -284,7 +284,7 @@ public class SaveImage {
             if (srcFile != null) {
                 srcFile.renameTo(mDestinationFile);
                 uri = SaveImage.linkNewFileToUri(mContext, mSelectedImageUri,
-                        mDestinationFile, System.currentTimeMillis());
+                        mDestinationFile, System.currentTimeMillis(), doAuxBackup);
             }
         }
         return uri;
@@ -300,9 +300,9 @@ public class SaveImage {
         }
     }
 
-    public Uri processAndSaveImage(ImagePreset preset) {
+    public Uri processAndSaveImage(ImagePreset preset, boolean doAuxBackup) {
 
-        Uri uri = resetToOriginalImageIfNeeded(preset);
+        Uri uri = resetToOriginalImageIfNeeded(preset, doAuxBackup);
         if (uri != null) {
             return null;
         }
@@ -316,7 +316,10 @@ public class SaveImage {
         // If necessary, move the source file into the auxiliary directory,
         // newSourceUri is then pointing to the new location.
         // If no file is moved, newSourceUri will be the same as mSourceUri.
-        Uri newSourceUri = moveSrcToAuxIfNeeded(mSourceUri, mDestinationFile);
+        Uri newSourceUri = mSourceUri;
+        if (doAuxBackup) {
+            newSourceUri = moveSrcToAuxIfNeeded(mSourceUri, mDestinationFile);
+        }
 
         // Stopgap fix for low-memory devices.
         while (noBitmap) {
@@ -360,7 +363,7 @@ public class SaveImage {
                     // After this call, mSelectedImageUri will be actually
                     // pointing at the new file mDestinationFile.
                     uri = SaveImage.linkNewFileToUri(mContext, mSelectedImageUri,
-                            mDestinationFile, time);
+                            mDestinationFile, time, doAuxBackup);
                 }
                 updateProgress();
 
@@ -436,7 +439,7 @@ public class SaveImage {
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(time));
         File saveDirectory = getFinalSaveDirectory(context, sourceUri);
         File file = new File(saveDirectory, filename  + ".JPG");
-        return linkNewFileToUri(context, sourceUri, file, time);
+        return linkNewFileToUri(context, sourceUri, file, time, false);
     }
 
     public static void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
@@ -445,7 +448,7 @@ public class SaveImage {
         Uri sourceImageUri = MasterImage.getImage().getUri();
 
         Intent processIntent = ProcessingService.getSaveIntent(filterShowActivity, preset,
-                destination, selectedImageUri, sourceImageUri);
+                destination, selectedImageUri, sourceImageUri, false);
 
         filterShowActivity.startService(processIntent);
 
@@ -565,7 +568,7 @@ public class SaveImage {
      * @return the final Uri referring to the <code>file</code>.
      */
     public static Uri linkNewFileToUri(Context context, Uri sourceUri,
-            File file, long time) {
+            File file, long time, boolean deleteOriginal) {
         File oldSelectedFile = getLocalFileFromUri(context, sourceUri);
         final ContentValues values = new ContentValues();
 
@@ -603,7 +606,7 @@ public class SaveImage {
                 });
 
         Uri result = sourceUri;
-        if (oldSelectedFile == null) {
+        if (oldSelectedFile == null || !deleteOriginal) {
             result = context.getContentResolver().insert(
                     Images.Media.EXTERNAL_CONTENT_URI, values);
         } else {

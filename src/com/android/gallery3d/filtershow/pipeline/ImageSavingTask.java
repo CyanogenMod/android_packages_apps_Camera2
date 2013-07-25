@@ -33,6 +33,7 @@ public class ImageSavingTask extends ProcessingTask {
         Uri selectedUri;
         File destinationFile;
         ImagePreset preset;
+        boolean flatten;
     }
 
     static class UpdateBitmap implements Update {
@@ -53,12 +54,13 @@ public class ImageSavingTask extends ProcessingTask {
     }
 
     public void saveImage(Uri sourceUri, Uri selectedUri,
-                          File destinationFile, ImagePreset preset) {
+                          File destinationFile, ImagePreset preset, boolean flatten) {
         SaveRequest request = new SaveRequest();
         request.sourceUri = sourceUri;
         request.selectedUri = selectedUri;
         request.destinationFile = destinationFile;
         request.preset = preset;
+        request.flatten = flatten;
         postRequest(request);
     }
 
@@ -68,13 +70,12 @@ public class ImageSavingTask extends ProcessingTask {
         Uri selectedUri = request.selectedUri;
         File destinationFile = request.destinationFile;
         ImagePreset preset = request.preset;
-
+        boolean flatten = request.flatten;
         // We create a small bitmap showing the result that we can
         // give to the notification
         UpdateBitmap updateBitmap = new UpdateBitmap();
         updateBitmap.bitmap = createNotificationBitmap(sourceUri, preset);
         postUpdate(updateBitmap);
-
         SaveImage saveImage = new SaveImage(mProcessingService, sourceUri,
                 selectedUri, destinationFile,
                 new SaveImage.Callback() {
@@ -86,8 +87,7 @@ public class ImageSavingTask extends ProcessingTask {
                         postUpdate(updateProgress);
                     }
                 });
-
-        Uri uri = saveImage.processAndSaveImage(preset);
+        Uri uri = saveImage.processAndSaveImage(preset, !flatten);
         URIResult result = new URIResult();
         result.uri = uri;
         return result;
