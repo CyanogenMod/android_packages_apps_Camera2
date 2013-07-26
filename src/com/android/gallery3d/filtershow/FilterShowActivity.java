@@ -897,6 +897,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         super.onConfigurationChanged(newConfig);
         setDefaultValues();
         loadXML();
+        fillCategories();
         loadMainPanel();
 
         // mLoadBitmapTask==null implies you have looked at the intent
