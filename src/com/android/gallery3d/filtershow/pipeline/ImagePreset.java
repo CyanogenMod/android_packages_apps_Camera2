@@ -581,23 +581,8 @@ public class ImagePreset {
         int numFilters =  mFilters.size();
         try {
             writer.beginObject();
-            GeometryMetadata geoData = getGeometry();
-            writer.name(geoData.getSerializationName());
-            writer.beginObject();
-            {
-                String[][] rep = geoData.serializeRepresentation();
-                for (int i = 0; i < rep.length; i++) {
-                    writer.name(rep[i][0]);
-                    writer.value(rep[i][1]);
-                }
-            }
-            writer.endObject();
-
             for (int i = 0; i < numFilters; i++) {
                 FilterRepresentation filter = mFilters.get(i);
-                if (filter instanceof GeometryMetadata) {
-                    continue;
-                }
                 String sname = filter.getSerializationName();
                 if (DEBUG) {
                     Log.v(LOGTAG, "Serialization: " + sname);
