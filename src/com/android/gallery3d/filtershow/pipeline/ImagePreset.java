@@ -613,7 +613,7 @@ public class ImagePreset {
             writer.endObject();
 
         } catch (IOException e) {
-            e.printStackTrace();
+           Log.e(LOGTAG,"Error encoding JASON",e);
         }
     }
 
