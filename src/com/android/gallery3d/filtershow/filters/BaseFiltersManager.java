@@ -121,6 +121,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         filters.add(ImageFilterWBalance.class);
         filters.add(ImageFilterExposure.class);
         filters.add(ImageFilterVignette.class);
+        filters.add(ImageFilterGrad.class);
         filters.add(ImageFilterContrast.class);
         filters.add(ImageFilterShadows.class);
         filters.add(ImageFilterHighlights.class);
@@ -217,6 +218,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         mEffects.add(getRepresentation(ImageFilterWBalance.class));
         mEffects.add(getRepresentation(ImageFilterExposure.class));
         mEffects.add(getRepresentation(ImageFilterVignette.class));
+        mEffects.add(getRepresentation(ImageFilterGrad.class));
         mEffects.add(getRepresentation(ImageFilterContrast.class));
         mEffects.add(getRepresentation(ImageFilterShadows.class));
         mEffects.add(getRepresentation(ImageFilterHighlights.class));

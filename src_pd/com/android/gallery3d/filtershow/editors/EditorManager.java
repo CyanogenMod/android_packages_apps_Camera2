@@ -24,6 +24,7 @@ import com.android.gallery3d.filtershow.editors.EditorZoom;
 public class EditorManager {
 
     public static void addEditors(EditorPlaceHolder editorPlaceHolder) {
+        editorPlaceHolder.addEditor(new EditorGrad());
         editorPlaceHolder.addEditor(new EditorZoom());
         editorPlaceHolder.addEditor(new EditorCurves());
         editorPlaceHolder.addEditor(new EditorTinyPlanet());

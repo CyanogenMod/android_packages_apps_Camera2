@@ -58,6 +58,7 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.LocalAlbum;
+import com.android.gallery3d.filtershow.editors.EditorGrad;
 import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.category.Action;
@@ -376,6 +377,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void fillEditors() {
+        mEditorPlaceHolder.addEditor(new EditorGrad());
         mEditorPlaceHolder.addEditor(new EditorDraw());
         mEditorPlaceHolder.addEditor(new BasicEditor());
         mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
