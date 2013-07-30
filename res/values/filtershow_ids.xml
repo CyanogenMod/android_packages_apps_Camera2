@@ -47,4 +47,5 @@
     <item type="id" name="editorRotate" />
     <item type="id" name="editorStraighten" />
     <item type="id" name="editorParametric" />
+    <item type="id" name="editorGrad" />
 </resources>

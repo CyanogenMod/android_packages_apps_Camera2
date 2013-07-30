@@ -38,4 +38,14 @@
     <color name="filtershow_categoryview_background">#1a1a1a</color>
     <color name="filtershow_categoryview_text">#a7a7a7</color>
     <color name="filtershow_category_selection">#ffffffff</color>
+    <color name="gradcontrol_point_center">#ffffffff</color>
+    <color name="gradcontrol_point_edge">#ffffffff</color>
+    <color name="gradcontrol_graypoint_center">#888888</color>
+    <color name="gradcontrol_graypoint_edge">#BBBBBB</color>
+    <color name="gradcontrol_point_shadow_start">#66000000</color>
+    <color name="gradcontrol_point_shadow_end">#00000000</color>
+    <color name="gradcontrol_line_color">#FFFFFF</color>
+    <color name="gradcontrol_line_shadow">#000000</color>
+
+
 </resources>
