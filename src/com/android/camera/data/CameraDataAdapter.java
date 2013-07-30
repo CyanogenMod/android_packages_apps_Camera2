@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.camera.Storage;
-import com.android.camera.ui.FilmStripView;
 import com.android.camera.ui.FilmStripView.ImageData;
 import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 
@@ -37,12 +36,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * A FilmStrip.DataProvider that provide data in the camera folder.
- *
- * The given view for camera preview won't be added until the preview info
- * has been set by setCameraPreviewInfo(int, int).
+ * A {@link LocalDataAdapter} that provides data in the camera folder.
  */
-public class CameraDataAdapter implements FilmStripView.DataAdapter {
+public class CameraDataAdapter implements LocalDataAdapter {
     private static final String TAG = CameraDataAdapter.class.getSimpleName();
 
     private static final int DEFAULT_DECODE_SIZE = 3000;
@@ -51,31 +47,21 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     private List<LocalData> mImages;
 
     private Listener mListener;
-    private View mCameraPreviewView;
     private Drawable mPlaceHolder;
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
 
-    private boolean mCameraPreviewLocked;
     private LocalData mLocalDataToDelete;
 
     public CameraDataAdapter(Drawable placeHolder) {
         mPlaceHolder = placeHolder;
     }
 
-    public void setCameraPreviewInfo(View cameraPreview, int width, int height) {
-        mCameraPreviewView = cameraPreview;
-        addOrReplaceCameraData(buildCameraImageData(width, height));
-    }
-
+    @Override
     public void requestLoad(ContentResolver resolver) {
         QueryTask qtask = new QueryTask();
         qtask.execute(resolver);
-    }
-
-    public void setCameraPreviewLock(boolean locked) {
-        mCameraPreviewLocked = locked;
     }
 
     @Override
@@ -91,15 +77,8 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         return getData(id);
     }
 
-    public LocalData getData(int id) {
-        if (mImages == null || id >= mImages.size() || id < 0) {
-            return null;
-        }
-        return mImages.get(id);
-    }
-
     @Override
-    public void suggestDecodeSize(int w, int h) {
+    public void suggestViewSizeBound(int w, int h) {
         if (w <= 0 || h <= 0) {
             mSuggestedWidth  = mSuggestedHeight = DEFAULT_DECODE_SIZE;
         } else {
@@ -131,14 +110,26 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     }
 
     @Override
-    public boolean canSwipeInFullScreen(int id) {
-        if (mImages.get(id).getType()
-                == ImageData.TYPE_CAMERA_PREVIEW) {
-            return !mCameraPreviewLocked;
+    public void onDataFullScreen(int dataID, boolean fullScreen) {
+        if (dataID < mImages.size() && dataID >= 0) {
+            mImages.get(dataID).onFullScreen(fullScreen);
         }
-        return false;
     }
 
+    @Override
+    public void onDataCentered(int dataID, boolean centered) {
+        // do nothing.
+    }
+
+    @Override
+    public boolean canSwipeInFullScreen(int dataID) {
+        if (dataID < mImages.size() && dataID > 0) {
+            return mImages.get(dataID).canSwipeInFullScreen();
+        }
+        return true;
+    }
+
+    @Override
     public void removeData(Context c, int dataID) {
         if (dataID >= mImages.size()) return;
         LocalData d = mImages.remove(dataID);
@@ -166,6 +157,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
+    @Override
     public void addNewVideo(ContentResolver cr, Uri uri) {
         Cursor c = cr.query(uri,
                 LocalData.Video.QUERY_PROJECTION,
@@ -176,6 +168,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
+    @Override
     public void addNewPhoto(ContentResolver cr, Uri uri) {
         Cursor c = cr.query(uri,
                 LocalData.Photo.QUERY_PROJECTION,
@@ -186,6 +179,13 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
+    @Override
+    public int findDataByContentUri(Uri uri) {
+        // TODO: find the data.
+        return -1;
+    }
+
+    @Override
     public boolean undoDataRemoval() {
         if (mLocalDataToDelete == null) return false;
         LocalData d = mLocalDataToDelete;
@@ -194,6 +194,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         return true;
     }
 
+    @Override
     public boolean executeDeletion(Context c) {
         if (mLocalDataToDelete == null) return false;
 
@@ -201,6 +202,18 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         task.execute(mLocalDataToDelete);
         mLocalDataToDelete = null;
         return true;
+    }
+
+    @Override
+    public void flush() {
+        replaceData(null);
+    }
+
+    private LocalData getData(int id) {
+        if (mImages == null || id >= mImages.size() || id < 0) {
+            return null;
+        }
+        return mImages.get(id);
     }
 
     // Update all the data but keep the camera data if already set.
@@ -239,61 +252,6 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         } else {
             // both might be null.
             if (changed) {
-                mListener.onDataLoaded();
-            }
-        }
-    }
-
-    public void flush() {
-        replaceData(null);
-    }
-
-    public void addLocalData(LocalData data) {
-        insertData(data);
-    }
-
-    private LocalData buildCameraImageData(int width, int height) {
-        LocalData d = new CameraPreviewData(width, height);
-        return d;
-    }
-
-    private void addOrReplaceCameraData(LocalData data) {
-        if (mImages == null) {
-            mImages = new ArrayList<LocalData>();
-        }
-        if (mImages.size() == 0) {
-            // No data at all.
-            mImages.add(0, data);
-            if (mListener != null) {
-                mListener.onDataLoaded();
-            }
-            return;
-        }
-
-        LocalData first = mImages.get(0);
-        if (first.getType() == ImageData.TYPE_CAMERA_PREVIEW) {
-            // Replace the old camera data.
-            mImages.set(0, data);
-            if (mListener != null) {
-                mListener.onDataUpdated(new UpdateReporter() {
-                    @Override
-                    public boolean isDataRemoved(int id) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean isDataUpdated(int id) {
-                        if (id == 0) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-            }
-        } else {
-            // Add a new camera data.
-            mImages.add(0, data);
-            if (mListener != null) {
                 mListener.onDataLoaded();
             }
         }
@@ -385,89 +343,6 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
                 data[i].delete(mContext);
             }
             return null;
-        }
-    }
-
-    private class CameraPreviewData implements LocalData {
-        private int width;
-        private int height;
-
-        CameraPreviewData(int w, int h) {
-            width = w;
-            height = h;
-        }
-
-        @Override
-        public long getDateTaken() {
-            // This value is used for sorting.
-            return -1;
-        }
-
-        @Override
-        public long getDateModified() {
-            // This value might be used for sorting.
-            return -1;
-        }
-
-        @Override
-        public String getTitle() {
-            return "";
-        }
-
-        @Override
-        public int getWidth() {
-            return width;
-        }
-
-        @Override
-        public int getHeight() {
-            return height;
-        }
-
-        @Override
-        public int getType() {
-            return ImageData.TYPE_CAMERA_PREVIEW;
-        }
-
-        @Override
-        public boolean isUIActionSupported(int action) {
-            return false;
-        }
-
-        @Override
-        public boolean isDataActionSupported(int action) {
-            return false;
-        }
-
-        @Override
-        public boolean delete(Context c) {
-            return false;
-        }
-
-        @Override
-        public View getView(Context c, int width, int height, Drawable placeHolder) {
-            return mCameraPreviewView;
-        }
-
-        @Override
-        public void prepare() {
-            // do nothing.
-        }
-
-        @Override
-        public void recycle() {
-            // do nothing.
-        }
-
-        @Override
-        public void isPhotoSphere(Context context, PanoramaSupportCallback callback) {
-            // Not a photo sphere panorama.
-            callback.panoramaInfoAvailable(false, false);
-        }
-
-        @Override
-        public void viewPhotoSphere(PanoramaViewHelper helper) {
-            // do nothing.
         }
     }
 }

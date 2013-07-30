@@ -42,7 +42,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.android.camera.data.CameraDataAdapter;
+import com.android.camera.data.CameraPreviewData;
+import com.android.camera.data.FixedFirstDataAdapter;
+import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
+import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.FilmStripView;
@@ -68,7 +72,11 @@ public class CameraActivity extends Activity
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
-    private CameraDataAdapter mDataAdapter;
+    /** This data adapter is used by FilmStirpView. */
+    private LocalDataAdapter mDataAdapter;
+    /** This data adapter represents the real local camera data. */
+    private LocalDataAdapter mWrappedDataAdapter;
+
     private PanoramaStitchingManager mPanoramaManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
@@ -87,6 +95,7 @@ public class CameraActivity extends Activity
     private MyOrientationEventListener mOrientationListener;
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
+    private CameraPreviewData mCameraPreviewData;
 
     private class MyOrientationEventListener
         extends OrientationEventListener {
@@ -267,8 +276,13 @@ public class CameraActivity extends Activity
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mRootView = rootLayout.findViewById(R.id.camera_app_root);
-        mDataAdapter = new CameraDataAdapter(
-                new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
+        mCameraPreviewData = new CameraPreviewData(rootLayout,
+                FilmStripView.ImageData.SIZE_FULL,
+                FilmStripView.ImageData.SIZE_FULL);
+        mWrappedDataAdapter = new FixedFirstDataAdapter(
+                new CameraDataAdapter(new ColorDrawable(
+                        getResources().getColor(R.color.photo_placeholder))),
+                mCameraPreviewData);
         mFilmStripView = (FilmStripView) findViewById(R.id.filmstrip_view);
         mFilmStripView.setViewGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
@@ -276,9 +290,6 @@ public class CameraActivity extends Activity
         mPanoramaViewHelper.onCreate();
         mFilmStripView.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
-        mDataAdapter.setCameraPreviewInfo(rootLayout,
-                FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
-        mFilmStripView.setDataAdapter(mDataAdapter);
         mFilmStripView.setListener(mFilmStripListener);
         mCurrentModule = new PhotoModule();
         mCurrentModule.init(this, mRootView);
@@ -334,19 +345,22 @@ public class CameraActivity extends Activity
 
         // The loading is done in background and will update the filmstrip later.
         if (!mSecureCamera) {
+            mDataAdapter = mWrappedDataAdapter;
             mDataAdapter.requestLoad(getContentResolver());
+            mFilmStripView.setDataAdapter(mDataAdapter);
         } else {
-            // Flush out all the original data first.
-            mDataAdapter.flush();
+            // Put a lock placeholder as the last image by setting its date to 0.
             ImageView v = (ImageView) getLayoutInflater().inflate(
                     R.layout.secure_album_placeholder, null);
-            // Put a lock placeholder as the last image by setting its date to 0.
-            mDataAdapter.addLocalData(
+            mDataAdapter = new FixedLastDataAdapter(
+                    mWrappedDataAdapter,
                     new LocalData.LocalViewData(
                             v,
                             v.getDrawable().getIntrinsicWidth(),
                             v.getDrawable().getIntrinsicHeight(),
                             0, 0));
+            // Flush out all the original data.
+            mDataAdapter.flush();
         }
         mPanoramaViewHelper.onStart();
     }
@@ -515,7 +529,7 @@ public class CameraActivity extends Activity
     }
 
     public void setSwipingEnabled(boolean enable) {
-        mDataAdapter.setCameraPreviewLock(!enable);
+        mCameraPreviewData.lockPreview(!enable);
     }
 
     // Accessor methods for getting latency times used in performance testing

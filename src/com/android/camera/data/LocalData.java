@@ -67,14 +67,17 @@ public interface LocalData extends FilmStripView.ImageData {
     String getTitle();
     boolean isDataActionSupported(int action);
     boolean delete(Context c);
+    void onFullScreen(boolean fullScreen);
+    boolean canSwipeInFullScreen();
+    String getPath();
 
     static class NewestFirstComparator implements Comparator<LocalData> {
 
-        // Compare taken/modified date of LocalData in descent order to make
-        // newer data in the front.
-        // The negative numbers here are always considered "bigger" than
-        // positive ones. Thus, if any one of the numbers is negative, the logic
-        // is reversed.
+        /** Compare taken/modified date of LocalData in descent order to make
+         newer data in the front.
+         The negative numbers here are always considered "bigger" than
+         positive ones. Thus, if any one of the numbers is negative, the logic
+         is reversed. */
         private static int compareDate(long v1, long v2) {
             if (v1 >= 0 && v2 >= 0) {
                 return ((v1 < v2) ? 1 : ((v1 > v2) ? -1 : 0));
@@ -98,10 +101,16 @@ public interface LocalData extends FilmStripView.ImageData {
     // Implementations below.
 
     /**
+<<<<<<< HEAD
      * A base class for all the local media files. The bitmap is loaded in
      * background thread. Subclasses should implement their own background
      * loading thread by subclassing BitmapLoadTask and overriding
      * doInBackground() to return a bitmap.
+=======
+     * A base class for all the local media files. The bitmap is loaded in background
+     * thread. Subclasses should implement their own background loading thread by
+     * sub-classing BitmapLoadTask and overriding doInBackground() to return a bitmap.
+>>>>>>> Add LocalDataAdapter and wrappers.
      */
     abstract static class LocalMediaData implements LocalData {
         protected long id;
@@ -149,6 +158,11 @@ public interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
+        public String getPath() {
+            return path;
+        }
+
+        @Override
         public boolean isUIActionSupported(int action) {
             return false;
         }
@@ -163,7 +177,6 @@ public interface LocalData extends FilmStripView.ImageData {
             File f = new File(path);
             return f.delete();
         }
-
 
         @Override
         public void viewPhotoSphere(PanoramaViewHelper helper) {
@@ -194,6 +207,16 @@ public interface LocalData extends FilmStripView.ImageData {
                             metadata.mIsPanorama360);
                 }
             });
+        }
+
+        @Override
+        public void onFullScreen(boolean fullScreen) {
+            // do nothing.
+        }
+
+        @Override
+        public boolean canSwipeInFullScreen() {
+            return true;
         }
 
         protected ImageView fillImageView(Context ctx, ImageView v,
@@ -287,6 +310,9 @@ public interface LocalData extends FilmStripView.ImageData {
 
         static final String QUERY_ORDER = ImageColumns.DATE_TAKEN + " DESC, "
                 + ImageColumns._ID + " DESC";
+        /**
+         * These values should be kept in sync with column IDs (COL_*) above.
+         */
         static final String[] QUERY_PROJECTION = {
             ImageColumns._ID,           // 0, int
             ImageColumns.TITLE,         // 1, string
@@ -432,6 +458,7 @@ public interface LocalData extends FilmStripView.ImageData {
         public static final int COL_DATA = 5;
         public static final int COL_WIDTH = 6;
         public static final int COL_HEIGHT = 7;
+        public static final int COL_RESOLUTION = 8;
 
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
@@ -444,6 +471,9 @@ public interface LocalData extends FilmStripView.ImageData {
 
         static final String QUERY_ORDER = VideoColumns.DATE_TAKEN + " DESC, "
                 + VideoColumns._ID + " DESC";
+        /**
+         * These values should be kept in sync with column IDs (COL_*) above.
+         */
         static final String[] QUERY_PROJECTION = {
             VideoColumns._ID,           // 0, int
             VideoColumns.TITLE,         // 1, string
@@ -453,7 +483,7 @@ public interface LocalData extends FilmStripView.ImageData {
             VideoColumns.DATA,          // 5, string
             VideoColumns.WIDTH,         // 6, int
             VideoColumns.HEIGHT,        // 7, int
-            VideoColumns.RESOLUTION
+            VideoColumns.RESOLUTION     // 8, string
         };
 
         private Uri mPlayUri;
@@ -637,6 +667,11 @@ public interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
+        public String getPath() {
+            return "";
+        }
+
+        @Override
         public boolean isUIActionSupported(int action) {
             return false;
         }
@@ -675,6 +710,16 @@ public interface LocalData extends FilmStripView.ImageData {
         @Override
         public void viewPhotoSphere(PanoramaViewHelper helper) {
             // do nothing.
+        }
+
+        @Override
+        public void onFullScreen(boolean fullScreen) {
+            // do nothing.
+        }
+
+        @Override
+        public boolean canSwipeInFullScreen() {
+            return true;
         }
     }
 }
