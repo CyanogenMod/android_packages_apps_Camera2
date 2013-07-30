@@ -117,15 +117,6 @@ public class ImageFilterGrad extends ImageFilterRS {
         mScript.set_inputHeight(height);
     }
 
-    private boolean hasInk() {
-        boolean[] ink = mParameters.getInking();
-        for (int i = 0; i < ink.length; i++) {
-            if (ink[i])
-                return true;
-        }
-        return false;
-    }
-
     @Override
     protected void runFilter() {
         int[] x1 = mParameters.getXPos1();
@@ -151,7 +142,6 @@ public class ImageFilterGrad extends ImageFilterRS {
         }
 
         mScript.set_mask(mParameters.getMask());
-        mScript.set_active(mParameters.getActive());
         mScript.set_xPos1(x1);
         mScript.set_yPos1(y1);
         mScript.set_xPos2(x2);
@@ -160,7 +150,6 @@ public class ImageFilterGrad extends ImageFilterRS {
         mScript.set_brightness(mParameters.getBrightness());
         mScript.set_contrast(mParameters.getContrast());
         mScript.set_saturation(mParameters.getSaturation());
-        mScript.set_inking(mParameters.getInking());
 
         mScript.invoke_setupGradParams();
         runSelectiveAdjust(

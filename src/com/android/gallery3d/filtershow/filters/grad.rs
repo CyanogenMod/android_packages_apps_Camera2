@@ -27,8 +27,6 @@ static const float Bf = 0.114f;
 //static const float size_scale = 0.01f;
 
 typedef struct {
-    bool active;
-    bool inking;
     rs_matrix3x3 colorMatrix;
     float rgbOff;
     float dx;
@@ -38,7 +36,6 @@ typedef struct {
 int mNumberOfLines;
 // input data
 bool mask[MAX_POINTS];
-bool active[MAX_POINTS];
 int xPos1[MAX_POINTS];
 int yPos1[MAX_POINTS];
 int xPos2[MAX_POINTS];
@@ -47,8 +44,6 @@ int size[MAX_POINTS];
 int brightness[MAX_POINTS];
 int contrast[MAX_POINTS];
 int saturation[MAX_POINTS];
-bool inking[MAX_POINTS];
-
 
 // generated data
 static UPointData grads[MAX_POINTS];
@@ -56,7 +51,6 @@ static UPointData grads[MAX_POINTS];
 void setupGradParams() {
     int k = 0;
     for (int i = 0; i < MAX_POINTS; i++) {
-      grads[i].active = false;
       if (!mask[i]) {
          continue;
       }
@@ -67,7 +61,6 @@ void setupGradParams() {
 
       float denom = (y2 * y2 - 2 * y1 * y2 + x2 * x2 - 2 * x1 * x2 + y1 * y1 + x1 * x1);
       if (denom == 0) {
-         grads[i].active = false;
          continue;
       }
       grads[k].dy = (y1 - y2) / denom;
@@ -94,9 +87,6 @@ void setupGradParams() {
       rsMatrixSet(&grads[i].colorMatrix, 1, 2, b * Gt);
       rsMatrixSet(&grads[i].colorMatrix, 2, 2, b * (Bt + S));
 
-
-      grads[k].active = true;
-      grads[k].inking = inking[i];
       k++;
     }
     mNumberOfLines = k;

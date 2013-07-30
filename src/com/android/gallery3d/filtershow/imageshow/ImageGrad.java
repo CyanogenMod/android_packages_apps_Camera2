@@ -30,7 +30,7 @@ public class ImageGrad extends ImageShow {
     private static final String LOGTAG = "ImageGrad";
     private FilterGradRepresentation mGradRep;
     private EditorGrad mEditorGrad;
-    private int mMinTouchDist;
+    private float mMinTouchDist;
     private int mActiveHandle = -1;
     private GradControl mEllipse;
 
@@ -48,6 +48,8 @@ public class ImageGrad extends ImageShow {
 
     public ImageGrad(Context context, AttributeSet attrs) {
         super(context, attrs);
+        Resources res = context.getResources();
+        mMinTouchDist = res.getDimensionPixelSize(R.dimen.gradcontrol_min_touch_dist);
         mEllipse = new GradControl(context);
         mEllipse.setShowReshapeHandles(false);
     }
@@ -55,10 +57,6 @@ public class ImageGrad extends ImageShow {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int mask = event.getActionMasked();
-
-        if (mask == MotionEvent.ACTION_DOWN || mask == MotionEvent.ACTION_UP) {
-            mGradRep.setInking(MotionEvent.ACTION_DOWN == mask);
-        }
 
         if (mActiveHandle == -1) {
             if (MotionEvent.ACTION_DOWN != mask) {
@@ -87,7 +85,6 @@ public class ImageGrad extends ImageShow {
 
                     if (pos != -1) {
                         mGradRep.setSelectedPoint(pos);
-                        mGradRep.setInking(true);
                         resetImageCaches(this);
                         mEditorGrad.updateSeekBar(mGradRep);
                         mEditorGrad.commitLocalRepresentation();
