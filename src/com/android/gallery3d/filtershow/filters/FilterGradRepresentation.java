@@ -42,7 +42,7 @@ public class FilterGradRepresentation extends FilterRepresentation
         super("Grad");
         setSerializationName(SERIALIZATION_NAME);
         creatExample();
-        setOverlayId(R.drawable.filtershow_button_colors_vignette);
+        setOverlayId(R.drawable.filtershow_button_grad);
         setFilterClass(ImageFilterGrad.class);
         setTextId(R.string.grad);
         setEditorId(EditorGrad.ID);
@@ -63,7 +63,7 @@ public class FilterGradRepresentation extends FilterRepresentation
 
     static class Band {
         private boolean mask = true;
-        private boolean active = true;
+
         private int xPos1 = -1;
         private int yPos1 = 100;
         private int xPos2 = -1;
@@ -71,7 +71,7 @@ public class FilterGradRepresentation extends FilterRepresentation
         private int brightness = 40;
         private int contrast = 0;
         private int saturation = 0;
-        private boolean inking;
+
 
         public Band() {
         }
@@ -85,7 +85,6 @@ public class FilterGradRepresentation extends FilterRepresentation
 
         public Band(Band copy) {
             mask = copy.mask;
-            active = copy.active;
             xPos1 = copy.xPos1;
             yPos1 = copy.yPos1;
             xPos2 = copy.xPos2;
@@ -93,7 +92,6 @@ public class FilterGradRepresentation extends FilterRepresentation
             brightness = copy.brightness;
             contrast = copy.contrast;
             saturation = copy.saturation;
-            inking = copy.inking;
         }
 
     }
@@ -112,7 +110,6 @@ public class FilterGradRepresentation extends FilterRepresentation
     private void creatExample() {
         Band p = new Band();
         p.mask = false;
-        p.active = true;
         p.xPos1 = -1;
         p.yPos1 = 100;
         p.xPos2 = -1;
@@ -120,7 +117,6 @@ public class FilterGradRepresentation extends FilterRepresentation
         p.brightness = 40;
         p.contrast = 0;
         p.saturation = 0;
-        p.inking = false;
         mBands.add(0, p);
         mCurrentBand = p;
         trimVector();
@@ -155,7 +151,26 @@ public class FilterGradRepresentation extends FilterRepresentation
     @Override
     public boolean equals(FilterRepresentation representation) {
         if (representation instanceof FilterGradRepresentation) {
-            return true; // TODO much more extensive equals needed
+            FilterGradRepresentation rep = (FilterGradRepresentation) representation;
+            int n = getNumberOfBands();
+            if (rep.getNumberOfBands() != n) {
+                return false;
+            }
+            for (int i = 0; i < mBands.size(); i++) {
+                Band b1 = mBands.get(i);
+                Band b2 = rep.mBands.get(i);
+                if (b1.mask != b2.mask
+                        || b1.brightness != b2.brightness
+                        || b1.contrast != b2.contrast
+                        || b1.saturation != b2.saturation
+                        || b1.xPos1 != b2.xPos1
+                        || b1.xPos2 != b2.xPos2
+                        || b1.yPos1 != b2.yPos1
+                        || b1.yPos2 != b2.yPos2) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }
@@ -168,17 +183,6 @@ public class FilterGradRepresentation extends FilterRepresentation
             }
         }
         return count;
-    }
-
-    public void toggleInking() {
-        mCurrentBand.inking = !mCurrentBand.inking;
-    }
-
-    public void setInking(boolean on) {
-        for (Band point : mBands) {
-            point.inking = false;
-        }
-        mCurrentBand.inking = on;
     }
 
     public int addBand(Rect rect) {
@@ -278,17 +282,6 @@ public class FilterGradRepresentation extends FilterRepresentation
         return ret;
     }
 
-    public boolean[] getActive() {
-        boolean[] ret = new boolean[mBands.size()];
-        int i = 0;
-        String s = "";
-        for (Band point : mBands) {
-            ret[i++] = point.active;
-            s += (point.active) ? "1" : "0";
-        }
-        return ret;
-    }
-
     public int[] getXPos1() {
         int[] ret = new int[mBands.size()];
         int i = 0;
@@ -348,15 +341,6 @@ public class FilterGradRepresentation extends FilterRepresentation
         int i = 0;
         for (Band point : mBands) {
             ret[i++] = point.saturation;
-        }
-        return ret;
-    }
-
-    public boolean[] getInking() {
-        boolean[] ret = new boolean[mBands.size()];
-        int i = 0;
-        for (Band point : mBands) {
-            ret[i++] = point.inking;
         }
         return ret;
     }
