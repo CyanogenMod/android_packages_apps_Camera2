@@ -327,6 +327,8 @@ public class CropView extends View {
             mShadow.draw(canvas);
         }
 
+        mPaint.setAntiAlias(true);
+        mPaint.setFilterBitmap(true);
         // Draw actual bitmap
         canvas.drawBitmap(mBitmap, mDisplayMatrix, mPaint);
 
