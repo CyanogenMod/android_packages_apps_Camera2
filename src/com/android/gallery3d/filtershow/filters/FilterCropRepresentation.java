@@ -60,6 +60,25 @@ public class FilterCropRepresentation extends FilterRepresentation {
         mImage.set(r.mImage);
     }
 
+    @Override
+    public boolean equals(FilterRepresentation rep) {
+        if (!(rep instanceof FilterCropRepresentation)) {
+            return false;
+        }
+        FilterCropRepresentation crop = (FilterCropRepresentation) rep;
+        if (mCrop.bottom != crop.mCrop.bottom
+            || mCrop.left != crop.mCrop.left
+            || mCrop.right != crop.mCrop.right
+            || mCrop.top != crop.mCrop.top
+            || mImage.bottom != crop.mImage.bottom
+            || mImage.left != crop.mImage.left
+            || mImage.right != crop.mImage.right
+            || mImage.top != crop.mImage.top) {
+            return false;
+        }
+        return true;
+    }
+
     public RectF getCrop() {
         return new RectF(mCrop);
     }
