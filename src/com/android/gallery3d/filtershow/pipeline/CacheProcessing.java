@@ -35,7 +35,10 @@ public class CacheProcessing {
     public Bitmap process(Bitmap originalBitmap,
                           Vector<FilterRepresentation> filters,
                           FilterEnvironment environment) {
-        Bitmap cacheBitmap = originalBitmap;
+
+        if (filters.size() == 0) {
+            return originalBitmap;
+        }
 
         // New set of filters, let's clear the cache and rebuild it.
         if (filters.size() != mSteps.size()) {
@@ -54,7 +57,7 @@ public class CacheProcessing {
 
         // First, let's find how similar we are in our cache
         // compared to the current list of filters
-        int similarUpToIndex = 0;
+        int similarUpToIndex = -1;
         for (int i = 0; i < filters.size(); i++) {
             FilterRepresentation representation = filters.elementAt(i);
             CacheStep step = mSteps.elementAt(i);
@@ -70,18 +73,27 @@ public class CacheProcessing {
         }
 
         // Now, let's get the earliest cached result in our pipeline
+        Bitmap cacheBitmap = null;
         int findBaseImageIndex = similarUpToIndex;
-        while (findBaseImageIndex > 0
-                && mSteps.elementAt(findBaseImageIndex).cache == null) {
-            findBaseImageIndex--;
+        if (findBaseImageIndex > -1) {
+            while (findBaseImageIndex > 0
+                    && mSteps.elementAt(findBaseImageIndex).cache == null) {
+                findBaseImageIndex--;
+            }
+            cacheBitmap = mSteps.elementAt(findBaseImageIndex).cache;
         }
-        cacheBitmap = mSteps.elementAt(findBaseImageIndex).cache;
         boolean emptyStack = false;
         if (cacheBitmap == null) {
             emptyStack = true;
             // Damn, it's an empty stack, we have to start from scratch
             // TODO: use a bitmap cache + RS allocation instead of Bitmap.copy()
             cacheBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            if (findBaseImageIndex > -1) {
+                FilterRepresentation representation = filters.elementAt(findBaseImageIndex);
+                cacheBitmap = environment.applyRepresentation(representation, cacheBitmap);
+                mSteps.elementAt(findBaseImageIndex).representation = representation.copy();
+                mSteps.elementAt(findBaseImageIndex).cache = cacheBitmap;
+            }
             if (DEBUG) {
                 Log.v(LOGTAG, "empty stack");
             }
@@ -97,6 +109,9 @@ public class CacheProcessing {
             // rebuild the cache image for this step
             if (!emptyStack) {
                 cacheBitmap = cacheBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            } else {
+                // if it was an empty stack, we already applied it
+                findBaseImageIndex ++;
             }
             for (int i = findBaseImageIndex; i <= similarUpToIndex; i++) {
                 FilterRepresentation representation = filters.elementAt(i);

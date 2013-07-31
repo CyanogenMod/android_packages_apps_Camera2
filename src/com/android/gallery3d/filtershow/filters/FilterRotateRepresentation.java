@@ -134,6 +134,18 @@ public class FilterRotateRepresentation extends FilterRepresentation {
     }
 
     @Override
+    public boolean equals(FilterRepresentation rep) {
+        if (!(rep instanceof FilterRotateRepresentation)) {
+            return false;
+        }
+        FilterRotateRepresentation rotate = (FilterRotateRepresentation) rep;
+        if (rotate.mRotation.value() != mRotation.value()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public void deSerializeRepresentation(JsonReader reader) throws IOException {
         boolean unset = true;
         reader.beginObject();

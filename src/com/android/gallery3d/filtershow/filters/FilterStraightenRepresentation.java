@@ -55,6 +55,18 @@ public class FilterStraightenRepresentation extends FilterRepresentation {
         mStraighten = r.mStraighten;
     }
 
+    @Override
+    public boolean equals(FilterRepresentation rep) {
+        if (!(rep instanceof FilterStraightenRepresentation)) {
+            return false;
+        }
+        FilterStraightenRepresentation straighten = (FilterStraightenRepresentation) rep;
+        if (straighten.mStraighten != mStraighten) {
+            return false;
+        }
+        return true;
+    }
+
     public float getStraighten() {
         return mStraighten;
     }

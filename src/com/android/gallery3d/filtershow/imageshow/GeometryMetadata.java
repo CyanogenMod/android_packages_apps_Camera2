@@ -101,6 +101,22 @@ public class GeometryMetadata extends FilterRepresentation {
         mMirrorRep.set(g.mMirrorRep);
     }
 
+    @Override
+    public boolean equals(FilterRepresentation rep) {
+        if (!(rep instanceof GeometryMetadata)) {
+            return false;
+        }
+        GeometryMetadata geo = (GeometryMetadata) rep;
+        if (geo.mScaleFactor != mScaleFactor
+            || !geo.mRotationRep.equals(mRotationRep)
+            || !geo.mStraightenRep.equals(mStraightenRep)
+            || !geo.mCropRep.equals(mCropRep)
+            || !geo.mMirrorRep.equals(mMirrorRep)) {
+            return false;
+        }
+        return true;
+    }
+
     public float getScaleFactor() {
         return mScaleFactor;
     }

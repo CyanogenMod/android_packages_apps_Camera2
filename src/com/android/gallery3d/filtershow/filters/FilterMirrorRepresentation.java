@@ -79,6 +79,18 @@ public class FilterMirrorRepresentation extends FilterRepresentation {
         this(Mirror.NONE);
     }
 
+    @Override
+    public boolean equals(FilterRepresentation rep) {
+        if (!(rep instanceof FilterMirrorRepresentation)) {
+            return false;
+        }
+        FilterMirrorRepresentation mirror = (FilterMirrorRepresentation) rep;
+        if (mirror.mMirror.value() != mirror.mMirror.value()) {
+            return false;
+        }
+        return true;
+    }
+
     public Mirror getMirror() {
         return mMirror;
     }

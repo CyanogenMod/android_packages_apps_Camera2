@@ -127,7 +127,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
-    protected static final boolean ANIMATE_PANELS = true;
 
     private boolean mShowingTinyPlanet = false;
     private boolean mShowingImageStatePanel = false;
@@ -142,7 +141,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private WeakReference<ProgressDialog> mSavingProgressDialog;
 
     private LoadBitmapTask mLoadBitmapTask;
-    private boolean mLoading = true;
 
     private Uri mOriginalImageUri = null;
     private ImagePreset mOriginalPreset = null;
@@ -420,7 +418,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void startLoadBitmap(Uri uri) {
-        mLoading = true;
         final View loading = findViewById(R.id.loading);
         final View imageShow = findViewById(R.id.imageShow);
         imageShow.setVisibility(View.INVISIBLE);
@@ -653,7 +650,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (mAction == TINY_PLANET_ACTION) {
                 showRepresentation(mCategoryFiltersAdapter.getTinyPlanet());
             }
-            mLoading = false;
+
             MasterImage.getImage().notifyGeometryChange();
             LoadHighresBitmapTask highresLoad = new LoadHighresBitmapTask();
             highresLoad.execute();
