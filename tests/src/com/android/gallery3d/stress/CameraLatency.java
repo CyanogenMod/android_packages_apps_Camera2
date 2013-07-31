@@ -66,7 +66,6 @@ public class CameraLatency extends ActivityInstrumentationTestCase2 <CameraActiv
         super.tearDown();
     }
 
-    @LargeTest
     public void testImageCapture() {
         Log.v(TAG, "start testImageCapture test");
         Instrumentation inst = getInstrumentation();

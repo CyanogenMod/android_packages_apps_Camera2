@@ -112,7 +112,6 @@ public class CameraStartUp extends InstrumentationTestCase {
         }
     }
 
-    @LargeTest
     public void testLaunchVideo() throws Exception {
         String individualStartupTime;
         individualStartupTime = "Individual Video Startup Time = ";
@@ -133,7 +132,6 @@ public class CameraStartUp extends InstrumentationTestCase {
         writeToOutputFile(totalStartupTime, individualStartupTime, false, "Video");
     }
 
-    @LargeTest
     public void testLaunchCamera() throws Exception {
         String individualStartupTime;
         individualStartupTime = "Individual Camera Startup Time = ";
