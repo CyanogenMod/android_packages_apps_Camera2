@@ -34,7 +34,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +50,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.RefocusHelper;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 
 public class CameraActivity extends Activity
     implements CameraSwitchListener {
@@ -78,7 +78,6 @@ public class CameraActivity extends Activity
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
     private long mStorageSpace = Storage.LOW_STORAGE_THRESHOLD;
-    private PhotoModule mController;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
     // This is a hack to speed up the start of SecureCamera.
@@ -87,6 +86,7 @@ public class CameraActivity extends Activity
     private int mLastRawOrientation;
     private MyOrientationEventListener mOrientationListener;
     private Handler mMainHandler;
+    private PanoramaViewHelper mPanoramaViewHelper;
 
     private class MyOrientationEventListener
         extends OrientationEventListener {
@@ -272,6 +272,9 @@ public class CameraActivity extends Activity
         mFilmStripView = (FilmStripView) findViewById(R.id.filmstrip_view);
         mFilmStripView.setViewGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
+        mPanoramaViewHelper = new PanoramaViewHelper(this);
+        mPanoramaViewHelper.onCreate();
+        mFilmStripView.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter.setCameraPreviewInfo(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
@@ -345,6 +348,13 @@ public class CameraActivity extends Activity
                             v.getDrawable().getIntrinsicHeight(),
                             0, 0));
         }
+        mPanoramaViewHelper.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mPanoramaViewHelper.onStop();
     }
 
     @Override
@@ -384,10 +394,6 @@ public class CameraActivity extends Activity
         return super.onKeyUp(keyCode, event);
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        return mFilmStripView.dispatchTouchEvent(m);
-    }
     public boolean isAutoRotateScreen() {
         return mAutoRotateScreen;
     }

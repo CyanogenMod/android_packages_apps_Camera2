@@ -29,6 +29,7 @@ import android.view.View;
 import com.android.camera.Storage;
 import com.android.camera.ui.FilmStripView;
 import com.android.camera.ui.FilmStripView.ImageData;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -455,6 +456,17 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
 
         @Override
         public void recycle() {
+            // do nothing.
+        }
+
+        @Override
+        public void isPhotoSphere(Context context, PanoramaSupportCallback callback) {
+            // Not a photo sphere panorama.
+            callback.panoramaInfoAvailable(false, false);
+        }
+
+        @Override
+        public void viewPhotoSphere(PanoramaViewHelper helper) {
             // do nothing.
         }
     }
