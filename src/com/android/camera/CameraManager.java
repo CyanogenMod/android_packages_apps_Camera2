@@ -18,8 +18,8 @@ package com.android.camera;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.hardware.Camera.ErrorCallback;
-import android.hardware.Camera.FaceDetectionListener;
 import android.hardware.Camera.OnZoomChangeListener;
 import android.hardware.Camera.Parameters;
 import android.os.Handler;
@@ -30,7 +30,7 @@ import com.android.gallery3d.common.ApiHelper;
 import java.io.IOException;
 
 /**
- * An interface which provides possible camera device operations. 
+ * An interface which provides possible camera device operations.
  *
  * The client should call {@code CameraManager.cameraOpen} to get an instance
  * of {@link CameraManager.CameraProxy} to control the camera. Classes
@@ -41,7 +41,6 @@ import java.io.IOException;
  *
  * TODO: provide callback interfaces for:
  * {@code android.hardware.Camera.ErrorCallback},
- * {@code android.hardware.Camera.FaceDetectionListener},
  * {@code android.hardware.Camera.OnZoomChangeListener}, and
  * {@code android.hardware.Camera.Parameters}.
  */
@@ -85,6 +84,20 @@ public interface CameraManager {
      */
     public interface CameraPreviewDataCallback {
         public void onPreviewFrame(byte[] data, CameraProxy camera);
+    }
+
+    /**
+     * An interface which wraps
+     * {@link android.hardware.Camera.FaceDetectionListener}.
+     */
+    public interface CameraFaceDetectionCallback {
+        /**
+         * Callback for face detection.
+         *
+         * @param faces   Recognized face in the preview.
+         * @param camera  The camera which the preview image comes from.
+         */
+        public void onFaceDetection(Camera.Face[] faces, CameraProxy camera);
     }
 
     /**
@@ -248,10 +261,11 @@ public interface CameraManager {
         /**
          * Sets the face detection listener.
          *
-         * @param listener The listener for face detection results.
+         * @param handler  The handler in which the callback will be invoked.
+         * @param callback The callback for face detection results.
          */
         @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
-        public void setFaceDetectionListener(FaceDetectionListener listener);
+        public void setFaceDetectionCallback(Handler handler, CameraFaceDetectionCallback callback);
 
         /**
          * Starts the face detection.

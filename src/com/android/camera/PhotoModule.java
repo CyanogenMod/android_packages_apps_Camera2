@@ -664,7 +664,7 @@ public class PhotoModule
             CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
             mUI.onStartFaceDetection(mDisplayOrientation,
                     (info.facing == CameraInfo.CAMERA_FACING_FRONT));
-            mCameraDevice.setFaceDetectionListener(mUI);
+            mCameraDevice.setFaceDetectionCallback(mHandler, mUI);
             mCameraDevice.startFaceDetection();
         }
     }
@@ -676,7 +676,7 @@ public class PhotoModule
         if (!mFaceDetectionStarted) return;
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = false;
-            mCameraDevice.setFaceDetectionListener(null);
+            mCameraDevice.setFaceDetectionCallback(null, null);
             mCameraDevice.stopFaceDetection();
             mUI.clearFaces();
         }
@@ -1502,7 +1502,7 @@ public class PhotoModule
         if (mCameraDevice != null) {
             mCameraDevice.setZoomChangeListener(null);
             if(ApiHelper.HAS_FACE_DETECTION) {
-                mCameraDevice.setFaceDetectionListener(null);
+                mCameraDevice.setFaceDetectionCallback(null, null);
             }
             mCameraDevice.setErrorCallback(null);
             CameraHolder.instance().release();

@@ -27,13 +27,11 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.hardware.Camera.FaceDetectionListener;
-import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,20 +40,19 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
+import com.android.camera.ui.CameraRootView;
+import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
-import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
-import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
@@ -63,14 +60,13 @@ import com.android.camera.ui.ZoomRenderer;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
-import java.io.IOException;
 import java.util.List;
 
 public class PhotoUI implements PieListener,
     PreviewGestures.SingleTapListener,
     FocusUI, TextureView.SurfaceTextureListener,
     LocationManager.Listener, CameraRootView.MyDisplayListener,
-    FaceDetectionListener {
+    CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "CAM_UI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
@@ -856,7 +852,7 @@ public class PhotoUI implements PieListener,
     }
 
     @Override
-    public void onFaceDetection(Face[] faces, android.hardware.Camera camera) {
+    public void onFaceDetection(Face[] faces, CameraManager.CameraProxy camera) {
         mFaceView.setFaces(faces);
     }
 
