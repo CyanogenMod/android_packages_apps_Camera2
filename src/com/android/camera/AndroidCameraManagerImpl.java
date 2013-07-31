@@ -194,7 +194,7 @@ class AndroidCameraManagerImpl implements CameraManager {
             try {
                 switch (msg.what) {
                     case OPEN_CAMERA:
-                        mCamera = android.hardware.Camera.open();
+                        mCamera = android.hardware.Camera.open(msg.arg1);
                         if (mCamera != null) {
                             mParametersIsDirty = true;
 
