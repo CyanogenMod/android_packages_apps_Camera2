@@ -391,12 +391,12 @@ class AndroidCameraManagerImpl implements CameraManager {
 
         @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
         @Override
-        public void setPreviewTexture(final SurfaceTexture surfaceTexture) {
+        public void setPreviewTexture(SurfaceTexture surfaceTexture) {
             mCameraHandler.obtainMessage(SET_PREVIEW_TEXTURE_ASYNC, surfaceTexture).sendToTarget();
         }
 
         @Override
-        public void setPreviewDisplay(final SurfaceHolder surfaceHolder) {
+        public void setPreviewDisplay(SurfaceHolder surfaceHolder) {
             mCameraHandler.obtainMessage(SET_PREVIEW_DISPLAY_ASYNC, surfaceHolder).sendToTarget();
         }
 
@@ -413,18 +413,18 @@ class AndroidCameraManagerImpl implements CameraManager {
 
         @Override
         public void setPreviewDataCallback(
-                Handler handler, final CameraPreviewDataCallback cb) {
+                Handler handler, CameraPreviewDataCallback cb) {
             mCameraHandler.obtainMessage(
                     SET_PREVIEW_CALLBACK,
-                    PreviewCallbackForward.instance(handler, this, cb)).sendToTarget();
+                    PreviewCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
         }
 
         @Override
         public void setPreviewDataCallbackWithBuffer(
-                Handler handler, final CameraPreviewDataCallback cb) {
+                Handler handler, CameraPreviewDataCallback cb) {
             mCameraHandler.obtainMessage(
                     SET_PREVIEW_CALLBACK_WITH_BUFFER,
-                    PreviewCallbackForward.instance(handler, this, cb)).sendToTarget();
+                    PreviewCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
         }
 
         @Override
@@ -436,7 +436,7 @@ class AndroidCameraManagerImpl implements CameraManager {
         public void autoFocus(Handler handler, CameraAFCallback cb) {
             mCameraHandler.obtainMessage(
                     AUTO_FOCUS,
-                    AFCallbackForward.instance(handler, this, cb)).sendToTarget();
+                    AFCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
         }
 
         @Override
@@ -448,24 +448,24 @@ class AndroidCameraManagerImpl implements CameraManager {
         @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
         @Override
         public void setAutoFocusMoveCallback(
-                Handler handler, final CameraAFMoveCallback cb) {
+                Handler handler, CameraAFMoveCallback cb) {
             mCameraHandler.obtainMessage(
                     SET_AUTO_FOCUS_MOVE_CALLBACK,
-                    AFMoveCallbackForward.instance(handler, this, cb)).sendToTarget();
+                    AFMoveCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
         }
 
         @Override
         public void takePicture(
-                final Handler handler,
-                final CameraShutterCallback shutter,
-                final CameraPictureCallback raw,
-                final CameraPictureCallback post,
-                final CameraPictureCallback jpeg) {
+                Handler handler,
+                CameraShutterCallback shutter,
+                CameraPictureCallback raw,
+                CameraPictureCallback post,
+                CameraPictureCallback jpeg) {
             mCameraHandler.requestTakePicture(
-                    ShutterCallbackForward.instance(handler, this, shutter),
-                    PictureCallbackForward.instance(handler, this, raw),
-                    PictureCallbackForward.instance(handler, this, post),
-                    PictureCallbackForward.instance(handler, this, jpeg));
+                    ShutterCallbackForward.getNewInstance(handler, this, shutter),
+                    PictureCallbackForward.getNewInstance(handler, this, raw),
+                    PictureCallbackForward.getNewInstance(handler, this, post),
+                    PictureCallbackForward.getNewInstance(handler, this, jpeg));
         }
 
         @Override
@@ -480,8 +480,11 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
-        public void setFaceDetectionListener(FaceDetectionListener listener) {
-            mCameraHandler.obtainMessage(SET_FACE_DETECTION_LISTENER, listener).sendToTarget();
+        public void setFaceDetectionCallback(
+                Handler handler, CameraFaceDetectionCallback cb) {
+            mCameraHandler.obtainMessage(
+                    SET_FACE_DETECTION_LISTENER,
+                    FaceDetectionCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
         }
 
         @Override
@@ -537,15 +540,15 @@ class AndroidCameraManagerImpl implements CameraManager {
         private final CameraAFCallback mCallback;
 
         /**
-         * Returns an instance of {@link AFCallbackForward}.
+         * Returns a new instance of {@link AFCallbackForward}.
          *
          * @param handler The handler in which the callback will be invoked in.
          * @param camera  The {@link CameraProxy} which the callback is from.
          * @param cb      The callback to be invoked.
          * @return        The instance of the {@link AFCallbackForward},
-         *                or null if any one of other parameters is null.
+         *                or null if any parameter is null.
          */
-        public static AFCallbackForward instance(
+        public static AFCallbackForward getNewInstance(
                 Handler handler, CameraProxy camera, CameraAFCallback cb) {
             if (handler == null || camera == null || cb == null) return null;
             return new AFCallbackForward(handler, camera, cb);
@@ -577,15 +580,15 @@ class AndroidCameraManagerImpl implements CameraManager {
         private final CameraProxy mCamera;
 
         /**
-         * Returns an instance of {@link AFMoveCallbackForward}.
+         * Returns a new instance of {@link AFMoveCallbackForward}.
          *
          * @param handler The handler in which the callback will be invoked in.
          * @param camera  The {@link CameraProxy} which the callback is from.
          * @param cb      The callback to be invoked.
          * @return        The instance of the {@link AFMoveCallbackForward},
-         *                or null if any one of other parameters is null.
+         *                or null if any parameter is null.
          */
-        public static AFMoveCallbackForward instance(
+        public static AFMoveCallbackForward getNewInstance(
                 Handler handler, CameraProxy camera, CameraAFMoveCallback cb) {
             if (handler == null || camera == null || cb == null) return null;
             return new AFMoveCallbackForward(handler, camera, cb);
@@ -619,15 +622,15 @@ class AndroidCameraManagerImpl implements CameraManager {
         private final CameraProxy mCamera;
 
         /**
-         * Returns an instance of {@link ShutterCallbackForward}.
+         * Returns a new instance of {@link ShutterCallbackForward}.
          *
          * @param handler The handler in which the callback will be invoked in.
          * @param camera  The {@link CameraProxy} which the callback is from.
          * @param cb      The callback to be invoked.
          * @return        The instance of the {@link ShutterCallbackForward},
-         *                or null if any one of other parameters is null.
+         *                or null if any parameter is null.
          */
-        public static ShutterCallbackForward instance(
+        public static ShutterCallbackForward getNewInstance(
                 Handler handler, CameraProxy camera, CameraShutterCallback cb) {
             if (handler == null || camera == null || cb == null) return null;
             return new ShutterCallbackForward(handler, camera, cb);
@@ -660,15 +663,15 @@ class AndroidCameraManagerImpl implements CameraManager {
         private final CameraProxy mCamera;
 
         /**
-         * Returns an instance of {@link PictureCallbackForward}.
+         * Returns a new instance of {@link PictureCallbackForward}.
          *
          * @param handler The handler in which the callback will be invoked in.
          * @param camera  The {@link CameraProxy} which the callback is from.
          * @param cb      The callback to be invoked.
          * @return        The instance of the {@link PictureCallbackForward},
-         *                or null if any one of other parameters is null.
+         *                or null if any parameters is null.
          */
-        public static PictureCallbackForward instance(
+        public static PictureCallbackForward getNewInstance(
                 Handler handler, CameraProxy camera, CameraPictureCallback cb) {
             if (handler == null || camera == null || cb == null) return null;
             return new PictureCallbackForward(handler, camera, cb);
@@ -702,15 +705,15 @@ class AndroidCameraManagerImpl implements CameraManager {
         private final CameraProxy mCamera;
 
         /**
-         * Returns an instance of {@link PreviewCallbackForward}.
+         * Returns a new instance of {@link PreviewCallbackForward}.
          *
          * @param handler The handler in which the callback will be invoked in.
          * @param camera  The {@link CameraProxy} which the callback is from.
          * @param cb      The callback to be invoked.
-         * @return        The instance of the {@link PictureCallbackForward},
-         *                or null if any one of other parameters is null.
+         * @return        The instance of the {@link PreviewCallbackForward},
+         *                or null if any parameters is null.
          */
-        public static PreviewCallbackForward instance(
+        public static PreviewCallbackForward getNewInstance(
                 Handler handler, CameraProxy camera, CameraPreviewDataCallback cb) {
             if (handler == null || camera == null || cb == null) return null;
             return new PreviewCallbackForward(handler, camera, cb);
@@ -730,6 +733,45 @@ class AndroidCameraManagerImpl implements CameraManager {
                 @Override
                 public void run() {
                     mCallback.onPreviewFrame(data, mCamera);
+                }
+            });
+        }
+    }
+
+    private static class FaceDetectionCallbackForward implements FaceDetectionListener {
+        private final Handler mHandler;
+        private final CameraFaceDetectionCallback mCallback;
+        private final CameraProxy mCamera;
+
+        /**
+         * Returns a new instance of {@link FaceDetectionCallbackForward}.
+         *
+         * @param handler The handler in which the callback will be invoked in.
+         * @param camera  The {@link CameraProxy} which the callback is from.
+         * @param cb      The callback to be invoked.
+         * @return        The instance of the {@link FaceDetectionCallbackForward},
+         *                or null if any parameter is null.
+         */
+        public static FaceDetectionCallbackForward getNewInstance(
+                Handler handler, CameraProxy camera, CameraFaceDetectionCallback cb) {
+            if (handler == null || camera == null || cb == null) return null;
+            return new FaceDetectionCallbackForward(handler, camera, cb);
+        }
+
+        private FaceDetectionCallbackForward(
+                Handler h, CameraProxy camera, CameraFaceDetectionCallback cb) {
+            mHandler = h;
+            mCamera = camera;
+            mCallback = cb;
+        }
+
+        @Override
+        public void onFaceDetection(
+                final Camera.Face[] faces, Camera camera) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onFaceDetection(faces, mCamera);
                 }
             });
         }
