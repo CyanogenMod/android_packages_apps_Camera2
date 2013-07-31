@@ -114,6 +114,23 @@ public class FilterVignetteRepresentation extends FilterBasicRepresentation impl
         return getValue() == 0;
     }
 
+    @Override
+    public boolean equals(FilterRepresentation representation) {
+        if (!super.equals(representation)) {
+            return false;
+        }
+        if (representation instanceof FilterVignetteRepresentation) {
+            FilterVignetteRepresentation rep = (FilterVignetteRepresentation) representation;
+            if (rep.getCenterX() == getCenterX()
+                    && rep.getCenterY() == getCenterY()
+                    && rep.getRadiusX() == getRadiusX()
+                    && rep.getRadiusY() == getRadiusY()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static final String[] sParams = {
             "Name", "value", "mCenterX", "mCenterY", "mRadiusX",
             "mRadiusY"
