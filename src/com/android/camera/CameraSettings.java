@@ -93,16 +93,16 @@ public class CameraSettings {
         return group;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-    public static String getDefaultVideoQuality(int cameraId,
+    public static String getSupportedHighestVideoQuality(int cameraId,
             String defaultQuality) {
-        if (ApiHelper.HAS_FINE_RESOLUTION_QUALITY_LEVELS) {
-            if (CamcorderProfile.hasProfile(
-                    cameraId, Integer.valueOf(defaultQuality))) {
-                return defaultQuality;
-            }
+        // When launching the camera app first time, we will set the video quality
+        // to the first one (i.e. highest quality) in the supported list
+        List<String> supported = getSupportedVideoQuality(cameraId);
+        if (supported == null) {
+            Log.e(TAG, "No supported video quality is found");
+            return defaultQuality;
         }
-        return Integer.toString(CamcorderProfile.QUALITY_HIGH);
+        return supported.get(0);
     }
 
     public static void initialCameraPictureSize(
@@ -177,7 +177,7 @@ public class CameraSettings {
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
         if (videoQuality != null) {
-            filterUnsupportedOptions(group, videoQuality, getSupportedVideoQuality());
+            filterUnsupportedOptions(group, videoQuality, getSupportedVideoQuality(mCameraId));
         }
 
         if (pictureSize != null) {
@@ -532,37 +532,19 @@ public class CameraSettings {
         writePreferredCameraId(preferences, currentCameraId);
     }
 
-    private ArrayList<String> getSupportedVideoQuality() {
+    private static ArrayList<String> getSupportedVideoQuality(int cameraId) {
         ArrayList<String> supported = new ArrayList<String>();
         // Check for supported quality
-        if (ApiHelper.HAS_FINE_RESOLUTION_QUALITY_LEVELS) {
-            getFineResolutionQuality(supported);
-        } else {
-            supported.add(Integer.toString(CamcorderProfile.QUALITY_HIGH));
-            CamcorderProfile high = CamcorderProfile.get(
-                    mCameraId, CamcorderProfile.QUALITY_HIGH);
-            CamcorderProfile low = CamcorderProfile.get(
-                    mCameraId, CamcorderProfile.QUALITY_LOW);
-            if (high.videoFrameHeight * high.videoFrameWidth >
-                    low.videoFrameHeight * low.videoFrameWidth) {
-                supported.add(Integer.toString(CamcorderProfile.QUALITY_LOW));
-            }
-        }
-
-        return supported;
-    }
-
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-    private void getFineResolutionQuality(ArrayList<String> supported) {
-        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_1080P)) {
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_1080P));
         }
-        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_720P)) {
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_720P));
         }
-        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_480P)) {
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
         }
+        return supported;
     }
 
     private void initVideoEffect(PreferenceGroup group, ListPreference videoEffect) {

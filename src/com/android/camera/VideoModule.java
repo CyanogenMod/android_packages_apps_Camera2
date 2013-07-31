@@ -472,19 +472,9 @@ public class VideoModule implements CameraModule,
         if (effectsActive()) {
             mUI.overrideSettings(
                     CameraSettings.KEY_VIDEO_QUALITY,
-                    Integer.toString(getLowVideoQuality()));
+                    Integer.toString(CamcorderProfile.QUALITY_480P));
         }
     }
-
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-    private static int getLowVideoQuality() {
-        if (ApiHelper.HAS_FINE_RESOLUTION_QUALITY_LEVELS) {
-            return CamcorderProfile.QUALITY_480P;
-        } else {
-            return CamcorderProfile.QUALITY_LOW;
-        }
-    }
-
 
     @Override
     public void onOrientationChanged(int orientation) {
@@ -565,7 +555,7 @@ public class VideoModule implements CameraModule,
                 // back to use SurfaceTexture for preview and we need to stop then start
                 // the preview. This will cause the preview flicker since the preview
                 // will not be continuous for a short period of time.
-                // TODO: need to get the capture animation to work 
+                // TODO: need to get the capture animation to work
                 // ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
 
                 mUI.enablePreviewThumb(true);
@@ -613,11 +603,14 @@ public class VideoModule implements CameraModule,
     private void readVideoPreferences() {
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
-        String defaultQuality = CameraSettings.getDefaultVideoQuality(mCameraId,
-                mActivity.getResources().getString(R.string.pref_video_quality_default));
-        String videoQuality =
-                mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY,
-                        defaultQuality);
+        String videoQuality = mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY,
+                        null);
+        if (videoQuality == null) {
+            // check for highest quality before setting default value
+            videoQuality = CameraSettings.getSupportedHighestVideoQuality(mCameraId,
+                    mActivity.getResources().getString(R.string.pref_video_quality_default));
+            mPreferences.edit().putString(CameraSettings.KEY_VIDEO_QUALITY, videoQuality);
+        }
         int quality = Integer.valueOf(videoQuality);
 
         // Set video quality.
@@ -649,7 +642,7 @@ public class VideoModule implements CameraModule,
             // Set quality to be no higher than 480p.
             CamcorderProfile profile = CamcorderProfile.get(mCameraId, quality);
             if (profile.videoFrameHeight > 480) {
-                quality = getLowVideoQuality();
+                quality = CamcorderProfile.QUALITY_480P;
             }
         } else {
             mEffectParameter = null;
