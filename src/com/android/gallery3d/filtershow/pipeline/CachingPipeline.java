@@ -24,10 +24,13 @@ import android.support.v8.renderscript.RenderScript;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+
+import java.util.Vector;
 
 public class CachingPipeline implements PipelineInterface {
     private static final String LOGTAG = "CachingPipeline";
@@ -43,6 +46,8 @@ public class CachingPipeline implements PipelineInterface {
     private volatile Bitmap mResizedOriginalBitmap = null;
 
     private FilterEnvironment mEnvironment = new FilterEnvironment();
+    private CacheProcessing mCachedProcessing = new CacheProcessing();
+
 
     private volatile Allocation mOriginalAllocation = null;
     private volatile Allocation mFiltersOnlyOriginalAllocation =  null;
@@ -338,7 +343,17 @@ public class CachingPipeline implements PipelineInterface {
                 FilterEnvironment.QUALITY_PREVIEW);
     }
 
-    public synchronized void compute(SharedBuffer buffer, ImagePreset preset, int type) {
+    public void compute(SharedBuffer buffer, ImagePreset preset, int type) {
+        if (getRenderScriptContext() == null) {
+            return;
+        }
+        setupEnvironment(preset, false);
+        Vector<FilterRepresentation> filters = preset.getFilters();
+        Bitmap result = mCachedProcessing.process(mOriginalBitmap, filters, mEnvironment);
+        buffer.setProducer(result);
+    }
+
+    public synchronized void computeOld(SharedBuffer buffer, ImagePreset preset, int type) {
         synchronized (CachingPipeline.class) {
             if (getRenderScriptContext() == null) {
                 return;

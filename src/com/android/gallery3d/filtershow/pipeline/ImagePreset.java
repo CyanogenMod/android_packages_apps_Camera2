@@ -79,6 +79,10 @@ public class ImagePreset {
         }
     }
 
+    public Vector<FilterRepresentation> getFilters() {
+        return mFilters;
+    }
+
     public FilterRepresentation getFilterRepresentation(int position) {
         FilterRepresentation representation = null;
 
