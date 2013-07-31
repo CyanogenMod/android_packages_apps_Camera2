@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.suitebuilder.annotation.MediumTest;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -45,6 +47,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         mGroundTruth = ExifXmlReader.readXml(getXmlParser());
     }
 
+    @MediumTest
     public void testParse() throws Exception {
         try {
             ExifParser parser = ExifParser.parse(getImageInputStream(), mInterface);
@@ -138,22 +141,27 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         }
     }
 
+    @MediumTest
     public void testOnlyExifIfd() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_EXIF, ExifParser.OPTION_IFD_EXIF);
     }
 
+    @MediumTest
     public void testOnlyIfd0() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_0, ExifParser.OPTION_IFD_0);
     }
 
+    @MediumTest
     public void testOnlyIfd1() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_1, ExifParser.OPTION_IFD_1);
     }
 
+    @MediumTest
     public void testOnlyInteroperabilityIfd() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_INTEROPERABILITY, ExifParser.OPTION_IFD_INTEROPERABILITY);
     }
 
+    @MediumTest
     public void testOnlyReadSomeTag() throws Exception {
         // Do not do this test if there is no model tag.
         if (mGroundTruth.get(IfdId.TYPE_IFD_0).get(ExifInterface.TAG_MODEL) == null) {
@@ -197,6 +205,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         }
     }
 
+    @MediumTest
     public void testReadThumbnail() throws Exception {
         try {
             ExifParser parser = ExifParser.parse(getImageInputStream(),

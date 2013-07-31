@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.suitebuilder.annotation.SmallTest;
+
 import junit.framework.TestCase;
 
 import java.util.HashMap;
@@ -92,6 +94,7 @@ public class ExifTagTest extends TestCase {
         mTestTags = null;
     }
 
+    @SmallTest
     public void testValueType() {
         for (ExifTag tag : mTestTags.values()) {
             assertTrue(tag != null);

@@ -16,8 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.suitebuilder.annotation.SmallTest;
 import junit.framework.TestCase;
-
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +90,7 @@ public class ExifDataTest extends TestCase {
         mTestTags = null;
     }
 
+    @SmallTest
     public void testAddTag() {
         ExifData exifData = new ExifData(ByteOrder.BIG_ENDIAN);
 

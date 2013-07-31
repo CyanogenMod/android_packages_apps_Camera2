@@ -31,7 +31,6 @@ import junit.framework.TestCase;
 
 import javax.microedition.khronos.opengles.GL11;
 
-@SmallTest
 public class TextureTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String TAG = "TextureTest";

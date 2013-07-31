@@ -66,7 +66,6 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         super.tearDown();
     }
 
-    @LargeTest
     public void captureVideos(String reportTag, Instrumentation inst) throws Exception{
         boolean memoryResult = false;
         int total_num_of_videos = CameraStressTestRunner.mVideoIterations;
@@ -83,7 +82,6 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         }
     }
 
-    @LargeTest
     public void testBackVideoCapture() throws Exception {
         Instrumentation inst = getInstrumentation();
         Intent intent = new Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA);
@@ -98,7 +96,6 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         act.finish();
     }
 
-    @LargeTest
     public void testFrontVideoCapture() throws Exception {
         Instrumentation inst = getInstrumentation();
         Intent intent = new Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA);
