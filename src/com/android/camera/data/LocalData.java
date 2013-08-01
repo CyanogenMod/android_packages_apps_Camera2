@@ -28,8 +28,8 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,14 +40,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.Util;
+import com.android.camera.data.PanoramaMetadataLoader.PanoramaMetadataCallback;
 import com.android.camera.ui.FilmStripView;
 import com.android.gallery3d.R;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 
 import java.io.File;
 import java.util.Comparator;
 import java.util.Date;
 
-/* An abstract interface that represents the local media data. Also implements
+/**
+ * An abstract interface that represents the local media data. Also implements
  * Comparable interface so we can sort in DataAdapter.
  */
 public interface LocalData extends FilmStripView.ImageData {
@@ -68,8 +72,8 @@ public interface LocalData extends FilmStripView.ImageData {
 
         // Compare taken/modified date of LocalData in descent order to make
         // newer data in the front.
-        // The negavive numbers here are always considered "bigger" than
-        // postive ones. Thus, if any one of the numbers is negative, the logic
+        // The negative numbers here are always considered "bigger" than
+        // positive ones. Thus, if any one of the numbers is negative, the logic
         // is reversed.
         private static int compareDate(long v1, long v2) {
             if (v1 >= 0 && v2 >= 0) {
@@ -93,10 +97,11 @@ public interface LocalData extends FilmStripView.ImageData {
 
     // Implementations below.
 
-    /*
-     * A base class for all the local media files. The bitmap is loaded in background
-     * thread. Subclasses should implement their own background loading thread by
-     * subclassing BitmapLoadTask and overriding doInBackground() to return a bitmap.
+    /**
+     * A base class for all the local media files. The bitmap is loaded in
+     * background thread. Subclasses should implement their own background
+     * loading thread by subclassing BitmapLoadTask and overriding
+     * doInBackground() to return a bitmap.
      */
     abstract static class LocalMediaData implements LocalData {
         protected long id;
@@ -108,6 +113,12 @@ public interface LocalData extends FilmStripView.ImageData {
         // width and height should be adjusted according to orientation.
         protected int width;
         protected int height;
+
+        /** The panorama metadata information of this media data. */
+        private PanoramaMetadata mPanoramaMetadata;
+
+        /** Used to load photo sphere metadata from image files. */
+        private PanoramaMetadataLoader mPanoramaMetadataLoader = null;
 
         // true if this data has a corresponding visible view.
         protected Boolean mUsing = false;
@@ -153,6 +164,38 @@ public interface LocalData extends FilmStripView.ImageData {
             return f.delete();
         }
 
+
+        @Override
+        public void viewPhotoSphere(PanoramaViewHelper helper) {
+            helper.showPanorama(getContentUri());
+        }
+
+        @Override
+        public void isPhotoSphere(Context context, final PanoramaSupportCallback callback) {
+            // If we already have metadata, use it.
+            if (mPanoramaMetadata != null) {
+                callback.panoramaInfoAvailable(mPanoramaMetadata.mUsePanoramaViewer,
+                        mPanoramaMetadata.mIsPanorama360);
+            }
+
+            // Otherwise prepare a loader, if we don't have one already.
+            if (mPanoramaMetadataLoader == null) {
+                mPanoramaMetadataLoader = new PanoramaMetadataLoader(getContentUri());
+            }
+
+            // Load the metadata asynchronously.
+            mPanoramaMetadataLoader.getPanoramaMetadata(context, new PanoramaMetadataCallback() {
+                @Override
+                public void onPanoramaMetadataLoaded(PanoramaMetadata metadata) {
+                    // Store the metadata and remove the loader to free up space.
+                    mPanoramaMetadata = metadata;
+                    mPanoramaMetadataLoader = null;
+                    callback.panoramaInfoAvailable(metadata.mUsePanoramaViewer,
+                            metadata.mIsPanorama360);
+                }
+            });
+        }
+
         protected ImageView fillImageView(Context ctx, ImageView v,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
             v.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -190,13 +233,21 @@ public interface LocalData extends FilmStripView.ImageData {
             }
         }
 
+        /**
+         * Returns the content URI of this data item.
+         */
+        private Uri getContentUri() {
+            Uri baseUri = Images.Media.EXTERNAL_CONTENT_URI;
+            return baseUri.buildUpon().appendPath(String.valueOf(id)).build();
+        }
+
         @Override
         public abstract int getType();
 
         protected abstract BitmapLoadTask getBitmapLoadTask(
                 ImageView v, int decodeWidth, int decodeHeight);
 
-        /*
+        /**
          * An AsyncTask class that loads the bitmap in the background thread.
          * Sub-classes should implement their own "protected Bitmap doInBackground(Void... )"
          */
@@ -254,10 +305,10 @@ public interface LocalData extends FilmStripView.ImageData {
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE;
 
-        // 32K buffer.
+        /** 32K buffer. */
         private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
 
-        // from MediaStore, can only be 0, 90, 180, 270;
+        /** from MediaStore, can only be 0, 90, 180, 270 */
         public int orientation;
 
         static Photo buildFromCursor(Cursor c) {
@@ -364,7 +415,7 @@ public interface LocalData extends FilmStripView.ImageData {
                         return null;
                     }
                     Matrix m = new Matrix();
-                    m.setRotate((float) orientation);
+                    m.setRotate(orientation);
                     b = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, false);
                 }
                 return b;
@@ -527,7 +578,7 @@ public interface LocalData extends FilmStripView.ImageData {
                     bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 }
                 if (bitmap == null) {
-                    bitmap = (Bitmap) retriever.getFrameAtTime();
+                    bitmap = retriever.getFrameAtTime();
                 }
                 retriever.release();
                 return bitmap;
@@ -535,13 +586,13 @@ public interface LocalData extends FilmStripView.ImageData {
         }
     }
 
-    /*
+    /**
      * A LocalData that does nothing but only shows a view.
      */
     public static class LocalViewData implements LocalData {
         private int mWidth;
         private int mHeight;
-        View mView;
+        private View mView;
         private long mDateTaken;
         private long mDateModified;
 
@@ -612,6 +663,17 @@ public interface LocalData extends FilmStripView.ImageData {
 
         @Override
         public void recycle() {
+            // do nothing.
+        }
+
+        @Override
+        public void isPhotoSphere(Context context, PanoramaSupportCallback callback) {
+            // Not a photo sphere panorama.
+            callback.panoramaInfoAvailable(false, false);
+        }
+
+        @Override
+        public void viewPhotoSphere(PanoramaViewHelper helper) {
             // do nothing.
         }
     }
