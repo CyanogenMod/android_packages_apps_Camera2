@@ -168,7 +168,20 @@
     <string name="editor_grad_contrast">Contrast</string>
     <!--  Label for the saturation effect  [CHAR LIMIT=20] -->
     <string name="editor_grad_saturation">Saturation</string>
-
+    <!--  Label for the Main or Master control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_main">Main</string>
+    <!--  Label for the red control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_red">Red</string>
+    <!--  Label for the yellow control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_yellow">Yellow</string>
+    <!--  Label for the green control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_green">Green</string>
+    <!--  Label for the cyan control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_cyan">Cyan</string>
+    <!--  Label for the blue control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_blue">Blue</string>
+    <!--  Label for the Magenta control for per channel saturation effect [CHAR LIMIT=20] -->
+    <string name="editor_chan_sat_magenta">Magenta</string>
     <!--  Label for the image graduated filter effect  [CHAR LIMIT=20] -->
     <string name="editor_grad_style">Style</string>
     <!--  Label for the image new grad layer  [CHAR LIMIT=20] -->

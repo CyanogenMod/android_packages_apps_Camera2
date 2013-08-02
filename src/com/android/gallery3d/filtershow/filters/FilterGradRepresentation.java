@@ -419,7 +419,6 @@ public class FilterGradRepresentation extends FilterRepresentation
     public float getPoint1Y() {
         return mCurrentBand.yPos1;
     }
-
     @Override
     public float getPoint2X() {
         return mCurrentBand.xPos2;
