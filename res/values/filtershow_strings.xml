@@ -49,6 +49,10 @@
     <string name="hide_imagestate_panel">Hide Applied Effects</string>
     <!--  Text for the menu item to export a flattened photo[CHAR LIMIT=30] -->
     <string name="export_flattened">Export Flattened Image</string>
+    <!--  Text for selecting export image quality [CHAR LIMIT=100] -->
+    <string name="select_compression">Select output quality.</string>
+    <!--  Text for quality value tag [CHAR LIMIT=30] -->
+    <string name="quality">Quality</string>
 
     <!--  Name for the overflow menu item for settings [CHAR LIMIT=20] -->
     <string name="menu_settings">Settings</string>
