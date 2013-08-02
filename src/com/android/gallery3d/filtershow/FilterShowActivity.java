@@ -59,22 +59,19 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.LocalAlbum;
-import com.android.gallery3d.filtershow.editors.EditorChanSat;
-import com.android.gallery3d.filtershow.editors.EditorGrad;
-import com.android.gallery3d.filtershow.data.FilterStackSource;
-import com.android.gallery3d.filtershow.data.UserPresetsManager;
-import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
-import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.category.Action;
 import com.android.gallery3d.filtershow.category.CategoryAdapter;
 import com.android.gallery3d.filtershow.category.MainPanel;
+import com.android.gallery3d.filtershow.data.UserPresetsManager;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.Editor;
+import com.android.gallery3d.filtershow.editors.EditorChanSat;
 import com.android.gallery3d.filtershow.editors.EditorCrop;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
-import com.android.gallery3d.filtershow.editors.EditorMirror;
+import com.android.gallery3d.filtershow.editors.EditorGrad;
 import com.android.gallery3d.filtershow.editors.EditorManager;
+import com.android.gallery3d.filtershow.editors.EditorMirror;
 import com.android.gallery3d.filtershow.editors.EditorPanel;
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
 import com.android.gallery3d.filtershow.editors.EditorRotate;
@@ -82,14 +79,15 @@ import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterUserPresetRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.history.HistoryItem;
-import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.imageshow.Spline;
+import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.pipeline.ProcessingService;
 import com.android.gallery3d.filtershow.presets.PresetManagementDialog;
@@ -99,6 +97,7 @@ import com.android.gallery3d.filtershow.state.StateAdapter;
 import com.android.gallery3d.filtershow.tools.SaveImage;
 import com.android.gallery3d.filtershow.tools.XmpPresets;
 import com.android.gallery3d.filtershow.tools.XmpPresets.XMresults;
+import com.android.gallery3d.filtershow.ui.ExportDialog;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.UsageStatistics;
@@ -821,11 +820,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 return true;
             }
             case R.id.exportFlattenButton: {
-                Uri sourceUri = MasterImage.getImage().getUri();
-                File dest = SaveImage.getNewFile(this, sourceUri);
-                Intent processIntent = ProcessingService.getSaveIntent(this, MasterImage.getImage()
-                        .getPreset(), dest, getSelectedImageUri(), sourceUri, true);
-                startService(processIntent);
+                showExportOptionsDialog();
                 return true;
             }
             case android.R.id.home: {
@@ -843,6 +838,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private void manageUserPresets() {
         DialogFragment dialog = new PresetManagementDialog();
         dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
+    }
+
+    private void showExportOptionsDialog() {
+        DialogFragment dialog = new ExportDialog();
+        dialog.show(getSupportFragmentManager(), "ExportDialogFragment");
     }
 
     public void updateUserPresetsFromAdapter(UserPresetsAdapter adapter) {

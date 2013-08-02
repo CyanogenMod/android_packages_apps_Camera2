@@ -32,10 +32,10 @@ import android.util.Log;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.pipeline.ProcessingService;
 import com.android.gallery3d.util.UsageStatistics;
@@ -46,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -257,15 +258,24 @@ public class SaveImage {
         return exif;
     }
 
-    public boolean putExifData(File file, ExifInterface exif, Bitmap image) {
+    public boolean putExifData(File file, ExifInterface exif, Bitmap image,
+            int jpegCompressQuality) {
         boolean ret = false;
+        OutputStream s = null;
         try {
-            exif.writeExif(image, file.getAbsolutePath());
+            s = exif.getExifWriterStream(file.getAbsolutePath());
+            image.compress(Bitmap.CompressFormat.JPEG,
+                    (jpegCompressQuality > 0) ? jpegCompressQuality : 1, s);
+            s.flush();
+            s.close();
+            s = null;
             ret = true;
         } catch (FileNotFoundException e) {
             Log.w(LOGTAG, "File not found: " + file.getAbsolutePath(), e);
         } catch (IOException e) {
             Log.w(LOGTAG, "Could not write exif: ", e);
+        } finally {
+            Utils.closeSilently(s);
         }
         return ret;
     }
@@ -300,7 +310,7 @@ public class SaveImage {
         }
     }
 
-    public Uri processAndSaveImage(ImagePreset preset, boolean doAuxBackup) {
+    public Uri processAndSaveImage(ImagePreset preset, boolean doAuxBackup, int quality) {
 
         Uri uri = resetToOriginalImageIfNeeded(preset, doAuxBackup);
         if (uri != null) {
@@ -354,7 +364,7 @@ public class SaveImage {
                 updateProgress();
 
                 // If we succeed in writing the bitmap as a jpeg, return a uri.
-                if (putExifData(mDestinationFile, exif, bitmap)) {
+                if (putExifData(mDestinationFile, exif, bitmap, quality)) {
                     putPanoramaXMPData(mDestinationFile, xmp);
                     // mDestinationFile will save the newSourceUri info in the XMP.
                     XmpPresets.writeFilterXMP(mContext, newSourceUri,
@@ -448,7 +458,7 @@ public class SaveImage {
         Uri sourceImageUri = MasterImage.getImage().getUri();
 
         Intent processIntent = ProcessingService.getSaveIntent(filterShowActivity, preset,
-                destination, selectedImageUri, sourceImageUri, false);
+                destination, selectedImageUri, sourceImageUri, false, 90);
 
         filterShowActivity.startService(processIntent);
 
