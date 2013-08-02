@@ -70,7 +70,7 @@ public class HighresRenderingRequestTask extends ProcessingTask {
     public Result doInBackground(Request message) {
         RenderingRequest request = ((Render) message).request;
         RenderResult result = null;
-        mHighresPreviewPipeline.render(request);
+        mHighresPreviewPipeline.renderHighres(request);
         result = new RenderResult();
         result.request = request;
         return result;

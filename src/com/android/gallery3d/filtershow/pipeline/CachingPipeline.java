@@ -202,6 +202,30 @@ public class CachingPipeline implements PipelineInterface {
         return true;
     }
 
+    public void renderHighres(RenderingRequest request) {
+        synchronized (CachingPipeline.class) {
+            if (getRenderScriptContext() == null) {
+                return;
+            }
+            ImagePreset preset = request.getImagePreset();
+            setupEnvironment(preset, false);
+            Bitmap bitmap = MasterImage.getImage().getOriginalBitmapHighres();
+            if (bitmap == null) {
+                return;
+            }
+            // TODO: use a cache of bitmaps
+            bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            bitmap = preset.applyGeometry(bitmap, mEnvironment);
+
+            mEnvironment.setQuality(FilterEnvironment.QUALITY_PREVIEW);
+            Bitmap bmp = preset.apply(bitmap, mEnvironment);
+            if (!mEnvironment.needsStop()) {
+                request.setBitmap(bmp);
+            }
+            mFiltersManager.freeFilterResources(preset);
+        }
+    }
+
     public synchronized void render(RenderingRequest request) {
         synchronized (CachingPipeline.class) {
             if (getRenderScriptContext() == null) {
