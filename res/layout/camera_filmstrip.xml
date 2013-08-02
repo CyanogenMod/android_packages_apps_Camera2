@@ -35,6 +35,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
+        android:visibility="gone"
         android:src="@drawable/ic_view_photosphere" />
 
 </FrameLayout>
