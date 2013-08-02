@@ -133,6 +133,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         filters.add(ImageFilterCurves.class);
         filters.add(ImageFilterDraw.class);
         filters.add(ImageFilterHue.class);
+        filters.add(ImageFilterChanSat.class);
         filters.add(ImageFilterSaturated.class);
         filters.add(ImageFilterBwFilter.class);
         filters.add(ImageFilterNegative.class);
@@ -232,7 +233,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         mEffects.add(getRepresentation(ImageFilterSharpen.class));
         mEffects.add(getRepresentation(ImageFilterCurves.class));
         mEffects.add(getRepresentation(ImageFilterHue.class));
-        mEffects.add(getRepresentation(ImageFilterSaturated.class));
+        mEffects.add(getRepresentation(ImageFilterChanSat.class));
         mEffects.add(getRepresentation(ImageFilterBwFilter.class));
         mEffects.add(getRepresentation(ImageFilterNegative.class));
         mEffects.add(getRepresentation(ImageFilterEdge.class));

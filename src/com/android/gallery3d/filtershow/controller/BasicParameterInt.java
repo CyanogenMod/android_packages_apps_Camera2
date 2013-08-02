@@ -45,6 +45,14 @@ public class BasicParameterInt implements ParameterInteger {
         ID = id;
         mValue = value;
     }
+
+    public BasicParameterInt(int id, int value, int min, int max) {
+        ID = id;
+        mValue = value;
+        mMinimum = min;
+        mMaximum = max;
+    }
+
     @Override
     public String getParameterName() {
         return mParameterName;
