@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.jpegstream;
 
+import android.test.suitebuilder.annotation.MediumTest;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -59,6 +61,7 @@ public class JpegStreamReaderTest extends JpegStreamTestCase {
         }
     }
 
+    @MediumTest
     public void testBasicReads() throws Exception {
 
         // Setup input stream.

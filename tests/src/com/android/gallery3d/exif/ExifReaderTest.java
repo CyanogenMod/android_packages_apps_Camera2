@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.suitebuilder.annotation.MediumTest;
+
 import android.graphics.BitmapFactory;
 
 import java.util.List;
@@ -43,6 +45,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         mInterface = new ExifInterface();
     }
 
+    @MediumTest
     public void testRead() throws Exception {
         try {
             ExifReader reader = new ExifReader(mInterface);

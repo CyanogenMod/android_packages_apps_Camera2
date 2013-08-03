@@ -83,7 +83,6 @@ public class ShotToShotLatency extends ActivityInstrumentationTestCase2<CameraAc
         }
     }
 
-    @LargeTest
     public void testShotToShotLatency() {
         long sigmaOfDiffFromMeanSquared = 0;
         double mean = 0;

@@ -19,6 +19,8 @@ package com.android.gallery3d.exif;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.test.suitebuilder.annotation.MediumTest;
+
 import java.io.ByteArrayInputStream;
 
 import java.io.ByteArrayOutputStream;
@@ -58,6 +60,7 @@ public class ExifInterfaceTest extends ExifXmlDataTestCase {
         super(imagePath, xmlPath);
     }
 
+    @MediumTest
     public void testInterface() throws Exception {
 
         InputStream imageInputStream = null;
@@ -138,6 +141,7 @@ public class ExifInterfaceTest extends ExifXmlDataTestCase {
         }
     }
 
+    @MediumTest
     public void testInterfaceModify() throws Exception {
 
         // TODO: This test is dependent on galaxy_nexus jpeg/xml file.
@@ -227,6 +231,7 @@ public class ExifInterfaceTest extends ExifXmlDataTestCase {
         }
     }
 
+    @MediumTest
     public void testInterfaceDefines() throws Exception {
 
         InputStream imageInputStream = null;
@@ -365,6 +370,7 @@ public class ExifInterfaceTest extends ExifXmlDataTestCase {
         }
     }
 
+    @MediumTest
     public void testInterfaceThumbnails() throws Exception {
 
         InputStream imageInputStream = null;

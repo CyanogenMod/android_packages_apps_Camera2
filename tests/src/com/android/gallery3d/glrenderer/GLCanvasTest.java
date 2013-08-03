@@ -26,7 +26,6 @@ import java.util.Arrays;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
-@SmallTest
 public class GLCanvasTest extends TestCase {
     private static final String TAG = "GLCanvasTest";
 

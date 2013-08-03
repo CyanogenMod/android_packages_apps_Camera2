@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.suitebuilder.annotation.MediumTest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -108,6 +109,7 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
         mInterface = new ExifInterface();
     }
 
+    @MediumTest
     public void testModify() throws Exception {
         Map<Short, Boolean> results = new HashMap<Short, Boolean>();
 

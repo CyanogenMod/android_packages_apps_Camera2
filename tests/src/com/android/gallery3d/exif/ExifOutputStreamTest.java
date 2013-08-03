@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.suitebuilder.annotation.MediumTest;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -49,6 +51,7 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
         mInterface = new ExifInterface();
     }
 
+    @MediumTest
     public void testExifOutputStream() throws Exception {
         InputStream imageInputStream = null;
         InputStream exifInputStream = null;
@@ -132,6 +135,7 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
         }
     }
 
+    @MediumTest
     public void testOutputSpeed() throws Exception {
         final String LOGTAG = "testOutputSpeed";
         InputStream imageInputStream = null;
