@@ -89,7 +89,6 @@ public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         }
     }
 
-    @LargeTest
     public void testBackImageCapture() throws Exception {
         Instrumentation inst = getInstrumentation();
         Intent intent = new Intent();
@@ -104,7 +103,6 @@ public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         act.finish();
     }
 
-    @LargeTest
     public void testFrontImageCapture() throws Exception {
         Instrumentation inst = getInstrumentation();
         Intent intent = new Intent();

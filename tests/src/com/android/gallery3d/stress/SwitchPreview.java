@@ -86,7 +86,6 @@ public class SwitchPreview extends ActivityInstrumentationTestCase2 <CameraActiv
         }
     }
 
-    @LargeTest
     public void testSwitchMode() {
         //Switching the video and the video recorder mode
         Instrumentation inst = getInstrumentation();
