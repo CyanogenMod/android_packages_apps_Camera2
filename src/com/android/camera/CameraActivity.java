@@ -279,6 +279,7 @@ public class CameraActivity extends Activity
         mCameraPreviewData = new CameraPreviewData(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL,
                 FilmStripView.ImageData.SIZE_FULL);
+        // Put a CameraPreviewData at the first position.
         mWrappedDataAdapter = new FixedFirstDataAdapter(
                 new CameraDataAdapter(new ColorDrawable(
                         getResources().getColor(R.color.photo_placeholder))),
@@ -296,6 +297,25 @@ public class CameraActivity extends Activity
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
         bindMediaSaveService();
+
+        if (!mSecureCamera) {
+            mDataAdapter = mWrappedDataAdapter;
+            mDataAdapter.requestLoad(getContentResolver());
+        } else {
+            // Put a lock placeholder as the last image by setting its date to 0.
+            ImageView v = (ImageView) getLayoutInflater().inflate(
+                    R.layout.secure_album_placeholder, null);
+            mDataAdapter = new FixedLastDataAdapter(
+                    mWrappedDataAdapter,
+                    new LocalData.LocalViewData(
+                            v,
+                            v.getDrawable().getIntrinsicWidth(),
+                            v.getDrawable().getIntrinsicHeight(),
+                            0, 0));
+            // Flush out all the original data.
+            mDataAdapter.flush();
+        }
+        mFilmStripView.setDataAdapter(mDataAdapter);
     }
 
     private void setRotationAnimation() {
@@ -343,25 +363,6 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
 
-        // The loading is done in background and will update the filmstrip later.
-        if (!mSecureCamera) {
-            mDataAdapter = mWrappedDataAdapter;
-            mDataAdapter.requestLoad(getContentResolver());
-            mFilmStripView.setDataAdapter(mDataAdapter);
-        } else {
-            // Put a lock placeholder as the last image by setting its date to 0.
-            ImageView v = (ImageView) getLayoutInflater().inflate(
-                    R.layout.secure_album_placeholder, null);
-            mDataAdapter = new FixedLastDataAdapter(
-                    mWrappedDataAdapter,
-                    new LocalData.LocalViewData(
-                            v,
-                            v.getDrawable().getIntrinsicWidth(),
-                            v.getDrawable().getIntrinsicHeight(),
-                            0, 0));
-            // Flush out all the original data.
-            mDataAdapter.flush();
-        }
         mPanoramaViewHelper.onStart();
     }
 
