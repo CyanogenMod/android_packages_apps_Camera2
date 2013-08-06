@@ -16,6 +16,8 @@
 
 package com.android.camera;
 
+import java.util.List;
+
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -48,10 +50,8 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.ui.ZoomRenderer;
-import com.android.gallery3d.R;
+import com.android.camera2.R;
 import com.android.gallery3d.common.ApiHelper;
-
-import java.util.List;
 
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,

@@ -17,6 +17,8 @@
 
 package com.android.camera;
 
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -26,7 +28,6 @@ import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
-import android.hardware.Camera.FaceDetectionListener;
 import android.hardware.Camera.Size;
 import android.os.Handler;
 import android.os.Message;
@@ -57,10 +58,8 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.ZoomRenderer;
-import com.android.gallery3d.R;
+import com.android.camera2.R;
 import com.android.gallery3d.common.ApiHelper;
-
-import java.util.List;
 
 public class PhotoUI implements PieListener,
     PreviewGestures.SingleTapListener,

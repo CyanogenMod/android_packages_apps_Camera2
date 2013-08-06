@@ -22,12 +22,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 
-import com.android.gallery3d.util.UsageStatistics;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.android.camera.util.UsageStatistics;
 
 public class ComboPreferences implements
         SharedPreferences,

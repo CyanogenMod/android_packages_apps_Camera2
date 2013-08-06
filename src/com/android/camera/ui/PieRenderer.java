@@ -16,6 +16,9 @@
 
 package com.android.camera.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
@@ -37,10 +40,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 import com.android.camera.drawable.TextDrawable;
-import com.android.gallery3d.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.android.camera2.R;
 
 public class PieRenderer extends OverlayRenderer
         implements FocusIndicator {

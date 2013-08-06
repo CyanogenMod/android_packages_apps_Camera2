@@ -16,6 +16,15 @@
 
 package com.android.camera;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import com.android.camera2.R;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,7 +47,6 @@ import android.hardware.Camera.Size;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -54,17 +62,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.MovieActivity;
-import com.android.gallery3d.common.ApiHelper;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
+import com.android.camera.support.common.ApiHelper;
 
 /**
  * Collection of utility functions used in this package.
@@ -90,6 +88,9 @@ public class Util {
     public static final String SCENE_MODE_HDR = "hdr";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    
+    /** Has to by in sync with the receiving MovieActivity. */
+    public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
 
     public static boolean isSupported(String value, List<String> supported) {
         return supported == null ? false : supported.indexOf(value) >= 0;
@@ -794,7 +795,7 @@ public class Util {
             Intent intent = new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "video/*")
                     .putExtra(Intent.EXTRA_TITLE, title)
-                    .putExtra(MovieActivity.KEY_TREAT_UP_AS_BACK, true);
+                    .putExtra(KEY_TREAT_UP_AS_BACK, true);
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(context, context.getString(R.string.video_err),

@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,8 +29,8 @@ import android.media.CamcorderProfile;
 import android.util.FloatMath;
 import android.util.Log;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera2.R;
+import com.android.camera.support.common.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.List;

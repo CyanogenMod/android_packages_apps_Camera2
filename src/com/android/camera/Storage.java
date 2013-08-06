@@ -16,6 +16,9 @@
 
 package com.android.camera;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -29,11 +32,8 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.support.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 public class Storage {
     private static final String TAG = "CameraStorage";

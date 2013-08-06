@@ -16,6 +16,15 @@
 
 package com.android.camera;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentProviderClient;
@@ -56,26 +65,16 @@ import com.android.camera.CameraManager.CameraAFMoveCallback;
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.CameraManager.CameraShutterCallback;
+import com.android.camera.support.common.ApiHelper;
+import com.android.camera.support.filtershow.crop.CropExtras;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.util.UsageStatistics;
+import com.android.camera2.R;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.Rational;
-import com.android.gallery3d.filtershow.crop.CropActivity;
-import com.android.gallery3d.filtershow.crop.CropExtras;
-import com.android.gallery3d.util.UsageStatistics;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.List;
 
 public class PhotoModule
     implements CameraModule,
@@ -1131,7 +1130,9 @@ public class PhotoModule
                 newExtras.putBoolean(CropExtras.KEY_SHOW_WHEN_LOCKED, true);
             }
 
-            Intent cropIntent = new Intent(CropActivity.CROP_ACTION);
+            // TODO ...
+            final String CROP_ACTION = "com.android.camera.action.CROP";
+            Intent cropIntent = new Intent(CROP_ACTION);
 
             cropIntent.setData(tempUri);
             cropIntent.putExtras(newExtras);

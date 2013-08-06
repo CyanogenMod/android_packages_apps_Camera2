@@ -23,7 +23,7 @@ import android.hardware.Camera.Parameters;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.android.gallery3d.R;
+import com.android.camera2.R;
 
 /**
  * The on-screen indicators of the pie menu button. They show the camera

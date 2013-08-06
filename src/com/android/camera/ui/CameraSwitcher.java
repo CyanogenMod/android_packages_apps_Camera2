@@ -35,10 +35,10 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
 import com.android.camera.Util;
-import com.android.gallery3d.R;
+import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.UsageStatistics;
+import com.android.camera2.R;
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.util.LightCycleHelper;
-import com.android.gallery3d.util.UsageStatistics;
 
 public class CameraSwitcher extends RotateImageView
         implements OnClickListener, OnTouchListener {
@@ -96,14 +96,14 @@ public class CameraSwitcher extends RotateImageView
     }
 
     public void initializeDrawables(Context context) {
-        int totaldrawid = (LightCycleHelper.hasLightCycleCapture(context)
+        int totaldrawid = (PhotoSphereHelper.hasLightCycleCapture(context)
                 ? DRAW_IDS.length : DRAW_IDS.length - 1);
 
         int[] drawids = new int[totaldrawid];
         int[] moduleids = new int[totaldrawid];
         int ix = 0;
         for (int i = 0; i < DRAW_IDS.length; i++) {
-            if (i == LIGHTCYCLE_MODULE_INDEX && !LightCycleHelper.hasLightCycleCapture(context)) {
+            if (i == LIGHTCYCLE_MODULE_INDEX && !PhotoSphereHelper.hasLightCycleCapture(context)) {
                 continue; // not enabled, so don't add to UI
             }
             moduleids[ix] = i;

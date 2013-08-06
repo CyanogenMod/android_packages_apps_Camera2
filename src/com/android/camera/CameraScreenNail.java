@@ -16,16 +16,16 @@
 
 package com.android.camera;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.Matrix;
 import android.util.Log;
-
-import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.glrenderer.GLCanvas;
-import com.android.gallery3d.glrenderer.RawTexture;
-import com.android.gallery3d.ui.SurfaceTextureScreenNail;
+import com.android.camera.support.common.ApiHelper;
+import com.android.camera.support.glrenderer.GLCanvas;
+import com.android.camera.support.glrenderer.RawTexture;
+import com.android.camera.support.ui.SurfaceTextureScreenNail;
 
 /*
  * This is a ScreenNail which can display camera's preview.
@@ -313,11 +313,13 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
         Matrix.translateM(matrix, 0, -.5f, -.5f, 0);
     }
 
-    public void directDraw(GLCanvas canvas, int x, int y, int width, int height) {
+    @SuppressLint("WrongCall")
+	public void directDraw(GLCanvas canvas, int x, int y, int width, int height) {
         DrawClient draw;
         synchronized (mLock) {
             draw = mDraw;
         }
+        // TODO: Should this call draw or onDraw?
         draw.onDraw(canvas, x, y, width, height);
     }
 

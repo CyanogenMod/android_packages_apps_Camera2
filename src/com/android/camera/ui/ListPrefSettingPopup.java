@@ -16,23 +16,23 @@
 
 package com.android.camera.ui;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.SimpleAdapter;
-
-import com.android.camera.IconListPreference;
-import com.android.camera.ListPreference;
-import com.android.gallery3d.R;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import com.android.camera.IconListPreference;
+import com.android.camera.ListPreference;
+import com.android.camera2.R;
 
 // A popup window that shows one camera setting. The title is the name of the
 // setting (ex: white-balance). The entries are the supported values (ex:

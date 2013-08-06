@@ -16,6 +16,9 @@
 
 package com.android.camera.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -26,12 +29,8 @@ import android.widget.GridView;
 import android.widget.SimpleAdapter;
 
 import com.android.camera.IconListPreference;
-
-import com.android.gallery3d.R;
+import com.android.camera2.R;
 import com.android.gallery3d.common.ApiHelper;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 // A popup window that shows video effect setting. It has two grid view.
 // One shows the goofy face effects. The other shows the background replacer

@@ -16,6 +16,8 @@
 
 package com.android.camera;
 
+import java.util.Locale;
+
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
 
@@ -25,9 +27,7 @@ import com.android.camera.ui.ListPrefSettingPopup;
 import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
-import com.android.gallery3d.R;
-
-import java.util.Locale;
+import com.android.camera2.R;
 
 public class PhotoMenu extends PieController
         implements CountdownTimerPopup.Listener,

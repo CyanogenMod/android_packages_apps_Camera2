@@ -16,13 +16,13 @@
 
 package com.android.camera.data;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.net.Uri;
 
-import com.android.gallery3d.util.LightCycleHelper;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
-
-import java.util.ArrayList;
+import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.PhotoSphereHelper.PanoramaMetadata;
 
 /**
  * This class breaks out the off-thread panorama support.
@@ -72,7 +72,7 @@ public class PanoramaMetadataLoader {
                 (new Thread() {
                     @Override
                     public void run() {
-                        onLoadingDone(LightCycleHelper.getPanoramaMetadata(context,
+                        onLoadingDone(PhotoSphereHelper.getPanoramaMetadata(context,
                                 mMediaUri));
                     }
                 }).start();
@@ -96,7 +96,7 @@ public class PanoramaMetadataLoader {
         mPanoramaMetadata = metadata;
         if (mPanoramaMetadata == null) {
             // Error getting panorama data from file. Treat as not panorama.
-            mPanoramaMetadata = LightCycleHelper.NOT_PANORAMA;
+            mPanoramaMetadata = PhotoSphereHelper.NOT_PANORAMA;
         }
         for (PanoramaMetadataCallback cb : mCallbacksWaiting) {
             cb.onPanoramaMetadataLoaded(mPanoramaMetadata);

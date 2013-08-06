@@ -23,10 +23,10 @@ import android.os.SystemClock;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.glrenderer.GLCanvas;
-import com.android.gallery3d.glrenderer.NinePatchTexture;
-import com.android.gallery3d.glrenderer.RawTexture;
+import com.android.camera.support.glrenderer.GLCanvas;
+import com.android.camera.support.glrenderer.NinePatchTexture;
+import com.android.camera.support.glrenderer.RawTexture;
+import com.android.camera2.R;
 
 /**
  * Class to handle the capture animation.

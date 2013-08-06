@@ -16,6 +16,13 @@
 
 package com.android.camera;
 
+import java.io.FileDescriptor;
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -26,15 +33,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.ApiHelper;
-
-import java.io.FileDescriptor;
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import com.android.camera.support.common.ApiHelper;
+import com.android.camera2.R;
 
 
 /**

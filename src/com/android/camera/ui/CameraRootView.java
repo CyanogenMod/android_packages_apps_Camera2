@@ -16,6 +16,7 @@
 
 package com.android.camera.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -27,8 +28,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.Util;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.support.common.ApiHelper;
 
+@SuppressLint("NewApi")
 public class CameraRootView extends FrameLayout {
 
     private int mTopMargin = 0;

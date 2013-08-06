@@ -16,6 +16,13 @@
 
 package com.android.camera;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -56,21 +63,14 @@ import android.widget.Toast;
 
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.support.app.OrientationManager;
+import com.android.camera.support.util.AccessibilityUtils;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.OrientationManager;
+import com.android.camera.util.UsageStatistics;
+import com.android.camera2.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
-import com.android.gallery3d.util.AccessibilityUtils;
-import com.android.gallery3d.util.UsageStatistics;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 public class VideoModule implements CameraModule,
     VideoController,

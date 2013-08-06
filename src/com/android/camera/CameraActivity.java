@@ -47,14 +47,14 @@ import com.android.camera.data.FixedFirstDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
+import com.android.camera.support.common.ApiHelper;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.FilmStripView;
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.util.LightCycleHelper;
-import com.android.gallery3d.util.RefocusHelper;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
+import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.RefocusHelper;
+import com.android.camera2.R;
 
 public class CameraActivity extends Activity
     implements CameraSwitchListener {
@@ -279,7 +279,6 @@ public class CameraActivity extends Activity
         mCameraPreviewData = new CameraPreviewData(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL,
                 FilmStripView.ImageData.SIZE_FULL);
-        // Put a CameraPreviewData at the first position.
         mWrappedDataAdapter = new FixedFirstDataAdapter(
                 new CameraDataAdapter(new ColorDrawable(
                         getResources().getColor(R.color.photo_placeholder))),
@@ -297,25 +296,6 @@ public class CameraActivity extends Activity
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
         bindMediaSaveService();
-
-        if (!mSecureCamera) {
-            mDataAdapter = mWrappedDataAdapter;
-            mDataAdapter.requestLoad(getContentResolver());
-        } else {
-            // Put a lock placeholder as the last image by setting its date to 0.
-            ImageView v = (ImageView) getLayoutInflater().inflate(
-                    R.layout.secure_album_placeholder, null);
-            mDataAdapter = new FixedLastDataAdapter(
-                    mWrappedDataAdapter,
-                    new LocalData.LocalViewData(
-                            v,
-                            v.getDrawable().getIntrinsicWidth(),
-                            v.getDrawable().getIntrinsicHeight(),
-                            0, 0));
-            // Flush out all the original data.
-            mDataAdapter.flush();
-        }
-        mFilmStripView.setDataAdapter(mDataAdapter);
     }
 
     private void setRotationAnimation() {
@@ -363,6 +343,25 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
 
+        // The loading is done in background and will update the filmstrip later.
+        if (!mSecureCamera) {
+            mDataAdapter = mWrappedDataAdapter;
+            mDataAdapter.requestLoad(getContentResolver());
+            mFilmStripView.setDataAdapter(mDataAdapter);
+        } else {
+            // Put a lock placeholder as the last image by setting its date to 0.
+            ImageView v = (ImageView) getLayoutInflater().inflate(
+                    R.layout.secure_album_placeholder, null);
+            mDataAdapter = new FixedLastDataAdapter(
+                    mWrappedDataAdapter,
+                    new LocalData.LocalViewData(
+                            v,
+                            v.getDrawable().getIntrinsicWidth(),
+                            v.getDrawable().getIntrinsicHeight(),
+                            0, 0));
+            // Flush out all the original data.
+            mDataAdapter.flush();
+        }
         mPanoramaViewHelper.onStart();
     }
 
@@ -497,7 +496,7 @@ public class CameraActivity extends Activity
                 mCurrentModule = new PhotoModule();
                 break;
             case CameraSwitcher.LIGHTCYCLE_MODULE_INDEX:
-                mCurrentModule = LightCycleHelper.createPanoramaModule();
+                mCurrentModule = PhotoSphereHelper.createPanoramaModule();
                 break;
             case CameraSwitcher.REFOCUS_MODULE_INDEX:
                 mCurrentModule = RefocusHelper.createRefocusModule();

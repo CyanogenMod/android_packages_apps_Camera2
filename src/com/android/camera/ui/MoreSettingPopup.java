@@ -16,6 +16,8 @@
 
 package com.android.camera.ui;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,9 +30,7 @@ import android.widget.ListView;
 
 import com.android.camera.ListPreference;
 import com.android.camera.PreferenceGroup;
-import com.android.gallery3d.R;
-
-import java.util.ArrayList;
+import com.android.camera2.R;
 
 /* A popup window that contains several camera settings. */
 public class MoreSettingPopup extends AbstractSettingPopup

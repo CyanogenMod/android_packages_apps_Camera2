@@ -16,6 +16,9 @@
 
 package com.android.camera;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -27,10 +30,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.android.gallery3d.common.ApiHelper;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.android.camera.support.common.ApiHelper;
 
 /* A class that handles everything about focus in still picture mode.
  * This also handles the metering area because it is the same as focus area.

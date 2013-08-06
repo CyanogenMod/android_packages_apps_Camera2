@@ -33,8 +33,8 @@ import android.widget.ImageButton;
 import android.widget.Scroller;
 
 import com.android.camera.ui.FilmStripView.ImageData.PanoramaSupportCallback;
-import com.android.gallery3d.R;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
+import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera2.R;
 
 public class FilmStripView extends ViewGroup {
     @SuppressWarnings("unused")

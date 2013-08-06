@@ -16,6 +16,10 @@
 
 package com.android.camera.data;
 
+import java.io.File;
+import java.util.Comparator;
+import java.util.Date;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -42,13 +46,9 @@ import android.widget.ImageView;
 import com.android.camera.Util;
 import com.android.camera.data.PanoramaMetadataLoader.PanoramaMetadataCallback;
 import com.android.camera.ui.FilmStripView;
-import com.android.gallery3d.R;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
-
-import java.io.File;
-import java.util.Comparator;
-import java.util.Date;
+import com.android.camera.util.PhotoSphereHelper.PanoramaMetadata;
+import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera2.R;
 
 /**
  * An abstract interface that represents the local media data. Also implements
@@ -101,16 +101,10 @@ public interface LocalData extends FilmStripView.ImageData {
     // Implementations below.
 
     /**
-<<<<<<< HEAD
      * A base class for all the local media files. The bitmap is loaded in
      * background thread. Subclasses should implement their own background
      * loading thread by subclassing BitmapLoadTask and overriding
      * doInBackground() to return a bitmap.
-=======
-     * A base class for all the local media files. The bitmap is loaded in background
-     * thread. Subclasses should implement their own background loading thread by
-     * sub-classing BitmapLoadTask and overriding doInBackground() to return a bitmap.
->>>>>>> Add LocalDataAdapter and wrappers.
      */
     abstract static class LocalMediaData implements LocalData {
         protected long id;

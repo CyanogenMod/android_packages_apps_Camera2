@@ -16,6 +16,8 @@
 
 package com.android.camera;
 
+import java.io.IOException;
+
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -25,9 +27,7 @@ import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-import com.android.gallery3d.common.ApiHelper;
-
-import java.io.IOException;
+import com.android.camera.support.common.ApiHelper;
 
 /**
  * An interface which provides possible camera device operations.

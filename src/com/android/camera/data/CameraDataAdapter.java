@@ -16,6 +16,11 @@
 
 package com.android.camera.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,12 +33,6 @@ import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.ui.FilmStripView.ImageData;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * A {@link LocalDataAdapter} that provides data in the camera folder.

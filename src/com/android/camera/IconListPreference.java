@@ -16,14 +16,14 @@
 
 package com.android.camera;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
-import com.android.gallery3d.R;
-
-import java.util.List;
+import com.android.camera2.R;
 
 /** A {@code ListPreference} where each entry has a corresponding icon. */
 public class IconListPreference extends ListPreference {

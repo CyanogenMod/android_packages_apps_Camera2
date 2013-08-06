@@ -18,6 +18,8 @@ package com.android.camera;
 
 import static com.android.camera.Util.Assert;
 
+import java.io.IOException;
+
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -37,9 +39,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.android.gallery3d.common.ApiHelper;
-
-import java.io.IOException;
+import com.android.camera.support.common.ApiHelper;
 
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.

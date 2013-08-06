@@ -16,17 +16,13 @@
 
 package com.android.camera.ui;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.android.camera.Util;
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera2.R;
 
 public class CameraControls extends RotatableLayout {
 

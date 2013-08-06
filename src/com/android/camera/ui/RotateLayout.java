@@ -27,8 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.android.camera.support.util.MotionEventHelper;
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.util.MotionEventHelper;
 
 // A RotateLayout is designed to display a single item and provides the
 // capabilities to rotate the item.

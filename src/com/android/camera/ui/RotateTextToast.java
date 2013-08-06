@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.camera.Util;
-import com.android.gallery3d.R;
+import com.android.camera2.R;
 
 public class RotateTextToast {
     private static final int TOAST_DURATION = 5000; // milliseconds

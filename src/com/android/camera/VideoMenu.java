@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 
@@ -27,7 +26,7 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimeIntervalPopup;
-import com.android.gallery3d.R;
+import com.android.camera2.R;
 
 public class VideoMenu extends PieController
         implements MoreSettingPopup.Listener,

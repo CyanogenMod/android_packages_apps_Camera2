@@ -16,6 +16,9 @@
 
 package com.android.camera;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -23,10 +26,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 
-import com.android.gallery3d.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.android.camera2.R;
 
 /**
  * A type of <code>CameraPreference</code> whose number of possible values
