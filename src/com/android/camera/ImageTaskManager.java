@@ -21,7 +21,7 @@ import android.net.Uri;
 /**
  * The interface for background image processing task manager.
  */
-interface ImageTaskManager {
+public interface ImageTaskManager {
 
     /**
      * Callback interface for task events.

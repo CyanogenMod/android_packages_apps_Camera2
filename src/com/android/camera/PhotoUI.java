@@ -19,16 +19,15 @@ package com.android.camera;
 
 import java.util.List;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -41,6 +40,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
@@ -69,6 +69,8 @@ public class PhotoUI implements PieListener,
 
     private static final String TAG = "CAM_UI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
+    private static final int DOWN_SAMPLE_FACTOR = 4;
+    private final AnimationManager mAnimationManager;
     private CameraActivity mActivity;
     private PhotoController mController;
     private PreviewGestures mGestures;
@@ -108,8 +110,7 @@ public class PhotoUI implements PieListener,
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
 
-    private View mPreviewThumb;
-    private ObjectAnimator mFlashAnim;
+    private ImageView mPreviewThumb;
     private View mFlashOverlay;
 
     private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
@@ -156,25 +157,25 @@ public class PhotoUI implements PieListener,
         }
     };
 
-    private ValueAnimator.AnimatorListener mAnimatorListener =
-            new ValueAnimator.AnimatorListener() {
+    private class DecodeTask extends AsyncTask<Integer, Void, Bitmap> {
+        private final byte [] mData;
 
-        @Override
-        public void onAnimationCancel(Animator arg0) {}
-
-        @Override
-        public void onAnimationEnd(Animator arg0) {
-            mFlashOverlay.setAlpha(0f);
-            mFlashOverlay.setVisibility(View.GONE);
-            mFlashAnim.removeListener(this);
+        public DecodeTask(byte[] data) {
+            mData = data;
         }
 
         @Override
-        public void onAnimationRepeat(Animator arg0) {}
+        protected Bitmap doInBackground(Integer... params) {
+            // Decode image in background.
+            return Util.downSample(mData, DOWN_SAMPLE_FACTOR);
+        }
 
         @Override
-        public void onAnimationStart(Animator arg0) {}
-    };
+        protected void onPostExecute(Bitmap bitmap) {
+            mPreviewThumb.setImageBitmap(bitmap);
+            mAnimationManager.startCaptureAnimation(mPreviewThumb);
+        }
+    }
 
     public PhotoUI(CameraActivity activity, PhotoController controller, View parent) {
         mActivity = activity;
@@ -208,6 +209,7 @@ public class PhotoUI implements PieListener,
         }
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         ((CameraRootView) mRootView).setDisplayChangeListener(this);
+        mAnimationManager = new AnimationManager();
     }
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
@@ -328,6 +330,12 @@ public class PhotoUI implements PieListener,
         updateOnScreenIndicators(params, prefGroup, prefs);
     }
 
+    public void animateCapture(final byte[] jpegData) {
+        // Decode jpeg byte array and then animate the jpeg
+        DecodeTask task = new DecodeTask(jpegData);
+        task.execute();
+    }
+
     private void openMenu() {
         if (mPieRenderer != null) {
             // If autofocus is not finished, cancel autofocus so that the
@@ -341,7 +349,7 @@ public class PhotoUI implements PieListener,
 
     public void initializeControlByIntent() {
         mBlocker = mRootView.findViewById(R.id.blocker);
-        mPreviewThumb = mRootView.findViewById(R.id.preview_thumb);
+        mPreviewThumb = (ImageView) mRootView.findViewById(R.id.preview_thumb);
         mPreviewThumb.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -498,16 +506,7 @@ public class PhotoUI implements PieListener,
     }
 
     public void animateFlash() {
-        // End the previous animation if the previous one is still running
-        if (mFlashAnim != null && mFlashAnim.isRunning()) {
-            mFlashAnim.end();
-        }
-        // Start new flash animation.
-        mFlashOverlay.setVisibility(View.VISIBLE);
-        mFlashAnim = ObjectAnimator.ofFloat((Object) mFlashOverlay, "alpha", 0.3f, 0f);
-        mFlashAnim.setDuration(300);
-        mFlashAnim.addListener(mAnimatorListener);
-        mFlashAnim.start();
+        mAnimationManager.startFlashAnimation(mFlashOverlay);
     }
 
     public void enableGestures(boolean enable) {
@@ -568,14 +567,6 @@ public class PhotoUI implements PieListener,
         }
         setShowMenu(toCamera);
         if (!toCamera && mCountDownView != null) mCountDownView.cancelCountDown();
-    }
-
-    public void enablePreviewThumb(boolean enabled) {
-        if (enabled) {
-            mPreviewThumb.setVisibility(View.VISIBLE);
-        } else {
-            mPreviewThumb.setVisibility(View.GONE);
-        }
     }
 
     public boolean removeTopLevelPopup() {

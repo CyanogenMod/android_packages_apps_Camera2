@@ -21,6 +21,13 @@
         android:id="@+id/preview_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <View
+        android:id="@+id/flash_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        android:alpha="0" />
     <FrameLayout android:id="@+id/preview_border"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

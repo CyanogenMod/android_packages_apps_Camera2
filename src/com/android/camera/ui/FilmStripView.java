@@ -38,7 +38,7 @@ import com.android.camera2.R;
 
 public class FilmStripView extends ViewGroup {
     @SuppressWarnings("unused")
-    private static final String TAG = "FilmStripView";
+    private static final String TAG = "CAM_FilmStripView";
 
     private static final int BUFFER_SIZE = 5;
     private static final int DURATION_GEOMETRY_ADJUST = 200;
@@ -102,7 +102,6 @@ public class FilmStripView extends ViewGroup {
         public static final int TYPE_NONE = 0;
         public static final int TYPE_CAMERA_PREVIEW = 1;
         public static final int TYPE_PHOTO = 2;
-        public static final int TYPE_VIDEO = 3;
 
         // Actions allowed to be performed on the image data.
         // The actions are defined bit-wise so we can use bit operations like
@@ -197,7 +196,7 @@ public class FilmStripView extends ViewGroup {
         }
 
         /**
-         * An interface which defines the listener for UI actions over
+         * An interface which defines the listener for data events over
          * {@link ImageData}.
          */
         public interface Listener {
@@ -246,7 +245,7 @@ public class FilmStripView extends ViewGroup {
         public void suggestViewSizeBound(int w, int h);
 
         /**
-         * Sets the listener for FilmStripView UI actions over the ImageData.
+         * Sets the listener for data events over the ImageData.
          *
          * @param listener The listener to use.
          */
@@ -261,16 +260,6 @@ public class FilmStripView extends ViewGroup {
          *                    {@code false} otherwise.
          */
         public void onDataFullScreen(int dataID, boolean fullScreen);
-
-        /**
-         * The callback when the item is centered/off-centered.
-         * TODO: Calls this function actually.
-         *
-         * @param dataID      The ID of the image data.
-         * @param centered    {@code true} if the data is centered.
-         *                    {@code false} otherwise.
-         */
-        public void onDataCentered(int dataID, boolean centered);
 
         /**
          * Returns {@code true} if the view of the data can be moved by swipe
@@ -310,6 +299,15 @@ public class FilmStripView extends ViewGroup {
          *                 {@code false}
          */
         public void onSwitchMode(boolean toCamera);
+
+        /**
+         * The callback when the item is centered/off-centered.
+         *
+         * @param dataID      The ID of the image data.
+         * @param current     {@code true} if the data is the current one.
+         *                    {@code false} otherwise.
+         */
+        public void onCurrentDataChanged(int dataID, boolean current);
     }
 
     /**
@@ -500,7 +498,7 @@ public class FilmStripView extends ViewGroup {
         return false;
     }
 
-    public int getCurrentType() {
+    private int getCurrentType() {
         if (mDataAdapter == null) {
             return ImageData.TYPE_NONE;
         }
@@ -653,8 +651,7 @@ public class FilmStripView extends ViewGroup {
     private void stepIfNeeded() {
         if (!inFilmStrip() && !inFullScreen()) {
             // The good timing to step to the next view is when everything is
-            // not in
-            // transition.
+            // not in transition.
             return;
         }
         int nearest = findTheNearestView(mCenterX);
@@ -662,6 +659,10 @@ public class FilmStripView extends ViewGroup {
         if (nearest == -1 || nearest == mCurrentInfo)
             return;
 
+        // Going to change the current info, notify the listener.
+        if (mListener != null) {
+            mListener.onCurrentDataChanged(mViewInfo[mCurrentInfo].getID(), false);
+        }
         int adjust = nearest - mCurrentInfo;
         if (adjust > 0) {
             for (int k = 0; k < adjust; k++) {
@@ -689,6 +690,9 @@ public class FilmStripView extends ViewGroup {
                     mViewInfo[k] = buildInfoFromData(mViewInfo[k + 1].getID() - 1);
                 }
             }
+        }
+        if (mListener != null) {
+            mListener.onCurrentDataChanged(mViewInfo[mCurrentInfo].getID(), true);
         }
     }
 
@@ -741,7 +745,7 @@ public class FilmStripView extends ViewGroup {
     /**
      * @return The ID of the current item, or -1.
      */
-    private int getCurrentId() {
+    public int getCurrentId() {
         ViewInfo current = mViewInfo[mCurrentInfo];
         if (current == null) {
             return -1;

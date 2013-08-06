@@ -92,8 +92,6 @@ public class VideoModule implements CameraModule,
     private static final int SHOW_TAP_TO_SNAPSHOT_TOAST = 7;
     private static final int SWITCH_CAMERA = 8;
     private static final int SWITCH_CAMERA_START_ANIMATION = 9;
-    private static final int HIDE_SURFACE_VIEW = 10;
-    private static final int CAPTURE_ANIMATION_DONE = 11;
 
     private static final int SCREEN_DELAY = 2 * 60 * 1000;
 
@@ -107,7 +105,6 @@ public class VideoModule implements CameraModule,
     private static final String EXTRA_QUICK_CAPTURE =
             "android.intent.extra.quickCapture";
 
-    private static final int MIN_THUMB_SIZE = 64;
     // module fields
     private CameraActivity mActivity;
     private boolean mPaused;
@@ -200,9 +197,7 @@ public class VideoModule implements CameraModule,
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        mActivity.sendBroadcast(
-                                new Intent(Util.ACTION_NEW_VIDEO, uri));
-                        Util.broadcastNewPicture(mActivity, uri);
+                        mActivity.notifyNewMedia(uri);
                     }
                 }
             };
@@ -212,7 +207,7 @@ public class VideoModule implements CameraModule,
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        Util.broadcastNewPicture(mActivity, uri);
+                        mActivity.notifyNewMedia(uri);
                     }
                 }
             };
@@ -292,11 +287,6 @@ public class VideoModule implements CameraModule,
 
                     // Enable all camera controls.
                     mSwitchingCamera = false;
-                    break;
-                }
-
-                case CAPTURE_ANIMATION_DONE: {
-                    mUI.enablePreviewThumb(false);
                     break;
                 }
 
@@ -555,16 +545,12 @@ public class VideoModule implements CameraModule,
                 // back to use SurfaceTexture for preview and we need to stop then start
                 // the preview. This will cause the preview flicker since the preview
                 // will not be continuous for a short period of time.
-                // TODO: need to get the capture animation to work
-                // ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
 
-                mUI.enablePreviewThumb(true);
-
-                // Make sure to disable the thumbnail preview after the
-                // animation is done to disable the click target.
-                mHandler.removeMessages(CAPTURE_ANIMATION_DONE);
-                mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
-                        CaptureAnimManager.getAnimationDuration());
+                mUI.animateFlash();
+                Bitmap bitmap = getVideoThumbnail();
+                if (bitmap != null) {
+                    mUI.animateCapture(bitmap);
+                }
             }
         }
     }
@@ -1425,7 +1411,7 @@ public class VideoModule implements CameraModule,
 
     private void startVideoRecording() {
         Log.v(TAG, "startVideoRecording");
-        mUI.enablePreviewThumb(false);
+        mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();
@@ -1502,8 +1488,7 @@ public class VideoModule implements CameraModule,
                 UsageStatistics.ACTION_CAPTURE_START, "Video");
     }
 
-    private void showCaptureResult() {
-        mIsInReviewMode = true;
+    private Bitmap getVideoThumbnail() {
         Bitmap bitmap = null;
         if (mVideoFileDescriptor != null) {
             bitmap = Thumbnail.createVideoThumbnailBitmap(mVideoFileDescriptor.getFileDescriptor(),
@@ -1518,9 +1503,16 @@ public class VideoModule implements CameraModule,
             CameraInfo[] info = CameraHolder.instance().getCameraInfo();
             boolean mirror = (info[mCameraId].facing == CameraInfo.CAMERA_FACING_FRONT);
             bitmap = Util.rotateAndMirror(bitmap, 0, mirror);
+        }
+        return bitmap;
+    }
+
+    private void showCaptureResult() {
+        mIsInReviewMode = true;
+        Bitmap bitmap = getVideoThumbnail();
+        if (bitmap != null) {
             mUI.showReviewImage(bitmap);
         }
-
         mUI.showReviewControls();
         mUI.enableCameraControls(false);
         mUI.showTimeLapseUI(false);
@@ -2086,7 +2078,7 @@ public class VideoModule implements CameraModule,
         if (mParameters == null) return;
         if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (enabled) {
-             // TODO: ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
+                mUI.animateFlash();
             } else {
                 mUI.showPreviewBorder(enabled);
             }

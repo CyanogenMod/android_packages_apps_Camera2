@@ -32,7 +32,7 @@ import com.android.camera.ui.FilmStripView.ImageData;
 public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         implements DataAdapter.Listener {
 
-    private final LocalData mFirstData;
+    private LocalData mFirstData;
     private Listener mListener;
 
     /**
@@ -53,6 +53,14 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
+    public LocalData getLocalData(int dataID) {
+        if (dataID == 0) {
+            return mFirstData;
+        }
+        return mAdapter.getLocalData(dataID - 1);
+    }
+
+    @Override
     public void removeData(Context context, int dataID) {
         if (dataID > 0) {
             mAdapter.removeData(context, dataID - 1);
@@ -66,6 +74,28 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
             return pos + 1;
         }
         return -1;
+    }
+
+    @Override
+    public void updateData(int pos, LocalData data) {
+        if (pos == 0) {
+            mFirstData = data;
+            if (mListener != null) {
+                mListener.onDataUpdated(new UpdateReporter() {
+                    @Override
+                    public boolean isDataRemoved(int dataID) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isDataUpdated(int dataID) {
+                        return (dataID == 0);
+                    }
+                });
+            }
+        } else {
+            mAdapter.updateData(pos - 1, data);
+        }
     }
 
     @Override
@@ -100,15 +130,6 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public void onDataCentered(int dataID, boolean centered) {
-        if (dataID != 0) {
-            mAdapter.onDataCentered(dataID, centered);
-        } else {
-            // TODO: notify the data
-        }
-    }
-
-    @Override
     public void setListener(Listener listener) {
         mListener = listener;
         mAdapter.setListener((listener == null) ? null : this);
@@ -132,12 +153,12 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         mListener.onDataUpdated(new UpdateReporter() {
             @Override
             public boolean isDataRemoved(int dataID) {
-                return reporter.isDataRemoved(dataID + 1);
+                return reporter.isDataRemoved(dataID - 1);
             }
 
             @Override
             public boolean isDataUpdated(int dataID) {
-                return reporter.isDataUpdated(dataID + 1);
+                return reporter.isDataUpdated(dataID - 1);
             }
         });
     }

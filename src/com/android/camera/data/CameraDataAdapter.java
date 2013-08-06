@@ -16,11 +16,6 @@
 
 package com.android.camera.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,11 +29,16 @@ import android.view.View;
 import com.android.camera.Storage;
 import com.android.camera.ui.FilmStripView.ImageData;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * A {@link LocalDataAdapter} that provides data in the camera folder.
  */
 public class CameraDataAdapter implements LocalDataAdapter {
-    private static final String TAG = CameraDataAdapter.class.getSimpleName();
+    private static final String TAG = "CAM_CameraDataAdapter";
 
     private static final int DEFAULT_DECODE_SIZE = 3000;
     private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
@@ -64,6 +64,15 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
+    public LocalData getLocalData(int dataID) {
+        if (mImages == null || dataID < 0 || dataID >= mImages.size()) {
+            return null;
+        }
+
+        return mImages.get(dataID);
+    }
+
+    @Override
     public int getTotalNumber() {
         if (mImages == null) {
             return 0;
@@ -73,7 +82,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public ImageData getImageData(int id) {
-        return getData(id);
+        return getLocalData(id);
     }
 
     @Override
@@ -116,11 +125,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void onDataCentered(int dataID, boolean centered) {
-        // do nothing.
-    }
-
-    @Override
     public boolean canSwipeInFullScreen(int dataID) {
         if (dataID < mImages.size() && dataID > 0) {
             return mImages.get(dataID).canSwipeInFullScreen();
@@ -138,49 +142,60 @@ public class CameraDataAdapter implements LocalDataAdapter {
         mListener.onDataRemoved(dataID, d);
     }
 
-    private void insertData(LocalData data) {
-        if (mImages == null) {
-            mImages = new ArrayList<LocalData>();
-        }
-
-        // Since this function is mostly for adding the newest data,
-        // a simple linear search should yield the best performance over a
-        // binary search.
-        int pos = 0;
-        Comparator<LocalData> comp = new LocalData.NewestFirstComparator();
-        for (; pos < mImages.size()
-                && comp.compare(data, mImages.get(pos)) > 0; pos++);
-        mImages.add(pos, data);
-        if (mListener != null) {
-            mListener.onDataInserted(pos, data);
-        }
-    }
-
+    // TODO: put the database query on background thread
     @Override
     public void addNewVideo(ContentResolver cr, Uri uri) {
         Cursor c = cr.query(uri,
                 LocalData.Video.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalData.Video.QUERY_ORDER);
-        if (c != null && c.moveToFirst()) {
-            insertData(LocalData.Video.buildFromCursor(c));
+        if (c == null || !c.moveToFirst()) {
+            return;
+        }
+        int pos = findDataByContentUri(uri);
+        LocalData.Video newData = LocalData.Video.buildFromCursor(c);
+        if (pos != -1) {
+            // A duplicate one, just do a substitute.
+            updateData(pos, newData);
+        } else {
+            // A new data.
+            insertData(newData);
         }
     }
 
+    // TODO: put the database query on background thread
     @Override
     public void addNewPhoto(ContentResolver cr, Uri uri) {
         Cursor c = cr.query(uri,
                 LocalData.Photo.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalData.Photo.QUERY_ORDER);
-        if (c != null && c.moveToFirst()) {
-            insertData(LocalData.Photo.buildFromCursor(c));
+        if (c == null || !c.moveToFirst()) {
+            return;
+        }
+        int pos = findDataByContentUri(uri);
+        LocalData.Photo newData = LocalData.Photo.buildFromCursor(c);
+        if (pos != -1) {
+            // a duplicate one, just do a substitute.
+            Log.v(TAG, "found duplicate photo");
+            updateData(pos, newData);
+        } else {
+            // a new data.
+            insertData(newData);
         }
     }
 
     @Override
     public int findDataByContentUri(Uri uri) {
-        // TODO: find the data.
+        for (int i = 0; i < mImages.size(); i++) {
+            Uri u = mImages.get(i).getContentUri();
+            if (u == null) {
+                continue;
+            }
+            if (u.equals(uri)) {
+                return i;
+            }
+        }
         return -1;
     }
 
@@ -208,51 +223,62 @@ public class CameraDataAdapter implements LocalDataAdapter {
         replaceData(null);
     }
 
-    private LocalData getData(int id) {
-        if (mImages == null || id >= mImages.size() || id < 0) {
-            return null;
+    @Override
+    public void refresh(ContentResolver resolver, Uri contentUri) {
+        int pos = findDataByContentUri(contentUri);
+        if (pos == -1) {
+            return;
         }
-        return mImages.get(id);
+
+        LocalData data = mImages.get(pos);
+        if (data.refresh(resolver)) {
+            updateData(pos, data);
+        }
     }
 
-    // Update all the data but keep the camera data if already set.
-    private void replaceData(List<LocalData> list) {
-        boolean changed = (list != mImages);
-        LocalData cameraData = null;
-        if (mImages != null && mImages.size() > 0) {
-            cameraData = mImages.get(0);
-            if (cameraData.getType() != ImageData.TYPE_CAMERA_PREVIEW) {
-                cameraData = null;
-            }
+    @Override
+    public void updateData(final int pos, LocalData data) {
+        mImages.set(pos, data);
+        if (mListener != null) {
+            mListener.onDataUpdated(new UpdateReporter() {
+                @Override
+                public boolean isDataRemoved(int dataID) {
+                    return false;
+                }
+
+                @Override
+                public boolean isDataUpdated(int dataID) {
+                    return (dataID == pos);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void insertData(LocalData data) {
+        if (mImages == null) {
+            mImages = new ArrayList<LocalData>();
         }
 
-        mImages = list;
-        if (cameraData != null) {
-            // camera view exists, so we make sure at least 1 data is in the list.
-            if (mImages == null) {
-                mImages = new ArrayList<LocalData>();
-            }
-            mImages.add(0, cameraData);
-            if (mListener != null) {
-                // Only the camera data is not changed, everything else is changed.
-                mListener.onDataUpdated(new UpdateReporter() {
-                    @Override
-                    public boolean isDataRemoved(int id) {
-                        return false;
-                    }
+        // Since this function is mostly for adding the newest data,
+        // a simple linear search should yield the best performance over a
+        // binary search.
+        int pos = 0;
+        Comparator<LocalData> comp = new LocalData.NewestFirstComparator();
+        for (; pos < mImages.size()
+                && comp.compare(data, mImages.get(pos)) > 0; pos++);
+        mImages.add(pos, data);
+        if (mListener != null) {
+            mListener.onDataInserted(pos, data);
+        }
+    }
 
-                    @Override
-                    public boolean isDataUpdated(int id) {
-                        if (id == 0) return false;
-                        return true;
-                    }
-                });
-            }
-        } else {
-            // both might be null.
-            if (changed) {
-                mListener.onDataLoaded();
-            }
+    /** Update all the data */
+    private void replaceData(List<LocalData> list) {
+        boolean changed = (list != mImages);
+        mImages = list;
+        if (changed) {
+            mListener.onDataLoaded();
         }
     }
 

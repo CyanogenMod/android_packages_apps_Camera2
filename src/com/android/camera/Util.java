@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.android.camera2.R;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -62,7 +61,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera2.R;
+import com.android.gallery3d.common.ApiHelper;
 
 /**
  * Collection of utility functions used in this package.
@@ -89,8 +89,8 @@ public class Util {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
     
-    /** Has to by in sync with the receiving MovieActivity. */
-    public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
+	/** Has to be in sync with the receiving MovieActivity. */
+	public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
 
     public static boolean isSupported(String value, List<String> supported) {
         return supported == null ? false : supported.indexOf(value) >= 0;
@@ -709,6 +709,19 @@ public class Util {
             }
         }
         return rotation;
+    }
+
+    /**
+     * Down-samples a jpeg byte array.
+     * @param data a byte array of jpeg data
+     * @param downSampleFactor down-sample factor
+     * @return decoded and down-sampled bitmap
+     */
+    public static Bitmap downSample(final byte[] data, int downSampleFactor) {
+        final BitmapFactory.Options opts = new BitmapFactory.Options();
+        // Downsample the image
+        opts.inSampleSize = downSampleFactor;
+        return BitmapFactory.decodeByteArray(data, 0, data.length, opts);
     }
 
     public static void setGpsParameters(Parameters parameters, Location loc) {

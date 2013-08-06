@@ -29,7 +29,8 @@ import com.android.camera.ui.FilmStripView;
  */
 public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
 
-    private final LocalData mLastData;
+    private LocalData mLastData;
+    private Listener mListener;
 
     /**
      * Constructor.
@@ -48,6 +49,25 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
+    public void setListener(Listener listener) {
+        super.setListener(listener);
+        mListener = listener;
+    }
+
+    @Override
+    public LocalData getLocalData(int dataID) {
+        int totalNumber = mAdapter.getTotalNumber();
+
+        if (dataID < totalNumber) {
+            return mAdapter.getLocalData(dataID);
+        } else if (dataID == totalNumber) {
+            return mLastData;
+        }
+
+        return null;
+    }
+
+    @Override
     public void removeData(Context context, int dataID) {
         if (dataID < mAdapter.getTotalNumber()) {
             mAdapter.removeData(context, dataID);
@@ -57,6 +77,30 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     @Override
     public int findDataByContentUri(Uri uri) {
         return mAdapter.findDataByContentUri(uri);
+    }
+
+    @Override
+    public void updateData(final int pos, LocalData data) {
+        int totalNumber = mAdapter.getTotalNumber();
+
+        if (pos < totalNumber) {
+            mAdapter.updateData(pos, data);
+        } else if (pos == totalNumber) {
+            mLastData = data;
+            if (mListener != null) {
+                mListener.onDataUpdated(new UpdateReporter() {
+                    @Override
+                    public boolean isDataRemoved(int dataID) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isDataUpdated(int dataID) {
+                        return (dataID == pos);
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -98,17 +142,6 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
             mAdapter.onDataFullScreen(dataID, fullScreen);
         } else if (dataID == totalNumber) {
             mLastData.onFullScreen(fullScreen);
-        }
-    }
-
-    @Override
-    public void onDataCentered(int dataID, boolean centered) {
-        int totalNumber = mAdapter.getTotalNumber();
-
-        if (dataID < totalNumber) {
-            mAdapter.onDataCentered(dataID, centered);
-        } else if (dataID == totalNumber) {
-            // TODO: notify the data
         }
     }
 

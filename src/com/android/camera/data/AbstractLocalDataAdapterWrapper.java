@@ -74,6 +74,11 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
+    public void insertData(LocalData data) {
+        mAdapter.insertData(data);
+    }
+
+    @Override
     public void flush() {
         mAdapter.flush();
     }
@@ -86,5 +91,10 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     @Override
     public boolean undoDataRemoval() {
         return mAdapter.undoDataRemoval();
+    }
+
+    @Override
+    public void refresh(ContentResolver resolver, Uri uri) {
+        mAdapter.refresh(resolver, uri);
     }
 }

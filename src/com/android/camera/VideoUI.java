@@ -91,6 +91,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private int mZoomMax;
     private List<Integer> mZoomRatios;
     private View mPreviewThumb;
+    private View mFlashOverlay;
 
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
@@ -99,6 +100,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private float mSurfaceTextureUncroppedHeight;
     private float mAspectRatio = 4f / 3f;
     private Matrix mMatrix = null;
+    private final AnimationManager mAnimationManager;
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -141,6 +143,7 @@ public class VideoUI implements PieRenderer.PieListener,
         mTextureView.setSurfaceTextureListener(this);
         mRootView.addOnLayoutChangeListener(mLayoutListener);
         ((CameraRootView) mRootView).setDisplayChangeListener(this);
+        mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
         mSwitcher.setCurrentIndex(CameraSwitcher.VIDEO_MODULE_INDEX);
@@ -148,6 +151,7 @@ public class VideoUI implements PieRenderer.PieListener,
         initializeMiscControls();
         initializeControlByIntent();
         initializeOverlay();
+        mAnimationManager = new AnimationManager();
     }
 
 
@@ -264,6 +268,29 @@ public class VideoUI implements PieRenderer.PieListener,
             lp.gravity = Gravity.CENTER;
             mSurfaceView.requestLayout();
         }
+    }
+
+    /**
+     * Starts a flash animation
+     */
+    public void animateFlash() {
+        mAnimationManager.startFlashAnimation(mFlashOverlay);
+    }
+
+    /**
+     * Starts a capture animation
+     * @param bitmap the captured image that we shrink and slide in the animation
+     */
+    public void animateCapture(Bitmap bitmap) {
+        ((ImageView) mPreviewThumb).setImageBitmap(bitmap);
+        mAnimationManager.startCaptureAnimation(mPreviewThumb);
+    }
+
+    /**
+     * Cancels on-going animations
+     */
+    public void cancelAnimations() {
+        mAnimationManager.cancelAnimations();
     }
 
     public void hideUI() {
@@ -621,17 +648,6 @@ public class VideoUI implements PieRenderer.PieListener,
     public void onDisplayChanged() {
         mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
-    }
-
-    /**
-     * Enable or disable the preview thumbnail for click events.
-     */
-    public void enablePreviewThumb(boolean enabled) {
-        if (enabled) {
-            mPreviewThumb.setVisibility(View.VISIBLE);
-        } else {
-            mPreviewThumb.setVisibility(View.GONE);
-        }
     }
 
     private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {

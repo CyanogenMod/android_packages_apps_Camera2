@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
@@ -40,6 +41,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.CameraPreviewData;
@@ -51,8 +53,8 @@ import com.android.camera.support.common.ApiHelper;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.FilmStripView;
-import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
 import com.android.camera2.R;
 
@@ -82,6 +84,8 @@ public class CameraActivity extends Activity
     private CameraModule mCurrentModule;
     private View mRootView;
     private FilmStripView mFilmStripView;
+    private ProgressBar mBottomProgress;
+    private View mPanoStitchingPanel;
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
@@ -150,26 +154,65 @@ public class CameraActivity extends Activity
         sFirstStartAfterScreenOn = false;
     }
 
-    private FilmStripView.Listener mFilmStripListener = new FilmStripView.Listener() {
-            @Override
-            public void onDataPromoted(int dataID) {
-                removeData(dataID);
-            }
+    private FilmStripView.Listener mFilmStripListener =
+            new FilmStripView.Listener() {
+                @Override
+                public void onDataPromoted(int dataID) {
+                    removeData(dataID);
+                }
 
-            @Override
-            public void onDataDemoted(int dataID) {
-                removeData(dataID);
-            }
+                @Override
+                public void onDataDemoted(int dataID) {
+                    removeData(dataID);
+                }
 
-            @Override
-            public void onDataFullScreenChange(int dataID, boolean full) {
-            }
+                @Override
+                public void onDataFullScreenChange(int dataID, boolean full) {
+                }
 
-            @Override
-            public void onSwitchMode(boolean toCamera) {
-                mCurrentModule.onSwitchMode(toCamera);
-            }
-        };
+                @Override
+                public void onSwitchMode(boolean toCamera) {
+                    mCurrentModule.onSwitchMode(toCamera);
+                }
+
+                @Override
+                public void onCurrentDataChanged(int dataID, boolean current) {
+                    if (!current) {
+                        hidePanoStitchingProgress();
+                    } else {
+                        LocalData currentData = mDataAdapter.getLocalData(dataID);
+                        if (currentData == null) {
+                            Log.w(TAG, "Current data ID not found.");
+                            hidePanoStitchingProgress();
+                            return;
+                        }
+                        Uri contentUri = currentData.getContentUri();
+                        if (contentUri == null) {
+                            hidePanoStitchingProgress();
+                            return;
+                        }
+                        int panoStitchingProgress = mPanoramaManager.getTaskProgress(contentUri);
+                        if (panoStitchingProgress < 0) {
+                            hidePanoStitchingProgress();
+                            return;
+                        }
+                        showPanoStitchingProgress();
+                        updateStitchingProgress(panoStitchingProgress);
+                    }
+                }
+            };
+
+    private void hidePanoStitchingProgress() {
+        mPanoStitchingPanel.setVisibility(View.GONE);
+    }
+
+    private void showPanoStitchingProgress() {
+        mPanoStitchingPanel.setVisibility(View.VISIBLE);
+    }
+
+    private void updateStitchingProgress(int progress) {
+        mBottomProgress.setProgress(progress);
+    }
 
     private Runnable mDeletionRunnable = new Runnable() {
             @Override
@@ -181,16 +224,50 @@ public class CameraActivity extends Activity
     private ImageTaskManager.TaskListener mStitchingListener =
             new ImageTaskManager.TaskListener() {
                 @Override
-                public void onTaskQueued(String filePath, Uri imageUri) {
+                public void onTaskQueued(String filePath, final Uri imageUri) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyNewMedia(imageUri);
+                        }
+                    });
                 }
 
                 @Override
-                public void onTaskDone(String filePath, Uri imageUri) {
+                public void onTaskDone(String filePath, final Uri imageUri) {
+                    Log.v(TAG, "onTaskDone:" + filePath);
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int doneID = mDataAdapter.findDataByContentUri(imageUri);
+                            int currentDataId = mFilmStripView.getCurrentId();
+
+                            if (currentDataId == doneID) {
+                                hidePanoStitchingProgress();
+                                updateStitchingProgress(0);
+                            }
+
+                            mDataAdapter.refresh(getContentResolver(), imageUri);
+                        }
+                    });
                 }
 
                 @Override
                 public void onTaskProgress(
-                        String filePath, Uri imageUri, int progress) {
+                        String filePath, final Uri imageUri, final int progress) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int currentDataId = mFilmStripView.getCurrentId();
+                            if (currentDataId == -1) {
+                                return;
+                            }
+                            if (imageUri.equals(
+                                    mDataAdapter.getLocalData(currentDataId).getContentUri())) {
+                                updateStitchingProgress(progress);
+                            }
+                        }
+                    });
                 }
             };
 
@@ -206,6 +283,8 @@ public class CameraActivity extends Activity
             mDataAdapter.addNewVideo(cr, uri);
         } else if (mimeType.startsWith("image/")) {
             Util.broadcastNewPicture(this, uri);
+            mDataAdapter.addNewPhoto(cr, uri);
+        } else if (mimeType.startsWith("application/stitching-preview")) {
             mDataAdapter.addNewPhoto(cr, uri);
         } else {
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
@@ -276,9 +355,12 @@ public class CameraActivity extends Activity
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mRootView = rootLayout.findViewById(R.id.camera_app_root);
+        mPanoStitchingPanel = (View) findViewById(R.id.pano_stitching_progress_panel);
+        mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL,
                 FilmStripView.ImageData.SIZE_FULL);
+        // Put a CameraPreviewData at the first position.
         mWrappedDataAdapter = new FixedFirstDataAdapter(
                 new CameraDataAdapter(new ColorDrawable(
                         getResources().getColor(R.color.photo_placeholder))),
@@ -296,6 +378,25 @@ public class CameraActivity extends Activity
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
         bindMediaSaveService();
+
+        if (!mSecureCamera) {
+            mDataAdapter = mWrappedDataAdapter;
+            mDataAdapter.requestLoad(getContentResolver());
+        } else {
+            // Put a lock placeholder as the last image by setting its date to 0.
+            ImageView v = (ImageView) getLayoutInflater().inflate(
+                    R.layout.secure_album_placeholder, null);
+            mDataAdapter = new FixedLastDataAdapter(
+                    mWrappedDataAdapter,
+                    new LocalData.LocalViewData(
+                            v,
+                            v.getDrawable().getIntrinsicWidth(),
+                            v.getDrawable().getIntrinsicHeight(),
+                            0, 0));
+            // Flush out all the original data.
+            mDataAdapter.flush();
+        }
+        mFilmStripView.setDataAdapter(mDataAdapter);
     }
 
     private void setRotationAnimation() {
@@ -343,25 +444,6 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
 
-        // The loading is done in background and will update the filmstrip later.
-        if (!mSecureCamera) {
-            mDataAdapter = mWrappedDataAdapter;
-            mDataAdapter.requestLoad(getContentResolver());
-            mFilmStripView.setDataAdapter(mDataAdapter);
-        } else {
-            // Put a lock placeholder as the last image by setting its date to 0.
-            ImageView v = (ImageView) getLayoutInflater().inflate(
-                    R.layout.secure_album_placeholder, null);
-            mDataAdapter = new FixedLastDataAdapter(
-                    mWrappedDataAdapter,
-                    new LocalData.LocalViewData(
-                            v,
-                            v.getDrawable().getIntrinsicWidth(),
-                            v.getDrawable().getIntrinsicHeight(),
-                            0, 0));
-            // Flush out all the original data.
-            mDataAdapter.flush();
-        }
         mPanoramaViewHelper.onStart();
     }
 

@@ -36,6 +36,14 @@ public interface LocalDataAdapter extends DataAdapter {
     public void requestLoad(ContentResolver resolver);
 
     /**
+     * Returns the specified {@link LocalData}.
+     *
+     * @param dataID The ID of the {@link LocalData} to get.
+     * @return The {@link LocalData} to get. {@code null} if not available.
+     */
+    public LocalData getLocalData(int dataID);
+
+    /**
      * Remove the data in the local camera folder.
      *
      * @param context       {@link Context} used to remove the data.
@@ -58,6 +66,14 @@ public interface LocalDataAdapter extends DataAdapter {
      * @param uri       {@link Uri} of the photo.
      */
     public void addNewPhoto(ContentResolver resolver, Uri uri);
+
+    /**
+     * Refresh the data by {@link Uri}.
+     *
+     * @param resolver {@link ContentResolver} used to refresh the data.
+     * @param uri The {@link Uri} of the data to refresh.
+     */
+    public void refresh(ContentResolver resolver, Uri uri);
 
     /**
      * Finds the {@link LocalData} of the specified content Uri.
@@ -88,4 +104,15 @@ public interface LocalDataAdapter extends DataAdapter {
      * @return {@code true} if there are items in the queue, {@code false} otherwise.
      */
     public boolean undoDataRemoval();
+
+    /**
+     * Update the data in a specific position.
+     *
+     * @param pos The position of the data to be updated.
+     * @param data The new data.
+     */
+    public void updateData(int pos, LocalData data);
+
+    /** Insert a data. */
+    public void insertData(LocalData data);
 }
