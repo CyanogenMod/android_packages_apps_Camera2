@@ -601,7 +601,8 @@ public class VideoModule implements CameraModule,
             return;
         }
         mParameters = mCameraDevice.getParameters();
-        if (mParameters.getSupportedVideoSizes() == null || (!mActivity.getResources().getBoolean(R.bool.usePreferredPreviewSizeForEffects))) {
+        if (mParameters.getSupportedVideoSizes() == null || (!mActivity.getResources().getBoolean(R.bool.usePreferredPreviewSizeForEffects)) ||
+        mActivity.getResources().getBoolean(R.bool.useVideoSizeForPreview)) {
             mDesiredPreviewWidth = mProfile.videoFrameWidth;
             mDesiredPreviewHeight = mProfile.videoFrameHeight;
         } else { // Driver supports separates outputs for preview and video.
