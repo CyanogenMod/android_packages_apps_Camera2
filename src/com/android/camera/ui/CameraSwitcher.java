@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 
 import com.android.camera.Util;
 import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.RefocusHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -56,8 +57,10 @@ public class CameraSwitcher extends RotateImageView
             R.drawable.ic_switch_photosphere,
             R.drawable.ic_switch_refocus
     };
+
     public interface CameraSwitchListener {
         public void onCameraSelected(int i);
+
         public void onShowSwitcherPopup();
     }
 
@@ -96,14 +99,23 @@ public class CameraSwitcher extends RotateImageView
     }
 
     public void initializeDrawables(Context context) {
-        int totaldrawid = (PhotoSphereHelper.hasLightCycleCapture(context)
-                ? DRAW_IDS.length : DRAW_IDS.length - 1);
+        int numDrawIds = DRAW_IDS.length;
 
-        int[] drawids = new int[totaldrawid];
-        int[] moduleids = new int[totaldrawid];
+        if (!PhotoSphereHelper.hasLightCycleCapture(context)) {
+            --numDrawIds;
+        }
+        if (!RefocusHelper.hasRefocusCapture(context)) {
+            --numDrawIds;
+        }
+
+        int[] drawids = new int[numDrawIds];
+        int[] moduleids = new int[numDrawIds];
         int ix = 0;
         for (int i = 0; i < DRAW_IDS.length; i++) {
             if (i == LIGHTCYCLE_MODULE_INDEX && !PhotoSphereHelper.hasLightCycleCapture(context)) {
+                continue; // not enabled, so don't add to UI
+            }
+            if (i == REFOCUS_MODULE_INDEX && !RefocusHelper.hasRefocusCapture(context)) {
                 continue; // not enabled, so don't add to UI
             }
             moduleids[ix] = i;
@@ -155,7 +167,8 @@ public class CameraSwitcher extends RotateImageView
                 (ViewGroup) getParent());
         LinearLayout content = (LinearLayout) mParent.findViewById(R.id.content);
         mPopup = content;
-        // Set the gravity of the popup, so that it shows up at the right position
+        // Set the gravity of the popup, so that it shows up at the right
+        // position
         // on screen
         LayoutParams lp = ((LayoutParams) mPopup.getLayoutParams());
         lp.gravity = ((LayoutParams) mParent.findViewById(R.id.camera_switcher)
@@ -172,7 +185,9 @@ public class CameraSwitcher extends RotateImageView
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (showsPopup()) onCameraSelected(index);
+                    if (showsPopup()) {
+                        onCameraSelected(index);
+                    }
                 }
             });
             switch (mDrawIds[i]) {
@@ -206,7 +221,9 @@ public class CameraSwitcher extends RotateImageView
     }
 
     public boolean isInsidePopup(MotionEvent evt) {
-        if (!showsPopup()) return false;
+        if (!showsPopup()) {
+            return false;
+        }
         int topLeft[] = new int[2];
         mPopup.getLocationOnScreen(topLeft);
         int left = topLeft[0];
@@ -265,7 +282,9 @@ public class CameraSwitcher extends RotateImageView
     public void setOrientation(int degree, boolean animate) {
         super.setOrientation(degree, animate);
         ViewGroup content = (ViewGroup) mPopup;
-        if (content == null) return;
+        if (content == null) {
+            return;
+        }
         for (int i = 0; i < content.getChildCount(); i++) {
             RotateImageView iv = (RotateImageView) content.getChildAt(i);
             iv.setOrientation(degree, animate);
@@ -282,14 +301,14 @@ public class CameraSwitcher extends RotateImageView
             mTranslationY = h / 3;
         } else if (orientation == 90) {
             mTranslationX = w / 3;
-            mTranslationY = - h / 3;
+            mTranslationY = -h / 3;
             mPopup.layout(getRight() - w, getTop(), getRight(), getTop() + h);
         } else if (orientation == 180) {
-            mTranslationX = - w / 3;
-            mTranslationY = - h / 3;
+            mTranslationX = -w / 3;
+            mTranslationY = -h / 3;
             mPopup.layout(getLeft(), getTop(), getLeft() + w, getTop() + h);
         } else {
-            mTranslationX = - w / 3;
+            mTranslationX = -w / 3;
             mTranslationY = h - getHeight();
             mPopup.layout(getLeft(), getBottom() - h, getLeft() + w, getBottom());
         }
@@ -358,7 +377,8 @@ public class CameraSwitcher extends RotateImageView
                     // Verify that we weren't canceled
                     if (showsPopup()) {
                         setVisibility(View.INVISIBLE);
-                        // request layout to make sure popup is laid out correctly on ICS
+                        // request layout to make sure popup is laid out
+                        // correctly on ICS
                         mPopup.requestLayout();
                     }
                 }
