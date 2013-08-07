@@ -42,8 +42,6 @@
     </style>
     <style name="DialogPickerTheme" parent="Theme.Gallery">
     </style>
-    <style name="Theme.ProxyLauncher" parent="@android:Theme.Translucent.NoTitleBar">
-    </style>
     <bool name="picker_is_dialog">false</bool>
     <color name="darker_transparent">#C1000000</color>
     <style name="ActionBarTwoLinePrimary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"></style>
@@ -53,6 +51,8 @@
     </style> -->
 
     <!-- Camera resources below -->
+    <style name="Theme.ProxyLauncher" parent="@android:Theme.Translucent.NoTitleBar">
+    </style>
 
     <style name="Theme.Camera" parent="Theme.CameraBase">
         <item name="android:windowBackground">@android:color/black</item>
