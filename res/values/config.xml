@@ -34,4 +34,6 @@
     <bool name="noFaceDetectOnFrontCamera">false</bool>
     <!-- Use ZSL mode for Qualcomm cameras -->
     <bool name="enableZSL">false</bool>
+    <!-- Always use recording dimensions for preview -->
+    <bool name="useVideoSizeForPreview">false</bool>
 </resources>
