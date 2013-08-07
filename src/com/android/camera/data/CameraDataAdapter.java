@@ -146,14 +146,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void addNewVideo(ContentResolver cr, Uri uri) {
         Cursor c = cr.query(uri,
-                LocalData.Video.QUERY_PROJECTION,
+                LocalMediaData.VideoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
-                LocalData.Video.QUERY_ORDER);
+                LocalMediaData.VideoData.QUERY_ORDER);
         if (c == null || !c.moveToFirst()) {
             return;
         }
         int pos = findDataByContentUri(uri);
-        LocalData.Video newData = LocalData.Video.buildFromCursor(c);
+        LocalMediaData.VideoData newData = LocalMediaData.VideoData.buildFromCursor(c);
         if (pos != -1) {
             // A duplicate one, just do a substitute.
             updateData(pos, newData);
@@ -167,14 +167,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void addNewPhoto(ContentResolver cr, Uri uri) {
         Cursor c = cr.query(uri,
-                LocalData.Photo.QUERY_PROJECTION,
+                LocalMediaData.PhotoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
-                LocalData.Photo.QUERY_ORDER);
+                LocalMediaData.PhotoData.QUERY_ORDER);
         if (c == null || !c.moveToFirst()) {
             return;
         }
         int pos = findDataByContentUri(uri);
-        LocalData.Photo newData = LocalData.Photo.buildFromCursor(c);
+        LocalMediaData.PhotoData newData = LocalMediaData.PhotoData.buildFromCursor(c);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
             Log.v(TAG, "found duplicate photo");
@@ -288,19 +288,19 @@ public class CameraDataAdapter implements LocalDataAdapter {
             List<LocalData> l = new ArrayList<LocalData>();
             // Photos
             Cursor c = resolver[0].query(
-                    LocalData.Photo.CONTENT_URI,
-                    LocalData.Photo.QUERY_PROJECTION,
+                    LocalMediaData.PhotoData.CONTENT_URI,
+                    LocalMediaData.PhotoData.QUERY_PROJECTION,
                     MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
-                    LocalData.Photo.QUERY_ORDER);
+                    LocalMediaData.PhotoData.QUERY_ORDER);
             if (c != null && c.moveToFirst()) {
                 // build up the list.
                 while (true) {
-                    LocalData data = LocalData.Photo.buildFromCursor(c);
+                    LocalData data = LocalMediaData.PhotoData.buildFromCursor(c);
                     if (data != null) {
                         l.add(data);
                     } else {
                         Log.e(TAG, "Error loading data:"
-                                + c.getString(LocalData.Photo.COL_DATA));
+                                + c.getString(LocalMediaData.PhotoData.COL_DATA));
                     }
                     if (c.isLast()) {
                         break;
@@ -313,20 +313,20 @@ public class CameraDataAdapter implements LocalDataAdapter {
             }
 
             c = resolver[0].query(
-                    LocalData.Video.CONTENT_URI,
-                    LocalData.Video.QUERY_PROJECTION,
+                    LocalMediaData.VideoData.CONTENT_URI,
+                    LocalMediaData.VideoData.QUERY_PROJECTION,
                     MediaStore.Video.Media.DATA + " like ? ", CAMERA_PATH,
-                    LocalData.Video.QUERY_ORDER);
+                    LocalMediaData.VideoData.QUERY_ORDER);
             if (c != null && c.moveToFirst()) {
                 // build up the list.
                 c.moveToFirst();
                 while (true) {
-                    LocalData data = LocalData.Video.buildFromCursor(c);
+                    LocalData data = LocalMediaData.VideoData.buildFromCursor(c);
                     if (data != null) {
                         l.add(data);
                     } else {
                         Log.e(TAG, "Error loading data:"
-                                + c.getString(LocalData.Video.COL_DATA));
+                                + c.getString(LocalMediaData.VideoData.COL_DATA));
                     }
                     if (!c.isLast()) {
                         c.moveToNext();

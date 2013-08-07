@@ -23,7 +23,7 @@ import com.android.camera.ui.FilmStripView.ImageData;
 /**
  * A class implementing {@link LocalData} to represent a camera preview.
  */
-public class CameraPreviewData extends LocalData.LocalViewData {
+public class CameraPreviewData extends SimpleViewData {
 
     private boolean mPreviewLocked;
 

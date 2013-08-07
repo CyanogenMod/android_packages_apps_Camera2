@@ -49,6 +49,7 @@ import com.android.camera.data.FixedFirstDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
+import com.android.camera.data.SimpleViewData;
 import com.android.camera.support.common.ApiHelper;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
@@ -388,7 +389,7 @@ public class CameraActivity extends Activity
                     R.layout.secure_album_placeholder, null);
             mDataAdapter = new FixedLastDataAdapter(
                     mWrappedDataAdapter,
-                    new LocalData.LocalViewData(
+                    new SimpleViewData(
                             v,
                             v.getDrawable().getIntrinsicWidth(),
                             v.getDrawable().getIntrinsicHeight(),
