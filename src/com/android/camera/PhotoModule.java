@@ -1411,9 +1411,6 @@ public class PhotoModule
             return;
         }
 
-        // Do not trigger touch focus if popup window is opened.
-        if (mUI.removeTopLevelPopup()) return;
-
         // Check if metering area or focus area is supported.
         if (!mFocusAreaSupported && !mMeteringAreaSupported) return;
         mFocusManager.onSingleTapUp(x, y);
@@ -1449,7 +1446,6 @@ public class PhotoModule
                 // Start auto-focus immediately to reduce shutter lag. After
                 // the shutter button gets the focus, onShutterButtonFocus()
                 // will be called again but it is fine.
-                if (mUI.removeTopLevelPopup()) return true;
                 onShutterButtonFocus(true);
                 mUI.pressShutterButton();
             }

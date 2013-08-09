@@ -22,8 +22,10 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.hardware.Camera.Size;
@@ -38,9 +40,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
@@ -78,7 +80,7 @@ public class PhotoUI implements PieListener,
     private View mRootView;
     private Object mSurfaceTexture;
 
-    private AbstractSettingPopup mPopup;
+    private PopupWindow mPopup;
     private ShutterButton mShutterButton;
     private CountDownView mCountDownView;
 
@@ -89,7 +91,6 @@ public class PhotoUI implements PieListener,
     private View mReviewRetakeButton;
 
     private View mMenuButton;
-    private View mBlocker;
     private PhotoMenu mMenu;
     private CameraSwitcher mSwitcher;
     private CameraControls mCameraControls;
@@ -348,7 +349,6 @@ public class PhotoUI implements PieListener,
     }
 
     public void initializeControlByIntent() {
-        mBlocker = mRootView.findViewById(R.id.blocker);
         mPreviewThumb = (ImageView) mRootView.findViewById(R.id.preview_thumb);
         mPreviewThumb.setOnClickListener(new OnClickListener() {
             @Override
@@ -530,16 +530,13 @@ public class PhotoUI implements PieListener,
         // 1) if there is any popup, dismiss them, 2) otherwise, get out of
         // image capture
         if (mController.isImageCaptureIntent()) {
-            if (!removeTopLevelPopup()) {
-                // no popup to dismiss, cancel image capture
-                mController.onCaptureCancelled();
-            }
+            mController.onCaptureCancelled();
             return true;
         } else if (!mController.isCameraIdle()) {
             // ignore backs while we're taking a picture
             return true;
         } else {
-            return removeTopLevelPopup();
+            return false;
         }
     }
 
@@ -551,9 +548,6 @@ public class PhotoUI implements PieListener,
         }
         if (mFaceView != null) {
             mFaceView.setBlockDraw(!toCamera);
-        }
-        if (mPopup != null) {
-            dismissPopup(toCamera);
         }
         if (mGestures != null) {
             mGestures.setEnabled(toCamera);
@@ -569,42 +563,32 @@ public class PhotoUI implements PieListener,
         if (!toCamera && mCountDownView != null) mCountDownView.cancelCountDown();
     }
 
-    public boolean removeTopLevelPopup() {
-        // Remove the top level popup or dialog box and return true if there's any
-        if (mPopup != null) {
-            dismissPopup();
-            return true;
-        }
-        return false;
-    }
-
     public void showPopup(AbstractSettingPopup popup) {
         hideUI();
-        mBlocker.setVisibility(View.INVISIBLE);
-        setShowMenu(false);
-        mPopup = popup;
-        mPopup.setVisibility(View.VISIBLE);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        ((FrameLayout) mRootView).addView(mPopup, lp);
+
+        if (mPopup == null) {
+            mPopup = new PopupWindow(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            mPopup.setOutsideTouchable(true);
+            mPopup.setFocusable(true);
+            mPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    mPopup = null;
+                    mMenu.popupDismissed();
+                    showUI();
+                }
+            });
+        }
+        popup.setVisibility(View.VISIBLE);
+        mPopup.setContentView(popup);
+        mPopup.showAtLocation(mRootView, Gravity.CENTER, 0, 0);
     }
 
     public void dismissPopup() {
-        dismissPopup(true);
-    }
-
-    private void dismissPopup(boolean fullScreen) {
-        if (fullScreen) {
-            showUI();
-            mBlocker.setVisibility(View.VISIBLE);
+        if (mPopup != null && mPopup.isShowing()) {
+            mPopup.dismiss();
         }
-        setShowMenu(fullScreen);
-        if (mPopup != null) {
-            ((FrameLayout) mRootView).removeView(mPopup);
-            mPopup = null;
-        }
-        mMenu.popupDismissed();
     }
 
     public void onShowSwitcherPopup() {
@@ -705,7 +689,6 @@ public class PhotoUI implements PieListener,
     @Override
     public void onPieOpened(int centerX, int centerY) {
         setSwipingEnabled(false);
-        dismissPopup();
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }

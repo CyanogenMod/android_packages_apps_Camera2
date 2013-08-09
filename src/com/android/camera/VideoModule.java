@@ -423,12 +423,6 @@ public class VideoModule implements CameraModule,
             return;
         }
 
-        if (!mMediaRecorderRecording) {
-            // check for dismissing popup
-            mUI.dismissPopup(true);
-            return;
-        }
-
         // Set rotation and gps data.
         int rotation = Util.getJpegRotation(mCameraId, mOrientation);
         mParameters.setRotation(rotation);
@@ -945,8 +939,8 @@ public class VideoModule implements CameraModule,
         mPendingSwitchCameraId = -1;
         mSwitchingCamera = false;
         mPreferenceRead = false;
-        // Call onPause after stopping video recording. So the camera can be
-        // released as soon as possible.
+
+        mUI.collapseCameraControls();
     }
 
     @Override

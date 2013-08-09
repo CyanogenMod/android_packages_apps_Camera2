@@ -19,8 +19,10 @@ package com.android.camera;
 import java.util.List;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.os.Message;
@@ -38,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
@@ -78,11 +81,10 @@ public class VideoUI implements PieRenderer.PieListener,
     private PieRenderer mPieRenderer;
     private VideoMenu mVideoMenu;
     private CameraControls mCameraControls;
-    private AbstractSettingPopup mPopup;
+    private SettingsPopup mPopup;
     private ZoomRenderer mZoomRenderer;
     private PreviewGestures mGestures;
     private View mMenuButton;
-    private View mBlocker;
     private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
     private final Object mLock = new Object();
@@ -134,6 +136,31 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     };
 
+    private class SettingsPopup extends PopupWindow {
+        public SettingsPopup(View popup) {
+            super(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(true);
+            popup.setVisibility(View.VISIBLE);
+            setContentView(popup);
+            showAtLocation(mRootView, Gravity.CENTER, 0, 0);
+        }
+
+        public void dismiss(boolean topLevelOnly) {
+            super.dismiss();
+            popupDismissed();
+            showUI();
+            mVideoMenu.popupDismissed(topLevelOnly);
+        }
+
+        @Override
+        public void dismiss() {
+            // Called by Framework when touch outside the popup or hit back key
+            dismiss(true);
+        }
+    }
+
     public VideoUI(CameraActivity activity, VideoController controller, View parent) {
         mActivity = activity;
         mController = controller;
@@ -162,7 +189,6 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     private void initializeControlByIntent() {
-        mBlocker = mActivity.findViewById(R.id.blocker);
         mMenuButton = mActivity.findViewById(R.id.menu);
         mMenuButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -440,36 +466,25 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
-    public void showPopup(AbstractSettingPopup popup) {
-        hideUI();
-        mBlocker.setVisibility(View.INVISIBLE);
-        setShowMenu(false);
-        mPopup = popup;
-        mPopup.setVisibility(View.VISIBLE);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        ((FrameLayout) mRootView).addView(mPopup, lp);
-    }
-
     public void dismissPopup(boolean topLevelOnly) {
-        dismissPopup(topLevelOnly, true);
-    }
-
-    public void dismissPopup(boolean topLevelPopupOnly, boolean fullScreen) {
         // In review mode, we do not want to bring up the camera UI
         if (mController.isInReviewMode()) return;
-
-        if (fullScreen) {
-            showUI();
-            mBlocker.setVisibility(View.VISIBLE);
-        }
-        setShowMenu(fullScreen);
         if (mPopup != null) {
-            ((FrameLayout) mRootView).removeView(mPopup);
-            mPopup = null;
+            mPopup.dismiss(topLevelOnly);
         }
-        mVideoMenu.popupDismissed(topLevelPopupOnly);
+    }
+
+    private void popupDismissed() {
+        mPopup = null;
+    }
+
+    public void showPopup(AbstractSettingPopup popup) {
+        hideUI();
+
+        if (mPopup != null) {
+            mPopup.dismiss(false);
+        }
+        mPopup = new SettingsPopup(popup);
     }
 
     public void onShowSwitcherPopup() {
@@ -500,7 +515,6 @@ public class VideoUI implements PieRenderer.PieListener,
     @Override
     public void onPieOpened(int centerX, int centerY) {
         setSwipingEnabled(false);
-        dismissPopup(false, true);
     }
 
     @Override
@@ -590,9 +604,6 @@ public class VideoUI implements PieRenderer.PieListener,
         }
         if (mGestures != null) {
             mGestures.setEnabled(toCamera);
-        }
-        if (mPopup != null) {
-            dismissPopup(false, toCamera);
         }
         if (mRenderOverlay != null) {
             // this can not happen in capture mode
