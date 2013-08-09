@@ -1,4 +1,4 @@
-package com.android.camera.support.ui;
+package com.android.camera.app;
 
 public interface OrientationSource {
     public int getDisplayRotation();

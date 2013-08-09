@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 /**
@@ -49,7 +50,7 @@ public class ListPreference extends CameraPreference {
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.ListPreference, 0, 0);
 
-        mKey = Util.checkNotNull(
+        mKey = CameraUtil.checkNotNull(
                 a.getString(R.styleable.ListPreference_key));
 
         // We allow the defaultValue attribute to be a string or an array of
@@ -137,7 +138,7 @@ public class ListPreference extends CameraPreference {
 
     public int findIndexOfValue(String value) {
         for (int i = 0, n = mEntryValues.length; i < n; ++i) {
-            if (Util.equals(mEntryValues[i], value)) return i;
+            if (CameraUtil.equals(mEntryValues[i], value)) return i;
         }
         return -1;
     }

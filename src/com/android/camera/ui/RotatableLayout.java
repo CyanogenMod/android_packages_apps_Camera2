@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.android.camera.Util;
+import com.android.camera.util.CameraUtil;
 
 /* RotatableLayout rotates itself as well as all its children when orientation
  * changes. Specifically, when going from portrait to landscape, camera
@@ -62,7 +62,7 @@ public class RotatableLayout extends FrameLayout {
 
     @Override
     public void onAttachedToWindow() {
-        mPrevRotation = Util.getDisplayRotation((Activity) getContext());
+        mPrevRotation = CameraUtil.getDisplayRotation((Activity) getContext());
         // check if there is any rotation before the view is attached to window
         int currentOrientation = getResources().getConfiguration().orientation;
         int orientation = getUnifiedRotation();
@@ -89,7 +89,7 @@ public class RotatableLayout extends FrameLayout {
         // all the layout code assumes camera device orientation to be portrait
         // adjust rotation for landscape
         int orientation = getResources().getConfiguration().orientation;
-        int rotation = Util.getDisplayRotation((Activity) getContext());
+        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
         int camOrientation = (rotation % 180 == 0) ? Configuration.ORIENTATION_PORTRAIT
                 : Configuration.ORIENTATION_LANDSCAPE;
         if (camOrientation != orientation) {
@@ -99,7 +99,7 @@ public class RotatableLayout extends FrameLayout {
     }
 
     public void checkLayoutFlip() {
-        int currentRotation = Util.getDisplayRotation((Activity) getContext());
+        int currentRotation = CameraUtil.getDisplayRotation((Activity) getContext());
         if ((currentRotation - mPrevRotation + 360) % 360 == 180) {
             mPrevRotation = currentRotation;
             flipChildren();
@@ -118,7 +118,7 @@ public class RotatableLayout extends FrameLayout {
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        int rotation = Util.getDisplayRotation((Activity) getContext());
+        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
         int diff = (rotation - mPrevRotation + 360) % 360;
         if ( diff == 0) {
             // No rotation

@@ -50,10 +50,11 @@ import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.SimpleViewData;
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.FilmStripView;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
@@ -280,10 +281,10 @@ public class CameraActivity extends Activity
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
         if (mimeType.startsWith("video/")) {
-            sendBroadcast(new Intent(Util.ACTION_NEW_VIDEO, uri));
+            sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
             mDataAdapter.addNewVideo(cr, uri);
         } else if (mimeType.startsWith("image/")) {
-            Util.broadcastNewPicture(this, uri);
+            CameraUtil.broadcastNewPicture(this, uri);
             mDataAdapter.addNewPhoto(cr, uri);
         } else if (mimeType.startsWith("application/stitching-preview")) {
             mDataAdapter.addNewPhoto(cr, uri);

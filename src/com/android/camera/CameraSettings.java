@@ -29,8 +29,9 @@ import android.media.CamcorderProfile;
 import android.util.FloatMath;
 import android.util.Log;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +198,7 @@ public class CameraSettings {
                     flashMode, mParameters.getSupportedFlashModes());
         }
         if (focusMode != null) {
-            if (!Util.isFocusAreaSupported(mParameters)) {
+            if (!CameraUtil.isFocusAreaSupported(mParameters)) {
                 filterUnsupportedOptions(group,
                         focusMode, mParameters.getSupportedFocusModes());
             } else {
@@ -228,7 +229,7 @@ public class CameraSettings {
             }
         }
         if (cameraHdr != null && (!ApiHelper.HAS_CAMERA_HDR
-                    || !Util.isCameraHdrSupported(mParameters))) {
+                    || !CameraUtil.isCameraHdrSupported(mParameters))) {
             removePreference(group, cameraHdr.getKey());
         }
     }
@@ -553,8 +554,8 @@ public class CameraSettings {
                 EffectsRecorder.isEffectSupported(EffectsRecorder.EFFECT_GOOFY_FACE);
         boolean backdropperSupported =
                 EffectsRecorder.isEffectSupported(EffectsRecorder.EFFECT_BACKDROPPER) &&
-                Util.isAutoExposureLockSupported(mParameters) &&
-                Util.isAutoWhiteBalanceLockSupported(mParameters);
+                CameraUtil.isAutoExposureLockSupported(mParameters) &&
+                CameraUtil.isAutoWhiteBalanceLockSupported(mParameters);
 
         ArrayList<String> supported = new ArrayList<String>();
         for (CharSequence value : values) {

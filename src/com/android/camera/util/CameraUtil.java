@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera;
+package com.android.camera.util;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -61,14 +61,21 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
+import com.android.camera.CameraDisabledException;
+import com.android.camera.CameraHardwareException;
+import com.android.camera.CameraHolder;
+import com.android.camera.CameraManager;
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
 
 /**
  * Collection of utility functions used in this package.
  */
-public class Util {
+public class CameraUtil {
     private static final String TAG = "Util";
+
+    // For creating crop intents.
+    public static final String KEY_RETURN_DATA = "return-data";
+    public static final String KEY_SHOW_WHEN_LOCKED = "showWhenLocked";
 
     // Orientation hysteresis amount used in rounding, in degrees
     public static final int ORIENTATION_HYSTERESIS = 5;
@@ -138,7 +145,7 @@ public class Util {
     private static float sPixelDensity = 1;
     private static ImageFileNamer sImageFileNamer;
 
-    private Util() {
+    private CameraUtil() {
     }
 
     public static void initialize(Context context) {
@@ -554,7 +561,7 @@ public class Util {
         int cameraId = -1;
 
         int intentCameraId =
-                currentActivity.getIntent().getIntExtra(Util.EXTRAS_CAMERA_FACING, -1);
+                currentActivity.getIntent().getIntExtra(CameraUtil.EXTRAS_CAMERA_FACING, -1);
 
         if (isFrontCameraIntent(intentCameraId)) {
             // Check if the front camera exist
@@ -622,7 +629,7 @@ public class Util {
         }
 
         try {
-            context.startActivity(new Intent(Util.REVIEW_ACTION, uri));
+            context.startActivity(new Intent(CameraUtil.REVIEW_ACTION, uri));
         } catch (ActivityNotFoundException ex) {
             try {
                 context.startActivity(new Intent(Intent.ACTION_VIEW, uri));

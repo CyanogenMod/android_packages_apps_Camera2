@@ -1,4 +1,4 @@
-package com.android.camera.support.app;
+package com.android.camera.app;
 
 
 import android.app.Activity;
@@ -11,8 +11,7 @@ import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
-import com.android.camera.support.ui.OrientationSource;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 public class OrientationManager implements OrientationSource {
     private static final String TAG = "OrientationManager";

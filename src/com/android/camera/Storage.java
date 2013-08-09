@@ -32,7 +32,7 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
 
 public class Storage {

@@ -53,8 +53,9 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.ui.ZoomRenderer;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
@@ -87,7 +88,6 @@ public class VideoUI implements PieRenderer.PieListener,
     private View mMenuButton;
     private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
-    private final Object mLock = new Object();
     private SurfaceTexture mSurfaceTexture;
     private VideoController mController;
     private int mZoomMax;
@@ -124,7 +124,7 @@ public class VideoUI implements PieRenderer.PieListener,
             // Full-screen screennail
             int w = width;
             int h = height;
-            if (Util.getDisplayRotation(mActivity) % 180 != 0) {
+            if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
                 w = height;
                 h = width;
             }
@@ -262,7 +262,7 @@ public class VideoUI implements PieRenderer.PieListener,
 
     private void setTransformMatrix(int width, int height) {
         mMatrix = mTextureView.getTransform(mMatrix);
-        int orientation = Util.getDisplayRotation(mActivity);
+        int orientation = CameraUtil.getDisplayRotation(mActivity);
         float scaleX = 1f, scaleY = 1f;
         float scaledTextureWidth, scaledTextureHeight;
         if (width > height) {
@@ -569,9 +569,9 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void showReviewControls() {
-        Util.fadeOut(mShutterButton);
-        Util.fadeIn(mReviewDoneButton);
-        Util.fadeIn(mReviewPlayButton);
+        CameraUtil.fadeOut(mShutterButton);
+        CameraUtil.fadeIn(mReviewDoneButton);
+        CameraUtil.fadeIn(mReviewPlayButton);
         mReviewImage.setVisibility(View.VISIBLE);
         mMenuButton.setVisibility(View.GONE);
         mOnScreenIndicators.setVisibility(View.GONE);
@@ -582,9 +582,9 @@ public class VideoUI implements PieRenderer.PieListener,
         mShutterButton.setEnabled(true);
         mMenuButton.setVisibility(View.VISIBLE);
         mOnScreenIndicators.setVisibility(View.VISIBLE);
-        Util.fadeOut(mReviewDoneButton);
-        Util.fadeOut(mReviewPlayButton);
-        Util.fadeIn(mShutterButton);
+        CameraUtil.fadeOut(mReviewDoneButton);
+        CameraUtil.fadeOut(mReviewPlayButton);
+        CameraUtil.fadeIn(mShutterButton);
     }
 
     private void setShowMenu(boolean show) {

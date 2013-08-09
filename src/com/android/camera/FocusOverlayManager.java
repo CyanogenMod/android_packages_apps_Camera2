@@ -30,7 +30,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
+import com.android.camera.util.CameraUtil;
 
 /* A class that handles everything about focus in still picture mode.
  * This also handles the metering area because it is the same as focus area.
@@ -151,10 +152,10 @@ public class FocusOverlayManager {
         // camera is open.
         if (parameters == null) return;
         mParameters = parameters;
-        mFocusAreaSupported = Util.isFocusAreaSupported(parameters);
-        mMeteringAreaSupported = Util.isMeteringAreaSupported(parameters);
-        mLockAeAwbNeeded = (Util.isAutoExposureLockSupported(mParameters) ||
-                Util.isAutoWhiteBalanceLockSupported(mParameters));
+        mFocusAreaSupported = CameraUtil.isFocusAreaSupported(parameters);
+        mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(parameters);
+        mLockAeAwbNeeded = (CameraUtil.isAutoExposureLockSupported(mParameters) ||
+                CameraUtil.isAutoWhiteBalanceLockSupported(mParameters));
     }
 
     public void setPreviewSize(int previewWidth, int previewHeight) {
@@ -178,7 +179,7 @@ public class FocusOverlayManager {
     private void setMatrix() {
         if (mPreviewWidth != 0 && mPreviewHeight != 0) {
             Matrix matrix = new Matrix();
-            Util.prepareMatrix(matrix, mMirror, mDisplayOrientation,
+            CameraUtil.prepareMatrix(matrix, mMirror, mDisplayOrientation,
                     mPreviewWidth, mPreviewHeight);
             // In face detection, the matrix converts the driver coordinates to UI
             // coordinates. In tap focus, the inverted matrix converts the UI
@@ -440,17 +441,17 @@ public class FocusOverlayManager {
             if (mFocusMode == null) {
                 for (int i = 0; i < mDefaultFocusModes.length; i++) {
                     String mode = mDefaultFocusModes[i];
-                    if (Util.isSupported(mode, supportedFocusModes)) {
+                    if (CameraUtil.isSupported(mode, supportedFocusModes)) {
                         mFocusMode = mode;
                         break;
                     }
                 }
             }
         }
-        if (!Util.isSupported(mFocusMode, supportedFocusModes)) {
+        if (!CameraUtil.isSupported(mFocusMode, supportedFocusModes)) {
             // For some reasons, the driver does not support the current
             // focus mode. Fall back to auto.
-            if (Util.isSupported(Parameters.FOCUS_MODE_AUTO,
+            if (CameraUtil.isSupported(Parameters.FOCUS_MODE_AUTO,
                     mParameters.getSupportedFocusModes())) {
                 mFocusMode = Parameters.FOCUS_MODE_AUTO;
             } else {
@@ -484,7 +485,7 @@ public class FocusOverlayManager {
         } else if (mState == STATE_FOCUSING || mState == STATE_FOCUSING_SNAP_ON_FINISH) {
             mUI.onFocusStarted();
         } else {
-            if (Util.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)) {
+            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)) {
                 // TODO: check HAL behavior and decide if this can be removed.
                 mUI.onFocusSucceeded(false);
             } else if (mState == STATE_SUCCESS) {
@@ -513,12 +514,12 @@ public class FocusOverlayManager {
 
     private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
         int areaSize = (int) (Math.min(mPreviewWidth, mPreviewHeight) * areaMultiple / 20);
-        int left = Util.clamp(x - areaSize, 0, mPreviewWidth - 2 * areaSize);
-        int top = Util.clamp(y - areaSize, 0, mPreviewHeight - 2 * areaSize);
+        int left = CameraUtil.clamp(x - areaSize, 0, mPreviewWidth - 2 * areaSize);
+        int top = CameraUtil.clamp(y - areaSize, 0, mPreviewHeight - 2 * areaSize);
 
         RectF rectF = new RectF(left, top, left + 2 * areaSize, top + 2 * areaSize);
         mMatrix.mapRect(rectF);
-        Util.rectFToRect(rectF, rect);
+        CameraUtil.rectFToRect(rectF, rect);
     }
 
     /* package */ int getFocusState() {

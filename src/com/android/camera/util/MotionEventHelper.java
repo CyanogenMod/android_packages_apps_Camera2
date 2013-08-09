@@ -1,12 +1,10 @@
-package com.android.camera.support.util;
+package com.android.camera.util;
 
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
 import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
-
-import com.android.gallery3d.common.ApiHelper;
 
 public final class MotionEventHelper {
     private MotionEventHelper() {}

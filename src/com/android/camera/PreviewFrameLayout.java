@@ -21,9 +21,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.LayoutChangeHelper;
 import com.android.camera.ui.LayoutChangeNotifier;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 /**
@@ -68,7 +69,7 @@ public class PreviewFrameLayout extends RelativeLayout implements LayoutChangeNo
     }
 
     public void fadeOutBorder() {
-        Util.fadeOut(mBorder);
+        CameraUtil.fadeOut(mBorder);
     }
 
     @Override

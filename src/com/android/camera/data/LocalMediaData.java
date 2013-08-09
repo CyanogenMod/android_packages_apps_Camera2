@@ -35,7 +35,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.camera.Util;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
@@ -526,7 +526,7 @@ public abstract class LocalMediaData implements LocalData {
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.playVideo(ctx, mPlayUri, title);
+                    CameraUtil.playVideo(ctx, mPlayUri, title);
                 }
             });
 

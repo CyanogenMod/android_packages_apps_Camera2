@@ -27,8 +27,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.android.camera.Util;
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.CameraUtil;
+import com.android.camera.util.ApiHelper;
 
 @SuppressLint("NewApi")
 public class CameraRootView extends FrameLayout {
@@ -110,7 +110,7 @@ public class CameraRootView extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int rotation = Util.getDisplayRotation((Activity) getContext());
+        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
         // all the layout code assumes camera device orientation to be portrait
         // adjust rotation for landscape
         int orientation = getResources().getConfiguration().orientation;

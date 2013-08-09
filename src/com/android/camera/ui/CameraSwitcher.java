@@ -34,12 +34,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
-import com.android.camera.Util;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 public class CameraSwitcher extends RotateImageView
         implements OnClickListener, OnTouchListener {
@@ -292,7 +292,7 @@ public class CameraSwitcher extends RotateImageView
     }
 
     private void layoutPopup() {
-        int orientation = Util.getDisplayRotation((Activity) getContext());
+        int orientation = CameraUtil.getDisplayRotation((Activity) getContext());
         int w = mPopup.getMeasuredWidth();
         int h = mPopup.getMeasuredHeight();
         if (orientation == 0) {

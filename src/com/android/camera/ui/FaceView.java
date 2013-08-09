@@ -31,10 +31,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera.PhotoUI;
-import com.android.camera.Util;
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class FaceView extends View
@@ -197,7 +197,7 @@ public class FaceView extends View
                 rw = rh;
                 rh = temp;
             }
-            Util.prepareMatrix(mMatrix, mMirror, mDisplayOrientation, rw, rh);
+            CameraUtil.prepareMatrix(mMatrix, mMirror, mDisplayOrientation, rw, rh);
             int dx = (getWidth() - rw) / 2;
             int dy = (getHeight() - rh) / 2;
 
@@ -212,9 +212,9 @@ public class FaceView extends View
 
                 // Transform the coordinates.
                 mRect.set(mFaces[i].rect);
-                if (LOGV) Util.dumpRect(mRect, "Original rect");
+                if (LOGV) CameraUtil.dumpRect(mRect, "Original rect");
                 mMatrix.mapRect(mRect);
-                if (LOGV) Util.dumpRect(mRect, "Transformed rect");
+                if (LOGV) CameraUtil.dumpRect(mRect, "Transformed rect");
                 mPaint.setColor(mColor);
                 mRect.offset(dx, dy);
                 canvas.drawOval(mRect, mPaint);

@@ -1,14 +1,6 @@
 # Disable the warnings of using dynamic method call in common library.
 -dontnote com.android.gallery3d.common.*
 
-# Keep all classes extended from com.android.gallery3d.common.Entry
-# Since we annotate on the fields and use reflection to create SQL
-# according to those field.
-
--keep class * extends com.android.gallery3d.common.Entry {
-    @com.android.gallery3d.common.Entry$Column <fields>;
-}
-
 # ctors of subclasses of CameraPreference are called with Java reflection.
 -keep class * extends com.android.camera.CameraPreference {
   <init>(...);
@@ -40,9 +32,6 @@
 # Disable the warnings of using dynamic method calls in EffectsRecorder
 -dontnote com.android.camera.EffectsRecorder
 
--keep class android.support.v8.renderscript.** { *; }
-
-
 # For unit testing:
 
 # - Required for running exif tests on userdebug
@@ -53,21 +42,3 @@
   *** closeSilently(...);
 }
 
-# - Required for running blobcache tests on userdebug
--keep class com.android.gallery3d.common.BlobCache { *; }
-
-# - Required for running glcanvas tests on userdebug
--keep class com.android.gallery3d.ui.GLPaint { *; }
--keep class com.android.gallery3d.ui.GLCanvas { *; }
--keep class com.android.gallery3d.glrenderer.GLPaint { *; }
--keep class com.android.gallery3d.glrenderer.GLCanvas { *; }
--keep class com.android.gallery3d.ui.GLView { *; }
--keepclassmembers class com.android.gallery3d.util.IntArray {
-  *** toArray(...);
-}
--keep class com.android.gallery3d.util.ProfileData { *; }
-
-# - Required for running jpeg stream tests on userdebug
--keep class com.android.gallery3d.jpegstream.JPEGOutputStream { *; }
--keep class com.android.gallery3d.jpegstream.JPEGInputStream { *; }
--keep class com.android.gallery3d.jpegstream.StreamUtils { *; }
