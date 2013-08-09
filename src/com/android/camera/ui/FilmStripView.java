@@ -491,6 +491,9 @@ public class FilmStripView extends ViewGroup {
     }
 
     public boolean isAnchoredTo(int id) {
+        if (mViewInfo[mCurrentInfo] == null) {
+            return false;
+        }
         if (mViewInfo[mCurrentInfo].getID() == id
                 && mViewInfo[mCurrentInfo].getCenterX() == mCenterX) {
             return true;
@@ -511,7 +514,7 @@ public class FilmStripView extends ViewGroup {
 
     @Override
     public void onDraw(Canvas c) {
-        if (mController.hasNewGeometry()) {
+        if (mViewInfo[mCurrentInfo] != null && mController.hasNewGeometry()) {
             layoutChildren();
         }
     }
@@ -796,6 +799,9 @@ public class FilmStripView extends ViewGroup {
     }
 
     private void layoutChildren() {
+        if (mViewInfo[mCurrentInfo] == null) {
+            return;
+        }
         if (mAnchorPending) {
             mCenterX = mViewInfo[mCurrentInfo].getCenterX();
             mAnchorPending = false;
@@ -1261,6 +1267,9 @@ public class FilmStripView extends ViewGroup {
 
         mViewInfo[mCurrentInfo] = buildInfoFromData(0);
         mViewInfo[mCurrentInfo].setLeftPosition(0);
+        if (mViewInfo[mCurrentInfo] == null) {
+            return;
+        }
         if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW) {
             // we are in camera mode by default.
             mController.lockAtCurrentView();
@@ -1437,8 +1446,9 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public boolean stopScrolling() {
-            if (!mCanStopScroll)
+            if (!mCanStopScroll) {
                 return false;
+            }
             mScroller.forceFinished(true);
             mHasNewPosition = false;
             return true;
@@ -1451,8 +1461,9 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public void scrollTo(int position, int duration, boolean interruptible) {
-            if (!stopScrolling() || mIsPositionLocked)
+            if (!stopScrolling() || mIsPositionLocked) {
                 return;
+            }
             mCanStopScroll = interruptible;
             stopScrolling();
             mScroller.startScroll(mCenterX, 0, position - mCenterX,
@@ -1461,6 +1472,9 @@ public class FilmStripView extends ViewGroup {
         }
 
         private void scaleTo(float scale, int duration) {
+            if (mViewInfo[mCurrentInfo] == null) {
+                return;
+            }
             stopScale();
             mScaleAnimator.setDuration(duration);
             mScaleAnimator.setFloatValues(mScale, scale);
@@ -1518,6 +1532,9 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
+            if (mViewInfo[mCurrentInfo] == null) {
+                return;
+            }
             mHasNewScale = true;
             mNewScale = (Float) animation.getAnimatedValue();
             layoutChildren();
@@ -1628,6 +1645,9 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
+            if (mViewInfo[mCurrentInfo] == null) {
+                return false;
+            }
             int deltaX = (int) (dx / mScale);
             if (inFilmStrip()) {
                 if (Math.abs(dx) > Math.abs(dy)) {

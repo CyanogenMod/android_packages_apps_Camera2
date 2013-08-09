@@ -133,6 +133,11 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     public void setListener(Listener listener) {
         mListener = listener;
         mAdapter.setListener((listener == null) ? null : this);
+        // The first data is always there. Thus, When the listener is set,
+        // we should call listener.onDataLoaded().
+        if (mListener != null) {
+            mListener.onDataLoaded();
+        }
     }
 
     @Override
@@ -145,7 +150,20 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
 
     @Override
     public void onDataLoaded() {
-        mListener.onDataLoaded();
+        if (mListener == null) {
+            return;
+        }
+        mListener.onDataUpdated(new UpdateReporter() {
+            @Override
+            public boolean isDataRemoved(int dataID) {
+                return false;
+            }
+
+            @Override
+            public boolean isDataUpdated(int dataID) {
+                return (dataID != 0);
+            }
+        });
     }
 
     @Override
@@ -153,12 +171,12 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         mListener.onDataUpdated(new UpdateReporter() {
             @Override
             public boolean isDataRemoved(int dataID) {
-                return reporter.isDataRemoved(dataID - 1);
+                return (dataID != 0) && reporter.isDataRemoved(dataID - 1);
             }
 
             @Override
             public boolean isDataUpdated(int dataID) {
-                return reporter.isDataUpdated(dataID - 1);
+                return (dataID != 0) && reporter.isDataUpdated(dataID - 1);
             }
         });
     }
