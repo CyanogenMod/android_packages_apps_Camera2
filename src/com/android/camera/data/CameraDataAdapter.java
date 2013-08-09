@@ -276,6 +276,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     private class QueryTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
+
+        /**
+         * Loads all the photo and video data in the camera folder in background
+         * and combine them into one single list.
+         *
+         * @param resolver {@link ContentResolver} to load all the data.
+         * @return An {@link ArrayList} of all loaded data.
+         */
         @Override
         protected List<LocalData> doInBackground(ContentResolver... resolver) {
             List<LocalData> l = new ArrayList<LocalData>();
