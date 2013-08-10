@@ -54,6 +54,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private LocalData mLocalDataToDelete;
 
     public CameraDataAdapter(Drawable placeHolder) {
+        mImages = new ArrayList<LocalData>();
         mPlaceHolder = placeHolder;
     }
 
@@ -65,7 +66,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public LocalData getLocalData(int dataID) {
-        if (mImages == null || dataID < 0 || dataID >= mImages.size()) {
+        if (dataID < 0 || dataID >= mImages.size()) {
             return null;
         }
 
@@ -74,9 +75,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public int getTotalNumber() {
-        if (mImages == null) {
-            return 0;
-        }
         return mImages.size();
     }
 
@@ -97,9 +95,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public View getView(Context c, int dataID) {
-        if (mImages == null) {
-            return null;
-        }
         if (dataID >= mImages.size() || dataID < 0) {
             return null;
         }
@@ -256,10 +251,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void insertData(LocalData data) {
-        if (mImages == null) {
-            mImages = new ArrayList<LocalData>();
-        }
-
         // Since this function is mostly for adding the newest data,
         // a simple linear search should yield the best performance over a
         // binary search.
