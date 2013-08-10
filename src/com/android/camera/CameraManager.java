@@ -27,7 +27,7 @@ import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 /**
  * An interface which provides possible camera device operations.

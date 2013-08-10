@@ -19,11 +19,9 @@ package com.android.camera.util;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 
 import com.android.camera.CameraModule;
-import com.android.camera.app.StitchingProgressManager;
 
 public class PhotoSphereHelper {
     public static class PanoramaMetadata {
@@ -63,10 +61,6 @@ public class PhotoSphereHelper {
 
     public static final PanoramaMetadata NOT_PANORAMA = new PanoramaMetadata(false, false);
 
-    public static void setupCaptureIntent(Context context, Intent it, String outputDir) {
-        /* Do nothing */
-    }
-
     public static boolean hasLightCycleCapture(Context context) {
         return false;
     }
@@ -76,10 +70,6 @@ public class PhotoSphereHelper {
     }
 
     public static CameraModule createPanoramaModule() {
-        return null;
-    }
-
-    public static StitchingProgressManager createStitchingManagerInstance(Context context) {
         return null;
     }
 

@@ -31,7 +31,7 @@ import android.view.View;
 
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager.CameraProxy;
-import com.android.camera.Util;
+import com.android.camera.util.CameraUtil;
 import com.android.gallery3d.R;
 
 import static com.google.testing.littlemock.LittleMock.mock;
@@ -161,7 +161,7 @@ public class CameraTestCase<T extends Activity> extends ActivityInstrumentationT
         } catch (IOException e) {
             // ignore
         } finally {
-            Util.closeSilently(ins);
+            CameraUtil.closeSilently(ins);
         }
         mBlankJpeg = outputStream.toByteArray();
     }

@@ -17,8 +17,6 @@
 
 package com.android.camera;
 
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -47,6 +45,7 @@ import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
@@ -60,8 +59,10 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.ZoomRenderer;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
+
+import java.util.List;
 
 public class PhotoUI implements PieListener,
     PreviewGestures.SingleTapListener,
@@ -145,7 +146,7 @@ public class PhotoUI implements PieListener,
             // Full-screen screennail
             int w = width;
             int h = height;
-            if (Util.getDisplayRotation(mActivity) % 180 != 0) {
+            if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
                 w = height;
                 h = width;
             }
@@ -168,7 +169,7 @@ public class PhotoUI implements PieListener,
         @Override
         protected Bitmap doInBackground(Integer... params) {
             // Decode image in background.
-            return Util.downSample(mData, DOWN_SAMPLE_FACTOR);
+            return CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
         }
 
         @Override
@@ -238,7 +239,7 @@ public class PhotoUI implements PieListener,
 
     private void setTransformMatrix(int width, int height) {
         mMatrix = mTextureView.getTransform(mMatrix);
-        int orientation = Util.getDisplayRotation(mActivity);
+        int orientation = CameraUtil.getDisplayRotation(mActivity);
         float scaleX = 1f, scaleY = 1f;
         float scaledTextureWidth, scaledTextureHeight;
         if (width > height) {
@@ -620,18 +621,18 @@ public class PhotoUI implements PieListener,
     protected void showPostCaptureAlert() {
         mOnScreenIndicators.setVisibility(View.GONE);
         mMenuButton.setVisibility(View.GONE);
-        Util.fadeIn(mReviewDoneButton);
+        CameraUtil.fadeIn(mReviewDoneButton);
         mShutterButton.setVisibility(View.INVISIBLE);
-        Util.fadeIn(mReviewRetakeButton);
+        CameraUtil.fadeIn(mReviewRetakeButton);
         pauseFaceDetection();
     }
 
     protected void hidePostCaptureAlert() {
         mOnScreenIndicators.setVisibility(View.VISIBLE);
         mMenuButton.setVisibility(View.VISIBLE);
-        Util.fadeOut(mReviewDoneButton);
+        CameraUtil.fadeOut(mReviewDoneButton);
         mShutterButton.setVisibility(View.VISIBLE);
-        Util.fadeOut(mReviewRetakeButton);
+        CameraUtil.fadeOut(mReviewRetakeButton);
         resumeFaceDetection();
     }
 

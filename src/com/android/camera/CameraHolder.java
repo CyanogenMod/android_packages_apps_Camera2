@@ -16,7 +16,7 @@
 
 package com.android.camera;
 
-import static com.android.camera.Util.Assert;
+import static com.android.camera.util.CameraUtil.Assert;
 
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;

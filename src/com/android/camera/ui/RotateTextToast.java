@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.camera.Util;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 public class RotateTextToast {
@@ -46,7 +46,7 @@ public class RotateTextToast {
     private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            Util.fadeOut(mToast);
+            CameraUtil.fadeOut(mToast);
             mLayoutRoot.removeView(mToast);
             mToast = null;
         }

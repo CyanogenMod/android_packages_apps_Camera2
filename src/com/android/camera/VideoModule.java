@@ -16,13 +16,6 @@
 
 package com.android.camera;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -63,14 +56,22 @@ import android.widget.Toast;
 
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
-import com.android.camera.support.app.OrientationManager;
-import com.android.camera.support.util.AccessibilityUtils;
+import com.android.camera.app.OrientationManager;
+import com.android.camera.util.ApiHelper;
+import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 public class VideoModule implements CameraModule,
     VideoController,
@@ -223,7 +224,7 @@ public class VideoModule implements CameraModule,
     private void openCamera() {
         try {
             if (mCameraDevice == null) {
-                mCameraDevice = Util.openCamera(mActivity, mCameraId);
+                mCameraDevice = CameraUtil.openCamera(mActivity, mCameraId);
             }
             mParameters = mCameraDevice.getParameters();
         } catch (CameraHardwareException e) {
@@ -261,7 +262,7 @@ public class VideoModule implements CameraModule,
                     // down and camera app is opened. Rotation animation will
                     // take some time and the rotation value we have got may be
                     // wrong. Framework does not have a callback for this now.
-                    if ((Util.getDisplayRotation(mActivity) != mDisplayRotation)
+                    if ((CameraUtil.getDisplayRotation(mActivity) != mDisplayRotation)
                             && !mMediaRecorderRecording && !mSwitchingCamera) {
                         startPreview();
                     }
@@ -321,7 +322,7 @@ public class VideoModule implements CameraModule,
     }
 
     private int getPreferredCameraId(ComboPreferences preferences) {
-        int intentCameraId = Util.getCameraFacingIntentExtras(mActivity);
+        int intentCameraId = CameraUtil.getCameraFacingIntentExtras(mActivity);
         if (intentCameraId != -1) {
             // Testing purpose. Launch a specific camera through the intent
             // extras.
@@ -370,10 +371,10 @@ public class VideoModule implements CameraModule,
         try {
             cameraOpenThread.join();
             if (mOpenCameraFail) {
-                Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
+                CameraUtil.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
                 return;
             } else if (mCameraDisabled) {
-                Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
+                CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
                 return;
             }
         } catch (InterruptedException ex) {
@@ -424,10 +425,10 @@ public class VideoModule implements CameraModule,
         }
 
         // Set rotation and gps data.
-        int rotation = Util.getJpegRotation(mCameraId, mOrientation);
+        int rotation = CameraUtil.getJpegRotation(mCameraId, mOrientation);
         mParameters.setRotation(rotation);
         Location loc = mLocationManager.getCurrentLocation();
-        Util.setGpsParameters(mParameters, loc);
+        CameraUtil.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 
         Log.v(TAG, "Video snapshot start");
@@ -466,7 +467,7 @@ public class VideoModule implements CameraModule,
         // the camera then point the camera to floor or sky, we still have
         // the correct orientation.
         if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) return;
-        int newOrientation = Util.roundOrientation(orientation, mOrientation);
+        int newOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
 
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
@@ -668,7 +669,7 @@ public class VideoModule implements CameraModule,
                         it.remove();
                     }
                 }
-                Size optimalSize = Util.getOptimalPreviewSize(mActivity, sizes,
+                Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
                         (double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
                 mDesiredPreviewWidth = optimalSize.width;
                 mDesiredPreviewHeight = optimalSize.height;
@@ -716,11 +717,11 @@ public class VideoModule implements CameraModule,
             resetEffect();
             openCamera();
             if (mOpenCameraFail) {
-                Util.showErrorAndFinish(mActivity,
+                CameraUtil.showErrorAndFinish(mActivity,
                         R.string.cannot_connect_camera);
                 return;
             } else if (mCameraDisabled) {
-                Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
+                CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
                 return;
             }
             readVideoPreferences();
@@ -753,8 +754,8 @@ public class VideoModule implements CameraModule,
     }
 
     private void setDisplayOrientation() {
-        mDisplayRotation = Util.getDisplayRotation(mActivity);
-        mCameraDisplayOrientation = Util.getDisplayOrientation(mDisplayRotation, mCameraId);
+        mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
+        mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, mCameraId);
         // Change the camera display orientation
         if (mCameraDevice != null) {
             mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
@@ -764,7 +765,7 @@ public class VideoModule implements CameraModule,
     @Override
     public void updateCameraOrientation() {
         if (mMediaRecorderRecording) return;
-        if (mDisplayRotation != Util.getDisplayRotation(mActivity)) {
+        if (mDisplayRotation != CameraUtil.getDisplayRotation(mActivity)) {
             setDisplayOrientation();
         }
     }
@@ -819,9 +820,9 @@ public class VideoModule implements CameraModule,
             throw new RuntimeException("startPreview failed", ex);
         } finally {
             if (mOpenCameraFail) {
-                Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
+                CameraUtil.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
             } else if (mCameraDisabled) {
-                Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
+                CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
             }
         }
 
@@ -1048,7 +1049,7 @@ public class VideoModule implements CameraModule,
             // SurfaceView we will have to take everything into account so the
             // display rotation is considered.
             mCameraDevice.setDisplayOrientation(
-                    Util.getDisplayOrientation(mDisplayRotation, mCameraId));
+                    CameraUtil.getDisplayOrientation(mDisplayRotation, mCameraId));
             mCameraDevice.startPreview();
             mPreviewing = true;
             mMediaRecorder.setPreviewDisplay(mUI.getSurfaceHolder().getSurface());
@@ -1496,7 +1497,7 @@ public class VideoModule implements CameraModule,
             // it to match the UI orientation (and mirror if it is front-facing camera).
             CameraInfo[] info = CameraHolder.instance().getCameraInfo();
             boolean mirror = (info[mCameraId].facing == CameraInfo.CAMERA_FACING_FRONT);
-            bitmap = Util.rotateAndMirror(bitmap, 0, mirror);
+            bitmap = CameraUtil.rotateAndMirror(bitmap, 0, mirror);
         }
         return bitmap;
     }
@@ -1730,7 +1731,7 @@ public class VideoModule implements CameraModule,
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
-        int[] fpsRange = Util.getMaxPreviewFpsRange(mParameters);
+        int[] fpsRange = CameraUtil.getMaxPreviewFpsRange(mParameters);
         if (fpsRange.length > 0) {
             mParameters.setPreviewFpsRange(
                     fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
@@ -1784,7 +1785,7 @@ public class VideoModule implements CameraModule,
             mParameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
 
-        mParameters.set(Util.RECORDING_HINT, Util.TRUE);
+        mParameters.set(CameraUtil.RECORDING_HINT, CameraUtil.TRUE);
 
         // Enable video stabilization. Convenience methods not available in API
         // level <= 14
@@ -1798,7 +1799,7 @@ public class VideoModule implements CameraModule,
         // There we determine the preview size based on the picture size, but
         // here we determine the picture size based on the preview size.
         List<Size> supported = mParameters.getSupportedPictureSizes();
-        Size optimalSize = Util.getOptimalVideoSnapshotPictureSize(supported,
+        Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
                 (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
         Size original = mParameters.getPictureSize();
         if (!original.equals(optimalSize)) {
@@ -2058,7 +2059,7 @@ public class VideoModule implements CameraModule,
 
     private void initializeVideoSnapshot() {
         if (mParameters == null) return;
-        if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
+        if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             // Show the tap to focus toast if this is the first start.
             if (mPreferences.getBoolean(
                         CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN, true)) {
@@ -2070,7 +2071,7 @@ public class VideoModule implements CameraModule,
 
     void showVideoSnapshotUI(boolean enabled) {
         if (mParameters == null) return;
-        if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
+        if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (enabled) {
                 mUI.animateFlash();
             } else {
@@ -2121,7 +2122,7 @@ public class VideoModule implements CameraModule,
 
     private void storeImage(final byte[] data, Location loc) {
         long dateTaken = System.currentTimeMillis();
-        String title = Util.createJpegName(dateTaken);
+        String title = CameraUtil.createJpegName(dateTaken);
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
         Size s = mParameters.getPictureSize();

@@ -16,28 +16,15 @@
 
 package com.android.camera.app;
 
-import com.android.camera.Util;
-import com.android.camera.util.PhotoSphereHelper;
-
 import android.app.Application;
-import android.content.Context;
+
+import com.android.camera.util.CameraUtil;
 
 public class CameraApp extends Application {
-
-    private StitchingProgressManager mStitchingProgressManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Util.initialize(this);
-        mStitchingProgressManager = PhotoSphereHelper.createStitchingManagerInstance(this);
-    }
-
-    public Context getAndroidContext() {
-        return this;
-    }
-
-    public StitchingProgressManager getStitchingProgressManager() {
-        return mStitchingProgressManager;
+        CameraUtil.initialize(this);
     }
 }

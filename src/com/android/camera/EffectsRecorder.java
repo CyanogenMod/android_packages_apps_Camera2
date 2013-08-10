@@ -33,7 +33,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.android.camera.support.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 
@@ -1056,8 +1057,8 @@ public class EffectsRecorder {
             return false;
         }
         Camera.Parameters params = mCameraDevice.getParameters();
-        if (Util.isAutoExposureLockSupported(params) &&
-            Util.isAutoWhiteBalanceLockSupported(params)) {
+        if (CameraUtil.isAutoExposureLockSupported(params) &&
+            CameraUtil.isAutoWhiteBalanceLockSupported(params)) {
             params.setAutoExposureLock(toggle);
             params.setAutoWhiteBalanceLock(toggle);
             mCameraDevice.setParameters(params);

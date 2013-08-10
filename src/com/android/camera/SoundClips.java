@@ -24,7 +24,7 @@ import android.media.SoundPool;
 import android.util.Log;
 
 import com.android.camera2.R;
-import com.android.gallery3d.common.ApiHelper;
+import com.android.camera.util.ApiHelper;
 
 /*
  * This class controls the sound playback according to the API level.
