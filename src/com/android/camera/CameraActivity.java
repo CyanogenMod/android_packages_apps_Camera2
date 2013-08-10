@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -101,6 +102,7 @@ public class CameraActivity extends Activity
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
     private CameraPreviewData mCameraPreviewData;
+    private ActionBar mActionBar;
 
     private class MyOrientationEventListener
         extends OrientationEventListener {
@@ -174,6 +176,11 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSwitchMode(boolean toCamera) {
                     mCurrentModule.onSwitchMode(toCamera);
+                    if (toCamera) {
+                        mActionBar.hide();
+                    } else {
+                        mActionBar.show();
+                    }
                 }
 
                 @Override
@@ -319,6 +326,10 @@ public class CameraActivity extends Activity
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.camera_filmstrip);
+        mActionBar = getActionBar();
+        // Hide action bar first since we are in full screen mode first.
+        mActionBar.hide();
+
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
         }
@@ -356,7 +367,7 @@ public class CameraActivity extends Activity
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mRootView = rootLayout.findViewById(R.id.camera_app_root);
-        mPanoStitchingPanel = (View) findViewById(R.id.pano_stitching_progress_panel);
+        mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL,
