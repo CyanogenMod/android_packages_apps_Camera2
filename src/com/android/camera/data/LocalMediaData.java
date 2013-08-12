@@ -61,12 +61,15 @@ public abstract class LocalMediaData implements LocalData {
     protected int height;
 
     /** The panorama metadata information of this media data. */
-    private PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
+    protected PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
 
     /** Used to load photo sphere metadata from image files. */
-    private PanoramaMetadataLoader mPanoramaMetadataLoader = null;
+    protected PanoramaMetadataLoader mPanoramaMetadataLoader = null;
 
-    // true if this data has a corresponding visible view.
+    /**
+     * Used for thumbnail loading optimization. True if this data
+     * has a corresponding visible view.
+     */
     protected Boolean mUsing = false;
 
     @Override
@@ -194,7 +197,7 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public abstract int getType();
+    public abstract int getViewType();
 
     protected abstract BitmapLoadTask getBitmapLoadTask(
             ImageView v, int decodeWidth, int decodeHeight);
@@ -289,8 +292,8 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public int getType() {
-            return TYPE_PHOTO;
+        public int getViewType() {
+            return TYPE_REMOVABLE_VIEW;
         }
 
         @Override
@@ -314,6 +317,14 @@ public abstract class LocalMediaData implements LocalData {
         public Uri getContentUri() {
             Uri baseUri = CONTENT_URI;
             return baseUri.buildUpon().appendPath(String.valueOf(id)).build();
+        }
+
+        @Override
+        public int getLocalDataType(int dataID) {
+            if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
+                return LOCAL_PHOTO_SPHERE;
+            }
+            return LOCAL_IMAGE;
         }
 
         @Override
@@ -458,8 +469,8 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public int getType() {
-            return TYPE_PHOTO;
+        public int getViewType() {
+            return TYPE_REMOVABLE_VIEW;
         }
 
         @Override
@@ -483,6 +494,11 @@ public abstract class LocalMediaData implements LocalData {
         public Uri getContentUri() {
             Uri baseUri = CONTENT_URI;
             return baseUri.buildUpon().appendPath(String.valueOf(id)).build();
+        }
+
+        @Override
+        public int getLocalDataType(int dataID) {
+            return LOCAL_VIDEO;
         }
 
         @Override

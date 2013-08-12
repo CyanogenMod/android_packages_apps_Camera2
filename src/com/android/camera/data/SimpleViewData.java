@@ -71,8 +71,8 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public int getType() {
-        return FilmStripView.ImageData.TYPE_PHOTO;
+    public int getViewType() {
+        return FilmStripView.ImageData.TYPE_REMOVABLE_VIEW;
     }
 
     @Override
@@ -83,6 +83,11 @@ public class SimpleViewData implements LocalData {
     @Override
     public Uri getContentUri() {
         return Uri.EMPTY;
+    }
+
+    @Override
+    public int getLocalDataType(int dataID) {
+        return LOCAL_VIEW;
     }
 
     @Override

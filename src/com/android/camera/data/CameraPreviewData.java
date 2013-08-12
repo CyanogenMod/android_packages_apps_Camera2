@@ -40,8 +40,13 @@ public class CameraPreviewData extends SimpleViewData {
     }
 
     @Override
-    public int getType() {
-        return ImageData.TYPE_CAMERA_PREVIEW;
+    public int getViewType() {
+        return ImageData.TYPE_STICKY_VIEW;
+    }
+
+    @Override
+    public int getLocalDataType(int dataID) {
+        return LOCAL_CAMERA_PREVIEW;
     }
 
     @Override

@@ -98,10 +98,10 @@ public class FilmStripView extends ViewGroup {
                     boolean isPanorama360);
         }
 
-        // Image data types.
+        // View types.
         public static final int TYPE_NONE = 0;
-        public static final int TYPE_CAMERA_PREVIEW = 1;
-        public static final int TYPE_PHOTO = 2;
+        public static final int TYPE_STICKY_VIEW = 1;
+        public static final int TYPE_REMOVABLE_VIEW = 2;
 
         // Actions allowed to be performed on the image data.
         // The actions are defined bit-wise so we can use bit operations like
@@ -139,7 +139,7 @@ public class FilmStripView extends ViewGroup {
         public int getHeight();
 
         /** Returns the image data type */
-        public int getType();
+        public int getViewType();
 
         /**
          * Checks if the UI action is supported.
@@ -501,7 +501,7 @@ public class FilmStripView extends ViewGroup {
         return false;
     }
 
-    private int getCurrentType() {
+    private int getCurrentViewType() {
         if (mDataAdapter == null) {
             return ImageData.TYPE_NONE;
         }
@@ -509,7 +509,7 @@ public class FilmStripView extends ViewGroup {
         if (curr == null) {
             return ImageData.TYPE_NONE;
         }
-        return mDataAdapter.getImageData(curr.getID()).getType();
+        return mDataAdapter.getImageData(curr.getID()).getViewType();
     }
 
     @Override
@@ -711,7 +711,7 @@ public class FilmStripView extends ViewGroup {
             if (mController.isScrolling()) {
                 mController.stopScrolling();
             }
-            if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW
+            if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
                     && !mController.isScalling()
                     && mScale != FULLSCREEN_SCALE) {
                 mController.gotoFullScreen();
@@ -890,7 +890,7 @@ public class FilmStripView extends ViewGroup {
     // Keeps the view in the view hierarchy if it's camera preview.
     // Remove from the hierarchy otherwise.
     private void checkForRemoval(ImageData data, View v) {
-        if (data.getType() != ImageData.TYPE_CAMERA_PREVIEW) {
+        if (data.getViewType() != ImageData.TYPE_STICKY_VIEW) {
             removeView(v);
             data.recycle();
         } else {
@@ -1147,7 +1147,7 @@ public class FilmStripView extends ViewGroup {
 
     public boolean inCameraFullscreen() {
         return isAnchoredTo(0) && inFullScreen()
-                && (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW);
+                && (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW);
     }
 
     @Override
@@ -1270,7 +1270,7 @@ public class FilmStripView extends ViewGroup {
         if (mViewInfo[mCurrentInfo] == null) {
             return;
         }
-        if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW) {
+        if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
             // we are in camera mode by default.
             mController.lockAtCurrentView();
         }
@@ -1426,7 +1426,8 @@ public class FilmStripView extends ViewGroup {
             }
 
             float scaledVelocityX = velocityX / mScale;
-            if (inCameraFullscreen() && scaledVelocityX < 0) {
+            if (inFullScreen() && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
+                    && scaledVelocityX < 0) {
                 // Swipe left in camera preview.
                 gotoFilmStrip();
             }
@@ -1518,8 +1519,8 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public void gotoCameraFullScreen() {
-            if (mDataAdapter.getImageData(0).getType()
-                    != ImageData.TYPE_CAMERA_PREVIEW) {
+            if (mDataAdapter.getImageData(0).getViewType()
+                    != ImageData.TYPE_STICKY_VIEW) {
                 return;
             }
             gotoFullScreen();
@@ -1651,7 +1652,9 @@ public class FilmStripView extends ViewGroup {
             int deltaX = (int) (dx / mScale);
             if (inFilmStrip()) {
                 if (Math.abs(dx) > Math.abs(dy)) {
-                    if (deltaX > 0 && inCameraFullscreen()) {
+                    if (deltaX > 0
+                            && inFullScreen()
+                            && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
                         mController.gotoFilmStrip();
                     }
                     mController.scroll(deltaX);
