@@ -215,7 +215,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void flush() {
-        replaceData(null);
+        replaceData(new ArrayList<LocalData>());
     }
 
     @Override
