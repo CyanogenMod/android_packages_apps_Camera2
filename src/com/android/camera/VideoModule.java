@@ -418,15 +418,17 @@ public class VideoModule implements CameraModule,
                     mOrientation).show();
             return;
         }
-
         takeASnapshot();
     }
 
     private void takeASnapshot() {
-        // only take snapshots if video snapshot is supported by device
+        // Only take snapshots if video snapshot is supported by device
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
+            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress || effectsActive()) {
+                return;
+            }
             MediaSaveService s = mActivity.getMediaSaveService();
-            if (mPaused || mSnapshotInProgress || effectsActive() || s == null || s.isQueueFull()) {
+            if (s == null || s.isQueueFull()) {
                 return;
             }
 
