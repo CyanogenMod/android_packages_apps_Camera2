@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -56,7 +55,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -170,8 +168,6 @@ public class PhotoModule
     };
 
     private final StringBuilder mBuilder = new StringBuilder();
-    private final Formatter mFormatter = new Formatter(mBuilder);
-    private final Object[] mFormatterArgs = new Object[1];
 
     /**
      * An unpublished intent flag requesting to return as soon as capturing
@@ -265,10 +261,6 @@ public class PhotoModule
         public void cancel() {
             mCancelled = true;
             interrupt();
-        }
-
-        public boolean isCanceled() {
-            return mCancelled;
         }
 
         @Override
@@ -607,20 +599,6 @@ public class PhotoModule
         keepMediaProviderInstance();
     }
 
-    @Override
-    public void onSurfaceCreated(SurfaceHolder holder) {
-        // Do not access the camera if camera start up thread is not finished.
-        if (mCameraDevice == null || mCameraStartUpThread != null)
-            return;
-
-        mCameraDevice.setPreviewDisplay(holder);
-        // This happens when onConfigurationChanged arrives, surface has been
-        // destroyed, and there is no onFullScreenChanged.
-        if (mCameraState == PREVIEW_STOPPED) {
-            setupPreview();
-        }
-    }
-
     private void showTapToFocusToastIfNeeded() {
         // Show the tap to focus toast if this is the first start.
         if (mFocusAreaSupported &&
@@ -851,7 +829,6 @@ public class PhotoModule
 
     private static class NamedImages {
         private ArrayList<NamedEntity> mQueue;
-        private boolean mStop;
         private NamedEntity mNamedEntity;
 
         public NamedImages() {
@@ -1503,7 +1480,7 @@ public class PhotoModule
         }
     }
 
-    // Only called by UI thread.
+    /** Only called by UI thread. */
     private void setupPreview() {
         mFocusManager.resetTouchFocus();
         startPreview();
