@@ -38,6 +38,18 @@ public interface LocalData extends FilmStripView.ImageData {
     public static final int ACTION_PLAY = 1;
     public static final int ACTION_DELETE = (1 << 1);
 
+    // Local data types. Returned by getLocalDataType().
+    // Camera preview.
+    public static final int LOCAL_CAMERA_PREVIEW = 1;
+    // A data for showing an arbitrary view.
+    public static final int LOCAL_VIEW           = 2;
+    // A still image.
+    public static final int LOCAL_IMAGE          = 3;
+    // A video.
+    public static final int LOCAL_VIDEO          = 4;
+    // A still image but with valid PhotoSphere metadata.
+    public static final int LOCAL_PHOTO_SPHERE   = 5;
+
     View getView(Context c, int width, int height, Drawable placeHolder);
 
     /**
@@ -91,6 +103,16 @@ public interface LocalData extends FilmStripView.ImageData {
     Uri getContentUri();
 
     /**
+     * Returns the type of the local data defined by {@link LocalData}.
+     *
+     * @param dataID The ID of the data.
+     * @return The local data type. Could be one of the following:
+     * {@code LOCAL_CAMERA_PREVIEW}, {@code LOCAL_VIEW}, {@code LOCAL_IMAGE},
+     * {@code LOCAL_VIDEO}, and {@code LOCAL_PHOTO_SPHERE},
+     */
+    int getLocalDataType(int dataID);
+
+    /**
      * Refresh the data content.
      *
      * @param resolver {@link ContentResolver} to refresh the data.
@@ -124,6 +146,5 @@ public interface LocalData extends FilmStripView.ImageData {
             return cmp;
         }
     }
-
 }
 
