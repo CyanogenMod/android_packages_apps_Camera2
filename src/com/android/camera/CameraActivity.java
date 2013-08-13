@@ -37,6 +37,9 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +80,19 @@ public class CameraActivity extends Activity
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
+    // Supported operations at FilmStripView. Different data has different
+    // set of supported operations.
+    private static final int SUPPORT_DELETE = 1 << 0;
+    private static final int SUPPORT_ROTATE = 1 << 1;
+    private static final int SUPPORT_INFO = 1 << 2;
+    private static final int SUPPORT_CROP = 1 << 3;
+    private static final int SUPPORT_SETAS = 1 << 4;
+    private static final int SUPPORT_EDIT = 1 << 5;
+    private static final int SUPPORT_TRIM = 1 << 6;
+    private static final int SUPPORT_MUTE = 1 << 7;
+    private static final int SUPPORT_SHOW_ON_MAP = 1 << 8;
+    private static final int SUPPORT_ALL = 0xffffffff;
+
     /** This data adapter is used by FilmStirpView. */
     private LocalDataAdapter mDataAdapter;
     /** This data adapter represents the real local camera data. */
@@ -104,6 +120,7 @@ public class CameraActivity extends Activity
     private PanoramaViewHelper mPanoramaViewHelper;
     private CameraPreviewData mCameraPreviewData;
     private ActionBar mActionBar;
+    private Menu mActionBarMenu;
 
     private class MyOrientationEventListener
         extends OrientationEventListener {
@@ -195,6 +212,9 @@ public class CameraActivity extends Activity
                             hidePanoStitchingProgress();
                             return;
                         }
+                        int type = currentData.getLocalDataType(dataID);
+                        updateActionBarMenu(type);
+
                         Uri contentUri = currentData.getContentUri();
                         if (contentUri == null) {
                             hidePanoStitchingProgress();
@@ -221,6 +241,64 @@ public class CameraActivity extends Activity
 
     private void updateStitchingProgress(int progress) {
         mBottomProgress.setProgress(progress);
+    }
+
+    /**
+     * According to the data type, make the menu items for supported operations
+     * visible.
+     * @param type : the data type for the current local data.
+     */
+    private void updateActionBarMenu(int type) {
+        if (mActionBarMenu == null) {
+            return;
+        }
+
+        int supported = 0;
+        switch (type) {
+            case LocalData.LOCAL_IMAGE:
+                supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
+                        | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
+                        | SUPPORT_SHOW_ON_MAP;
+                break;
+            case LocalData.LOCAL_VIDEO:
+                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM
+                        | SUPPORT_MUTE;
+                break;
+            case LocalData.LOCAL_PHOTO_SPHERE:
+                supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
+                        | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
+                        | SUPPORT_SHOW_ON_MAP;
+                break;
+            default:
+                break;
+        }
+
+        setMenuItemVisible(mActionBarMenu, R.id.action_delete,
+                (supported & SUPPORT_DELETE) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_rotate_ccw,
+                (supported & SUPPORT_ROTATE) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_rotate_cw,
+                (supported & SUPPORT_ROTATE) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_crop,
+                (supported & SUPPORT_CROP) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_trim,
+                (supported & SUPPORT_TRIM) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_mute,
+                (supported & SUPPORT_MUTE) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_setas,
+                (supported & SUPPORT_SETAS) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_show_on_map,
+                (supported & SUPPORT_SHOW_ON_MAP) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_edit,
+                (supported & SUPPORT_EDIT) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_details,
+                (supported & SUPPORT_INFO) != 0);
+    }
+
+    private void setMenuItemVisible(Menu menu, int itemId, boolean visible) {
+        MenuItem item = menu.findItem(itemId);
+        if (item != null)
+            item.setVisible(visible);
     }
 
     private Runnable mDeletionRunnable = new Runnable() {
@@ -320,6 +398,54 @@ public class CameraActivity extends Activity
         }
         if (mConnection != null) {
             unbindService(mConnection);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.operations, menu);
+        mActionBarMenu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_edit:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_trim:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_mute:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_rotate_ccw:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_rotate_cw:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_crop:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_setas:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_details:
+                // TODO: add the functionality.
+                return true;
+            case R.id.action_show_on_map:
+                // TODO: add the functionality.
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
