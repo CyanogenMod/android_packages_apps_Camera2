@@ -51,6 +51,7 @@
             style="@style/ReviewControlIcon"
             android:layout_centerInParent="true"
             android:src="@drawable/ic_gallery_play_big"
+            android:scaleType="center"
             android:visibility="gone"
             android:onClick="onReviewPlayClicked"/>
 

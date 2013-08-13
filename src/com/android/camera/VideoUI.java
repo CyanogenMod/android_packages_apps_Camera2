@@ -189,7 +189,7 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     private void initializeControlByIntent() {
-        mMenuButton = mActivity.findViewById(R.id.menu);
+        mMenuButton = mRootView.findViewById(R.id.menu);
         mMenuButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,9 +199,9 @@ public class VideoUI implements PieRenderer.PieListener,
             }
         });
 
-        mCameraControls = (CameraControls) mActivity.findViewById(R.id.camera_controls);
+        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mOnScreenIndicators = new OnScreenIndicators(mActivity,
-                mActivity.findViewById(R.id.on_screen_indicators));
+                mRootView.findViewById(R.id.on_screen_indicators));
         mOnScreenIndicators.resetToDefault();
         if (mController.isVideoCaptureIntent()) {
             hideSwitcher();
@@ -210,9 +210,9 @@ public class VideoUI implements PieRenderer.PieListener,
             // Cannot use RotateImageView for "done" and "cancel" button because
             // the tablet layout uses RotateLayout, which cannot be cast to
             // RotateImageView.
-            mReviewDoneButton = mActivity.findViewById(R.id.btn_done);
-            mReviewCancelButton = mActivity.findViewById(R.id.btn_cancel);
-            mReviewPlayButton = mActivity.findViewById(R.id.btn_play);
+            mReviewDoneButton = mRootView.findViewById(R.id.btn_done);
+            mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
+            mReviewPlayButton = mRootView.findViewById(R.id.btn_play);
             mReviewCancelButton.setVisibility(View.VISIBLE);
             mReviewDoneButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -414,7 +414,7 @@ public class VideoUI implements PieRenderer.PieListener,
         }
         mGestures.setRenderOverlay(mRenderOverlay);
 
-        mPreviewThumb = mActivity.findViewById(R.id.preview_thumb);
+        mPreviewThumb = mRootView.findViewById(R.id.preview_thumb);
         mPreviewThumb.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -555,7 +555,9 @@ public class VideoUI implements PieRenderer.PieListener,
             }
         } else {
             mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
-            showSwitcher();
+            if (!mController.isVideoCaptureIntent()) {
+                showSwitcher();
+            }
             mRecordingTimeView.setVisibility(View.GONE);
             if (!ApiHelper.HAS_ZOOM_WHEN_RECORDING && zoomSupported) {
                 // TODO: enable zoom UI here.
