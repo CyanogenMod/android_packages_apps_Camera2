@@ -36,7 +36,6 @@ import android.widget.LinearLayout;
 
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
-import com.android.camera.util.RefocusHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.android.camera.util.ApiHelper;
@@ -44,18 +43,17 @@ import com.android.camera.util.ApiHelper;
 public class CameraSwitcher extends RotateImageView
         implements OnClickListener, OnTouchListener {
 
+    @SuppressWarnings("unused")
     private static final String TAG = "CAM_Switcher";
     private static final int SWITCHER_POPUP_ANIM_DURATION = 200;
 
     public static final int PHOTO_MODULE_INDEX = 0;
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int LIGHTCYCLE_MODULE_INDEX = 2;
-    public static final int REFOCUS_MODULE_INDEX = 3;
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
             R.drawable.ic_switch_photosphere,
-            R.drawable.ic_switch_refocus
     };
 
     public interface CameraSwitchListener {
@@ -104,18 +102,12 @@ public class CameraSwitcher extends RotateImageView
         if (!PhotoSphereHelper.hasLightCycleCapture(context)) {
             --numDrawIds;
         }
-        if (!RefocusHelper.hasRefocusCapture(context)) {
-            --numDrawIds;
-        }
 
         int[] drawids = new int[numDrawIds];
         int[] moduleids = new int[numDrawIds];
         int ix = 0;
         for (int i = 0; i < DRAW_IDS.length; i++) {
             if (i == LIGHTCYCLE_MODULE_INDEX && !PhotoSphereHelper.hasLightCycleCapture(context)) {
-                continue; // not enabled, so don't add to UI
-            }
-            if (i == REFOCUS_MODULE_INDEX && !RefocusHelper.hasRefocusCapture(context)) {
                 continue; // not enabled, so don't add to UI
             }
             moduleids[ix] = i;
