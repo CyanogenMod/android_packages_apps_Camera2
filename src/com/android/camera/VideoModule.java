@@ -421,25 +421,32 @@ public class VideoModule implements CameraModule,
             return;
         }
 
-        MediaSaveService s = mActivity.getMediaSaveService();
-        if (mPaused || mSnapshotInProgress || effectsActive() || s == null || s.isQueueFull()) {
-            return;
+        takeASnapshot();
+    }
+
+    private void takeASnapshot() {
+        // only take snapshots if video snapshot is supported by device
+        if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
+            MediaSaveService s = mActivity.getMediaSaveService();
+            if (mPaused || mSnapshotInProgress || effectsActive() || s == null || s.isQueueFull()) {
+                return;
+            }
+
+            // Set rotation and gps data.
+            int rotation = CameraUtil.getJpegRotation(mCameraId, mOrientation);
+            mParameters.setRotation(rotation);
+            Location loc = mLocationManager.getCurrentLocation();
+            CameraUtil.setGpsParameters(mParameters, loc);
+            mCameraDevice.setParameters(mParameters);
+
+            Log.v(TAG, "Video snapshot start");
+            mCameraDevice.takePicture(mHandler,
+                    null, null, null, new JpegPictureCallback(loc));
+            showVideoSnapshotUI(true);
+            mSnapshotInProgress = true;
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                    UsageStatistics.ACTION_CAPTURE_DONE, "VideoSnapshot");
         }
-
-        // Set rotation and gps data.
-        int rotation = CameraUtil.getJpegRotation(mCameraId, mOrientation);
-        mParameters.setRotation(rotation);
-        Location loc = mLocationManager.getCurrentLocation();
-        CameraUtil.setGpsParameters(mParameters, loc);
-        mCameraDevice.setParameters(mParameters);
-
-        Log.v(TAG, "Video snapshot start");
-        mCameraDevice.takePicture(mHandler,
-                null, null, null, new JpegPictureCallback(loc));
-        showVideoSnapshotUI(true);
-        mSnapshotInProgress = true;
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_CAPTURE_DONE, "VideoSnapshot");
     }
 
     @Override
