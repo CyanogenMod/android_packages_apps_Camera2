@@ -59,7 +59,6 @@ import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.PhotoSphereHelper;
-import com.android.camera.util.RefocusHelper;
 import com.android.camera2.R;
 
 public class CameraActivity extends Activity
@@ -599,9 +598,6 @@ public class CameraActivity extends Activity
                 break;
             case CameraSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
-                break;
-            case CameraSwitcher.REFOCUS_MODULE_INDEX:
-                mCurrentModule = RefocusHelper.createRefocusModule();
                 break;
            default:
                break;
