@@ -567,9 +567,6 @@
     <!-- label for the icon meaning 'show me all the images that were taken with the camera' -->
     <string name="camera_label">Camera</string>
 
-    <!-- label for the 'video recording application shown in the top level 'all applications' -->
-    <string name="video_camera_label">Camcorder</string>
-
     <!-- alert to the user to wait for some operation to complete -->
     <string name="wait">Please wait\u2026</string>
 
