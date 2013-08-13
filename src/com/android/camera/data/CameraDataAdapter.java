@@ -266,9 +266,11 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     /** Update all the data */
     private void replaceData(List<LocalData> list) {
-        boolean changed = (list != mImages);
+        if (list.size() == 0 && mImages.size() == 0) {
+            return;
+        }
         mImages = list;
-        if (changed) {
+        if (mListener != null) {
             mListener.onDataLoaded();
         }
     }
@@ -330,9 +332,10 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 c.close();
             }
 
-            if (l.size() == 0) return null;
+            if (l.size() != 0) {
+                Collections.sort(l, new LocalData.NewestFirstComparator());
+            }
 
-            Collections.sort(l, new LocalData.NewestFirstComparator());
             return l;
         }
 
