@@ -49,7 +49,6 @@ import android.provider.MediaStore.Video;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
-import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -177,7 +176,6 @@ public class VideoModule implements CameraModule,
     private LocationManager mLocationManager;
     private OrientationManager mOrientationManager;
 
-    private Surface mSurface;
     private int mPendingSwitchCameraId;
     private boolean mOpenCameraFail;
     private boolean mCameraDisabled;
@@ -1197,9 +1195,6 @@ public class VideoModule implements CameraModule,
         // If the mCameraDevice is null, then this activity is going to finish
         if (mCameraDevice == null) return;
 
-        boolean inLandscape = (mActivity.getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE);
-
         CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
 
         mEffectsDisplayResult = false;
@@ -1532,14 +1527,6 @@ public class VideoModule implements CameraModule,
         mUI.showReviewControls();
         mUI.enableCameraControls(false);
         mUI.showTimeLapseUI(false);
-    }
-
-    private void hideAlert() {
-        mUI.enableCameraControls(true);
-        mUI.hideReviewUI();
-        if (mCaptureTimeLapse) {
-            mUI.showTimeLapseUI(true);
-        }
     }
 
     private boolean stopVideoRecording() {
