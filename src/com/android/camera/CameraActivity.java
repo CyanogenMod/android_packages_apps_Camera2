@@ -452,6 +452,7 @@ public class CameraActivity extends Activity
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.camera_filmstrip);
         mActionBar = getActionBar();
         // Hide action bar first since we are in full screen mode first.
