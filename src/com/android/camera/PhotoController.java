@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.android.camera.ShutterButton.OnShutterButtonListener;
@@ -52,8 +51,6 @@ public interface PhotoController extends OnShutterButtonListener {
     public int getCameraState();
 
     public void onSingleTapUp(View view, int x, int y);
-
-    public void onSurfaceCreated(SurfaceHolder holder);
 
     public void onCountDownFinished();
 
