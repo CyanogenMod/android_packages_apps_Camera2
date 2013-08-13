@@ -198,6 +198,8 @@ public class VideoModule implements CameraModule,
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
+                        mCurrentVideoUri = uri;
+                        onVideoSaved();
                         mActivity.notifyNewMedia(uri);
                     }
                 }
@@ -547,6 +549,12 @@ public class VideoModule implements CameraModule,
                     mUI.animateCapture(bitmap);
                 }
             }
+        }
+    }
+
+    public void onVideoSaved() {
+        if (mIsVideoCaptureIntent) {
+            showCaptureResult();
         }
     }
 
@@ -1488,9 +1496,15 @@ public class VideoModule implements CameraModule,
         if (mVideoFileDescriptor != null) {
             bitmap = Thumbnail.createVideoThumbnailBitmap(mVideoFileDescriptor.getFileDescriptor(),
                     mDesiredPreviewWidth);
-        } else if (mCurrentVideoFilename != null) {
-            bitmap = Thumbnail.createVideoThumbnailBitmap(mCurrentVideoFilename,
-                    mDesiredPreviewWidth);
+        } else if (mCurrentVideoUri != null) {
+            try {
+                mVideoFileDescriptor = mContentResolver.openFileDescriptor(mCurrentVideoUri, "r");
+                bitmap = Thumbnail.createVideoThumbnailBitmap(
+                        mVideoFileDescriptor.getFileDescriptor(), mDesiredPreviewWidth);
+            } catch (java.io.FileNotFoundException ex) {
+                // invalid uri
+                Log.e(TAG, ex.toString());
+            }
         }
         if (bitmap != null) {
             // MetadataRetriever already rotates the thumbnail. We should rotate
@@ -1524,7 +1538,9 @@ public class VideoModule implements CameraModule,
     private boolean stopVideoRecording() {
         Log.v(TAG, "stopVideoRecording");
         mUI.setSwipingEnabled(true);
-        mUI.showSwitcher();
+        if (!isVideoCaptureIntent()) {
+            mUI.showSwitcher();
+        }
 
         boolean fail = false;
         if (mMediaRecorderRecording) {
@@ -1580,8 +1596,13 @@ public class VideoModule implements CameraModule,
             // reflect the device orientation as video recording is stopped.
             mUI.setOrientationIndicator(0, true);
             keepScreenOnAwhile();
-            if (shouldAddToMediaStoreNow) {
-                saveVideo();
+            if (shouldAddToMediaStoreNow && !fail) {
+                if (mVideoFileDescriptor == null) {
+                    saveVideo();
+                } else if (mIsVideoCaptureIntent) {
+                    // if no file save is needed, we can show the post capture UI now
+                    showCaptureResult();
+                }
             }
         }
         // always release media recorder if no effects running
