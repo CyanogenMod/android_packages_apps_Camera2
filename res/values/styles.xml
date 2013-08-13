@@ -55,6 +55,8 @@
     </style>
 
     <style name="Theme.Camera" parent="Theme.CameraBase">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
         <item name="android:colorBackgroundCacheHint">@android:color/black</item>
