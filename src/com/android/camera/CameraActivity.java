@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -386,7 +387,13 @@ public class CameraActivity extends Activity
         mFilmStripView.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
         mFilmStripView.setListener(mFilmStripListener);
-        mCurrentModule = new PhotoModule();
+        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
+                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
+            mCurrentModule = new VideoModule();
+            mCurrentModuleIndex = CameraSwitcher.VIDEO_MODULE_INDEX;
+        } else {
+            mCurrentModule = new PhotoModule();
+        }
         mCurrentModule.init(this, mRootView);
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
