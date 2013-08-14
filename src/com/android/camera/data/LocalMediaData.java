@@ -35,12 +35,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.camera.util.CameraUtil;
 import com.android.camera.ui.FilmStripView;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -53,12 +54,13 @@ public abstract class LocalMediaData implements LocalData {
     protected long id;
     protected String title;
     protected String mimeType;
-    protected long dateTaken;
-    protected long dateModified;
+    protected long dateTakenInSeconds;
+    protected long dateModifiedInSeconds;
     protected String path;
     // width and height should be adjusted according to orientation.
     protected int width;
     protected int height;
+    protected long sizeInBytes;
 
     /** The panorama metadata information of this media data. */
     protected PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
@@ -74,12 +76,12 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public long getDateTaken() {
-        return dateTaken;
+        return dateTakenInSeconds;
     }
 
     @Override
     public long getDateModified() {
-        return dateModified;
+        return dateModifiedInSeconds;
     }
 
     @Override
@@ -214,6 +216,7 @@ public abstract class LocalMediaData implements LocalData {
         public static final int COL_ORIENTATION = 6;
         public static final int COL_WIDTH = 7;
         public static final int COL_HEIGHT = 8;
+        public static final int COL_SIZE = 9;
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -232,6 +235,7 @@ public abstract class LocalMediaData implements LocalData {
             MediaStore.Images.ImageColumns.ORIENTATION,   // 6, int, 0, 90, 180, 270
             MediaStore.Images.ImageColumns.WIDTH,         // 7, int
             MediaStore.Images.ImageColumns.HEIGHT,        // 8, int
+            MediaStore.Images.ImageColumns.SIZE,          // 9, long
         };
 
         private static final int mSupportedUIActions =
@@ -251,8 +255,8 @@ public abstract class LocalMediaData implements LocalData {
             d.id = c.getLong(COL_ID);
             d.title = c.getString(COL_TITLE);
             d.mimeType = c.getString(COL_MIME_TYPE);
-            d.dateTaken = c.getLong(COL_DATE_TAKEN);
-            d.dateModified = c.getLong(COL_DATE_MODIFIED);
+            d.dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
+            d.dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
             d.path = c.getString(COL_DATA);
             d.orientation = c.getInt(COL_ORIENTATION);
             d.width = c.getInt(COL_WIDTH);
@@ -281,6 +285,7 @@ public abstract class LocalMediaData implements LocalData {
                 d.width = d.height;
                 d.height = b;
             }
+            d.sizeInBytes = c.getLong(COL_SIZE);
             return d;
         }
 
@@ -288,7 +293,7 @@ public abstract class LocalMediaData implements LocalData {
         public String toString() {
             return "Photo:" + ",data=" + path + ",mimeType=" + mimeType
                     + "," + width + "x" + height + ",orientation=" + orientation
-                    + ",date=" + new Date(dateTaken);
+                    + ",date=" + new Date(dateTakenInSeconds);
         }
 
         @Override
@@ -320,6 +325,23 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public MediaDetails getMediaDetails(Context context) {
+            DateFormat formater = DateFormat.getDateTimeInstance();
+            MediaDetails mediaDetails = new MediaDetails();
+            mediaDetails.addDetail(MediaDetails.INDEX_TITLE, title);
+            mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, width);
+            mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, height);
+            mediaDetails.addDetail(MediaDetails.INDEX_PATH, path);
+            mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
+                    formater.format(new Date(dateModifiedInSeconds * 1000)));
+            if (sizeInBytes > 0)
+                mediaDetails.addDetail(MediaDetails.INDEX_SIZE, sizeInBytes);
+
+            MediaDetails.extractExifInfo(mediaDetails, path);
+            return mediaDetails;
+        }
+
+        @Override
         public int getLocalDataType(int dataID) {
             if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
                 return LOCAL_PHOTO_SPHERE;
@@ -338,8 +360,8 @@ public abstract class LocalMediaData implements LocalData {
             id = newData.id;
             title = newData.title;
             mimeType = newData.mimeType;
-            dateTaken = newData.dateTaken;
-            dateModified = newData.dateModified;
+            dateTakenInSeconds = newData.dateTakenInSeconds;
+            dateModifiedInSeconds = newData.dateModifiedInSeconds;
             path = newData.path;
             orientation = newData.orientation;
             width = newData.width;
@@ -436,8 +458,8 @@ public abstract class LocalMediaData implements LocalData {
             d.id = c.getLong(COL_ID);
             d.title = c.getString(COL_TITLE);
             d.mimeType = c.getString(COL_MIME_TYPE);
-            d.dateTaken = c.getLong(COL_DATE_TAKEN);
-            d.dateModified = c.getLong(COL_DATE_MODIFIED);
+            d.dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
+            d.dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
             d.path = c.getString(COL_DATA);
             d.width = c.getInt(COL_WIDTH);
             d.height = c.getInt(COL_HEIGHT);
@@ -475,7 +497,7 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public String toString() {
             return "Video:" + ",data=" + path + ",mimeType=" + mimeType
-                    + "," + width + "x" + height + ",date=" + new Date(dateTaken);
+                    + "," + width + "x" + height + ",date=" + new Date(dateTakenInSeconds);
         }
 
         @Override
@@ -507,6 +529,12 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public MediaDetails getMediaDetails(Context context) {
+            // TODO: Return valid MediaDetails for videos.
+            return new MediaDetails();
+        }
+
+        @Override
         public int getLocalDataType(int dataID) {
             return LOCAL_VIDEO;
         }
@@ -525,8 +553,8 @@ public abstract class LocalMediaData implements LocalData {
             id = newData.id;
             title = newData.title;
             mimeType = newData.mimeType;
-            dateTaken = newData.dateTaken;
-            dateModified = newData.dateModified;
+            dateTakenInSeconds = newData.dateTakenInSeconds;
+            dateModifiedInSeconds = newData.dateModifiedInSeconds;
             path = newData.path;
             width = newData.width;
             height = newData.height;
