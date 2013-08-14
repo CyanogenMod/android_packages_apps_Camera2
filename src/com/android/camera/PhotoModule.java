@@ -18,10 +18,12 @@ package com.android.camera;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -74,14 +76,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoModule
-    implements CameraModule,
-    PhotoController,
-    FocusOverlayManager.Listener,
-    CameraPreference.OnPreferenceChangedListener,
-    ShutterButton.OnShutterButtonListener,
-    MediaSaveService.Listener,
-    OnCountDownFinishedListener,
-    SensorEventListener {
+        implements CameraModule,
+        PhotoController,
+        FocusOverlayManager.Listener,
+        CameraPreference.OnPreferenceChangedListener,
+        ShutterButton.OnShutterButtonListener,
+        MediaSaveService.Listener,
+        OnCountDownFinishedListener,
+        SensorEventListener {
 
     private static final String TAG = "CAM_PhotoModule";
 
@@ -200,8 +202,8 @@ public class PhotoModule
             new AutoFocusCallback();
     private final Object mAutoFocusMoveCallback =
             ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK
-            ? new AutoFocusMoveCallback()
-            : null;
+                    ? new AutoFocusMoveCallback()
+                    : null;
 
     private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
 
@@ -308,8 +310,8 @@ public class PhotoModule
                 }
 
                 case SWITCH_CAMERA_START_ANIMATION: {
-                   // TODO: Need to revisit
-                   // ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
+                    // TODO: Need to revisit
+                    // ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
                     break;
                 }
 
@@ -331,6 +333,19 @@ public class PhotoModule
                             R.string.camera_disabled);
                     break;
                 }
+            }
+        }
+    }
+
+    private BroadcastReceiver mReceiver = null;
+
+    private class ShutterBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals("com.android.camera.SHUTTER")) {
+                onShutterButtonFocus(true);
+                onShutterButtonClick();
             }
         }
     }
@@ -410,8 +425,8 @@ public class PhotoModule
 
     private void setLocationPreference(String value) {
         mPreferences.edit()
-            .putString(CameraSettings.KEY_RECORD_LOCATION, value)
-            .apply();
+                .putString(CameraSettings.KEY_RECORD_LOCATION, value)
+                .apply();
         // TODO: Fix this to use the actual onSharedPreferencesChanged listener
         // instead of invoking manually
         onSharedPreferenceChanged();
@@ -780,8 +795,8 @@ public class PhotoModule
             implements CameraAFMoveCallback {
         @Override
         public void onAutoFocusMoving(
-            boolean moving, CameraProxy camera) {
-                mFocusManager.onAutoFocusMoving(moving);
+                boolean moving, CameraProxy camera) {
+            mFocusManager.onAutoFocusMoving(moving);
         }
     }
 
@@ -826,14 +841,14 @@ public class PhotoModule
     private void setCameraState(int state) {
         mCameraState = state;
         switch (state) {
-        case PhotoController.PREVIEW_STOPPED:
-        case PhotoController.SNAPSHOT_IN_PROGRESS:
-        case PhotoController.SWITCHING_CAMERA:
-            mUI.enableGestures(false);
-            break;
-        case PhotoController.IDLE:
-            mUI.enableGestures(true);
-            break;
+            case PhotoController.PREVIEW_STOPPED:
+            case PhotoController.SNAPSHOT_IN_PROGRESS:
+            case PhotoController.SWITCHING_CAMERA:
+                mUI.enableGestures(false);
+                break;
+            case PhotoController.IDLE:
+                mUI.enableGestures(true);
+                break;
         }
     }
 
@@ -922,7 +937,7 @@ public class PhotoModule
     }
 
     private void overrideCameraSettings(final String flashMode,
-            final String whiteBalance, final String focusMode) {
+                                        final String whiteBalance, final String focusMode) {
         mUI.overrideSettings(
                 CameraSettings.KEY_FLASH_MODE, flashMode,
                 CameraSettings.KEY_WHITE_BALANCE, whiteBalance,
@@ -1120,13 +1135,18 @@ public class PhotoModule
         if (seconds > 0) {
             mUI.startCountDown(seconds, playSound);
         } else {
-           mSnapshotOnIdle = false;
-           mFocusManager.doSnap();
+            mSnapshotOnIdle = false;
+            mFocusManager.doSnap();
         }
     }
 
     @Override
     public void installIntentFilter() {
+        // Install an intent filter to receive remote shutter events.
+        IntentFilter intentFilter =
+                new IntentFilter("com.android.camera.SHUTTER");
+        mReceiver = new ShutterBroadcastReceiver();
+        mActivity.registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
@@ -1198,10 +1218,23 @@ public class PhotoModule
         if (msensor != null) {
             mSensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+
+        installIntentFilter();
+        Intent intent = new Intent("com.android.camera.CAMERA_STARTED");
+        mActivity.sendBroadcast(intent);
     }
 
     @Override
     public void onPauseBeforeSuper() {
+
+        Intent intent = new Intent("com.android.camera.CAMERA_STOPPED");
+        mActivity.sendBroadcast(intent);
+
+        if (mReceiver != null) {
+            mActivity.unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
+
         mPaused = true;
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
@@ -1354,32 +1387,32 @@ public class PhotoModule
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
-        case KeyEvent.KEYCODE_VOLUME_UP:
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-        case KeyEvent.KEYCODE_FOCUS:
-            if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized) {
-                if (event.getRepeatCount() == 0) {
-                    onShutterButtonFocus(true);
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_FOCUS:
+                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized) {
+                    if (event.getRepeatCount() == 0) {
+                        onShutterButtonFocus(true);
+                    }
+                    return true;
+                }
+                return false;
+            case KeyEvent.KEYCODE_CAMERA:
+                if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
+                    onShutterButtonClick();
                 }
                 return true;
-            }
-            return false;
-        case KeyEvent.KEYCODE_CAMERA:
-            if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
-                onShutterButtonClick();
-            }
-            return true;
-        case KeyEvent.KEYCODE_DPAD_CENTER:
-            // If we get a dpad center event without any focused view, move
-            // the focus to the shutter button and press it.
-            if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
-                // Start auto-focus immediately to reduce shutter lag. After
-                // the shutter button gets the focus, onShutterButtonFocus()
-                // will be called again but it is fine.
-                onShutterButtonFocus(true);
-                mUI.pressShutterButton();
-            }
-            return true;
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                // If we get a dpad center event without any focused view, move
+                // the focus to the shutter button and press it.
+                if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
+                    // Start auto-focus immediately to reduce shutter lag. After
+                    // the shutter button gets the focus, onShutterButtonFocus()
+                    // will be called again but it is fine.
+                    onShutterButtonFocus(true);
+                    mUI.pressShutterButton();
+                }
+                return true;
         }
         return false;
     }
@@ -1387,18 +1420,18 @@ public class PhotoModule
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
-        case KeyEvent.KEYCODE_VOLUME_UP:
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-            if (/*mActivity.isInCameraApp() && */ mFirstTimeInitialized) {
-                onShutterButtonClick();
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (/*mActivity.isInCameraApp() && */ mFirstTimeInitialized) {
+                    onShutterButtonClick();
+                    return true;
+                }
+                return false;
+            case KeyEvent.KEYCODE_FOCUS:
+                if (mFirstTimeInitialized) {
+                    onShutterButtonFocus(false);
+                }
                 return true;
-            }
-            return false;
-        case KeyEvent.KEYCODE_FOCUS:
-            if (mFirstTimeInitialized) {
-                onShutterButtonFocus(false);
-            }
-            return true;
         }
         return false;
     }
@@ -1600,8 +1633,8 @@ public class PhotoModule
             mSceneMode = CameraUtil.SCENE_MODE_HDR;
         } else {
             mSceneMode = mPreferences.getString(
-                CameraSettings.KEY_SCENE_MODE,
-                mActivity.getString(R.string.pref_camera_scenemode_default));
+                    CameraSettings.KEY_SCENE_MODE,
+                    mActivity.getString(R.string.pref_camera_scenemode_default));
         }
         if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
             if (!mParameters.getSceneMode().equals(mSceneMode)) {
@@ -1790,7 +1823,7 @@ public class PhotoModule
 
     @Override
     public void onUserInteraction() {
-      if (!mActivity.isFinishing()) keepScreenOnAwhile();
+        if (!mActivity.isFinishing()) keepScreenOnAwhile();
     }
 
     private void resetScreenOn() {
