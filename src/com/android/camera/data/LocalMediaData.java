@@ -443,16 +443,26 @@ public abstract class LocalMediaData implements LocalData {
             d.height = c.getInt(COL_HEIGHT);
             d.mPlayUri = d.getContentUri();
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(d.path);
-            String rotation = retriever.extractMetadata(
+            String rotation = null;
+            try {
+                retriever.setDataSource(d.path);
+            } catch (IllegalArgumentException ex) {
+                retriever.release();
+                Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
+                        + ex.getMessage());
+                return null;
+            }
+            rotation = retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
             if (d.width == 0 || d.height == 0) {
-                d.width = Integer.parseInt(retriever.extractMetadata(
-                    MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-                d.height = Integer.parseInt(retriever.extractMetadata(
-                    MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                retrieveVideoDimension(retriever, d);
             }
             retriever.release();
+            if (d.width == 0 || d.height == 0) {
+                // Width or height is still not available.
+                Log.e(TAG, "Unable to retrieve dimension of video:" + d.path);
+                return null;
+            }
             if (rotation != null
                     && (rotation.equals("90") || rotation.equals("270"))) {
                 int b = d.width;
@@ -509,6 +519,9 @@ public abstract class LocalMediaData implements LocalData {
                 return false;
             }
             VideoData newData = buildFromCursor(c);
+            if (newData == null) {
+                return false;
+            }
             id = newData.id;
             title = newData.title;
             mimeType = newData.mimeType;
@@ -586,6 +599,22 @@ public abstract class LocalMediaData implements LocalData {
                 retriever.release();
                 return bitmap;
             }
+        }
+
+        /**
+         * Extracts video height/width if available. If
+         * unavailable, set to 0.
+         * @param retriever An initialized metadata retriever.
+         * @param d The {@link VideoData} whose width/height are to update.
+         */
+        private static void retrieveVideoDimension(
+                MediaMetadataRetriever retriever, VideoData d) {
+            String val = retriever.extractMetadata(
+                    MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            d.width = (val == null) ? 0 : Integer.parseInt(val);
+            val = retriever.extractMetadata(
+                    MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+            d.height = (val == null) ? 0 : Integer.parseInt(val);
         }
     }
 
