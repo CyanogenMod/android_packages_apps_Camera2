@@ -78,6 +78,9 @@ public class FilmStripView extends ViewGroup {
     // mCenterX accordingly.
     private boolean mAnchorPending;
 
+    // This is true if and only if the user is scrolling,
+    private boolean mIsUserScrolling;
+
     /**
      * Common interface for all images in the filmstrip.
      */
@@ -712,11 +715,6 @@ public class FilmStripView extends ViewGroup {
             if (mController.isScrolling()) {
                 mController.stopScrolling();
             }
-            if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
-                    && !mController.isScalling()
-                    && mScale != FULLSCREEN_SCALE) {
-                mController.gotoFullScreen();
-            }
         }
         if (curr.getID() == mDataAdapter.getTotalNumber() - 1
                 && mCenterX > curr.getCenterX()) {
@@ -799,6 +797,23 @@ public class FilmStripView extends ViewGroup {
         });
     }
 
+    private void snapInCenter() {
+        ViewInfo currentInfo = mViewInfo[mCurrentInfo];
+        if (currentInfo == null || mController.isScrolling() || mIsUserScrolling) {
+            return;
+        }
+        int currentViewCenter = currentInfo.getCenterX();
+        if (mCenterX != currentViewCenter) {
+            mController.scrollTo(currentViewCenter,
+                    DURATION_GEOMETRY_ADJUST, false);
+        }
+        if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
+                && !mController.isScalling()
+                && mScale != FULLSCREEN_SCALE) {
+            mController.gotoFullScreen();
+        }
+    }
+
     private void layoutChildren() {
         if (mViewInfo[mCurrentInfo] == null) {
             return;
@@ -869,6 +884,7 @@ public class FilmStripView extends ViewGroup {
 
         stepIfNeeded();
         adjustChildZOrder();
+        snapInCenter();
         invalidate();
         updatePhotoSphereViewButton();
         mLastItemId = getCurrentId();
@@ -1554,6 +1570,7 @@ public class FilmStripView extends ViewGroup {
                     lockAtCurrentView();
                 } else if (inFilmStrip()) {
                     unlockPosition();
+                    snapInCenter();
                 }
             }
         }
@@ -1615,6 +1632,7 @@ public class FilmStripView extends ViewGroup {
         @Override
         public boolean onUp(float x, float y) {
             float halfH = getHeight() / 2;
+            mIsUserScrolling = false;
             for (int i = 0; i < BUFFER_SIZE; i++) {
                 if (mViewInfo[i] == null) {
                     continue;
@@ -1642,6 +1660,7 @@ public class FilmStripView extends ViewGroup {
                             .start();
                 }
             }
+            snapInCenter();
             return false;
         }
 
@@ -1650,6 +1669,7 @@ public class FilmStripView extends ViewGroup {
             if (mViewInfo[mCurrentInfo] == null) {
                 return false;
             }
+            mIsUserScrolling = true;
             int deltaX = (int) (dx / mScale);
             if (inFilmStrip()) {
                 if (Math.abs(dx) > Math.abs(dy)) {
