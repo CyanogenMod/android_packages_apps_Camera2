@@ -527,6 +527,7 @@ public class CameraActivity extends Activity
 
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
+            mFilmStripView.setDataAdapter(mDataAdapter);
             mDataAdapter.requestLoad(getContentResolver());
         } else {
             // Put a lock placeholder as the last image by setting its date to 0.
@@ -541,8 +542,8 @@ public class CameraActivity extends Activity
                             0, 0));
             // Flush out all the original data.
             mDataAdapter.flush();
+            mFilmStripView.setDataAdapter(mDataAdapter);
         }
-        mFilmStripView.setDataAdapter(mDataAdapter);
     }
 
     private void setRotationAnimation() {

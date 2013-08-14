@@ -840,7 +840,6 @@ public class VideoModule implements CameraModule,
                 CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
             }
         }
-
     }
 
     private void onPreviewStarted() {
