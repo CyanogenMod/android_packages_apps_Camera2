@@ -71,7 +71,6 @@ public class PhotoUI implements PieListener,
     CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "CAM_UI";
-    private static final int UPDATE_TRANSFORM_MATRIX = 1;
     private static final int DOWN_SAMPLE_FACTOR = 4;
     private final AnimationManager mAnimationManager;
     private CameraActivity mActivity;
@@ -119,18 +118,6 @@ public class PhotoUI implements PieListener,
     private TextureView mTextureView;
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UPDATE_TRANSFORM_MATRIX:
-                    setTransformMatrix(mPreviewWidth, mPreviewHeight);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     public interface SurfaceTextureSizeChangedListener {
         public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
@@ -152,7 +139,6 @@ public class PhotoUI implements PieListener,
             if (mPreviewWidth != width || mPreviewHeight != height) {
                 mPreviewWidth = width;
                 mPreviewHeight = height;
-                onScreenSizeChanged(width, height, w, h);
                 mController.onScreenSizeChanged(width, height, w, h);
             }
         }
@@ -210,10 +196,6 @@ public class PhotoUI implements PieListener,
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         ((CameraRootView) mRootView).setDisplayChangeListener(this);
         mAnimationManager = new AnimationManager();
-    }
-
-    public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
-        setTransformMatrix(width, height);
     }
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
