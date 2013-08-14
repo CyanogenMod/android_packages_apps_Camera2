@@ -80,6 +80,7 @@ public interface LocalData extends FilmStripView.ImageData {
      */
     boolean isDataActionSupported(int actions);
 
+    /** Removes the data from the storage if possible. */
     boolean delete(Context c);
 
     void onFullScreen(boolean fullScreen);
