@@ -59,4 +59,19 @@ public interface PhotoController extends OnShutterButtonListener {
     public void updateCameraOrientation();
 
     public void enableRecordingLocation(boolean enable);
+
+    /**
+     * This is the callback when the UI or buffer holder for camera preview,
+     * such as {@link android.graphics.SurfaceTexture}, is ready to be used.
+     * The controller can start the camera preview after or in this callback.
+     */
+    public void onPreviewUIReady();
+
+
+    /**
+     * This is the callback when the UI or buffer holder for camera preview,
+     * such as {@link android.graphics.SurfaceTexture}, is being destroyed.
+     * The controller should try to stop the preview in this callback.
+     */
+    public void onPreviewUIDestroyed();
 }

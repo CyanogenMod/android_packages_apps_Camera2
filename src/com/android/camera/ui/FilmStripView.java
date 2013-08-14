@@ -516,6 +516,7 @@ public class FilmStripView extends ViewGroup {
     public void onDraw(Canvas c) {
         if (mViewInfo[mCurrentInfo] != null && mController.hasNewGeometry()) {
             layoutChildren();
+            super.onDraw(c);
         }
     }
 

@@ -79,7 +79,7 @@ public class PhotoUI implements PieListener,
     private PreviewGestures mGestures;
 
     private View mRootView;
-    private Object mSurfaceTexture;
+    private SurfaceTexture mSurfaceTexture;
 
     private PopupWindow mPopup;
     private ShutterButton mShutterButton;
@@ -119,7 +119,6 @@ public class PhotoUI implements PieListener,
     private TextureView mTextureView;
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
-    private final Object mLock = new Object();
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -197,7 +196,7 @@ public class PhotoUI implements PieListener,
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
         mSwitcher.setCurrentIndex(CameraSwitcher.PHOTO_MODULE_INDEX);
-        mSwitcher.setSwitchListener((CameraSwitchListener) mActivity);
+        mSwitcher.setSwitchListener(mActivity);
         mMenuButton = mRootView.findViewById(R.id.menu);
         if (ApiHelper.HAS_FACE_DETECTION) {
             ViewStub faceViewStub = (ViewStub) mRootView
@@ -205,8 +204,7 @@ public class PhotoUI implements PieListener,
             if (faceViewStub != null) {
                 faceViewStub.inflate();
                 mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
-                setSurfaceTextureSizeChangedListener(
-                        (SurfaceTextureSizeChangedListener) mFaceView);
+                setSurfaceTextureSizeChangedListener(mFaceView);
             }
         }
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
@@ -220,21 +218,6 @@ public class PhotoUI implements PieListener,
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
         mSurfaceTextureSizeListener = listener;
-    }
-
-    public void setPreviewSize(Size size) {
-        int width = size.width;
-        int height = size.height;
-        if (width == 0 || height == 0) {
-            Log.w(TAG, "Preview size should not be 0.");
-            return;
-        }
-        if (width > height) {
-            mAspectRatio = (float) width / height;
-        } else {
-            mAspectRatio = (float) height / width;
-        }
-        mHandler.sendEmptyMessage(UPDATE_TRANSFORM_MATRIX);
     }
 
     private void setTransformMatrix(int width, int height) {
@@ -269,26 +252,28 @@ public class PhotoUI implements PieListener,
         mTextureView.setTransform(mMatrix);
     }
 
+    @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        synchronized (mLock) {
-            mSurfaceTexture = surface;
-            mLock.notifyAll();
-        }
+        Log.v(TAG, "SurfaceTexture ready.");
+        mSurfaceTexture = surface;
+        mController.onPreviewUIReady();
     }
 
+    @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         // Ignored, Camera does all the work for us
     }
 
+    @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         mSurfaceTexture = null;
-        mController.stopPreview();
-        Log.w(TAG, "surfaceTexture is destroyed");
+        mController.onPreviewUIDestroyed();
+        Log.w(TAG, "SurfaceTexture destroyed");
         return true;
     }
 
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Invoked every time there's a new Camera preview frame
+        // Do nothing.
     }
 
     public View getRootView() {
@@ -707,16 +692,7 @@ public class PhotoUI implements PieListener,
         mActivity.setSwipingEnabled(enable);
     }
 
-    public Object getSurfaceTexture() {
-        synchronized (mLock) {
-            if (mSurfaceTexture == null) {
-                try {
-                    mLock.wait();
-                } catch (InterruptedException e) {
-                    Log.w(TAG, "Unexpected interruption when waiting to get surface texture");
-                }
-            }
-        }
+    public SurfaceTexture getSurfaceTexture() {
         return mSurfaceTexture;
     }
 

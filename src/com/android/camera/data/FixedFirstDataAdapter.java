@@ -20,7 +20,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 
-import com.android.camera.ui.FilmStripView;
 import com.android.camera.ui.FilmStripView.DataAdapter;
 import com.android.camera.ui.FilmStripView.ImageData;
 
@@ -31,6 +30,9 @@ import com.android.camera.ui.FilmStripView.ImageData;
  */
 public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         implements DataAdapter.Listener {
+
+    @SuppressWarnings("unused")
+    private static final String TAG = "CAM_FixedFirstDataAdapter";
 
     private LocalData mFirstData;
     private Listener mListener;
