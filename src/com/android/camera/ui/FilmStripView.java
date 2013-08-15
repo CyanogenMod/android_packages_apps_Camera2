@@ -1591,24 +1591,6 @@ public class FilmStripView extends ViewGroup {
         @Override
         public boolean onSingleTapUp(float x, float y) {
             if (inFilmStrip()) {
-                for (int i = 0; i < BUFFER_SIZE; i++) {
-                    if (mViewInfo[i] == null) {
-                        continue;
-                    }
-
-                    if (mViewInfo[i].areaContains(x, y)) {
-                        mController.scrollTo(mViewInfo[i].getCenterX(),
-                                DURATION_GEOMETRY_ADJUST, false);
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public boolean onDoubleTap(float x, float y) {
-            if (inFilmStrip()) {
                 ViewInfo centerInfo = mViewInfo[mCurrentInfo];
                 if (centerInfo != null && centerInfo.areaContains(x, y)) {
                     mController.gotoFullScreen();
@@ -1618,6 +1600,11 @@ public class FilmStripView extends ViewGroup {
                 mController.gotoFilmStrip();
                 return true;
             }
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTap(float x, float y) {
             return false;
         }
 
