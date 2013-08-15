@@ -29,6 +29,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -54,10 +55,12 @@ import com.android.camera.data.FixedFirstDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
+import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
+import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
@@ -93,7 +96,7 @@ public class CameraActivity extends Activity
     private static final int SUPPORT_SHOW_ON_MAP = 1 << 8;
     private static final int SUPPORT_ALL = 0xffffffff;
 
-    /** This data adapter is used by FilmStirpView. */
+    /** This data adapter is used by FilmStripView. */
     private LocalDataAdapter mDataAdapter;
     /** This data adapter represents the real local camera data. */
     private LocalDataAdapter mWrappedDataAdapter;
@@ -412,6 +415,12 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int currentDataId = mFilmStripView.getCurrentId();
+        if (currentDataId < 0) {
+            return false;
+        }
+        final LocalData localData = mDataAdapter.getLocalData(currentDataId);
+
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_delete:
@@ -439,7 +448,17 @@ public class CameraActivity extends Activity
                 // TODO: add the functionality.
                 return true;
             case R.id.action_details:
-                // TODO: add the functionality.
+                (new AsyncTask<Void, Void, MediaDetails>() {
+                    @Override
+                    protected MediaDetails doInBackground(Void... params) {
+                        return localData.getMediaDetails(CameraActivity.this);
+                    }
+
+                    @Override
+                    protected void onPostExecute(MediaDetails mediaDetails) {
+                        DetailsDialog.create(CameraActivity.this, mediaDetails).show();
+                    }
+                }).execute();
                 return true;
             case R.id.action_show_on_map:
                 // TODO: add the functionality.

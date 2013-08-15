@@ -23,7 +23,6 @@ import android.net.Uri;
 import android.view.View;
 
 import com.android.camera.ui.FilmStripView;
-import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 
 import java.util.Comparator;
 
@@ -101,6 +100,11 @@ public interface LocalData extends FilmStripView.ImageData {
      * @return {@code Uri.EMPTY} if not valid.
      */
     Uri getContentUri();
+
+    /**
+     * Return media data (such as EXIF) for the item.
+     */
+    MediaDetails getMediaDetails(Context context);
 
     /**
      * Returns the type of the local data defined by {@link LocalData}.
