@@ -145,4 +145,9 @@ public class SimpleViewData implements LocalData {
     public boolean canSwipeInFullScreen() {
         return true;
     }
+
+    @Override
+    public MediaDetails getMediaDetails(Context context) {
+        return null;
+    }
 }
