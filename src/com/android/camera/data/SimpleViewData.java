@@ -86,7 +86,7 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public int getLocalDataType(int dataID) {
+    public int getLocalDataType() {
         return LOCAL_VIEW;
     }
 
@@ -148,6 +148,11 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public MediaDetails getMediaDetails(Context context) {
+        return null;
+    }
+
+    @Override
+    public double[] getLatLong() {
         return null;
     }
 }

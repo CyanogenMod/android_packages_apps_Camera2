@@ -131,7 +131,6 @@ public class FilmStripView extends ViewGroup {
          */
         public int getWidth();
 
-
         /**
          * Returns the width of the image. The final layout of the view returned
          * by {@link DataAdapter#getView(android.content.Context, int)} will
@@ -143,6 +142,14 @@ public class FilmStripView extends ViewGroup {
 
         /** Returns the image data type */
         public int getViewType();
+
+        /**
+         * Returns the coordinates of this item.
+         *
+         * @return A 2-element array containing {latitude, longitude}, or null,
+         *         if no position is known for this item.
+         */
+        public double[] getLatLong();
 
         /**
          * Checks if the UI action is supported.
