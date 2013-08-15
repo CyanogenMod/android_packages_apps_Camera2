@@ -215,8 +215,7 @@ public class CameraActivity extends Activity
                             hidePanoStitchingProgress();
                             return;
                         }
-                        int type = currentData.getLocalDataType(dataID);
-                        updateActionBarMenu(type);
+                        updateActionBarMenu(dataID);
 
                         Uri contentUri = currentData.getContentUri();
                         if (contentUri == null) {
@@ -249,9 +248,12 @@ public class CameraActivity extends Activity
     /**
      * According to the data type, make the menu items for supported operations
      * visible.
-     * @param type : the data type for the current local data.
+     * @param dataID the data ID of the current item.
      */
-    private void updateActionBarMenu(int type) {
+    private void updateActionBarMenu(int dataID) {
+        LocalData currentData = mDataAdapter.getLocalData(dataID);
+        int type = currentData.getLocalDataType();
+
         if (mActionBarMenu == null) {
             return;
         }
@@ -290,12 +292,14 @@ public class CameraActivity extends Activity
                 (supported & SUPPORT_MUTE) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_setas,
                 (supported & SUPPORT_SETAS) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_show_on_map,
-                (supported & SUPPORT_SHOW_ON_MAP) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_edit,
                 (supported & SUPPORT_EDIT) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_details,
                 (supported & SUPPORT_INFO) != 0);
+
+        boolean itemHasLocation = currentData.getLatLong() != null;
+        setMenuItemVisible(mActionBarMenu, R.id.action_show_on_map,
+                itemHasLocation && (supported & SUPPORT_SHOW_ON_MAP) != 0);
     }
 
     private void setMenuItemVisible(Menu menu, int itemId, boolean visible) {
@@ -461,7 +465,10 @@ public class CameraActivity extends Activity
                 }).execute();
                 return true;
             case R.id.action_show_on_map:
-                // TODO: add the functionality.
+                double[] latLong = localData.getLatLong();
+                if (latLong != null) {
+                  CameraUtil.showOnMap(this, latLong);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
