@@ -318,6 +318,11 @@ public class FilmStripView extends ViewGroup {
          *                    {@code false} otherwise.
          */
         public void onCurrentDataChanged(int dataID, boolean current);
+
+        /**
+         * Toggles the visibility of the ActionBar.
+         */
+        public void onToggleActionBarVisibility();
     }
 
     /**
@@ -1604,7 +1609,7 @@ public class FilmStripView extends ViewGroup {
                     return true;
                 }
             } else if (inFullScreen()) {
-                mController.gotoFilmStrip();
+                mListener.onToggleActionBarVisibility();
                 return true;
             }
             return false;
