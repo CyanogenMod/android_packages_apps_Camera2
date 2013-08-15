@@ -86,6 +86,16 @@ public class CameraUtil {
     // See android.hardware.Camera.ACTION_NEW_VIDEO.
     public static final String ACTION_NEW_VIDEO = "android.hardware.action.NEW_VIDEO";
 
+    // Broadcast Action: The camera application has become active in picture-taking mode.
+    public static final String ACTION_CAMERA_STARTED = "com.android.camera.action.CAMERA_STARTED";
+    // Broadcast Action: The camera application is no longer in active picture-taking mode.
+    public static final String ACTION_CAMERA_STOPPED = "com.android.camera.action.CAMERA_STOPPED";
+    // When the camera application is active in picture-taking mode, it listens for this intent,
+    // which upon receipt will trigger the shutter to capture a new picture, as if the user had
+    // pressed the shutter button.
+    public static final String ACTION_CAMERA_SHUTTER_CLICK =
+            "com.android.camera.action.SHUTTER_CLICK";
+
     // Fields from android.hardware.Camera.Parameters
     public static final String FOCUS_MODE_CONTINUOUS_PICTURE = "continuous-picture";
     public static final String RECORDING_HINT = "recording-hint";
