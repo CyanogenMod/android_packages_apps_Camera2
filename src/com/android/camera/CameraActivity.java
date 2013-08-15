@@ -231,6 +231,15 @@ public class CameraActivity extends Activity
                         updateStitchingProgress(panoStitchingProgress);
                     }
                 }
+
+                @Override
+                public void onToggleActionBarVisibility() {
+                    if (mActionBar.isShowing()) {
+                        mActionBar.hide();
+                    } else {
+                        mActionBar.show();
+                    }
+                }
             };
 
     private void hidePanoStitchingProgress() {
