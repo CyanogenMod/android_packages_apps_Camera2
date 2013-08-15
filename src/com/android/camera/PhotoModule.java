@@ -343,7 +343,7 @@ public class PhotoModule
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals("com.android.camera.SHUTTER")) {
+            if (action.equals(CameraUtil.ACTION_CAMERA_SHUTTER_CLICK)) {
                 onShutterButtonFocus(true);
                 onShutterButtonClick();
             }
@@ -1144,7 +1144,7 @@ public class PhotoModule
     public void installIntentFilter() {
         // Install an intent filter to receive remote shutter events.
         IntentFilter intentFilter =
-                new IntentFilter("com.android.camera.SHUTTER");
+                new IntentFilter(CameraUtil.ACTION_CAMERA_SHUTTER_CLICK);
         mReceiver = new ShutterBroadcastReceiver();
         mActivity.registerReceiver(mReceiver, intentFilter);
     }
@@ -1220,14 +1220,14 @@ public class PhotoModule
         }
 
         installIntentFilter();
-        Intent intent = new Intent("com.android.camera.CAMERA_STARTED");
+        Intent intent = new Intent(CameraUtil.ACTION_CAMERA_STARTED);
         mActivity.sendBroadcast(intent);
     }
 
     @Override
     public void onPauseBeforeSuper() {
 
-        Intent intent = new Intent("com.android.camera.CAMERA_STOPPED");
+        Intent intent = new Intent(CameraUtil.ACTION_CAMERA_STOPPED);
         mActivity.sendBroadcast(intent);
 
         if (mReceiver != null) {
