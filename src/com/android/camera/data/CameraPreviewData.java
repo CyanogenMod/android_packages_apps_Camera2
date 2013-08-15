@@ -45,7 +45,7 @@ public class CameraPreviewData extends SimpleViewData {
     }
 
     @Override
-    public int getLocalDataType(int dataID) {
+    public int getLocalDataType() {
         return LOCAL_CAMERA_PREVIEW;
     }
 
