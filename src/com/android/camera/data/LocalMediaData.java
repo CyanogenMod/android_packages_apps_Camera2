@@ -61,6 +61,8 @@ public abstract class LocalMediaData implements LocalData {
     protected int width;
     protected int height;
     protected long sizeInBytes;
+    protected double latitude;
+    protected double longitude;
 
     /** The panorama metadata information of this media data. */
     protected PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
@@ -192,6 +194,16 @@ public abstract class LocalMediaData implements LocalData {
         }
     }
 
+    @Override
+    public double[] getLatLong() {
+        if (latitude == 0 && longitude == 0) {
+            return null;
+        }
+        return new double[] {
+                latitude, longitude
+        };
+    }
+
     protected boolean isUsing() {
         synchronized (mUsing) {
             return mUsing;
@@ -217,6 +229,8 @@ public abstract class LocalMediaData implements LocalData {
         public static final int COL_WIDTH = 7;
         public static final int COL_HEIGHT = 8;
         public static final int COL_SIZE = 9;
+        public static final int COL_LATITUDE = 10;
+        public static final int COL_LONGITUDE = 11;
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -226,16 +240,18 @@ public abstract class LocalMediaData implements LocalData {
          * These values should be kept in sync with column IDs (COL_*) above.
          */
         static final String[] QUERY_PROJECTION = {
-            MediaStore.Images.ImageColumns._ID,           // 0, int
-            MediaStore.Images.ImageColumns.TITLE,         // 1, string
-            MediaStore.Images.ImageColumns.MIME_TYPE,     // 2, string
-            MediaStore.Images.ImageColumns.DATE_TAKEN,    // 3, int
-            MediaStore.Images.ImageColumns.DATE_MODIFIED, // 4, int
-            MediaStore.Images.ImageColumns.DATA,          // 5, string
-            MediaStore.Images.ImageColumns.ORIENTATION,   // 6, int, 0, 90, 180, 270
-            MediaStore.Images.ImageColumns.WIDTH,         // 7, int
-            MediaStore.Images.ImageColumns.HEIGHT,        // 8, int
-            MediaStore.Images.ImageColumns.SIZE,          // 9, long
+            MediaStore.Images.ImageColumns._ID,           // 0,  int
+            MediaStore.Images.ImageColumns.TITLE,         // 1,  string
+            MediaStore.Images.ImageColumns.MIME_TYPE,     // 2,  string
+            MediaStore.Images.ImageColumns.DATE_TAKEN,    // 3,  int
+            MediaStore.Images.ImageColumns.DATE_MODIFIED, // 4,  int
+            MediaStore.Images.ImageColumns.DATA,          // 5,  string
+            MediaStore.Images.ImageColumns.ORIENTATION,   // 6,  int, 0, 90, 180, 270
+            MediaStore.Images.ImageColumns.WIDTH,         // 7,  int
+            MediaStore.Images.ImageColumns.HEIGHT,        // 8,  int
+            MediaStore.Images.ImageColumns.SIZE,          // 9,  long
+            MediaStore.Images.ImageColumns.LATITUDE,      // 10, double
+            MediaStore.Images.ImageColumns.LONGITUDE      // 11, double
         };
 
         private static final int mSupportedUIActions =
@@ -286,6 +302,8 @@ public abstract class LocalMediaData implements LocalData {
                 d.height = b;
             }
             d.sizeInBytes = c.getLong(COL_SIZE);
+            d.latitude = c.getDouble(COL_LATITUDE);
+            d.longitude = c.getDouble(COL_LONGITUDE);
             return d;
         }
 
@@ -338,11 +356,15 @@ public abstract class LocalMediaData implements LocalData {
                 mediaDetails.addDetail(MediaDetails.INDEX_SIZE, sizeInBytes);
 
             MediaDetails.extractExifInfo(mediaDetails, path);
+
+            if (latitude != 0 && longitude != 0) {
+              mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, latitude + ", " + longitude);
+            }
             return mediaDetails;
         }
 
         @Override
-        public int getLocalDataType(int dataID) {
+        public int getLocalDataType() {
             if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
                 return LOCAL_PHOTO_SPHERE;
             }
@@ -535,7 +557,7 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public int getLocalDataType(int dataID) {
+        public int getLocalDataType() {
             return LOCAL_VIDEO;
         }
 

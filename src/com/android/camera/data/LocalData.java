@@ -109,12 +109,11 @@ public interface LocalData extends FilmStripView.ImageData {
     /**
      * Returns the type of the local data defined by {@link LocalData}.
      *
-     * @param dataID The ID of the data.
      * @return The local data type. Could be one of the following:
      * {@code LOCAL_CAMERA_PREVIEW}, {@code LOCAL_VIEW}, {@code LOCAL_IMAGE},
      * {@code LOCAL_VIDEO}, and {@code LOCAL_PHOTO_SPHERE},
      */
-    int getLocalDataType(int dataID);
+    int getLocalDataType();
 
     /**
      * Refresh the data content.

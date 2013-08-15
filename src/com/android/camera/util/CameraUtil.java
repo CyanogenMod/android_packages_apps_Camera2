@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import android.annotation.TargetApi;
@@ -29,6 +30,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -105,9 +107,13 @@ public class CameraUtil {
     public static final String SCENE_MODE_HDR = "hdr";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
-    
-	/** Has to be in sync with the receiving MovieActivity. */
-	public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
+
+    // Fields for the show-on-maps-functionality
+    private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
+    private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
+
+    /** Has to be in sync with the receiving MovieActivity. */
+    public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
 
     public static boolean isSupported(String value, List<String> supported) {
         return supported == null ? false : supported.indexOf(value) >= 0;
@@ -830,6 +836,35 @@ public class CameraUtil {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(context, context.getString(R.string.video_err),
                     Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Starts GMM with the given location shown. If this fails, and GMM could
+     * not be found, we use a geo intent as a fallback.
+     *
+     * @param context the Android context to use for starting the activities.
+     * @param latLong a 2-element array containing {latitude/longitude}.
+     */
+    public static void showOnMap(Context context, double[] latLong) {
+        try {
+            // We don't use "geo:latitude,longitude" because it only centers
+            // the MapView to the specified location, but we need a marker
+            // for further operations (routing to/from).
+            // The q=(lat, lng) syntax is suggested by geo-team.
+            String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?f=q&q=(%f,%f)",
+                    latLong[0], latLong[1]);
+            ComponentName compName = new ComponentName(MAPS_PACKAGE_NAME,
+                    MAPS_CLASS_NAME);
+            Intent mapsIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(uri)).setComponent(compName);
+            context.startActivity(mapsIntent);
+        } catch (ActivityNotFoundException e) {
+            // Use the "geo intent" if no GMM is installed
+            Log.e(TAG, "GMM activity not found!", e);
+            String url = String.format(Locale.ENGLISH, "geo:%f,%f", latLong[0], latLong[1]);
+            Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            context.startActivity(mapsIntent);
         }
     }
 }
