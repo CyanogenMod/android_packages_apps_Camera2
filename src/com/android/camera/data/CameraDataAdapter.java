@@ -113,13 +113,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void onDataFullScreen(int dataID, boolean fullScreen) {
-        if (dataID < mImages.size() && dataID >= 0) {
-            mImages.get(dataID).onFullScreen(fullScreen);
-        }
-    }
-
-    @Override
     public boolean canSwipeInFullScreen(int dataID) {
         if (dataID < mImages.size() && dataID > 0) {
             return mImages.get(dataID).canSwipeInFullScreen();

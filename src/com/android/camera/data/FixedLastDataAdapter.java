@@ -135,17 +135,6 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public void onDataFullScreen(int dataID, boolean fullScreen) {
-        int totalNumber = mAdapter.getTotalNumber();
-
-        if (dataID < totalNumber) {
-            mAdapter.onDataFullScreen(dataID, fullScreen);
-        } else if (dataID == totalNumber) {
-            mLastData.onFullScreen(fullScreen);
-        }
-    }
-
-    @Override
     public boolean canSwipeInFullScreen(int dataID) {
         int totalNumber = mAdapter.getTotalNumber();
 

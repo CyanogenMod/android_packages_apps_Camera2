@@ -43,7 +43,7 @@ public class FilmStripView extends ViewGroup {
     private static final int BUFFER_SIZE = 5;
     private static final int DURATION_GEOMETRY_ADJUST = 200;
     private static final float FILM_STRIP_SCALE = 0.6f;
-    private static final float FULLSCREEN_SCALE = 1f;
+    private static final float FULL_SCREEN_SCALE = 1f;
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
 
@@ -207,7 +207,7 @@ public class FilmStripView extends ViewGroup {
 
         /**
          * An interface which defines the listener for data events over
-         * {@link ImageData}.
+         * {@link ImageData}. Usually {@link FilmStripView} itself.
          */
         public interface Listener {
             // Called when the whole data loading is done. No any assumption
@@ -262,16 +262,6 @@ public class FilmStripView extends ViewGroup {
         public void setListener(Listener listener);
 
         /**
-         * The callback when the item enters/leaves full-screen.
-         * TODO: Call this function actually.
-         *
-         * @param dataID      The ID of the image data.
-         * @param fullScreen  {@code true} if the data is entering full-screen.
-         *                    {@code false} otherwise.
-         */
-        public void onDataFullScreen(int dataID, boolean fullScreen);
-
-        /**
          * Returns {@code true} if the view of the data can be moved by swipe
          * gesture when in full-screen.
          *
@@ -300,7 +290,15 @@ public class FilmStripView extends ViewGroup {
          */
         public void onDataDemoted(int dataID);
 
-        public void onDataFullScreenChange(int dataID, boolean full);
+        /**
+         * The callback when the item enters/leaves full-screen.
+         * TODO: Call this function actually.
+         *
+         * @param dataID      The ID of the image data.
+         * @param fullScreen  {@code true} if the data is entering full-screen.
+         *                    {@code false} otherwise.
+         */
+        public void onDataFullScreenChange(int dataID, boolean fullScreen);
 
         /**
          * Callback when entering/leaving camera mode.
@@ -362,6 +360,11 @@ public class FilmStripView extends ViewGroup {
         private View mView;
         private RectF mViewArea;
 
+        /**
+         * Constructor.
+         * @param id The id of the data from {@link DataAdapter}.
+         * @param v The {@code View} representing the data.
+         */
         public ViewInfo(int id, View v) {
             v.setPivotX(0f);
             v.setPivotY(0f);
@@ -371,38 +374,47 @@ public class FilmStripView extends ViewGroup {
             mViewArea = new RectF();
         }
 
+        /** Returns the data id from {@link DataAdapter}. */
         public int getID() {
             return mDataID;
         }
 
+        /** Sets the data id from {@link DataAdapter}. */
         public void setID(int id) {
             mDataID = id;
         }
 
+        /** Sets the left position of the view in the whole filmstrip. */
         public void setLeftPosition(int pos) {
             mLeftPosition = pos;
         }
 
+        /** Returns the left position of the view in the whole filmstrip. */
         public int getLeftPosition() {
             return mLeftPosition;
         }
 
+        /** Returns the translation of Y regarding the view scale. */
         public float getTranslationY(float scale) {
             return mView.getTranslationY() / scale;
         }
 
+        /** Returns the translation of X regarding the view scale. */
         public float getTranslationX(float scale) {
             return mView.getTranslationX();
         }
 
+        /** Sets the translation of Y regarding the view scale. */
         public void setTranslationY(float transY, float scale) {
             mView.setTranslationY(transY * scale);
         }
 
+        /** Sets the translation of X regarding the view scale. */
         public void setTranslationX(float transX, float scale) {
             mView.setTranslationX(transX * scale);
         }
 
+        /** Adjusts the translation of X regarding the view scale. */
         public void translateXBy(float transX, float scale) {
             mView.setTranslationX(mView.getTranslationX() + transX * scale);
         }
@@ -411,6 +423,7 @@ public class FilmStripView extends ViewGroup {
             return mLeftPosition + mView.getWidth() / 2;
         }
 
+        /** Gets the view representing the data. */
         public View getView() {
             return mView;
         }
@@ -420,10 +433,16 @@ public class FilmStripView extends ViewGroup {
                     top + mView.getMeasuredHeight());
         }
 
+        /**
+         * Layouts the view in the area assuming the center of the area is at
+         * a specific point of the whole filmstrip.
+         *
+         * @param drawArea The area when filmstrip will show in.
+         * @param refCenter The absolute X coordination in the whole filmstrip
+         *                  of the center of {@code drawArea}.
+         * @param scale The current scale of the filmstrip.
+         */
         public void layoutIn(Rect drawArea, int refCenter, float scale) {
-            // drawArea is where to layout in.
-            // refCenter is the absolute horizontal position of the center of
-            // drawArea.
             int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter) * scale);
             int top = (int) (drawArea.centerY() - (mView.getMeasuredHeight() / 2) * scale);
             layoutAt(left, top);
@@ -438,6 +457,7 @@ public class FilmStripView extends ViewGroup {
                     t + mView.getHeight() * scale);
         }
 
+        /** Returns true if the point is in the view. */
         public boolean areaContains(float x, float y) {
             return mViewArea.contains(x, y);
         }
@@ -821,7 +841,7 @@ public class FilmStripView extends ViewGroup {
         }
         if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
                 && !mController.isScalling()
-                && mScale != FULLSCREEN_SCALE) {
+                && mScale != FULL_SCREEN_SCALE) {
             mController.gotoFullScreen();
         }
     }
@@ -847,8 +867,13 @@ public class FilmStripView extends ViewGroup {
         int currentViewLeft = mViewInfo[mCurrentInfo].getLeftPosition();
         int currentViewCenter = mViewInfo[mCurrentInfo].getCenterX();
         int fullScreenWidth = mDrawArea.width() + mViewGap;
+        /**
+         * Transformed scale fraction between 0 and 1. 0 if the scale is
+         * {@link FILM_STRIP_SCALE}. 1 if the scale is
+         * {@link FULL_SCREEN_SCALE}.
+         */
         float scaleFraction = mViewAnimInterpolator.getInterpolation(
-                (mScale - FILM_STRIP_SCALE) / (FULLSCREEN_SCALE - FILM_STRIP_SCALE));
+                (mScale - FILM_STRIP_SCALE) / (FULL_SCREEN_SCALE - FILM_STRIP_SCALE));
 
         // images on the left
         for (int infoID = mCurrentInfo - 1; infoID >= 0; infoID--) {
@@ -882,13 +907,21 @@ public class FilmStripView extends ViewGroup {
                     prev.getLeftPosition() + prev.getView().getMeasuredWidth() + mViewGap;
             curr.setLeftPosition(myLeft);
             curr.layoutIn(mDrawArea, mCenterX, mScale);
-            if (infoID == mCurrentInfo + 1) {
-                curr.getView().setAlpha(1f - scaleFraction);
+            View currView = curr.getView();
+            if (scaleFraction == 1) {
+                currView.setVisibility(INVISIBLE);
             } else {
-                if (scaleFraction == 0f) {
-                    curr.getView().setAlpha(1f);
+                if (currView.getVisibility() == INVISIBLE) {
+                    currView.setVisibility(VISIBLE);
+                }
+                if (infoID == mCurrentInfo + 1) {
+                    currView.setAlpha(1f - scaleFraction);
                 } else {
-                    curr.getView().setAlpha(0f);
+                    if (scaleFraction == 0f) {
+                        currView.setAlpha(1f);
+                    } else {
+                        currView.setVisibility(INVISIBLE);
+                    }
                 }
             }
             curr.setTranslationX((currentViewLeft - myLeft) * scaleFraction, mScale);
@@ -1171,7 +1204,7 @@ public class FilmStripView extends ViewGroup {
     }
 
     public boolean inFullScreen() {
-        return (mScale == FULLSCREEN_SCALE);
+        return (mScale == FULL_SCREEN_SCALE);
     }
 
     public boolean inCameraFullscreen() {
@@ -1181,7 +1214,7 @@ public class FilmStripView extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (inFilmStrip()) {
+        if (!inFullScreen() || mController.isScrolling()) {
             return true;
         }
 
@@ -1577,7 +1610,10 @@ public class FilmStripView extends ViewGroup {
         @Override
         public void onAnimationEnd(Animator anim) {
             ViewInfo info = mViewInfo[mCurrentInfo];
-            if (info != null && mCenterX == info.getCenterX()) {
+            if (info == null) {
+                return;
+            }
+            if (mCenterX == info.getCenterX()) {
                 if (inFullScreen()) {
                     lockAtCurrentView();
                 } else if (inFilmStrip()) {
@@ -1747,8 +1783,8 @@ public class FilmStripView extends ViewGroup {
             if (mScale <= FILM_STRIP_SCALE) {
                 mScale = FILM_STRIP_SCALE;
             }
-            if (mScale >= FULLSCREEN_SCALE) {
-                mScale = FULLSCREEN_SCALE;
+            if (mScale >= FULL_SCREEN_SCALE) {
+                mScale = FULL_SCREEN_SCALE;
             }
             layoutChildren();
             return true;
