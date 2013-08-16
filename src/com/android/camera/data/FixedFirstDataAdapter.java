@@ -123,15 +123,6 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public void onDataFullScreen(int dataID, boolean fullScreen) {
-        if (dataID == 0) {
-            mFirstData.onFullScreen(fullScreen);
-        } else {
-            mAdapter.onDataFullScreen(dataID - 1, fullScreen);
-        }
-    }
-
-    @Override
     public void setListener(Listener listener) {
         mListener = listener;
         mAdapter.setListener((listener == null) ? null : this);
