@@ -103,6 +103,12 @@ public interface LocalData extends FilmStripView.ImageData {
     Uri getContentUri();
 
     /**
+     * @return The mimetype of this data item, or null, if this item has no
+     *         mimetype associated with it.
+     */
+    String getMimeType();
+
+    /**
      * Return media data (such as EXIF) for the item.
      */
     MediaDetails getMediaDetails(Context context);

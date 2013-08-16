@@ -57,14 +57,14 @@ import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
-import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
 
 public class CameraActivity extends Activity
@@ -235,12 +235,13 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onToggleActionBarVisibility() {
+                public boolean onToggleActionBarVisibility() {
                     if (mActionBar.isShowing()) {
                         mActionBar.hide();
                     } else {
                         mActionBar.show();
                     }
+                    return mActionBar.isShowing();
                 }
             };
 
@@ -439,7 +440,7 @@ public class CameraActivity extends Activity
                 // TODO: add the functionality.
                 return true;
             case R.id.action_edit:
-                // TODO: add the functionality.
+                launchEditor(localData);
                 return true;
             case R.id.action_trim:
                 // This is going to be handled by the Gallery app.
@@ -623,12 +624,26 @@ public class CameraActivity extends Activity
         mCurrentModule.onResumeAfterSuper();
 
         setSwipingEnabled(true);
+
+        // We might be returning from an editor that changed the current item.
+        updateCurrentDataItem();
+    }
+
+    private void updateCurrentDataItem() {
+        int currentDataId = mFilmStripView.getCurrentId();
+        if (currentDataId < 0) {
+            return;
+        }
+        final LocalData localData = mDataAdapter.getLocalData(currentDataId);
+        if (localData == null) {
+            return;
+        }
+        mDataAdapter.refresh(getContentResolver(), localData.getContentUri());
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
         mPanoramaViewHelper.onStart();
     }
 
@@ -774,6 +789,16 @@ public class CameraActivity extends Activity
         if (mMediaSaveService != null) {
             mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
         }
+    }
+
+    /**
+     * Launches an ACTION_EDIT intent for the given local data item.
+     */
+    public void launchEditor(LocalData data) {
+        Intent intent = new Intent(Intent.ACTION_EDIT)
+                .setDataAndType(data.getContentUri(), data.getMimeType())
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(intent, null));
     }
 
     private void openModule(CameraModule module) {
