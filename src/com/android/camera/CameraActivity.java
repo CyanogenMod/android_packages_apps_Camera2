@@ -76,6 +76,9 @@ public class CameraActivity extends Activity
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";
     public static final String ACTION_IMAGE_CAPTURE_SECURE =
             "android.media.action.IMAGE_CAPTURE_SECURE";
+    public static final String ACTION_TRIM_VIDEO =
+            "com.android.camera.action.TRIM";
+    public static final String MEDIA_ITEM_PATH = "media-item-path";
 
     // The intent extra for camera from secure lock screen. True if the gallery
     // should only show newly captured pictures. sSecureAlbumId does not
@@ -92,8 +95,7 @@ public class CameraActivity extends Activity
     private static final int SUPPORT_SETAS = 1 << 4;
     private static final int SUPPORT_EDIT = 1 << 5;
     private static final int SUPPORT_TRIM = 1 << 6;
-    private static final int SUPPORT_MUTE = 1 << 7;
-    private static final int SUPPORT_SHOW_ON_MAP = 1 << 8;
+    private static final int SUPPORT_SHOW_ON_MAP = 1 << 7;
     private static final int SUPPORT_ALL = 0xffffffff;
 
     /** This data adapter is used by FilmStripView. */
@@ -275,8 +277,7 @@ public class CameraActivity extends Activity
                         | SUPPORT_SHOW_ON_MAP;
                 break;
             case LocalData.LOCAL_VIDEO:
-                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM
-                        | SUPPORT_MUTE;
+                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM;
                 break;
             case LocalData.LOCAL_PHOTO_SPHERE:
                 supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
@@ -297,8 +298,6 @@ public class CameraActivity extends Activity
                 (supported & SUPPORT_CROP) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_trim,
                 (supported & SUPPORT_TRIM) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_mute,
-                (supported & SUPPORT_MUTE) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_setas,
                 (supported & SUPPORT_SETAS) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_edit,
@@ -443,10 +442,14 @@ public class CameraActivity extends Activity
                 // TODO: add the functionality.
                 return true;
             case R.id.action_trim:
-                // TODO: add the functionality.
-                return true;
-            case R.id.action_mute:
-                // TODO: add the functionality.
+                // This is going to be handled by the Gallery app.
+                Intent intent = new Intent(ACTION_TRIM_VIDEO);
+                LocalData currentData = mDataAdapter.getLocalData(
+                        mFilmStripView.getCurrentId());
+                intent.setData(currentData.getContentUri());
+                // We need the file path to wrap this into a RandomAccessFile.
+                intent.putExtra(MEDIA_ITEM_PATH, currentData.getPath());
+                startActivity(intent);
                 return true;
             case R.id.action_rotate_ccw:
                 // TODO: add the functionality.
