@@ -46,9 +46,9 @@ import java.util.Date;
 
 /**
  * A base class for all the local media files. The bitmap is loaded in
- * background thread. Subclasses should implement their own background
- * loading thread by sub-classing BitmapLoadTask and overriding
- * doInBackground() to return a bitmap.
+ * background thread. Subclasses should implement their own background loading
+ * thread by sub-classing BitmapLoadTask and overriding doInBackground() to
+ * return a bitmap.
  */
 public abstract class LocalMediaData implements LocalData {
     protected long id;
@@ -71,8 +71,8 @@ public abstract class LocalMediaData implements LocalData {
     protected PanoramaMetadataLoader mPanoramaMetadataLoader = null;
 
     /**
-     * Used for thumbnail loading optimization. True if this data
-     * has a corresponding visible view.
+     * Used for thumbnail loading optimization. True if this data has a
+     * corresponding visible view.
      */
     protected Boolean mUsing = false;
 
@@ -141,16 +141,18 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         // Load the metadata asynchronously.
-        mPanoramaMetadataLoader.getPanoramaMetadata(context, new PanoramaMetadataLoader.PanoramaMetadataCallback() {
-            @Override
-            public void onPanoramaMetadataLoaded(PhotoSphereHelper.PanoramaMetadata metadata) {
-                // Store the metadata and remove the loader to free up space.
-                mPanoramaMetadata = metadata;
-                mPanoramaMetadataLoader = null;
-                callback.panoramaInfoAvailable(metadata.mUsePanoramaViewer,
-                        metadata.mIsPanorama360);
-            }
-        });
+        mPanoramaMetadataLoader.getPanoramaMetadata(context,
+                new PanoramaMetadataLoader.PanoramaMetadataCallback() {
+                    @Override
+                    public void onPanoramaMetadataLoaded(PhotoSphereHelper.PanoramaMetadata metadata) {
+                        // Store the metadata and remove the loader to free up
+                        // space.
+                        mPanoramaMetadata = metadata;
+                        mPanoramaMetadataLoader = null;
+                        callback.panoramaInfoAvailable(metadata.mUsePanoramaViewer,
+                                metadata.mIsPanorama360);
+                    }
+                });
     }
 
     @Override
@@ -216,6 +218,25 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
+    public MediaDetails getMediaDetails(Context context) {
+        DateFormat formater = DateFormat.getDateTimeInstance();
+        MediaDetails mediaDetails = new MediaDetails();
+        mediaDetails.addDetail(MediaDetails.INDEX_TITLE, title);
+        mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, width);
+        mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, height);
+        mediaDetails.addDetail(MediaDetails.INDEX_PATH, path);
+        mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
+                formater.format(new Date(dateModifiedInSeconds * 1000)));
+        if (sizeInBytes > 0) {
+            mediaDetails.addDetail(MediaDetails.INDEX_SIZE, sizeInBytes);
+        }
+        if (latitude != 0 && longitude != 0) {
+            mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, latitude + ", " + longitude);
+        }
+        return mediaDetails;
+    }
+
+    @Override
     public abstract int getViewType();
 
     protected abstract BitmapLoadTask getBitmapLoadTask(
@@ -245,23 +266,23 @@ public abstract class LocalMediaData implements LocalData {
          * These values should be kept in sync with column IDs (COL_*) above.
          */
         static final String[] QUERY_PROJECTION = {
-            MediaStore.Images.ImageColumns._ID,           // 0,  int
-            MediaStore.Images.ImageColumns.TITLE,         // 1,  string
-            MediaStore.Images.ImageColumns.MIME_TYPE,     // 2,  string
-            MediaStore.Images.ImageColumns.DATE_TAKEN,    // 3,  int
-            MediaStore.Images.ImageColumns.DATE_MODIFIED, // 4,  int
-            MediaStore.Images.ImageColumns.DATA,          // 5,  string
-            MediaStore.Images.ImageColumns.ORIENTATION,   // 6,  int, 0, 90, 180, 270
-            MediaStore.Images.ImageColumns.WIDTH,         // 7,  int
-            MediaStore.Images.ImageColumns.HEIGHT,        // 8,  int
-            MediaStore.Images.ImageColumns.SIZE,          // 9,  long
-            MediaStore.Images.ImageColumns.LATITUDE,      // 10, double
-            MediaStore.Images.ImageColumns.LONGITUDE      // 11, double
+                MediaStore.Images.ImageColumns._ID,           // 0, int
+                MediaStore.Images.ImageColumns.TITLE,         // 1, string
+                MediaStore.Images.ImageColumns.MIME_TYPE,     // 2, string
+                MediaStore.Images.ImageColumns.DATE_TAKEN,    // 3, int
+                MediaStore.Images.ImageColumns.DATE_MODIFIED, // 4, int
+                MediaStore.Images.ImageColumns.DATA,          // 5, string
+                MediaStore.Images.ImageColumns.ORIENTATION,   // 6, int, 0, 90, 180, 270
+                MediaStore.Images.ImageColumns.WIDTH,         // 7, int
+                MediaStore.Images.ImageColumns.HEIGHT,        // 8, int
+                MediaStore.Images.ImageColumns.SIZE,          // 9, long
+                MediaStore.Images.ImageColumns.LATITUDE,      // 10, double
+                MediaStore.Images.ImageColumns.LONGITUDE      // 11, double
         };
 
         private static final int mSupportedUIActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
-                | FilmStripView.ImageData.ACTION_PROMOTE;
+                        | FilmStripView.ImageData.ACTION_PROMOTE;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE;
 
@@ -288,7 +309,7 @@ public abstract class LocalMediaData implements LocalData {
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(d.path, opts);
-                if (opts.outWidth != -1 && opts.outHeight != -1)  {
+                if (opts.outWidth != -1 && opts.outHeight != -1) {
                     d.width = opts.outWidth;
                     d.height = opts.outHeight;
                 } else {
@@ -349,22 +370,8 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public MediaDetails getMediaDetails(Context context) {
-            DateFormat formater = DateFormat.getDateTimeInstance();
-            MediaDetails mediaDetails = new MediaDetails();
-            mediaDetails.addDetail(MediaDetails.INDEX_TITLE, title);
-            mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, width);
-            mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, height);
-            mediaDetails.addDetail(MediaDetails.INDEX_PATH, path);
-            mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
-                    formater.format(new Date(dateModifiedInSeconds * 1000)));
-            if (sizeInBytes > 0)
-                mediaDetails.addDetail(MediaDetails.INDEX_SIZE, sizeInBytes);
-
+            MediaDetails mediaDetails = super.getMediaDetails(context);
             MediaDetails.extractExifInfo(mediaDetails, path);
-
-            if (latitude != 0 && longitude != 0) {
-              mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, latitude + ", " + longitude);
-            }
             return mediaDetails;
         }
 
@@ -456,15 +463,19 @@ public abstract class LocalMediaData implements LocalData {
         public static final int COL_WIDTH = 6;
         public static final int COL_HEIGHT = 7;
         public static final int COL_RESOLUTION = 8;
+        public static final int COL_SIZE = 9;
+        public static final int COL_LATITUDE = 10;
+        public static final int COL_LONGITUDE = 11;
+        public static final int COL_DURATION = 12;
 
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
         private static final int mSupportedUIActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
-                | FilmStripView.ImageData.ACTION_PROMOTE;
+                        | FilmStripView.ImageData.ACTION_PROMOTE;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE
-                | LocalData.ACTION_PLAY;
+                        | LocalData.ACTION_PLAY;
 
         static final String QUERY_ORDER = MediaStore.Video.VideoColumns.DATE_TAKEN + " DESC, "
                 + MediaStore.Video.VideoColumns._ID + " DESC";
@@ -472,18 +483,25 @@ public abstract class LocalMediaData implements LocalData {
          * These values should be kept in sync with column IDs (COL_*) above.
          */
         static final String[] QUERY_PROJECTION = {
-            MediaStore.Video.VideoColumns._ID,           // 0, int
-            MediaStore.Video.VideoColumns.TITLE,         // 1, string
-            MediaStore.Video.VideoColumns.MIME_TYPE,     // 2, string
-            MediaStore.Video.VideoColumns.DATE_TAKEN,    // 3, int
-            MediaStore.Video.VideoColumns.DATE_MODIFIED, // 4, int
-            MediaStore.Video.VideoColumns.DATA,          // 5, string
-            MediaStore.Video.VideoColumns.WIDTH,         // 6, int
-            MediaStore.Video.VideoColumns.HEIGHT,        // 7, int
-            MediaStore.Video.VideoColumns.RESOLUTION     // 8, string
+                MediaStore.Video.VideoColumns._ID,           // 0, int
+                MediaStore.Video.VideoColumns.TITLE,         // 1, string
+                MediaStore.Video.VideoColumns.MIME_TYPE,     // 2, string
+                MediaStore.Video.VideoColumns.DATE_TAKEN,    // 3, int
+                MediaStore.Video.VideoColumns.DATE_MODIFIED, // 4, int
+                MediaStore.Video.VideoColumns.DATA,          // 5, string
+                MediaStore.Video.VideoColumns.WIDTH,         // 6, int
+                MediaStore.Video.VideoColumns.HEIGHT,        // 7, int
+                MediaStore.Video.VideoColumns.RESOLUTION,    // 8 string
+                MediaStore.Video.VideoColumns.SIZE,          // 9 long
+                MediaStore.Video.VideoColumns.LATITUDE,      // 10 double
+                MediaStore.Video.VideoColumns.LONGITUDE,     // 11 double
+                MediaStore.Video.VideoColumns.DURATION       // 12 long
         };
 
         private Uri mPlayUri;
+
+        /** The duration in milliseconds. */
+        private long durationInSeconds;
 
         static VideoData buildFromCursor(Cursor c) {
             VideoData d = new VideoData();
@@ -523,6 +541,11 @@ public abstract class LocalMediaData implements LocalData {
                 d.width = d.height;
                 d.height = b;
             }
+
+            d.sizeInBytes = c.getLong(COL_SIZE);
+            d.latitude = c.getDouble(COL_LATITUDE);
+            d.longitude = c.getDouble(COL_LONGITUDE);
+            d.durationInSeconds = c.getLong(COL_DURATION) / 1000;
             return d;
         }
 
@@ -562,8 +585,10 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public MediaDetails getMediaDetails(Context context) {
-            // TODO: Return valid MediaDetails for videos.
-            return new MediaDetails();
+            MediaDetails mediaDetails = super.getMediaDetails(context);
+            String duration = MediaDetails.formatDuration(context, durationInSeconds);
+            mediaDetails.addDetail(MediaDetails.INDEX_DURATION, duration);
+            return mediaDetails;
         }
 
         @Override
@@ -575,7 +600,7 @@ public abstract class LocalMediaData implements LocalData {
         public boolean refresh(ContentResolver resolver) {
             Cursor c = resolver.query(
                     getContentUri(), QUERY_PROJECTION, null, null, null);
-            if (c == null && !c.moveToFirst()) {
+            if (c == null || !c.moveToFirst()) {
                 return false;
             }
             VideoData newData = buildFromCursor(c);
@@ -667,8 +692,8 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         /**
-         * Extracts video height/width if available. If
-         * unavailable, set to 0.
+         * Extracts video height/width if available. If unavailable, set to 0.
+         *
          * @param retriever An initialized metadata retriever.
          * @param d The {@link VideoData} whose width/height are to update.
          */
@@ -684,8 +709,8 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     /**
-     * An {@link AsyncTask} class that loads the bitmap in the background thread.
-     * Sub-classes should implement their own
+     * An {@link AsyncTask} class that loads the bitmap in the background
+     * thread. Sub-classes should implement their own
      * {@code BitmapLoadTask#doInBackground(Void...)}."
      */
     protected abstract class BitmapLoadTask extends AsyncTask<Void, Void, Bitmap> {
@@ -697,7 +722,9 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (!isUsing()) return;
+            if (!isUsing()) {
+                return;
+            }
             if (bitmap == null) {
                 Log.e(TAG, "Failed decoding bitmap for file:" + path);
                 return;
