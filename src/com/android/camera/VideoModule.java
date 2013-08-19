@@ -2211,6 +2211,7 @@ public class VideoModule implements CameraModule,
         // TODO: ((CameraScreenNail) mActivity.mCameraScreenNail).copyTexture();
         // Disable all camera controls.
         mSwitchingCamera = true;
+        switchCamera();
 
     }
 
