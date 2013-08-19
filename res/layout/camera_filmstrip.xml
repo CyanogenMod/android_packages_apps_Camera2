@@ -24,19 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageButton
-        android:id="@+id/filmstrip_bottom_control_panorama"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/transparent_button_background"
-        android:clickable="true"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:visibility="gone"
-        android:src="@drawable/ic_view_photosphere" />
+    <include layout="@layout/filmstrip_bottom_controls" />
 
     <LinearLayout
         android:id="@+id/pano_stitching_progress_panel"
