@@ -437,7 +437,7 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_delete:
-                // TODO: add the functionality.
+                removeData(currentDataId);
                 return true;
             case R.id.action_edit:
                 launchEditor(localData);
