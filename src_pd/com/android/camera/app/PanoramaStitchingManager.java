@@ -16,16 +16,28 @@
 
 package com.android.camera.app;
 
-import android.app.Application;
+import android.content.Context;
+import android.net.Uri;
 
-import com.android.camera.util.CameraUtil;
+import com.android.camera.ImageTaskManager;
 
-public class CameraApp extends Application {
+public class PanoramaStitchingManager implements ImageTaskManager {
+
+    public PanoramaStitchingManager(Context ctx) {
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        CameraUtil.initialize(this);
+    public void addTaskListener(TaskListener l) {
+        // do nothing.
+    }
+
+    @Override
+    public void removeTaskListener(TaskListener l) {
+        // do nothing.
+    }
+
+    @Override
+    public int getTaskProgress(Uri uri) {
+        return -1;
     }
 }
-
