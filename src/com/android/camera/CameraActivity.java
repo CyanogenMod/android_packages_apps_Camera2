@@ -624,21 +624,6 @@ public class CameraActivity extends Activity
         mCurrentModule.onResumeAfterSuper();
 
         setSwipingEnabled(true);
-
-        // We might be returning from an editor that changed the current item.
-        updateCurrentDataItem();
-    }
-
-    private void updateCurrentDataItem() {
-        int currentDataId = mFilmStripView.getCurrentId();
-        if (currentDataId < 0) {
-            return;
-        }
-        final LocalData localData = mDataAdapter.getLocalData(currentDataId);
-        if (localData == null) {
-            return;
-        }
-        mDataAdapter.refresh(getContentResolver(), localData.getContentUri());
     }
 
     @Override
