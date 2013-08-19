@@ -211,6 +211,11 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    @Override
     public abstract int getViewType();
 
     protected abstract BitmapLoadTask getBitmapLoadTask(
@@ -388,6 +393,11 @@ public abstract class LocalMediaData implements LocalData {
             orientation = newData.orientation;
             width = newData.width;
             height = newData.height;
+            return true;
+        }
+
+        @Override
+        public boolean isPhoto() {
             return true;
         }
 
@@ -613,6 +623,11 @@ public abstract class LocalMediaData implements LocalData {
             f.addView(iv);
             f.addView(icon);
             return f;
+        }
+
+        @Override
+        public boolean isPhoto() {
+            return false;
         }
 
         @Override

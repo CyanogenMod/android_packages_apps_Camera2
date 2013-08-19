@@ -155,4 +155,14 @@ public class SimpleViewData implements LocalData {
     public double[] getLatLong() {
         return null;
     }
+
+    @Override
+    public boolean isPhoto() {
+        return false;
+    }
+
+    @Override
+    public String getMimeType() {
+        return null;
+    }
 }
