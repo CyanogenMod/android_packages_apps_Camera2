@@ -16,6 +16,7 @@
 
 package com.android.camera.data;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.camera2.R;
@@ -167,5 +168,21 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
                     focalTag.getValueAsRational(0).toDouble());
             details.setUnit(MediaDetails.INDEX_FOCAL_LENGTH, R.string.unit_mm);
         }
+    }
+
+    /**
+     * Returns a (localized) string for the given duration (in seconds).
+     */
+    public static String formatDuration(final Context context, long seconds) {
+        long h = seconds / 3600;
+        long m = (seconds - h * 3600) / 60;
+        long s = seconds - (h * 3600 + m * 60);
+        String durationValue;
+        if (h == 0) {
+            durationValue = String.format(context.getString(R.string.details_ms), m, s);
+        } else {
+            durationValue = String.format(context.getString(R.string.details_hms), h, m, s);
+        }
+        return durationValue;
     }
 }
