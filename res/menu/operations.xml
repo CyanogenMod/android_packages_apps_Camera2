@@ -35,10 +35,6 @@
             android:title="@string/trim_action"
             android:showAsAction="never"
             android:visible="false" />
-    <item android:id="@+id/action_mute"
-            android:title="@string/mute_action"
-            android:showAsAction="never"
-            android:visible="false" />
     <item android:id="@+id/action_rotate_ccw"
             android:showAsAction="never"
             android:visible="false"
