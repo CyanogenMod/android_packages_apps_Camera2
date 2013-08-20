@@ -2141,9 +2141,9 @@ public class VideoModule implements CameraModule,
         String title = CameraUtil.createJpegName(dateTaken);
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
-        Size s = mParameters.getPictureSize();
+
         mActivity.getMediaSaveService().addImage(
-                data, title, dateTaken, loc, s.width, s.height, orientation,
+                data, title, dateTaken, loc, orientation,
                 exif, mOnPhotoSavedListener, mContentResolver);
     }
 
