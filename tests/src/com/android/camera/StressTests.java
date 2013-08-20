@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d;
+package com.android.camera;
 
-import com.android.gallery3d.stress.CameraLatency;
-import com.android.gallery3d.stress.CameraStartUp;
-import com.android.gallery3d.stress.ImageCapture;
-import com.android.gallery3d.stress.SwitchPreview;
+import com.android.camera.stress.CameraLatency;
+import com.android.camera.stress.CameraStartUp;
+import com.android.camera.stress.ImageCapture;
+import com.android.camera.stress.SwitchPreview;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 
 /**
  * Instrumentation Test Runner for all Camera tests.
@@ -31,8 +30,8 @@ import junit.framework.TestSuite;
  * Running all tests:
  *
  * adb shell am instrument \
- *    -e class com.android.gallery3d.StressTests \
- *    -w com.google.android.gallery3d.tests/com.android.gallery3d.stress.CameraStressTestRunner
+ *    -e class com.android.camera.StressTests \
+ *    -w com.google.android.camera.tests/com.android.camera.stress.CameraStressTestRunner
  */
 
 public class StressTests extends TestSuite {

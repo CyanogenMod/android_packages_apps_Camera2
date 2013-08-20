@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2009 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.stress;
+package com.android.camera.stress;
 
 import com.android.camera.CameraActivity;
-import com.android.gallery3d.stress.TestUtil;
+import com.android.camera.stress.CameraStressTestRunner;
 
-import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.provider.MediaStore;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
 import android.view.KeyEvent;
-
-import com.android.gallery3d.stress.CameraStressTestRunner;
+import android.app.Activity;
 
 /**
  * Junit / Instrumentation test case for camera test
@@ -35,22 +33,23 @@ import com.android.gallery3d.stress.CameraStressTestRunner;
  * Running the test suite:
  *
  * adb shell am instrument \
- *    -e class com.android.camera.stress.VideoCapture \
+ *    -e class com.android.camera.stress.ImageCapture \
  *    -w com.google.android.camera.tests/android.test.InstrumentationTestRunner
  *
  */
 
-public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivity> {
-    private static final long WAIT_FOR_PREVIEW = 1500; //1.5 seconds
-    private static final long WAIT_FOR_SWITCH_CAMERA = 3000; //2 seconds
-
-    // Private intent extras which control the camera facing.
-    private final static String EXTRAS_CAMERA_FACING =
-        "android.intent.extras.CAMERA_FACING";
+public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivity> {
+    private String TAG = "ImageCapture";
+    private static final long WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN = 1500;   //1.5 sedconds
+    private static final long WAIT_FOR_SWITCH_CAMERA = 3000; //3 seconds
 
     private TestUtil testUtil = new TestUtil();
 
-    public VideoCapture() {
+    // Private intent extras.
+    private final static String EXTRAS_CAMERA_FACING =
+        "android.intent.extras.CAMERA_FACING";
+
+    public ImageCapture() {
         super(CameraActivity.class);
     }
 
@@ -66,25 +65,33 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         super.tearDown();
     }
 
-    public void captureVideos(String reportTag, Instrumentation inst) throws Exception{
-        boolean memoryResult = false;
-        int total_num_of_videos = CameraStressTestRunner.mVideoIterations;
-        int video_duration = CameraStressTestRunner.mVideoDuration;
-        testUtil.writeReportHeader(reportTag, total_num_of_videos);
+    public void captureImages(String reportTag, Instrumentation inst) {
+        int total_num_of_images = CameraStressTestRunner.mImageIterations;
+        Log.v(TAG, "no of images = " + total_num_of_images);
 
-        for (int i = 0; i < total_num_of_videos; i++) {
-            Thread.sleep(WAIT_FOR_PREVIEW);
-            // record a video
-            inst.sendCharacterSync(KeyEvent.KEYCODE_CAMERA);
-            Thread.sleep(video_duration);
-            inst.sendCharacterSync(KeyEvent.KEYCODE_CAMERA);
-            testUtil.writeResult(i);
+        //TODO(yslau): Need to integrate the outoput with the central dashboard,
+        //write to a txt file as a temp solution
+        boolean memoryResult = false;
+        KeyEvent focusEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_FOCUS);
+
+        try {
+            testUtil.writeReportHeader(reportTag, total_num_of_images);
+            for (int i = 0; i < total_num_of_images; i++) {
+                Thread.sleep(WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN);
+                inst.sendKeySync(focusEvent);
+                inst.sendCharacterSync(KeyEvent.KEYCODE_CAMERA);
+                Thread.sleep(WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN);
+                testUtil.writeResult(i);
+            }
+        } catch (Exception e) {
+            Log.v(TAG, "Got exception: " + e.toString());
+            assertTrue("testImageCapture", false);
         }
     }
 
-    public void testBackVideoCapture() throws Exception {
+    public void testBackImageCapture() throws Exception {
         Instrumentation inst = getInstrumentation();
-        Intent intent = new Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA);
+        Intent intent = new Intent();
 
         intent.setClass(getInstrumentation().getTargetContext(), CameraActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -92,13 +99,13 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
                 android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK);
         Activity act = inst.startActivitySync(intent);
         Thread.sleep(WAIT_FOR_SWITCH_CAMERA);
-        captureVideos("Back Camera Video Capture\n", inst);
+        captureImages("Back Camera Image Capture\n", inst);
         act.finish();
     }
 
-    public void testFrontVideoCapture() throws Exception {
+    public void testFrontImageCapture() throws Exception {
         Instrumentation inst = getInstrumentation();
-        Intent intent = new Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA);
+        Intent intent = new Intent();
 
         intent.setClass(getInstrumentation().getTargetContext(), CameraActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -106,7 +113,7 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
                 android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
         Activity act = inst.startActivitySync(intent);
         Thread.sleep(WAIT_FOR_SWITCH_CAMERA);
-        captureVideos("Front Camera Video Capture\n", inst);
+        captureImages("Front Camera Image Capture\n", inst);
         act.finish();
     }
 }

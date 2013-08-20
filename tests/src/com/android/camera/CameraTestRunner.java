@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d;
+package com.android.camera;
 
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
 
-import com.android.gallery3d.functional.CameraTest;
-import com.android.gallery3d.functional.ImageCaptureIntentTest;
-import com.android.gallery3d.functional.VideoCaptureIntentTest;
-import com.android.gallery3d.unittest.CameraUnitTest;
+import com.android.camera.functional.CameraTest;
+import com.android.camera.functional.ImageCaptureIntentTest;
+import com.android.camera.functional.VideoCaptureIntentTest;
+import com.android.camera.unittest.CameraUnitTest;
 
 import junit.framework.TestSuite;
 

@@ -15,7 +15,7 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.gallery3d.tests">
+    package="com.android.camera.tests">
 
     <application
         android:debuggable="true">
@@ -23,26 +23,22 @@
     </application>
 
     <instrumentation android:name="android.test.InstrumentationTestRunner"
-             android:targetPackage="com.android.gallery3d"
-             android:label="Tests for GalleryNew3D application."/>
+             android:targetPackage="com.android.camera2"
+             android:label="Tests for Camera2 application."/>
 
-    <instrumentation android:name="com.android.gallery3d.CameraTestRunner"
-            android:targetPackage="com.android.gallery3d"
+    <instrumentation android:name="com.android.camera.CameraTestRunner"
+            android:targetPackage="com.android.camera2"
             android:label="Camera continuous test runner"/>
 
-    <instrumentation android:name="com.android.gallery3d.exif.ExifTestRunner"
-            android:targetPackage="com.android.gallery3d"
+    <instrumentation android:name="com.android.camera.exif.ExifTestRunner"
+            android:targetPackage="com.android.camera2"
             android:label="Tests for ExifParser."/>
 
-    <instrumentation android:name="com.android.gallery3d.jpegstream.JpegStreamTestRunner"
-            android:targetPackage="com.android.gallery3d"
+    <instrumentation android:name="com.android.camera.jpegstream.JpegStreamTestRunner"
+            android:targetPackage="com.android.camera2"
             android:label="Tests for JpegStream classes."/>
 
-    <instrumentation android:name="com.android.gallery3d.stress.CameraStressTestRunner"
-            android:targetPackage="com.android.gallery3d"
+    <instrumentation android:name="com.android.camera.stress.CameraStressTestRunner"
+            android:targetPackage="com.android.camera2"
             android:label="Camera stress test runner"/>
-
-    <instrumentation android:name="com.android.photos.data.DataTestRunner"
-            android:targetPackage="com.android.gallery3d"
-            android:label="Tests for android photo DataProviders."/>
 </manifest>

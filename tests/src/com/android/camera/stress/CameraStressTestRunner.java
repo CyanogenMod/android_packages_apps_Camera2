@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.stress;
+package com.android.camera.stress;
 
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;

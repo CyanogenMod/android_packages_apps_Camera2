@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.functional;
+package com.android.camera.functional;
 
 import com.android.camera.CameraActivity;
 
