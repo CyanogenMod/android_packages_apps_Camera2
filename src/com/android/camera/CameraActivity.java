@@ -442,7 +442,7 @@ public class CameraActivity extends Activity
             case R.id.action_edit:
                 launchEditor(localData);
                 return true;
-            case R.id.action_trim:
+            case R.id.action_trim: {
                 // This is going to be handled by the Gallery app.
                 Intent intent = new Intent(ACTION_TRIM_VIDEO);
                 LocalData currentData = mDataAdapter.getLocalData(
@@ -452,6 +452,7 @@ public class CameraActivity extends Activity
                 intent.putExtra(MEDIA_ITEM_PATH, currentData.getPath());
                 startActivity(intent);
                 return true;
+            }
             case R.id.action_rotate_ccw:
                 // TODO: add the functionality.
                 return true;
@@ -461,9 +462,16 @@ public class CameraActivity extends Activity
             case R.id.action_crop:
                 // TODO: add the functionality.
                 return true;
-            case R.id.action_setas:
-                // TODO: add the functionality.
+            case R.id.action_setas: {
+                Intent intent = new Intent(Intent.ACTION_ATTACH_DATA)
+                        .setDataAndType(localData.getContentUri(),
+                                localData.getMimeType())
+                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.putExtra("mimeType", intent.getType());
+                startActivity(Intent.createChooser(
+                        intent, getString(R.string.set_as)));
                 return true;
+            }
             case R.id.action_details:
                 (new AsyncTask<Void, Void, MediaDetails>() {
                     @Override
