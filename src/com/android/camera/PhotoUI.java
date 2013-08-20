@@ -129,7 +129,7 @@ public class PhotoUI implements PieListener,
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
-            // Full-screen screennail
+            // Full-screen preview
             int w = width;
             int h = height;
             if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
@@ -139,6 +139,7 @@ public class PhotoUI implements PieListener,
             if (mPreviewWidth != width || mPreviewHeight != height) {
                 mPreviewWidth = width;
                 mPreviewHeight = height;
+                setTransformMatrix(width, height);
                 mController.onScreenSizeChanged(width, height, w, h);
             }
         }
@@ -204,7 +205,6 @@ public class PhotoUI implements PieListener,
 
     private void setTransformMatrix(int width, int height) {
         mMatrix = mTextureView.getTransform(mMatrix);
-        int orientation = CameraUtil.getDisplayRotation(mActivity);
         float scaleX = 1f, scaleY = 1f;
         float scaledTextureWidth, scaledTextureHeight;
         if (width > height) {
