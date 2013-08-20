@@ -193,7 +193,7 @@ public class CameraSwitcher extends RotateImageView
                     break;
                 case R.drawable.ic_switch_photosphere:
                     item.setContentDescription(getContext().getResources().getString(
-                            R.string.accessibility_switch_to_new_panorama));
+                            R.string.accessibility_switch_to_photo_sphere));
                     break;
                 case R.drawable.ic_switch_refocus:
                     item.setContentDescription(getContext().getResources().getString(
