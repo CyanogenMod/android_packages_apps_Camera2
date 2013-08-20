@@ -935,8 +935,8 @@
     <string name="accessibility_switch_to_video">Switch to video</string>
     <!-- The button to switch to Panorama mode. [CHAR LIMIT = NONE] -->
     <string name="accessibility_switch_to_panorama">Switch to panorama</string>
-    <!-- The button to switch to new Panorama mode. [CHAR LIMIT = NONE] -->
-    <string name="accessibility_switch_to_new_panorama">Switch to new panorama</string>
+    <!-- The button to switch to the Photo Sphere mode. [CHAR LIMIT = NONE] -->
+    <string name="accessibility_switch_to_photo_sphere">Switch to Photo Sphere</string>
     <!-- The button to switch to the Re-Focus mode. [CHAR LIMIT = NONE] -->
     <string name="accessibility_switch_to_refocus">Switch to Refocus</string>
     <!-- The button in review mode indicating that the photo taking, video recording, and panorama saving session should be canceled [CHAR LIMIT = NONE] -->
