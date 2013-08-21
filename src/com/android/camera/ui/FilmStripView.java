@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
@@ -43,7 +44,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final String TAG = "CAM_FilmStripView";
 
     private static final int BUFFER_SIZE = 5;
-    private static final int DURATION_GEOMETRY_ADJUST = 200;
+    private static final int GEOMETRY_ADJUST_TIME_MS = 400;
     private static final int SNAP_IN_CENTER_TIME_MS = 600;
     private static final float FILM_STRIP_SCALE = 0.6f;
     private static final float FULL_SCREEN_SCALE = 1f;
@@ -341,17 +342,19 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         public void fling(float velocity);
 
-        public void scrollTo(int position, int duration, boolean interruptible);
+        public void scrollToPosition(int position, int duration, boolean interruptible);
+
+        public boolean goToNextItem();
 
         public boolean stopScrolling();
 
         public boolean isScrolling();
 
-        public void gotoCameraFullScreen();
+        public void goToCameraFullScreen();
 
-        public void gotoFilmStrip();
+        public void goToFilmStrip();
 
-        public void gotoFullScreen();
+        public void goToFullScreen();
     }
 
     /**
@@ -861,13 +864,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (mCenterX != currentViewCenter) {
             int snapInTime = (int) (SNAP_IN_CENTER_TIME_MS
                     * Math.abs(mCenterX - currentViewCenter) / mDrawArea.width());
-            mController.scrollTo(currentViewCenter,
+            mController.scrollToPosition(currentViewCenter,
                     snapInTime, false);
         }
         if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
                 && !mController.isScalling()
                 && mScale != FULL_SCREEN_SCALE) {
-            mController.gotoFullScreen();
+            mController.goToFullScreen();
         }
     }
 
@@ -1031,7 +1034,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private void slideViewBack(View v) {
         v.animate().translationX(0)
                 .alpha(1f)
-                .setDuration(DURATION_GEOMETRY_ADJUST)
+                .setDuration(GEOMETRY_ADJUST_TIME_MS)
                 .setInterpolator(mViewAnimInterpolator)
                 .start();
     }
@@ -1143,7 +1146,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 .alpha(0f)
                 .translationYBy(transY)
                 .setInterpolator(mViewAnimInterpolator)
-                .setDuration(DURATION_GEOMETRY_ADJUST)
+                .setDuration(GEOMETRY_ADJUST_TIME_MS)
                 .withEndAction(new Runnable() {
                     @Override
                     public void run() {
@@ -1236,7 +1239,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 .alpha(1f)
                 .translationY(0f)
                 .setInterpolator(mViewAnimInterpolator)
-                .setDuration(DURATION_GEOMETRY_ADJUST)
+                .setDuration(GEOMETRY_ADJUST_TIME_MS)
                 .start();
         invalidate();
     }
@@ -1457,25 +1460,39 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             ValueAnimator.AnimatorUpdateListener,
             Animator.AnimatorListener {
 
-        private ValueAnimator mScaleAnimator;
+        private final ValueAnimator mScaleAnimator;
         private boolean mHasNewScale;
         private float mNewScale;
 
-        private Scroller mScroller;
+        private final Scroller mScroller;
         private boolean mHasNewPosition;
-        private DecelerateInterpolator mDecelerateInterpolator;
+        private final DecelerateInterpolator mDecelerateInterpolator;
+        private final TimeInterpolator mDecelerateAccelerateInterpolator =
+                new TimeInterpolator() {
+                    private final TimeInterpolator interpolator =
+                            new AccelerateInterpolator();
+
+                    @Override
+                    public float getInterpolation(float v) {
+                        float v2 = v * 2f;
+                        return ((v2 < 1f) ?
+                                mDecelerateInterpolator.getInterpolation(v2) / 2f :
+                                interpolator.getInterpolation(v2 - 1f) / 2f + 0.5f);
+                    }
+                };
 
         private boolean mCanStopScroll;
 
         MyController(Context context) {
             mScroller = new Scroller(context);
             mHasNewPosition = false;
+            mCanStopScroll = true;
+            mHasNewScale = false;
+
             mScaleAnimator = new ValueAnimator();
             mScaleAnimator.addUpdateListener(MyController.this);
             mScaleAnimator.addListener(MyController.this);
-            mDecelerateInterpolator = new DecelerateInterpolator();
-            mCanStopScroll = true;
-            mHasNewScale = false;
+            mDecelerateInterpolator = new DecelerateInterpolator(1.5f);
         }
 
         @Override
@@ -1485,7 +1502,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean isScalling() {
-            return mScaleAnimator.isRunning();
+            return (mScaleAnimator.isRunning());
         }
 
         boolean hasNewGeometry() {
@@ -1553,7 +1570,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (inFullScreen() && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
                     && scaledVelocityX < 0) {
                 // Swipe left in camera preview.
-                gotoFilmStrip();
+                goToFilmStrip();
             }
 
             int w = getWidth();
@@ -1585,7 +1602,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         @Override
-        public void scrollTo(int position, int duration, boolean interruptible) {
+        public void scrollToPosition(int position, int duration, boolean interruptible) {
             if (!stopScrolling()) {
                 return;
             }
@@ -1593,7 +1610,23 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             stopScrolling();
             mScroller.startScroll(mCenterX, 0, position - mCenterX,
                     0, duration);
+            mHasNewPosition = true;
             invalidate();
+        }
+
+        @Override
+        public boolean goToNextItem() {
+            ViewItem nextItem = mViewItem[mCurrentItem + 1];
+            if (nextItem == null) {
+                return false;
+            }
+            stopScale();
+            scrollToPosition(nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS * 2, false);
+            mScaleAnimator.setFloatValues(FULL_SCREEN_SCALE, FILM_STRIP_SCALE, FULL_SCREEN_SCALE);
+            mScaleAnimator.setInterpolator(mDecelerateAccelerateInterpolator);
+            mScaleAnimator.setDuration(GEOMETRY_ADJUST_TIME_MS * 2);
+            mScaleAnimator.start();
+            return true;
         }
 
         private void scaleTo(float scale, int duration) {
@@ -1605,13 +1638,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mScaleAnimator.setFloatValues(mScale, scale);
             mScaleAnimator.setInterpolator(mDecelerateInterpolator);
             mScaleAnimator.start();
-            mHasNewScale = true;
             layoutChildren();
         }
 
         @Override
-        public void gotoFilmStrip() {
-            scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST);
+        public void goToFilmStrip() {
+            scaleTo(FILM_STRIP_SCALE, GEOMETRY_ADJUST_TIME_MS);
             if (mListener != null) {
                 mListener.onSwitchMode(false);
                 mBottomControls.setVisibility(View.VISIBLE);
@@ -1619,10 +1651,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         @Override
-        public void gotoFullScreen() {
+        public void goToFullScreen() {
             if (mViewItem[mCurrentItem] != null) {
-                mController.scrollTo(mViewItem[mCurrentItem].getCenterX(),
-                        DURATION_GEOMETRY_ADJUST, false);
+                mController.scrollToPosition(mViewItem[mCurrentItem].getCenterX(),
+                        GEOMETRY_ADJUST_TIME_MS, false);
             }
             enterFullScreen();
         }
@@ -1639,21 +1671,21 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (inFullScreen()) {
                 return;
             }
-            scaleTo(1f, DURATION_GEOMETRY_ADJUST);
+            scaleTo(1f, GEOMETRY_ADJUST_TIME_MS);
         }
 
         @Override
-        public void gotoCameraFullScreen() {
+        public void goToCameraFullScreen() {
             if (mDataAdapter.getImageData(0).getViewType()
                     != ImageData.TYPE_STICKY_VIEW) {
                 return;
             }
-            gotoFullScreen();
-            scrollTo(
+            goToFullScreen();
+            scrollToPosition(
                     estimateMinX(mViewItem[mCurrentItem].getID(),
                             mViewItem[mCurrentItem].getLeftPosition(),
                             getWidth()),
-                    DURATION_GEOMETRY_ADJUST, false);
+                    GEOMETRY_ADJUST_TIME_MS, false);
         }
 
         @Override
@@ -1668,6 +1700,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void onAnimationStart(Animator anim) {
+            mHasNewScale = true;
         }
 
         @Override
@@ -1701,7 +1734,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (inFilmStrip()) {
                 ViewItem centerItem = mViewItem[mCurrentItem];
                 if (centerItem != null && centerItem.areaContains(x, y)) {
-                    mController.gotoFullScreen();
+                    mController.goToFullScreen();
                     return true;
                 }
             } else if (inFullScreen()) {
@@ -1752,7 +1785,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     mViewItem[i].getView().animate()
                             .translationY(0f)
                             .alpha(1f)
-                            .setDuration(DURATION_GEOMETRY_ADJUST)
+                            .setDuration(GEOMETRY_ADJUST_TIME_MS)
                             .start();
                 }
             }
@@ -1772,7 +1805,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     if (deltaX > 0
                             && inFullScreen()
                             && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
-                        mController.gotoFilmStrip();
+                        mController.goToFilmStrip();
                     }
                     mController.scroll(deltaX);
                 } else {
@@ -1805,7 +1838,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
             } else if (inFullScreen()) {
                 if (deltaX > 0 && inCameraFullscreen()) {
-                    mController.gotoFilmStrip();
+                    mController.goToFilmStrip();
                 }
                 // Multiplied by 1.2 to make it more easy to swipe.
                 mController.scroll((int) (deltaX * 1.2));
@@ -1860,9 +1893,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         @Override
         public void onScaleEnd() {
             if (mScaleTrend >= 1f) {
-                mController.gotoFullScreen();
+                mController.goToFullScreen();
             } else {
-                mController.gotoFilmStrip();
+                mController.goToFilmStrip();
             }
             mScaleTrend = 1f;
         }
