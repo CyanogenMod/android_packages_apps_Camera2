@@ -908,7 +908,7 @@
     <string name="effect_background">BACKGROUND</string>
 
     <!-- The shutter button. [CHAR LIMIT = NONE] -->
-    <string name="accessibility_shutter_button">Shutter button</string>
+    <string name="accessibility_shutter_button">Shutter</string>
     <!-- The menu button. [CHAR LIMIT = NONE] -->
     <string name="accessibility_menu_button">Menu button</string>
     <!-- The button to review the thumbnail. [CHAR LIMIT = NONE] -->
