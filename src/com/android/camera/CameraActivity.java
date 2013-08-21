@@ -153,7 +153,10 @@ public class CameraActivity extends Activity
             }
             @Override
             public void onServiceDisconnected(ComponentName className) {
-                mMediaSaveService = null;
+                if (mMediaSaveService != null) {
+                    mMediaSaveService.setListener(null);
+                    mMediaSaveService = null;
+                }
             }};
 
     // close activity when screen turns off
@@ -403,15 +406,10 @@ public class CameraActivity extends Activity
 
     private void bindMediaSaveService() {
         Intent intent = new Intent(this, MediaSaveService.class);
-        startService(intent);  // start service before binding it so the
-                               // service won't be killed if we unbind it.
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void unbindMediaSaveService() {
-        if (mMediaSaveService != null) {
-            mMediaSaveService.setListener(null);
-        }
         if (mConnection != null) {
             unbindService(mConnection);
         }
@@ -570,7 +568,6 @@ public class CameraActivity extends Activity
         mCurrentModule.init(this, mRootView);
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
-        bindMediaSaveService();
 
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
@@ -637,6 +634,7 @@ public class CameraActivity extends Activity
     @Override
     public void onStart() {
         super.onStart();
+        bindMediaSaveService();
         mPanoramaViewHelper.onStart();
     }
 
@@ -644,11 +642,11 @@ public class CameraActivity extends Activity
     protected void onStop() {
         super.onStop();
         mPanoramaViewHelper.onStop();
+        unbindMediaSaveService();
     }
 
     @Override
     public void onDestroy() {
-        unbindMediaSaveService();
         if (mSecureCamera) unregisterReceiver(mScreenOffReceiver);
         super.onDestroy();
     }
