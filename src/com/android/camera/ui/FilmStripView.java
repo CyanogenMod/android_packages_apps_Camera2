@@ -627,6 +627,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // Set the position of the "View Photo Sphere" button.
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mBottomControls
                     .getLayoutParams();
+            params.leftMargin = insets.left;
+            params.rightMargin = insets.right;
             params.bottomMargin = insets.bottom;
             mBottomControls.setLayoutParams(params);
         }
