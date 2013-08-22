@@ -37,6 +37,8 @@ import java.io.File;
  * Service for saving images in the background thread.
  */
 public class MediaSaveService extends Service {
+    public static final String VIDEO_BASE_URI = "content://media/external/video/media";
+
     // The memory limit for unsaved image is 20MB.
     private static final int SAVE_TASK_MEMORY_LIMIT = 20 * 1024 * 1024;
     private static final String TAG = "CAM_" + MediaSaveService.class.getSimpleName();
@@ -207,17 +209,12 @@ public class MediaSaveService extends Service {
         }
 
         @Override
-        protected void onPreExecute() {
-            // do nothing.
-        }
-
-        @Override
         protected Uri doInBackground(Void... v) {
             values.put(Video.Media.SIZE, new File(path).length());
             values.put(Video.Media.DURATION, duration);
             Uri uri = null;
             try {
-                Uri videoTable = Uri.parse("content://media/external/video/media");
+                Uri videoTable = Uri.parse(VIDEO_BASE_URI);
                 uri = resolver.insert(videoTable, values);
 
                 // Rename the video file to the final name. This avoids other
