@@ -20,6 +20,7 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -100,6 +101,13 @@ public class MediaSaveService extends Service {
         t.execute();
     }
 
+    public void addImage(final byte[] data, String title, long date, Location loc,
+                         int orientation, ExifInterface exif,
+                         OnMediaSavedListener l, ContentResolver resolver) {
+        // When dimensions are unknown, pass 0 as width and height,
+        // and decode image for width and height later in a background thread
+        addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver);
+    }
     public void addImage(final byte[] data, String title, Location loc,
             int width, int height, int orientation, ExifInterface exif,
             OnMediaSavedListener l, ContentResolver resolver) {
@@ -161,6 +169,14 @@ public class MediaSaveService extends Service {
 
         @Override
         protected Uri doInBackground(Void... v) {
+            if (width == 0 || height == 0) {
+                // Decode bounds
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeByteArray(data, 0, data.length, options);
+                width = options.outWidth;
+                height = options.outHeight;
+            }
             return Storage.addImage(
                     resolver, title, date, loc, orientation, exif, data, width, height);
         }
