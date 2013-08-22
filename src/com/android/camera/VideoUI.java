@@ -434,7 +434,7 @@ public class VideoUI implements PieRenderer.PieListener,
         mPreviewThumb.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Go to filmstrip view
+                mActivity.gotoGallery();
             }
         });
     }
