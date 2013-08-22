@@ -18,6 +18,7 @@ package com.android.camera.data;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.SparseIntArray;
 
 import com.android.camera2.R;
 import com.android.gallery3d.exif.ExifInterface;
@@ -25,7 +26,6 @@ import com.android.gallery3d.exif.ExifTag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -35,7 +35,7 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
     private static final String TAG = "MediaDetails";
 
     private TreeMap<Integer, Object> mDetails = new TreeMap<Integer, Object>();
-    private HashMap<Integer, Integer> mUnits = new HashMap<Integer, Integer>();
+    private SparseIntArray mUnits = new SparseIntArray();
 
     public static final int INDEX_TITLE = 1;
     public static final int INDEX_DESCRIPTION = 2;
@@ -101,7 +101,7 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
     }
 
     public boolean hasUnit(int index) {
-        return mUnits.containsKey(index);
+        return mUnits.indexOfKey(index) >= 0;
     }
 
     public int getUnit(int index) {

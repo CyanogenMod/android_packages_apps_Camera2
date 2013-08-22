@@ -33,7 +33,10 @@ import android.widget.TextView;
 import com.android.camera.data.MediaDetails;
 import com.android.camera2.R;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 /**
@@ -72,7 +75,8 @@ public class DetailsDialog {
         private final Context mContext;
         private final MediaDetails mMediaDetails;
         private final ArrayList<String> mItems;
-        private int mLocationIndex;
+        private final Locale mDefaultLocale = Locale.getDefault();
+        private final DecimalFormat mDecimalFormat = new DecimalFormat(".####");
         private int mWidthIndex = -1;
         private int mHeightIndex = -1;
 
@@ -80,7 +84,6 @@ public class DetailsDialog {
             mContext = context;
             mMediaDetails = details;
             mItems = new ArrayList<String>(details.size());
-            mLocationIndex = -1;
             setDetails(context, details);
         }
 
@@ -90,7 +93,6 @@ public class DetailsDialog {
             for (Entry<Integer, Object> detail : details) {
                 String value;
                 switch (detail.getKey()) {
-                    // TODO: Resolve address asynchronously.
                     case MediaDetails.INDEX_SIZE: {
                         value = Formatter.formatFileSize(
                                 context, (Long) detail.getValue());
@@ -118,20 +120,22 @@ public class DetailsDialog {
                         value = (String) detail.getValue();
                         double time = Double.valueOf(value);
                         if (time < 1.0f) {
-                            value = String.format("1/%d", (int) (0.5f + 1 / time));
+                            value = String.format(mDefaultLocale, "%d/%d", 1,
+                                    (int) (0.5f + 1 / time));
                         } else {
                             int integer = (int) time;
                             time -= integer;
                             value = String.valueOf(integer) + "''";
                             if (time > 0.0001) {
-                                value += String.format(" 1/%d", (int) (0.5f + 1 / time));
+                                value += String.format(mDefaultLocale, " %d/%d", 1,
+                                        (int) (0.5f + 1 / time));
                             }
                         }
                         break;
                     }
                     case MediaDetails.INDEX_WIDTH:
                         mWidthIndex = mItems.size();
-                        value = detail.getValue().toString();
+                        value = toLocalNumber((Integer) detail.getValue());
                         if (value.equalsIgnoreCase("0")) {
                             value = context.getString(R.string.unknown);
                             resolutionIsValid = false;
@@ -139,7 +143,7 @@ public class DetailsDialog {
                         break;
                     case MediaDetails.INDEX_HEIGHT: {
                         mHeightIndex = mItems.size();
-                        value = detail.getValue().toString();
+                        value = toLocalNumber((Integer) detail.getValue());
                         if (value.equalsIgnoreCase("0")) {
                             value = context.getString(R.string.unknown);
                             resolutionIsValid = false;
@@ -147,9 +151,21 @@ public class DetailsDialog {
                         break;
                     }
                     case MediaDetails.INDEX_PATH:
-                        // Get the path and then fall through to the default
-                        // case
+                        // Prepend the new-line as a) paths are usually long, so
+                        // the formatting is better and b) an RTL UI will see it
+                        // as a separate section and interpret it for what it
+                        // is, rather than trying to make it RTL (which messes
+                        // up the path).
+                        value = "\n" + detail.getValue().toString();
                         path = detail.getValue().toString();
+                        break;
+                    case MediaDetails.INDEX_ISO:
+                        value = toLocalNumber(Integer.parseInt((String) detail.getValue()));
+                        break;
+                    case MediaDetails.INDEX_FOCAL_LENGTH:
+                        double focalLength = Double.parseDouble(detail.getValue().toString());
+                        value = toLocalNumber(focalLength);
+                        break;
                     default: {
                         Object valueObj = detail.getValue();
                         // This shouldn't happen, log its key to help us
@@ -171,9 +187,9 @@ public class DetailsDialog {
                             context, key), value);
                 }
                 mItems.add(value);
-                if (!resolutionIsValid) {
-                    resolveResolution(path);
-                }
+            }
+            if (!resolutionIsValid) {
+                resolveResolution(path);
             }
         }
 
@@ -226,15 +242,25 @@ public class DetailsDialog {
             if (width == 0 || height == 0)
                 return;
             // Update the resolution with the new width and height
-            String widthString = String.format("%s: %d",
+            String widthString = String.format(mDefaultLocale, "%s: %d",
                     getDetailsName(
                             mContext, MediaDetails.INDEX_WIDTH), width);
-            String heightString = String.format("%s: %d",
+            String heightString = String.format(mDefaultLocale, "%s: %d",
                     getDetailsName(
                             mContext, MediaDetails.INDEX_HEIGHT), height);
             mItems.set(mWidthIndex, String.valueOf(widthString));
             mItems.set(mHeightIndex, String.valueOf(heightString));
             notifyDataSetChanged();
+        }
+
+        /** Converts the given integer to a localized String version. */
+        private String toLocalNumber(int n) {
+            return String.format(mDefaultLocale, "%d", n);
+        }
+
+        /** Converts the given double to a localized String version. */
+        private String toLocalNumber(double n) {
+            return mDecimalFormat.format(n);
         }
     }
 

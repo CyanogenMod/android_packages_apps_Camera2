@@ -43,6 +43,7 @@ import com.android.camera2.R;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * A base class for all the local media files. The bitmap is loaded in
@@ -219,19 +220,21 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public MediaDetails getMediaDetails(Context context) {
-        DateFormat formater = DateFormat.getDateTimeInstance();
+        DateFormat dateFormatter = DateFormat.getDateTimeInstance();
         MediaDetails mediaDetails = new MediaDetails();
         mediaDetails.addDetail(MediaDetails.INDEX_TITLE, title);
         mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, width);
         mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, height);
         mediaDetails.addDetail(MediaDetails.INDEX_PATH, path);
         mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
-                formater.format(new Date(dateModifiedInSeconds * 1000)));
+                dateFormatter.format(new Date(dateModifiedInSeconds * 1000)));
         if (sizeInBytes > 0) {
             mediaDetails.addDetail(MediaDetails.INDEX_SIZE, sizeInBytes);
         }
         if (latitude != 0 && longitude != 0) {
-            mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, latitude + ", " + longitude);
+            String locationString = String.format(Locale.getDefault(), "%f, %f", latitude,
+                    longitude);
+            mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, locationString);
         }
         return mediaDetails;
     }
