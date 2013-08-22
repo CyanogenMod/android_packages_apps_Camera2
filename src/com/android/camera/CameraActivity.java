@@ -127,6 +127,10 @@ public class CameraActivity extends Activity
     private ActionBar mActionBar;
     private Menu mActionBarMenu;
 
+    public void gotoGallery() {
+        mFilmStripView.getController().goToNextItem();
+    }
+
     private class MyOrientationEventListener
         extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
