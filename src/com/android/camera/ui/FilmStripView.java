@@ -36,7 +36,6 @@ import com.android.camera.CameraActivity;
 import com.android.camera.data.LocalData;
 import com.android.camera.ui.FilmStripView.ImageData.PanoramaSupportCallback;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
-import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
 
@@ -348,10 +347,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         public boolean isScrolling();
 
-        public void lockAtCurrentView();
-
-        public void unlockPosition();
-
         public void gotoCameraFullScreen();
 
         public void gotoFilmStrip();
@@ -535,10 +530,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      */
     public void setPanoramaViewHelper(PanoramaViewHelper helper) {
         mPanoramaViewHelper = helper;
-    }
-
-    public float getScale() {
-        return mScale;
     }
 
     public boolean isAnchoredTo(int id) {
@@ -1006,17 +997,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         stepIfNeeded();
         adjustChildZOrder();
         snapInCenter();
-        invalidate();
         updateBottomControls();
         mLastItemId = getCurrentId();
+
+        invalidate();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (mViewItem[mCurrentItem] == null) {
-            return;
-        }
-
         mDrawArea.left = l;
         mDrawArea.top = t;
         mDrawArea.right = r;
@@ -1085,6 +1073,15 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             int prev = curr - 1;
             if (mViewItem[prev] != null) {
                 mViewItem[curr] = buildItemFromData(mViewItem[prev].getID() + 1);
+            }
+
+            // The animation part.
+            if (inFullScreen()) {
+                mViewItem[mCurrentItem].getView().setVisibility(VISIBLE);
+                ViewItem nextItem = mViewItem[mCurrentItem + 1];
+                if (nextItem != null) {
+                    nextItem.getView().setVisibility(INVISIBLE);
+                }
             }
 
             // Translate the views to their original places.
@@ -1470,9 +1467,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         private boolean mCanStopScroll;
 
-        private boolean mIsPositionLocked;
-        private int mLockedViewItem;
-
         MyController(Context context) {
             mScroller = new Scroller(context);
             mHasNewPosition = false;
@@ -1501,7 +1495,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             // If the position is locked, then we always return true to force
             // the position value to use the locked value.
-            return (mHasNewPosition || mHasNewScale || mIsPositionLocked);
+            return (mHasNewPosition || mHasNewScale);
         }
 
         /**
@@ -1521,32 +1515,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          * value.
          */
         int getNewPosition() {
-            if (mIsPositionLocked) {
-                if (mViewItem[mLockedViewItem] == null)
-                    return mCenterX;
-                return mViewItem[mLockedViewItem].getCenterX();
-            }
-            if (!mHasNewPosition)
+            if (!mHasNewPosition) {
                 return mCenterX;
-            return mScroller.getCurrX();
-        }
-
-        @Override
-        public void lockAtCurrentView() {
-            mIsPositionLocked = true;
-            mLockedViewItem = mCurrentItem;
-        }
-
-        @Override
-        public void unlockPosition() {
-            if (mIsPositionLocked) {
-                // only when the position is previously locked we set the
-                // current position to make it consistent.
-                if (mViewItem[mLockedViewItem] != null) {
-                    mCenterX = mViewItem[mLockedViewItem].getCenterX();
-                }
-                mIsPositionLocked = false;
             }
+            return mScroller.getCurrX();
         }
 
         private int estimateMinX(int dataID, int leftPos, int viewWidth) {
@@ -1569,7 +1541,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void fling(float velocityX) {
-            if (!stopScrolling() || mIsPositionLocked) {
+            if (!stopScrolling()) {
                 return;
             }
             ViewItem item = mViewItem[mCurrentItem];
@@ -1614,7 +1586,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void scrollTo(int position, int duration, boolean interruptible) {
-            if (!stopScrolling() || mIsPositionLocked) {
+            if (!stopScrolling()) {
                 return;
             }
             mCanStopScroll = interruptible;
@@ -1639,7 +1611,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void gotoFilmStrip() {
-            unlockPosition();
             scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST);
             if (mListener != null) {
                 mListener.onSwitchMode(false);
@@ -1707,7 +1678,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             if (mCenterX == item.getCenterX()) {
                 if (inFilmStrip()) {
-                    unlockPosition();
                     snapInCenter();
                 }
             }
