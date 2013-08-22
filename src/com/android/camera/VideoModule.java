@@ -77,13 +77,9 @@ public class VideoModule implements CameraModule,
     CameraPreference.OnPreferenceChangedListener,
     ShutterButton.OnShutterButtonListener,
     MediaRecorder.OnErrorListener,
-    MediaRecorder.OnInfoListener,
-    EffectsRecorder.EffectsListener {
+    MediaRecorder.OnInfoListener {
 
     private static final String TAG = "CAM_VideoModule";
-
-    // We number the request code from 1000 to avoid collision with Gallery.
-    private static final int REQUEST_EFFECT_BACKDROPPER = 1000;
 
     private static final int CHECK_DISPLAY_ROTATION = 3;
     private static final int CLEAR_SCREEN_DELAY = 4;
@@ -114,8 +110,6 @@ public class VideoModule implements CameraModule,
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
 
-    private static final String EFFECT_BG_FROM_GALLERY = "gallery";
-
     private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
 
     private ComboPreferences mPreferences;
@@ -128,14 +122,6 @@ public class VideoModule implements CameraModule,
     private boolean mQuickCapture;
 
     private MediaRecorder mMediaRecorder;
-    private EffectsRecorder mEffectsRecorder;
-    private boolean mEffectsDisplayResult;
-
-    private int mEffectType = EffectsRecorder.EFFECT_NONE;
-    private Object mEffectParameter = null;
-    private String mEffectUriFromGallery = null;
-    private String mPrefVideoEffectDefault;
-    private boolean mResetEffect = true;
 
     private boolean mSwitchingCamera;
     private boolean mMediaRecorderRecording = false;
@@ -349,8 +335,6 @@ public class VideoModule implements CameraModule,
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
 
-        mPrefVideoEffectDefault = mActivity.getString(R.string.pref_video_effect_default);
-        resetEffect();
         mOrientationManager = new OrientationManager(mActivity);
 
         /*
@@ -398,33 +382,19 @@ public class VideoModule implements CameraModule,
         mPendingSwitchCameraId = -1;
         mUI.updateOnScreenIndicators(mParameters, mPreferences);
 
-        // Disable the shutter button if effects are ON since it might take
-        // a little more time for the effects preview to be ready. We do not
-        // want to allow recording before that happens. The shutter button
-        // will be enabled when we get the message from effectsrecorder that
-        // the preview is running. This becomes critical when the camera is
-        // swapped.
-        if (effectsActive()) {
-            mUI.enableShutter(false);
-        }
     }
 
     // SingleTapListener
     // Preview area is touched. Take a picture.
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        if (mMediaRecorderRecording && effectsActive()) {
-            new RotateTextToast(mActivity, R.string.disable_video_snapshot_hint,
-                    mOrientation).show();
-            return;
-        }
         takeASnapshot();
     }
 
     private void takeASnapshot() {
         // Only take snapshots if video snapshot is supported by device
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
-            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress || effectsActive()) {
+            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress) {
                 return;
             }
             MediaSaveService s = mActivity.getMediaSaveService();
@@ -463,11 +433,6 @@ public class VideoModule implements CameraModule,
     private void initializeVideoControl() {
         loadCameraPreferences();
         mUI.initializePopup(mPreferenceGroup);
-        if (effectsActive()) {
-            mUI.overrideSettings(
-                    CameraSettings.KEY_VIDEO_QUALITY,
-                    Integer.toString(CamcorderProfile.QUALITY_480P));
-        }
     }
 
     @Override
@@ -480,14 +445,6 @@ public class VideoModule implements CameraModule,
 
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
-            // The input of effects recorder is affected by
-            // android.hardware.Camera.setDisplayOrientation. Its value only
-            // compensates the camera orientation (no Display.getRotation).
-            // So the orientation hint here should only consider sensor
-            // orientation.
-            if (effectsActive()) {
-                mEffectsRecorder.setOrientationHint(mOrientation);
-            }
         }
 
         // Show the toast after getting the first orientation changed.
@@ -531,15 +488,12 @@ public class VideoModule implements CameraModule,
     }
 
     private void onStopVideoRecording() {
-        mEffectsDisplayResult = true;
         boolean recordFail = stopVideoRecording();
         if (mIsVideoCaptureIntent) {
-            if (!effectsActive()) {
-                if (mQuickCapture) {
-                    doReturnToCaller(!recordFail);
-                } else if (!recordFail) {
-                    showCaptureResult();
-                }
+            if (mQuickCapture) {
+                doReturnToCaller(!recordFail);
+            } else if (!recordFail) {
+                showCaptureResult();
             }
         } else if (!recordFail){
             // Start capture animation.
@@ -551,10 +505,7 @@ public class VideoModule implements CameraModule,
                 // will not be continuous for a short period of time.
 
                 mUI.animateFlash();
-                Bitmap bitmap = getVideoThumbnail();
-                if (bitmap != null) {
-                    mUI.animateCapture(bitmap);
-                }
+                mUI.animateCapture();
             }
         }
     }
@@ -631,18 +582,6 @@ public class VideoModule implements CameraModule,
             mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
         }
 
-        // Set effect
-        mEffectType = CameraSettings.readEffectType(mPreferences);
-        if (mEffectType != EffectsRecorder.EFFECT_NONE) {
-            mEffectParameter = CameraSettings.readEffectParameter(mPreferences);
-            // Set quality to be no higher than 480p.
-            CamcorderProfile profile = CamcorderProfile.get(mCameraId, quality);
-            if (profile.videoFrameHeight > 480) {
-                quality = CamcorderProfile.QUALITY_480P;
-            }
-        } else {
-            mEffectParameter = null;
-        }
         // Read time lapse recording interval.
         if (ApiHelper.HAS_TIME_LAPSE_RECORDING) {
             String frameIntervalStr = mPreferences.getString(
@@ -658,18 +597,11 @@ public class VideoModule implements CameraModule,
         mPreferenceRead = true;
     }
 
-    private void writeDefaultEffectToPrefs()  {
-        ComboPreferences.Editor editor = mPreferences.edit();
-        editor.putString(CameraSettings.KEY_VIDEO_EFFECT,
-                mActivity.getString(R.string.pref_video_effect_default));
-        editor.apply();
-    }
-
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private void getDesiredPreviewSize() {
         mParameters = mCameraDevice.getParameters();
         if (ApiHelper.HAS_GET_SUPPORTED_VIDEO_SIZE) {
-            if (mParameters.getSupportedVideoSizes() == null || effectsActive()) {
+            if (mParameters.getSupportedVideoSizes() == null) {
                 mDesiredPreviewWidth = mProfile.videoFrameWidth;
                 mDesiredPreviewHeight = mProfile.videoFrameHeight;
             } else {  // Driver supports separates outputs for preview and video.
@@ -729,7 +661,6 @@ public class VideoModule implements CameraModule,
         showVideoSnapshotUI(false);
 
         if (!mPreviewing) {
-            resetEffect();
             openCamera();
             if (mOpenCameraFail) {
                 CameraUtil.showErrorAndFinish(mActivity,
@@ -808,10 +739,6 @@ public class VideoModule implements CameraModule,
         mCameraDevice.setErrorCallback(mErrorCallback);
         if (mPreviewing == true) {
             stopPreview();
-            if (effectsActive() && mEffectsRecorder != null) {
-                mEffectsRecorder.release();
-                mEffectsRecorder = null;
-            }
         }
 
         setDisplayOrientation();
@@ -819,17 +746,10 @@ public class VideoModule implements CameraModule,
         setCameraParameters();
 
         try {
-            if (!effectsActive()) {
-                mCameraDevice.setPreviewTexture(surfaceTexture);
-                mCameraDevice.startPreview();
-                mPreviewing = true;
-                onPreviewStarted();
-            } else {
-                initializeEffectsPreview();
-                mEffectsRecorder.startPreview();
-                mPreviewing = true;
-                onPreviewStarted();
-            }
+            mCameraDevice.setPreviewTexture(surfaceTexture);
+            mCameraDevice.startPreview();
+            mPreviewing = true;
+            onPreviewStarted();
         } catch (Throwable ex) {
             closeCamera();
             throw new RuntimeException("startPreview failed", ex);
@@ -853,49 +773,12 @@ public class VideoModule implements CameraModule,
         mPreviewing = false;
     }
 
-    // Closing the effects out. Will shut down the effects graph.
-    private void closeEffects() {
-        Log.v(TAG, "Closing effects");
-        mEffectType = EffectsRecorder.EFFECT_NONE;
-        if (mEffectsRecorder == null) {
-            Log.d(TAG, "Effects are already closed. Nothing to do");
-            return;
-        }
-        // This call can handle the case where the camera is already released
-        // after the recording has been stopped.
-        mEffectsRecorder.release();
-        mEffectsRecorder = null;
-    }
-
-    // By default, we want to close the effects as well with the camera.
     private void closeCamera() {
-        closeCamera(true);
-    }
-
-    // In certain cases, when the effects are active, we may want to shutdown
-    // only the camera related parts, and handle closing the effects in the
-    // effectsUpdate callback.
-    // For example, in onPause, we want to make the camera available to
-    // outside world immediately, however, want to wait till the effects
-    // callback to shut down the effects. In such a case, we just disconnect
-    // the effects from the camera by calling disconnectCamera. That way
-    // the effects can handle that when shutting down.
-    //
-    // @param closeEffectsAlso - indicates whether we want to close the
-    // effects also along with the camera.
-    private void closeCamera(boolean closeEffectsAlso) {
         Log.v(TAG, "closeCamera");
         if (mCameraDevice == null) {
             Log.d(TAG, "already stopped.");
             return;
         }
-
-        if (mEffectsRecorder != null) {
-            // Disconnect the camera from effects so that camera is ready to
-            // be released to the outside world.
-            mEffectsRecorder.disconnectCamera();
-        }
-        if (closeEffectsAlso) closeEffects();
         mCameraDevice.setZoomChangeListener(null);
         mCameraDevice.setErrorCallback(null);
         CameraHolder.instance().release();
@@ -919,24 +802,11 @@ public class VideoModule implements CameraModule,
             onStopVideoRecording();
         } else {
             closeCamera();
-            if (!effectsActive()) releaseMediaRecorder();
+            releaseMediaRecorder();
         }
-        if (effectsActive()) {
-            // If the effects are active, make sure we tell the graph that the
-            // surfacetexture is not valid anymore. Disconnect the graph from
-            // the display. This should be done before releasing the surface
-            // texture.
-            mEffectsRecorder.disconnectDisplay();
-        } else {
-            // Close the file descriptor and clear the video namer only if the
-            // effects are not active. If effects are active, we need to wait
-            // till we get the callback from the Effects that the graph is done
-            // recording. That also needs a change in the stopVideoRecording()
-            // call to not call closeCamera if the effects are active, because
-            // that will close down the effects are well, thus making this if
-            // condition invalid.
-            closeVideoFileDescriptor();
-        }
+
+        closeVideoFileDescriptor();
+
 
         releasePreviewResources();
 
@@ -1191,98 +1061,6 @@ public class VideoModule implements CameraModule,
         }
     }
 
-    private void initializeEffectsPreview() {
-        Log.v(TAG, "initializeEffectsPreview");
-        // If the mCameraDevice is null, then this activity is going to finish
-        if (mCameraDevice == null) return;
-
-        CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-
-        mEffectsDisplayResult = false;
-        mEffectsRecorder = new EffectsRecorder(mActivity);
-
-        // TODO: Confirm none of the following need to go to initializeEffectsRecording()
-        // and none of these change even when the preview is not refreshed.
-        mEffectsRecorder.setCameraDisplayOrientation(mCameraDisplayOrientation);
-        mEffectsRecorder.setCamera(mCameraDevice);
-        mEffectsRecorder.setCameraFacing(info.facing);
-        mEffectsRecorder.setProfile(mProfile);
-        mEffectsRecorder.setEffectsListener(this);
-        mEffectsRecorder.setOnInfoListener(this);
-        mEffectsRecorder.setOnErrorListener(this);
-
-        // The input of effects recorder is affected by
-        // android.hardware.Camera.setDisplayOrientation. Its value only
-        // compensates the camera orientation (no Display.getRotation). So the
-        // orientation hint here should only consider sensor orientation.
-        int orientation = 0;
-        if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            orientation = mOrientation;
-        }
-        mEffectsRecorder.setOrientationHint(orientation);
-
-        mEffectsRecorder.setPreviewSurfaceTexture(mUI.getSurfaceTexture(),
-            mUI.getPreviewWidth(), mUI.getPreviewHeight());
-
-        if (mEffectType == EffectsRecorder.EFFECT_BACKDROPPER &&
-                ((String) mEffectParameter).equals(EFFECT_BG_FROM_GALLERY)) {
-            mEffectsRecorder.setEffect(mEffectType, mEffectUriFromGallery);
-        } else {
-            mEffectsRecorder.setEffect(mEffectType, mEffectParameter);
-        }
-    }
-
-    private void initializeEffectsRecording() {
-        Log.v(TAG, "initializeEffectsRecording");
-
-        Intent intent = mActivity.getIntent();
-        Bundle myExtras = intent.getExtras();
-
-        long requestedSizeLimit = 0;
-        closeVideoFileDescriptor();
-        if (mIsVideoCaptureIntent && myExtras != null) {
-            Uri saveUri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
-            if (saveUri != null) {
-                try {
-                    mVideoFileDescriptor =
-                            mContentResolver.openFileDescriptor(saveUri, "rw");
-                    mCurrentVideoUri = saveUri;
-                } catch (java.io.FileNotFoundException ex) {
-                    // invalid uri
-                    Log.e(TAG, ex.toString());
-                }
-            }
-            requestedSizeLimit = myExtras.getLong(MediaStore.EXTRA_SIZE_LIMIT);
-        }
-
-        mEffectsRecorder.setProfile(mProfile);
-        // important to set the capture rate to zero if not timelapsed, since the
-        // effectsrecorder object does not get created again for each recording
-        // session
-        if (mCaptureTimeLapse) {
-            mEffectsRecorder.setCaptureRate((1000 / (double) mTimeBetweenTimeLapseFrameCaptureMs));
-        } else {
-            mEffectsRecorder.setCaptureRate(0);
-        }
-
-        // Set output file
-        if (mVideoFileDescriptor != null) {
-            mEffectsRecorder.setOutputFile(mVideoFileDescriptor.getFileDescriptor());
-        } else {
-            generateVideoFilename(mProfile.fileFormat);
-            mEffectsRecorder.setOutputFile(mVideoFilename);
-        }
-
-        // Set maximum file size.
-        long maxFileSize = mActivity.getStorageSpace() - Storage.LOW_STORAGE_THRESHOLD;
-        if (requestedSizeLimit > 0 && requestedSizeLimit < maxFileSize) {
-            maxFileSize = requestedSizeLimit;
-        }
-        mEffectsRecorder.setMaxFileSize(maxFileSize);
-        mEffectsRecorder.setMaxDuration(mMaxVideoDurationInMs);
-    }
-
-
     private void releaseMediaRecorder() {
         Log.v(TAG, "Releasing media recorder.");
         if (mMediaRecorder != null) {
@@ -1291,17 +1069,6 @@ public class VideoModule implements CameraModule,
             mMediaRecorder.release();
             mMediaRecorder = null;
         }
-        mVideoFilename = null;
-    }
-
-    private void releaseEffectsRecorder() {
-        Log.v(TAG, "Releasing effects recorder.");
-        if (mEffectsRecorder != null) {
-            cleanupEmptyFile();
-            mEffectsRecorder.release();
-            mEffectsRecorder = null;
-        }
-        mEffectType = EffectsRecorder.EFFECT_NONE;
         mVideoFilename = null;
     }
 
@@ -1429,40 +1196,23 @@ public class VideoModule implements CameraModule,
         //??
         //if (!mCameraDevice.waitDone()) return;
         mCurrentVideoUri = null;
-        if (effectsActive()) {
-            initializeEffectsRecording();
-            if (mEffectsRecorder == null) {
-                Log.e(TAG, "Fail to initialize effect recorder");
-                return;
-            }
-        } else {
-            initializeRecorder();
-            if (mMediaRecorder == null) {
-                Log.e(TAG, "Fail to initialize media recorder");
-                return;
-            }
+
+        initializeRecorder();
+        if (mMediaRecorder == null) {
+            Log.e(TAG, "Fail to initialize media recorder");
+            return;
         }
 
         pauseAudioPlayback();
 
-        if (effectsActive()) {
-            try {
-                mEffectsRecorder.startRecording();
-            } catch (RuntimeException e) {
-                Log.e(TAG, "Could not start effects recorder. ", e);
-                releaseEffectsRecorder();
-                return;
-            }
-        } else {
-            try {
-                mMediaRecorder.start(); // Recording is now started
-            } catch (RuntimeException e) {
-                Log.e(TAG, "Could not start media recorder. ", e);
-                releaseMediaRecorder();
-                // If start fails, frameworks will not lock the camera for us.
-                mCameraDevice.lock();
-                return;
-            }
+        try {
+            mMediaRecorder.start(); // Recording is now started
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Could not start media recorder. ", e);
+            releaseMediaRecorder();
+            // If start fails, frameworks will not lock the camera for us.
+            mCameraDevice.lock();
+            return;
         }
 
         // Make sure the video recording has started before announcing
@@ -1509,6 +1259,7 @@ public class VideoModule implements CameraModule,
                 Log.e(TAG, ex.toString());
             }
         }
+
         if (bitmap != null) {
             // MetadataRetriever already rotates the thumbnail. We should rotate
             // it to match the UI orientation (and mirror if it is front-facing camera).
@@ -1542,18 +1293,10 @@ public class VideoModule implements CameraModule,
             boolean shouldAddToMediaStoreNow = false;
 
             try {
-                if (effectsActive()) {
-                    // This is asynchronous, so we can't add to media store now because thumbnail
-                    // may not be ready. In such case saveVideo() is called later
-                    // through a callback from the MediaEncoderFilter to EffectsRecorder,
-                    // and then to the VideoModule.
-                    mEffectsRecorder.stopRecording();
-                } else {
-                    mMediaRecorder.setOnErrorListener(null);
-                    mMediaRecorder.setOnInfoListener(null);
-                    mMediaRecorder.stop();
-                    shouldAddToMediaStoreNow = true;
-                }
+                mMediaRecorder.setOnErrorListener(null);
+                mMediaRecorder.setOnInfoListener(null);
+                mMediaRecorder.stop();
+                shouldAddToMediaStoreNow = true;
                 mCurrentVideoFilename = mVideoFilename;
                 Log.v(TAG, "stopVideoRecording: Setting current video filename: "
                         + mCurrentVideoFilename);
@@ -1570,17 +1313,8 @@ public class VideoModule implements CameraModule,
             // If the activity is paused, this means activity is interrupted
             // during recording. Release the camera as soon as possible because
             // face unlock or other applications may need to use the camera.
-            // However, if the effects are active, then we can only release the
-            // camera and cannot release the effects recorder since that will
-            // stop the graph. It is possible to separate out the Camera release
-            // part and the effects release part. However, the effects recorder
-            // does hold on to the camera, hence, it needs to be "disconnected"
-            // from the camera in the closeCamera call.
             if (mPaused) {
-                // Closing only the camera part if effects active. Effects will
-                // be closed in the callback from effects.
-                boolean closeEffects = !effectsActive();
-                closeCamera(closeEffects);
+                closeCamera();
             }
 
             mUI.showRecordingUI(false, mParameters.isZoomSupported());
@@ -1600,17 +1334,15 @@ public class VideoModule implements CameraModule,
                 }
             }
         }
-        // always release media recorder if no effects running
-        if (!effectsActive()) {
-            releaseMediaRecorder();
-            if (!mPaused) {
-                mCameraDevice.lock();
-                if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
-                    stopPreview();
-                    mUI.hideSurfaceView();
-                    // Switch back to use SurfaceTexture for preview.
-                    startPreview();
-                }
+        // release media recorder
+        releaseMediaRecorder();
+        if (!mPaused) {
+            mCameraDevice.lock();
+            if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
+                stopPreview();
+                mUI.hideSurfaceView();
+                // Switch back to use SurfaceTexture for preview.
+                startPreview();
             }
         }
         // Update the parameters here because the parameters might have been altered
@@ -1836,84 +1568,7 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_EFFECT_BACKDROPPER:
-                if (resultCode == Activity.RESULT_OK) {
-                    // onActivityResult() runs before onResume(), so this parameter will be
-                    // seen by startPreview from onResume()
-                    mEffectUriFromGallery = data.getData().toString();
-                    Log.v(TAG, "Received URI from gallery: " + mEffectUriFromGallery);
-                    mResetEffect = false;
-                } else {
-                    mEffectUriFromGallery = null;
-                    Log.w(TAG, "No URI from gallery");
-                    mResetEffect = true;
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onEffectsUpdate(int effectId, int effectMsg) {
-        Log.v(TAG, "onEffectsUpdate. Effect Message = " + effectMsg);
-        if (effectMsg == EffectsRecorder.EFFECT_MSG_EFFECTS_STOPPED) {
-            // Effects have shut down. Hide learning message if any,
-            // and restart regular preview.
-            checkQualityAndStartPreview();
-        } else if (effectMsg == EffectsRecorder.EFFECT_MSG_RECORDING_DONE) {
-            // This follows the codepath from onStopVideoRecording.
-            if (mEffectsDisplayResult) {
-                saveVideo();
-                if (mIsVideoCaptureIntent) {
-                    if (mQuickCapture) {
-                        doReturnToCaller(true);
-                    } else {
-                        showCaptureResult();
-                    }
-                }
-            }
-            mEffectsDisplayResult = false;
-            // In onPause, these were not called if the effects were active. We
-            // had to wait till the effects recording is complete to do this.
-            if (mPaused) {
-                closeVideoFileDescriptor();
-            }
-        } else if (effectMsg == EffectsRecorder.EFFECT_MSG_PREVIEW_RUNNING) {
-            // Enable the shutter button once the preview is complete.
-            mUI.enableShutter(true);
-        }
-        // In onPause, this was not called if the effects were active. We had to
-        // wait till the effects completed to do this.
-        if (mPaused) {
-            Log.v(TAG, "OnEffectsUpdate: closing effects if activity paused");
-            closeEffects();
-        }
-    }
-
-    public void onCancelBgTraining(View v) {
-        // Write default effect out to shared prefs
-        writeDefaultEffectToPrefs();
-        // Tell VideoCamer to re-init based on new shared pref values.
-        onSharedPreferenceChanged();
-    }
-
-    @Override
-    public synchronized void onEffectsError(Exception exception, String fileName) {
-        // TODO: Eventually we may want to show the user an error dialog, and then restart the
-        // camera and encoder gracefully. For now, we just delete the file and bail out.
-        if (fileName != null && new File(fileName).exists()) {
-            deleteVideoFile(fileName);
-        }
-        try {
-            if (Class.forName("android.filterpacks.videosink.MediaRecorderStopException")
-                    .isInstance(exception)) {
-                Log.w(TAG, "Problem recoding video file. Removing incomplete file.");
-                return;
-            }
-        } catch (ClassNotFoundException ex) {
-            Log.w(TAG, ex);
-        }
-        throw new RuntimeException("Error during recording!", exception);
+        // Do nothing.
     }
 
     @Override
@@ -1931,10 +1586,6 @@ public class VideoModule implements CameraModule,
     public void onRestorePreferencesClicked() {
     }
 
-    private boolean effectsActive() {
-        return (mEffectType != EffectsRecorder.EFFECT_NONE);
-    }
-
     @Override
     public void onSharedPreferenceChanged() {
         // ignore the events after "onPause()" or preview has not started yet
@@ -1948,21 +1599,14 @@ public class VideoModule implements CameraModule,
                     mPreferences, mContentResolver);
             mLocationManager.recordLocation(recordLocation);
 
-            // Check if the current effects selection has changed
-            if (updateEffectSelection()) return;
-
             readVideoPreferences();
             mUI.showTimeLapseUI(mCaptureTimeLapse);
             // We need to restart the preview if preview size is changed.
             Size size = mParameters.getPreviewSize();
             if (size.width != mDesiredPreviewWidth
                     || size.height != mDesiredPreviewHeight) {
-                if (!effectsActive()) {
-                    stopPreview();
-                } else {
-                    mEffectsRecorder.release();
-                    mEffectsRecorder = null;
-                }
+
+                stopPreview();
                 resizeForPreviewAspectRatio();
                 startPreview(); // Parameters will be set in startPreview().
             } else {
@@ -2019,46 +1663,6 @@ public class VideoModule implements CameraModule,
     public void onCaptureTextureCopied() {
     }
 
-    private boolean updateEffectSelection() {
-        int previousEffectType = mEffectType;
-        Object previousEffectParameter = mEffectParameter;
-        mEffectType = CameraSettings.readEffectType(mPreferences);
-        mEffectParameter = CameraSettings.readEffectParameter(mPreferences);
-
-        if (mEffectType == previousEffectType) {
-            if (mEffectType == EffectsRecorder.EFFECT_NONE) return false;
-            if (mEffectParameter.equals(previousEffectParameter)) return false;
-        }
-        Log.v(TAG, "New effect selection: " + mPreferences.getString(
-                CameraSettings.KEY_VIDEO_EFFECT, "none"));
-
-        if (mEffectType == EffectsRecorder.EFFECT_NONE) {
-            // Stop effects and return to normal preview
-            mEffectsRecorder.stopPreview();
-            mPreviewing = false;
-            return true;
-        }
-        if (mEffectType == EffectsRecorder.EFFECT_BACKDROPPER &&
-            ((String) mEffectParameter).equals(EFFECT_BG_FROM_GALLERY)) {
-            // Request video from gallery to use for background
-            Intent i = new Intent(Intent.ACTION_PICK);
-            i.setDataAndType(Video.Media.EXTERNAL_CONTENT_URI,
-                             "video/*");
-            i.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-            mActivity.startActivityForResult(i, REQUEST_EFFECT_BACKDROPPER);
-            return true;
-        }
-        if (previousEffectType == EffectsRecorder.EFFECT_NONE) {
-            // Stop regular preview and start effects.
-            stopPreview();
-            checkQualityAndStartPreview();
-        } else {
-            // Switch currently running effect
-            mEffectsRecorder.setEffect(mEffectType, mEffectParameter);
-        }
-        return true;
-    }
-
     // Verifies that the current preview view size is correct before starting
     // preview. If not, resets the surface texture and resizes the view.
     private void checkQualityAndStartPreview() {
@@ -2090,6 +1694,7 @@ public class VideoModule implements CameraModule,
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (enabled) {
                 mUI.animateFlash();
+                mUI.animateCapture();
             } else {
                 mUI.showPreviewBorder(enabled);
             }
@@ -2145,19 +1750,6 @@ public class VideoModule implements CameraModule,
         mActivity.getMediaSaveService().addImage(
                 data, title, dateTaken, loc, orientation,
                 exif, mOnPhotoSavedListener, mContentResolver);
-    }
-
-    private boolean resetEffect() {
-        if (mResetEffect) {
-            String value = mPreferences.getString(CameraSettings.KEY_VIDEO_EFFECT,
-                    mPrefVideoEffectDefault);
-            if (!mPrefVideoEffectDefault.equals(value)) {
-                writeDefaultEffectToPrefs();
-                return true;
-            }
-        }
-        mResetEffect = true;
-        return false;
     }
 
     private String convertOutputFormatToMimeType(int outputFileFormat) {
