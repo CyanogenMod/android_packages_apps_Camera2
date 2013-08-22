@@ -426,20 +426,20 @@ public abstract class LocalMediaData implements LocalData {
 
             @Override
             protected Bitmap doInBackground(Void... v) {
-                BitmapFactory.Options opts = null;
-                Bitmap b;
-                int sample = 1;
-                while (mDecodeWidth * sample < width
-                        || mDecodeHeight * sample < height) {
-                    sample *= 2;
+                int sampleSize = 1;
+                if (width > mDecodeWidth || height > mDecodeHeight) {
+                    int heightRatio = Math.round((float) height / (float) mDecodeHeight);
+                    int widthRatio = Math.round((float) width / (float) mDecodeWidth);
+                    sampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
                 }
-                opts = new BitmapFactory.Options();
-                opts.inSampleSize = sample;
+
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inSampleSize = sampleSize;
                 opts.inTempStorage = DECODE_TEMP_STORAGE;
                 if (isCancelled() || !isUsing()) {
                     return null;
                 }
-                b = BitmapFactory.decodeFile(path, opts);
+                Bitmap b = BitmapFactory.decodeFile(path, opts);
                 if (orientation != 0) {
                     if (isCancelled() || !isUsing()) {
                         return null;
