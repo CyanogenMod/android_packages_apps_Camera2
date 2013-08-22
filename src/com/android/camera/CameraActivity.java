@@ -46,6 +46,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -106,7 +107,9 @@ public class CameraActivity extends Activity
     private PanoramaStitchingManager mPanoramaManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
-    private View mRootView;
+    private FrameLayout mLayoutRoot;
+    private FrameLayout mAboveFilmstripControlLayout;
+    private View mCameraModuleRootView;
     private FilmStripView mFilmStripView;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
@@ -126,6 +129,7 @@ public class CameraActivity extends Activity
     private CameraPreviewData mCameraPreviewData;
     private ActionBar mActionBar;
     private Menu mActionBarMenu;
+    private ViewGroup mUndoDeletionBar;
 
     public void gotoGallery() {
         mFilmStripView.getController().goToNextItem();
@@ -327,6 +331,7 @@ public class CameraActivity extends Activity
     private Runnable mDeletionRunnable = new Runnable() {
             @Override
             public void run() {
+                hideUndoDeletionBar();
                 mDataAdapter.executeDeletion(CameraActivity.this);
             }
         };
@@ -404,6 +409,7 @@ public class CameraActivity extends Activity
 
     private void removeData(int dataID) {
         mDataAdapter.removeData(CameraActivity.this, dataID);
+        showUndoDeletionBar();
         mMainHandler.removeCallbacks(mDeletionRunnable);
         mMainHandler.postDelayed(mDeletionRunnable, 3000);
     }
@@ -539,11 +545,19 @@ public class CameraActivity extends Activity
                 registerReceiver(sScreenOffReceiver, filter);
             }
         }
+        mLayoutRoot = (FrameLayout) findViewById(R.id.camera_layout_root);
+
+        mAboveFilmstripControlLayout =
+                (FrameLayout) findViewById(R.id.camera_above_filmstrip_layout);
+        mAboveFilmstripControlLayout.setFitsSystemWindows(true);
+        mAboveFilmstripControlLayout.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mPanoramaManager = new PanoramaStitchingManager(CameraActivity.this);
         mPanoramaManager.addTaskListener(mStitchingListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
-        mRootView = rootLayout.findViewById(R.id.camera_app_root);
+        mCameraModuleRootView = rootLayout.findViewById(R.id.camera_app_root);
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
@@ -569,7 +583,7 @@ public class CameraActivity extends Activity
         } else {
             mCurrentModule = new PhotoModule();
         }
-        mCurrentModule.init(this, mRootView);
+        mCurrentModule.init(this, mCameraModuleRootView);
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
 
@@ -797,7 +811,7 @@ public class CameraActivity extends Activity
     }
 
     private void openModule(CameraModule module) {
-        module.init(this, mRootView);
+        module.init(this, mCameraModuleRootView);
         module.onResumeBeforeSuper();
         module.onResumeAfterSuper();
     }
@@ -805,7 +819,44 @@ public class CameraActivity extends Activity
     private void closeModule(CameraModule module) {
         module.onPauseBeforeSuper();
         module.onPauseAfterSuper();
-        ((ViewGroup) mRootView).removeAllViews();
+        ((ViewGroup) mCameraModuleRootView).removeAllViews();
+    }
+
+    private void showUndoDeletionBar() {
+        if (mUndoDeletionBar == null) {
+            Log.v(TAG, "showing undo bar");
+            ViewGroup v = (ViewGroup) getLayoutInflater().inflate(
+                    R.layout.undo_bar, mAboveFilmstripControlLayout, true);
+            mUndoDeletionBar = (ViewGroup) v.findViewById(R.id.camera_undo_deletion_bar);
+            View button = mUndoDeletionBar.findViewById(R.id.camera_undo_deletion_button);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDataAdapter.undoDataRemoval();
+                    mMainHandler.removeCallbacks(mDeletionRunnable);
+                    hideUndoDeletionBar();
+                }
+            });
+        }
+        mUndoDeletionBar.setAlpha(0f);
+        mUndoDeletionBar.setVisibility(View.VISIBLE);
+        mUndoDeletionBar.animate().setDuration(200).alpha(1f).start();
+    }
+
+    private void hideUndoDeletionBar() {
+        Log.v(TAG, "Hiding undo deletion bar");
+        if (mUndoDeletionBar != null) {
+            mUndoDeletionBar.animate()
+                    .setDuration(200)
+                    .alpha(0f)
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUndoDeletionBar.setVisibility(View.GONE);
+                        }
+                    })
+                    .start();
+        }
     }
 
     @Override
