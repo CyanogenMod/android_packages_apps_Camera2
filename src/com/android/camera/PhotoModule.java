@@ -681,9 +681,6 @@ public class PhotoModule
             }
             if (mIsImageCaptureIntent) {
                 stopPreview();
-            } else {
-                // Animate capture with real jpeg data instead of a preview frame.
-                mUI.animateCapture(jpegData);
             }
             if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
                 mUI.showSwitcher();
@@ -754,6 +751,8 @@ public class PhotoModule
                             jpegData, title, date, mLocation, width, height,
                             orientation, exif, mOnMediaSavedListener, mContentResolver);
                 }
+                // Animate capture with real jpeg data instead of a preview frame.
+                mUI.animateCapture(jpegData, orientation);
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
