@@ -305,9 +305,25 @@ public class VideoUI implements PieRenderer.PieListener,
 
     /**
      * Starts a capture animation
+     */
+    public void animateCapture() {
+        Bitmap bitmap = null;
+        if (mTextureView != null) {
+            bitmap = mTextureView.getBitmap((int) mSurfaceTextureUncroppedWidth / 2,
+                    (int) mSurfaceTextureUncroppedHeight / 2);
+        }
+        animateCapture(bitmap);
+    }
+
+    /**
+     * Starts a capture animation
      * @param bitmap the captured image that we shrink and slide in the animation
      */
     public void animateCapture(Bitmap bitmap) {
+        if (bitmap == null) {
+            Log.e(TAG, "No valid bitmap for capture animation.");
+            return;
+        }
         ((ImageView) mPreviewThumb).setImageBitmap(bitmap);
         mAnimationManager.startCaptureAnimation(mPreviewThumb);
     }
