@@ -51,6 +51,7 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     public void suggestViewSizeBound(int w, int h) {
         mSuggestedWidth = w;
         mSuggestedHeight = h;
+        mAdapter.suggestViewSizeBound(w, h);
     }
 
     @Override
