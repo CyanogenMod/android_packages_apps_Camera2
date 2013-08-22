@@ -896,11 +896,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         clampCenterX();
 
-        mViewItem[mCurrentItem].layoutIn(mDrawArea, mCenterX, mScale);
-
-        int currentViewLeft = mViewItem[mCurrentItem].getLeftPosition();
-        int currentViewCenter = mViewItem[mCurrentItem].getCenterX();
-        int fullScreenWidth = mDrawArea.width() + mViewGap;
         /**
          * Transformed scale fraction between 0 and 1. 0 if the scale is
          * {@link FILM_STRIP_SCALE}. 1 if the scale is {@link FULL_SCREEN_SCALE}
@@ -908,6 +903,32 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          */
         float scaleFraction = mViewAnimInterpolator.getInterpolation(
                 (mScale - FILM_STRIP_SCALE) / (FULL_SCREEN_SCALE - FILM_STRIP_SCALE));
+
+        // Layout the current ViewItem first.
+        if (scaleFraction == 1
+                && mViewItem[mCurrentItem - 1] != null
+                && mCenterX < mViewItem[mCurrentItem].getCenterX()) {
+            // In full-screen and it's not the first one and mCenterX is on
+            // the left of the center, we draw the current one to "fade down".
+            ViewItem curr = mViewItem[mCurrentItem];
+            ViewItem prev = mViewItem[mCurrentItem - 1];
+            int currCenterX = curr.getCenterX();
+            int prevCenterX = prev.getCenterX();
+            float fadeUpFraction =
+                    ((float) mCenterX - prevCenterX)
+                    / (currCenterX - prevCenterX);
+            curr.layoutIn(mDrawArea, currCenterX,
+                    FILM_STRIP_SCALE
+                    + (1f - FILM_STRIP_SCALE) * fadeUpFraction);
+            curr.getView().setAlpha(fadeUpFraction);
+        } else {
+            mViewItem[mCurrentItem].layoutIn(mDrawArea, mCenterX, mScale);
+        }
+
+        // Layout the rest dependent on the current scale.
+        int currentViewLeft = mViewItem[mCurrentItem].getLeftPosition();
+        int currentViewCenter = mViewItem[mCurrentItem].getCenterX();
+        int fullScreenWidth = mDrawArea.width() + mViewGap;
 
         // images on the left
         for (int itemID = mCurrentItem - 1; itemID >= 0; itemID--) {
@@ -918,14 +939,15 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             ViewItem next = mViewItem[itemID + 1];
             int myLeft =
-                    next.getLeftPosition() - curr.getView().getMeasuredWidth() - mViewGap;
+                    next.getLeftPosition() - curr.getView().getMeasuredWidth()
+                    - mViewGap;
             curr.setLeftPosition(myLeft);
             curr.layoutIn(mDrawArea, mCenterX, mScale);
             curr.getView().setAlpha(1f);
             int itemDiff = mCurrentItem - itemID;
             curr.setTranslationX(
                     (currentViewCenter
-                            - fullScreenWidth * itemDiff - curr.getCenterX()) * scaleFraction,
+                     - fullScreenWidth * itemDiff - curr.getCenterX()) * scaleFraction,
                     mScale);
         }
 
@@ -938,12 +960,32 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             ViewItem prev = mViewItem[itemID - 1];
             int myLeft =
-                    prev.getLeftPosition() + prev.getView().getMeasuredWidth() + mViewGap;
+                    prev.getLeftPosition() + prev.getView().getMeasuredWidth()
+                    + mViewGap;
             curr.setLeftPosition(myLeft);
             curr.layoutIn(mDrawArea, mCenterX, mScale);
             View currView = curr.getView();
             if (scaleFraction == 1) {
-                currView.setVisibility(INVISIBLE);
+                // It's in full-screen mode.
+                if (itemID == mCurrentItem + 1) {
+                    int currCenterX = curr.getCenterX();
+                    int prevCenterX = prev.getCenterX();
+                    if (mCenterX == prevCenterX) {
+                        currView.setVisibility(INVISIBLE);
+                    } else {
+                        float fadeUpFraction =
+                                ((float) mCenterX - prevCenterX)
+                                / (currCenterX - prevCenterX);
+                        curr.layoutIn(mDrawArea, currCenterX,
+                                FILM_STRIP_SCALE
+                                + (1f - FILM_STRIP_SCALE) * fadeUpFraction);
+                        currView.setAlpha(fadeUpFraction);
+                        currView.setVisibility(VISIBLE);
+                    }
+                } else {
+                    currView.setVisibility(INVISIBLE);
+                }
+                curr.setTranslationX(0, mScale);
             } else {
                 if (currView.getVisibility() == INVISIBLE) {
                     currView.setVisibility(VISIBLE);
@@ -957,8 +999,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                         currView.setVisibility(INVISIBLE);
                     }
                 }
+                curr.setTranslationX((currentViewLeft - myLeft) * scaleFraction, mScale);
             }
-            curr.setTranslationX((currentViewLeft - myLeft) * scaleFraction, mScale);
         }
 
         stepIfNeeded();
@@ -1384,10 +1426,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (mViewItem[mCurrentItem] == null) {
             return;
         }
-        if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
-            // we are in camera mode by default.
-            mController.lockAtCurrentView();
-        }
         for (int i = 1; mCurrentItem + i < BUFFER_SIZE || mCurrentItem - i >= 0; i++) {
             int itemID = mCurrentItem + i;
             if (itemID < BUFFER_SIZE && mViewItem[itemID - 1] != null) {
@@ -1668,9 +1706,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             if (mCenterX == item.getCenterX()) {
-                if (inFullScreen()) {
-                    lockAtCurrentView();
-                } else if (inFilmStrip()) {
+                if (inFilmStrip()) {
                     unlockPosition();
                     snapInCenter();
                 }
@@ -1801,7 +1837,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 if (deltaX > 0 && inCameraFullscreen()) {
                     mController.gotoFilmStrip();
                 }
-                mController.scroll(deltaX);
+                // Multiplied by 1.2 to make it more easy to swipe.
+                mController.scroll((int) (deltaX * 1.2));
             }
             layoutChildren();
 
@@ -1810,11 +1847,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onFling(float velocityX, float velocityY) {
-            if (Math.abs(velocityX) > Math.abs(velocityY)) {
-                mController.fling(velocityX);
-            } else {
+            if (Math.abs(velocityX) < Math.abs(velocityY)) {
                 // ignore vertical fling.
+                return true;
             }
+
+            if (mScale != FILM_STRIP_SCALE) {
+                // No fling in other modes.
+                return true;
+            }
+            mController.fling(velocityX);
             return true;
         }
 
