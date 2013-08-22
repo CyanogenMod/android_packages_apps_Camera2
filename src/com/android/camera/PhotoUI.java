@@ -321,8 +321,7 @@ public class PhotoUI implements PieListener,
         mPreviewThumb.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: go to filmstrip
-                // mActivity.gotoGallery();
+                mActivity.gotoGallery();
             }
         });
         mMenuButton = mRootView.findViewById(R.id.menu);
