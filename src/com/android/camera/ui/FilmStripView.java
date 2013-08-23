@@ -589,6 +589,20 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         return ret;
     }
 
+    private void measureViewItem(ViewItem item, int boundWidth, int boundHeight) {
+        int id = item.getID();
+        int[] dim = calculateChildDimension(
+                mDataAdapter.getImageData(id).getWidth(),
+                mDataAdapter.getImageData(id).getHeight(),
+                boundWidth, boundHeight);
+
+        item.getView().measure(
+                MeasureSpec.makeMeasureSpec(
+                        dim[0], MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(
+                        dim[1], MeasureSpec.EXACTLY));
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -605,36 +619,22 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         for (ViewItem item : mViewItem) {
-            if (item == null) {
-                continue;
+            if (item != null) {
+                measureViewItem(item, boundWidth, boundHeight);
             }
-
-            int id = item.getID();
-            int[] dim = calculateChildDimension(
-                    mDataAdapter.getImageData(id).getWidth(),
-                    mDataAdapter.getImageData(id).getHeight(),
-                    boundWidth, boundHeight);
-
-            item.getView().measure(
-                    MeasureSpec.makeMeasureSpec(
-                            dim[0], MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(
-                            dim[1], MeasureSpec.EXACTLY));
         }
     }
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        if (mBottomControls != null) {
-            // Set the position of the "View Photo Sphere" button.
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mBottomControls
-                    .getLayoutParams();
-            params.leftMargin = insets.left;
-            params.rightMargin = insets.right;
-            params.bottomMargin = insets.bottom;
-            mBottomControls.setLayoutParams(params);
-        }
-        return super.fitSystemWindows(insets);
+        // Since the camera preview needs this callback to layout the camera
+        // controls correctly, we need to call super here.
+        super.fitSystemWindows(insets);
+        // After calling super, we need to return false because we have other
+        // layouts such as bottom controls that needs this callback. The
+        // framework behavior is to stop propagating this after the first
+        // child returning true is found.
+        return false;
     }
 
     private int findTheNearestView(int pointX) {

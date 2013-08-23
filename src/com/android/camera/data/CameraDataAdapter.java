@@ -40,7 +40,7 @@ import java.util.List;
 public class CameraDataAdapter implements LocalDataAdapter {
     private static final String TAG = "CAM_CameraDataAdapter";
 
-    private static final int DEFAULT_DECODE_SIZE = 3000;
+    private static final int DEFAULT_DECODE_SIZE = 1600;
     private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
 
     private List<LocalData> mImages;
