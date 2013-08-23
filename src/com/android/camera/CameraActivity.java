@@ -505,6 +505,10 @@ public class CameraActivity extends Activity
 
         // Handle presses on the action bar items
         switch (item.getItemId()) {
+            case android.R.id.home:
+                // ActionBar's Up/Home button was clicked
+                mFilmStripView.getController().goToFirstItem();
+                return true;
             case R.id.action_delete:
                 removeData(currentDataId);
                 return true;
