@@ -456,10 +456,10 @@ public class CameraActivity extends Activity
                 return true;
             }
             case R.id.action_rotate_ccw:
-                // TODO: add the functionality.
+                localData.rotate90Degrees(this, mDataAdapter, currentDataId, false);
                 return true;
             case R.id.action_rotate_cw:
-                // TODO: add the functionality.
+                localData.rotate90Degrees(this, mDataAdapter, currentDataId, true);
                 return true;
             case R.id.action_crop:
                 // TODO: add the functionality.
