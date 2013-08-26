@@ -16,6 +16,7 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera_layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -24,43 +25,51 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <include layout="@layout/filmstrip_bottom_controls" />
-
-    <LinearLayout
-        android:id="@+id/pano_stitching_progress_panel"
+    <!--com.android.camera.ui.FitSystemUiFrameLayout-->
+    <FrameLayout
+        android:id="@+id/camera_above_filmstrip_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:paddingBottom="52dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:layout_height="match_parent" >
 
-        <TextView
-            android:id="@+id/pano_stitching_progress_text"
-            android:text="@string/pano_progress_text"
-            android:textColor="#ffffffff"
-            android:textSize="14dp"
-            android:shadowColor="#ff000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:paddingBottom="8dp"
-            android:visibility="visible"
-            android:layout_gravity="right"/>
+        <include layout="@layout/filmstrip_bottom_controls" />
 
-        <ProgressBar
-            android:id="@+id/pano_stitching_progress_bar"
-            style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+        <LinearLayout
+            android:id="@+id/pano_stitching_progress_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:layout_gravity="bottom|center_horizontal" />
-    </LinearLayout>
+            android:layout_gravity="bottom|center_horizontal"
+            android:paddingBottom="52dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/pano_stitching_progress_text"
+                android:text="@string/pano_progress_text"
+                android:textColor="#ffffffff"
+                android:textSize="14dp"
+                android:shadowColor="#ff000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="8dp"
+                android:visibility="visible"
+                android:layout_gravity="right"/>
+
+            <ProgressBar
+                android:id="@+id/pano_stitching_progress_bar"
+                style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_gravity="bottom|center_horizontal" />
+        </LinearLayout>
+    </FrameLayout>
+    <!--/com.android.camera.ui.FitSystemUiFrameLayout-->
 
 </FrameLayout>
