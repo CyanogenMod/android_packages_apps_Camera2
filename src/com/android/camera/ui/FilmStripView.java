@@ -874,6 +874,90 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
     }
 
+    /**
+     * Translates the {@link ViewItem} on the left of the current one to match
+     * the full-screen layout. In full-screen, we show only one {@link ViewItem}
+     * which occupies the whole screen. The other left ones are put on the left
+     * side in full scales.
+     *
+     * @param currItem The item ID of the current one to be translated.
+     * @param drawAreaWidth The width of the current draw area.
+     * @param scaleFraction A {@code float} between 0 and 1. 0 if the current
+     *                      scale is {@link FILM_STRIP_SCALE}. 1 if the
+     *                      current scale is {@link FULL_SCREEN_SCALE}.
+     */
+    private void translateLeftViewItem(
+            int currItem, int drawAreaWidth, float scaleFraction) {
+        if (currItem < 0 || currItem > BUFFER_SIZE - 1) {
+            Log.e(TAG, "currItem id out of bound.");
+            return;
+        }
+
+        final ViewItem curr = mViewItem[currItem];
+        final ViewItem next = mViewItem[currItem + 1];
+        if (curr == null || next == null) {
+            Log.e(TAG, "Invalid view item.");
+            return;
+        }
+
+        final int currCenterX = curr.getCenterX();
+        final int nextCenterX = next.getCenterX();
+        final int translate = (int) ((nextCenterX - drawAreaWidth
+                    - currCenterX) * scaleFraction);
+
+        curr.layoutIn(mDrawArea, mCenterX, mScale);
+        curr.getView().setAlpha(1f);
+
+        if (inFullScreen()) {
+            curr.setTranslationX(translate * (mCenterX - currCenterX)
+                    / (nextCenterX - currCenterX), mScale);
+        } else {
+            curr.setTranslationX(translate, mScale);
+        }
+    }
+
+    /**
+     * Fade out the {@link ViewItem} on the right of the current one in
+     * full-screen layout.
+     *
+     * @param currItem The ID of the item to fade.
+     */
+    private void fadeAndScaleRightViewItem(int currItem) {
+        if (currItem < 1 || currItem > BUFFER_SIZE) {
+            Log.e(TAG, "currItem id out of bound.");
+            return;
+        }
+
+        final ViewItem curr = mViewItem[currItem];
+        final ViewItem prev = mViewItem[currItem - 1];
+        if (curr == null || prev == null) {
+            Log.e(TAG, "Invalid view item.");
+            return;
+        }
+
+        final View currView = curr.getView();
+        if (currItem > mCurrentItem + 1) {
+            // Every item not right next to the mCurrentItem is invisible.
+            currView.setVisibility(INVISIBLE);
+            return;
+        }
+        final int prevCenterX = prev.getCenterX();
+        if (mCenterX <= prevCenterX) {
+            // Shortcut. If the position is at the center of the previous one,
+            // set to invisible too.
+            currView.setVisibility(INVISIBLE);
+            return;
+        }
+        final int currCenterX = curr.getCenterX();
+        final float fadeDownFraction =
+                ((float) mCenterX - prevCenterX) / (currCenterX - prevCenterX);
+        curr.layoutIn(mDrawArea, currCenterX,
+                FILM_STRIP_SCALE + (1f - FILM_STRIP_SCALE) * fadeDownFraction);
+        currView.setAlpha(fadeDownFraction);
+        currView.setTranslationX(0);
+        currView.setVisibility(VISIBLE);
+    }
+
     private void layoutChildren() {
         if (mViewItem[mCurrentItem] == null) {
             return;
@@ -895,54 +979,44 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          * {@link FILM_STRIP_SCALE}. 1 if the scale is {@link FULL_SCREEN_SCALE}
          * .
          */
-        float scaleFraction = mViewAnimInterpolator.getInterpolation(
+        final float scaleFraction = mViewAnimInterpolator.getInterpolation(
                 (mScale - FILM_STRIP_SCALE) / (FULL_SCREEN_SCALE - FILM_STRIP_SCALE));
+        final int fullScreenWidth = mDrawArea.width() + mViewGap;
 
         // Layout the current ViewItem first.
         if (scaleFraction == 1
-                && mViewItem[mCurrentItem - 1] != null
                 && mCenterX < mViewItem[mCurrentItem].getCenterX()) {
             // In full-screen and it's not the first one and mCenterX is on
             // the left of the center, we draw the current one to "fade down".
-            ViewItem curr = mViewItem[mCurrentItem];
-            ViewItem prev = mViewItem[mCurrentItem - 1];
-            int currCenterX = curr.getCenterX();
-            int prevCenterX = prev.getCenterX();
-            float fadeUpFraction =
-                    ((float) mCenterX - prevCenterX)
-                    / (currCenterX - prevCenterX);
-            curr.layoutIn(mDrawArea, currCenterX,
-                    FILM_STRIP_SCALE
-                    + (1f - FILM_STRIP_SCALE) * fadeUpFraction);
-            curr.getView().setAlpha(fadeUpFraction);
+            fadeAndScaleRightViewItem(mCurrentItem);
+        } else if (scaleFraction == 1
+                && mCenterX > mViewItem[mCurrentItem].getCenterX()) {
+            // In full-screen and it's not the last one and mCenterX is on
+            // the right of the center, we draw the current one translated.
+            translateLeftViewItem(mCurrentItem, fullScreenWidth, scaleFraction);
         } else {
+            // The normal filmstrip has no translation for the current item. If it has
+            // translation before, gradually set it to zero.
+            mViewItem[mCurrentItem].setTranslationX(
+                    mViewItem[mCurrentItem].getTranslationX(mScale) * scaleFraction,
+                    mScale);
             mViewItem[mCurrentItem].layoutIn(mDrawArea, mCenterX, mScale);
         }
 
         // Layout the rest dependent on the current scale.
-        int currentViewLeft = mViewItem[mCurrentItem].getLeftPosition();
-        int currentViewCenter = mViewItem[mCurrentItem].getCenterX();
-        int fullScreenWidth = mDrawArea.width() + mViewGap;
 
         // images on the left
         for (int itemID = mCurrentItem - 1; itemID >= 0; itemID--) {
-            ViewItem curr = mViewItem[itemID];
+            final ViewItem curr = mViewItem[itemID];
             if (curr == null) {
-                continue;
+                break;
             }
 
-            ViewItem next = mViewItem[itemID + 1];
-            int myLeft =
-                    next.getLeftPosition() - curr.getView().getMeasuredWidth()
-                    - mViewGap;
-            curr.setLeftPosition(myLeft);
-            curr.layoutIn(mDrawArea, mCenterX, mScale);
-            curr.getView().setAlpha(1f);
-            int itemDiff = mCurrentItem - itemID;
-            curr.setTranslationX(
-                    (currentViewCenter
-                     - fullScreenWidth * itemDiff - curr.getCenterX()) * scaleFraction,
-                    mScale);
+            // First, layout relatively to the next one.
+            final int currLeft = mViewItem[itemID + 1].getLeftPosition()
+                    - curr.getView().getMeasuredWidth() - mViewGap;
+            curr.setLeftPosition(currLeft);
+            translateLeftViewItem(itemID, fullScreenWidth, scaleFraction);
         }
 
         // images on the right
@@ -952,34 +1026,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 continue;
             }
 
+            // First, layout relatively to the previous one.
             ViewItem prev = mViewItem[itemID - 1];
-            int myLeft =
+            int currLeft =
                     prev.getLeftPosition() + prev.getView().getMeasuredWidth()
                     + mViewGap;
-            curr.setLeftPosition(myLeft);
+            curr.setLeftPosition(currLeft);
             curr.layoutIn(mDrawArea, mCenterX, mScale);
             View currView = curr.getView();
             if (scaleFraction == 1) {
                 // It's in full-screen mode.
-                if (itemID == mCurrentItem + 1) {
-                    int currCenterX = curr.getCenterX();
-                    int prevCenterX = prev.getCenterX();
-                    if (mCenterX == prevCenterX) {
-                        currView.setVisibility(INVISIBLE);
-                    } else {
-                        float fadeUpFraction =
-                                ((float) mCenterX - prevCenterX)
-                                / (currCenterX - prevCenterX);
-                        curr.layoutIn(mDrawArea, currCenterX,
-                                FILM_STRIP_SCALE
-                                + (1f - FILM_STRIP_SCALE) * fadeUpFraction);
-                        currView.setAlpha(fadeUpFraction);
-                        currView.setVisibility(VISIBLE);
-                    }
-                } else {
-                    currView.setVisibility(INVISIBLE);
-                }
-                curr.setTranslationX(0, mScale);
+                fadeAndScaleRightViewItem(itemID);
             } else {
                 if (currView.getVisibility() == INVISIBLE) {
                     currView.setVisibility(VISIBLE);
@@ -993,7 +1050,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                         currView.setVisibility(INVISIBLE);
                     }
                 }
-                curr.setTranslationX((currentViewLeft - myLeft) * scaleFraction, mScale);
+                curr.setTranslationX(
+                        (mViewItem[mCurrentItem].getLeftPosition() - currLeft)
+                        * scaleFraction, mScale);
             }
         }
 
@@ -1709,7 +1768,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (item == null) {
                 return;
             }
-            if (mCenterX == item.getCenterX()) {
+            if (mCenterX != item.getCenterX()) {
                 if (inFilmStrip()) {
                     snapInCenter();
                 }
