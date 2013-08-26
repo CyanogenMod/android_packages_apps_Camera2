@@ -195,10 +195,6 @@ public class CameraSwitcher extends RotateImageView
                     item.setContentDescription(getContext().getResources().getString(
                             R.string.accessibility_switch_to_photo_sphere));
                     break;
-                case R.drawable.ic_switch_refocus:
-                    item.setContentDescription(getContext().getResources().getString(
-                            R.string.accessibility_switch_to_refocus));
-                    break;
                 default:
                     break;
             }
