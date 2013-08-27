@@ -49,6 +49,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ShareActionProvider;
 
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.CameraPreviewData;
@@ -96,7 +97,9 @@ public class CameraActivity extends Activity
     private static final int SUPPORT_SETAS = 1 << 4;
     private static final int SUPPORT_EDIT = 1 << 5;
     private static final int SUPPORT_TRIM = 1 << 6;
-    private static final int SUPPORT_SHOW_ON_MAP = 1 << 7;
+    private static final int SUPPORT_SHARE = 1 << 7;
+    private static final int SUPPORT_SHARE_PANORAMA360 = 1 << 8;
+    private static final int SUPPORT_SHOW_ON_MAP = 1 << 9;
     private static final int SUPPORT_ALL = 0xffffffff;
 
     /** This data adapter is used by FilmStripView. */
@@ -130,6 +133,11 @@ public class CameraActivity extends Activity
     private ActionBar mActionBar;
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
+
+    private ShareActionProvider mStandardShareActionProvider;
+    private Intent mStandardShareIntent;
+    private ShareActionProvider mPanoramaShareActionProvider;
+    private Intent mPanoramaShareIntent;
 
     public void gotoGallery() {
         mFilmStripView.getController().goToNextItem();
@@ -268,6 +276,28 @@ public class CameraActivity extends Activity
         mBottomProgress.setProgress(progress);
     }
 
+    private void setStandardShareIntent(Uri contentUri, String mimeType) {
+        if (mStandardShareIntent == null) {
+            mStandardShareIntent = new Intent(Intent.ACTION_SEND);
+        }
+        mStandardShareIntent.setType(mimeType);
+        mStandardShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        if (mStandardShareActionProvider != null) {
+            mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
+        }
+    }
+
+    private void setPanoramaShareIntent(Uri contentUri) {
+        if (mPanoramaShareIntent == null) {
+            mPanoramaShareIntent = new Intent(Intent.ACTION_SEND);
+        }
+        mPanoramaShareIntent.setType("application/vnd.google.panorama360+jpg");
+        mPanoramaShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        if (mPanoramaShareActionProvider != null) {
+            mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
+        }
+    }
+
     /**
      * According to the data type, make the menu items for supported operations
      * visible.
@@ -286,14 +316,21 @@ public class CameraActivity extends Activity
             case LocalData.LOCAL_IMAGE:
                 supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
                         | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
-                        | SUPPORT_SHOW_ON_MAP;
+                        | SUPPORT_SHARE | SUPPORT_SHOW_ON_MAP;
                 break;
             case LocalData.LOCAL_VIDEO:
-                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM;
+                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM
+                        | SUPPORT_SHARE;
                 break;
             case LocalData.LOCAL_PHOTO_SPHERE:
                 supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
                         | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
+                        | SUPPORT_SHARE | SUPPORT_SHOW_ON_MAP;
+                break;
+            case LocalData.LOCAL_360_PHOTO_SPHERE:
+                supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
+                        | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
+                        | SUPPORT_SHARE | SUPPORT_SHARE_PANORAMA360
                         | SUPPORT_SHOW_ON_MAP;
                 break;
             default:
@@ -306,16 +343,25 @@ public class CameraActivity extends Activity
                 (supported & SUPPORT_ROTATE) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_rotate_cw,
                 (supported & SUPPORT_ROTATE) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_details,
+                (supported & SUPPORT_INFO) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_crop,
                 (supported & SUPPORT_CROP) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_trim,
-                (supported & SUPPORT_TRIM) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_setas,
                 (supported & SUPPORT_SETAS) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_edit,
                 (supported & SUPPORT_EDIT) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_details,
-                (supported & SUPPORT_INFO) != 0);
+        setMenuItemVisible(mActionBarMenu, R.id.action_trim,
+                (supported & SUPPORT_TRIM) != 0);
+
+        if ((supported & SUPPORT_SHARE) != 0) {
+            setMenuItemVisible(mActionBarMenu, R.id.action_share, true);
+            setStandardShareIntent(currentData.getContentUri(), currentData.getMimeType());
+        }
+        if ((supported & SUPPORT_SHARE_PANORAMA360) != 0) {
+            setMenuItemVisible(mActionBarMenu, R.id.action_share_panorama, true);
+            setPanoramaShareIntent(currentData.getContentUri());
+        }
 
         boolean itemHasLocation = currentData.getLatLong() != null;
         setMenuItemVisible(mActionBarMenu, R.id.action_show_on_map,
@@ -431,6 +477,21 @@ public class CameraActivity extends Activity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.operations, menu);
         mActionBarMenu = menu;
+
+        // Configure the standard share action provider
+        MenuItem item = menu.findItem(R.id.action_share);
+        mStandardShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        if (mStandardShareIntent != null) {
+            mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
+        }
+
+        // Configure the panorama share action provider
+        item = menu.findItem(R.id.action_share_panorama);
+        mPanoramaShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        if (mPanoramaShareIntent != null) {
+            mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 

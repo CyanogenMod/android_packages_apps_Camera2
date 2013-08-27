@@ -380,8 +380,12 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public int getLocalDataType() {
-            if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
-                return LOCAL_PHOTO_SPHERE;
+            if (mPanoramaMetadata != null) {
+                if (mPanoramaMetadata.mIsPanorama360) {
+                    return LOCAL_360_PHOTO_SPHERE;
+                } else if (mPanoramaMetadata.mUsePanoramaViewer) {
+                    return LOCAL_PHOTO_SPHERE;
+                }
             }
             return LOCAL_IMAGE;
         }
