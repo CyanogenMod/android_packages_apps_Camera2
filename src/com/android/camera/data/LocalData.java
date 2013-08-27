@@ -38,16 +38,30 @@ public interface LocalData extends FilmStripView.ImageData {
     public static final int ACTION_DELETE = (1 << 1);
 
     // Local data types. Returned by getLocalDataType().
-    // Camera preview.
-    public static final int LOCAL_CAMERA_PREVIEW = 1;
-    // A data for showing an arbitrary view.
-    public static final int LOCAL_VIEW           = 2;
-    // A still image.
-    public static final int LOCAL_IMAGE          = 3;
-    // A video.
-    public static final int LOCAL_VIDEO          = 4;
-    // A still image but with valid PhotoSphere metadata.
-    public static final int LOCAL_PHOTO_SPHERE   = 5;
+    /**
+     * Constant for denoting a camera preview.
+     */
+    public static final int LOCAL_CAMERA_PREVIEW   = 1;
+    /**
+     * Constant for denoting an arbitrary view.
+     */
+    public static final int LOCAL_VIEW             = 2;
+    /**
+     * Constant for denoting a still image.
+     */
+    public static final int LOCAL_IMAGE            = 3;
+    /**
+     * Constant for denoting a video.
+     */
+    public static final int LOCAL_VIDEO            = 4;
+    /**
+     * Constant for denoting a still image, with valid PhotoSphere metadata.
+     */
+    public static final int LOCAL_PHOTO_SPHERE     = 5;
+    /**
+     * Constant for denoting a still image, with valid 360 PhotoSphere metadata.
+     */
+    public static final int LOCAL_360_PHOTO_SPHERE = 6;
 
     View getView(Context c, int width, int height, Drawable placeHolder);
 
@@ -118,7 +132,7 @@ public interface LocalData extends FilmStripView.ImageData {
      *
      * @return The local data type. Could be one of the following:
      * {@code LOCAL_CAMERA_PREVIEW}, {@code LOCAL_VIEW}, {@code LOCAL_IMAGE},
-     * {@code LOCAL_VIDEO}, and {@code LOCAL_PHOTO_SPHERE},
+     * {@code LOCAL_VIDEO}, {@code LOCAL_PHOTO_SPHERE}, and {@code LOCAL_360_PHOTO_SPHERE}
      */
     int getLocalDataType();
 
