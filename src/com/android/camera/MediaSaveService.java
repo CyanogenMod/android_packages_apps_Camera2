@@ -29,7 +29,7 @@ import android.os.IBinder;
 import android.provider.MediaStore.Video;
 import android.util.Log;
 
-import com.android.camera.exif.ExifInterface;
+import com.android.gallery3d.exif.ExifInterface;
 
 import java.io.File;
 

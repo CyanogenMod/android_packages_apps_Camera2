@@ -52,18 +52,18 @@ import java.util.Locale;
  * return a bitmap.
  */
 public abstract class LocalMediaData implements LocalData {
-    protected final long mId;
-    protected final String mTitle;
-    protected final String mMimeType;
-    protected final long mDateTakenInSeconds;
-    protected final long mDateModifiedInSeconds;
-    protected final String mPath;
+    protected long id;
+    protected String title;
+    protected String mimeType;
+    protected long dateTakenInSeconds;
+    protected long dateModifiedInSeconds;
+    protected String path;
     // width and height should be adjusted according to orientation.
-    protected final int mWidth;
-    protected final int mHeight;
-    protected final long mSizeInBytes;
-    protected final double mLatitude;
-    protected final double mLongitude;
+    protected int width;
+    protected int height;
+    protected long sizeInBytes;
+    protected double latitude;
+    protected double longitude;
 
     /** The panorama metadata information of this media data. */
     protected PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
@@ -77,62 +77,34 @@ public abstract class LocalMediaData implements LocalData {
      */
     protected Boolean mUsing = false;
 
-    public LocalMediaData (long id, String title, String mimeType,
-            long dateTakenInSeconds, long dateModifiedInSeconds, String path,
-            int width, int height, long sizeInBytes, double latitude,
-            double longitude) {
-        mId = id;
-        mTitle = new String(title);
-        mMimeType = new String(mimeType);
-        mDateTakenInSeconds = dateTakenInSeconds;
-        mDateModifiedInSeconds = dateModifiedInSeconds;
-        mPath = new String(path);
-        mWidth = width;
-        mHeight = height;
-        mSizeInBytes = sizeInBytes;
-        mLatitude = latitude;
-        mLongitude = longitude;
-        return;
-    }
-
     @Override
     public long getDateTaken() {
-        return mDateTakenInSeconds;
+        return dateTakenInSeconds;
     }
 
     @Override
     public long getDateModified() {
-        return mDateModifiedInSeconds;
-    }
-
-    @Override
-    public long getId() {
-        return mId;
+        return dateModifiedInSeconds;
     }
 
     @Override
     public String getTitle() {
-        return new String(mTitle);
+        return new String(title);
     }
 
     @Override
     public int getWidth() {
-        return mWidth;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        return mHeight;
+        return height;
     }
 
     @Override
     public String getPath() {
-        return mPath;
-    }
-
-    @Override
-    public long getSizeInBytes() {
-        return mSizeInBytes;
+        return path;
     }
 
     @Override
@@ -147,7 +119,7 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public boolean delete(Context ctx) {
-        File f = new File(mPath);
+        File f = new File(path);
         return f.delete();
     }
 
@@ -227,11 +199,11 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public double[] getLatLong() {
-        if (mLatitude == 0 && mLongitude == 0) {
+        if (latitude == 0 && longitude == 0) {
             return null;
         }
         return new double[] {
-                mLatitude, mLongitude
+                latitude, longitude
         };
     }
 
@@ -243,25 +215,25 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public String getMimeType() {
-        return mMimeType;
+        return mimeType;
     }
 
     @Override
     public MediaDetails getMediaDetails(Context context) {
         DateFormat dateFormatter = DateFormat.getDateTimeInstance();
         MediaDetails mediaDetails = new MediaDetails();
-        mediaDetails.addDetail(MediaDetails.INDEX_TITLE, mTitle);
-        mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, mWidth);
-        mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, mHeight);
-        mediaDetails.addDetail(MediaDetails.INDEX_PATH, mPath);
+        mediaDetails.addDetail(MediaDetails.INDEX_TITLE, title);
+        mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, width);
+        mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, height);
+        mediaDetails.addDetail(MediaDetails.INDEX_PATH, path);
         mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
-                dateFormatter.format(new Date(mDateModifiedInSeconds * 1000)));
-        if (mSizeInBytes > 0) {
-            mediaDetails.addDetail(MediaDetails.INDEX_SIZE, mSizeInBytes);
+                dateFormatter.format(new Date(dateModifiedInSeconds * 1000)));
+        if (sizeInBytes > 0) {
+            mediaDetails.addDetail(MediaDetails.INDEX_SIZE, sizeInBytes);
         }
-        if (mLatitude != 0 && mLongitude != 0) {
-            String locationString = String.format(Locale.getDefault(), "%f, %f", mLatitude,
-                    mLongitude);
+        if (latitude != 0 && longitude != 0) {
+            String locationString = String.format(Locale.getDefault(), "%f, %f", latitude,
+                    longitude);
             mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, locationString);
         }
         return mediaDetails;
@@ -273,7 +245,7 @@ public abstract class LocalMediaData implements LocalData {
     protected abstract BitmapLoadTask getBitmapLoadTask(
             ImageView v, int decodeWidth, int decodeHeight);
 
-    public static final class PhotoData extends LocalMediaData {
+    public static class PhotoData extends LocalMediaData {
         private static final String TAG = "CAM_PhotoData";
 
         public static final int COL_ID = 0;
@@ -321,69 +293,54 @@ public abstract class LocalMediaData implements LocalData {
         private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
 
         /** from MediaStore, can only be 0, 90, 180, 270 */
-        private final int mOrientation;
-
-        public PhotoData(long id, String title, String mimeType,
-                long dateTakenInSeconds, long dateModifiedInSeconds,
-                String path, int orientation, int width, int height,
-                long sizeInBytes, double latitude, double longitude) {
-            super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
-                    path, width, height, sizeInBytes, latitude, longitude);
-            mOrientation = orientation;
-        }
+        public int orientation;
 
         static PhotoData buildFromCursor(Cursor c) {
-            long id = c.getLong(COL_ID);
-            String title = c.getString(COL_TITLE);
-            String mimeType = c.getString(COL_MIME_TYPE);
-            long dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
-            long dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
-            String path = c.getString(COL_DATA);
-            int orientation = c.getInt(COL_ORIENTATION);
-            int width = c.getInt(COL_WIDTH);
-            int height = c.getInt(COL_HEIGHT);
-            if (width <= 0 || height <= 0) {
+            PhotoData d = new PhotoData();
+            d.id = c.getLong(COL_ID);
+            d.title = c.getString(COL_TITLE);
+            d.mimeType = c.getString(COL_MIME_TYPE);
+            d.dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
+            d.dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
+            d.path = c.getString(COL_DATA);
+            d.orientation = c.getInt(COL_ORIENTATION);
+            d.width = c.getInt(COL_WIDTH);
+            d.height = c.getInt(COL_HEIGHT);
+            if (d.width <= 0 || d.height <= 0) {
                 Log.w(TAG, "Warning! zero dimension for "
-                        + path + ":" + width + "x" + height);
+                        + d.path + ":" + d.width + "x" + d.height);
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(path, opts);
+                BitmapFactory.decodeFile(d.path, opts);
                 if (opts.outWidth != -1 && opts.outHeight != -1) {
-                    width = opts.outWidth;
-                    height = opts.outHeight;
+                    d.width = opts.outWidth;
+                    d.height = opts.outHeight;
                 } else {
-                    Log.w(TAG, "Warning! dimension decode failed for " + path);
-                    Bitmap b = BitmapFactory.decodeFile(path);
+                    Log.w(TAG, "Warning! dimension decode failed for " + d.path);
+                    Bitmap b = BitmapFactory.decodeFile(d.path);
                     if (b == null) {
                         return null;
                     }
-                    width = b.getWidth();
-                    height = b.getHeight();
+                    d.width = b.getWidth();
+                    d.height = b.getHeight();
                 }
             }
-            if (orientation == 90 || orientation == 270) {
-                int b = width;
-                width = height;
-                height = b;
+            if (d.orientation == 90 || d.orientation == 270) {
+                int b = d.width;
+                d.width = d.height;
+                d.height = b;
             }
-            long sizeInBytes = c.getLong(COL_SIZE);
-            double latitude = c.getDouble(COL_LATITUDE);
-            double longitude = c.getDouble(COL_LONGITUDE);
-            PhotoData result = new PhotoData(id, title, mimeType, dateTakenInSeconds,
-                    dateModifiedInSeconds, path, orientation, width, height,
-                    sizeInBytes, latitude, longitude);
-            return result;
-        }
-
-        public int getOrientation() {
-            return mOrientation;
+            d.sizeInBytes = c.getLong(COL_SIZE);
+            d.latitude = c.getDouble(COL_LATITUDE);
+            d.longitude = c.getDouble(COL_LONGITUDE);
+            return d;
         }
 
         @Override
         public String toString() {
-            return "Photo:" + ",data=" + mPath + ",mimeType=" + mMimeType
-                    + "," + mWidth + "x" + mHeight + ",orientation=" + mOrientation
-                    + ",date=" + new Date(mDateTakenInSeconds);
+            return "Photo:" + ",data=" + path + ",mimeType=" + mimeType
+                    + "," + width + "x" + height + ",orientation=" + orientation
+                    + ",date=" + new Date(dateTakenInSeconds);
         }
 
         @Override
@@ -404,20 +361,20 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public boolean delete(Context c) {
             ContentResolver cr = c.getContentResolver();
-            cr.delete(CONTENT_URI, MediaStore.Images.ImageColumns._ID + "=" + mId, null);
+            cr.delete(CONTENT_URI, MediaStore.Images.ImageColumns._ID + "=" + id, null);
             return super.delete(c);
         }
 
         @Override
         public Uri getContentUri() {
             Uri baseUri = CONTENT_URI;
-            return baseUri.buildUpon().appendPath(String.valueOf(mId)).build();
+            return baseUri.buildUpon().appendPath(String.valueOf(id)).build();
         }
 
         @Override
         public MediaDetails getMediaDetails(Context context) {
             MediaDetails mediaDetails = super.getMediaDetails(context);
-            MediaDetails.extractExifInfo(mediaDetails, mPath);
+            MediaDetails.extractExifInfo(mediaDetails, path);
             return mediaDetails;
         }
 
@@ -434,14 +391,23 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public LocalData refresh(ContentResolver resolver) {
+        public boolean refresh(ContentResolver resolver) {
             Cursor c = resolver.query(
                     getContentUri(), QUERY_PROJECTION, null, null, null);
             if (c == null || !c.moveToFirst()) {
-                return null;
+                return false;
             }
             PhotoData newData = buildFromCursor(c);
-            return newData;
+            id = newData.id;
+            title = newData.title;
+            mimeType = newData.mimeType;
+            dateTakenInSeconds = newData.dateTakenInSeconds;
+            dateModifiedInSeconds = newData.dateModifiedInSeconds;
+            path = newData.path;
+            orientation = newData.orientation;
+            width = newData.width;
+            height = newData.height;
+            return true;
         }
 
         @Override
@@ -468,9 +434,9 @@ public abstract class LocalMediaData implements LocalData {
             @Override
             protected Bitmap doInBackground(Void... v) {
                 int sampleSize = 1;
-                if (mWidth > mDecodeWidth || mHeight > mDecodeHeight) {
-                    int heightRatio = Math.round((float) mHeight / (float) mDecodeHeight);
-                    int widthRatio = Math.round((float) mWidth / (float) mDecodeWidth);
+                if (width > mDecodeWidth || height > mDecodeHeight) {
+                    int heightRatio = Math.round((float) height / (float) mDecodeHeight);
+                    int widthRatio = Math.round((float) width / (float) mDecodeWidth);
                     sampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
                 }
 
@@ -480,30 +446,21 @@ public abstract class LocalMediaData implements LocalData {
                 if (isCancelled() || !isUsing()) {
                     return null;
                 }
-                Bitmap b = BitmapFactory.decodeFile(mPath, opts);
-                if (mOrientation != 0) {
+                Bitmap b = BitmapFactory.decodeFile(path, opts);
+                if (orientation != 0) {
                     if (isCancelled() || !isUsing()) {
                         return null;
                     }
                     Matrix m = new Matrix();
-                    m.setRotate(mOrientation);
+                    m.setRotate(orientation);
                     b = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, false);
                 }
                 return b;
             }
         }
-
-        @Override
-        public void rotate90Degrees(Context context, LocalDataAdapter adapter,
-                int currentDataId, boolean clockwise) {
-            RotationTask task = new RotationTask(context, adapter,
-                    currentDataId, clockwise);
-            task.execute(this);
-            return;
-        }
     }
 
-    public static final class VideoData extends LocalMediaData {
+    public static class VideoData extends LocalMediaData {
         public static final int COL_ID = 0;
         public static final int COL_TITLE = 1;
         public static final int COL_MIME_TYPE = 2;
@@ -548,31 +505,26 @@ public abstract class LocalMediaData implements LocalData {
                 MediaStore.Video.VideoColumns.DURATION       // 12 long
         };
 
-        /** The duration in milliseconds. */
-        private long mDurationInSeconds;
+        private Uri mPlayUri;
 
-        public VideoData(long id, String title, String mimeType,
-                long dateTakenInSeconds, long dateModifiedInSeconds,
-                String path, int width, int height, long sizeInBytes,
-                double latitude, double longitude, long durationInSeconds) {
-            super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
-                    path, width, height, sizeInBytes, latitude, longitude);
-            mDurationInSeconds = durationInSeconds;
-        }
+        /** The duration in milliseconds. */
+        private long durationInSeconds;
 
         static VideoData buildFromCursor(Cursor c) {
-            long id = c.getLong(COL_ID);
-            String title = c.getString(COL_TITLE);
-            String mimeType = c.getString(COL_MIME_TYPE);
-            long dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
-            long dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
-            String path = c.getString(COL_DATA);
-            int width = c.getInt(COL_WIDTH);
-            int height = c.getInt(COL_HEIGHT);
+            VideoData d = new VideoData();
+            d.id = c.getLong(COL_ID);
+            d.title = c.getString(COL_TITLE);
+            d.mimeType = c.getString(COL_MIME_TYPE);
+            d.dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
+            d.dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
+            d.path = c.getString(COL_DATA);
+            d.width = c.getInt(COL_WIDTH);
+            d.height = c.getInt(COL_HEIGHT);
+            d.mPlayUri = d.getContentUri();
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             String rotation = null;
             try {
-                retriever.setDataSource(path);
+                retriever.setDataSource(d.path);
             } catch (IllegalArgumentException ex) {
                 retriever.release();
                 Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
@@ -581,43 +533,33 @@ public abstract class LocalMediaData implements LocalData {
             }
             rotation = retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-
-            // Extracts video height/width if available. If unavailable, set to 0.
-            if (width == 0 || height == 0) {
-                String val = retriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                width = (val == null) ? 0 : Integer.parseInt(val);
-                val = retriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-                height = (val == null) ? 0 : Integer.parseInt(val);
+            if (d.width == 0 || d.height == 0) {
+                retrieveVideoDimension(retriever, d);
             }
             retriever.release();
-            if (width == 0 || height == 0) {
+            if (d.width == 0 || d.height == 0) {
                 // Width or height is still not available.
-                Log.e(TAG, "Unable to retrieve dimension of video:" + path);
+                Log.e(TAG, "Unable to retrieve dimension of video:" + d.path);
                 return null;
             }
             if (rotation != null
                     && (rotation.equals("90") || rotation.equals("270"))) {
-                int b = width;
-                width = height;
-                height = b;
+                int b = d.width;
+                d.width = d.height;
+                d.height = b;
             }
 
-            long sizeInBytes = c.getLong(COL_SIZE);
-            double latitude = c.getDouble(COL_LATITUDE);
-            double longitude = c.getDouble(COL_LONGITUDE);
-            long durationInSeconds = c.getLong(COL_DURATION) / 1000;
-            VideoData d = new VideoData(id, title, mimeType, dateTakenInSeconds,
-                    dateModifiedInSeconds, path, width, height, sizeInBytes,
-                    latitude, longitude, durationInSeconds);
+            d.sizeInBytes = c.getLong(COL_SIZE);
+            d.latitude = c.getDouble(COL_LATITUDE);
+            d.longitude = c.getDouble(COL_LONGITUDE);
+            d.durationInSeconds = c.getLong(COL_DURATION) / 1000;
             return d;
         }
 
         @Override
         public String toString() {
-            return "Video:" + ",data=" + mPath + ",mimeType=" + mMimeType
-                    + "," + mWidth + "x" + mHeight + ",date=" + new Date(mDateTakenInSeconds);
+            return "Video:" + ",data=" + path + ",mimeType=" + mimeType
+                    + "," + width + "x" + height + ",date=" + new Date(dateTakenInSeconds);
         }
 
         @Override
@@ -638,20 +580,20 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public boolean delete(Context ctx) {
             ContentResolver cr = ctx.getContentResolver();
-            cr.delete(CONTENT_URI, MediaStore.Video.VideoColumns._ID + "=" + mId, null);
+            cr.delete(CONTENT_URI, MediaStore.Video.VideoColumns._ID + "=" + id, null);
             return super.delete(ctx);
         }
 
         @Override
         public Uri getContentUri() {
             Uri baseUri = CONTENT_URI;
-            return baseUri.buildUpon().appendPath(String.valueOf(mId)).build();
+            return baseUri.buildUpon().appendPath(String.valueOf(id)).build();
         }
 
         @Override
         public MediaDetails getMediaDetails(Context context) {
             MediaDetails mediaDetails = super.getMediaDetails(context);
-            String duration = MediaDetails.formatDuration(context, mDurationInSeconds);
+            String duration = MediaDetails.formatDuration(context, durationInSeconds);
             mediaDetails.addDetail(MediaDetails.INDEX_DURATION, duration);
             return mediaDetails;
         }
@@ -662,14 +604,26 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public LocalData refresh(ContentResolver resolver) {
+        public boolean refresh(ContentResolver resolver) {
             Cursor c = resolver.query(
                     getContentUri(), QUERY_PROJECTION, null, null, null);
             if (c == null || !c.moveToFirst()) {
-                return null;
+                return false;
             }
             VideoData newData = buildFromCursor(c);
-            return newData;
+            if (newData == null) {
+                return false;
+            }
+            id = newData.id;
+            title = newData.title;
+            mimeType = newData.mimeType;
+            dateTakenInSeconds = newData.dateTakenInSeconds;
+            dateModifiedInSeconds = newData.dateModifiedInSeconds;
+            path = newData.path;
+            width = newData.width;
+            height = newData.height;
+            mPlayUri = newData.mPlayUri;
+            return true;
         }
 
         @Override
@@ -693,7 +647,7 @@ public abstract class LocalMediaData implements LocalData {
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CameraUtil.playVideo(ctx, getContentUri(), mTitle);
+                    CameraUtil.playVideo(ctx, mPlayUri, title);
                 }
             });
 
@@ -726,7 +680,7 @@ public abstract class LocalMediaData implements LocalData {
                     return null;
                 }
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(mPath);
+                retriever.setDataSource(path);
                 byte[] data = retriever.getEmbeddedPicture();
                 Bitmap bitmap = null;
                 if (isCancelled() || !isUsing()) {
@@ -744,12 +698,20 @@ public abstract class LocalMediaData implements LocalData {
             }
         }
 
-        @Override
-        public void rotate90Degrees(Context context, LocalDataAdapter adapter,
-                int currentDataId, boolean clockwise) {
-            // We don't support rotation for video data.
-            Log.e(TAG, "Unexpected call in rotate90Degrees()");
-            return;
+        /**
+         * Extracts video height/width if available. If unavailable, set to 0.
+         *
+         * @param retriever An initialized metadata retriever.
+         * @param d The {@link VideoData} whose width/height are to update.
+         */
+        private static void retrieveVideoDimension(
+                MediaMetadataRetriever retriever, VideoData d) {
+            String val = retriever.extractMetadata(
+                    MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            d.width = (val == null) ? 0 : Integer.parseInt(val);
+            val = retriever.extractMetadata(
+                    MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+            d.height = (val == null) ? 0 : Integer.parseInt(val);
         }
     }
 
@@ -771,7 +733,7 @@ public abstract class LocalMediaData implements LocalData {
                 return;
             }
             if (bitmap == null) {
-                Log.e(TAG, "Failed decoding bitmap for file:" + mPath);
+                Log.e(TAG, "Failed decoding bitmap for file:" + path);
                 return;
             }
             BitmapDrawable d = new BitmapDrawable(bitmap);
