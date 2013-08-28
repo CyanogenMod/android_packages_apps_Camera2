@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.exif;
+package com.android.gallery3d.exif;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;

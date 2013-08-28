@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.exif;
+package com.android.gallery3d.exif;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -759,7 +759,7 @@ public class ExifInterface {
         }
         InputStream is = null;
         try {
-            is = new BufferedInputStream(new FileInputStream(inFileName));
+            is = (InputStream) new BufferedInputStream(new FileInputStream(inFileName));
             readExif(is);
         } catch (IOException e) {
             closeSilently(is);
@@ -985,7 +985,7 @@ public class ExifInterface {
         }
         OutputStream out = null;
         try {
-            out = new FileOutputStream(exifOutFileName);
+            out = (OutputStream) new FileOutputStream(exifOutFileName);
         } catch (FileNotFoundException e) {
             closeSilently(out);
             throw e;
