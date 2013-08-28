@@ -18,7 +18,7 @@ package com.android.camera;
 
 import android.util.Log;
 
-import com.android.gallery3d.exif.ExifInterface;
+import com.android.camera.exif.ExifInterface;
 
 import java.io.IOException;
 
