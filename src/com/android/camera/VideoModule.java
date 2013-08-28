@@ -56,6 +56,7 @@ import android.widget.Toast;
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.ui.PopupManager;
@@ -63,7 +64,6 @@ import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
-import com.android.gallery3d.exif.ExifInterface;
 
 import java.io.File;
 import java.io.IOException;
