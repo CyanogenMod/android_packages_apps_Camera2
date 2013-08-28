@@ -862,8 +862,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
         int currentViewCenter = currentItem.getCenterX();
         if (mCenterX != currentViewCenter) {
-            int snapInTime = SNAP_IN_CENTER_TIME_MS
-                    * Math.abs(mCenterX - currentViewCenter) / mDrawArea.width();
+            int snapInTime = (int) (SNAP_IN_CENTER_TIME_MS
+                    * Math.abs(mCenterX - currentViewCenter) / mDrawArea.width());
             mController.scrollToPosition(currentViewCenter,
                     snapInTime, false);
         }

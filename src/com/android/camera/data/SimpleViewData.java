@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 
 import com.android.camera.ui.FilmStripView;
@@ -30,13 +29,11 @@ import com.android.camera.util.PhotoSphereHelper;
  * A LocalData that does nothing but only shows a view.
  */
 public class SimpleViewData implements LocalData {
-    private static final String TAG = "CAM_SimpleViewData";
-
-    private final int mWidth;
-    private final int mHeight;
-    private final View mView;
-    private final long mDateTaken;
-    private final long mDateModified;
+    private int mWidth;
+    private int mHeight;
+    private View mView;
+    private long mDateTaken;
+    private long mDateModified;
 
     public SimpleViewData(
             View v, int width, int height,
@@ -94,8 +91,8 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public LocalData refresh(ContentResolver resolver) {
-        return null;
+    public boolean refresh(ContentResolver resolver) {
+        return false;
     }
 
     @Override
@@ -167,23 +164,5 @@ public class SimpleViewData implements LocalData {
     @Override
     public String getMimeType() {
         return null;
-    }
-
-    @Override
-    public void rotate90Degrees(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise) {
-        // We don't support rotation for SimpleViewData.
-        Log.w(TAG, "Unexpected call in rotate90Degrees()");
-        return;
-    }
-
-    @Override
-    public long getSizeInBytes() {
-        return 0;
-    }
-
-    @Override
-    public long getId() {
-        return -1;
     }
 }

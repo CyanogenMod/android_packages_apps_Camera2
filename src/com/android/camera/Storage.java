@@ -32,9 +32,8 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
-import com.android.camera.data.LocalData;
-import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
+import com.android.gallery3d.exif.ExifInterface;
 
 public class Storage {
     private static final String TAG = "CameraStorage";
@@ -105,7 +104,7 @@ public class Storage {
         values.put(ImageColumns.TITLE, title);
         values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
         values.put(ImageColumns.DATE_TAKEN, date);
-        values.put(ImageColumns.MIME_TYPE, LocalData.MIME_TYPE_JPEG);
+        values.put(ImageColumns.MIME_TYPE, "image/jpeg");
         // Clockwise rotation in degrees. 0, 90, 180, or 270.
         values.put(ImageColumns.ORIENTATION, orientation);
         values.put(ImageColumns.DATA, path);

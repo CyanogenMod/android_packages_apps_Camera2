@@ -29,14 +29,9 @@ import java.util.Comparator;
 /**
  * An abstract interface that represents the local media data. Also implements
  * Comparable interface so we can sort in DataAdapter.
- * Note that all the sub-class of LocalData are designed to be immutable, i.e:
- * all the members need to be final, and there is no setter. In this way, we
- * can guarantee thread safety for LocalData.
  */
 public interface LocalData extends FilmStripView.ImageData {
     static final String TAG = "CAM_LocalData";
-
-    public static final String MIME_TYPE_JPEG = "image/jpeg";
 
     public static final int ACTION_NONE = 0;
     public static final int ACTION_PLAY = 1;
@@ -102,17 +97,6 @@ public interface LocalData extends FilmStripView.ImageData {
     /** Removes the data from the storage if possible. */
     boolean delete(Context c);
 
-    /**
-     * Rotate the image in 90 degrees. This is a no-op for non-image.
-     *
-     * @param context Used to update the content provider when rotation is done.
-     * @param adapter Used to update the view.
-     * @param currentDataId Used to update the view.
-     * @param clockwise True if the rotation goes clockwise.
-     */
-    void rotate90Degrees(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise);
-
     void onFullScreen(boolean fullScreen);
 
     /** Returns {@code true} if it allows swipe to filmstrip in full screen. */
@@ -153,17 +137,12 @@ public interface LocalData extends FilmStripView.ImageData {
     int getLocalDataType();
 
     /**
-     * @return The size of the data in bytes
-     */
-    long getSizeInBytes();
-
-    /**
      * Refresh the data content.
      *
      * @param resolver {@link ContentResolver} to refresh the data.
-     * @return A new LocalData object if success, null otherwise.
+     * @return {@code true} if success, {@code false} otherwise.
      */
-    LocalData refresh(ContentResolver resolver);
+    boolean refresh(ContentResolver resolver);
 
     static class NewestFirstComparator implements Comparator<LocalData> {
 
@@ -191,10 +170,5 @@ public interface LocalData extends FilmStripView.ImageData {
             return cmp;
         }
     }
-
-    /**
-     * @return the Id of the data.
-     */
-    long getId();
 }
 
