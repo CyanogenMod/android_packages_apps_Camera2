@@ -184,6 +184,8 @@ public class PhotoModule
     private int mDisplayOrientation;
     // The value for android.hardware.Camera.Parameters.setRotation.
     private int mJpegRotation;
+    // Indicates whether we are using front camera
+    private boolean mMirror;
     private boolean mFirstTimeInitialized;
     private boolean mIsImageCaptureIntent;
 
@@ -471,8 +473,8 @@ public class PhotoModule
         }
         initializeCapabilities();
         CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-        boolean mirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
-        mFocusManager.setMirror(mirror);
+        mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+        mFocusManager.setMirror(mMirror);
         mFocusManager.setParameters(mInitialParams);
         setupPreview();
 
@@ -752,7 +754,7 @@ public class PhotoModule
                             orientation, exif, mOnMediaSavedListener, mContentResolver);
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
-                mUI.animateCapture(jpegData, orientation);
+                mUI.animateCapture(jpegData, orientation, mMirror);
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
@@ -1300,11 +1302,11 @@ public class PhotoModule
             mFocusManager.removeMessages();
         } else {
             CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-            boolean mirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+            mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
             mFocusManager = new FocusOverlayManager(mPreferences, defaultFocusModes,
-                    mInitialParams, this, mirror,
+                    mInitialParams, this, mMirror,
                     mActivity.getMainLooper(), mUI);
         }
     }
