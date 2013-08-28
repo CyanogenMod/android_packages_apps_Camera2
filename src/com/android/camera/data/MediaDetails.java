@@ -20,9 +20,9 @@ import android.content.Context;
 import android.util.Log;
 import android.util.SparseIntArray;
 
+import com.android.camera.exif.ExifInterface;
+import com.android.camera.exif.ExifTag;
 import com.android.camera2.R;
-import com.android.gallery3d.exif.ExifInterface;
-import com.android.gallery3d.exif.ExifTag;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
