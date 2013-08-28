@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -33,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -81,6 +83,8 @@ public class CameraActivity extends Activity
     public static final String ACTION_TRIM_VIDEO =
             "com.android.camera.action.TRIM";
     public static final String MEDIA_ITEM_PATH = "media-item-path";
+
+    private static final String PREF_STARTUP_MODULE_INDEX = "camera.startup_module";
 
     // The intent extra for camera from secure lock screen. True if the gallery
     // should only show newly captured pictures. sSecureAlbumId does not
@@ -637,13 +641,28 @@ public class CameraActivity extends Activity
         mFilmStripView.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
         mFilmStripView.setListener(mFilmStripListener);
+
+        int moduleIndex = -1;
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            mCurrentModule = new VideoModule();
-            mCurrentModuleIndex = CameraSwitcher.VIDEO_MODULE_INDEX;
+            moduleIndex = CameraSwitcher.VIDEO_MODULE_INDEX;
+        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
+                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
+                        .getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
+            moduleIndex = CameraSwitcher.PHOTO_MODULE_INDEX;
         } else {
-            mCurrentModule = new PhotoModule();
+            // If the activity has not been started using an explicit intent,
+            // read the module index from the last time the user changed modes
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            moduleIndex = prefs.getInt(PREF_STARTUP_MODULE_INDEX, -1);
+            if (moduleIndex < 0) {
+                moduleIndex = CameraSwitcher.PHOTO_MODULE_INDEX;
+            }
         }
+        setModuleFromIndex(moduleIndex);
+
         mCurrentModule.init(this, mCameraModuleRootView);
         mOrientationListener = new MyOrientationEventListener(this);
         mMainHandler = new Handler(getMainLooper());
@@ -834,13 +853,32 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onCameraSelected(int i) {
-        if (mCurrentModuleIndex == i) return;
+    public void onCameraSelected(int moduleIndex) {
+        if (mCurrentModuleIndex == moduleIndex) return;
 
         CameraHolder.instance().keep();
         closeModule(mCurrentModule);
-        mCurrentModuleIndex = i;
-        switch (i) {
+        setModuleFromIndex(moduleIndex);
+
+        openModule(mCurrentModule);
+        mCurrentModule.onOrientationChanged(mLastRawOrientation);
+        if (mMediaSaveService != null) {
+            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+        }
+
+        // Store the module index so we can use it the next time the Camera
+        // starts up.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putInt(PREF_STARTUP_MODULE_INDEX, moduleIndex).apply();
+    }
+
+    /**
+     * Sets the mCurrentModuleIndex, creates a new module instance for the
+     * given index an sets it as mCurrentModule.
+     */
+    private void setModuleFromIndex(int moduleIndex) {
+        mCurrentModuleIndex = moduleIndex;
+        switch (moduleIndex) {
             case CameraSwitcher.VIDEO_MODULE_INDEX:
                 mCurrentModule = new VideoModule();
                 break;
@@ -850,14 +888,8 @@ public class CameraActivity extends Activity
             case CameraSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
                 break;
-           default:
-               break;
-        }
-
-        openModule(mCurrentModule);
-        mCurrentModule.onOrientationChanged(mLastRawOrientation);
-        if (mMediaSaveService != null) {
-            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+            default:
+                break;
         }
     }
 
