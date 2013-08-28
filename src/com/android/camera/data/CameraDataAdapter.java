@@ -219,8 +219,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
 
         LocalData data = mImages.get(pos);
-        if (data.refresh(resolver)) {
-            updateData(pos, data);
+        LocalData refreshedData = data.refresh(resolver);
+        if (refreshedData != null) {
+            updateData(pos, refreshedData);
         }
     }
 
