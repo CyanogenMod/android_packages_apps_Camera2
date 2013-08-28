@@ -40,11 +40,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.view.View.OnLayoutChangeListener;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
+import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
+import com.android.camera.ui.FocusIndicator;
 import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
@@ -57,7 +60,7 @@ import java.util.List;
 
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
-        CameraRootView.MyDisplayListener,
+        CameraRootView.MyDisplayListener, FocusUI,
         SurfaceTextureListener, SurfaceHolder.Callback {
     private static final String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
@@ -283,6 +286,7 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
         setTransformMatrix(width, height);
+        mController.onScreenSizeChanged(width, height, previewWidth, previewHeight);
     }
 
     private void setTransformMatrix(int width, int height) {
@@ -756,6 +760,50 @@ public class VideoUI implements PieRenderer.PieListener,
                 mPieRenderer.setBlockFocus(false);
             }
         }
+    }
+
+    // implement focusUI interface
+    private FocusIndicator getFocusIndicator() {
+        return mPieRenderer;
+    }
+
+    @Override
+    public boolean hasFaces() {
+        return false;
+    }
+
+    @Override
+    public void clearFocus() {
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) indicator.clear();
+    }
+
+    @Override
+    public void setFocusPosition(int x, int y) {
+        mPieRenderer.setFocus(x, y);
+    }
+
+    @Override
+    public void onFocusStarted(){
+        getFocusIndicator().showStart();
+    }
+
+    @Override
+    public void onFocusSucceeded(boolean timeOut) {
+        getFocusIndicator().showSuccess(timeOut);
+    }
+
+    @Override
+    public void onFocusFailed(boolean timeOut) {
+        getFocusIndicator().showFail(timeOut);
+    }
+
+    @Override
+    public void pauseFaceDetection() {
+    }
+
+    @Override
+    public void resumeFaceDetection() {
     }
 
     public SurfaceTexture getSurfaceTexture() {
