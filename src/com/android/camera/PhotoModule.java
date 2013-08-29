@@ -676,6 +676,7 @@ public class PhotoModule
 
         @Override
         public void onPictureTaken(final byte [] jpegData, CameraProxy camera) {
+            mUI.enableShutter(true);
             if (mPaused) {
                 return;
             }
@@ -894,6 +895,9 @@ public class PhotoModule
         CameraUtil.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 
+        // We don't want user to press the button again while taking a
+        // multi-second HDR photo.
+        mUI.enableShutter(false);
         mCameraDevice.takePicture(mHandler,
                 new ShutterCallback(!animateBefore),
                 mRawPictureCallback, mPostViewPictureCallback,

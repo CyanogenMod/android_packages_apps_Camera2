@@ -623,6 +623,9 @@ public class PhotoUI implements PieListener,
         return mShutterButton.isPressed();
     }
 
+    /**
+     * Enables or disables the shutter button.
+     */
     public void enableShutter(boolean enabled) {
         if (mShutterButton != null) {
             mShutterButton.setEnabled(enabled);
