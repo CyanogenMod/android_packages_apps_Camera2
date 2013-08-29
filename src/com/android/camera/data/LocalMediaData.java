@@ -313,7 +313,8 @@ public abstract class LocalMediaData implements LocalData {
 
         private static final int mSupportedUIActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
-                        | FilmStripView.ImageData.ACTION_PROMOTE;
+                        | FilmStripView.ImageData.ACTION_PROMOTE
+                        | FilmStripView.ImageData.ACTION_ZOOM;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE;
 

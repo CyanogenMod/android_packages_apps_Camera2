@@ -126,13 +126,6 @@ public interface LocalData extends FilmStripView.ImageData {
     String getPath();
 
     /**
-     * Returns the content URI of this data item.
-     *
-     * @return {@code Uri.EMPTY} if not valid.
-     */
-    Uri getContentUri();
-
-    /**
      * @return The mimetype of this data item, or null, if this item has no
      *         mimetype associated with it.
      */
