@@ -148,19 +148,25 @@ public class PhotoUI implements PieListener,
     private class DecodeTask extends AsyncTask<Integer, Void, Bitmap> {
         private final byte [] mData;
         private int mOrientation;
+        private boolean mMirror;
 
-        public DecodeTask(byte[] data, int orientation) {
+        public DecodeTask(byte[] data, int orientation, boolean mirror) {
             mData = data;
             mOrientation = orientation;
+            mMirror = mirror;
         }
 
         @Override
         protected Bitmap doInBackground(Integer... params) {
             // Decode image in background.
             Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
-            if (mOrientation != 0) {
+            if (mOrientation != 0 || mMirror) {
                 Matrix m = new Matrix();
-                m.postRotate(mOrientation);
+                m.preRotate(mOrientation);
+                if (mMirror) {
+                    // Flip horizontally
+                    m.setScale(-1f, 1f);
+                }
                 return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
                         false);
             }
@@ -308,9 +314,9 @@ public class PhotoUI implements PieListener,
         updateOnScreenIndicators(params, prefGroup, prefs);
     }
 
-    public void animateCapture(final byte[] jpegData, int orientation) {
+    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
         // Decode jpeg byte array and then animate the jpeg
-        DecodeTask task = new DecodeTask(jpegData, orientation);
+        DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
         task.execute();
     }
 
