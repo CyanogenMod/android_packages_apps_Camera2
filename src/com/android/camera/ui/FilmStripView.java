@@ -23,6 +23,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -30,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
@@ -64,6 +64,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private ViewItem[] mViewItem = new ViewItem[BUFFER_SIZE];
 
     private Listener mListener;
+    private ZoomView mZoomView = null;
 
     private MotionEvent mDown;
     private boolean mCheckToIntercept = true;
@@ -89,6 +90,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * Common interface for all images in the filmstrip.
      */
     public interface ImageData {
+
         /**
          * Interface that is used to tell the caller whether an image is a photo
          * sphere.
@@ -116,6 +118,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public static final int ACTION_NONE = 0;
         public static final int ACTION_PROMOTE = 1;
         public static final int ACTION_DEMOTE = (1 << 1);
+        /**
+         * For image data that supports zoom, it should also provide a valid
+         * content uri.
+         */
+        public static final int ACTION_ZOOM = (1 << 2);
 
         /**
          * SIZE_FULL can be returned by {@link ImageData#getWidth()} and
@@ -193,6 +200,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         /** Whether this item is a photo. */
         public boolean isPhoto();
+
+        /**
+         * Returns the content URI of this data item.
+         *
+         * @return {@code Uri.EMPTY} if not valid.
+         */
+        public Uri getContentUri();
     }
 
     /**
@@ -336,7 +350,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * An interface which defines the controller of {@link FilmStripView}.
      */
     public interface Controller {
-        public boolean isScalling();
+        public boolean isScaling();
 
         public void scroll(float deltaX);
 
@@ -403,13 +417,36 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         /** Returns the translation of Y regarding the view scale. */
-        public float getTranslationY(float scale) {
+        public float getScaledTranslationY(float scale) {
             return mView.getTranslationY() / scale;
         }
 
         /** Returns the translation of X regarding the view scale. */
-        public float getTranslationX(float scale) {
+        public float getScaledTranslationX(float scale) {
             return mView.getTranslationX() / scale;
+        }
+
+        /**
+         * The horizontal location of this view relative to its left position.
+         * This position is post-layout, in addition to wherever the object's
+         * layout placed it.
+         *
+         * @return The horizontal position of this view relative to its left position, in pixels.
+         */
+        public float getTranslationX() {
+            return mView.getTranslationX();
+        }
+
+        /**
+         * The vertical location of this view relative to its top position.
+         * This position is post-layout, in addition to wherever the object's
+         * layout placed it.
+         *
+         * @return The vertical position of this view relative to its top position,
+         * in pixels.
+         */
+        public float getTranslationY() {
+            return mView.getTranslationY();
         }
 
         /** Sets the translation of Y regarding the view scale. */
@@ -436,9 +473,35 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return mView;
         }
 
+        /**
+         * The visual x position of this view, in pixels.
+         */
+        public float getX() {
+            return mView.getX();
+        }
+
+        /**
+         * The visual y position of this view, in pixels.
+         */
+        public float getY() {
+            return mView.getY();
+        }
+
         private void layoutAt(int left, int top) {
             mView.layout(left, top, left + mView.getMeasuredWidth(),
                     top + mView.getMeasuredHeight());
+        }
+
+        /**
+         * The bounding rect of the view.
+         */
+        public RectF getViewRect() {
+            RectF r = new RectF();
+            r.left = mView.getX();
+            r.top = mView.getY();
+            r.right = r.left + mView.getWidth() * mView.getScaleX();
+            r.bottom = r.top + mView.getHeight() * mView.getScaleY();
+            return r;
         }
 
         /**
@@ -470,12 +533,37 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return mViewArea.contains(x, y);
         }
 
+        /**
+         * Return the width of the view.
+         */
+        public int getWidth() {
+            return mView.getWidth();
+        }
+
         public void copyGeometry(ViewItem item) {
             setLeftPosition(item.getLeftPosition());
             View v = item.getView();
             mView.setTranslationY(v.getTranslationY());
             mView.setTranslationX(v.getTranslationX());
         }
+
+
+        void updateTransform(float transX, float transY, float scaleX, float scaleY,
+                                    int viewportWidth, int viewportHeight) {
+            int left = (int) transX + mView.getLeft();
+            int top = (int) transY + mView.getTop();
+            Rect r = ZoomView.adjustToFitInBounds(new Rect(left, top,
+                    left + (int) (mView.getWidth() * scaleX),
+                    top + (int) (mView.getHeight() * scaleY)),
+                    viewportWidth, viewportHeight);
+            mView.setScaleX(scaleX);
+            mView.setScaleY(scaleY);
+            transX = r.left - mView.getLeft();
+            transY = r.top - mView.getTop();
+            mView.setTranslationX(transX);
+            mView.setTranslationY(transY);
+        }
+
     }
 
     public FilmStripView(Context context) {
@@ -506,6 +594,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mScale = 1.0f;
         mController = new MyController(cameraActivity);
         mViewAnimInterpolator = new DecelerateInterpolator();
+        mZoomView = new ZoomView(cameraActivity);
+        mZoomView.setVisibility(GONE);
+        addView(mZoomView);
+
         mGestureRecognizer =
                 new FilmStripGestureRecognizer(cameraActivity, new MyGestureReceiver());
         mSlop = (int) getContext().getResources().getDimension(R.dimen.pie_touch_slop);
@@ -547,9 +639,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     private int getCurrentViewType() {
-        if (mDataAdapter == null) {
-            return ImageData.TYPE_NONE;
-        }
         ViewItem curr = mViewItem[mCurrentItem];
         if (curr == null) {
             return ImageData.TYPE_NONE;
@@ -623,6 +712,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 measureViewItem(item, boundWidth, boundHeight);
             }
         }
+        // Measure zoom view
+        mZoomView.measure(
+                MeasureSpec.makeMeasureSpec(
+                        widthMeasureSpec, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(
+                        heightMeasureSpec, MeasureSpec.EXACTLY));
     }
 
     @Override
@@ -868,7 +963,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     snapInTime, false);
         }
         if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
-                && !mController.isScalling()
+                && !mController.isScaling()
                 && mScale != FULL_SCREEN_SCALE) {
             mController.goToFullScreen();
         }
@@ -998,7 +1093,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // The normal filmstrip has no translation for the current item. If it has
             // translation before, gradually set it to zero.
             mViewItem[mCurrentItem].setTranslationX(
-                    mViewItem[mCurrentItem].getTranslationX(mScale) * scaleFraction,
+                    mViewItem[mCurrentItem].getScaledTranslationX(mScale) * scaleFraction,
                     mScale);
             mViewItem[mCurrentItem].layoutIn(mDrawArea, mCenterX, mScale);
         }
@@ -1061,6 +1156,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         snapInCenter();
         updateBottomControls();
         mLastItemId = getCurrentId();
+
+        // Layout zoom view
+        mZoomView.layout(mDrawArea.left, mDrawArea.top, mDrawArea.right, mDrawArea.bottom);
+        bringChildToFront(mZoomView);
 
         invalidate();
     }
@@ -1192,7 +1291,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         // Now, slide every one back.
         for (int i = 0; i < BUFFER_SIZE; i++) {
             if (mViewItem[i] != null
-                    && mViewItem[i].getTranslationX(mScale) != 0f) {
+                    && mViewItem[i].getScaledTranslationX(mScale) != 0f) {
                 slideViewBack(mViewItem[i].getView());
             }
         }
@@ -1560,8 +1659,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         @Override
-        public boolean isScalling() {
-            return (mScaleAnimator.isRunning());
+        public boolean isScaling() {
+            return mScaleAnimator.isRunning();
         }
 
         boolean hasNewGeometry() {
@@ -1716,6 +1815,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                         GEOMETRY_ADJUST_TIME_MS, false);
             }
             enterFullScreen();
+
+            if (inFullScreen()) {
+                return;
+            }
+            scaleTo(1f, GEOMETRY_ADJUST_TIME_MS);
         }
 
         private void enterFullScreen() {
@@ -1727,10 +1831,70 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 mListener.onSwitchMode(true);
                 mBottomControls.setVisibility(View.GONE);
             }
-            if (inFullScreen()) {
+        }
+
+        private void setSurroundingViewsVisible(boolean visible) {
+            // Hide everything on the left
+            // TODO: Need to find a better way to toggle the visibility of views around
+            //       the current view.
+            for (int i = 0; i < mCurrentItem; i++) {
+                if (i == mCurrentItem || mViewItem[i] == null) {
+                    continue;
+                }
+                mViewItem[i].getView().setVisibility(visible ? VISIBLE : INVISIBLE);
+            }
+        }
+
+        private void leaveFullScreen() {
+            if (mListener != null) {
+                mListener.onSwitchMode(false);
+                mBottomControls.setVisibility(View.VISIBLE);
+            }
+        }
+
+        private Uri getCurrentContentUri() {
+            ViewItem curr = mViewItem[mCurrentItem];
+            if (curr == null) {
+                return Uri.EMPTY;
+            }
+            return mDataAdapter.getImageData(curr.getID()).getContentUri();
+        }
+
+        /**
+         * Here we only support up to 1:1 image zoom (i.e. a 100% view of the
+         * actual pixels). The max scale that we can apply on the view should
+         * make the view same size as the image, in pixels.
+         */
+        private float getCurrentDataMaxScale() {
+            ViewItem curr = mViewItem[mCurrentItem];
+            ImageData imageData = mDataAdapter.getImageData(curr.getID());
+            if (curr == null || !imageData
+                    .isUIActionSupported(ImageData.ACTION_ZOOM)) {
+                return FULL_SCREEN_SCALE;
+            }
+            float imageWidth = (float) imageData.getWidth();
+            return imageWidth / (float) curr.getWidth();
+        }
+
+        private void loadZoomedImage() {
+            if (!isZoomStarted()) {
                 return;
             }
-            scaleTo(1f, GEOMETRY_ADJUST_TIME_MS);
+            ViewItem curr = mViewItem[mCurrentItem];
+            if(curr == null || !mDataAdapter.getImageData(curr.getID())
+                    .isUIActionSupported(ImageData.ACTION_ZOOM)) {
+                return;
+            }
+            Uri uri = getCurrentContentUri();
+            RectF viewRect = curr.getViewRect();
+            if (uri == null || uri == Uri.EMPTY) {
+                return;
+            }
+            mZoomView.loadBitmap(uri, viewRect);
+        }
+
+        private void cancelLoadingZoomedImage() {
+            mZoomView.cancelPartialDecodingTask();
         }
 
         @Override
@@ -1782,11 +1946,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         @Override
         public void onAnimationRepeat(Animator anim) {
         }
+
+        public boolean isZoomStarted() {
+            return mScale > FULL_SCREEN_SCALE;
+        }
     }
 
     private class MyGestureReceiver implements FilmStripGestureRecognizer.Listener {
         // Indicating the current trend of scaling is up (>1) or down (<1).
         private float mScaleTrend;
+        private float mMaxScale;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -1819,13 +1988,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onUp(float x, float y) {
+            if (mController.isZoomStarted()) {
+                mController.loadZoomedImage();
+                return true;
+            }
             float halfH = getHeight() / 2;
             mIsUserScrolling = false;
             for (int i = 0; i < BUFFER_SIZE; i++) {
                 if (mViewItem[i] == null) {
                     continue;
                 }
-                float transY = mViewItem[i].getTranslationY(mScale);
+                float transY = mViewItem[i].getScaledTranslationY(mScale);
                 if (transY == 0) {
                     continue;
                 }
@@ -1857,6 +2030,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (mViewItem[mCurrentItem] == null) {
                 return false;
             }
+            // When image is zoomed in to be bigger than the screen
+            if (mController.isZoomStarted()) {
+                mController.cancelLoadingZoomedImage();
+                ViewItem curr = mViewItem[mCurrentItem];
+                float transX = curr.getTranslationX() - dx;
+                float transY = curr.getTranslationY() - dy;
+                curr.updateTransform(transX, transY, mScale, mScale, mDrawArea.width(),
+                        mDrawArea.height());
+                return true;
+            }
             mIsUserScrolling = true;
             int deltaX = (int) (dx / mScale);
             if (inFilmStrip()) {
@@ -1886,7 +2069,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     }
 
                     ImageData data = mDataAdapter.getImageData(mViewItem[hit].getID());
-                    float transY = mViewItem[hit].getTranslationY(mScale) - dy / mScale;
+                    float transY = mViewItem[hit].getScaledTranslationY(mScale) - dy / mScale;
                     if (!data.isUIActionSupported(ImageData.ACTION_DEMOTE) && transY > 0f) {
                         transY = 0f;
                     }
@@ -1916,7 +2099,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             if (mScale != FILM_STRIP_SCALE) {
                 // No fling in other modes.
-                return true;
+                return false;
             }
             mController.fling(velocityX);
             return true;
@@ -1924,10 +2107,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
+            mController.cancelLoadingZoomedImage();
             if (inCameraFullscreen()) {
                 return false;
             }
             mScaleTrend = 1f;
+            mMaxScale = mController.getCurrentDataMaxScale();
             return true;
         }
 
@@ -1938,20 +2123,66 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
 
             mScaleTrend = mScaleTrend * 0.3f + scale * 0.7f;
-            mScale *= scale;
-            if (mScale <= FILM_STRIP_SCALE) {
-                mScale = FILM_STRIP_SCALE;
-            }
-            if (mScale >= FULL_SCREEN_SCALE) {
+            if ((mScale < FULL_SCREEN_SCALE) && (mScale * scale < FULL_SCREEN_SCALE)) {
+                // Scaled view is smaller than or equal to screen size both before
+                // and after scaling
+                mScale *= scale;
+                if (mScale <= FILM_STRIP_SCALE) {
+                    mScale = FILM_STRIP_SCALE;
+                }
+                layoutChildren();
+            } else if ((mScale < FULL_SCREEN_SCALE) && (mScale * scale >= FULL_SCREEN_SCALE)) {
+                // Going from smaller than screen size to bigger than or equal to screen size
                 mScale = FULL_SCREEN_SCALE;
+                mController.enterFullScreen();
+                layoutChildren();
+                mController.setSurroundingViewsVisible(false);
+            } else if ((mScale >= FULL_SCREEN_SCALE) && (mScale * scale < FULL_SCREEN_SCALE)) {
+                // Going from bigger than or equal to screen size to smaller than screen size
+                mScale *= scale;
+                mController.leaveFullScreen();
+                layoutChildren();
+                mController.setSurroundingViewsVisible(true);
+            } else {
+                // Scaled view bigger than or equal to screen size both before
+                // and after scaling
+                if (!mController.isZoomStarted()) {
+                    mController.setSurroundingViewsVisible(false);
+                }
+                ViewItem curr = mViewItem[mCurrentItem];
+                // Make sure the image is not overly scaled
+                if (mScale * scale > mMaxScale) {
+                    scale = mMaxScale / mScale;
+                }
+                mScale *= scale;
+                float transX = curr.getTranslationX();
+                float transY = curr.getTranslationY();
+                // Pivot point is top left of the view, so we need to translate
+                // to scale around focus point
+                transX -= (focusX - curr.getX()) * (scale - 1f);
+                transY -= (focusY - curr.getY()) * (scale - 1f);
+                curr.updateTransform(transX, transY, mScale, mScale, mDrawArea.width(),
+                        mDrawArea.height());
             }
-            layoutChildren();
             return true;
         }
 
+
         @Override
         public void onScaleEnd() {
-            if (mScaleTrend >= 1f) {
+            float tolerance = 0.1f;
+            if (mScale > FULL_SCREEN_SCALE + tolerance) {
+                return;
+            }
+            mController.setSurroundingViewsVisible(true);
+            if (mScale <= FILM_STRIP_SCALE + tolerance) {
+                mController.goToFilmStrip();
+            } else if (mScaleTrend > 1f || mScale > FULL_SCREEN_SCALE - tolerance) {
+                if (mController.isZoomStarted()) {
+                    mScale = FULL_SCREEN_SCALE;
+                    mViewItem[mCurrentItem].updateTransform(0f, 0f, 1f, 1f, mDrawArea.width(),
+                            mDrawArea.height());
+                }
                 mController.goToFullScreen();
             } else {
                 mController.goToFilmStrip();
