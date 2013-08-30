@@ -13,7 +13,12 @@ LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
 
 LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res
 
-LOCAL_AAPT_FLAGS := --auto-add-overlay
+
+include $(LOCAL_PATH)/version.mk
+LOCAL_AAPT_FLAGS := \
+        --auto-add-overlay \
+        --version-name "$(version_name_package)" \
+        --version-code $(version_code_package) \
 
 LOCAL_PACKAGE_NAME := Camera2
 
