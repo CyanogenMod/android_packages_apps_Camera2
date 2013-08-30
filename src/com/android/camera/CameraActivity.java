@@ -783,6 +783,15 @@ public class CameraActivity extends Activity
         return super.onKeyUp(keyCode, event);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!mFilmStripView.inCameraFullscreen()) {
+            mFilmStripView.getController().goToFirstItem();
+        } else if (!mCurrentModule.onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
     public boolean isAutoRotateScreen() {
         return mAutoRotateScreen;
     }
