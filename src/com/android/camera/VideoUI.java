@@ -168,7 +168,7 @@ public class VideoUI implements PieRenderer.PieListener,
         mActivity.getLayoutInflater().inflate(R.layout.video_module, (ViewGroup) mRootView, true);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
-        mRootView.addOnLayoutChangeListener(mLayoutListener);
+        mTextureView.addOnLayoutChangeListener(mLayoutListener);
         ((CameraRootView) mRootView).setDisplayChangeListener(this);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
