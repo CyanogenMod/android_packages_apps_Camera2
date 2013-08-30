@@ -40,6 +40,8 @@ import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
 
+import java.util.Arrays;
+
 public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final String TAG = "CAM_FilmStripView";
 
@@ -364,7 +366,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         public boolean isScrolling();
 
-        public void goToCameraFullScreen();
+        public void goToFirstItem();
 
         public void goToFilmStrip();
 
@@ -1525,7 +1527,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         ViewItem curr = mViewItem[mCurrentItem];
         int dataID = curr.getID();
         if (reporter.isDataRemoved(dataID)) {
-            mCenterX = -1;
             reload();
             return;
         }
@@ -1570,10 +1571,23 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     /**
      * The whole data might be totally different. Flush all and load from the
-     * start.
+     * start. Filmstrip will be centered on the first item, i.e. the camera
+     * preview.
      */
     private void reload() {
-        removeAllViews();
+        // Remove all views from the mViewItem buffer, except the camera view.
+        for (int i = 0; i < mViewItem.length; i++) {
+            if (mViewItem[i] == null) {
+                continue;
+            }
+            View v = mViewItem[i].getView();
+            if (v != mCameraView) {
+                removeView(v);
+            }
+        }
+
+        // Clear out the mViewItems and rebuild with camera in the center.
+        Arrays.fill(mViewItem, null);
         int dataNumber = mDataAdapter.getTotalNumber();
         if (dataNumber == 0) {
             return;
@@ -1584,16 +1598,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (mViewItem[mCurrentItem] == null) {
             return;
         }
-        for (int i = 1; mCurrentItem + i < BUFFER_SIZE || mCurrentItem - i >= 0; i++) {
-            int itemID = mCurrentItem + i;
-            if (itemID < BUFFER_SIZE && mViewItem[itemID - 1] != null) {
-                mViewItem[itemID] = buildItemFromData(mViewItem[itemID - 1].getID() + 1);
-            }
-            itemID = mCurrentItem - i;
-            if (itemID >= 0 && mViewItem[itemID + 1] != null) {
-                mViewItem[itemID] = buildItemFromData(mViewItem[itemID + 1].getID() - 1);
+        for (int i = mCurrentItem + 1; i < BUFFER_SIZE; i++) {
+            mViewItem[i] = buildItemFromData(mViewItem[i - 1].getID() + 1);
+            if (mViewItem[i] == null) {
+                break;
             }
         }
+
+        // Ensure that the views in mViewItem will layout the first in the
+        // center of the display upon a reload.
+        mCenterX = -1;
+
         layoutChildren();
     }
 
@@ -1898,17 +1913,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         @Override
-        public void goToCameraFullScreen() {
-            if (mDataAdapter.getImageData(0).getViewType()
-                    != ImageData.TYPE_STICKY_VIEW) {
-                return;
-            }
-            goToFullScreen();
-            scrollToPosition(
-                    estimateMinX(mViewItem[mCurrentItem].getID(),
-                            mViewItem[mCurrentItem].getLeftPosition(),
-                            getWidth()),
-                    GEOMETRY_ADJUST_TIME_MS, false);
+        public void goToFirstItem() {
+            // TODO: animate to camera if it is still in the mViewItem buffer
+            // versus a full reload which will perform an immediate transition
+            reload();
         }
 
         @Override
