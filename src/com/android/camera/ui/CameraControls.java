@@ -37,10 +37,12 @@ public class CameraControls extends RotatableLayout {
 
     public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setMeasureAllChildren(true);
     }
 
     public CameraControls(Context context) {
         super(context);
+        setMeasureAllChildren(true);
     }
 
     @Override
