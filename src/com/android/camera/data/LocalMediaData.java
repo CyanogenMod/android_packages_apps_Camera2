@@ -472,7 +472,7 @@ public abstract class LocalMediaData implements LocalData {
                 if (mWidth > mDecodeWidth || mHeight > mDecodeHeight) {
                     int heightRatio = Math.round((float) mHeight / (float) mDecodeHeight);
                     int widthRatio = Math.round((float) mWidth / (float) mDecodeWidth);
-                    sampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+                    sampleSize = Math.max(heightRatio, widthRatio);
                 }
 
                 BitmapFactory.Options opts = new BitmapFactory.Options();
