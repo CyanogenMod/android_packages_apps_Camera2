@@ -344,22 +344,28 @@ public abstract class LocalMediaData implements LocalData {
             int width = c.getInt(COL_WIDTH);
             int height = c.getInt(COL_HEIGHT);
             if (width <= 0 || height <= 0) {
-                Log.w(TAG, "Warning! zero dimension for "
+                Log.w(TAG, "Zero dimension in ContentResolver for "
                         + path + ":" + width + "x" + height);
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(path, opts);
-                if (opts.outWidth != -1 && opts.outHeight != -1) {
+                if (opts.outWidth > 0 && opts.outHeight > 0) {
                     width = opts.outWidth;
                     height = opts.outHeight;
                 } else {
-                    Log.w(TAG, "Warning! dimension decode failed for " + path);
+                    Log.w(TAG, "Dimension decode failed for " + path);
                     Bitmap b = BitmapFactory.decodeFile(path);
                     if (b == null) {
+                        Log.w(TAG, "PhotoData skipeped."
+                                + " Decoding " + path + "failed.");
                         return null;
                     }
                     width = b.getWidth();
                     height = b.getHeight();
+                    if (width == 0 || height == 0) {
+                        Log.w(TAG, "PhotoData skipped. Bitmap size 0 for " + path);
+                        return null;
+                    }
                 }
             }
             if (orientation == 90 || orientation == 270) {
