@@ -17,10 +17,16 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
-    <TextureView
-        android:id="@+id/preview_content"
+    <!-- Wrap a frame layout around texture view so that when scaled, texture
+         view will not draw outside its unscaled bounds -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <TextureView
+            android:id="@+id/preview_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
     <View
         android:id="@+id/flash_overlay"
         android:layout_width="match_parent"
