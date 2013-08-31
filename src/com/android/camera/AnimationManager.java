@@ -59,6 +59,32 @@ public class AnimationManager {
         ObjectAnimator slide = ObjectAnimator.ofFloat(view, "translationX", 0f, slideDistance)
                 .setDuration(AnimationManager.SLIDE_DURATION);
         slide.setStartDelay(AnimationManager.SHRINK_DURATION + AnimationManager.HOLD_DURATION);
+
+        ObjectAnimator translateY = ObjectAnimator.ofFloat(view, "translationY",
+                parentView.getHeight() / 2 - centerY, 0f)
+                .setDuration(AnimationManager.SHRINK_DURATION);
+        translateY.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                view.setClickable(true);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+                // Do nothing.
+            }
+        });
+
         mCaptureAnimator = new AnimatorSet();
         mCaptureAnimator.playTogether(
                 ObjectAnimator.ofFloat(view, "scaleX", scale, 1f)
@@ -68,13 +94,12 @@ public class AnimationManager {
                 ObjectAnimator.ofFloat(view, "translationX",
                         parentView.getWidth() / 2 - centerX, 0f)
                         .setDuration(AnimationManager.SHRINK_DURATION),
-                ObjectAnimator.ofFloat(view, "translationY",
-                        parentView.getHeight() / 2 - centerY, 0f)
-                        .setDuration(AnimationManager.SHRINK_DURATION),
+                translateY,
                 slide);
         mCaptureAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
+                view.setClickable(false);
                 view.setVisibility(View.VISIBLE);
             }
 
