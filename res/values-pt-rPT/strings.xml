@@ -202,7 +202,8 @@
     <string name="please_wait" msgid="99283054995831377">"Aguarde"</string>
     <string name="save_into" msgid="3800886260514315436">"A guardar o vídeo em <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Não é possível cortar: o vídeo de destino é demasiado pequeno"</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"A processar panorama"</string>
+    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
+    <skip />
     <string name="save" msgid="4522918253523037970">"Guardar"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"A digitalizar o conteúdo..."</string>
   <plurals name="ingest_number_of_items_scanned">
