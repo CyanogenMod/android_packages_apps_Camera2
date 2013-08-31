@@ -566,6 +566,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mView.setTranslationY(transY);
         }
 
+        void resetTransform() {
+            mView.setScaleX(FULL_SCREEN_SCALE);
+            mView.setScaleY(FULL_SCREEN_SCALE);
+            mView.setTranslationX(0f);
+            mView.setTranslationY(0f);
+        }
     }
 
     public FilmStripView(Context context) {
@@ -1173,7 +1179,28 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mDrawArea.right = r;
         mDrawArea.bottom = b;
 
+        resetZoomView();
         layoutChildren();
+    }
+
+    /**
+     * Clears the translation and scale that has been set on the view, cancels any loading
+     * request for image partial decoding, and hides zoom view.
+     * This is needed for when there is a layout change (e.g. when users re-enter the app,
+     * or rotate the device, etc).
+     */
+    private void resetZoomView() {
+        if (!mController.isZoomStarted()) {
+            return;
+        }
+        ViewItem current = mViewItem[mCurrentItem];
+        if (current == null) {
+            return;
+        }
+        mScale = FULL_SCREEN_SCALE;
+        current.resetTransform();
+        mController.cancelLoadingZoomedImage();
+        mZoomView.setVisibility(GONE);
     }
 
     // Keeps the view in the view hierarchy if it's camera preview.
