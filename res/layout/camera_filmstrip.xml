@@ -47,16 +47,15 @@
 
             <TextView
                 android:id="@+id/pano_stitching_progress_text"
-                android:text="@string/pano_progress_text"
+                android:text="@string/rendering_photo_sphere"
                 android:textColor="#ffffffff"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:shadowColor="#ff000000"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:paddingBottom="8dp"
                 android:visibility="visible"
                 android:layout_gravity="right"/>
