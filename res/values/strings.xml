@@ -519,8 +519,8 @@
     <!-- Toast if the trimmed video is too short to trim. [CHAR LIMIT=80] -->
     <string name="trim_too_short">Can not trim : target video is too short</string>
 
-    <!-- Text to show with progress bar while stitching in Gallery -->
-    <string name="pano_progress_text">Rendering panorama</string>
+    <!-- Text to show with progress bar while stitching a photo sphere. 'Photo sphere' is a product name. [CHAR LIMIT=28]-->
+    <string name="rendering_photo_sphere">Rendering photo sphere</string>
 
     <!-- The label on the button that will save an edited image -->
     <string name="save" msgid="8140440041190264400">Save</string>
