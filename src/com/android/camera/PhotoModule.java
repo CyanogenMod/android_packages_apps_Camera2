@@ -970,6 +970,10 @@ public class PhotoModule
             }else if ((mReceivedSnapNum == mBurstSnapNum)
                         && (mCameraState != LONGSHOT)){
                 mFocusManager.resetTouchFocus();
+                if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
+                        mFocusManager.getFocusMode())) {
+                    mCameraDevice.cancelAutoFocus();
+                }
                 setCameraState(IDLE);
             }
 
@@ -1494,6 +1498,10 @@ public class PhotoModule
                } else {
                    setCameraState(IDLE);
                    mFocusManager.resetTouchFocus();
+                   if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
+                           mFocusManager.getFocusMode())) {
+                       mCameraDevice.cancelAutoFocus();
+                   }
                }
            }
         }
@@ -1802,9 +1810,11 @@ public class PhotoModule
 
     @Override
     public void cancelAutoFocus() {
-        mCameraDevice.cancelAutoFocus();
-        setCameraState(IDLE);
-        setCameraParameters(UPDATE_PARAM_PREFERENCE);
+        if (null != mCameraDevice ) {
+            mCameraDevice.cancelAutoFocus();
+            setCameraState(IDLE);
+            setCameraParameters(UPDATE_PARAM_PREFERENCE);
+        }
     }
 
     // Preview area is touched. Handle touch focus.
