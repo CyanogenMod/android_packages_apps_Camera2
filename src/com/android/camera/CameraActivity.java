@@ -262,7 +262,11 @@ public class CameraActivity extends Activity
                     if (mActionBar.isShowing()) {
                         mActionBar.hide();
                     } else {
-                        mActionBar.show();
+                        // In the preview, don't show the action bar if that is
+                        // a capture intent.
+                        if (!isCaptureIntent()) {
+                            mActionBar.show();
+                        }
                     }
                     return mActionBar.isShowing();
                 }
@@ -570,6 +574,16 @@ public class CameraActivity extends Activity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private boolean isCaptureIntent() {
+        if (MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
+            return true;
+        } else {
+            return false;
         }
     }
 
