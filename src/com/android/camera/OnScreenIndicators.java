@@ -143,7 +143,7 @@ public class OnScreenIndicators {
     /**
      * Set the flash indicator to the given value.
      *
-     * @param value One of Parameters.FLASH_MODE_OFF,
+     * @param value One of Parameters.FLASH_MODE_OFF, Parameters.FLASH_MODE_RED_EYE,
      *            Parameters.FLASH_MODE_AUTO, Parameters.FLASH_MODE_ON.
      */
     public void updateFlashOnScreenIndicator(String value) {
@@ -158,6 +158,8 @@ public class OnScreenIndicators {
             } else if (Parameters.FLASH_MODE_ON.equals(value)
                     || Parameters.FLASH_MODE_TORCH.equals(value)) {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
+            } else if (Parameters.FLASH_MODE_RED_EYE.equals(value)) {
+                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_redeye);
             } else {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
             }
