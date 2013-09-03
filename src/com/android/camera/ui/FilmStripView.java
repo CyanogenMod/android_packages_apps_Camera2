@@ -48,8 +48,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final int BUFFER_SIZE = 5;
     private static final int GEOMETRY_ADJUST_TIME_MS = 400;
     private static final int SNAP_IN_CENTER_TIME_MS = 600;
+    private static final int ZOOM_ANIMATION_DURATION_MS = 200;
     private static final float FILM_STRIP_SCALE = 0.6f;
     private static final float FULL_SCREEN_SCALE = 1f;
+
+    private static final float TOLERANCE = 0.1f;
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
 
@@ -548,15 +551,32 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mView.setTranslationY(v.getTranslationY());
             mView.setTranslationX(v.getTranslationX());
         }
-
+        /**
+         * Apply a scale factor (i.e. {@param postScale}) on top of current scale at
+         * pivot point ({@param focusX}, {@param focusY}). Visually it should be the
+         * same as post concatenating current view's matrix with specified scale.
+         */
+        void postScale(float focusX, float focusY, float postScale, int viewportWidth,
+                       int viewportHeight) {
+            float transX = getTranslationX();
+            float transY = getTranslationY();
+            // Pivot point is top left of the view, so we need to translate
+            // to scale around focus point
+            transX -= (focusX - getX()) * (postScale - 1f);
+            transY -= (focusY - getY()) * (postScale - 1f);
+            float scaleX = mView.getScaleX() * postScale;
+            float scaleY = mView.getScaleY() * postScale;
+            updateTransform(transX, transY, scaleX, scaleY, viewportWidth,
+                    viewportHeight);
+        }
 
         void updateTransform(float transX, float transY, float scaleX, float scaleY,
                                     int viewportWidth, int viewportHeight) {
-            int left = (int) transX + mView.getLeft();
-            int top = (int) transY + mView.getTop();
-            Rect r = ZoomView.adjustToFitInBounds(new Rect(left, top,
-                    left + (int) (mView.getWidth() * scaleX),
-                    top + (int) (mView.getHeight() * scaleY)),
+            float left = transX + mView.getLeft();
+            float top = transY + mView.getTop();
+            RectF r = ZoomView.adjustToFitInBounds(new RectF(left, top,
+                    left + mView.getWidth() * scaleX,
+                    top + mView.getHeight() * scaleY),
                     viewportWidth, viewportHeight);
             mView.setScaleX(scaleX);
             mView.setScaleY(scaleY);
@@ -1178,9 +1198,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mDrawArea.top = t;
         mDrawArea.right = r;
         mDrawArea.bottom = b;
-
-        resetZoomView();
-        layoutChildren();
+        if (changed) {
+            resetZoomView();
+            layoutChildren();
+        }
     }
 
     /**
@@ -1661,6 +1682,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             Animator.AnimatorListener {
 
         private final ValueAnimator mScaleAnimator;
+        private ValueAnimator mZoomAnimator;
         private boolean mHasNewScale;
         private float mNewScale;
 
@@ -1746,6 +1768,74 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return leftPos
                     + (mDataAdapter.getTotalNumber() - dataID + 100)
                     * (viewWidth + mViewGap);
+        }
+
+        /** Zoom all the way in or out on the image at the given pivot point. */
+        private void zoomAt(final ViewItem current, final float focusX, final float focusY) {
+            // End previous zoom animation, if any
+            if (mZoomAnimator != null) {
+                mZoomAnimator.end();
+            }
+            // Calculate end scale
+            final float maxScale = getCurrentDataMaxScale();
+            final float endScale = mScale < maxScale - maxScale * TOLERANCE
+                    ? maxScale : FULL_SCREEN_SCALE;
+
+            mZoomAnimator = new ValueAnimator();
+            mZoomAnimator.setFloatValues(mScale, endScale);
+            mZoomAnimator.setDuration(ZOOM_ANIMATION_DURATION_MS);
+            mZoomAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    if (mScale == FULL_SCREEN_SCALE) {
+                        enterFullScreen();
+                        setSurroundingViewsVisible(false);
+                    }
+                    cancelLoadingZoomedImage();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    // Make sure animation ends up having the correct scale even
+                    // if it is cancelled before it finishes
+                    if (mScale != endScale) {
+                        current.postScale(focusX, focusY, endScale/mScale, mDrawArea.width(),
+                                mDrawArea.height());
+                        mScale = endScale;
+                    }
+
+                    if (mScale == FULL_SCREEN_SCALE) {
+                        setSurroundingViewsVisible(true);
+                        mZoomView.setVisibility(GONE);
+                        current.resetTransform();
+                    } else {
+                        mController.loadZoomedImage();
+                    }
+                    mZoomAnimator = null;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    // Do nothing.
+                }
+            });
+
+            mZoomAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float newScale = (Float) animation.getAnimatedValue();
+                    float postScale = newScale / mScale;
+                    mScale = newScale;
+                    current.postScale(focusX, focusY, postScale, mDrawArea.width(),
+                            mDrawArea.height());
+                }
+            });
+            mZoomAnimator.start();
         }
 
         @Override
@@ -1985,6 +2075,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public boolean isZoomStarted() {
             return mScale > FULL_SCREEN_SCALE;
         }
+
+        public boolean isZoomAnimationRunning() {
+            return mZoomAnimator != null && mZoomAnimator.isRunning();
+        }
+
     }
 
     private class MyGestureReceiver implements FilmStripGestureRecognizer.Listener {
@@ -2010,6 +2105,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onDoubleTap(float x, float y) {
+            if (mScale < FULL_SCREEN_SCALE || inCameraFullscreen()) {
+                return false;
+            }
+            ViewItem current = mViewItem[mCurrentItem];
+            if (current == null) {
+                return false;
+            }
+            mController.zoomAt(current, x, y);
             return false;
         }
 
@@ -2018,11 +2121,20 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (mController.isScrolling()) {
                 mController.stopScrolling();
             }
+            // A down event is usually followed by a gesture, we apply gesture on
+            // the lower-res image during a gesture to ensure a responsive experience.
+            // TODO: Delay this until gesture starts.
+            if (mController.isZoomStarted()) {
+                mZoomView.setVisibility(GONE);
+            }
             return true;
         }
 
         @Override
         public boolean onUp(float x, float y) {
+            if (mController.isZoomAnimationRunning()) {
+                return false;
+            }
             if (mController.isZoomStarted()) {
                 mController.loadZoomedImage();
                 return true;
@@ -2158,23 +2270,24 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
 
             mScaleTrend = mScaleTrend * 0.3f + scale * 0.7f;
-            if ((mScale < FULL_SCREEN_SCALE) && (mScale * scale < FULL_SCREEN_SCALE)) {
+            float newScale = mScale * scale;
+            if (mScale < FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
                 // Scaled view is smaller than or equal to screen size both before
                 // and after scaling
-                mScale *= scale;
+                mScale = newScale;
                 if (mScale <= FILM_STRIP_SCALE) {
                     mScale = FILM_STRIP_SCALE;
                 }
                 layoutChildren();
-            } else if ((mScale < FULL_SCREEN_SCALE) && (mScale * scale >= FULL_SCREEN_SCALE)) {
+            } else if (mScale < FULL_SCREEN_SCALE && newScale >= FULL_SCREEN_SCALE) {
                 // Going from smaller than screen size to bigger than or equal to screen size
                 mScale = FULL_SCREEN_SCALE;
                 mController.enterFullScreen();
                 layoutChildren();
                 mController.setSurroundingViewsVisible(false);
-            } else if ((mScale >= FULL_SCREEN_SCALE) && (mScale * scale < FULL_SCREEN_SCALE)) {
+            } else if (mScale >= FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
                 // Going from bigger than or equal to screen size to smaller than screen size
-                mScale *= scale;
+                mScale = newScale;
                 mController.leaveFullScreen();
                 layoutChildren();
                 mController.setSurroundingViewsVisible(true);
@@ -2186,18 +2299,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
                 ViewItem curr = mViewItem[mCurrentItem];
                 // Make sure the image is not overly scaled
-                if (mScale * scale > mMaxScale) {
-                    scale = mMaxScale / mScale;
-                }
-                mScale *= scale;
-                float transX = curr.getTranslationX();
-                float transY = curr.getTranslationY();
-                // Pivot point is top left of the view, so we need to translate
-                // to scale around focus point
-                transX -= (focusX - curr.getX()) * (scale - 1f);
-                transY -= (focusY - curr.getY()) * (scale - 1f);
-                curr.updateTransform(transX, transY, mScale, mScale, mDrawArea.width(),
-                        mDrawArea.height());
+                newScale = Math.min(newScale, mMaxScale);
+                float postScale = newScale / mScale;
+                curr.postScale(focusX, focusY, postScale, mDrawArea.width(), mDrawArea.height());
+                mScale = newScale;
             }
             return true;
         }
@@ -2205,14 +2310,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void onScaleEnd() {
-            float tolerance = 0.1f;
-            if (mScale > FULL_SCREEN_SCALE + tolerance) {
+            if (mScale > FULL_SCREEN_SCALE + TOLERANCE) {
                 return;
             }
             mController.setSurroundingViewsVisible(true);
-            if (mScale <= FILM_STRIP_SCALE + tolerance) {
+            if (mScale <= FILM_STRIP_SCALE + TOLERANCE) {
                 mController.goToFilmStrip();
-            } else if (mScaleTrend > 1f || mScale > FULL_SCREEN_SCALE - tolerance) {
+            } else if (mScaleTrend > 1f || mScale > FULL_SCREEN_SCALE - TOLERANCE) {
                 if (mController.isZoomStarted()) {
                     mScale = FULL_SCREEN_SCALE;
                     mViewItem[mCurrentItem].updateTransform(0f, 0f, 1f, 1f, mDrawArea.width(),
