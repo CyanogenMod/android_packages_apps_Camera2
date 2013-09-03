@@ -90,9 +90,9 @@
     <string name="simple_edit" msgid="7167857524719035134">"Basit Düzenleme"</string>
     <string name="process_caching_requests" msgid="6521997636837045412">"Önbelleğe alma istekleri işleniyor"</string>
     <string name="caching_label" msgid="6581817666800160995">"Önbelleğe alınıyor..."</string>
-    <string name="crop_action" msgid="3281088975169422593">"Kes"</string>
+    <string name="crop_action" msgid="3281088975169422593">"Kırp"</string>
     <string name="trim_action" msgid="1912063594235898890">"Kırp"</string>
-    <string name="mute_action" msgid="6523005634451795344">"Yoksay"</string>
+    <string name="mute_action" msgid="6523005634451795344">"Sesi kapat"</string>
     <string name="set_as" msgid="7362777416265059096">"Şu şekilde ayarla:"</string>
     <string name="video_mute_err" msgid="4955516955624461937">"Videonun sesi kapatılamıyor."</string>
     <string name="video_err" msgid="6747342411484597130">"Video oynatılamıyor."</string>
@@ -132,7 +132,7 @@
     <string name="file_size" msgid="624610858632029292">"Dosya boyutu"</string>
     <string name="maker" msgid="6997781789783937494">"Yapımcı"</string>
     <string name="model" msgid="1812030182695078529">"Model"</string>
-    <string name="flash" msgid="8875025367055499744">"Flash"</string>
+    <string name="flash" msgid="8875025367055499744">"Flaş"</string>
     <string name="aperture" msgid="4049918471495099840">"Diyafram"</string>
     <string name="focal_length" msgid="7208863566011453148">"Odak Uzaklığı"</string>
     <string name="white_balance" msgid="2638519262687012770">"Beyaz dengesi"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Lütfen bekleyin"</string>
     <string name="save_into" msgid="3800886260514315436">"Video <xliff:g id="ALBUM_NAME">%1$s</xliff:g> adlı albüme kaydediliyor…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Kırpılamaz: hedef video çok kısa"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Fotoğraf küresi oluşturuluyor"</string>
     <string name="save" msgid="4522918253523037970">"Kaydet"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"İçerik taranıyor..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -231,7 +230,7 @@
     <string name="review_ok" msgid="4229133003029778558">"BİTTİ"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"Zaman atlamalı kayıt"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Kamera seçin"</string>
-    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Geri"</string>
+    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Arka"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Ön"</string>
     <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Konumu depola"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"KONUM"</string>
@@ -244,7 +243,7 @@
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Geri sayımda bip sesi"</string>
     <string name="setting_off" msgid="3321226648786639381">"Kapalı"</string>
-    <string name="setting_on" msgid="6658320155242340595">"Aç"</string>
+    <string name="setting_on" msgid="6658320155242340595">"Açık"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Video kalitesi"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Yüksek"</string>
     <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Düşük"</string>
@@ -359,7 +358,7 @@
     <string name="accessibility_decrement" msgid="5448728215316193220">"%1$s azalt"</string>
     <string name="accessibility_increment" msgid="7569148421415559960">"%1$s artır"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s onay kutusu"</string>
-    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Fotoğrafa moduna geç"</string>
+    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Fotoğraf moduna geç"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Video moduna geç"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Panorama moduna geç"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Photo Sphere moduna geç"</string>

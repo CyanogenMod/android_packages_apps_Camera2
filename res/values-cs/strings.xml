@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Čekejte prosím"</string>
     <string name="save_into" msgid="3800886260514315436">"Ukládání videa do alba <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Oříznutí nelze provést: výsledné video je příliš krátké"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Vykreslování Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"Uložit"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Skenování obsahu..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -301,7 +300,7 @@
     <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"AKCE"</string>
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NOC"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"ZÁPAD SLUNCE"</string>
-    <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"VEČÍREK"</string>
+    <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"OSLAVA"</string>
     <string name="pref_camera_countdown_label" msgid="4311699135435555732">"ČASOVAČ ODPOČÍTÁVÁNÍ"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"ČASOVAČ VYPNUT"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SEKUNDA"</string>

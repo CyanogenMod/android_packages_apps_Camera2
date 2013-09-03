@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"請稍候"</string>
     <string name="save_into" msgid="3800886260514315436">"正在將影片儲存至「<xliff:g id="ALBUM_NAME">%1$s</xliff:g>」…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"無法修剪：目標影片長度過短"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"正在轉譯全景拍攝相片"</string>
     <string name="save" msgid="4522918253523037970">"儲存"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"正在掃描內容..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -231,8 +230,8 @@
     <string name="review_ok" msgid="4229133003029778558">"完成"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"延時攝影錄製"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"選擇相機"</string>
-    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"後置鏡頭"</string>
-    <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"前置鏡頭"</string>
+    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"後置"</string>
+    <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"前置"</string>
     <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"儲存地點"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"地點"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"倒數計時器"</string>
@@ -359,8 +358,8 @@
     <string name="accessibility_decrement" msgid="5448728215316193220">"縮小 %1$s"</string>
     <string name="accessibility_increment" msgid="7569148421415559960">"放大 %1$s"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s 核取方塊。"</string>
-    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"切換至相片"</string>
-    <string name="accessibility_switch_to_video" msgid="685379350229791000">"切換至影片"</string>
+    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"切換至拍照模式"</string>
+    <string name="accessibility_switch_to_video" msgid="685379350229791000">"切換至錄影模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"切換至全景模式"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"切換至全景拍攝"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"檢閱取消"</string>
@@ -417,8 +416,8 @@
     <string name="time_lapse_hours" msgid="2466092767364327518">"小時"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"完成"</string>
     <string name="set_time_interval" msgid="844482952911185265">"設定時間間隔"</string>
-    <string name="set_time_interval_help" msgid="1403571747238933001">"延時攝影功能已關閉，請開啟以設定時間間隔。"</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"倒數計時器目前為關閉狀態，開啟即可在拍照前倒數計時。"</string>
+    <string name="set_time_interval_help" msgid="1403571747238933001">"延時攝影功能已關閉；請開啟以設定時間間隔。"</string>
+    <string name="set_timer_help" msgid="5221481839846083210">"倒數計時器未開啟；開啟即可在拍照前倒數計時。"</string>
     <string name="set_duration" msgid="7425045408900251919">"設定倒數時間 (以秒為單位)"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"拍照倒數計時中"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"記錄拍攝地點？"</string>

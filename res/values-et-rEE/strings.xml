@@ -33,7 +33,7 @@
     <string name="resume_playing_restart" msgid="7874418747024545675">"Alusta uuesti"</string>
     <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
     <string name="ok" msgid="7771534786778882486">"OK"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"Alustamiseks näo puudutamine."</string>
+    <string name="multiface_crop_help" msgid="3096903739496991318">"Alustamiseks puudutage nägu."</string>
     <string name="saving_image" msgid="4305990779779942817">"Pildi salvestamine ..."</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Pildi salvestamine albumisse <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="save_error" msgid="1170362488191167076">"Kärbitud kujutist ei saanud salvestada."</string>
@@ -45,7 +45,7 @@
     <string name="select_album" msgid="7946907074045669521">"Valige album"</string>
     <string name="select_group" msgid="7446238738711880170">"Valige rühm"</string>
     <string name="set_image" msgid="3011821258780340803">"Määrake pilt kui"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Taustapildi määram."</string>
+    <string name="set_wallpaper" msgid="4913071112864032079">"Taustapilt"</string>
     <string name="wallpaper" msgid="3542643990146620046">"Taustapildi määramine ..."</string>
     <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Taustapilt"</string>
     <string name="delete" msgid="7258764001896874869">"Kustuta"</string>
@@ -66,7 +66,7 @@
     <string name="details" msgid="3581943734736871564">"Üksikasjad"</string>
     <string name="details_title" msgid="681306416468138508">"%1$d/%2$d üksusest"</string>
     <string name="close" msgid="7196876073399885123">"Sule"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Üleminek rakendusele Kaamera"</string>
+    <string name="switch_to_camera" msgid="5252691793674565308">"Ava rakendus Kaamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"Valitud on %1$d"</item>
     <item quantity="one" msgid="4283105620980058761">"Valitud on %1$d"</item>
@@ -93,7 +93,7 @@
     <string name="crop_action" msgid="3281088975169422593">"Kärbi"</string>
     <string name="trim_action" msgid="1912063594235898890">"Kärbi"</string>
     <string name="mute_action" msgid="6523005634451795344">"Summuta"</string>
-    <string name="set_as" msgid="7362777416265059096">"Määrake kui"</string>
+    <string name="set_as" msgid="7362777416265059096">"Määra kui"</string>
     <string name="video_mute_err" msgid="4955516955624461937">"Video summutamine ei õnnestu."</string>
     <string name="video_err" msgid="6747342411484597130">"Videot ei saa esitada."</string>
     <string name="group_by_location" msgid="7885728085506867484">"Asukoha järgi"</string>
@@ -152,7 +152,7 @@
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"Mustvalge"</string>
     <string name="ffx_punch" msgid="5506629527921353460">"Punš"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"X-töötlus"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Piimakohv"</string>
+    <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litorgaafia"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="9028798463216468312">"Album muudetakse võrguühenduseta kättesaadavaks."</item>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Oodake"</string>
     <string name="save_into" msgid="3800886260514315436">"Video salvestamine albumisse <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Ei saa kärpida: lõppvideo on liiga lühike"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Photo Sphere\'i renderdamine"</string>
     <string name="save" msgid="4522918253523037970">"Salvesta"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Sisu skannimine ..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -218,31 +217,31 @@
     <string name="ingest_no_device" msgid="8065743026716074158">"Ühtegi MTP-seadet pole ühendatud"</string>
     <string name="camera_error_title" msgid="434116066686973315">"Kaamera viga"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"Ei saa kaameraga ühendada."</string>
-    <string name="camera_disabled" msgid="4927328535752421596">"Kaamera on keelatud turvaeeskirjade tõttu."</string>
+    <string name="camera_disabled" msgid="4927328535752421596">"Kaamera on keelatud turvaereeglite tõttu."</string>
     <string name="camera_label" msgid="8822012181326078626">"Kaamera"</string>
     <string name="wait" msgid="2081747495953883435">"Oodake …"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Paigaldage USB-salvestusruum enne kaamera kasutamist."</string>
+    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Paigaldage USB-infokandja enne kaamera kasutamist."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Enne kaamera kasutamist sisestage SD-kaart."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"USB-salvestusruumi ettevalm."</string>
+    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"USB-mälu ettevalmistus..."</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"SD-kaardi ettevalmistamine ..."</string>
     <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"Ei saanud juurdepääsu USB-talletusruumile."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Ei saanud juurdepääsu SD-kaardile."</string>
     <string name="review_cancel" msgid="4681578987722865410">"TÜHISTA"</string>
     <string name="review_ok" msgid="4229133003029778558">"VALMIS"</string>
-    <string name="time_lapse_title" msgid="264021984782348139">"Aeglustusrež. filmimise salvestam."</string>
+    <string name="time_lapse_title" msgid="264021984782348139">"Aeglustusrežiimis salvestus"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Kaamera valimine"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Tagasi"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Esikaamera"</string>
     <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Talletuse asukoht"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"ASUKOHT"</string>
-    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Pöördloendustaimer"</string>
+    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Loendustaimer"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8868342573738742056">"1 sekund"</item>
     <item quantity="other" msgid="3053084895126759755">"%d sekundit"</item>
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Piip pöördloend."</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Loenduse heli"</string>
     <string name="setting_off" msgid="3321226648786639381">"Väljas"</string>
     <string name="setting_on" msgid="6658320155242340595">"Sees"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Video kvaliteet"</string>
@@ -302,7 +301,7 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"ÖÖ"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"PÄIKESELOOJANG"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"PIDU"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"PÖÖRDLOENDUSTAIMER"</string>
+    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"LOENDUSTAIMER"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"TAIMER ON VÄLJAS"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SEKUND"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SEKUNDIT"</string>
@@ -318,7 +317,7 @@
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"TAGAKAAMERA"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"OK"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"Teie USB-salvestusruum saab otsa. Muutke kvaliteediseadeid või kustutage kujutisi või teisi faile."</string>
-    <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"Teie SD-kaardi ruum saab otsa. Muutke kvaliteediseadeid või kustutage kujutisi või teisi faile."</string>
+    <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"Teie SD-kaardi salvestusruum saab otsa. Muutke kvaliteediseadeid või kustutage kujutisi või teisi faile."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"Suuruspiirang on saavutatud."</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"Liiga kiire"</string>
     <string name="pano_dialog_prepare_preview" msgid="7116632064591648365">"Panoraami ettevalmistus"</string>
@@ -344,14 +343,14 @@
     <string name="video_snapshot_hint" msgid="56511446769261564">"Puudutage salvestamise ajal foto jäädvustamiseks."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Video salvestamine algas."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Video salvestamine lõppes."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Kui eriefektid on sisse lülitatud, on video hetkepilt keelatud."</string>
-    <string name="clear_effects" msgid="155262355011195942">"Selge mõju"</string>
+    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Kui eriefektid on sisse lülitatud, on video momentvõte keelatud."</string>
+    <string name="clear_effects" msgid="155262355011195942">"Tühista efektid"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"NALJAKAD NÄOD"</string>
     <string name="effect_background" msgid="2260438748276866983">"TAUST"</string>
-    <string name="accessibility_shutter_button" msgid="442677115885353279">"Katik"</string>
+    <string name="accessibility_shutter_button" msgid="442677115885353279">"Päästik"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"Menüünupp"</string>
     <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Viimane foto"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Kaamera esi- ja tagalülitid"</string>
+    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Esi-/tagakaamera lüliti"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"Kaamera, video või panoraami valija"</string>
     <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"Rohkem seadete juhtnuppe"</string>
     <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Sule seadete juhtnupud"</string>
@@ -363,9 +362,9 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Lülitu videorežiimile"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Lülitu panoraamirežiimile"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Lülitu Photo Sphere\'i režiimile"</string>
-    <string name="accessibility_review_cancel" msgid="8233210011810145540">"Ülevaatamine on tühistatud"</string>
-    <string name="accessibility_review_ok" msgid="1919818908740908312">"Ülevaatamine on lõpetatud"</string>
-    <string name="accessibility_review_retake" msgid="3256541538259494381">"Uuesti ülevaatamine"</string>
+    <string name="accessibility_review_cancel" msgid="8233210011810145540">"Ülevaatamine – tühista"</string>
+    <string name="accessibility_review_ok" msgid="1919818908740908312">"Ülevaatamine – valmis"</string>
+    <string name="accessibility_review_retake" msgid="3256541538259494381">"Ülevaatamine – uus võte"</string>
     <string name="accessibility_play_video" msgid="7230042317349119408">"Esita video"</string>
     <string name="accessibility_pause_video" msgid="8737987643497056384">"Peata video"</string>
     <string name="accessibility_reload_video" msgid="7551133941501337910">"Laadi video uuesti"</string>
@@ -418,9 +417,9 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Valmis"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Ajavahemiku määramine"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Aeglustusfunktsioon on välja lülitatud. Ajavahemiku määramiseks lülitage funktsioon sisse."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"Pöördloendustaimer on väljas. Lülitage see sisse, et loendada pildi tegemiseni jäänud aega."</string>
+    <string name="set_timer_help" msgid="5221481839846083210">"Loendustaimer on väljas. Lülitage see sisse, et loendada pildi tegemiseni jäänud aega."</string>
     <string name="set_duration" msgid="7425045408900251919">"Määrake kestus sekundites"</string>
-    <string name="count_down_title_text" msgid="8269417928362735617">"Pöördloendus foto jäädvustamiseni"</string>
+    <string name="count_down_title_text" msgid="8269417928362735617">"Loendus foto jäädvustamiseni"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Kas jätta meelde fotode jäädvustamise asukohad?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Märkige oma fotodele ja videotele jäädvustamise asukoht.\n\nMuud rakendused pääsevad lisaks salvestatud piltidele juurde ka sellele teabele."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Ei, aitäh"</string>

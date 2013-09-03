@@ -66,7 +66,7 @@
     <string name="details" msgid="3581943734736871564">"Podrobnosti"</string>
     <string name="details_title" msgid="681306416468138508">"%1$d z %2$d položiek:"</string>
     <string name="close" msgid="7196876073399885123">"Zavrieť"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Prepnúť do režimu fotoaparát"</string>
+    <string name="switch_to_camera" msgid="5252691793674565308">"Prepnúť do režimu fotoaparátu"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"Počet vyb. položiek: %1$d"</item>
     <item quantity="one" msgid="4283105620980058761">"Počet vyb. položiek: %1$d"</item>
@@ -113,7 +113,7 @@
     <string name="appwidget_empty_text" msgid="7338621200293556250">"Žiadne fotografie."</string>
     <string name="crop_saved" msgid="6708204358512805637">"Orezaný obrázok bol uložený do priečinka <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="no_albums_alert" msgid="6301185420723201993">"Nie sú k dispozícii žiadne albumy."</string>
-    <string name="empty_album" msgid="7143934241018780840">"Počet obrázkov / videí k dispozícii: 0."</string>
+    <string name="empty_album" msgid="7143934241018780840">"Počet obrázkov/videí k dispozícii: 0."</string>
     <string name="picasa_posts" msgid="1266615912017351938">"Príspevky"</string>
     <string name="make_available_offline" msgid="4399445722926739810">"Sprístupniť v režime offline"</string>
     <string name="sync_picasa_albums" msgid="6809590273138267530">"Obnoviť"</string>
@@ -144,7 +144,7 @@
     <string name="flash_on" msgid="4053187950402210000">"S bleskom"</string>
     <string name="flash_off" msgid="7313393221333362406">"Bez blesku"</string>
     <string name="unknown" msgid="2211992216750845926">"Neznáme"</string>
-    <string name="ffx_original" msgid="549901223077566047">"Pôvodné"</string>
+    <string name="ffx_original" msgid="549901223077566047">"Pôvodný"</string>
     <string name="ffx_vintage" msgid="4873569709320076102">"Klasika"</string>
     <string name="ffx_instant" msgid="2789796369450602080">"Instantný"</string>
     <string name="ffx_bleach" msgid="2202542296041511846">"Vybielenie"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Počkajte"</string>
     <string name="save_into" msgid="3800886260514315436">"Video sa ukladá do albumu <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Nie je možné orezať: výsledné video je príliš krátke"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Vykresľovanie Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"Uložiť"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Prebieha skenovanie obsahu..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -264,7 +263,7 @@
     <string name="pref_camera_picturesize_entry_vga" msgid="5417241189390562935">"VGA"</string>
     <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Režim zaostrenia"</string>
-    <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Automatické"</string>
+    <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Automaticky"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Nekonečno"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"Makro"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"AUTO"</string>
@@ -280,7 +279,7 @@
     <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"BLESK VYPNUTÝ"</string>
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Vyváženie bielej"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"VYVÁŽENIE BIELEJ"</string>
-    <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Automatické"</string>
+    <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Automaticky"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Žiariace"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Denné svetlo"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Svetielkujúce"</string>
@@ -291,7 +290,7 @@
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"ŽIARIVKA"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"ZAMRAČENÉ"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Scénický režim"</string>
-    <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automatické"</string>
+    <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automaticky"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Akcia"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Noc"</string>
@@ -303,7 +302,7 @@
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"ZÁPAD SLNKA"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"VEČIEROK"</string>
     <string name="pref_camera_countdown_label" msgid="4311699135435555732">"ČASOVAČ ODPOČÍTAVANIA"</string>
-    <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"ČASOVAČ VYPNUTÝ"</string>
+    <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"ČASOVAČ JE VYPNUTÝ"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SEKUNDA"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SEKUNDY"</string>
     <string name="pref_camera_countdown_label_ten" msgid="8259680166571641702">"10 SEKÚND"</string>
@@ -432,7 +431,7 @@
     <string name="camera_menu_more_label" msgid="3997839063378329544">"ĎALŠIE MOŽNOSTI"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"NASTAVENIA"</string>
   <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d fotografia"</item>
+    <item quantity="one" msgid="1666588544512497522">"%1$d fotka"</item>
     <item quantity="other" msgid="6337070372269594668">"Fotky: %1$d"</item>
   </plurals>
 </resources>

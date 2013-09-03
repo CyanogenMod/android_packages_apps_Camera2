@@ -34,7 +34,7 @@
     <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
     <string name="ok" msgid="7771534786778882486">"OK"</string>
     <string name="multiface_crop_help" msgid="3096903739496991318">"Pumindot ng mukha upang magsimula."</string>
-    <string name="saving_image" msgid="4305990779779942817">"Nagse-save ng larawan..."</string>
+    <string name="saving_image" msgid="4305990779779942817">"Sine-save ang larawan..."</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Sine-save ang larawan sa <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="save_error" msgid="1170362488191167076">"Hindi mai-save ang na-crop na larawan."</string>
     <string name="crop_label" msgid="8114305803169123050">"I-crop ang larawan"</string>
@@ -51,7 +51,7 @@
     <string name="delete" msgid="7258764001896874869">"Tanggalin"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"Tanggalin ang napiling item?"</item>
-    <item quantity="other" msgid="882035505847338991">"Tanggalin mga napiling item?"</item>
+    <item quantity="other" msgid="882035505847338991">"Tanggalin ang mga napiling item?"</item>
   </plurals>
     <string name="confirm" msgid="6079809872780030117">"Kumpirmahin"</string>
     <string name="cancel" msgid="3709581234100450763">"Ikansela"</string>
@@ -115,22 +115,22 @@
     <string name="no_albums_alert" msgid="6301185420723201993">"Walang available na mga album."</string>
     <string name="empty_album" msgid="7143934241018780840">"O na larawan/video ang available."</string>
     <string name="picasa_posts" msgid="1266615912017351938">"Mga Post"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"Gawing available sa offline"</string>
+    <string name="make_available_offline" msgid="4399445722926739810">"Gawing available offline"</string>
     <string name="sync_picasa_albums" msgid="6809590273138267530">"I-refresh"</string>
     <string name="done" msgid="998934109252173093">"Tapos na"</string>
     <string name="sequence_in_set" msgid="7297278525463370182">"%1$d ng %2$d na item:"</string>
     <string name="title" msgid="1465174588508188840">"Pamagat"</string>
     <string name="description" msgid="7012551348834166615">"Paglalarawan"</string>
     <string name="time" msgid="53680310933472250">"Oras"</string>
-    <string name="location" msgid="7836832588874777265">"Kinalalagyan"</string>
+    <string name="location" msgid="7836832588874777265">"Lokasyon"</string>
     <string name="path" msgid="7641372546343443225">"Daanan"</string>
     <string name="width" msgid="4689895076320623907">"Lapad"</string>
     <string name="height" msgid="3982701549798669179">"Tangkad"</string>
-    <string name="orientation" msgid="6270421867039429826">"Pagsasaayos"</string>
+    <string name="orientation" msgid="6270421867039429826">"Oryentasyon"</string>
     <string name="duration" msgid="1998783741258561149">"Tagal"</string>
     <string name="mimetype" msgid="2655949175201126964">"Uri ng MIME"</string>
     <string name="file_size" msgid="624610858632029292">"Laki ng File"</string>
-    <string name="maker" msgid="6997781789783937494">"Tagagawa"</string>
+    <string name="maker" msgid="6997781789783937494">"Maker"</string>
     <string name="model" msgid="1812030182695078529">"Modelo"</string>
     <string name="flash" msgid="8875025367055499744">"Flash"</string>
     <string name="aperture" msgid="4049918471495099840">"Aperture"</string>
@@ -155,10 +155,10 @@
     <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Pag available ang album offline."</item>
-    <item quantity="other" msgid="5124932962621695590">"Gawing available ang mga album offline."</item>
+    <item quantity="one" msgid="9028798463216468312">"Ginagawang available ang album offline."</item>
+    <item quantity="other" msgid="5124932962621695590">"Ginagawang available ang mga album offline."</item>
   </plurals>
-    <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"Nakaimbak ang item na ito sa lokal at available sa offline."</string>
+    <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"Lokal na naka-store ang item na ito at available offline."</string>
     <string name="set_label_all_albums" msgid="6609415760077097893">"Lahat ng album"</string>
     <string name="set_label_local_albums" msgid="567749080638164284">"Mga lokal na album"</string>
     <string name="set_label_mtp_devices" msgid="4247105968633555252">"Mga device na MTP"</string>
@@ -193,7 +193,7 @@
     <string name="folder_screenshot" msgid="8619432532724304995">"Screenshot"</string>
     <string name="help" msgid="2528548040829796056">"Tulong"</string>
     <string name="no_external_storage_title" msgid="8762156252392350944">"Walang Storage"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"Walang available na panlabas na storage"</string>
+    <string name="no_external_storage" msgid="9150100688259295300">"Walang available na external storage"</string>
     <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmstrip view"</string>
     <string name="switch_photo_grid" msgid="3024831878595067734">"View ng grid"</string>
     <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Fullscreen na view"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Mangyaring maghintay"</string>
     <string name="save_into" msgid="3800886260514315436">"Sine-save ang video sa <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Hindi ma-trim : masyadong maikli ang target na video"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Nire-render ang photo sphere"</string>
     <string name="save" msgid="4522918253523037970">"I-save"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Inii-scan ang nilalaman..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -223,17 +222,17 @@
     <string name="wait" msgid="2081747495953883435">"Mangyaring maghintay…"</string>
     <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"I-mount ang USB storage bago gamitin ang camera."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Magpasok ng isang SD card bago gamitin ang camera."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Ihinahanda imbakan na USB..."</string>
-    <string name="preparing_sd" product="default" msgid="5062635071578247325">"Naghahanda ng SD card..."</string>
+    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Ihinahanda ang USB storage..."</string>
+    <string name="preparing_sd" product="default" msgid="5062635071578247325">"Ihinahanda ang SD card..."</string>
     <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"Hindi ma-access ang USB storage."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Hindi ma-access ang SD card."</string>
     <string name="review_cancel" msgid="4681578987722865410">"KANSELAHIN"</string>
     <string name="review_ok" msgid="4229133003029778558">"TAPOS NA"</string>
-    <string name="time_lapse_title" msgid="264021984782348139">"Pagre-record ng paglipas ng oras"</string>
+    <string name="time_lapse_title" msgid="264021984782348139">"Pagre-record ng time lapse"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Pumili ng camera"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Bumalik"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Harap"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Iimbak ang lokasyon"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"I ang lokasyon"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"LOKASYON"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"Timer ng countdown"</string>
   <plurals name="pref_camera_timer_entry">
@@ -248,7 +247,7 @@
     <string name="pref_video_quality_title" msgid="133986891365610568">"Kalidad ng video"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Mataas"</string>
     <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Mababa"</string>
-    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Lumipas na oras"</string>
+    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Time lapse"</string>
     <string name="pref_camera_settings_category" msgid="4286755118301278593">"Mga setting ng Camera"</string>
     <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Mga setting ng camcorder"</string>
     <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Laki ng larawan"</string>
@@ -263,9 +262,9 @@
     <string name="pref_camera_picturesize_entry_1mp" msgid="4015199907773658431">"1M pixel"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="5417241189390562935">"VGA"</string>
     <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
-    <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Mode ng pagtuon"</string>
+    <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Focus mode"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Auto"</string>
-    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Walang Katapusan"</string>
+    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Infinity"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"Macro"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"AUTO"</string>
     <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"INFINITY"</string>
@@ -281,7 +280,7 @@
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"White balance"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"WHITE BALANCE"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Auto"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Napakaliwanag"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Incandescent"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Liwanag ng araw"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Fluorescent"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3695152185934196085">"Maulap"</string>
@@ -293,12 +292,12 @@
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Scene mode"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Auto"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
-    <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Pagkilos"</string>
+    <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Aksyon"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Gabi"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Paglubog ng araw"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="2053177794948141241">"Party"</string>
     <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"WALA"</string>
-    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"ACTION"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"AKSYON"</string>
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NIGHT"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"SUNSET"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"PARTY"</string>
@@ -328,7 +327,7 @@
     <string name="pano_dialog_waiting_previous" msgid="1379192572905837403">"Hinihintay ang nakaraang panorama"</string>
     <string name="pano_review_saving_indication_str" msgid="7006233508921435129">"Nagse-save..."</string>
     <string name="pano_review_rendering" msgid="7712584259126188763">"Nire-render ang panorama"</string>
-    <string name="tap_to_focus" msgid="3031819623593720463">"Pindutin upang tumuon."</string>
+    <string name="tap_to_focus" msgid="3031819623593720463">"Pindutin upang mag-focus."</string>
     <string name="pref_video_effect_title" msgid="2371174223707366255">"Mga Effect"</string>
     <string name="effect_none" msgid="1026487463817289779">"Wala"</string>
     <string name="effect_goofy_face_squeeze" msgid="1286464707958852799">"Squeeze"</string>
@@ -412,12 +411,12 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="322398198717672456">"12 oras"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="4545285575174744076">"15 oras"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="225288451792149886">"24 na oras"</string>
-    <string name="time_lapse_seconds" msgid="6338396613003859047">"segundo"</string>
-    <string name="time_lapse_minutes" msgid="1610738675813013569">"minuto"</string>
+    <string name="time_lapse_seconds" msgid="6338396613003859047">"(na) segundo"</string>
+    <string name="time_lapse_minutes" msgid="1610738675813013569">"(na) minuto"</string>
     <string name="time_lapse_hours" msgid="2466092767364327518">"oras"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Tapos na"</string>
-    <string name="set_time_interval" msgid="844482952911185265">"Itakda ang Palugit ng Oras"</string>
-    <string name="set_time_interval_help" msgid="1403571747238933001">"Naka-off ang tampok sa lumipas na oras. I-on ito upang itakda ang palugit ng oras."</string>
+    <string name="set_time_interval" msgid="844482952911185265">"Itakda ang Time Interval"</string>
+    <string name="set_time_interval_help" msgid="1403571747238933001">"Naka-off ang tampok na time lapse. I-on ito upang itakda ang time interval."</string>
     <string name="set_timer_help" msgid="5221481839846083210">"Naka-off ang timer ng countdown. I-on ito upang magbilang bago kumuha ng larawan."</string>
     <string name="set_duration" msgid="7425045408900251919">"Itakda ang tagal sa loob ng ilang segundo"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Nagbibilang upang kumuha ng larawan"</string>

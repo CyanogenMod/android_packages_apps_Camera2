@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"โปรดรอสักครู่"</string>
     <string name="save_into" msgid="3800886260514315436">"กำลังบันทึกวิดีโอใน <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"ไม่สามารถตัด : วิดีโอปลายทางสั้นเกินไป"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"กำลังแสดงผล Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"บันทึก"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"กำลังสแกนเนื้อหา..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -362,7 +361,7 @@
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"เปลี่ยนเป็นภาพถ่าย"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"สลับเป็นวิดีโอ"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"เปลี่ยนเป็นภาพพาโนรามา"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"เปลี่ยนเป็น Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"เปลี่ยนเป็นโฟโตสเฟียร์"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"ไม่ผ่านการตรวจสอบ"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"ผ่านการตรวจสอบ"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"ตรวจสอบการถ่ายภาพ/วิดีโอใหม่"</string>

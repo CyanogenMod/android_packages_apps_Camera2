@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Lūdzu, uzgaidiet!"</string>
     <string name="save_into" msgid="3800886260514315436">"Notiek videoklipa saglabāšana albumā <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Nevar apgriezt: mērķa videoklips ir pārāk īss."</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Sfēriskā panorāmas fotoattēla iegūšana"</string>
     <string name="save" msgid="4522918253523037970">"Saglabāt"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Notiek satura skenēšana..."</string>
   <plurals name="ingest_number_of_items_scanned">

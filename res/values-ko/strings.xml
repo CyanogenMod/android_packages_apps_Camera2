@@ -127,7 +127,7 @@
     <string name="width" msgid="4689895076320623907">"너비"</string>
     <string name="height" msgid="3982701549798669179">"높이"</string>
     <string name="orientation" msgid="6270421867039429826">"방향"</string>
-    <string name="duration" msgid="1998783741258561149">"기간"</string>
+    <string name="duration" msgid="1998783741258561149">"길이"</string>
     <string name="mimetype" msgid="2655949175201126964">"MIME 유형"</string>
     <string name="file_size" msgid="624610858632029292">"파일 크기"</string>
     <string name="maker" msgid="6997781789783937494">"제조업체"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"잠시 기다려 주세요."</string>
     <string name="save_into" msgid="3800886260514315436">"<xliff:g id="ALBUM_NAME">%1$s</xliff:g>에 동영상 저장 중…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"잘라낼 수 없음 : 동영상이 너무 짧음"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Photo Sphere 사진 렌더링"</string>
     <string name="save" msgid="4522918253523037970">"저장"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"콘텐츠를 스캔하는 중..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -265,10 +264,10 @@
     <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"초점 모드"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"자동"</string>
-    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"무한"</string>
+    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"인피니티"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"매크로"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"자동"</string>
-    <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"무한"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"인피니티"</string>
     <string name="pref_camera_focusmode_label_macro" msgid="4573817863140007172">"매크로"</string>
     <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"플래시 모드"</string>
     <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"플래시 모드"</string>
@@ -365,7 +364,7 @@
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Photo Sphere로 전환"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"리뷰 취소"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"리뷰 완료"</string>
-    <string name="accessibility_review_retake" msgid="3256541538259494381">"리뷰용으로 다시 찍기"</string>
+    <string name="accessibility_review_retake" msgid="3256541538259494381">"다시 찍기"</string>
     <string name="accessibility_play_video" msgid="7230042317349119408">"동영상 재생"</string>
     <string name="accessibility_pause_video" msgid="8737987643497056384">"동영상 일지중지"</string>
     <string name="accessibility_reload_video" msgid="7551133941501337910">"동영상 새로고침"</string>

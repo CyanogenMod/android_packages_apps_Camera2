@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Vänta"</string>
     <string name="save_into" msgid="3800886260514315436">"Sparar videon i <xliff:g id="ALBUM_NAME">%1$s</xliff:g> ..."</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Det gick inte att beskära videon. Målvideon är för kort"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Bearbetar sfäriskt foto"</string>
     <string name="save" msgid="4522918253523037970">"Spara"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Skannar innehåll ..."</string>
   <plurals name="ingest_number_of_items_scanned">

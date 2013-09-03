@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"لطفاً منتظر بمانید"</string>
     <string name="save_into" msgid="3800886260514315436">"درحال ذخیره ویدیو در <xliff:g id="ALBUM_NAME">%1$s</xliff:g> ..."</string>
     <string name="trim_too_short" msgid="8755328952688477762">"نمی‌تواند کوتاه شود: ویدیوی موردنظر بسیار کوتاه است"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"تولید عکس پانوراما"</string>
     <string name="save" msgid="4522918253523037970">"ذخیره"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"در حال اسکن کردن محتوا..."</string>
   <plurals name="ingest_number_of_items_scanned">

@@ -36,7 +36,7 @@
     <string name="multiface_crop_help" msgid="3096903739496991318">"Sentuh wajah untuk memulai."</string>
     <string name="saving_image" msgid="4305990779779942817">"Menyimpan gambar…"</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Menyimpan gambar ke <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="save_error" msgid="1170362488191167076">"Tak dapat menyimpan gambar yg dipangkas."</string>
+    <string name="save_error" msgid="1170362488191167076">"Gambar yang dipangkas tak bisa disimpan."</string>
     <string name="crop_label" msgid="8114305803169123050">"Pangkas gambar"</string>
     <string name="trim_label" msgid="7369596929410798458">"Potong video"</string>
     <string name="select_image" msgid="3289827722983995546">"Pilih foto"</string>
@@ -135,7 +135,7 @@
     <string name="flash" msgid="8875025367055499744">"Flash"</string>
     <string name="aperture" msgid="4049918471495099840">"Bukaan"</string>
     <string name="focal_length" msgid="7208863566011453148">"Panjang Fokal"</string>
-    <string name="white_balance" msgid="2638519262687012770">"Kseimbangn pth"</string>
+    <string name="white_balance" msgid="2638519262687012770">"Seimbang putih"</string>
     <string name="exposure_time" msgid="6992897250021008387">"Waktu paparan"</string>
     <string name="iso" msgid="4909058434077568534">"ISO"</string>
     <string name="unit_mm" msgid="1893537204908056363">"mm"</string>
@@ -174,7 +174,7 @@
     <string name="camera_disconnected" msgid="7879070561053748598">"Kamera terputus."</string>
     <string name="click_import" msgid="5153823057201280612">"Sentuh di sini untuk mengimpor"</string>
     <string name="widget_type_album" msgid="8649890012992069317">"Pilih album"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"Kocok semua gambar"</string>
+    <string name="widget_type_shuffle" msgid="3813327035908882115">"Acak semua gambar"</string>
     <string name="widget_type_photo" msgid="2237017593844917491">"Pilih gambar"</string>
     <string name="widget_type" msgid="1607279427350645903">"Pilih gambar"</string>
     <string name="slideshow_dream_name" msgid="2358714399417036646">"Rangkai slide"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Mohon tunggu"</string>
     <string name="save_into" msgid="3800886260514315436">"Menyimpan video ke <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Tidak dapat memangkas : video target terlalu pendek"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Merender Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"Simpan"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Memindai konten..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -265,7 +264,7 @@
     <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Mode fokus"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Otomatis"</string>
-    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Ketakterbatasan"</string>
+    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Tak Terbatas"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"Makro"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"OTOMATIS"</string>
     <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"TAK TERBATAS"</string>
