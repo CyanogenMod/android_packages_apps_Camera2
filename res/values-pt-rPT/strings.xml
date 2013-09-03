@@ -39,7 +39,7 @@
     <string name="save_error" msgid="1170362488191167076">"Impossível guardar imagem recortada."</string>
     <string name="crop_label" msgid="8114305803169123050">"Recortar imagem"</string>
     <string name="trim_label" msgid="7369596929410798458">"Cortar vídeo"</string>
-    <string name="select_image" msgid="3289827722983995546">"Selecionar fotog."</string>
+    <string name="select_image" msgid="3289827722983995546">"Selecionar foto"</string>
     <string name="select_video" msgid="882817436381543724">"Selecionar vídeo"</string>
     <string name="select_item" msgid="2611103251995672148">"Selecionar item"</string>
     <string name="select_album" msgid="7946907074045669521">"Selecionar álbum"</string>
@@ -68,19 +68,19 @@
     <string name="close" msgid="7196876073399885123">"Fechar"</string>
     <string name="switch_to_camera" msgid="5252691793674565308">"Mudar para Câmara"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="629802015400399691">"%1$d selecionados"</item>
-    <item quantity="one" msgid="4283105620980058761">"%1$d selecionado"</item>
-    <item quantity="other" msgid="6433812272993337098">"%1$d selecionados"</item>
+    <item quantity="zero" msgid="629802015400399691">"%1$d selecionado(s)"</item>
+    <item quantity="one" msgid="4283105620980058761">"%1$d selecionado(s)"</item>
+    <item quantity="other" msgid="6433812272993337098">"%1$d selecionado(s)"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="7322496523426352621">"%1$d selecionados"</item>
-    <item quantity="one" msgid="3571296348626418242">"%1$d selecionado"</item>
-    <item quantity="other" msgid="3103452138866993468">"%1$d selecionados"</item>
+    <item quantity="zero" msgid="7322496523426352621">"%1$d selecionado(s)"</item>
+    <item quantity="one" msgid="3571296348626418242">"%1$d selecionado(s)"</item>
+    <item quantity="other" msgid="3103452138866993468">"%1$d selecionado(s)"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="3312206920893882756">"%1$d selecionados"</item>
-    <item quantity="one" msgid="7749557015923438739">"%1$d selecionado"</item>
-    <item quantity="other" msgid="3562299676983425193">"%1$d selecionados"</item>
+    <item quantity="zero" msgid="3312206920893882756">"%1$d selecionado(s)"</item>
+    <item quantity="one" msgid="7749557015923438739">"%1$d selecionado(s)"</item>
+    <item quantity="other" msgid="3562299676983425193">"%1$d selecionado(s)"</item>
   </plurals>
     <string name="show_on_map" msgid="1986264085815015696">"Mostrar no mapa"</string>
     <string name="rotate_left" msgid="6719855780237705569">"Rodar para a esquerda"</string>
@@ -150,9 +150,9 @@
     <string name="ffx_bleach" msgid="2202542296041511846">"Descolorar"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Azul"</string>
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"P/B"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Amarelada"</string>
+    <string name="ffx_punch" msgid="5506629527921353460">"Amarelado"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"Processo X"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Acastanh."</string>
+    <string name="ffx_washout" msgid="6941478261736953916">"Acastanhado"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litografia"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="9028798463216468312">"Disponibilizar álbum offline."</item>
@@ -177,7 +177,7 @@
     <string name="widget_type_shuffle" msgid="3813327035908882115">"Repr. aleat. todas as imagens"</string>
     <string name="widget_type_photo" msgid="2237017593844917491">"Escolher uma imagem"</string>
     <string name="widget_type" msgid="1607279427350645903">"Escolher imagens"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"Apresentação de diapositivos"</string>
+    <string name="slideshow_dream_name" msgid="2358714399417036646">"Apres. diapositivos"</string>
     <string name="albums" msgid="7571656500475430599">"Álbuns"</string>
     <string name="times" msgid="4738095876364133181">"Horas"</string>
     <string name="locations" msgid="9050411755300802457">"Locais"</string>
@@ -192,7 +192,7 @@
     <string name="folder_imported" msgid="1652410522850456583">"Importadas"</string>
     <string name="folder_screenshot" msgid="8619432532724304995">"Captura de Ecrã"</string>
     <string name="help" msgid="2528548040829796056">"Ajuda"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"Nenhum Armazenamento"</string>
+    <string name="no_external_storage_title" msgid="8762156252392350944">"Nenhum armazenamento"</string>
     <string name="no_external_storage" msgid="9150100688259295300">"Nenhum armazenamento externo disponível"</string>
     <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Vista de película"</string>
     <string name="switch_photo_grid" msgid="3024831878595067734">"Vista de grelha"</string>
@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Aguarde"</string>
     <string name="save_into" msgid="3800886260514315436">"A guardar o vídeo em <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Não é possível cortar: o vídeo de destino é demasiado pequeno"</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"A processar panorama"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"A processar Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"Guardar"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"A digitalizar o conteúdo..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -241,7 +241,7 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Beep em contagem decr"</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Beep contagem decr"</string>
     <string name="setting_off" msgid="3321226648786639381">"Desativada"</string>
     <string name="setting_on" msgid="6658320155242340595">"Ativada"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Qualidade do vídeo"</string>
@@ -296,7 +296,7 @@
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Noite"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Ocaso"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="2053177794948141241">"Festa"</string>
-    <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"NENHUM"</string>
+    <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"NENHUMA"</string>
     <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"AÇÃO"</string>
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NOITE"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"OCASO"</string>
@@ -432,6 +432,6 @@
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"DEFINIÇÕES"</string>
   <plurals name="number_of_photos">
     <item quantity="one" msgid="1666588544512497522">"%1$d fotografia"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d fotog."</item>
+    <item quantity="other" msgid="6337070372269594668">"%1$d fotos"</item>
   </plurals>
 </resources>

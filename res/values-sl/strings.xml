@@ -40,12 +40,12 @@
     <string name="crop_label" msgid="8114305803169123050">"Obreži sliko"</string>
     <string name="trim_label" msgid="7369596929410798458">"Obreži videoposnetek"</string>
     <string name="select_image" msgid="3289827722983995546">"Izberite fotografijo"</string>
-    <string name="select_video" msgid="882817436381543724">"Izberi videoposnetek"</string>
+    <string name="select_video" msgid="882817436381543724">"Izberite videoposnetek"</string>
     <string name="select_item" msgid="2611103251995672148">"Izberite element"</string>
     <string name="select_album" msgid="7946907074045669521">"Izberite album"</string>
     <string name="select_group" msgid="7446238738711880170">"Izberite skupino"</string>
     <string name="set_image" msgid="3011821258780340803">"Nastavi sliko kot"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Nastavi sliko za ozadje"</string>
+    <string name="set_wallpaper" msgid="4913071112864032079">"Nastavi za ozadje"</string>
     <string name="wallpaper" msgid="3542643990146620046">"Nastavljanje slike za ozadje …"</string>
     <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Ozadje"</string>
     <string name="delete" msgid="7258764001896874869">"Izbriši"</string>
@@ -129,7 +129,7 @@
     <string name="orientation" msgid="6270421867039429826">"Postavitev"</string>
     <string name="duration" msgid="1998783741258561149">"Trajanje"</string>
     <string name="mimetype" msgid="2655949175201126964">"Vrsta MIME"</string>
-    <string name="file_size" msgid="624610858632029292">"Velikost datoteke"</string>
+    <string name="file_size" msgid="624610858632029292">"Velikost dat."</string>
     <string name="maker" msgid="6997781789783937494">"Izdelovalec"</string>
     <string name="model" msgid="1812030182695078529">"Model"</string>
     <string name="flash" msgid="8875025367055499744">"Bliskavica"</string>
@@ -170,8 +170,8 @@
     <string name="Import" msgid="7415409432995200645">"Uvozi"</string>
     <string name="import_complete" msgid="6772771659359964875">"Uvoz je končan"</string>
     <string name="import_fail" msgid="5162454276035072428">"Uvoz ni uspel"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"Kamera je priključena."</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"Fotoaparat je izklopljen."</string>
+    <string name="camera_connected" msgid="5972302349448026591">"Fotoaparat je priklopljen."</string>
+    <string name="camera_disconnected" msgid="7879070561053748598">"Fotoaparat je odklopljen."</string>
     <string name="click_import" msgid="5153823057201280612">"Dotaknite se tukaj, če želite uvoziti"</string>
     <string name="widget_type_album" msgid="8649890012992069317">"Izberite album"</string>
     <string name="widget_type_shuffle" msgid="3813327035908882115">"Naključno razporedi vse slike"</string>
@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Počakajte"</string>
     <string name="save_into" msgid="3800886260514315436">"Shranjevanje videoposnetka v album <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Obrezovanje ni mogoče: končni videoposnetek je prekratek."</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"Upodabljanje panorame"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"upod. fotogr. photo sphere"</string>
     <string name="save" msgid="4522918253523037970">"Shrani"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Pregledovanje vsebine …"</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -228,7 +228,7 @@
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Do kartice SD ni bilo mogoče dostopiti."</string>
     <string name="review_cancel" msgid="4681578987722865410">"PREKLIČI"</string>
     <string name="review_ok" msgid="4229133003029778558">"DOKONČANO"</string>
-    <string name="time_lapse_title" msgid="264021984782348139">"Snemanje s časovnim zamikom"</string>
+    <string name="time_lapse_title" msgid="264021984782348139">"Snemanje s pospešeno reprodukcijo"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Izberite fotoaparat"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Zadaj"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Spredaj"</string>
@@ -247,7 +247,7 @@
     <string name="pref_video_quality_title" msgid="133986891365610568">"Kakovost videoposnetka"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Visoka"</string>
     <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Nizka"</string>
-    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Časovni zamik"</string>
+    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Pospešena reprodukcija"</string>
     <string name="pref_camera_settings_category" msgid="4286755118301278593">"Nastavitve fotoaparata"</string>
     <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Nastavitve videokamere"</string>
     <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Velikost slike"</string>
@@ -280,12 +280,12 @@
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Ravnovesje beline"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"RAVNOVESJE BELINE"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Samodejno"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Žareče"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Žarilna nitka"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Dnevna svetloba"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Fluorescenčno"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3695152185934196085">"Oblačno"</string>
     <string name="pref_camera_whitebalance_label_auto" msgid="1152472201811061031">"SAMODEJNO"</string>
-    <string name="pref_camera_whitebalance_label_incandescent" msgid="8920127934705255947">"ŽAREČE"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="8920127934705255947">"ŽARILNA NITKA"</string>
     <string name="pref_camera_whitebalance_label_daylight" msgid="3554450557101127960">"DNEVNA SVETLOBA"</string>
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"FLUORESCENČNO"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"OBLAČNO"</string>
@@ -341,9 +341,9 @@
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Vaš videoposnetek"</string>
     <string name="bg_replacement_message" msgid="2572170208044781072">"Odložite napravo.\nZa trenutek stopite iz vidnega polja."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Dotaknite se, če želite fotografirati med snemanjem."</string>
-    <string name="video_recording_started" msgid="1478448043553326540">"Snemanje se je začelo."</string>
-    <string name="video_recording_stopped" msgid="2676770458529207322">"Snemanje se je ustavilo."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Videoposnetek je onemogočen, ko so vklopljeni posebni učinki."</string>
+    <string name="video_recording_started" msgid="1478448043553326540">"Snemanje videa se je začelo."</string>
+    <string name="video_recording_stopped" msgid="2676770458529207322">"Snemanje videa se je ustavilo."</string>
+    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Posnetek videa je onemogočen, ko so vklopljeni posebni učinki."</string>
     <string name="clear_effects" msgid="155262355011195942">"Počisti učinke"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"NORČAVI OBRAZI"</string>
     <string name="effect_background" msgid="2260438748276866983">"OZADJE"</string>
@@ -416,7 +416,7 @@
     <string name="time_lapse_hours" msgid="2466092767364327518">"h"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Dokončano"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Nastavite časovni Interval"</string>
-    <string name="set_time_interval_help" msgid="1403571747238933001">"Funkcija časovnega zamika je izklopljena. Vklopite jo, da nastavite časovni interval."</string>
+    <string name="set_time_interval_help" msgid="1403571747238933001">"Funkcija pospešene reprodukcije je izklopljena. Vklopite jo, da nastavite časovni interval."</string>
     <string name="set_timer_help" msgid="5221481839846083210">"Odštevalnik je izklopljen. Vklopite ga, če želite odštevanje pred fotografiranjem."</string>
     <string name="set_duration" msgid="7425045408900251919">"Nastavite trajanje v sekundah"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Odštevanje pred fotografiranjem"</string>

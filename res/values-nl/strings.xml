@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Een ogenblik geduld"</string>
     <string name="save_into" msgid="3800886260514315436">"Video opslaan in <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Kan niet bijsnijden: doelvideo is te kort"</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"Panorama genereren"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Panoramafoto opbouwen"</string>
     <string name="save" msgid="4522918253523037970">"Opslaan"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Inhoud scannen..."</string>
   <plurals name="ingest_number_of_items_scanned">

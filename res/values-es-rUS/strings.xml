@@ -45,7 +45,7 @@
     <string name="select_album" msgid="7946907074045669521">"Seleccionar álbum"</string>
     <string name="select_group" msgid="7446238738711880170">"Seleccionar grupo"</string>
     <string name="set_image" msgid="3011821258780340803">"Establecer imagen como"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Fijar como fon. pan."</string>
+    <string name="set_wallpaper" msgid="4913071112864032079">"Fijar como fondo"</string>
     <string name="wallpaper" msgid="3542643990146620046">"Estableciendo fondo de pantalla…"</string>
     <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Fondo de pantalla"</string>
     <string name="delete" msgid="7258764001896874869">"Eliminar"</string>
@@ -68,28 +68,28 @@
     <string name="close" msgid="7196876073399885123">"Cerrar"</string>
     <string name="switch_to_camera" msgid="5252691793674565308">"Cambiar a Cámara"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="629802015400399691">"%1$d seleccionado(s)"</item>
-    <item quantity="one" msgid="4283105620980058761">"%1$d seleccionado(s)"</item>
-    <item quantity="other" msgid="6433812272993337098">"%1$d seleccionado(s)"</item>
+    <item quantity="zero" msgid="629802015400399691">"%1$d seleccionados"</item>
+    <item quantity="one" msgid="4283105620980058761">"%1$d seleccionado"</item>
+    <item quantity="other" msgid="6433812272993337098">"%1$d seleccionados"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="7322496523426352621">"%1$d seleccionado(s)"</item>
-    <item quantity="one" msgid="3571296348626418242">"%1$d seleccionado(s)"</item>
-    <item quantity="other" msgid="3103452138866993468">"%1$d seleccionado(s)"</item>
+    <item quantity="zero" msgid="7322496523426352621">"%1$d seleccionados"</item>
+    <item quantity="one" msgid="3571296348626418242">"%1$d seleccionado"</item>
+    <item quantity="other" msgid="3103452138866993468">"%1$d seleccionados"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="3312206920893882756">"%1$d seleccionado(s)"</item>
-    <item quantity="one" msgid="7749557015923438739">"%1$d seleccionado(s)"</item>
-    <item quantity="other" msgid="3562299676983425193">"%1$d seleccionado(s)"</item>
+    <item quantity="zero" msgid="3312206920893882756">"%1$d seleccionados"</item>
+    <item quantity="one" msgid="7749557015923438739">"%1$d seleccionado"</item>
+    <item quantity="other" msgid="3562299676983425193">"%1$d seleccionados"</item>
   </plurals>
     <string name="show_on_map" msgid="1986264085815015696">"Mostrar en el mapa"</string>
-    <string name="rotate_left" msgid="6719855780237705569">"Rotar hacia la izquierda"</string>
-    <string name="rotate_right" msgid="8558343437940821771">"Rotar hacia la derecha"</string>
+    <string name="rotate_left" msgid="6719855780237705569">"Girar a la izquierda"</string>
+    <string name="rotate_right" msgid="8558343437940821771">"Girar a la derecha"</string>
     <string name="no_such_item" msgid="8109733824863145928">"No se pudo encontrar el elemento."</string>
     <string name="edit" msgid="8457904262004517151">"Editar"</string>
     <string name="simple_edit" msgid="7167857524719035134">"Edición simple"</string>
     <string name="process_caching_requests" msgid="6521997636837045412">"Procesando solicitudes de almacenamiento en caché"</string>
-    <string name="caching_label" msgid="6581817666800160995">"Alm. en caché"</string>
+    <string name="caching_label" msgid="6581817666800160995">"Almacenando…"</string>
     <string name="crop_action" msgid="3281088975169422593">"Recortar"</string>
     <string name="trim_action" msgid="1912063594235898890">"Recortar"</string>
     <string name="mute_action" msgid="6523005634451795344">"Silenciar"</string>
@@ -102,7 +102,7 @@
     <string name="group_by_faces" msgid="3460585100434719851">"Por persona"</string>
     <string name="group_by_album" msgid="518334663451373758">"Por álbum"</string>
     <string name="group_by_size" msgid="3086722779025599249">"Por tamaño"</string>
-    <string name="untagged" msgid="4213803874762026102">"No etiquetadas"</string>
+    <string name="untagged" msgid="4213803874762026102">"Sin etiquetas"</string>
     <string name="no_location" msgid="4077330169715063726">"Sin ubicación"</string>
     <string name="no_connectivity" msgid="1400890066380537843">"No se pudieron identificar algunas ubicaciones debido a problemas de la red."</string>
     <string name="sync_album_error" msgid="3635184059175668833">"No se pudieron descargar las fotos de este álbum. Vuelve a intentarlo más tarde."</string>
@@ -135,12 +135,12 @@
     <string name="flash" msgid="8875025367055499744">"Flash"</string>
     <string name="aperture" msgid="4049918471495099840">"Apertura"</string>
     <string name="focal_length" msgid="7208863566011453148">"Longitud focal"</string>
-    <string name="white_balance" msgid="2638519262687012770">"Balan. blancos"</string>
-    <string name="exposure_time" msgid="6992897250021008387">"Tiem. exposic."</string>
+    <string name="white_balance" msgid="2638519262687012770">"Balance blanco"</string>
+    <string name="exposure_time" msgid="6992897250021008387">"Tiempo exposic"</string>
     <string name="iso" msgid="4909058434077568534">"ISO"</string>
     <string name="unit_mm" msgid="1893537204908056363">"mm"</string>
     <string name="manual" msgid="7862595820452711108">"Manual"</string>
-    <string name="auto" msgid="6792260257128968793">"Auto"</string>
+    <string name="auto" msgid="6792260257128968793">"Automát."</string>
     <string name="flash_on" msgid="4053187950402210000">"Flash activado"</string>
     <string name="flash_off" msgid="7313393221333362406">"Sin flash"</string>
     <string name="unknown" msgid="2211992216750845926">"Desconocido"</string>
@@ -150,13 +150,13 @@
     <string name="ffx_bleach" msgid="2202542296041511846">"Decolorar"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Azul"</string>
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"B/N"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Punch"</string>
+    <string name="ffx_punch" msgid="5506629527921353460">"Ponche"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"Proceso X"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Café leche"</string>
+    <string name="ffx_washout" msgid="6941478261736953916">"Tostado"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litografía"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Permitiendo álbum disponible sin conexión"</item>
-    <item quantity="other" msgid="5124932962621695590">"Permitiendo álbumes disponibles sin conexión"</item>
+    <item quantity="one" msgid="9028798463216468312">"Habilitando disponibilidad de álbum sin conexión"</item>
+    <item quantity="other" msgid="5124932962621695590">"Habilitando disponibilidad de álbumes sin conexión"</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"Este elemento se guardó de manera local y se encuentra disponible sin conexión."</string>
     <string name="set_label_all_albums" msgid="6609415760077097893">"Todos los álbumes"</string>
@@ -164,8 +164,8 @@
     <string name="set_label_mtp_devices" msgid="4247105968633555252">"Dispositivos MTP"</string>
     <string name="set_label_picasa_albums" msgid="1648813072177988748">"Álbumes de Picasa"</string>
     <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> libres"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> o inferior"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> o superior"</string>
+    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> o menos"</string>
+    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> o más"</string>
     <string name="size_between" msgid="2266484752949196814">"De <xliff:g id="MIN_SIZE">%1$s</xliff:g> a <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="7415409432995200645">"Importar"</string>
     <string name="import_complete" msgid="6772771659359964875">"Importación completa"</string>
@@ -174,7 +174,7 @@
     <string name="camera_disconnected" msgid="7879070561053748598">"Se desconectó la cámara."</string>
     <string name="click_import" msgid="5153823057201280612">"Toca aquí para importar."</string>
     <string name="widget_type_album" msgid="8649890012992069317">"Elegir un álbum"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"Reproducir imágenes aleator."</string>
+    <string name="widget_type_shuffle" msgid="3813327035908882115">"Mostrar imágenes aleatoriamen."</string>
     <string name="widget_type_photo" msgid="2237017593844917491">"Elegir una imagen"</string>
     <string name="widget_type" msgid="1607279427350645903">"Elegir imágenes"</string>
     <string name="slideshow_dream_name" msgid="2358714399417036646">"Presen. diapositivas"</string>
@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Espera un momento."</string>
     <string name="save_into" msgid="3800886260514315436">"Guardando video en <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"No se puede recortar. El video de destino es demasiado corto."</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"Procesando foto panorámica"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Procesando foto esférica"</string>
     <string name="save" msgid="4522918253523037970">"Guardar"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Examinando contenido…"</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -220,7 +220,7 @@
     <string name="camera_disabled" msgid="4927328535752421596">"Se inhabilitó la cámara por políticas de seguridad."</string>
     <string name="camera_label" msgid="8822012181326078626">"Cámara"</string>
     <string name="wait" msgid="2081747495953883435">"Espera…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Activa el almacenamiento USB antes de usar la cámara."</string>
+    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Conecta el almacenamiento USB antes de usar la cámara."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Inserta una tarjeta SD antes de usar la cámara."</string>
     <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Preparando almacenamiento USB…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"Preparando tarjeta SD…"</string>
@@ -241,7 +241,7 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Pitido en cuenta"</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Sonido en cuenta"</string>
     <string name="setting_off" msgid="3321226648786639381">"Desactivada"</string>
     <string name="setting_on" msgid="6658320155242340595">"Activada"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Calidad del video"</string>
@@ -251,27 +251,27 @@
     <string name="pref_camera_settings_category" msgid="4286755118301278593">"Configuración de la cámara"</string>
     <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Configuración de cámara de video"</string>
     <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Tamaño de imagen"</string>
-    <string name="pref_camera_picturesize_entry_13mp" msgid="3084140665950405601">"13 MP"</string>
-    <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"8 MP"</string>
-    <string name="pref_camera_picturesize_entry_5mp" msgid="8813718385379530965">"5 MP"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="8546276478576735924">"4 MP"</string>
-    <string name="pref_camera_picturesize_entry_3mp" msgid="6233692859150247237">"3 MP"</string>
-    <string name="pref_camera_picturesize_entry_2mp" msgid="542341433431186453">"2 MP"</string>
+    <string name="pref_camera_picturesize_entry_13mp" msgid="3084140665950405601">"13 megapíxeles"</string>
+    <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"8 megapíxeles"</string>
+    <string name="pref_camera_picturesize_entry_5mp" msgid="8813718385379530965">"5 megapíxeles"</string>
+    <string name="pref_camera_picturesize_entry_4mp" msgid="8546276478576735924">"4 megapíxeles"</string>
+    <string name="pref_camera_picturesize_entry_3mp" msgid="6233692859150247237">"3 megapíxeles"</string>
+    <string name="pref_camera_picturesize_entry_2mp" msgid="542341433431186453">"2 megapíxeles"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="607495602129189476">"2 MP (16:9)"</string>
-    <string name="pref_camera_picturesize_entry_1_3mp" msgid="2279105572299544416">"1,3 MP"</string>
-    <string name="pref_camera_picturesize_entry_1mp" msgid="4015199907773658431">"1 MP"</string>
+    <string name="pref_camera_picturesize_entry_1_3mp" msgid="2279105572299544416">"1,3 megapíxeles"</string>
+    <string name="pref_camera_picturesize_entry_1mp" msgid="4015199907773658431">"1 megapíxel"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="5417241189390562935">"VGA"</string>
     <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Modo de enfoque"</string>
-    <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Automático"</string>
+    <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Automát."</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Infinito"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"Macro"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"AUTOMÁTICO"</string>
     <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"INFINITO"</string>
     <string name="pref_camera_focusmode_label_macro" msgid="4573817863140007172">"MACRO"</string>
-    <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Modo de flash"</string>
-    <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"MODO DE FLASH"</string>
-    <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"Automático"</string>
+    <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Modo Flash"</string>
+    <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"MODO FLASH"</string>
+    <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"Automát."</string>
     <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Activar"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Desactivar"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="3099050003430647170">"FLASH AUTOMÁTICO"</string>
@@ -279,7 +279,7 @@
     <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"FLASH DESACTIVADO"</string>
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Balance de blancos"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"BALANCE DE BLANCOS"</string>
-    <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Automático"</string>
+    <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Automát."</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Incandescente"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Luz natural"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Fluorescente"</string>
@@ -289,8 +289,8 @@
     <string name="pref_camera_whitebalance_label_daylight" msgid="3554450557101127960">"LUZ NATURAL"</string>
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"FLUORESCENTE"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"NUBLADO"</string>
-    <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Modo panorámico"</string>
-    <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automático"</string>
+    <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Modo Escena"</string>
+    <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automát."</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Acción"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Noche"</string>
@@ -307,7 +307,7 @@
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SEGUNDOS"</string>
     <string name="pref_camera_countdown_label_ten" msgid="8259680166571641702">"10 SEGUNDOS"</string>
     <string name="pref_camera_countdown_label_fifteen" msgid="2251170484933984740">"15 SEGUNDOS"</string>
-    <string name="not_selectable_in_scene_mode" msgid="4186538577214404106">"No se puede seleccionar en el modo panorámico."</string>
+    <string name="not_selectable_in_scene_mode" msgid="4186538577214404106">"No se puede seleccionar en el modo Escena."</string>
     <string name="pref_exposure_title" msgid="5211801488740367403">"Exposición"</string>
     <string name="pref_exposure_label" msgid="5586132867242336300">"EXPOSICIÓN"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
@@ -417,7 +417,7 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Listo"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Establecer intervalo de tiempo"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"La función de intervalo de tiempo está desactivada. Actívala para definir el intervalo de tiempo."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"El temporizador de cuenta regresiva está desactivado. Actívalo en la cuenta regresiva antes de tomar una foto."</string>
+    <string name="set_timer_help" msgid="5221481839846083210">"El temporizador de cuenta regresiva está desactivado. Actívalo para contar los segundos antes de tomar una foto."</string>
     <string name="set_duration" msgid="7425045408900251919">"Configurar la duración en segundos"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Cuenta regresiva para tomar una foto"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"¿Recordar ubicaciones de las fotos?"</string>
