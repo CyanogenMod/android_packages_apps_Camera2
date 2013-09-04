@@ -230,38 +230,37 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onCurrentDataChanged(int dataID, boolean current) {
-                    if (!current) {
-                        hidePanoStitchingProgress();
-                    } else {
-                        LocalData currentData = mDataAdapter.getLocalData(dataID);
-                        if (currentData == null) {
-                            Log.w(TAG, "Current data ID not found.");
-                            hidePanoStitchingProgress();
-                            return;
-                        }
+                public void onCurrentDataChanged(final int dataID, final boolean current) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!current) {
+                                hidePanoStitchingProgress();
+                            } else {
+                                LocalData currentData = mDataAdapter.getLocalData(dataID);
+                                if (currentData == null) {
+                                    Log.w(TAG, "Current data ID not found.");
+                                    hidePanoStitchingProgress();
+                                    return;
+                                }
+                                updateActionBarMenu(dataID);
 
-                        if (currentData.getLocalDataType() ==
-                                LocalData.LOCAL_CAMERA_PREVIEW) {
-                            // Don't show the action bar in Camera preview.
-                            mActionBar.hide();
-                        } else {
-                            updateActionBarMenu(dataID);
+                                Uri contentUri = currentData.getContentUri();
+                                if (contentUri == null) {
+                                    hidePanoStitchingProgress();
+                                    return;
+                                }
+                                int panoStitchingProgress = mPanoramaManager.getTaskProgress(
+                                    contentUri);
+                                if (panoStitchingProgress < 0) {
+                                    hidePanoStitchingProgress();
+                                    return;
+                                }
+                                showPanoStitchingProgress();
+                                updateStitchingProgress(panoStitchingProgress);
+                            }
                         }
-
-                        Uri contentUri = currentData.getContentUri();
-                        if (contentUri == null) {
-                            hidePanoStitchingProgress();
-                            return;
-                        }
-                        int panoStitchingProgress = mPanoramaManager.getTaskProgress(contentUri);
-                        if (panoStitchingProgress < 0) {
-                            hidePanoStitchingProgress();
-                            return;
-                        }
-                        showPanoStitchingProgress();
-                        updateStitchingProgress(panoStitchingProgress);
-                    }
+                    });
                 }
 
                 @Override
@@ -369,13 +368,34 @@ public class CameraActivity extends Activity
         setMenuItemVisible(mActionBarMenu, R.id.action_trim,
                 (supported & SUPPORT_TRIM) != 0);
 
-        if ((supported & SUPPORT_SHARE) != 0) {
-            setMenuItemVisible(mActionBarMenu, R.id.action_share, true);
-            setStandardShareIntent(currentData.getContentUri(), currentData.getMimeType());
-        }
-        if ((supported & SUPPORT_SHARE_PANORAMA360) != 0) {
-            setMenuItemVisible(mActionBarMenu, R.id.action_share_panorama, true);
+        boolean standardShare = (supported & SUPPORT_SHARE) != 0;
+        boolean panoramaShare = (supported & SUPPORT_SHARE_PANORAMA360) != 0;
+        setMenuItemVisible(mActionBarMenu, R.id.action_share, standardShare);
+        setMenuItemVisible(mActionBarMenu, R.id.action_share_panorama, panoramaShare);
+
+        if (panoramaShare) {
+            // For 360 PhotoSphere, relegate standard share to the overflow menu
+            MenuItem item = mActionBarMenu.findItem(R.id.action_share);
+            if (item != null) {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                item.setTitle(getResources().getString(R.string.share_as_photo));
+            }
+            // And, promote "share as panorama" to action bar
+            item = mActionBarMenu.findItem(R.id.action_share_panorama);
+            if (item != null) {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            }
             setPanoramaShareIntent(currentData.getContentUri());
+        }
+        if (standardShare) {
+            if (!panoramaShare) {
+                MenuItem item = mActionBarMenu.findItem(R.id.action_share);
+                if (item != null) {
+                    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                    item.setTitle(getResources().getString(R.string.share));
+                }
+            }
+            setStandardShareIntent(currentData.getContentUri(), currentData.getMimeType());
         }
 
         boolean itemHasLocation = currentData.getLatLong() != null;
@@ -496,6 +516,7 @@ public class CameraActivity extends Activity
         // Configure the standard share action provider
         MenuItem item = menu.findItem(R.id.action_share);
         mStandardShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        mStandardShareActionProvider.setShareHistoryFileName("standard_share_history.xml");
         if (mStandardShareIntent != null) {
             mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
         }
@@ -503,6 +524,7 @@ public class CameraActivity extends Activity
         // Configure the panorama share action provider
         item = menu.findItem(R.id.action_share_panorama);
         mPanoramaShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        mPanoramaShareActionProvider.setShareHistoryFileName("panorama_share_history.xml");
         if (mPanoramaShareIntent != null) {
             mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
         }
