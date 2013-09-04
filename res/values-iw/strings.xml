@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"המתן"</string>
     <string name="save_into" msgid="3800886260514315436">"שומר את הסרטון ב-<xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"לא ניתן לקצר: סרטון היעד קצר מדי"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"מעבד את צילום ה-Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"שמור"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"סורק תוכן..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -233,7 +232,7 @@
     <string name="pref_camera_id_title" msgid="8027686978170301915">"בחר מצלמה"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"אחורית"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"חזיתית"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"אחסן מיקום"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"מיקום אחסון"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"מיקום"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"טיימר לספירה לאחור"</string>
   <plurals name="pref_camera_timer_entry">
@@ -283,12 +282,12 @@
     <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"אוטומטי"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"זוהר"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"אור יום"</string>
-    <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"פלואורסנט"</string>
+    <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"פלורסנט"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3695152185934196085">"מעונן"</string>
     <string name="pref_camera_whitebalance_label_auto" msgid="1152472201811061031">"אוטומטי"</string>
     <string name="pref_camera_whitebalance_label_incandescent" msgid="8920127934705255947">"זוהר"</string>
     <string name="pref_camera_whitebalance_label_daylight" msgid="3554450557101127960">"אור יום"</string>
-    <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"פלואורסנט"</string>
+    <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"פלורסנט"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"מעונן"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"מצב נוף"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"אוטומטי"</string>
@@ -298,7 +297,7 @@
     <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"שקיעה"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="2053177794948141241">"מסיבה"</string>
     <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"ללא"</string>
-    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"פעולה"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"תנועה"</string>
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"לילה"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"שקיעה"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"מסיבה"</string>
@@ -422,7 +421,7 @@
     <string name="set_duration" msgid="7425045408900251919">"הגדר משך זמן בשניות"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"סופר לאחור עד לצילום תמונה"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"האם לזכור מיקומי תמונות?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"תייג את התמונות והסרטונים שלך לציון המקומות שבהם צולמו.\n\nאפליקציות אחרות יכולים לגשת למידע זה, כולל תמונות שנשמרו."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"תייג את התמונות והסרטונים שלך לציון המקומות שבהם צולמו.\n\nאפליקציות אחרות יכולות לגשת למידע זה, כולל תמונות שנשמרו."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"לא תודה"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"כן"</string>
     <string name="menu_camera" msgid="1910174810571362219">"מצלמה"</string>

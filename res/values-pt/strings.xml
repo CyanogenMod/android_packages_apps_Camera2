@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Aguarde"</string>
     <string name="save_into" msgid="3800886260514315436">"Salvando vídeo em <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Impossível cortar: o vídeo de destino é curto demais"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Renderizando photo sphere"</string>
     <string name="save" msgid="4522918253523037970">"Salvar"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Verificando conteúdo…"</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -365,7 +364,7 @@
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Alternar para photo sphere"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Cancelar"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Revisão concluída"</string>
-    <string name="accessibility_review_retake" msgid="3256541538259494381">"Repetir anexo"</string>
+    <string name="accessibility_review_retake" msgid="3256541538259494381">"Repetir p/ anexo"</string>
     <string name="accessibility_play_video" msgid="7230042317349119408">"Reproduzir vídeo"</string>
     <string name="accessibility_pause_video" msgid="8737987643497056384">"Pausar vídeo"</string>
     <string name="accessibility_reload_video" msgid="7551133941501337910">"Atualizar vídeo"</string>

@@ -94,10 +94,10 @@
     <string name="trim_action" msgid="1912063594235898890">"Ritaglia"</string>
     <string name="mute_action" msgid="6523005634451795344">"Disattiva audio"</string>
     <string name="set_as" msgid="7362777416265059096">"Imposta come"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"Imposs. disattiv. audio video."</string>
-    <string name="video_err" msgid="6747342411484597130">"Impossibile riprodurre il video."</string>
+    <string name="video_mute_err" msgid="4955516955624461937">"Impossibile disattivare audio"</string>
+    <string name="video_err" msgid="6747342411484597130">"Impossibile riprodurre il video"</string>
     <string name="group_by_location" msgid="7885728085506867484">"Per luogo"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"Per orario"</string>
+    <string name="group_by_time" msgid="7606993606977133185">"Per data"</string>
     <string name="group_by_tags" msgid="6973485447235472857">"Per tag"</string>
     <string name="group_by_faces" msgid="3460585100434719851">"Per persone"</string>
     <string name="group_by_album" msgid="518334663451373758">"Per album"</string>
@@ -150,7 +150,7 @@
     <string name="ffx_bleach" msgid="2202542296041511846">"Bleach"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Blu"</string>
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"B/N"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Giallastro"</string>
+    <string name="ffx_punch" msgid="5506629527921353460">"Punch"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"X Process"</string>
     <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litografia"</string>
@@ -179,7 +179,7 @@
     <string name="widget_type" msgid="1607279427350645903">"Scegli immagini"</string>
     <string name="slideshow_dream_name" msgid="2358714399417036646">"Slideshow"</string>
     <string name="albums" msgid="7571656500475430599">"Album"</string>
-    <string name="times" msgid="4738095876364133181">"Orari"</string>
+    <string name="times" msgid="4738095876364133181">"Data"</string>
     <string name="locations" msgid="9050411755300802457">"Posizioni"</string>
     <string name="people" msgid="4059890005675672784">"Persone"</string>
     <string name="tags" msgid="1837044547733525409">"Tag"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Attendi"</string>
     <string name="save_into" msgid="3800886260514315436">"Salvataggio del video in <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Impossibile ritagliare: video di destinazione troppo breve"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Visualizzazione foto sferica"</string>
     <string name="save" msgid="4522918253523037970">"Salva"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Scansione dei contenuti..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -242,7 +241,7 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Bip conto alla rov."</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Bip conto alla rovescia"</string>
     <string name="setting_off" msgid="3321226648786639381">"Off"</string>
     <string name="setting_on" msgid="6658320155242340595">"On"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Qualità video"</string>
@@ -362,7 +361,7 @@
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Passa a foto"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Passa a video"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Passa a panorama"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Passa a Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Passa a foto sferica"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Annulla verifica"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Verifica terminata"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Scatta/Riprendi di nuovo per recensione"</string>
@@ -372,7 +371,7 @@
     <string name="accessibility_time_bar" msgid="2335246714845550375">"Barra temporale del video player"</string>
     <string name="capital_on" msgid="5840588038158274585">"ON"</string>
     <string name="capital_off" msgid="3199056669644846925">"OFF"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Off"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0,5 secondi"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 secondo"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="8931945040035127831">"1,5 secondi"</string>

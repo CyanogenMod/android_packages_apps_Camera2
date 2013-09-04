@@ -149,7 +149,7 @@
     <string name="ffx_instant" msgid="2789796369450602080">"Momentinis"</string>
     <string name="ffx_bleach" msgid="2202542296041511846">"Balinti"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Mėlynas"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"Nespalvotas"</string>
+    <string name="ffx_bw_contrast" msgid="2621607753472841297">"Nespalvot."</string>
     <string name="ffx_punch" msgid="5506629527921353460">"Gelsvas"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"Itin ryšku"</string>
     <string name="ffx_washout" msgid="6941478261736953916">"Latės sp."</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Palaukite"</string>
     <string name="save_into" msgid="3800886260514315436">"Vaizdo įrašas išsaugomas albume „<xliff:g id="ALBUM_NAME">%1$s</xliff:g>“…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Negalima apkarpyti: tikslinis vaizdo įrašas per trumpas"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Pateikiama „Photo Sphere“"</string>
     <string name="save" msgid="4522918253523037970">"Išsaugoti"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Nuskaitomas turinys…"</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -398,7 +397,7 @@
     <string name="pref_video_time_lapse_frame_interval_600000" msgid="262948882057819428">"10 minučių"</string>
     <string name="pref_video_time_lapse_frame_interval_720000" msgid="5025274021438060973">"12 minučių"</string>
     <string name="pref_video_time_lapse_frame_interval_900000" msgid="535122783273231729">"15 minučių"</string>
-    <string name="pref_video_time_lapse_frame_interval_1440000" msgid="1389025940394108838">"24 minučių"</string>
+    <string name="pref_video_time_lapse_frame_interval_1440000" msgid="1389025940394108838">"24 minutės"</string>
     <string name="pref_video_time_lapse_frame_interval_1800000" msgid="3960495676390536948">"0,5 valandos"</string>
     <string name="pref_video_time_lapse_frame_interval_3600000" msgid="4967310075272642117">"1 valanda"</string>
     <string name="pref_video_time_lapse_frame_interval_5400000" msgid="4381496945219954612">"1,5 valandos"</string>

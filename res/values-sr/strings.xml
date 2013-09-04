@@ -30,7 +30,7 @@
     <string name="fail_to_load" msgid="8207740590161925891">"Учитавање није могуће"</string>
     <string name="fail_to_load_image" msgid="3133435559287332979">"Није могуће учитати слику"</string>
     <string name="no_thumbnail" msgid="2070785115093266536">"Нема сличице"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"Почни опет"</string>
+    <string name="resume_playing_restart" msgid="7874418747024545675">"Почни испочетка"</string>
     <string name="crop_save_text" msgid="8249578825594306063">"Потврди"</string>
     <string name="ok" msgid="7771534786778882486">"Потврди"</string>
     <string name="multiface_crop_help" msgid="3096903739496991318">"Додирните неко лице за почетак."</string>
@@ -68,19 +68,19 @@
     <string name="close" msgid="7196876073399885123">"Затвори"</string>
     <string name="switch_to_camera" msgid="5252691793674565308">"Пребацивање на Камеру"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="629802015400399691">"Изабраних: %1$d"</item>
-    <item quantity="one" msgid="4283105620980058761">"Изабраних: %1$d"</item>
-    <item quantity="other" msgid="6433812272993337098">"Изабраних: %1$d"</item>
+    <item quantity="zero" msgid="629802015400399691">"Изабранo je %1$d"</item>
+    <item quantity="one" msgid="4283105620980058761">"Изабранa je %1$d"</item>
+    <item quantity="other" msgid="6433812272993337098">"Изабранo je %1$d"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="7322496523426352621">"Изабраних: %1$d"</item>
-    <item quantity="one" msgid="3571296348626418242">"Изабраних: %1$d"</item>
-    <item quantity="other" msgid="3103452138866993468">"Изабраних: %1$d"</item>
+    <item quantity="zero" msgid="7322496523426352621">"Изабрано је %1$d"</item>
+    <item quantity="one" msgid="3571296348626418242">"Изабран је %1$d"</item>
+    <item quantity="other" msgid="3103452138866993468">"Изабрано је %1$d"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="3312206920893882756">"Изабраних: %1$d"</item>
-    <item quantity="one" msgid="7749557015923438739">"Изабраних: %1$d"</item>
-    <item quantity="other" msgid="3562299676983425193">"Изабраних: %1$d"</item>
+    <item quantity="zero" msgid="3312206920893882756">"Изабранo je %1$d"</item>
+    <item quantity="one" msgid="7749557015923438739">"Изабранa je %1$d"</item>
+    <item quantity="other" msgid="3562299676983425193">"Изабранo je %1$d"</item>
   </plurals>
     <string name="show_on_map" msgid="1986264085815015696">"Прикажи на мапи"</string>
     <string name="rotate_left" msgid="6719855780237705569">"Ротирај налево"</string>
@@ -94,7 +94,7 @@
     <string name="trim_action" msgid="1912063594235898890">"Скрати"</string>
     <string name="mute_action" msgid="6523005634451795344">"Искључи звук"</string>
     <string name="set_as" msgid="7362777416265059096">"Постави као"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"Звук видеа не може да се искљ."</string>
+    <string name="video_mute_err" msgid="4955516955624461937">"Не може да се искључи звук."</string>
     <string name="video_err" msgid="6747342411484597130">"Није могуће пустити видео."</string>
     <string name="group_by_location" msgid="7885728085506867484">"Према локацији"</string>
     <string name="group_by_time" msgid="7606993606977133185">"Према времену"</string>
@@ -126,7 +126,7 @@
     <string name="path" msgid="7641372546343443225">"Путања"</string>
     <string name="width" msgid="4689895076320623907">"Ширина"</string>
     <string name="height" msgid="3982701549798669179">"Висина"</string>
-    <string name="orientation" msgid="6270421867039429826">"Оријентација"</string>
+    <string name="orientation" msgid="6270421867039429826">"Положај"</string>
     <string name="duration" msgid="1998783741258561149">"Трајање"</string>
     <string name="mimetype" msgid="2655949175201126964">"MIME тип"</string>
     <string name="file_size" msgid="624610858632029292">"Велич. датот."</string>
@@ -167,7 +167,7 @@
     <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> или мање"</string>
     <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> или више"</string>
     <string name="size_between" msgid="2266484752949196814">"Од <xliff:g id="MIN_SIZE">%1$s</xliff:g> до <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"Увоз"</string>
+    <string name="Import" msgid="7415409432995200645">"Увeзи"</string>
     <string name="import_complete" msgid="6772771659359964875">"Увоз је довршен"</string>
     <string name="import_fail" msgid="5162454276035072428">"Увоз није успео"</string>
     <string name="camera_connected" msgid="5972302349448026591">"Камера је прикључена."</string>
@@ -176,7 +176,7 @@
     <string name="widget_type_album" msgid="8649890012992069317">"Изабери албум"</string>
     <string name="widget_type_shuffle" msgid="3813327035908882115">"Пусти све слике насумично"</string>
     <string name="widget_type_photo" msgid="2237017593844917491">"Изабери слику"</string>
-    <string name="widget_type" msgid="1607279427350645903">"Избор слика"</string>
+    <string name="widget_type" msgid="1607279427350645903">"Изаберите слике"</string>
     <string name="slideshow_dream_name" msgid="2358714399417036646">"Пројекција слајдова"</string>
     <string name="albums" msgid="7571656500475430599">"Албуми"</string>
     <string name="times" msgid="4738095876364133181">"Времена"</string>
@@ -202,14 +202,13 @@
     <string name="please_wait" msgid="99283054995831377">"Сачекајте"</string>
     <string name="save_into" msgid="3800886260514315436">"Чување видео снимка у албум <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Скраћивање није могуће: Циљни видео је прекратак"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Приказивање фото-сфере"</string>
     <string name="save" msgid="4522918253523037970">"Сачувај"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Скенирање садржаја..."</string>
   <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"Скенираних ставки: %1$d"</item>
+    <item quantity="zero" msgid="2098511451971912797">"Скенирано је %1$d ставки"</item>
     <item quantity="one" msgid="6118751779386608938">"Скенирана је %1$d ставка"</item>
-    <item quantity="other" msgid="1091937586315173697">"Скенираних ставки: %1$d"</item>
+    <item quantity="other" msgid="1091937586315173697">"Скенирано је %1$d ставки."</item>
   </plurals>
     <string name="ingest_sorting" msgid="8879954253826159484">"Сортирање..."</string>
     <string name="ingest_scanning_done" msgid="6058944721856901890">"Скенирање је завршено"</string>
@@ -231,8 +230,8 @@
     <string name="review_ok" msgid="4229133003029778558">"ГОТОВО"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"Снимањe у дужем интервалу"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Избор камере"</string>
-    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Назад"</string>
-    <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Напред"</string>
+    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Задња"</string>
+    <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Предња"</string>
     <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Складишти локацију"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"ЛОКАЦИЈА"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"Тајмер за одбројавање"</string>
@@ -273,11 +272,11 @@
     <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Режим блица"</string>
     <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"РЕЖИМ БЛИЦА"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"Аутоматски"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Укључи"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Искључи"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Укључен"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Искључен"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="3099050003430647170">"АУТОМАТСКИ БЛИЦ"</string>
-    <string name="pref_camera_flashmode_label_on" msgid="2719503527558187559">"УКЉУЧИ БЛИЦ"</string>
-    <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"ИСКЉУЧИ БЛИЦ"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="2719503527558187559">"УКЉУЧЕН БЛИЦ"</string>
+    <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"ИСКЉУЧЕН БЛИЦ"</string>
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Баланс беле"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"БАЛАНС БЕЛЕ"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Аутоматски"</string>
@@ -362,16 +361,16 @@
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Пребаци на слику"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Пребаци на видео"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Пребаци на панораму"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Пребаци на Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Пребаци на фото-сферу"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Откажи преглед"</string>
-    <string name="accessibility_review_ok" msgid="1919818908740908312">"Доврши преглед"</string>
+    <string name="accessibility_review_ok" msgid="1919818908740908312">"Преглед је готов"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Поново сними за преглед"</string>
     <string name="accessibility_play_video" msgid="7230042317349119408">"Пусти видео"</string>
     <string name="accessibility_pause_video" msgid="8737987643497056384">"Паузирај видео"</string>
     <string name="accessibility_reload_video" msgid="7551133941501337910">"Поново учитај видео"</string>
     <string name="accessibility_time_bar" msgid="2335246714845550375">"Трака за време видео плејера"</string>
-    <string name="capital_on" msgid="5840588038158274585">"УКЉУЧИ"</string>
-    <string name="capital_off" msgid="3199056669644846925">"ИСКЉУЧИ"</string>
+    <string name="capital_on" msgid="5840588038158274585">"УКЉ."</string>
+    <string name="capital_off" msgid="3199056669644846925">"ИСКЉ."</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Искључено"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0,5 секунди"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 секунда"</string>

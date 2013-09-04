@@ -34,7 +34,7 @@
     <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
     <string name="ok" msgid="7771534786778882486">"OK"</string>
     <string name="multiface_crop_help" msgid="3096903739496991318">"Tryk på et ansigt for at begynde."</string>
-    <string name="saving_image" msgid="4305990779779942817">"Billede gemmes..."</string>
+    <string name="saving_image" msgid="4305990779779942817">"Gemmer billede..."</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Billedet gemmes i <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="save_error" msgid="1170362488191167076">"Det beskårne billede kunne ikke gemmes."</string>
     <string name="crop_label" msgid="8114305803169123050">"Beskær billede"</string>
@@ -88,11 +88,11 @@
     <string name="no_such_item" msgid="8109733824863145928">"Elementet blev ikke fundet."</string>
     <string name="edit" msgid="8457904262004517151">"Redigér"</string>
     <string name="simple_edit" msgid="7167857524719035134">"Simpel redigering"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"Anmodninger om cachelagring behandles"</string>
+    <string name="process_caching_requests" msgid="6521997636837045412">"Behandler anmodninger om cachelagring"</string>
     <string name="caching_label" msgid="6581817666800160995">"Cachelagrer..."</string>
     <string name="crop_action" msgid="3281088975169422593">"Beskær"</string>
     <string name="trim_action" msgid="1912063594235898890">"Beskær"</string>
-    <string name="mute_action" msgid="6523005634451795344">"Lyd fra"</string>
+    <string name="mute_action" msgid="6523005634451795344">"Slå lyden fra"</string>
     <string name="set_as" msgid="7362777416265059096">"Angiv som"</string>
     <string name="video_mute_err" msgid="4955516955624461937">"Videolyden kan ikke slås fra."</string>
     <string name="video_err" msgid="6747342411484597130">"Videoen kan ikke afspilles."</string>
@@ -136,27 +136,27 @@
     <string name="aperture" msgid="4049918471495099840">"Blænde"</string>
     <string name="focal_length" msgid="7208863566011453148">"Fokuslængde"</string>
     <string name="white_balance" msgid="2638519262687012770">"Hvidbalance"</string>
-    <string name="exposure_time" msgid="6992897250021008387">"Eksponeringstid"</string>
+    <string name="exposure_time" msgid="6992897250021008387">"Eksp. tid"</string>
     <string name="iso" msgid="4909058434077568534">"ISO"</string>
     <string name="unit_mm" msgid="1893537204908056363">"mm"</string>
     <string name="manual" msgid="7862595820452711108">"Manuel"</string>
     <string name="auto" msgid="6792260257128968793">"Auto."</string>
     <string name="flash_on" msgid="4053187950402210000">"Blitz affyret"</string>
     <string name="flash_off" msgid="7313393221333362406">"Ingen blitz"</string>
-    <string name="unknown" msgid="2211992216750845926">"Unknown"</string>
+    <string name="unknown" msgid="2211992216750845926">"Ukendt"</string>
     <string name="ffx_original" msgid="549901223077566047">"Original"</string>
     <string name="ffx_vintage" msgid="4873569709320076102">"Vintage"</string>
     <string name="ffx_instant" msgid="2789796369450602080">"Øjeblikkelig"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"Afbleget"</string>
+    <string name="ffx_bleach" msgid="2202542296041511846">"Afbleg"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Blå"</string>
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"Sort/hvid"</string>
     <string name="ffx_punch" msgid="5506629527921353460">"Punch"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"X Process"</string>
+    <string name="ffx_x_process" msgid="3726293897101289705">"X Fremkald"</string>
     <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Gør albummet tilgængeligt offline."</item>
-    <item quantity="other" msgid="5124932962621695590">"Gør albummer tilgængelige offline."</item>
+    <item quantity="one" msgid="9028798463216468312">"Albummet er gjort tilgængeligt offline."</item>
+    <item quantity="other" msgid="5124932962621695590">"Albummer er gjort tilgængelige offline."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"Dette element er gemt lokalt og er tilgængeligt offline."</string>
     <string name="set_label_all_albums" msgid="6609415760077097893">"Alle album"</string>
@@ -194,16 +194,15 @@
     <string name="help" msgid="2528548040829796056">"Hjælp"</string>
     <string name="no_external_storage_title" msgid="8762156252392350944">"Intet lager"</string>
     <string name="no_external_storage" msgid="9150100688259295300">"Intet tilgængeligt eksternt lager"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmstrip-visning"</string>
+    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmstrimmel-visning"</string>
     <string name="switch_photo_grid" msgid="3024831878595067734">"Gittervisning"</string>
     <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Visning i fuld skærm"</string>
     <string name="trimming" msgid="3297452940449729243">"Beskæring"</string>
     <string name="muting" msgid="4406071974811026243">"Slår lyden fra"</string>
     <string name="please_wait" msgid="99283054995831377">"Vent"</string>
-    <string name="save_into" msgid="3800886260514315436">"Videoen gemmes i <xliff:g id="ALBUM_NAME">%1$s</xliff:g>..."</string>
+    <string name="save_into" msgid="3800886260514315436">"Gemmer videoen i <xliff:g id="ALBUM_NAME">%1$s</xliff:g>..."</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Der kan ikke beskæres – målvideoen er for kort"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Gengiver billedboble"</string>
     <string name="save" msgid="4522918253523037970">"Gem"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Indhold scannes..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -223,8 +222,8 @@
     <string name="wait" msgid="2081747495953883435">"Vent…"</string>
     <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Isæt USB-lager, før du tager kameraet i brug."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Indsæt et SD-kort, før kameraet tages i brug."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"USB-lagring forberedes…"</string>
-    <string name="preparing_sd" product="default" msgid="5062635071578247325">"SD-kort forberedes..."</string>
+    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Forbereder USB-lagring"</string>
+    <string name="preparing_sd" product="default" msgid="5062635071578247325">"Forbereder SD-kort..."</string>
     <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"Der kunne ikke fås adgang til USB-lagring."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Der kunne ikke fås adgang til SD-kortet."</string>
     <string name="review_cancel" msgid="4681578987722865410">"ANNULLER"</string>
@@ -250,8 +249,8 @@
     <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Lav"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Tidsforløb"</string>
     <string name="pref_camera_settings_category" msgid="4286755118301278593">"Kameraindstillinger"</string>
-    <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Indstillinger for videokamera"</string>
-    <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Skærmstørrelse"</string>
+    <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Indstillinger for Videokamera"</string>
+    <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Billedstørrelse"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="3084140665950405601">"13 megapixels"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"8 megapixels"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="8813718385379530965">"5 megapixels"</string>
@@ -265,7 +264,7 @@
     <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Fokustilstand"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Automatisk"</string>
-    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Uendelighed"</string>
+    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Uendeligt"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"Makro"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"AUTOMATISK"</string>
     <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"UENDELIGT"</string>
@@ -281,7 +280,7 @@
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Hvidbalance"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"HVIDBALANCE"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Automatisk"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Glødepære"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Blødt lys"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Dagslys"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Hårdt lys"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3695152185934196085">"Overskyet"</string>
@@ -290,15 +289,15 @@
     <string name="pref_camera_whitebalance_label_daylight" msgid="3554450557101127960">"DAGSLYS"</string>
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"HÅRDT LYS"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"OVERSKYET"</string>
-    <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Scenetilstand"</string>
+    <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Motivtilstand"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automatisk"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Handling"</string>
-    <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Aften"</string>
+    <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Nat"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Solnedgang"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="2053177794948141241">"Fest"</string>
     <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"INGEN"</string>
-    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"HANDLING"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"ACTION"</string>
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NAT"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"SOLNEDGANG"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"FEST"</string>
@@ -327,7 +326,7 @@
     <string name="pano_capture_indication" msgid="6826745806103872825">"Optagelse af panorama"</string>
     <string name="pano_dialog_waiting_previous" msgid="1379192572905837403">"Venter på et tidligere panoramabillede"</string>
     <string name="pano_review_saving_indication_str" msgid="7006233508921435129">"Gemmer..."</string>
-    <string name="pano_review_rendering" msgid="7712584259126188763">"Panoramabilledet gengives"</string>
+    <string name="pano_review_rendering" msgid="7712584259126188763">"Gengiver panoramabilledet"</string>
     <string name="tap_to_focus" msgid="3031819623593720463">"Tryk for at fokusere."</string>
     <string name="pref_video_effect_title" msgid="2371174223707366255">"Effekter"</string>
     <string name="effect_none" msgid="1026487463817289779">"Ingen"</string>
@@ -418,10 +417,10 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Færdig"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Angiv tidsinterval"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Funktionen Tidsforløb er deaktiveret. Aktivér den for at indstille tidsintervallet."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"Nedtællingsur er slukket. Slå den til for at tælle ned, før du tager et billede."</string>
+    <string name="set_timer_help" msgid="5221481839846083210">"Nedtællingsur er slukket. Slå det til for at tælle ned, før du tager et billede."</string>
     <string name="set_duration" msgid="7425045408900251919">"Indstil varigheden i sekunder"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Der tælles ned for at tage et billede"</string>
-    <string name="remember_location_title" msgid="2290717227833540397">"Skal billedoplaceringer huskes?"</string>
+    <string name="remember_location_title" msgid="2290717227833540397">"Skal billedplaceringer huskes?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Tag dine billeder og videoer med de placeringer, hvor de blev taget.\n\nAndre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Nej tak"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Ja"</string>

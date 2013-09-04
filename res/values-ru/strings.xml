@@ -31,8 +31,8 @@
     <string name="fail_to_load_image" msgid="3133435559287332979">"Не удалось загрузить изображение"</string>
     <string name="no_thumbnail" msgid="2070785115093266536">"Уменьшенное изображение не найдено"</string>
     <string name="resume_playing_restart" msgid="7874418747024545675">"Начать заново"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
-    <string name="ok" msgid="7771534786778882486">"OK"</string>
+    <string name="crop_save_text" msgid="8249578825594306063">"ОК"</string>
+    <string name="ok" msgid="7771534786778882486">"ОК"</string>
     <string name="multiface_crop_help" msgid="3096903739496991318">"Нажмите на лицо, чтобы начать"</string>
     <string name="saving_image" msgid="4305990779779942817">"Сохранение изображения…"</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Сохранение в альбоме \"<xliff:g id="ALBUM_NAME">%1$s</xliff:g>\"…"</string>
@@ -122,7 +122,7 @@
     <string name="title" msgid="1465174588508188840">"Название"</string>
     <string name="description" msgid="7012551348834166615">"Описание"</string>
     <string name="time" msgid="53680310933472250">"Время"</string>
-    <string name="location" msgid="7836832588874777265">"Место съемки"</string>
+    <string name="location" msgid="7836832588874777265">"Место"</string>
     <string name="path" msgid="7641372546343443225">"Путь"</string>
     <string name="width" msgid="4689895076320623907">"Ширина"</string>
     <string name="height" msgid="3982701549798669179">"Высота"</string>
@@ -180,7 +180,7 @@
     <string name="slideshow_dream_name" msgid="2358714399417036646">"Слайд-шоу"</string>
     <string name="albums" msgid="7571656500475430599">"Альбомы"</string>
     <string name="times" msgid="4738095876364133181">"Дата съемки"</string>
-    <string name="locations" msgid="9050411755300802457">"Места съемки"</string>
+    <string name="locations" msgid="9050411755300802457">"Места"</string>
     <string name="people" msgid="4059890005675672784">"Люди"</string>
     <string name="tags" msgid="1837044547733525409">"Отметки"</string>
     <string name="group_by" msgid="7228838244265292454">"Группировать по"</string>
@@ -202,8 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Подождите…"</string>
     <string name="save_into" msgid="3800886260514315436">"Сохранение в альбом \"<xliff:g id="ALBUM_NAME">%1$s</xliff:g>\"…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Нельзя обрезать видео: оно слишком короткое"</string>
-    <!-- no translation found for rendering_photo_sphere (6767345449862157889) -->
-    <skip />
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Создание панорамы…"</string>
     <string name="save" msgid="4522918253523037970">"Сохранить"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Сканирование..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -316,7 +315,7 @@
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"ПЕРЕДНЯЯ КАМЕРА"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"ЗАДНЯЯ КАМЕРА"</string>
-    <string name="dialog_ok" msgid="8097436389338241320">"OK"</string>
+    <string name="dialog_ok" msgid="8097436389338241320">"ОК"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"Место на USB-накопителе заканчивается. Измените настройки качества или удалите ненужные файлы."</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"Место на вашей SD-карте заканчивается. Измените настройки качества или удалите ненужные файлы."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"Достигнут максимальный размер видео"</string>
@@ -422,7 +421,7 @@
     <string name="set_duration" msgid="7425045408900251919">"Время"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Обратный отсчет перед съемкой"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Сохранять место съемки?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"Укажите, где было сделано фото или видеозапись.\n\nЭта информация, а также сохраненные изображения будут доступны другим приложениям."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Укажите, где была сделана фотография или видеозапись.\n\nЭта информация, а также сохраненные изображения будут доступны другим приложениям."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Нет"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Да"</string>
     <string name="menu_camera" msgid="1910174810571362219">"Камера"</string>
