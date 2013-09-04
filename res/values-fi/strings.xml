@@ -16,385 +16,422 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="1928079047368929634">"Galleria"</string>
-    <string name="gadget_title" msgid="259405922673466798">"Valokuvakehys"</string>
-    <string name="details_ms" msgid="940634969189855292">"%1$02d.%2$02d"</string>
-    <string name="details_hms" msgid="3215779248094151255">"%1$d.%2$02d.%3$02d"</string>
-    <string name="movie_view_label" msgid="3526526872644898229">"Videosoitin"</string>
-    <string name="loading_video" msgid="4013492720121891585">"Ladataan videota…"</string>
-    <string name="loading_image" msgid="1200894415793838191">"Ladataan kuvaa..."</string>
-    <string name="loading_account" msgid="928195413034552034">"Tiliä ladataan..."</string>
-    <string name="resume_playing_title" msgid="8996677350649355013">"Jatka videon toistoa"</string>
-    <string name="resume_playing_message" msgid="5184414518126703481">"Jatketaanko toistoa kohdasta %s?"</string>
-    <string name="resume_playing_resume" msgid="3847915469173852416">"Jatka toistoa"</string>
-    <string name="loading" msgid="7038208555304563571">"Ladataan…"</string>
-    <string name="fail_to_load" msgid="8394392853646664505">"Ei voi ladata"</string>
-    <string name="fail_to_load_image" msgid="6155388718549782425">"Kuvaa ei voi ladata"</string>
-    <string name="no_thumbnail" msgid="284723185546429750">"Ei pikkukuvaa"</string>
-    <string name="resume_playing_restart" msgid="5471008499835769292">"Aloita alusta"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
-    <string name="ok" msgid="5296833083983263293">"OK"</string>
-    <string name="multiface_crop_help" msgid="2554690102655855657">"Aloita koskettamalla kasvoja."</string>
-    <string name="saving_image" msgid="7270334453636349407">"Tallennetaan kuvaa…"</string>
-    <string name="filtershow_saving_image" msgid="6659463980581993016">"Tallennetaan kuvaa albumiin <xliff:g id="ALBUM_NAME">%1$s</xliff:g>..."</string>
-    <string name="save_error" msgid="6857408774183654970">"Rajattua kuvaa ei voitu tallentaa."</string>
-    <string name="crop_label" msgid="521114301871349328">"Leikkaa kuvaa"</string>
-    <string name="trim_label" msgid="274203231381209979">"Lyhennä videota"</string>
-    <string name="select_image" msgid="7841406150484742140">"Valitse valokuva"</string>
-    <string name="select_video" msgid="4859510992798615076">"Valitse video"</string>
-    <string name="select_item" msgid="2816923896202086390">"Valitse kohde"</string>
-    <string name="select_album" msgid="1557063764849434077">"Valitse albumi"</string>
-    <string name="select_group" msgid="6744208543323307114">"Valitse ryhmä"</string>
-    <string name="set_image" msgid="2331476809308010401">"Aseta kuva"</string>
-    <string name="set_wallpaper" msgid="8491121226190175017">"Aseta taustakuva"</string>
-    <string name="wallpaper" msgid="140165383777262070">"Asetetaan taustakuvaa..."</string>
-    <string name="camera_setas_wallpaper" msgid="797463183863414289">"taustakuvaksi"</string>
-    <string name="delete" msgid="2839695998251824487">"Poista"</string>
+    <string name="app_name" msgid="8338864393568040722">"Kamera"</string>
+    <string name="details_ms" msgid="4368407634456462224">"%1$02d.%2$02d"</string>
+    <string name="details_hms" msgid="681695897098326459">"%1$d.%2$02d.%3$02d"</string>
+    <string name="movie_view_label" msgid="5418000271524694534">"Videosoitin"</string>
+    <string name="loading_video" msgid="7506410442678001647">"Ladataan videota…"</string>
+    <string name="loading_image" msgid="2060882673852072952">"Ladataan kuvaa…"</string>
+    <string name="loading_account" msgid="5905155935821293897">"Tiliä ladataan…"</string>
+    <string name="resume_playing_title" msgid="183661837882331054">"Jatka videon toistoa"</string>
+    <string name="resume_playing_message" msgid="2707046046147124277">"Jatketaanko toistoa kohdasta %s?"</string>
+    <string name="resume_playing_resume" msgid="4273369210087304227">"Jatka toistoa"</string>
+    <string name="loading" msgid="1780879367849478548">"Ladataan…"</string>
+    <string name="fail_to_load" msgid="8207740590161925891">"Ei voi ladata"</string>
+    <string name="fail_to_load_image" msgid="3133435559287332979">"Kuvaa ei voi ladata"</string>
+    <string name="no_thumbnail" msgid="2070785115093266536">"Ei pikkukuvaa"</string>
+    <string name="resume_playing_restart" msgid="7874418747024545675">"Aloita alusta"</string>
+    <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
+    <string name="ok" msgid="7771534786778882486">"OK"</string>
+    <string name="multiface_crop_help" msgid="3096903739496991318">"Aloita koskettamalla kasvoja."</string>
+    <string name="saving_image" msgid="4305990779779942817">"Tallennetaan kuvaa…"</string>
+    <string name="filtershow_saving_image" msgid="4744098915256700747">"Tallennetaan kuvaa albumiin <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
+    <string name="save_error" msgid="1170362488191167076">"Rajattua kuvaa ei voitu tallentaa."</string>
+    <string name="crop_label" msgid="8114305803169123050">"Rajaa kuvaa"</string>
+    <string name="trim_label" msgid="7369596929410798458">"Lyhennä videota"</string>
+    <string name="select_image" msgid="3289827722983995546">"Valitse kuva"</string>
+    <string name="select_video" msgid="882817436381543724">"Valitse video"</string>
+    <string name="select_item" msgid="2611103251995672148">"Valitse kohde"</string>
+    <string name="select_album" msgid="7946907074045669521">"Valitse albumi"</string>
+    <string name="select_group" msgid="7446238738711880170">"Valitse ryhmä"</string>
+    <string name="set_image" msgid="3011821258780340803">"Aseta kuva"</string>
+    <string name="set_wallpaper" msgid="4913071112864032079">"Aseta taustakuva"</string>
+    <string name="wallpaper" msgid="3542643990146620046">"Asetetaan taustakuvaa…"</string>
+    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Taustakuva"</string>
+    <string name="delete" msgid="7258764001896874869">"Poista"</string>
   <plurals name="delete_selection">
-    <item quantity="one" msgid="6453379735401083732">"Poistetaanko valittu kohde?"</item>
-    <item quantity="other" msgid="5874316486520635333">"Poistetaanko valitut kohteet?"</item>
+    <item quantity="one" msgid="2984228592820245170">"Poistetaanko valittu kohde?"</item>
+    <item quantity="other" msgid="882035505847338991">"Poistetaanko valitut kohteet?"</item>
   </plurals>
-    <string name="confirm" msgid="8646870096527848520">"Vahvista"</string>
-    <string name="cancel" msgid="3637516880917356226">"Peruuta"</string>
-    <string name="share" msgid="3619042788254195341">"Jaa"</string>
-    <string name="share_panorama" msgid="2569029972820978718">"Jaa panoraama"</string>
-    <string name="share_as_photo" msgid="8959225188897026149">"Jaa kuvana"</string>
-    <string name="deleted" msgid="6795433049119073871">"Poistettu"</string>
-    <string name="undo" msgid="2930873956446586313">"KUMOA"</string>
-    <string name="select_all" msgid="3403283025220282175">"Valitse kaikki"</string>
-    <string name="deselect_all" msgid="5758897506061723684">"Poista kaikki valinnat"</string>
-    <string name="slideshow" msgid="4355906903247112975">"Diaesitys"</string>
-    <string name="details" msgid="8415120088556445230">"Tiedot"</string>
-    <string name="details_title" msgid="2611396603977441273">"%1$d/%2$d kohdetta:"</string>
-    <string name="close" msgid="5585646033158453043">"Sulje"</string>
-    <string name="switch_to_camera" msgid="7280111806675169992">"Vaihda kameraan"</string>
+    <string name="confirm" msgid="6079809872780030117">"Vahvista"</string>
+    <string name="cancel" msgid="3709581234100450763">"Peruuta"</string>
+    <string name="share" msgid="319799706929863109">"Jaa"</string>
+    <string name="share_panorama" msgid="7488525470543070168">"Jaa panoraama"</string>
+    <string name="share_as_photo" msgid="8960831195285082544">"Jaa kuvana"</string>
+    <string name="deleted" msgid="1144434522200481802">"Poistettu"</string>
+    <string name="undo" msgid="7561810819827468379">"KUMOA"</string>
+    <string name="select_all" msgid="3201279798263252094">"Valitse kaikki"</string>
+    <string name="deselect_all" msgid="626233665600163037">"Poista kaikki valinnat"</string>
+    <string name="slideshow" msgid="6249043759236676662">"Diasarja"</string>
+    <string name="details" msgid="3581943734736871564">"Tiedot"</string>
+    <string name="details_title" msgid="681306416468138508">"%1$d/%2$d kohdetta:"</string>
+    <string name="close" msgid="7196876073399885123">"Sulje"</string>
+    <string name="switch_to_camera" msgid="5252691793674565308">"Vaihda kameraan"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="2142579311530586258">"%1$d valittu"</item>
-    <item quantity="one" msgid="2478365152745637768">"%1$d valittu"</item>
-    <item quantity="other" msgid="754722656147810487">"%1$d valittu"</item>
+    <item quantity="zero" msgid="629802015400399691">"%1$d valittu"</item>
+    <item quantity="one" msgid="4283105620980058761">"%1$d valittu"</item>
+    <item quantity="other" msgid="6433812272993337098">"%1$d valittu"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="749292746814788132">"%1$d valittu"</item>
-    <item quantity="one" msgid="6184377003099987825">"%1$d valittu"</item>
-    <item quantity="other" msgid="53105607141906130">"%1$d valittu"</item>
+    <item quantity="zero" msgid="7322496523426352621">"%1$d valittu"</item>
+    <item quantity="one" msgid="3571296348626418242">"%1$d valittu"</item>
+    <item quantity="other" msgid="3103452138866993468">"%1$d valittu"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="3466388370310869238">"%1$d valittu"</item>
-    <item quantity="one" msgid="5030162638216034260">"%1$d valittu"</item>
-    <item quantity="other" msgid="3512041363942842738">"%1$d valittu"</item>
+    <item quantity="zero" msgid="3312206920893882756">"%1$d valittu"</item>
+    <item quantity="one" msgid="7749557015923438739">"%1$d valittu"</item>
+    <item quantity="other" msgid="3562299676983425193">"%1$d valittu"</item>
   </plurals>
-    <string name="show_on_map" msgid="6157544221201750980">"Näytä kartalla"</string>
-    <string name="rotate_left" msgid="5888273317282539839">"Kierrä vastapäivään"</string>
-    <string name="rotate_right" msgid="6776325835923384839">"Kierrä myötäpäivään"</string>
-    <string name="no_such_item" msgid="5315144556325243400">"Kohdetta ei löytynyt."</string>
-    <string name="edit" msgid="1502273844748580847">"Muokkaa"</string>
-    <string name="process_caching_requests" msgid="8722939570307386071">"Käsitellään välimuistipyyntöjä"</string>
-    <string name="caching_label" msgid="4521059045896269095">"Vie välimuist."</string>
-    <string name="crop_action" msgid="3427470284074377001">"Rajaa"</string>
-    <string name="trim_action" msgid="703098114452883524">"Leikkaa"</string>
-    <string name="mute_action" msgid="5296241754753306251">"Mykistä"</string>
-    <string name="set_as" msgid="3636764710790507868">"Aseta"</string>
-    <string name="video_mute_err" msgid="6392457611270600908">"Videon mykistys epäonnistui."</string>
-    <string name="video_err" msgid="7003051631792271009">"Videon toistaminen epäonnistui."</string>
-    <string name="group_by_location" msgid="316641628989023253">"Sijainnin mukaan"</string>
-    <string name="group_by_time" msgid="9046168567717963573">"Ajan mukaan"</string>
-    <string name="group_by_tags" msgid="3568731317210676160">"Tunnisteiden mukaan"</string>
-    <string name="group_by_faces" msgid="1566351636227274906">"Ihmiset"</string>
-    <string name="group_by_album" msgid="1532818636053818958">"Albumin mukaan"</string>
-    <string name="group_by_size" msgid="153766174950394155">"Koon mukaan"</string>
-    <string name="untagged" msgid="7281481064509590402">"Merkitsemättömät"</string>
-    <string name="no_location" msgid="4043624857489331676">"Ei sijaintia"</string>
-    <string name="no_connectivity" msgid="7164037617297293668">"Verkkoyhteysongelma – joitakin paikkoja ei voi tunnistaa."</string>
-    <string name="sync_album_error" msgid="1020688062900977530">"Albumin valokuvia ei voi ladata. Yritä myöhemmin uudelleen."</string>
-    <string name="show_images_only" msgid="7263218480867672653">"Vain kuvat"</string>
-    <string name="show_videos_only" msgid="3850394623678871697">"Vain videot"</string>
-    <string name="show_all" msgid="6963292714584735149">"Kuvat ja videot"</string>
-    <string name="appwidget_title" msgid="6410561146863700411">"Kuvagalleria"</string>
-    <string name="appwidget_empty_text" msgid="1228925628357366957">"Ei valokuvia."</string>
-    <string name="crop_saved" msgid="1595985909779105158">"Rajattu kuva tallennettu kansioon <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="no_albums_alert" msgid="4111744447491690896">"Ei albumeja käytettävissä."</string>
-    <string name="empty_album" msgid="4542880442593595494">"0 kuvaa/videota saatavilla."</string>
-    <string name="picasa_posts" msgid="1497721615718760613">"Julkaisut"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Aseta offline-käytettäväksi"</string>
-    <string name="sync_picasa_albums" msgid="8522572542111169872">"Päivitä"</string>
-    <string name="done" msgid="217672440064436595">"Valmis"</string>
-    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d/%2$d kohdetta:"</string>
-    <string name="title" msgid="7622928349908052569">"Nimi"</string>
-    <string name="description" msgid="3016729318096557520">"Kuvaus"</string>
-    <string name="time" msgid="1367953006052876956">"Aika"</string>
-    <string name="location" msgid="3432705876921618314">"Sijainti"</string>
-    <string name="path" msgid="4725740395885105824">"Polku"</string>
-    <string name="width" msgid="9215847239714321097">"Leveys"</string>
-    <string name="height" msgid="3648885449443787772">"Korkeus"</string>
-    <string name="orientation" msgid="4958327983165245513">"Suunta"</string>
-    <string name="duration" msgid="8160058911218541616">"Kesto"</string>
-    <string name="mimetype" msgid="8024168704337990470">"MIME-tyyppi"</string>
-    <string name="file_size" msgid="8486169301588318915">"Tiedoston koko"</string>
-    <string name="maker" msgid="7921835498034236197">"Tekijä"</string>
-    <string name="model" msgid="8240207064064337366">"Malli"</string>
-    <string name="flash" msgid="2816779031261147723">"Salama"</string>
-    <string name="aperture" msgid="5920657630303915195">"Aukko"</string>
-    <string name="focal_length" msgid="1291383769749877010">"Polttoväli"</string>
-    <string name="white_balance" msgid="1582509289994216078">"Valkotasapaino"</string>
-    <string name="exposure_time" msgid="3990163680281058826">"Valotusaika"</string>
-    <string name="iso" msgid="5028296664327335940">"ISO"</string>
-    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
-    <string name="manual" msgid="6608905477477607865">"Manuaalinen"</string>
-    <string name="auto" msgid="4296941368722892821">"Autom."</string>
-    <string name="flash_on" msgid="7891556231891837284">"Salama käyt."</string>
-    <string name="flash_off" msgid="1445443413822680010">"Ei salamaa"</string>
-    <string name="unknown" msgid="3506693015896912952">"Tuntematon"</string>
-    <string name="ffx_original" msgid="372686331501281474">"Alkuperäinen"</string>
-    <string name="ffx_vintage" msgid="8348759951363844780">"Vanha"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"Pika"</string>
-    <string name="ffx_bleach" msgid="8946700451603478453">"Valkaisu"</string>
-    <string name="ffx_blue_crush" msgid="6034283412305561226">"Sininen"</string>
-    <string name="ffx_bw_contrast" msgid="517988490066217206">"MV"</string>
-    <string name="ffx_punch" msgid="1343475517872562639">"Isku"</string>
-    <string name="ffx_x_process" msgid="4779398678661811765">"X-prosessi"</string>
-    <string name="ffx_washout" msgid="4594160692176642735">"Latte"</string>
-    <string name="ffx_washout_color" msgid="8034075742195795219">"Litografia"</string>
+    <string name="show_on_map" msgid="1986264085815015696">"Näytä kartalla"</string>
+    <string name="rotate_left" msgid="6719855780237705569">"Kierrä vasemmalle"</string>
+    <string name="rotate_right" msgid="8558343437940821771">"Kierrä oikealle"</string>
+    <string name="no_such_item" msgid="8109733824863145928">"Kohdetta ei löytynyt."</string>
+    <string name="edit" msgid="8457904262004517151">"Muokkaa"</string>
+    <string name="simple_edit" msgid="7167857524719035134">"Yksinkert. muokkaus"</string>
+    <string name="process_caching_requests" msgid="6521997636837045412">"Käsitellään välimuistipyyntöjä"</string>
+    <string name="caching_label" msgid="6581817666800160995">"Vie välimuist."</string>
+    <string name="crop_action" msgid="3281088975169422593">"Kuvanrajaus"</string>
+    <string name="trim_action" msgid="1912063594235898890">"Leikkaus"</string>
+    <string name="mute_action" msgid="6523005634451795344">"Mykistä"</string>
+    <string name="set_as" msgid="7362777416265059096">"Aseta"</string>
+    <string name="video_mute_err" msgid="4955516955624461937">"Videon mykistys epäonnistui."</string>
+    <string name="video_err" msgid="6747342411484597130">"Videon toistaminen epäonnistui."</string>
+    <string name="group_by_location" msgid="7885728085506867484">"Sijainnin mukaan"</string>
+    <string name="group_by_time" msgid="7606993606977133185">"Ajan mukaan"</string>
+    <string name="group_by_tags" msgid="6973485447235472857">"Tunnisteiden mukaan"</string>
+    <string name="group_by_faces" msgid="3460585100434719851">"Ihmisten mukaan"</string>
+    <string name="group_by_album" msgid="518334663451373758">"Albumin mukaan"</string>
+    <string name="group_by_size" msgid="3086722779025599249">"Koon mukaan"</string>
+    <string name="untagged" msgid="4213803874762026102">"Merkitsemättömät"</string>
+    <string name="no_location" msgid="4077330169715063726">"Ei sijaintia"</string>
+    <string name="no_connectivity" msgid="1400890066380537843">"Verkkoyhteysongelma – joitakin paikkoja ei voi tunnistaa."</string>
+    <string name="sync_album_error" msgid="3635184059175668833">"Albumin valokuvia ei voi ladata. Yritä myöhemmin uudelleen."</string>
+    <string name="show_images_only" msgid="6498287528900683465">"Vain kuvat"</string>
+    <string name="show_videos_only" msgid="4359019105151934599">"Vain videot"</string>
+    <string name="show_all" msgid="5621895787382615225">"Kuvat ja videot"</string>
+    <string name="appwidget_title" msgid="5392520642718789241">"Kuvagalleria"</string>
+    <string name="appwidget_empty_text" msgid="7338621200293556250">"Ei valokuvia."</string>
+    <string name="crop_saved" msgid="6708204358512805637">"Rajattu kuva tallennettu kansioon <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
+    <string name="no_albums_alert" msgid="6301185420723201993">"Ei albumeja käytettävissä."</string>
+    <string name="empty_album" msgid="7143934241018780840">"0 kuvaa/videota saatavilla."</string>
+    <string name="picasa_posts" msgid="1266615912017351938">"Viestit"</string>
+    <string name="make_available_offline" msgid="4399445722926739810">"Aseta offline-käytettäväksi"</string>
+    <string name="sync_picasa_albums" msgid="6809590273138267530">"Päivitä"</string>
+    <string name="done" msgid="998934109252173093">"Valmis"</string>
+    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d/%2$d kohdetta:"</string>
+    <string name="title" msgid="1465174588508188840">"Nimi"</string>
+    <string name="description" msgid="7012551348834166615">"Kuvaus"</string>
+    <string name="time" msgid="53680310933472250">"Aika"</string>
+    <string name="location" msgid="7836832588874777265">"Sijainti"</string>
+    <string name="path" msgid="7641372546343443225">"Polku"</string>
+    <string name="width" msgid="4689895076320623907">"Leveys"</string>
+    <string name="height" msgid="3982701549798669179">"Korkeus"</string>
+    <string name="orientation" msgid="6270421867039429826">"Suunta"</string>
+    <string name="duration" msgid="1998783741258561149">"Kesto"</string>
+    <string name="mimetype" msgid="2655949175201126964">"MIME-tyyppi"</string>
+    <string name="file_size" msgid="624610858632029292">"Tiedoston koko"</string>
+    <string name="maker" msgid="6997781789783937494">"Tekijä"</string>
+    <string name="model" msgid="1812030182695078529">"Malli"</string>
+    <string name="flash" msgid="8875025367055499744">"Salama"</string>
+    <string name="aperture" msgid="4049918471495099840">"Aukko"</string>
+    <string name="focal_length" msgid="7208863566011453148">"Polttoväli"</string>
+    <string name="white_balance" msgid="2638519262687012770">"Valkotasapaino"</string>
+    <string name="exposure_time" msgid="6992897250021008387">"Valotusaika"</string>
+    <string name="iso" msgid="4909058434077568534">"ISO"</string>
+    <string name="unit_mm" msgid="1893537204908056363">"mm"</string>
+    <string name="manual" msgid="7862595820452711108">"Manuaalinen"</string>
+    <string name="auto" msgid="6792260257128968793">"Auto"</string>
+    <string name="flash_on" msgid="4053187950402210000">"Salama käyt."</string>
+    <string name="flash_off" msgid="7313393221333362406">"Ei salamaa"</string>
+    <string name="unknown" msgid="2211992216750845926">"Ei tiedossa"</string>
+    <string name="ffx_original" msgid="549901223077566047">"Alkuperäinen"</string>
+    <string name="ffx_vintage" msgid="4873569709320076102">"Vanha"</string>
+    <string name="ffx_instant" msgid="2789796369450602080">"Pika"</string>
+    <string name="ffx_bleach" msgid="2202542296041511846">"Valkaisu"</string>
+    <string name="ffx_blue_crush" msgid="1345076859609804450">"Sininen"</string>
+    <string name="ffx_bw_contrast" msgid="2621607753472841297">"MV"</string>
+    <string name="ffx_punch" msgid="5506629527921353460">"Isku"</string>
+    <string name="ffx_x_process" msgid="3726293897101289705">"X-prosessi"</string>
+    <string name="ffx_washout" msgid="6941478261736953916">"Maitokahvi"</string>
+    <string name="ffx_washout_color" msgid="1694204026157875566">"Kivipaino"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2171596356101611086">"Asetetaan albumeja offline-käyttöön."</item>
-    <item quantity="other" msgid="4948604338155959389">"Asetetaan albumeja offline-käyttöön."</item>
+    <item quantity="one" msgid="9028798463216468312">"Asetetaan albumeja offline-käyttöön."</item>
+    <item quantity="other" msgid="5124932962621695590">"Asetetaan albumeja offline-käyttöön."</item>
   </plurals>
-    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Tämä kohde on tallennettu laitteelle ja käytettävissä offline-tilassa."</string>
-    <string name="set_label_all_albums" msgid="4581863582996336783">"Kaikki albumit"</string>
-    <string name="set_label_local_albums" msgid="6698133661656266702">"Paikalliset albumit"</string>
-    <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP-laitteet"</string>
-    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa-albumit"</string>
-    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> vapaana"</string>
-    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> tai alle"</string>
-    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> tai yli"</string>
-    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> – <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="3985447518557474672">"Tuo"</string>
-    <string name="import_complete" msgid="3875040287486199999">"Tuonti valmis"</string>
-    <string name="import_fail" msgid="8497942380703298808">"Tuonti ei onnistu"</string>
-    <string name="camera_connected" msgid="916021826223448591">"Kamera yhdistetty."</string>
-    <string name="camera_disconnected" msgid="2100559901676329496">"Kamera irrotettu."</string>
-    <string name="click_import" msgid="6407959065464291972">"Tuo koskettamalla tätä"</string>
-    <string name="widget_type_album" msgid="6013045393140135468">"Valitse albumi"</string>
-    <string name="widget_type_shuffle" msgid="8594622705019763768">"Sekoita kaikki kuvat"</string>
-    <string name="widget_type_photo" msgid="6267065337367795355">"Valitse kuva"</string>
-    <string name="widget_type" msgid="1364653978966343448">"Valitse kuvat"</string>
-    <string name="slideshow_dream_name" msgid="6915963319933437083">"Diaesitys"</string>
-    <string name="albums" msgid="7320787705180057947">"Albumit"</string>
-    <string name="times" msgid="2023033894889499219">"Kerrat"</string>
-    <string name="locations" msgid="6649297994083130305">"Sijainnit"</string>
-    <string name="people" msgid="4114003823747292747">"Henkilöt"</string>
-    <string name="tags" msgid="5539648765482935955">"Tunnisteet"</string>
-    <string name="group_by" msgid="4308299657902209357">"Ryhmittely:"</string>
-    <string name="settings" msgid="1534847740615665736">"Asetukset"</string>
-    <string name="add_account" msgid="4271217504968243974">"Lisää tili"</string>
-    <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
-    <string name="folder_download" msgid="7186215137642323932">"Lataus"</string>
-    <string name="folder_edited_online_photos" msgid="6278215510236800181">"Muokatut verkkokuvat"</string>
-    <string name="folder_imported" msgid="2773581395524747099">"Tuonti"</string>
-    <string name="folder_screenshot" msgid="7200396565864213450">"Kuvakaappaus"</string>
-    <string name="help" msgid="7368960711153618354">"Ohje"</string>
-    <string name="no_external_storage_title" msgid="2408933644249734569">"Ei tallennustilaa"</string>
-    <string name="no_external_storage" msgid="95726173164068417">"Ei ulkoista tallennustilaa"</string>
-    <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Filminäkymä"</string>
-    <string name="switch_photo_grid" msgid="3681299459107925725">"Ruudukkonäkymä"</string>
-    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Koko ruudun näkymä"</string>
-    <string name="trimming" msgid="9122385768369143997">"Leikataan"</string>
-    <string name="muting" msgid="5094925919589915324">"Mykistetään"</string>
-    <string name="please_wait" msgid="7296066089146487366">"Odota"</string>
-    <string name="save_into" msgid="9155488424829609229">"Tallennetaan videota albumiin <xliff:g id="ALBUM_NAME">%1$s</xliff:g>..."</string>
-    <string name="trim_too_short" msgid="751593965620665326">"Ei voi leikata: kohdevideo on liian lyhyt"</string>
-    <string name="pano_progress_text" msgid="1586851614586678464">"Panoraamaa hahmonnetaan"</string>
-    <string name="save" msgid="613976532235060516">"Tallenna"</string>
-    <string name="ingest_scanning" msgid="1062957108473988971">"Skannataan sisältöä..."</string>
+    <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"Tämä kohde on tallennettu laitteelle ja käytettävissä offline-tilassa."</string>
+    <string name="set_label_all_albums" msgid="6609415760077097893">"Kaikki albumit"</string>
+    <string name="set_label_local_albums" msgid="567749080638164284">"Paikalliset albumit"</string>
+    <string name="set_label_mtp_devices" msgid="4247105968633555252">"MTP-laitteet"</string>
+    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa-albumit"</string>
+    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> vapaana"</string>
+    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> tai alle"</string>
+    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> tai yli"</string>
+    <string name="size_between" msgid="2266484752949196814">"<xliff:g id="MIN_SIZE">%1$s</xliff:g>–<xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="7415409432995200645">"Tuo"</string>
+    <string name="import_complete" msgid="6772771659359964875">"Tuonti valmis"</string>
+    <string name="import_fail" msgid="5162454276035072428">"Tuonti epäonnistui"</string>
+    <string name="camera_connected" msgid="5972302349448026591">"Kamera yhdistetty."</string>
+    <string name="camera_disconnected" msgid="7879070561053748598">"Kamera irrotettu."</string>
+    <string name="click_import" msgid="5153823057201280612">"Tuo koskettamalla tätä"</string>
+    <string name="widget_type_album" msgid="8649890012992069317">"Valitse albumi"</string>
+    <string name="widget_type_shuffle" msgid="3813327035908882115">"Sekoita kaikki kuvat"</string>
+    <string name="widget_type_photo" msgid="2237017593844917491">"Valitse kuva"</string>
+    <string name="widget_type" msgid="1607279427350645903">"Valitse kuvat"</string>
+    <string name="slideshow_dream_name" msgid="2358714399417036646">"Diasarja"</string>
+    <string name="albums" msgid="7571656500475430599">"Albumit"</string>
+    <string name="times" msgid="4738095876364133181">"Kerrat"</string>
+    <string name="locations" msgid="9050411755300802457">"Sijainnit"</string>
+    <string name="people" msgid="4059890005675672784">"Ihmiset"</string>
+    <string name="tags" msgid="1837044547733525409">"Tunnisteet"</string>
+    <string name="group_by" msgid="7228838244265292454">"Ryhmittely:"</string>
+    <string name="settings" msgid="2408436721619264685">"Asetukset"</string>
+    <string name="add_account" msgid="5407579257925503059">"Lisää tili"</string>
+    <string name="folder_camera" msgid="9117540100094034097">"Kamera"</string>
+    <string name="folder_download" msgid="9201141690833756842">"Lataa"</string>
+    <string name="folder_edited_online_photos" msgid="7885121837502350691">"Muokatut verkkokuvat"</string>
+    <string name="folder_imported" msgid="1652410522850456583">"Tuonti"</string>
+    <string name="folder_screenshot" msgid="8619432532724304995">"Kuvakaappaus"</string>
+    <string name="help" msgid="2528548040829796056">"Ohje"</string>
+    <string name="no_external_storage_title" msgid="8762156252392350944">"Ei tallennustilaa"</string>
+    <string name="no_external_storage" msgid="9150100688259295300">"Ei ulkoista tallennustilaa"</string>
+    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filminäkymä"</string>
+    <string name="switch_photo_grid" msgid="3024831878595067734">"Ruudukkonäkymä"</string>
+    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Koko ruudun näkymä"</string>
+    <string name="trimming" msgid="3297452940449729243">"Leikataan"</string>
+    <string name="muting" msgid="4406071974811026243">"Mykistetään"</string>
+    <string name="please_wait" msgid="99283054995831377">"Odota"</string>
+    <string name="save_into" msgid="3800886260514315436">"Tallennetaan videota albumiin <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
+    <string name="trim_too_short" msgid="8755328952688477762">"Ei voi leikata: kohdevideo on liian lyhyt"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Muunnetaan Photo Spherea"</string>
+    <string name="save" msgid="4522918253523037970">"Tallenna"</string>
+    <string name="ingest_scanning" msgid="7413203688783501800">"Skannataan sisältöä…"</string>
   <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2623289390474007396">"%1$d kohdetta skannattu"</item>
-    <item quantity="one" msgid="4340019444460561648">"%1$d kohde skannattu"</item>
-    <item quantity="other" msgid="3138021473860555499">"%1$d kohdetta skannattu"</item>
+    <item quantity="zero" msgid="2098511451971912797">"%1$d kohdetta skannattu"</item>
+    <item quantity="one" msgid="6118751779386608938">"%1$d kohde skannattu"</item>
+    <item quantity="other" msgid="1091937586315173697">"%1$d kohdetta skannattu"</item>
   </plurals>
-    <string name="ingest_sorting" msgid="1028652103472581918">"Järjestellään..."</string>
-    <string name="ingest_scanning_done" msgid="8911916277034483430">"Skannaus valmis"</string>
-    <string name="ingest_importing" msgid="7456633398378527611">"Tuodaan..."</string>
-    <string name="ingest_empty_device" msgid="2010470482779872622">"Tällä laitteella ei ole tuotavaa sisältöä."</string>
-    <string name="ingest_no_device" msgid="3054128223131382122">"MTP-laitetta ei ole yhdistetty"</string>
-    <string name="camera_error_title" msgid="6484667504938477337">"Kameravirhe"</string>
-    <string name="cannot_connect_camera" msgid="955440687597185163">"Ei saada yhteyttä kameraan."</string>
-    <string name="camera_disabled" msgid="8923911090533439312">"Kamera on poistettu käytöstä suojauskäytäntöjen vuoksi."</string>
-    <string name="camera_label" msgid="6346560772074764302">"Kamera"</string>
-    <string name="video_camera_label" msgid="2899292505526427293">"Videokamera"</string>
-    <string name="wait" msgid="8600187532323801552">"Odota…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7335975356349008814">"Ota USB-tallennustila käyttöön ennen kameran käyttöä."</string>
-    <string name="no_storage" product="default" msgid="5137703033746873624">"Aseta SD-kortti ennen kameran käyttämistä."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="6104019983528341353">"Valmistellaan USB-tilaa..."</string>
-    <string name="preparing_sd" product="default" msgid="2914969119574812666">"Valmistellaan SD-korttia…"</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="8147993984037859354">"USB-tallennuslaitetta ei voi käyttää."</string>
-    <string name="access_sd_fail" product="default" msgid="1584968646870054352">"SD-korttia ei voi käyttää."</string>
-    <string name="review_cancel" msgid="8188009385853399254">"PERUUTA"</string>
-    <string name="review_ok" msgid="1156261588693116433">"VALMIS"</string>
-    <string name="time_lapse_title" msgid="4360632427760662691">"Intervallikuvauksen tallennus"</string>
-    <string name="pref_camera_id_title" msgid="4040791582294635851">"Valitse kamera"</string>
-    <string name="pref_camera_id_entry_back" msgid="5142699735103692485">"Takaisin"</string>
-    <string name="pref_camera_id_entry_front" msgid="5668958706828733669">"Etupuoli"</string>
-    <string name="pref_camera_recordlocation_title" msgid="371208839215448917">"Tallennussijainti"</string>
-    <string name="pref_camera_timer_title" msgid="3105232208281893389">"Ajastin"</string>
+    <string name="ingest_sorting" msgid="8879954253826159484">"Järjestellään…"</string>
+    <string name="ingest_scanning_done" msgid="6058944721856901890">"Skannaus valmis"</string>
+    <string name="ingest_importing" msgid="3989872111774123311">"Tuodaan…"</string>
+    <string name="ingest_empty_device" msgid="9025143785347635275">"Tällä laitteella ei ole tuotavaa sisältöä."</string>
+    <string name="ingest_no_device" msgid="8065743026716074158">"MTP-laitetta ei ole yhdistetty"</string>
+    <string name="camera_error_title" msgid="434116066686973315">"Kameravirhe"</string>
+    <string name="cannot_connect_camera" msgid="3323690925318631453">"Ei saada yhteyttä kameraan."</string>
+    <string name="camera_disabled" msgid="4927328535752421596">"Kamera on poistettu käytöstä suojauskäytäntöjen vuoksi."</string>
+    <string name="camera_label" msgid="8822012181326078626">"Kamera"</string>
+    <string name="wait" msgid="2081747495953883435">"Odota…"</string>
+    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Ota USB-tallennustila käyttöön ennen kameran käyttöä."</string>
+    <string name="no_storage" product="default" msgid="5694411578108472132">"Aseta SD-kortti ennen kameran käyttämistä."</string>
+    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Valm. USB-tallennustilaa…"</string>
+    <string name="preparing_sd" product="default" msgid="5062635071578247325">"Valmistellaan SD-korttia…"</string>
+    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"USB-tallennuslaitetta ei voi käyttää."</string>
+    <string name="access_sd_fail" product="default" msgid="7705342436207795167">"SD-korttia ei voi käyttää."</string>
+    <string name="review_cancel" msgid="4681578987722865410">"PERUUTA"</string>
+    <string name="review_ok" msgid="4229133003029778558">"VALMIS"</string>
+    <string name="time_lapse_title" msgid="264021984782348139">"Intervallikuvauksen tallennus"</string>
+    <string name="pref_camera_id_title" msgid="8027686978170301915">"Valitse kamera"</string>
+    <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Takapuoli"</string>
+    <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Etupuoli"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Tallennussijainti"</string>
+    <string name="pref_camera_location_label" msgid="725236612912086608">"SIJAINTI"</string>
+    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Ajastin"</string>
   <plurals name="pref_camera_timer_entry">
-    <item quantity="one" msgid="1654523400981245448">"1 sekunti"</item>
-    <item quantity="other" msgid="6455381617076792481">"%d sekuntia"</item>
+    <item quantity="one" msgid="8868342573738742056">"1 sekunti"</item>
+    <item quantity="other" msgid="3053084895126759755">"%d sekuntia"</item>
   </plurals>
-    <!-- no translation found for pref_camera_timer_sound_default (7066624532144402253) -->
+    <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="2469008631966169105">"Ajastimen ääni"</string>
-    <string name="setting_off" msgid="4480039384202951946">"Pois käytöstä"</string>
-    <string name="setting_on" msgid="8602246224465348901">"Käytössä"</string>
-    <string name="pref_video_quality_title" msgid="8245379279801096922">"Videon laatu"</string>
-    <string name="pref_video_quality_entry_high" msgid="8664038216234805914">"Korkea"</string>
-    <string name="pref_video_quality_entry_low" msgid="7258507152393173784">"Alhainen"</string>
-    <string name="pref_video_time_lapse_frame_interval_title" msgid="6245716906744079302">"Intervallikuvaus"</string>
-    <string name="pref_camera_settings_category" msgid="2576236450859613120">"Kameran asetukset"</string>
-    <string name="pref_camcorder_settings_category" msgid="460313486231965141">"Videokameran asetukset"</string>
-    <string name="pref_camera_picturesize_title" msgid="4333724936665883006">"Kuvan koko"</string>
-    <string name="pref_camera_picturesize_entry_8mp" msgid="259953780932849079">"8 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_5mp" msgid="2882928212030661159">"5 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_3mp" msgid="741415860337400696">"3 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_2mp" msgid="1753709802245460393">"2 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_1_3mp" msgid="829109608140747258">"1,3 megapiks."</string>
-    <string name="pref_camera_picturesize_entry_1mp" msgid="1669725616780375066">"1 megapikseli"</string>
-    <string name="pref_camera_picturesize_entry_vga" msgid="806934254162981919">"VGA"</string>
-    <string name="pref_camera_picturesize_entry_qvga" msgid="8576186463069770133">"QVGA"</string>
-    <string name="pref_camera_focusmode_title" msgid="2877248921829329127">"Tarkennustila"</string>
-    <string name="pref_camera_focusmode_entry_auto" msgid="7374820710300362457">"Automaattinen"</string>
-    <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"Loputon"</string>
-    <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"Makro"</string>
-    <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"Salaman tila"</string>
-    <string name="pref_camera_flashmode_entry_auto" msgid="7288383434237457709">"Automaattinen"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"Käytössä"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"Pois käytöstä"</string>
-    <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Valkotasapaino"</string>
-    <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Automaattinen"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Hehkulamppuvalo"</string>
-    <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Päivänvalo"</string>
-    <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Loisteputkivalo"</string>
-    <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Pilvinen"</string>
-    <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Kuvaustila"</string>
-    <string name="pref_camera_scenemode_entry_auto" msgid="7113995286836658648">"Automaattinen"</string>
-    <string name="pref_camera_scenemode_entry_hdr" msgid="2923388802899511784">"HDR"</string>
-    <string name="pref_camera_scenemode_entry_action" msgid="616748587566110484">"Toiminta"</string>
-    <string name="pref_camera_scenemode_entry_night" msgid="7606898503102476329">"Yö"</string>
-    <string name="pref_camera_scenemode_entry_sunset" msgid="181661154611507212">"Auringonlasku"</string>
-    <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"Juhlat"</string>
-    <string name="not_selectable_in_scene_mode" msgid="2970291701448555126">"Ei valittavissa kuvaustilassa."</string>
-    <string name="pref_exposure_title" msgid="1229093066434614811">"Valotus"</string>
-    <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Ajastimen ääni"</string>
+    <string name="setting_off" msgid="3321226648786639381">"Ei käytössä"</string>
+    <string name="setting_on" msgid="6658320155242340595">"Käytössä"</string>
+    <string name="pref_video_quality_title" msgid="133986891365610568">"Videon laatu"</string>
+    <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Korkea"</string>
+    <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Matala"</string>
+    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Intervallikuvaus"</string>
+    <string name="pref_camera_settings_category" msgid="4286755118301278593">"Kameran asetukset"</string>
+    <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Videokameran asetukset"</string>
+    <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Kuvan koko"</string>
+    <string name="pref_camera_picturesize_entry_13mp" msgid="3084140665950405601">"13 megapiks."</string>
+    <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"8 megapikseliä"</string>
+    <string name="pref_camera_picturesize_entry_5mp" msgid="8813718385379530965">"5 megapikseliä"</string>
+    <string name="pref_camera_picturesize_entry_4mp" msgid="8546276478576735924">"4 megapikseliä"</string>
+    <string name="pref_camera_picturesize_entry_3mp" msgid="6233692859150247237">"3 megapikseliä"</string>
+    <string name="pref_camera_picturesize_entry_2mp" msgid="542341433431186453">"2 megapikseliä"</string>
+    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="607495602129189476">"2 megap. (16:9)"</string>
+    <string name="pref_camera_picturesize_entry_1_3mp" msgid="2279105572299544416">"1,3 megapiks."</string>
+    <string name="pref_camera_picturesize_entry_1mp" msgid="4015199907773658431">"1 megapikseli"</string>
+    <string name="pref_camera_picturesize_entry_vga" msgid="5417241189390562935">"VGA"</string>
+    <string name="pref_camera_picturesize_entry_qvga" msgid="5211497128670067462">"QVGA"</string>
+    <string name="pref_camera_focusmode_title" msgid="4675290599521989576">"Tarkennustila"</string>
+    <string name="pref_camera_focusmode_entry_auto" msgid="2359207328353055475">"Auto"</string>
+    <string name="pref_camera_focusmode_entry_infinity" msgid="2864044462778663709">"Loputon"</string>
+    <string name="pref_camera_focusmode_entry_macro" msgid="3737080531231192249">"Makro"</string>
+    <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"AUTOMAATTINEN"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"LOPUTON"</string>
+    <string name="pref_camera_focusmode_label_macro" msgid="4573817863140007172">"MAKRO"</string>
+    <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Salaman tila"</string>
+    <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"SALAMAN TILA"</string>
+    <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"Auto"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Käytössä"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Ei käytössä"</string>
+    <string name="pref_camera_flashmode_label_auto" msgid="3099050003430647170">"AUTOMAATTINEN SALAMA"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="2719503527558187559">"SALAMA PÄÄLLÄ"</string>
+    <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"SALAMA POIS"</string>
+    <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Valkotasapaino"</string>
+    <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"VALKOTASAPAINO"</string>
+    <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Auto"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Hehkulamppuvalo"</string>
+    <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Päivänvalo"</string>
+    <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Loisteputkivalo"</string>
+    <string name="pref_camera_whitebalance_entry_cloudy" msgid="3695152185934196085">"Pilvinen"</string>
+    <string name="pref_camera_whitebalance_label_auto" msgid="1152472201811061031">"AUTOMAATTINEN"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="8920127934705255947">"HEHKULAMPPUVALO"</string>
+    <string name="pref_camera_whitebalance_label_daylight" msgid="3554450557101127960">"PÄIVÄNVALO"</string>
+    <string name="pref_camera_whitebalance_label_fluorescent" msgid="3654887484979718684">"LOISTEPUTKIVALO"</string>
+    <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"PILVINEN"</string>
+    <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Kuvaustila"</string>
+    <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Auto"</string>
+    <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
+    <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Toiminto"</string>
+    <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Yö"</string>
+    <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Auringonlasku"</string>
+    <string name="pref_camera_scenemode_entry_party" msgid="2053177794948141241">"Juhlat"</string>
+    <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"EI MITÄÄN"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"TOIMINTA"</string>
+    <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"YÖ"</string>
+    <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"AURINGONLASKU"</string>
+    <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"JUHLAT"</string>
+    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"AJASTIN"</string>
+    <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"AJASTIN EI OLE KÄYTÖSSÄ"</string>
+    <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SEKUNTI"</string>
+    <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SEKUNTIA"</string>
+    <string name="pref_camera_countdown_label_ten" msgid="8259680166571641702">"10 SEKUNTIA"</string>
+    <string name="pref_camera_countdown_label_fifteen" msgid="2251170484933984740">"15 SEKUNTIA"</string>
+    <string name="not_selectable_in_scene_mode" msgid="4186538577214404106">"Ei valittavissa kuvaustilassa."</string>
+    <string name="pref_exposure_title" msgid="5211801488740367403">"Valotus"</string>
+    <string name="pref_exposure_label" msgid="5586132867242336300">"VALOTUS"</string>
+    <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
     <skip />
-    <string name="dialog_ok" msgid="6263301364153382152">"OK"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"USB-tallennustilasi on vähissä. Vaihda laatuasetusta tai poista kuvia tai muita tiedostoja."</string>
-    <string name="spaceIsLow_content" product="default" msgid="1732882643101247179">"SD-korttisi tila on vähissä. Vaihda laatuasetusta tai poista kuvia tai muita tiedostoja."</string>
-    <string name="video_reach_size_limit" msgid="6179877322015552390">"Videon koko on suurin mahdollinen."</string>
-    <string name="pano_too_fast_prompt" msgid="2823839093291374709">"Liian nopea"</string>
-    <string name="pano_dialog_prepare_preview" msgid="4788441554128083543">"Valmistellaan panoraamaa"</string>
-    <string name="pano_dialog_panorama_failed" msgid="2155692796549642116">"Panoraaman tallennus epäonnistui."</string>
-    <string name="pano_dialog_title" msgid="5755531234434437697">"Panoraama"</string>
-    <string name="pano_capture_indication" msgid="8248825828264374507">"Panoraamakuvaus"</string>
-    <string name="pano_dialog_waiting_previous" msgid="7800325815031423516">"Odotetaan edellistä panoraamaa"</string>
-    <string name="pano_review_saving_indication_str" msgid="2054886016665130188">"Tallennetaan…"</string>
-    <string name="pano_review_rendering" msgid="2887552964129301902">"Panoraamaa hahmonnetaan"</string>
-    <string name="tap_to_focus" msgid="8863427645591903760">"Tarkenna koskettamalla."</string>
-    <string name="pref_video_effect_title" msgid="8243182968457289488">"Tehosteet"</string>
-    <string name="effect_none" msgid="3601545724573307541">"Ei mitään"</string>
-    <string name="effect_goofy_face_squeeze" msgid="1207235692524289171">"Litistetty"</string>
-    <string name="effect_goofy_face_big_eyes" msgid="3945182409691408412">"Isot silmät"</string>
-    <string name="effect_goofy_face_big_mouth" msgid="7528748779754643144">"Iso suu"</string>
-    <string name="effect_goofy_face_small_mouth" msgid="3848209817806932565">"Pieni suu"</string>
-    <string name="effect_goofy_face_big_nose" msgid="5180533098740577137">"Iso nenä"</string>
-    <string name="effect_goofy_face_small_eyes" msgid="1070355596290331271">"Pienet silmät"</string>
-    <string name="effect_backdropper_space" msgid="7935661090723068402">"Avaruus"</string>
-    <string name="effect_backdropper_sunset" msgid="45198943771777870">"Auringonlasku"</string>
-    <string name="effect_backdropper_gallery" msgid="959158844620991906">"Oma videosi"</string>
-    <string name="bg_replacement_message" msgid="9184270738916564608">"Aseta laite alustalle."\n"Astu hetkeksi pois kuvasta."</string>
-    <string name="video_snapshot_hint" msgid="18833576851372483">"Ota kuva tallennuksen aikana koskettamalla ruutua."</string>
-    <string name="video_recording_started" msgid="4132915454417193503">"Videon tallennus on alkanut."</string>
-    <string name="video_recording_stopped" msgid="5086919511555808580">"Videon tallennus on pysäytetty."</string>
-    <string name="disable_video_snapshot_hint" msgid="4957723267826476079">"Videon kuvakaappausta ei voi käyttää erikoistehosteiden kanssa."</string>
-    <string name="clear_effects" msgid="5485339175014139481">"Tyhjennä tehosteet"</string>
-    <string name="effect_silly_faces" msgid="8107732405347155777">"HAUSKAT KASVOT"</string>
-    <string name="effect_background" msgid="6579360207378171022">"TAUSTA"</string>
-    <string name="accessibility_shutter_button" msgid="2664037763232556307">"Laukaisupainike"</string>
-    <string name="accessibility_menu_button" msgid="7140794046259897328">"Valikkopainike"</string>
-    <string name="accessibility_review_thumbnail" msgid="8961275263537513017">"Viimeisin valokuva"</string>
-    <string name="accessibility_camera_picker" msgid="8807945470215734566">"Etu- ja takakamerakytkin"</string>
-    <string name="accessibility_mode_picker" msgid="3278002189966833100">"Kamera-, video- tai panoraamavalitsin"</string>
-    <string name="accessibility_second_level_indicators" msgid="3855951632917627620">"Lisää asetuksia"</string>
-    <string name="accessibility_back_to_first_level" msgid="5234411571109877131">"Sulje asetukset"</string>
-    <string name="accessibility_zoom_control" msgid="1339909363226825709">"Zoomauksen hallinta"</string>
-    <string name="accessibility_decrement" msgid="1411194318538035666">"Vähennä %1$s"</string>
-    <string name="accessibility_increment" msgid="8447850530444401135">"Kasvata %1$s-arvoa"</string>
-    <string name="accessibility_check_box" msgid="7317447218256584181">"%1$s -valintaruutu"</string>
-    <string name="accessibility_switch_to_camera" msgid="5951340774212969461">"Vaihda kuvatilaan"</string>
-    <string name="accessibility_switch_to_video" msgid="4991396355234561505">"Vaihda videotilaan"</string>
-    <string name="accessibility_switch_to_panorama" msgid="604756878371875836">"Vaihda panoraamatilaan"</string>
-    <string name="accessibility_switch_to_new_panorama" msgid="8116783308051524188">"Vaihda uuteen panoraamaan"</string>
-    <string name="accessibility_review_cancel" msgid="9070531914908644686">"Peruuta"</string>
-    <string name="accessibility_review_ok" msgid="7793302834271343168">"Tarkistus valmis"</string>
-    <string name="accessibility_review_retake" msgid="659300290054705484">"Kuvaa uudelleen"</string>
-    <string name="capital_on" msgid="5491353494964003567">"KÄYTÖSSÄ"</string>
-    <string name="capital_off" msgid="7231052688467970897">"POIS KÄYTÖSTÄ"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3490489191038309496">"Pois käytöstä"</string>
-    <string name="pref_video_time_lapse_frame_interval_500" msgid="2949719376111679816">"0,5 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_1000" msgid="1672458758823855874">"1 sekunti"</string>
-    <string name="pref_video_time_lapse_frame_interval_1500" msgid="3415071702490624802">"1,5 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_2000" msgid="827813989647794389">"2 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_2500" msgid="5750464143606788153">"2,5 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_3000" msgid="2664846627499751396">"3 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_4000" msgid="7303255804306382651">"4 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_5000" msgid="6800566761690741841">"5 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_6000" msgid="8545447466540319539">"6 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_10000" msgid="3105568489694909852">"10 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_12000" msgid="6055574367392821047">"12 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_15000" msgid="2656164845371833761">"15 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_24000" msgid="2192628967233421512">"24 sekuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_30000" msgid="5923393773260634461">"0,5 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_60000" msgid="4678581247918524850">"1 minuutti"</string>
-    <string name="pref_video_time_lapse_frame_interval_90000" msgid="1187029705069674152">"1,5 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_120000" msgid="145301938098991278">"2 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_150000" msgid="793707078196731912">"2,5 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_180000" msgid="1785467676466542095">"3 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_240000" msgid="3734507766184666356">"4 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_300000" msgid="7442765761995328639">"5 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_360000" msgid="6724596937972563920">"6 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_600000" msgid="6563665954471001352">"10 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_720000" msgid="8969801372893266408">"12 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_900000" msgid="5803172407245902896">"15 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_1440000" msgid="6286246349698492186">"24 minuuttia"</string>
-    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="5042628461448570758">"0,5 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_3600000" msgid="6366071632666482636">"1 tunti"</string>
-    <string name="pref_video_time_lapse_frame_interval_5400000" msgid="536117788694519019">"1,5 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_7200000" msgid="6846617415182608533">"2 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_9000000" msgid="4242839574025261419">"2,5 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_10800000" msgid="2766886102170605302">"3 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_14400000" msgid="7497934659667867582">"4 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_18000000" msgid="8783643014853837140">"5 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_21600000" msgid="5005078879234015432">"6 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_36000000" msgid="69942198321578519">"10 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_43200000" msgid="285992046818504906">"12 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_54000000" msgid="5740227373848829515">"15 tuntia"</string>
-    <string name="pref_video_time_lapse_frame_interval_86400000" msgid="9040201678470052298">"24 tuntia"</string>
-    <string name="time_lapse_seconds" msgid="2105521458391118041">"sekuntia"</string>
-    <string name="time_lapse_minutes" msgid="7738520349259013762">"minuuttia"</string>
-    <string name="time_lapse_hours" msgid="1776453661704997476">"tuntia"</string>
-    <string name="time_lapse_interval_set" msgid="2486386210951700943">"Valmis"</string>
-    <string name="set_time_interval" msgid="2970567717633813771">"Aseta aikaväli"</string>
-    <string name="set_time_interval_help" msgid="6665849510484821483">"Intervallikuvaus ei ole käytössä. Ota ominaisuus käyttöön, jos haluat määrittää aikavälin."</string>
-    <string name="set_timer_help" msgid="5007708849404589472">"Ajastin ei ole käytössä. Ota se käyttöön, jos haluat ottaa kuvan ajastimella."</string>
-    <string name="set_duration" msgid="5578035312407161304">"Aseta kesto sekunteina"</string>
-    <string name="count_down_title_text" msgid="4976386810910453266">"Kuva otetaan, kun ajastin saavuttaa nollan"</string>
-    <string name="remember_location_title" msgid="9060472929006917810">"Muistetaanko valokuvien sijainnit?"</string>
-    <string name="remember_location_prompt" msgid="724592331305808098">"Merkitse valokuviin ja videoihin niiden kuvauspaikat."\n\n"Muut sovellukset voivat käyttää näitä tietoja tallennettujen kuviesi yhteydessä."</string>
-    <string name="remember_location_no" msgid="7541394381714894896">"Ei kiitos"</string>
-    <string name="remember_location_yes" msgid="862884269285964180">"Kyllä"</string>
-    <string name="menu_camera" msgid="3476709832879398998">"Kamera"</string>
-    <string name="menu_search" msgid="7580008232297437190">"Haku"</string>
-    <string name="tab_photos" msgid="9110813680630313419">"Kuvat"</string>
-    <string name="tab_albums" msgid="8079449907770685691">"Albumit"</string>
+    <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
+    <string name="pref_camera_id_label_back" msgid="6322318969185513097">"ETUKAMERA"</string>
+    <string name="pref_camera_id_label_front" msgid="3244743091065982114">"TAKAKAMERA"</string>
+    <string name="dialog_ok" msgid="8097436389338241320">"OK"</string>
+    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"USB-tallennustilasi on vähissä. Vaihda laatuasetusta tai poista kuvia tai muita tiedostoja."</string>
+    <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"SD-korttisi tila on vähissä. Vaihda laatuasetusta tai poista kuvia tai muita tiedostoja."</string>
+    <string name="video_reach_size_limit" msgid="3243731908069056095">"Videon koko on suurin mahdollinen."</string>
+    <string name="pano_too_fast_prompt" msgid="992490587329437459">"Liian nopea"</string>
+    <string name="pano_dialog_prepare_preview" msgid="7116632064591648365">"Valmistellaan panoraamaa"</string>
+    <string name="pano_dialog_panorama_failed" msgid="1856809633978860743">"Panoraaman tallennus epäonnistui."</string>
+    <string name="pano_dialog_title" msgid="7236715443943941505">"Panoraama"</string>
+    <string name="pano_capture_indication" msgid="6826745806103872825">"Panoraamakuvaus"</string>
+    <string name="pano_dialog_waiting_previous" msgid="1379192572905837403">"Odotetaan edellistä panoraamaa"</string>
+    <string name="pano_review_saving_indication_str" msgid="7006233508921435129">"Tallennetaan…"</string>
+    <string name="pano_review_rendering" msgid="7712584259126188763">"Panoraamaa hahmonnetaan"</string>
+    <string name="tap_to_focus" msgid="3031819623593720463">"Tarkenna koskettamalla."</string>
+    <string name="pref_video_effect_title" msgid="2371174223707366255">"Tehosteet"</string>
+    <string name="effect_none" msgid="1026487463817289779">"Ei mitään"</string>
+    <string name="effect_goofy_face_squeeze" msgid="1286464707958852799">"Litistetty"</string>
+    <string name="effect_goofy_face_big_eyes" msgid="6904511475216683450">"Isot silmät"</string>
+    <string name="effect_goofy_face_big_mouth" msgid="4037032365093279045">"Iso suu"</string>
+    <string name="effect_goofy_face_small_mouth" msgid="5950057962899410295">"Pieni suu"</string>
+    <string name="effect_goofy_face_big_nose" msgid="6225216990258277302">"Iso nenä"</string>
+    <string name="effect_goofy_face_small_eyes" msgid="547835991052738090">"Pienet silmät"</string>
+    <string name="effect_backdropper_space" msgid="5794499374151237559">"Avaruus"</string>
+    <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Auringonlasku"</string>
+    <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Oma video"</string>
+    <string name="bg_replacement_message" msgid="2572170208044781072">"Aseta laite alustalle.\nAstu hetkeksi pois kuvasta."</string>
+    <string name="video_snapshot_hint" msgid="56511446769261564">"Ota kuva tallennuksen aikana koskettamalla ruutua."</string>
+    <string name="video_recording_started" msgid="1478448043553326540">"Videon tallennus on aloitettu."</string>
+    <string name="video_recording_stopped" msgid="2676770458529207322">"Videon tallennus on pysäytetty."</string>
+    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Videon kuvakaappausta ei voi käyttää erikoistehosteiden kanssa."</string>
+    <string name="clear_effects" msgid="155262355011195942">"Tyhjennä tehosteet"</string>
+    <string name="effect_silly_faces" msgid="2764749499874707741">"HAUSKAT KASVOT"</string>
+    <string name="effect_background" msgid="2260438748276866983">"TAUSTA"</string>
+    <string name="accessibility_shutter_button" msgid="442677115885353279">"Suljin"</string>
+    <string name="accessibility_menu_button" msgid="7265396535447770250">"Valikkopainike"</string>
+    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Viimeisin valokuva"</string>
+    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Etu- ja takakamerakytkin"</string>
+    <string name="accessibility_mode_picker" msgid="5708483984757534790">"Kamera-, video- tai panoraamavalitsin"</string>
+    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"Lisää asetuksia"</string>
+    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Sulje asetukset"</string>
+    <string name="accessibility_zoom_control" msgid="7124489317642311462">"Zoomauksen hallinta"</string>
+    <string name="accessibility_decrement" msgid="5448728215316193220">"Vähennä %1$s"</string>
+    <string name="accessibility_increment" msgid="7569148421415559960">"Kasvata %1$s-arvoa"</string>
+    <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s -valintaruutu"</string>
+    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Vaihda kuvatilaan"</string>
+    <string name="accessibility_switch_to_video" msgid="685379350229791000">"Vaihda videoon"</string>
+    <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Vaihda panoraamaan"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Vaihda Photo Sphere -tilaan"</string>
+    <string name="accessibility_review_cancel" msgid="8233210011810145540">"Peruuta esikatselu"</string>
+    <string name="accessibility_review_ok" msgid="1919818908740908312">"Esikatselu valmis"</string>
+    <string name="accessibility_review_retake" msgid="3256541538259494381">"Kuvaa uudelleen"</string>
+    <string name="accessibility_play_video" msgid="7230042317349119408">"Katso video"</string>
+    <string name="accessibility_pause_video" msgid="8737987643497056384">"Keskeytä video"</string>
+    <string name="accessibility_reload_video" msgid="7551133941501337910">"Lataa video uudelleen"</string>
+    <string name="accessibility_time_bar" msgid="2335246714845550375">"Videosoittimen aikapalkki"</string>
+    <string name="capital_on" msgid="5840588038158274585">"KÄYTÖSSÄ"</string>
+    <string name="capital_off" msgid="3199056669644846925">"EI KÄYTÖSSÄ"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Ei käytössä"</string>
+    <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0,5 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 sekunti"</string>
+    <string name="pref_video_time_lapse_frame_interval_1500" msgid="8931945040035127831">"1,5 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_2000" msgid="3939716251293255146">"2 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_2500" msgid="7683749285828898630">"2,5 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_3000" msgid="780624543534219753">"3 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_4000" msgid="8889653143865462502">"4 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_5000" msgid="4102268340899789227">"5 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_6000" msgid="8603974284920017861">"6 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_10000" msgid="6650102184647775722">"10 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_12000" msgid="6753526423674050181">"12 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_15000" msgid="531646722496644257">"15 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_24000" msgid="290145063080413411">"24 sekuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_30000" msgid="9079297914740012179">"0,5 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_60000" msgid="3020106068480066496">"1 minuutti"</string>
+    <string name="pref_video_time_lapse_frame_interval_90000" msgid="2685855786622077615">"1,5 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_120000" msgid="7314050129714846577">"2 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_150000" msgid="4554449247426773111">"2,5 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_180000" msgid="4567679385417134299">"3 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_240000" msgid="980170959249981779">"4 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_300000" msgid="4134060119540433901">"5 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_360000" msgid="2279953220469717307">"6 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_600000" msgid="262948882057819428">"10 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_720000" msgid="5025274021438060973">"12 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_900000" msgid="535122783273231729">"15 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_1440000" msgid="1389025940394108838">"24 minuuttia"</string>
+    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="3960495676390536948">"0,5 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_3600000" msgid="4967310075272642117">"1 tunti"</string>
+    <string name="pref_video_time_lapse_frame_interval_5400000" msgid="4381496945219954612">"1,5 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_7200000" msgid="6542316368455276228">"2 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_9000000" msgid="7058722410153205915">"2,5 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_10800000" msgid="6261070817876538949">"3 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_14400000" msgid="6980220047958957353">"4 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_18000000" msgid="7199366553142266407">"5 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_21600000" msgid="5736484130500539985">"6 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_36000000" msgid="720554925530517471">"10 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_43200000" msgid="322398198717672456">"12 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_54000000" msgid="4545285575174744076">"15 tuntia"</string>
+    <string name="pref_video_time_lapse_frame_interval_86400000" msgid="225288451792149886">"24 tuntia"</string>
+    <string name="time_lapse_seconds" msgid="6338396613003859047">"sekuntia"</string>
+    <string name="time_lapse_minutes" msgid="1610738675813013569">"minuuttia"</string>
+    <string name="time_lapse_hours" msgid="2466092767364327518">"tuntia"</string>
+    <string name="time_lapse_interval_set" msgid="5430624261132317167">"Valmis"</string>
+    <string name="set_time_interval" msgid="844482952911185265">"Aseta aikaväli"</string>
+    <string name="set_time_interval_help" msgid="1403571747238933001">"Intervallikuvaus ei ole käytössä. Ota ominaisuus käyttöön, jos haluat määrittää aikavälin."</string>
+    <string name="set_timer_help" msgid="5221481839846083210">"Ajastin ei ole käytössä. Ota se käyttöön, jos haluat ottaa kuvan ajastimella."</string>
+    <string name="set_duration" msgid="7425045408900251919">"Aseta kesto sekunteina"</string>
+    <string name="count_down_title_text" msgid="8269417928362735617">"Kuva otetaan, kun ajastin saavuttaa nollan"</string>
+    <string name="remember_location_title" msgid="2290717227833540397">"Muistetaanko valokuvien sijainnit?"</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Merkitse valokuviin ja videoihin niiden kuvauspaikat.\n\nMuut sovellukset voivat käyttää näitä tietoja tallennettujen kuviesi yhteydessä."</string>
+    <string name="remember_location_no" msgid="5160772992721036553">"Ei kiitos"</string>
+    <string name="remember_location_yes" msgid="4663333638854720964">"Kyllä"</string>
+    <string name="menu_camera" msgid="1910174810571362219">"Kamera"</string>
+    <string name="menu_search" msgid="8274896451431033951">"Haku"</string>
+    <string name="tab_photos" msgid="5966798251406174200">"Valokuvat"</string>
+    <string name="tab_albums" msgid="3792683042889346954">"Albumit"</string>
+    <string name="camera_menu_more_label" msgid="3997839063378329544">"LISÄÄ VAIHTOEHTOJA"</string>
+    <string name="camera_menu_settings_label" msgid="2038476709578884568">"ASETUKSET"</string>
   <plurals name="number_of_photos">
-    <item quantity="one" msgid="6949174783125614798">"%1$d valokuva"</item>
-    <item quantity="other" msgid="3813306834113858135">"%1$d valokuvaa"</item>
+    <item quantity="one" msgid="1666588544512497522">"%1$d valokuva"</item>
+    <item quantity="other" msgid="6337070372269594668">"%1$d valokuvaa"</item>
   </plurals>
 </resources>
