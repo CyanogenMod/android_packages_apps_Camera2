@@ -971,6 +971,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     boolean isPanorama360) {
                 // Make sure the returned data is for the current image.
                 if (requestId == getCurrentId()) {
+                    if (mListener != null) {
+                        mListener.onCurrentDataChanged(requestId, true);
+                    }
                     mBottomControls.setViewPhotoSphereButtonVisibility(isPanorama);
                     mBottomControls.setTinyPlanetButtonVisibility(isPanorama360);
                 }
