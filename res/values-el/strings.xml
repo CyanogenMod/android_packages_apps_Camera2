@@ -36,7 +36,7 @@
     <string name="multiface_crop_help" msgid="3096903739496991318">"Αγγίξτε κάποιο πρόσωπο για να ξεκινήσετε."</string>
     <string name="saving_image" msgid="4305990779779942817">"Αποθήκευση εικόνας…"</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Αποθήκευση εικόνας στο λεύκωμα <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
-    <string name="save_error" msgid="1170362488191167076">"Αδύνταη αποθήκευση αποκομμένης εικόνας"</string>
+    <string name="save_error" msgid="1170362488191167076">"Αδύνατη αποθήκευση αποκομμένης εικόνας"</string>
     <string name="crop_label" msgid="8114305803169123050">"Περικοπή εικόνας"</string>
     <string name="trim_label" msgid="7369596929410798458">"Περικοπή βίντεο"</string>
     <string name="select_image" msgid="3289827722983995546">"Επιλέξτε φωτογραφία"</string>
@@ -150,10 +150,10 @@
     <string name="ffx_bleach" msgid="2202542296041511846">"Λεύκανση"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Μπλε"</string>
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"Α/Μ"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Γροθιά"</string>
+    <string name="ffx_punch" msgid="5506629527921353460">"Φωτεινό"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"Επεξ. X"</string>
     <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
+    <string name="ffx_washout_color" msgid="1694204026157875566">"Ξεβαμένο"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="9028798463216468312">"Διάθεση λευκώματος εκτός σύνδεσης."</item>
     <item quantity="other" msgid="5124932962621695590">"Διάθεση λευκωμάτων εκτός σύνδεσης."</item>
@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Περιμένετε"</string>
     <string name="save_into" msgid="3800886260514315436">"Αποθήκευση βίντεο στο λεύκωμα <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Δεν είναι δυνατή η περικοπή : το βίντεο-στόχος είναι πολύ σύντομο"</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"Απόδοση πανοράματος"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Απεικόνιση του photo sphere"</string>
     <string name="save" msgid="4522918253523037970">"Αποθήκευση"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Σάρωση περιεχομένου…"</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -241,7 +241,7 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Ήχος κατά την αντ.μέτρ."</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Ήχος σε αντ.μέτρ."</string>
     <string name="setting_off" msgid="3321226648786639381">"Ανενεργό"</string>
     <string name="setting_on" msgid="6658320155242340595">"Ενεργό"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Ποιότητα βίντεο"</string>

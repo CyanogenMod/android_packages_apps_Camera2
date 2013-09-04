@@ -129,7 +129,7 @@
     <string name="orientation" msgid="6270421867039429826">"Orientació"</string>
     <string name="duration" msgid="1998783741258561149">"Durada"</string>
     <string name="mimetype" msgid="2655949175201126964">"Tipus MIME"</string>
-    <string name="file_size" msgid="624610858632029292">"Mida fitxer"</string>
+    <string name="file_size" msgid="624610858632029292">"Mida de fitxer"</string>
     <string name="maker" msgid="6997781789783937494">"Creador"</string>
     <string name="model" msgid="1812030182695078529">"Model"</string>
     <string name="flash" msgid="8875025367055499744">"Flaix"</string>
@@ -155,8 +155,8 @@
     <string name="ffx_washout" msgid="6941478261736953916">"Cafè"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litografia"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Fem que l\'àlbum estigui disponible fora de línia."</item>
-    <item quantity="other" msgid="5124932962621695590">"Fem que àlbums estiguin disponibles fora de línia."</item>
+    <item quantity="one" msgid="9028798463216468312">"Fem l\'àlbum disponible fora de línia."</item>
+    <item quantity="other" msgid="5124932962621695590">"Fem els àlbums disponibles fora de línia."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"L\'element s\'ha desat localment i està disponible fora de línia."</string>
     <string name="set_label_all_albums" msgid="6609415760077097893">"Tots els àlbums"</string>
@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Espera"</string>
     <string name="save_into" msgid="3800886260514315436">"S\'està desant el vídeo a <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"No es pot retallar: el vídeo de destinació és massa curt."</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"Panorama de renderització"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Renderitzant foto esfèrica"</string>
     <string name="save" msgid="4522918253523037970">"Desa"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"S\'està explorant el contingut..."</string>
   <plurals name="ingest_number_of_items_scanned">
@@ -326,7 +326,7 @@
     <string name="pano_capture_indication" msgid="6826745806103872825">"S\'està capturant panorama."</string>
     <string name="pano_dialog_waiting_previous" msgid="1379192572905837403">"S\'està esperant el panorama anterior."</string>
     <string name="pano_review_saving_indication_str" msgid="7006233508921435129">"Desant..."</string>
-    <string name="pano_review_rendering" msgid="7712584259126188763">"Panorama de renderització"</string>
+    <string name="pano_review_rendering" msgid="7712584259126188763">"S\'està renderitzant panorama"</string>
     <string name="tap_to_focus" msgid="3031819623593720463">"Toca per enfocar."</string>
     <string name="pref_video_effect_title" msgid="2371174223707366255">"Efectes"</string>
     <string name="effect_none" msgid="1026487463817289779">"Cap"</string>

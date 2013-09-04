@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Wag asseblief"</string>
     <string name="save_into" msgid="3800886260514315436">"Stoor tans video na <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Kan nie snoei nie: teikenvideo is te kort"</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"Gee tans panorama weer"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Gee tans fotosfeer weer"</string>
     <string name="save" msgid="4522918253523037970">"Stoor"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Skandeer tans inhoud…"</string>
   <plurals name="ingest_number_of_items_scanned">

@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"يُرجى الانتظار"</string>
     <string name="save_into" msgid="3800886260514315436">"جارٍ حفظ الفيديو في <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"لا يمكن الاقتطاع: الفيديو المستهدف قصير جدًا"</string>
-    <string name="pano_progress_text" msgid="3675330643523371288">"جارٍ عرض البانوراما"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"جارٍ عرض البانوراما الكروية"</string>
     <string name="save" msgid="4522918253523037970">"حفظ"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"جارٍ فحص المحتوى..."</string>
   <plurals name="ingest_number_of_items_scanned">
