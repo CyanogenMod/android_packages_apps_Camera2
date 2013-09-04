@@ -21,7 +21,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-// This class aggregates three gesture detectors: GestureDetector,
+// This class aggregates two gesture detectors: GestureDetector,
 // ScaleGestureDetector.
 public class FilmStripGestureRecognizer {
     @SuppressWarnings("unused")
@@ -47,6 +47,7 @@ public class FilmStripGestureRecognizer {
         mListener = listener;
         mGestureDetector = new GestureDetector(context, new MyGestureListener(),
                 null, true /* ignoreMultitouch */);
+        mGestureDetector.setOnDoubleTapListener(new MyDoubleTapListener());
         mScaleDetector = new ScaleGestureDetector(
                 context, new MyScaleListener());
     }
@@ -61,16 +62,6 @@ public class FilmStripGestureRecognizer {
 
     private class MyGestureListener
                 extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return mListener.onSingleTapUp(e.getX(), e.getY());
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            return mListener.onDoubleTap(e.getX(), e.getY());
-        }
-
         @Override
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {
@@ -87,6 +78,28 @@ public class FilmStripGestureRecognizer {
         public boolean onDown(MotionEvent e) {
             mListener.onDown(e.getX(), e.getY());
             return super.onDown(e);
+        }
+    }
+
+    /**
+     * The listener that is used to notify when a double-tap or a confirmed
+     * single-tap occur.
+     */
+    private class MyDoubleTapListener implements GestureDetector.OnDoubleTapListener {
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            return mListener.onSingleTapUp(e.getX(), e.getY());
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return mListener.onDoubleTap(e.getX(), e.getY());
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return true;
         }
     }
 
