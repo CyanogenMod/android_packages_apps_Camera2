@@ -25,9 +25,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -42,7 +40,6 @@ public class ZoomView extends ImageView {
     private int mViewportWidth = 0;
     private int mViewportHeight = 0;
 
-    private RectF mInitialRect;
     private int mFullResImageWidth;
     private int mFullResImageHeight;
 
@@ -58,23 +55,39 @@ public class ZoomView extends ImageView {
             RectF endRect = params[0];
             // Find intersection with the screen
             RectF visibleRect = new RectF(endRect);
-            visibleRect.intersect(0, 0, mViewportWidth, mViewportHeight);
+            visibleRect.intersect(0, 0, mViewportWidth - 1, mViewportHeight - 1);
 
             Matrix m2 = new Matrix();
-            m2.setRectToRect(endRect, new RectF(0, 0, mFullResImageWidth, mFullResImageHeight),
-                    Matrix.ScaleToFit.CENTER);
+            m2.setRectToRect(endRect, new RectF(0, 0, mFullResImageWidth - 1,
+                    mFullResImageHeight - 1), Matrix.ScaleToFit.CENTER);
             RectF visibleInImage = new RectF();
             m2.mapRect(visibleInImage, visibleRect);
 
             // Decode region
             Rect v = new Rect();
             visibleInImage.round(v);
+
+            // Make sure region to decode is inside the image.
+            v.intersect(0, 0, mFullResImageWidth - 1, mFullResImageHeight - 1);
+
             if (isCancelled()) {
                 return null;
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = getSampleFactor(v.width(), v.height());
+            if (mRegionDecoder == null) {
+                InputStream is = getInputStream();
+                try {
+                    mRegionDecoder = BitmapRegionDecoder.newInstance(is, false);
+                    is.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to instantiate region decoder");
+                }
+            }
+            if (mRegionDecoder == null) {
+                return null;
+            }
             Bitmap b = mRegionDecoder.decodeRegion(v, options);
             return b;
         }
@@ -108,17 +121,13 @@ public class ZoomView extends ImageView {
     }
 
     public void loadBitmap(Uri uri, RectF imageRect) {
-        mUri = uri;
-        mFullResImageHeight = 0;
-        mFullResImageWidth = 0;
-        InputStream is = getInputStream();
-        try {
-            mRegionDecoder = BitmapRegionDecoder.newInstance(is, false);
-            is.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Fail to instantiate region decoder");
+        if (!uri.equals(mUri)) {
+            mUri = uri;
+            mFullResImageHeight = 0;
+            mFullResImageWidth = 0;
+            decodeImageSize();
+            mRegionDecoder = null;
         }
-        decodeImageSize();
         startPartialDecodingTask(imageRect);
     }
 
@@ -131,11 +140,6 @@ public class ZoomView extends ImageView {
         mPartialDecodingTask = null;
     }
 
-    public boolean onTouchEvent(MotionEvent e) {
-        setVisibility(GONE);
-        return false;
-    }
-
     public void cancelPartialDecodingTask() {
         if (mPartialDecodingTask != null && !mPartialDecodingTask.isCancelled()) {
             mPartialDecodingTask.cancel(true);
@@ -145,60 +149,13 @@ public class ZoomView extends ImageView {
     }
 
     /**
-     * snap back to the screen bounds from current position
-     */
-    private void snapBack() {
-    }
-
-    /**
-     * snap back to the screen bounds from given position
-     * @param rect
-     * @return resulting rect after snapping back
-     */
-    private RectF snapBack(RectF rect) {
-        RectF newRect = new RectF(rect);
-        if (rect.width() < mViewportWidth && rect.height() < mViewportHeight) {
-            newRect = mInitialRect;
-            return newRect;
-        }
-
-        float dx = 0, dy = 0;
-
-        if (newRect.width() < mViewportWidth) {
-            // Center it
-            dx = mViewportWidth / 2 - (newRect.left + newRect.right) / 2;
-        } else {
-            if (newRect.left > 0) {
-                dx = -newRect.left;
-            } else if (newRect.right < mViewportWidth) {
-                dx = mViewportWidth - newRect.right;
-            }
-        }
-
-        if (newRect.height() < mViewportHeight) {
-            dy = mViewportHeight / 2 - (newRect.top + newRect.bottom) / 2;
-        } else {
-            if (newRect.top > 0) {
-                dy = -newRect.top;
-            } else if (newRect.bottom < mViewportHeight) {
-                dy = mViewportHeight - newRect.bottom;
-            }
-        }
-
-        if (dx != 0 || dy != 0) {
-            newRect.offset(dx, dy);
-        }
-        return newRect;
-    }
-
-    /**
      * If the given rect is smaller than viewport on x or y axis, center rect within
      * viewport on the corresponding axis. Otherwise, make sure viewport is within
      * the bounds of the rect.
      */
-    public static Rect adjustToFitInBounds(Rect rect, int viewportWidth, int viewportHeight) {
-        int dx = 0, dy = 0;
-        Rect newRect = new Rect(rect);
+    public static RectF adjustToFitInBounds(RectF rect, int viewportWidth, int viewportHeight) {
+        float dx = 0, dy = 0;
+        RectF newRect = new RectF(rect);
         if (newRect.width() < viewportWidth) {
             dx = viewportWidth / 2 - (newRect.left + newRect.right) / 2;
         } else {
@@ -223,34 +180,6 @@ public class ZoomView extends ImageView {
             newRect.offset(dx, dy);
         }
         return newRect;
-    }
-
-    private void zoomAt(float x, float y) {
-    /*  TODO: double tap to zoom
-        Matrix startMatrix = mFullImage.getImageMatrix();
-        Matrix endMatrix = new Matrix();
-        RectF currentImageRect = new RectF();
-        startMatrix.mapRect(currentImageRect, mBitmapRect);
-
-        if (currentImageRect.width() < mFullResImageWidth - TOLERANCE) {
-            // Zoom in
-            float scale = ((float) mFullResImageWidth) / currentImageRect.width();
-            endMatrix.set(startMatrix);
-            endMatrix.postScale(scale, scale, x, y);
-            RectF endRect = new RectF();
-            endMatrix.mapRect(endRect, mBitmapRect);
-            RectF snapBackRect = snapBack(endRect);
-            endMatrix.setRectToRect(mBitmapRect, snapBackRect, Matrix.ScaleToFit.CENTER);
-            // Start animation
-            startAnimation(startMatrix, endMatrix);
-            startPartialDecodingTask(snapBackRect);
-        } else {
-            // Zoom out
-            endMatrix.setRectToRect(mBitmapRect, mInitialRect, Matrix.ScaleToFit.CENTER);
-            // Start animation
-            startAnimation(startMatrix, endMatrix);
-        } */
-
     }
 
     private void startPartialDecodingTask(RectF endRect) {
