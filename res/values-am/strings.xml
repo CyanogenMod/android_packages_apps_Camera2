@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"እባክዎ ይጠብቁ"</string>
     <string name="save_into" msgid="3800886260514315436">"ቪዲዮ ወደ <xliff:g id="ALBUM_NAME">%1$s</xliff:g> በማስቀመጥ ላይ …"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"ማሳጠር አይቻልም፤ የታለመው ቪዲዮ በጣም አጭር ነው"</string>
-    <string name="rendering_photo_sphere" msgid="6767345449862157889">"photo sphere በማሳየት ላይ"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"photo sphere በማዘጋጀት ላይ"</string>
     <string name="save" msgid="4522918253523037970">"አስቀምጥ"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"ይዘትን በመቃኘት ላይ..."</string>
   <plurals name="ingest_number_of_items_scanned">
