@@ -546,6 +546,7 @@ public class PhotoModule
         closeCamera();
         mUI.collapseCameraControls();
         mUI.clearFaces();
+        disableSkinToneSeekBar();
         if (mFocusManager != null) mFocusManager.removeMessages();
 
         // Restart the camera and initialize the UI. From onCreate.
@@ -2114,6 +2115,16 @@ public class PhotoModule
         Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
         if(mSeekBarInitialized == true)
              mHandler.sendEmptyMessage(SET_SKIN_TONE_FACTOR);
+        // skin tone ie enabled only for auto,party and portrait BSM
+        // when color effects are not enabled
+        if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
+            Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode)) &&
+            (Parameters.EFFECT_NONE.equals(colorEffect))) {
+             //Set Skin Tone Correction factor
+             Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
+             if(mSeekBarInitialized == true)
+                 mHandler.sendEmptyMessage(SET_SKIN_TONE_FACTOR);
+        }
 
         //Set Histogram
         String histogram = mPreferences.getString(
