@@ -77,7 +77,9 @@ public class CameraRootView extends FrameLayout {
 
                 @Override
                 public void onDisplayChanged(int arg0) {
-                    mListener.onDisplayChanged();
+                    if (mListener != null) {
+                        mListener.onDisplayChanged();
+                    }
                 }
 
                 @Override

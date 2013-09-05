@@ -26,10 +26,7 @@ import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
-import android.hardware.Camera.Size;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.TextureView;
@@ -45,12 +42,11 @@ import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
+import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
-import com.android.camera.ui.CameraSwitcher;
-import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.FaceView;
@@ -92,7 +88,7 @@ public class PhotoUI implements PieListener,
 
     private View mMenuButton;
     private PhotoMenu mMenu;
-    private CameraSwitcher mSwitcher;
+    private ModuleSwitcher mSwitcher;
     private CameraControls mCameraControls;
     private AlertDialog mLocationDialog;
 
@@ -196,8 +192,8 @@ public class PhotoUI implements PieListener,
         initIndicators();
 
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
-        mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        mSwitcher.setCurrentIndex(CameraSwitcher.PHOTO_MODULE_INDEX);
+        mSwitcher = (ModuleSwitcher) mRootView.findViewById(R.id.camera_switcher);
+        mSwitcher.setCurrentIndex(ModuleSwitcher.PHOTO_MODULE_INDEX);
         mSwitcher.setSwitchListener(mActivity);
         mMenuButton = mRootView.findViewById(R.id.menu);
         if (ApiHelper.HAS_FACE_DETECTION) {

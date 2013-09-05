@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.camera.ui;
+package com.android.camera;
 
-import android.view.View;
+/**
+ * The interface that controls the wide angle panorama module.
+ */
+public interface WideAnglePanoramaController {
 
-public interface LayoutChangeNotifier {
-    public interface Listener {
-        // Invoked only when the layout has changed or it is the first layout.
-        public void onLayoutChange(View v, int l, int t, int r, int b);
-    }
+    public void onPreviewUIReady();
 
-    public void setOnLayoutChangeListener(LayoutChangeNotifier.Listener listener);
+    public void onPreviewUIDestroyed();
+
+    public void cancelHighResStitching();
+
+    public void onShutterButtonClick();
+
+    public void onPreviewUILayoutChange(int l, int t, int r, int b);
 }
