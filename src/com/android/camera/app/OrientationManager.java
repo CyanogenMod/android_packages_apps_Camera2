@@ -1,5 +1,20 @@
-package com.android.camera.app;
+/*
+ * Copyright (C) 2013 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package com.android.camera.app;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -13,8 +28,8 @@ import android.view.Surface;
 
 import com.android.camera.util.ApiHelper;
 
-public class OrientationManager implements OrientationSource {
-    private static final String TAG = "OrientationManager";
+public class OrientationManager {
+    private static final String TAG = "CAM_OrientationManager";
 
     // Orientation hysteresis amount used in rounding, in degrees
     private static final int ORIENTATION_HYSTERESIS = 5;
@@ -112,12 +127,10 @@ public class OrientationManager implements OrientationSource {
         }
     }
 
-    @Override
     public int getDisplayRotation() {
         return getDisplayRotation(mActivity);
     }
 
-    @Override
     public int getCompensation() {
         return 0;
     }
