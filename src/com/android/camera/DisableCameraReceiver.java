@@ -30,7 +30,7 @@ import com.android.camera.debug.Log;
 // this receiver will be disabled, so it will not run again.
 public class DisableCameraReceiver extends BroadcastReceiver {
     private static final Log.Tag TAG = new Log.Tag("DisableCamRcver");
-    private static final boolean CHECK_BACK_CAMERA_ONLY = true;
+    private static final boolean CHECK_BACK_CAMERA_ONLY = false;
     private static final String ACTIVITIES[] = {
         "com.android.camera.CameraLauncher",
     };
@@ -43,7 +43,7 @@ public class DisableCameraReceiver extends BroadcastReceiver {
             : hasCamera();
 
         if (!needCameraActivity) {
-            Log.i(TAG, "disable all camera activities");
+            Log.i(TAG, "No sensors detected and so, disable all camera activities/CameraLauncher");
             for (int i = 0; i < ACTIVITIES.length; i++) {
                 disableComponent(context, ACTIVITIES[i]);
             }
