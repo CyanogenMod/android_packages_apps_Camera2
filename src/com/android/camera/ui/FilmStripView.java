@@ -1201,7 +1201,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mDrawArea.top = t;
         mDrawArea.right = r;
         mDrawArea.bottom = b;
-        if (changed) {
+        // TODO: (tianliu) Need a more robust solution to decide when to re-layout
+        // If in the middle of zooming, only re-layout when the layout has changed.
+        if (!mController.isZoomStarted() || changed) {
             resetZoomView();
             layoutChildren();
         }
