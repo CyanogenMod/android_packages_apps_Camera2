@@ -495,7 +495,7 @@ public abstract class LocalMediaData implements LocalData {
                     return null;
                 }
                 Bitmap b = BitmapFactory.decodeFile(mPath, opts);
-                if (mOrientation != 0) {
+                if (mOrientation != 0 && b != null) {
                     if (isCancelled() || !isUsing()) {
                         return null;
                     }
@@ -742,18 +742,21 @@ public abstract class LocalMediaData implements LocalData {
                     return null;
                 }
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(mPath);
-                byte[] data = retriever.getEmbeddedPicture();
                 Bitmap bitmap = null;
-                if (isCancelled() || !isUsing()) {
-                    retriever.release();
-                    return null;
-                }
-                if (data != null) {
-                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                }
-                if (bitmap == null) {
-                    bitmap = retriever.getFrameAtTime();
+                try {
+                    retriever.setDataSource(mPath);
+                    byte[] data = retriever.getEmbeddedPicture();
+                    if (!isCancelled() && isUsing()) {
+                        if (data != null) {
+                            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        }
+                        if (bitmap == null) {
+                            bitmap = retriever.getFrameAtTime();
+                        }
+                    }
+                } catch (IllegalArgumentException e) {
+                    Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
+                            + e.getMessage());
                 }
                 retriever.release();
                 return bitmap;
