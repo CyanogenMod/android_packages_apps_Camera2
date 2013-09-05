@@ -53,6 +53,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
+import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.PanoramaStitchingManager;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.CameraPreviewData;
 import com.android.camera.data.FixedFirstDataAdapter;
@@ -61,8 +63,7 @@ import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
-import com.android.camera.ui.CameraSwitcher;
-import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
+import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.ApiHelper;
@@ -72,7 +73,7 @@ import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
 
 public class CameraActivity extends Activity
-    implements CameraSwitchListener {
+    implements ModuleSwitcher.ModuleSwitchListener {
 
     private static final String TAG = "CAM_Activity";
 
@@ -128,7 +129,6 @@ public class CameraActivity extends Activity
     private boolean mSecureCamera;
     // This is a hack to speed up the start of SecureCamera.
     private static boolean sFirstStartAfterScreenOn = true;
-    private boolean mShowCameraPreview;
     private int mLastRawOrientation;
     private MyOrientationEventListener mOrientationListener;
     private Handler mMainHandler;
@@ -672,7 +672,8 @@ public class CameraActivity extends Activity
         mAboveFilmstripControlLayout.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mPanoramaManager = new PanoramaStitchingManager(CameraActivity.this);
+        mPanoramaManager = AppManagerFactory.getInstance(this)
+                .getPanoramaStitchingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
@@ -699,26 +700,26 @@ public class CameraActivity extends Activity
         int moduleIndex = -1;
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            moduleIndex = CameraSwitcher.VIDEO_MODULE_INDEX;
+            moduleIndex = ModuleSwitcher.VIDEO_MODULE_INDEX;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            moduleIndex = CameraSwitcher.PHOTO_MODULE_INDEX;
+            moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             moduleIndex = prefs.getInt(PREF_STARTUP_MODULE_INDEX, -1);
             if (moduleIndex < 0) {
-                moduleIndex = CameraSwitcher.PHOTO_MODULE_INDEX;
+                moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
             }
         }
-        setModuleFromIndex(moduleIndex);
 
-        mCurrentModule.init(this, mCameraModuleRootView);
         mOrientationListener = new MyOrientationEventListener(this);
+        setModuleFromIndex(moduleIndex);
+        mCurrentModule.init(this, mCameraModuleRootView);
         mMainHandler = new Handler(getMainLooper());
 
         if (!mSecureCamera) {
@@ -817,9 +818,6 @@ public class CameraActivity extends Activity
                 || keyCode == KeyEvent.KEYCODE_MENU) {
             if (event.isLongPress()) return true;
         }
-        if (keyCode == KeyEvent.KEYCODE_MENU && mShowCameraPreview) {
-            return true;
-        }
 
         return super.onKeyDown(keyCode, event);
     }
@@ -827,9 +825,6 @@ public class CameraActivity extends Activity
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (mCurrentModule.onKeyUp(keyCode, event)) return true;
-        if (keyCode == KeyEvent.KEYCODE_MENU && mShowCameraPreview) {
-            return true;
-        }
         return super.onKeyUp(keyCode, event);
     }
 
@@ -916,7 +911,7 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onCameraSelected(int moduleIndex) {
+    public void onModuleSelected(int moduleIndex) {
         if (mCurrentModuleIndex == moduleIndex) return;
 
         CameraHolder.instance().keep();
@@ -942,15 +937,26 @@ public class CameraActivity extends Activity
     private void setModuleFromIndex(int moduleIndex) {
         mCurrentModuleIndex = moduleIndex;
         switch (moduleIndex) {
-            case CameraSwitcher.VIDEO_MODULE_INDEX:
+            case ModuleSwitcher.VIDEO_MODULE_INDEX: {
                 mCurrentModule = new VideoModule();
                 break;
-            case CameraSwitcher.PHOTO_MODULE_INDEX:
+            }
+
+            case ModuleSwitcher.PHOTO_MODULE_INDEX: {
                 mCurrentModule = new PhotoModule();
                 break;
-            case CameraSwitcher.LIGHTCYCLE_MODULE_INDEX:
+            }
+
+            case ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX: {
+                mCurrentModule = new WideAnglePanoramaModule();
+                break;
+            }
+
+            case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX: {
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
                 break;
+            }
+
             default:
                 break;
         }
