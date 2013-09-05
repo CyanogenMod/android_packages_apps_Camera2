@@ -243,7 +243,14 @@ public class CameraActivity extends Activity
                                     hidePanoStitchingProgress();
                                     return;
                                 }
-                                updateActionBarMenu(dataID);
+
+                                if (currentData.getLocalDataType() ==
+                                        LocalData.LOCAL_CAMERA_PREVIEW) {
+                                    // Don't show the action bar in Camera preview.
+                                    mActionBar.hide();
+                                } else {
+                                    updateActionBarMenu(dataID);
+                                }
 
                                 Uri contentUri = currentData.getContentUri();
                                 if (contentUri == null) {
