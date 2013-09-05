@@ -26,6 +26,15 @@ LOCAL_SDK_VERSION := current
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
+# If this is an unbundled build (to install seprately) then include
+# the libraries in the APK, otherwise just put them in /system/lib and
+# leave them out of the APK
+ifneq (,$(TARGET_BUILD_APPS))
+  LOCAL_JNI_SHARED_LIBRARIES := libjni_mosaic
+else
+  LOCAL_REQUIRED_MODULES := libjni_mosaic
+endif
+
 include $(BUILD_PACKAGE)
 
 include $(call all-makefiles-under, $(LOCAL_PATH))

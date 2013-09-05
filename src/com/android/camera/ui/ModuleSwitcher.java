@@ -34,13 +34,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
-import com.android.camera.util.ApiHelper;
 
-public class CameraSwitcher extends RotateImageView
+public class ModuleSwitcher extends RotateImageView
         implements OnClickListener, OnTouchListener {
 
     @SuppressWarnings("unused")
@@ -49,20 +49,22 @@ public class CameraSwitcher extends RotateImageView
 
     public static final int PHOTO_MODULE_INDEX = 0;
     public static final int VIDEO_MODULE_INDEX = 1;
-    public static final int LIGHTCYCLE_MODULE_INDEX = 2;
+    public static final int WIDE_ANGLE_PANO_MODULE_INDEX = 2;
+    public static final int LIGHTCYCLE_MODULE_INDEX = 3;
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
+            R.drawable.ic_switch_pan,
             R.drawable.ic_switch_photosphere,
     };
 
-    public interface CameraSwitchListener {
-        public void onCameraSelected(int i);
+    public interface ModuleSwitchListener {
+        public void onModuleSelected(int i);
 
         public void onShowSwitcherPopup();
     }
 
-    private CameraSwitchListener mListener;
+    private ModuleSwitchListener mListener;
     private int mCurrentIndex;
     private int[] mModuleIds;
     private int[] mDrawIds;
@@ -79,12 +81,12 @@ public class CameraSwitcher extends RotateImageView
     private AnimatorListener mHideAnimationListener;
     private AnimatorListener mShowAnimationListener;
 
-    public CameraSwitcher(Context context) {
+    public ModuleSwitcher(Context context) {
         super(context);
         init(context);
     }
 
-    public CameraSwitcher(Context context, AttributeSet attrs) {
+    public ModuleSwitcher(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
@@ -126,7 +128,7 @@ public class CameraSwitcher extends RotateImageView
         setImageResource(mDrawIds[i]);
     }
 
-    public void setSwitchListener(CameraSwitchListener l) {
+    public void setSwitchListener(ModuleSwitchListener l) {
         mListener = l;
     }
 
@@ -136,14 +138,14 @@ public class CameraSwitcher extends RotateImageView
         mListener.onShowSwitcherPopup();
     }
 
-    private void onCameraSelected(int ix) {
+    private void onModuleSelected(int ix) {
         hidePopup();
         if ((ix != mCurrentIndex) && (mListener != null)) {
             UsageStatistics.onEvent("CameraModeSwitch", null, null);
             UsageStatistics.setPendingTransitionCause(
                     UsageStatistics.TRANSITION_MENU_TAP);
             setCurrentIndex(ix);
-            mListener.onCameraSelected(mModuleIds[ix]);
+            mListener.onModuleSelected(mModuleIds[ix]);
         }
     }
 
@@ -178,7 +180,7 @@ public class CameraSwitcher extends RotateImageView
                 @Override
                 public void onClick(View v) {
                     if (showsPopup()) {
-                        onCameraSelected(index);
+                        onModuleSelected(index);
                     }
                 }
             });
@@ -190,6 +192,10 @@ public class CameraSwitcher extends RotateImageView
                 case R.drawable.ic_switch_video:
                     item.setContentDescription(getContext().getResources().getString(
                             R.string.accessibility_switch_to_video));
+                    break;
+                case R.drawable.ic_switch_pan:
+                    item.setContentDescription(getContext().getResources().getString(
+                            R.string.accessibility_switch_to_panorama));
                     break;
                 case R.drawable.ic_switch_photosphere:
                     item.setContentDescription(getContext().getResources().getString(

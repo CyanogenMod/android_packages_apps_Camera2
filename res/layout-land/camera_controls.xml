@@ -40,7 +40,7 @@
             android:layout_gravity="right|top"
             android:layout_marginRight="2dip" />
 
-        <com.android.camera.ui.CameraSwitcher
+        <com.android.camera.ui.ModuleSwitcher
             android:id="@+id/camera_switcher"
             style="@style/SwitcherButton"
             android:layout_gravity="right|bottom"
