@@ -759,6 +759,7 @@ public class WideAnglePanoramaModule
     public void onPauseBeforeSuper() {
         mPaused = true;
         if (mLocationManager != null) mLocationManager.recordLocation(false);
+        mOrientationManager.pause();
     }
 
     @Override
@@ -851,6 +852,7 @@ public class WideAnglePanoramaModule
         }
         keepScreenOnAwhile();
 
+        mOrientationManager.resume();
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
