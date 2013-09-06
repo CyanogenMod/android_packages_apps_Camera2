@@ -655,7 +655,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mPanoramaViewHelper = helper;
     }
 
-    public boolean isAnchoredTo(int id) {
+    /**
+     * Checks if the data is at the center.
+     *
+     * @param id The id of the data to check.
+     * @return {@code True} if the data is currently at the center.
+     */
+    protected boolean isDataAtCenter(int id) {
         if (mViewItem[mCurrentItem] == null) {
             return false;
         }
@@ -1497,7 +1503,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     public boolean inCameraFullscreen() {
-        return isAnchoredTo(0) && inFullScreen()
+        return isDataAtCenter(0) && inFullScreen()
                 && (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW);
     }
 
@@ -1849,6 +1855,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             mCenterX += deltaX;
+            invalidate();
         }
 
         @Override
@@ -1939,6 +1946,15 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         @Override
         public void goToFilmStrip() {
             scaleTo(FILM_STRIP_SCALE, GEOMETRY_ADJUST_TIME_MS);
+
+            final ViewItem nextItem = mViewItem[mCurrentItem + 1];
+            if (mViewItem[mCurrentItem].getID() == 0 &&
+                    getCurrentViewType() == ImageData.TYPE_STICKY_VIEW &&
+                    nextItem != null) {
+                // Deal with the special case of swiping in camera preview.
+                scrollToPosition(nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, false);
+            }
+
             if (mListener != null) {
                 mListener.onSwitchMode(false);
                 mBottomControls.setVisibility(View.VISIBLE);
@@ -2084,7 +2100,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public boolean isZoomAnimationRunning() {
             return mZoomAnimator != null && mZoomAnimator.isRunning();
         }
-
     }
 
     private class MyGestureReceiver implements FilmStripGestureRecognizer.Listener {
@@ -2244,16 +2259,51 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onFling(float velocityX, float velocityY) {
+            final ViewItem currItem = mViewItem[mCurrentItem];
+            if (currItem == null) {
+                return false;
+            }
             if (Math.abs(velocityX) < Math.abs(velocityY)) {
                 // ignore vertical fling.
                 return true;
             }
 
-            if (mScale != FILM_STRIP_SCALE) {
-                // No fling in other modes.
-                return false;
+            // In full-screen, fling of a velocity above a threshold should go to
+            // the next/prev photos
+            if (mScale == FULL_SCREEN_SCALE) {
+                int currItemCenterX = currItem.getCenterX();
+                if (velocityX > 0) {  // left
+                    if (mCenterX > currItemCenterX) {
+                        // The visually previous item is actually the current item.
+                        mController.scrollToPosition(
+                                currItemCenterX, GEOMETRY_ADJUST_TIME_MS, true);
+                        return true;
+                    }
+                    ViewItem prevItem = mViewItem[mCurrentItem - 1];
+                    if (prevItem == null) {
+                        return false;
+                    }
+                    mController.scrollToPosition(
+                            prevItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, true);
+                } else {  // right
+                    if (mCenterX < currItemCenterX) {
+                        // The visually next item is actually the current item.
+                        mController.scrollToPosition(
+                                currItemCenterX, GEOMETRY_ADJUST_TIME_MS, true);
+                        return true;
+                    }
+                    final ViewItem nextItem = mViewItem[mCurrentItem + 1];
+                    if (nextItem == null) {
+                        return false;
+                    }
+                    mController.scrollToPosition(
+                            nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, true);
+                }
             }
-            mController.fling(velocityX);
+
+            if (mScale == FILM_STRIP_SCALE) {
+                mController.fling(velocityX);
+            }
             return true;
         }
 
