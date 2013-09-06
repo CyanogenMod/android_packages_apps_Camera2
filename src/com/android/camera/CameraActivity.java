@@ -768,6 +768,7 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
+        // TODO: Handle this in OrientationManager.
         if (Settings.System.getInt(getContentResolver(),
                 Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {// auto-rotate off
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);

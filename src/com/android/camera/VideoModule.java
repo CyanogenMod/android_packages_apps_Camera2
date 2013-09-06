@@ -683,6 +683,7 @@ public class VideoModule implements CameraModule,
 
         keepScreenOnAwhile();
 
+        mOrientationManager.resume();
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
@@ -817,6 +818,7 @@ public class VideoModule implements CameraModule,
         resetScreenOn();
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
+        mOrientationManager.pause();
 
         mHandler.removeMessages(CHECK_DISPLAY_ROTATION);
         mHandler.removeMessages(SWITCH_CAMERA);
