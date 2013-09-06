@@ -21,10 +21,10 @@
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
     <string name="movie_view_label" msgid="5418000271524694534">"Videospeler"</string>
     <string name="loading_video" msgid="7506410442678001647">"Laai tans video…"</string>
-    <string name="loading_image" msgid="2060882673852072952">"Laai tans prent…"</string>
+    <string name="loading_image" msgid="2060882673852072952">"Laai tans beeld…"</string>
     <string name="loading_account" msgid="5905155935821293897">"Laai tans rekening…"</string>
     <string name="resume_playing_title" msgid="183661837882331054">"Hervat video"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"Hervat speel vanaf %s ?"</string>
+    <string name="resume_playing_message" msgid="2707046046147124277">"Speel  verder vanaf %s ?"</string>
     <string name="resume_playing_resume" msgid="4273369210087304227">"Speel verder"</string>
     <string name="loading" msgid="1780879367849478548">"Laai tans…"</string>
     <string name="fail_to_load" msgid="8207740590161925891">"Kon nie laai nie"</string>
@@ -330,7 +330,7 @@
     <string name="tap_to_focus" msgid="3031819623593720463">"Raak om te fokus."</string>
     <string name="pref_video_effect_title" msgid="2371174223707366255">"Effekte"</string>
     <string name="effect_none" msgid="1026487463817289779">"Geen"</string>
-    <string name="effect_goofy_face_squeeze" msgid="1286464707958852799">"Druk"</string>
+    <string name="effect_goofy_face_squeeze" msgid="1286464707958852799">"Pers saam"</string>
     <string name="effect_goofy_face_big_eyes" msgid="6904511475216683450">"Groot oë"</string>
     <string name="effect_goofy_face_big_mouth" msgid="4037032365093279045">"Groot mond"</string>
     <string name="effect_goofy_face_small_mouth" msgid="5950057962899410295">"Klein mond"</string>
@@ -339,7 +339,7 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"In die ruimte"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Sonsondergang"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Jou video"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"Sit jou toestel neer.\nStap vir \'n oomblik buite sig."</string>
+    <string name="bg_replacement_message" msgid="2572170208044781072">"Sit jou toestel neer.\nStaan vir \'n oomblik buite sig."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Raak om foto tydens opname te neem."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Video-opname het begin."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Video-opname het gestop."</string>
@@ -415,13 +415,13 @@
     <string name="time_lapse_minutes" msgid="1610738675813013569">"minute"</string>
     <string name="time_lapse_hours" msgid="2466092767364327518">"uur"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Klaar"</string>
-    <string name="set_time_interval" msgid="844482952911185265">"Stel tydinterval"</string>
-    <string name="set_time_interval_help" msgid="1403571747238933001">"Tydsverloop-kenmerk is af. Skakel dit aan om tydtussenpose te stel."</string>
+    <string name="set_time_interval" msgid="844482952911185265">"Stel tydtussenposes"</string>
+    <string name="set_time_interval_help" msgid="1403571747238933001">"Tydsverloop-kenmerk is af. Skakel dit aan om tydtussenposes te stel."</string>
     <string name="set_timer_help" msgid="5221481839846083210">"Aftel-tydhouer is af. Skakel dit aan om af te tel voor jy \'n foto neem."</string>
     <string name="set_duration" msgid="7425045408900251919">"Stel tydsduur in sekondes"</string>
-    <string name="count_down_title_text" msgid="8269417928362735617">"Tel af om \'n foto te neem"</string>
+    <string name="count_down_title_text" msgid="8269417928362735617">"Tel tans af om \'n foto te neem"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Moet foto-liggings onthou word?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"Merk jou foto\'s en video\'s met die liggings waar hulle geneem is.\n\nAnder programme kan toegang kry tot hierdie inligting saam met jou gestoorde prente."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Merk jou foto\'s en video\'s met die liggings waar hulle geneem is.\n\nAnder programme kan toegang kry tot hierdie inligting saam met jou gestoorde beelde."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Nee, dankie"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Ja"</string>
     <string name="menu_camera" msgid="1910174810571362219">"Kamera"</string>
