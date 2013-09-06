@@ -150,7 +150,7 @@
     <string name="ffx_bleach" msgid="2202542296041511846">"Afbleg"</string>
     <string name="ffx_blue_crush" msgid="1345076859609804450">"Blå"</string>
     <string name="ffx_bw_contrast" msgid="2621607753472841297">"Sort/hvid"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Punch"</string>
+    <string name="ffx_punch" msgid="5506629527921353460">"Gullig"</string>
     <string name="ffx_x_process" msgid="3726293897101289705">"X Fremkald"</string>
     <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
     <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"Vent"</string>
     <string name="save_into" msgid="3800886260514315436">"Gemmer videoen i <xliff:g id="ALBUM_NAME">%1$s</xliff:g>..."</string>
     <string name="trim_too_short" msgid="8755328952688477762">"Der kan ikke beskæres – målvideoen er for kort"</string>
-    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Gengiver billedboble"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Gengiver Photo Sphere"</string>
     <string name="save" msgid="4522918253523037970">"Gem"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"Indhold scannes..."</string>
   <plurals name="ingest_number_of_items_scanned">

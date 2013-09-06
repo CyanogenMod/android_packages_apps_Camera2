@@ -24,21 +24,21 @@
     <string name="loading_image" msgid="2060882673852072952">"Memuatkan imej..."</string>
     <string name="loading_account" msgid="5905155935821293897">"Memuatkan akaun..."</string>
     <string name="resume_playing_title" msgid="183661837882331054">"Sambung semula video"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"Sambung semula proses main dari %s ?"</string>
+    <string name="resume_playing_message" msgid="2707046046147124277">"Sambung semula main dari %s ?"</string>
     <string name="resume_playing_resume" msgid="4273369210087304227">"Sambung semula main"</string>
     <string name="loading" msgid="1780879367849478548">"Memuatkan…"</string>
     <string name="fail_to_load" msgid="8207740590161925891">"Tidak dapat memuatkan"</string>
     <string name="fail_to_load_image" msgid="3133435559287332979">"Tidak dapat memuatkan imej"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"Tiada lakaran kenit"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"Buat Semula"</string>
+    <string name="no_thumbnail" msgid="2070785115093266536">"Tiada lakaran kecil"</string>
+    <string name="resume_playing_restart" msgid="7874418747024545675">"Mulakan semula"</string>
     <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
     <string name="ok" msgid="7771534786778882486">"OK"</string>
     <string name="multiface_crop_help" msgid="3096903739496991318">"Sentuh muka untuk bermula."</string>
     <string name="saving_image" msgid="4305990779779942817">"Menyimpan gambar..."</string>
     <string name="filtershow_saving_image" msgid="4744098915256700747">"Menyimpan gambar ke <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="save_error" msgid="1170362488191167076">"Tidak dapat menyimpan imej yang dipangkas."</string>
+    <string name="save_error" msgid="1170362488191167076">"Tidak dapat menyimpan imej dipangkas."</string>
     <string name="crop_label" msgid="8114305803169123050">"Pangkas gambar"</string>
-    <string name="trim_label" msgid="7369596929410798458">"Potong video"</string>
+    <string name="trim_label" msgid="7369596929410798458">"Cantas video"</string>
     <string name="select_image" msgid="3289827722983995546">"Pilih foto"</string>
     <string name="select_video" msgid="882817436381543724">"Pilih video"</string>
     <string name="select_item" msgid="2611103251995672148">"Pilih item"</string>
@@ -53,7 +53,7 @@
     <item quantity="one" msgid="2984228592820245170">"Padam item yang dipilih?"</item>
     <item quantity="other" msgid="882035505847338991">"Padam item yang dipilih?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"Pastikan"</string>
+    <string name="confirm" msgid="6079809872780030117">"Sahkan"</string>
     <string name="cancel" msgid="3709581234100450763">"Batal"</string>
     <string name="share" msgid="319799706929863109">"Kongsi"</string>
     <string name="share_panorama" msgid="7488525470543070168">"Kongsi panorama"</string>
@@ -64,9 +64,9 @@
     <string name="deselect_all" msgid="626233665600163037">"Nyahpilih semua"</string>
     <string name="slideshow" msgid="6249043759236676662">"Tayangan slaid"</string>
     <string name="details" msgid="3581943734736871564">"Butiran"</string>
-    <string name="details_title" msgid="681306416468138508">"%1$d dari %2$d item:"</string>
+    <string name="details_title" msgid="681306416468138508">"%1$d daripada %2$d item:"</string>
     <string name="close" msgid="7196876073399885123">"Tutup"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Bertukar kepada kamera"</string>
+    <string name="switch_to_camera" msgid="5252691793674565308">"Beralih kepada Kamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"%1$d dipilih"</item>
     <item quantity="one" msgid="4283105620980058761">"%1$d dipilih"</item>
@@ -91,9 +91,9 @@
     <string name="process_caching_requests" msgid="6521997636837045412">"Memproses permintaan cache"</string>
     <string name="caching_label" msgid="6581817666800160995">"Mengcache..."</string>
     <string name="crop_action" msgid="3281088975169422593">"Pangkas"</string>
-    <string name="trim_action" msgid="1912063594235898890">"Potong"</string>
+    <string name="trim_action" msgid="1912063594235898890">"Cantas"</string>
     <string name="mute_action" msgid="6523005634451795344">"Redam"</string>
-    <string name="set_as" msgid="7362777416265059096">"Tetapkan sebagai"</string>
+    <string name="set_as" msgid="7362777416265059096">"Tetap sebagai"</string>
     <string name="video_mute_err" msgid="4955516955624461937">"Tidak dapat meredam video"</string>
     <string name="video_err" msgid="6747342411484597130">"Tidak boleh memainkan video."</string>
     <string name="group_by_location" msgid="7885728085506867484">"Mengikut lokasi"</string>
@@ -102,7 +102,7 @@
     <string name="group_by_faces" msgid="3460585100434719851">"Mengikut orang"</string>
     <string name="group_by_album" msgid="518334663451373758">"Mengikut album"</string>
     <string name="group_by_size" msgid="3086722779025599249">"Mengikut saiz"</string>
-    <string name="untagged" msgid="4213803874762026102">"Tidak ditanda namakan"</string>
+    <string name="untagged" msgid="4213803874762026102">"Tidak diteg"</string>
     <string name="no_location" msgid="4077330169715063726">"Tiada lokasi"</string>
     <string name="no_connectivity" msgid="1400890066380537843">"Beberapa lokasi tidak dapat dikenal pasti kerana masalah rangkaian."</string>
     <string name="sync_album_error" msgid="3635184059175668833">"Tidak dapat memuat turun foto dalam album ini. Cuba lagi nanti."</string>
@@ -113,12 +113,12 @@
     <string name="appwidget_empty_text" msgid="7338621200293556250">"Tiada foto."</string>
     <string name="crop_saved" msgid="6708204358512805637">"Imej yang dipangkas disimpan ke <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="no_albums_alert" msgid="6301185420723201993">"Tiada album tersedia."</string>
-    <string name="empty_album" msgid="7143934241018780840">"O imej/video yang tersedia."</string>
+    <string name="empty_album" msgid="7143934241018780840">"O imej/video tersedia."</string>
     <string name="picasa_posts" msgid="1266615912017351938">"Siaran"</string>
     <string name="make_available_offline" msgid="4399445722926739810">"Sediakan di luar talian"</string>
     <string name="sync_picasa_albums" msgid="6809590273138267530">"Muatkan semula"</string>
     <string name="done" msgid="998934109252173093">"Selesai"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d dari %2$d item:"</string>
+    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d daripada %2$d item:"</string>
     <string name="title" msgid="1465174588508188840">"Tajuk"</string>
     <string name="description" msgid="7012551348834166615">"Huraian"</string>
     <string name="time" msgid="53680310933472250">"Masa"</string>
@@ -143,7 +143,7 @@
     <string name="auto" msgid="6792260257128968793">"Auto"</string>
     <string name="flash_on" msgid="4053187950402210000">"Denyar dilepas"</string>
     <string name="flash_off" msgid="7313393221333362406">"Tiada denyar"</string>
-    <string name="unknown" msgid="2211992216750845926">"Tidak diketahui"</string>
+    <string name="unknown" msgid="2211992216750845926">"Tak diketahui"</string>
     <string name="ffx_original" msgid="549901223077566047">"Asal"</string>
     <string name="ffx_vintage" msgid="4873569709320076102">"Vintaj"</string>
     <string name="ffx_instant" msgid="2789796369450602080">"Segera"</string>
@@ -194,9 +194,9 @@
     <string name="help" msgid="2528548040829796056">"Bantuan"</string>
     <string name="no_external_storage_title" msgid="8762156252392350944">"Tiada Storan"</string>
     <string name="no_external_storage" msgid="9150100688259295300">"Tiada storan luar tersedia"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Pandangan jalur filem"</string>
+    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Paparan jalur filem"</string>
     <string name="switch_photo_grid" msgid="3024831878595067734">"Paparan grid"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Pandangan skrin penuh"</string>
+    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Paparan skrin penuh"</string>
     <string name="trimming" msgid="3297452940449729243">"Mencantas"</string>
     <string name="muting" msgid="4406071974811026243">"Meredam"</string>
     <string name="please_wait" msgid="99283054995831377">"Sila tunggu"</string>
@@ -216,7 +216,7 @@
     <string name="ingest_empty_device" msgid="9025143785347635275">"Tiada kandungan tersedia untuk diimport pada peranti ini."</string>
     <string name="ingest_no_device" msgid="8065743026716074158">"Tiada peranti MTP disambungkan"</string>
     <string name="camera_error_title" msgid="434116066686973315">"Ralat kamera"</string>
-    <string name="cannot_connect_camera" msgid="3323690925318631453">"Tidak boleh menyambung kepada kamera."</string>
+    <string name="cannot_connect_camera" msgid="3323690925318631453">"Tidak dapat menyambung kepada kamera."</string>
     <string name="camera_disabled" msgid="4927328535752421596">"Kamera telah dilumpuhkan kerana dasar keselamatan."</string>
     <string name="camera_label" msgid="8822012181326078626">"Kamera"</string>
     <string name="wait" msgid="2081747495953883435">"Sila tunggu..."</string>
@@ -242,8 +242,8 @@
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Bip utk htg dtk"</string>
-    <string name="setting_off" msgid="3321226648786639381">"Dimati"</string>
-    <string name="setting_on" msgid="6658320155242340595">"Hidupkan"</string>
+    <string name="setting_off" msgid="3321226648786639381">"Mati"</string>
+    <string name="setting_on" msgid="6658320155242340595">"Hidup"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Kualiti video"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Tinggi"</string>
     <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Rendah"</string>
@@ -272,15 +272,15 @@
     <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Mod denyar"</string>
     <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"MOD DENYAR"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"Auto"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Hidupkan"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Dimati"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Hidup"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Mati"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="3099050003430647170">"AUTO DENYAR"</string>
     <string name="pref_camera_flashmode_label_on" msgid="2719503527558187559">"HIDUPKAN DENYAR"</string>
     <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"MATIKAN DENYAR"</string>
     <string name="pref_camera_whitebalance_title" msgid="3555176845614423913">"Imbangan putih"</string>
     <string name="pref_camera_whitebalance_label" msgid="4253164949812366852">"IMBANGAN PUTIH"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="8495359619521890418">"Auto"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Berpijar"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="374516940783347212">"Pijar"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="6066029271198399632">"Siang hari"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="1957728582798422397">"Pendarfluor"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3695152185934196085">"Mendung"</string>
@@ -294,12 +294,12 @@
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Tindakan"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Malam"</string>
-    <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Matahari Terbenam"</string>
+    <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Senja"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="2053177794948141241">"Parti"</string>
     <string name="pref_camera_scenemode_label_auto" msgid="3930776963493458919">"TIADA"</string>
     <string name="pref_camera_scenemode_label_action" msgid="7770498283906927328">"TINDAKAN"</string>
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"MALAM"</string>
-    <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"MATAHARI TERBENAM"</string>
+    <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"SENJA"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"PARTI"</string>
     <string name="pref_camera_countdown_label" msgid="4311699135435555732">"PEMASA HITUNG DETIK"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"PEMASA DIMATIKAN"</string>
@@ -337,11 +337,11 @@
     <string name="effect_goofy_face_big_nose" msgid="6225216990258277302">"Hidung besar"</string>
     <string name="effect_goofy_face_small_eyes" msgid="547835991052738090">"Mata kecil"</string>
     <string name="effect_backdropper_space" msgid="5794499374151237559">"Di angkasa"</string>
-    <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Matahari Terbenam"</string>
+    <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Senja"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Video anda"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"Tetapkan peranti anda ke bawah.\nKeluar dari pandangan seketika."</string>
+    <string name="bg_replacement_message" msgid="2572170208044781072">"Letakkan peranti anda.\nKeluar dari pandangan seketika."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Sentuh untuk mengambil gambar semasa merakam."</string>
-    <string name="video_recording_started" msgid="1478448043553326540">"Rakaman video telah bermula"</string>
+    <string name="video_recording_started" msgid="1478448043553326540">"Rakaman video telah bermula."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Rakaman video telah berhenti."</string>
     <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Petikan video dilumpuhkan apabila kesan khas dihidupkan."</string>
     <string name="clear_effects" msgid="155262355011195942">"Padam kesan"</string>
@@ -349,19 +349,19 @@
     <string name="effect_background" msgid="2260438748276866983">"LATAR BELAKANG"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"Pengatup"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"Butang menu"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Foto paling terbaru"</string>
+    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Foto terbaharu"</string>
     <string name="accessibility_camera_picker" msgid="9003279178263013363">"Suis kamera depan dan belakang"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"Pemilih kamera, video atau panorama"</string>
     <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"Lagi kawalan tetapan"</string>
     <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Tutup kawalan tetapan"</string>
     <string name="accessibility_zoom_control" msgid="7124489317642311462">"Kawalan zum"</string>
     <string name="accessibility_decrement" msgid="5448728215316193220">"Pengurangan %1$s"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"Tingkatkan %1$s"</string>
-    <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s kotak semak"</string>
-    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Tukar ke foto"</string>
-    <string name="accessibility_switch_to_video" msgid="685379350229791000">"Tukar kepada video"</string>
-    <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Tukar kepada panorama"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Tukar kepada Photo Sphere"</string>
+    <string name="accessibility_increment" msgid="7569148421415559960">"Peningkatan %1$s"</string>
+    <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s kotak pilihan"</string>
+    <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Beralih kepada foto"</string>
+    <string name="accessibility_switch_to_video" msgid="685379350229791000">"Beralih kepada video"</string>
+    <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Beralih kepada panorama"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Beralih kepada Photo Sphere"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Semakan dibatalkan"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Semakan selesai"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Semak penggambaran semula"</string>
@@ -371,7 +371,7 @@
     <string name="accessibility_time_bar" msgid="2335246714845550375">"Bar masa pemain video"</string>
     <string name="capital_on" msgid="5840588038158274585">"HIDUP"</string>
     <string name="capital_off" msgid="3199056669644846925">"MATI"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Dimati"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Mati"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0.5 saat"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 saat"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="8931945040035127831">"1.5 saat"</string>
@@ -421,7 +421,7 @@
     <string name="set_duration" msgid="7425045408900251919">"Tetapkan tempoh dalam saat"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Menghitung detik untuk mengambil gambar"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Ingat lokasi foto?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"Teg foto dan video anda dengan lokasi tempat diambil.\n\nApl lain boleh mengakses maklumat ini bersama dengan imej disimpan anda."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Teg foto dan video anda dengan lokasi tempat diambil.\n\nApl lain boleh mengakses maklumat ini bersama imej disimpan."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Tidak, terima kasih"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Ya"</string>
     <string name="menu_camera" msgid="1910174810571362219">"Kamera"</string>

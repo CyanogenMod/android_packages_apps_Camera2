@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"しばらくお待ちください"</string>
     <string name="save_into" msgid="3800886260514315436">"動画を<xliff:g id="ALBUM_NAME">%1$s</xliff:g>に保存しています…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"トリミングできません: 動画が短すぎます"</string>
-    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Photo Sphere写真をレンダリングしています"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"Photo Sphere写真をレンダリング中"</string>
     <string name="save" msgid="4522918253523037970">"保存"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"コンテンツをスキャンしています..."</string>
   <plurals name="ingest_number_of_items_scanned">
