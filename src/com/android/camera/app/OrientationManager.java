@@ -68,9 +68,12 @@ public class OrientationManager {
     //  the framework orientation, we always set the compensation value to 0.
     ////////////////////////////////////////////////////////////////////////////
 
-    // Lock the framework orientation to the current device orientation
+    /**
+     * Lock the framework orientation to the current device orientation
+     * rotates. No effect if the system setting of auto-rotation is off.
+     */
     public void lockOrientation() {
-        if (mOrientationLocked) return;
+        if (mOrientationLocked || mRotationLockedSetting) return;
         mOrientationLocked = true;
         if (ApiHelper.HAS_ORIENTATION_LOCK) {
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
@@ -79,10 +82,12 @@ public class OrientationManager {
         }
     }
 
-    // Unlock the framework orientation, so it can change when the device
-    // rotates.
+    /**
+     * Unlock the framework orientation, so it can change when the device
+     * rotates. No effect if the system setting of auto-rotation is off.
+     */
     public void unlockOrientation() {
-        if (!mOrientationLocked) return;
+        if (!mOrientationLocked || mRotationLockedSetting) return;
         mOrientationLocked = false;
         Log.d(TAG, "unlock orientation");
         mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
