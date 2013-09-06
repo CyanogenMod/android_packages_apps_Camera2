@@ -143,6 +143,9 @@ public class CameraActivity extends Activity
     private ShareActionProvider mPanoramaShareActionProvider;
     private Intent mPanoramaShareIntent;
 
+    private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+
     public void gotoGallery() {
         mFilmStripView.getController().goToNextItem();
     }
@@ -223,9 +226,9 @@ public class CameraActivity extends Activity
                 public void onSwitchMode(boolean toCamera) {
                     mCurrentModule.onSwitchMode(toCamera);
                     if (toCamera) {
-                        mActionBar.hide();
+                        setActionBarVisibilityAndLightsOut(true);
                     } else {
-                        mActionBar.show();
+                        setActionBarVisibilityAndLightsOut(false);
                     }
                 }
 
@@ -247,7 +250,7 @@ public class CameraActivity extends Activity
                                 if (currentData.getLocalDataType() ==
                                         LocalData.LOCAL_CAMERA_PREVIEW) {
                                     // Don't show the action bar in Camera preview.
-                                    mActionBar.hide();
+                                    setActionBarVisibilityAndLightsOut(true);
                                 } else {
                                     updateActionBarMenu(dataID);
                                 }
@@ -273,17 +276,33 @@ public class CameraActivity extends Activity
                 @Override
                 public boolean onToggleActionBarVisibility() {
                     if (mActionBar.isShowing()) {
-                        mActionBar.hide();
+                        setActionBarVisibilityAndLightsOut(true);
                     } else {
                         // In the preview, don't show the action bar if that is
                         // a capture intent.
                         if (!isCaptureIntent()) {
-                            mActionBar.show();
+                            setActionBarVisibilityAndLightsOut(false);
                         }
                     }
                     return mActionBar.isShowing();
                 }
             };
+
+    /**
+     * If enabled, this hides the action bar and switches the system UI to
+     * lights-out mode.
+     */
+    private void setActionBarVisibilityAndLightsOut(boolean enabled) {
+        if (enabled) {
+            mActionBar.hide();
+        } else {
+            mActionBar.show();
+        }
+        int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (enabled ? View.SYSTEM_UI_FLAG_LOW_PROFILE
+                : View.SYSTEM_UI_FLAG_VISIBLE);
+        mAboveFilmstripControlLayout
+                .setSystemUiVisibility(visibility);
+    }
 
     private void hidePanoStitchingProgress() {
         mPanoStitchingPanel.setVisibility(View.GONE);
@@ -629,8 +648,6 @@ public class CameraActivity extends Activity
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.camera_filmstrip);
         mActionBar = getActionBar();
-        // Hide action bar first since we are in full screen mode first.
-        mActionBar.hide();
 
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
@@ -669,9 +686,9 @@ public class CameraActivity extends Activity
         mAboveFilmstripControlLayout =
                 (FrameLayout) findViewById(R.id.camera_above_filmstrip_layout);
         mAboveFilmstripControlLayout.setFitsSystemWindows(true);
-        mAboveFilmstripControlLayout.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        // Hide action bar first since we are in full screen mode first, and
+        // switch the system UI to lights-out mode.
+        setActionBarVisibilityAndLightsOut(true);
         mPanoramaManager = AppManagerFactory.getInstance(this)
                 .getPanoramaStitchingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
