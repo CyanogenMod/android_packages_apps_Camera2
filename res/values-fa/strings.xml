@@ -39,7 +39,7 @@
     <string name="save_error" msgid="1170362488191167076">"ذخیره تصویر برش‌خورده امکان‌پذیر نیست."</string>
     <string name="crop_label" msgid="8114305803169123050">"برش تصویر"</string>
     <string name="trim_label" msgid="7369596929410798458">"کوتاه کردن ویدیو"</string>
-    <string name="select_image" msgid="3289827722983995546">"عکس را انتخاب کنید"</string>
+    <string name="select_image" msgid="3289827722983995546">"انتخاب عکس"</string>
     <string name="select_video" msgid="882817436381543724">"انتخاب ویدیو"</string>
     <string name="select_item" msgid="2611103251995672148">"انتخاب مورد"</string>
     <string name="select_album" msgid="7946907074045669521">"انتخاب آلبوم"</string>
@@ -89,7 +89,7 @@
     <string name="edit" msgid="8457904262004517151">"ویرایش"</string>
     <string name="simple_edit" msgid="7167857524719035134">"ویرایش ساده"</string>
     <string name="process_caching_requests" msgid="6521997636837045412">"پردازش درخواست‌های ذخیره در حافظه پنهان"</string>
-    <string name="caching_label" msgid="6581817666800160995">"حافظه پنهان..."</string>
+    <string name="caching_label" msgid="6581817666800160995">"در حال ذخیره..."</string>
     <string name="crop_action" msgid="3281088975169422593">"برش"</string>
     <string name="trim_action" msgid="1912063594235898890">"کوتاه کردن"</string>
     <string name="mute_action" msgid="6523005634451795344">"بی‌صدا کردن"</string>
@@ -180,7 +180,7 @@
     <string name="slideshow_dream_name" msgid="2358714399417036646">"نمایش اسلاید"</string>
     <string name="albums" msgid="7571656500475430599">"آلبوم‌ها"</string>
     <string name="times" msgid="4738095876364133181">"دوره"</string>
-    <string name="locations" msgid="9050411755300802457">"موقعیت مکانی"</string>
+    <string name="locations" msgid="9050411755300802457">"مکان‌ها"</string>
     <string name="people" msgid="4059890005675672784">"افراد"</string>
     <string name="tags" msgid="1837044547733525409">"برچسب‌ها"</string>
     <string name="group_by" msgid="7228838244265292454">"گروه‌بندی براساس"</string>
@@ -350,7 +350,7 @@
     <string name="accessibility_shutter_button" msgid="442677115885353279">"شاتر"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"دکمه منو"</string>
     <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"جدیدترین عکس"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"کلید دوربین جلو و عقب"</string>
+    <string name="accessibility_camera_picker" msgid="9003279178263013363">"تعویض دوربین جلو و عقب"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"انتخابگر دوربین، ویدیو یا پانوراما"</string>
     <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"کنترل‌های تنظیم بیشتر"</string>
     <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"بستن کنترل‌های تنظیم"</string>
