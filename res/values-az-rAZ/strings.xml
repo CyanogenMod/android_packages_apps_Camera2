@@ -172,7 +172,7 @@
     <string name="import_fail" msgid="5162454276035072428">"Uğursuz İmport"</string>
     <string name="camera_connected" msgid="5972302349448026591">"Kamera qoşuludur."</string>
     <string name="camera_disconnected" msgid="7879070561053748598">"Kamera qoşulu deyil."</string>
-    <string name="click_import" msgid="5153823057201280612">"İmport üçün buraya toxunun"</string>
+    <string name="click_import" msgid="5153823057201280612">"İmport üçün bura toxunun"</string>
     <string name="widget_type_album" msgid="8649890012992069317">"Albom seçin"</string>
     <string name="widget_type_shuffle" msgid="3813327035908882115">"Bütün şəkilləri qarışdırın"</string>
     <string name="widget_type_photo" msgid="2237017593844917491">"Şəkil seçin"</string>
@@ -189,7 +189,7 @@
     <string name="folder_camera" msgid="9117540100094034097">"Kamera"</string>
     <string name="folder_download" msgid="9201141690833756842">"Endir"</string>
     <string name="folder_edited_online_photos" msgid="7885121837502350691">"Redaktə edilmış onlayn fotolar"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"impot olunmuş"</string>
+    <string name="folder_imported" msgid="1652410522850456583">"import olunmuş"</string>
     <string name="folder_screenshot" msgid="8619432532724304995">"displey görüntüsü"</string>
     <string name="help" msgid="2528548040829796056">"Yardım"</string>
     <string name="no_external_storage_title" msgid="8762156252392350944">"Saxlamağa yer yoxdur"</string>

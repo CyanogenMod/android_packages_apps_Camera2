@@ -202,7 +202,7 @@
     <string name="please_wait" msgid="99283054995831377">"請稍候"</string>
     <string name="save_into" msgid="3800886260514315436">"正在將影片儲存至「<xliff:g id="ALBUM_NAME">%1$s</xliff:g>」…"</string>
     <string name="trim_too_short" msgid="8755328952688477762">"無法剪輯：目標影片長度過短"</string>
-    <string name="rendering_photo_sphere" msgid="6767345449862157889">"正在呈現全景相片"</string>
+    <string name="rendering_photo_sphere" msgid="6767345449862157889">"正在輸出全景相片"</string>
     <string name="save" msgid="4522918253523037970">"儲存"</string>
     <string name="ingest_scanning" msgid="7413203688783501800">"正在掃描內容…"</string>
   <plurals name="ingest_number_of_items_scanned">
