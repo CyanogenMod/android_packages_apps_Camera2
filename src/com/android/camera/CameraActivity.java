@@ -742,7 +742,9 @@ public class CameraActivity extends Activity
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
             mFilmStripView.setDataAdapter(mDataAdapter);
-            mDataAdapter.requestLoad(getContentResolver());
+            if (!isCaptureIntent()) {
+                mDataAdapter.requestLoad(getContentResolver());
+            }
         } else {
             // Put a lock placeholder as the last image by setting its date to 0.
             ImageView v = (ImageView) getLayoutInflater().inflate(
@@ -1043,8 +1045,18 @@ public class CameraActivity extends Activity
     public void onShowSwitcherPopup() {
     }
 
+    /**
+     * Enable/disable swipe-to-filmstrip.
+     * Will always disable swipe if in capture intent.
+     *
+     * @param enable {@code true} to enable swipe.
+     */
     public void setSwipingEnabled(boolean enable) {
-        mCameraPreviewData.lockPreview(!enable);
+        if (isCaptureIntent()) {
+            mCameraPreviewData.lockPreview(true);
+        } else {
+            mCameraPreviewData.lockPreview(!enable);
+        }
     }
 
     // Accessor methods for getting latency times used in performance testing
