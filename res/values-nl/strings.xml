@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"Camera"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"Videospeler"</string>
-    <string name="loading_video" msgid="7506410442678001647">"Video laden..."</string>
-    <string name="loading_image" msgid="2060882673852072952">"Afbeelding laden..."</string>
-    <string name="loading_account" msgid="5905155935821293897">"Account laden…"</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"Video hervatten"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"Afspelen hervatten vanaf %s?"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"Afspelen hervatten"</string>
-    <string name="loading" msgid="1780879367849478548">"Laden…"</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"Kan niet laden"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"Kan de afbeelding niet laden"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"Geen miniatuur"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"Opnieuw beginnen"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
-    <string name="ok" msgid="7771534786778882486">"OK"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"Raak een gezicht aan om te beginnen."</string>
-    <string name="saving_image" msgid="4305990779779942817">"Foto opslaan..."</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"Foto opslaan in <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
-    <string name="save_error" msgid="1170362488191167076">"Kan bijgesneden afbeelding niet opslaan."</string>
-    <string name="crop_label" msgid="8114305803169123050">"Foto bijsnijden"</string>
-    <string name="trim_label" msgid="7369596929410798458">"Video bijsnijden"</string>
-    <string name="select_image" msgid="3289827722983995546">"Foto selecteren"</string>
-    <string name="select_video" msgid="882817436381543724">"Video selecteren"</string>
-    <string name="select_item" msgid="2611103251995672148">"Item selecteren"</string>
-    <string name="select_album" msgid="7946907074045669521">"Album selecteren"</string>
-    <string name="select_group" msgid="7446238738711880170">"Groep selecteren"</string>
     <string name="set_image" msgid="3011821258780340803">"Foto instellen als"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Achtergrond inst."</string>
-    <string name="wallpaper" msgid="3542643990146620046">"Achtergrond instellen..."</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Achtergrond"</string>
     <string name="delete" msgid="7258764001896874869">"Verwijderen"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"Geselecteerd item verwijderen?"</item>
     <item quantity="other" msgid="882035505847338991">"Geselecteerde items verwijderen?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"Bevestigen"</string>
-    <string name="cancel" msgid="3709581234100450763">"Annuleren"</string>
     <string name="share" msgid="319799706929863109">"Delen"</string>
     <string name="share_panorama" msgid="7488525470543070168">"Panorama delen"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"Delen als foto"</string>
     <string name="deleted" msgid="1144434522200481802">"Verwijderd"</string>
     <string name="undo" msgid="7561810819827468379">"ONGEDAAN MAKEN"</string>
-    <string name="select_all" msgid="3201279798263252094">"Alles selecteren"</string>
-    <string name="deselect_all" msgid="626233665600163037">"Alle selecties opheffen"</string>
-    <string name="slideshow" msgid="6249043759236676662">"Diavoorstelling"</string>
     <string name="details" msgid="3581943734736871564">"Details"</string>
-    <string name="details_title" msgid="681306416468138508">"%1$d van %2$d items:"</string>
     <string name="close" msgid="7196876073399885123">"Sluiten"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Overschakelen naar Camera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"%1$d geselecteerd"</item>
     <item quantity="one" msgid="4283105620980058761">"%1$d geselecteerd"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"Op kaart weergeven"</string>
     <string name="rotate_left" msgid="6719855780237705569">"Linksom draaien"</string>
     <string name="rotate_right" msgid="8558343437940821771">"Rechtsom draaien"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"Kan item niet vinden."</string>
     <string name="edit" msgid="8457904262004517151">"Bewerken"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"Eenvoudig bewerken"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"Cacheverzoeken verwerken"</string>
-    <string name="caching_label" msgid="6581817666800160995">"In cache opslaan..."</string>
     <string name="crop_action" msgid="3281088975169422593">"Bijsnijden"</string>
     <string name="trim_action" msgid="1912063594235898890">"Bijsnijden"</string>
-    <string name="mute_action" msgid="6523005634451795344">"Dempen"</string>
     <string name="set_as" msgid="7362777416265059096">"Instellen als"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"Kan video niet dempen."</string>
     <string name="video_err" msgid="6747342411484597130">"Video kan niet worden afgespeeld."</string>
-    <string name="group_by_location" msgid="7885728085506867484">"Op locatie"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"Op tijd"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"Op tags"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"Op mensen"</string>
-    <string name="group_by_album" msgid="518334663451373758">"Op album"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"Op grootte"</string>
-    <string name="untagged" msgid="4213803874762026102">"Geen tags"</string>
-    <string name="no_location" msgid="4077330169715063726">"Geen locatie"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"Sommige locaties kunnen wegens problemen met het netwerk niet worden geïdentificeerd."</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"Kan de foto\'s in dit album niet downloaden. Probeer het later opnieuw."</string>
-    <string name="show_images_only" msgid="6498287528900683465">"Alleen afbeeldingen"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"Alleen video\'s"</string>
-    <string name="show_all" msgid="5621895787382615225">"Afbeeldingen en video\'s"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"Fotogalerij"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"Geen foto\'s."</string>
     <string name="crop_saved" msgid="6708204358512805637">"Bijgesneden afbeelding is opgeslagen in <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"Geen albums beschikbaar."</string>
-    <string name="empty_album" msgid="7143934241018780840">"0 afbeeldingen/video\'s beschikbaar."</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"Berichten"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"Offline beschikbaar maken"</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"Vernieuwen"</string>
-    <string name="done" msgid="998934109252173093">"Gereed"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d van %2$d items:"</string>
     <string name="title" msgid="1465174588508188840">"Titel"</string>
     <string name="description" msgid="7012551348834166615">"Beschrijving"</string>
     <string name="time" msgid="53680310933472250">"Tijd"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"Geflitst"</string>
     <string name="flash_off" msgid="7313393221333362406">"Geen flits"</string>
     <string name="unknown" msgid="2211992216750845926">"Onbekend"</string>
-    <string name="ffx_original" msgid="549901223077566047">"Oorspronkelijk"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"Vintage"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"Instant"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"Bleken"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"Blauw"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"Z/W"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Punch"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"X-proces"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Album offline beschikbaar maken."</item>
-    <item quantity="other" msgid="5124932962621695590">"Albums offline beschikbaar maken."</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"Dit item is lokaal opgeslagen en offline beschikbaar."</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"Alle albums"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"Lokale albums"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"MTP-apparaten"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa-albums"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> beschikbaar"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> of kleiner"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> of groter"</string>
-    <string name="size_between" msgid="2266484752949196814">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> tot <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"Importeren"</string>
-    <string name="import_complete" msgid="6772771659359964875">"Importeren voltooid"</string>
-    <string name="import_fail" msgid="5162454276035072428">"Importeren mislukt"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"Camera aangesloten."</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"Camera losgekoppeld."</string>
-    <string name="click_import" msgid="5153823057201280612">"Raak aan om te importeren"</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"Een album selecteren"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"Alle afbeeldingen verwisselen"</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"Een afbeelding kiezen"</string>
-    <string name="widget_type" msgid="1607279427350645903">"Afbeeldingen kiezen"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"Diavoorstelling"</string>
-    <string name="albums" msgid="7571656500475430599">"Albums"</string>
-    <string name="times" msgid="4738095876364133181">"Tijden"</string>
-    <string name="locations" msgid="9050411755300802457">"Locaties"</string>
-    <string name="people" msgid="4059890005675672784">"Mensen"</string>
-    <string name="tags" msgid="1837044547733525409">"Tags"</string>
-    <string name="group_by" msgid="7228838244265292454">"Groeperen op"</string>
-    <string name="settings" msgid="2408436721619264685">"Instellingen"</string>
-    <string name="add_account" msgid="5407579257925503059">"Account toevoegen"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"Camera"</string>
-    <string name="folder_download" msgid="9201141690833756842">"Downloaden"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"Bewerkte online foto\'s"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"Geïmporteerd"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"Screenshot"</string>
-    <string name="help" msgid="2528548040829796056">"Help"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"Geen opslag"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"Geen externe opslag beschikbaar"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmstrookweergave"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"Rasterweergave"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Op volledig scherm"</string>
-    <string name="trimming" msgid="3297452940449729243">"Bijsnijden"</string>
-    <string name="muting" msgid="4406071974811026243">"Dempen"</string>
     <string name="please_wait" msgid="99283054995831377">"Een ogenblik geduld"</string>
-    <string name="save_into" msgid="3800886260514315436">"Video opslaan in <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"Kan niet bijsnijden: doelvideo is te kort"</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"Panoramafoto opbouwen"</string>
-    <string name="save" msgid="4522918253523037970">"Opslaan"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"Inhoud scannen..."</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"%1$d items gescand"</item>
-    <item quantity="one" msgid="6118751779386608938">"%1$d item gescand"</item>
-    <item quantity="other" msgid="1091937586315173697">"%1$d items gescand"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"Sorteren..."</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"Scannen gereed"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"Importeren..."</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"Er is geen inhoud om te importeren naar dit apparaat."</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"Er is geen MTP-apparaat verbonden"</string>
     <string name="camera_error_title" msgid="434116066686973315">"Camerafout"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"Kan geen verbinding maken met de camera."</string>
     <string name="camera_disabled" msgid="4927328535752421596">"De camera is uitgeschakeld vanwege het beveiligingsbeleid."</string>
-    <string name="camera_label" msgid="8822012181326078626">"Camera"</string>
     <string name="wait" msgid="2081747495953883435">"Even geduld…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Koppel de USB-opslag voordat u de camera gebruikt."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Plaats een SD-kaart voordat u de camera gebruikt."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"USB-opslag voorbereiden…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"SD-kaart voorbereiden…"</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"Geen toegang tot USB-opslag."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Geen toegang tot SD-kaart."</string>
-    <string name="review_cancel" msgid="4681578987722865410">"ANNULEREN"</string>
-    <string name="review_ok" msgid="4229133003029778558">"GEREED"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"Time-lapse-opname"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Camera selecteren"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Achterzijde"</string>
@@ -301,7 +164,6 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NACHT"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"ZONSONDERGANG"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"FEEST"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"AFTELTIMER"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"TIMER UIT"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SECONDE"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SECONDEN"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"CAMERA AAN VOORZIJDE"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"CAMERA AAN ACHTERZIJDE"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"OK"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"Uw USB-opslag is bijna vol. Wijzig de kwaliteitsinstelling of verwijder enkele afbeeldingen of andere bestanden."</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"Uw SD-kaart is bijna vol. Wijzig de kwaliteitsinstelling of verwijder enkele afbeeldingen of andere bestanden."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"Maximale grootte bereikt."</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"Te snel"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"In de ruimte"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Zonsondergang"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Uw video"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"Zet uw apparaat neer.\nStap even uit beeld."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Raak aan om een foto te maken tijdens een opname."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Video-opname is gestart."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Video-opname is gestopt."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Videosnapshot staat uit als speciale effecten zijn ingeschakeld."</string>
     <string name="clear_effects" msgid="155262355011195942">"Effecten wissen"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"GEKKE GEZICHTEN"</string>
     <string name="effect_background" msgid="2260438748276866983">"ACHTERGROND"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"Sluiter"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"Menuknop"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Meest recente foto"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Schakelen tussen camera aan voorzijde en aan achterzijde"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"Camera-, video- of panoramakiezer"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"Meer instelopties"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Instelopties sluiten"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"Zoomregeling"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"%1$s verlagen"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"%1$s verhogen"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s selectievakje"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Overschakelen naar foto"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Overschakelen naar video"</string>
@@ -365,10 +217,6 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Controle annuleren"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Controle gereed"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Opnieuw maken na controle"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"Video afspelen"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"Video onderbreken"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"Video opnieuw laden"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"Tijdbalk videospeler"</string>
     <string name="capital_on" msgid="5840588038158274585">"AAN"</string>
     <string name="capital_off" msgid="3199056669644846925">"UIT"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Uit"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Gereed"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Tijdsinterval instellen"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Time-lapse-functie is uitgeschakeld. Schakel deze in om het tijdsinterval in te stellen."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"Afteltimer is uitgeschakeld. Schakel de timer in om af te tellen vóór het nemen van een foto."</string>
     <string name="set_duration" msgid="7425045408900251919">"Duur in seconden instellen"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Aftellen om een foto te nemen"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Fotolocaties onthouden?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Label uw foto\'s en video\'s met de locaties waar ze zijn genomen.\n\nAndere apps hebben toegang tot deze informatie en uw opgeslagen afbeeldingen."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Nee, bedankt"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Ja"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"Camera"</string>
-    <string name="menu_search" msgid="8274896451431033951">"Zoeken"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"Foto\'s"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"Albums"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"MEER OPTIES"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"INSTELLINGEN"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d foto"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d foto\'s"</item>
-  </plurals>
 </resources>

@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"Cámara"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"Reproductor de vídeo"</string>
-    <string name="loading_video" msgid="7506410442678001647">"Cargando vídeo..."</string>
-    <string name="loading_image" msgid="2060882673852072952">"Cargando imagen…"</string>
-    <string name="loading_account" msgid="5905155935821293897">"Cargando cuenta..."</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"Reanudar vídeo"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"Reanudar reproducción a partir de %s?"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"Reanudar reproducción"</string>
-    <string name="loading" msgid="1780879367849478548">"Cargando…"</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"Error al cargar"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"No se puede cargar la imagen."</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"No hay miniaturas."</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"Volver a empezar"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"Aceptar"</string>
-    <string name="ok" msgid="7771534786778882486">"Aceptar"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"Toca una cara para comenzar."</string>
-    <string name="saving_image" msgid="4305990779779942817">"Guardando imagen..."</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"Guardando imagen en <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="save_error" msgid="1170362488191167076">"Error al guardar la imagen recortada"</string>
-    <string name="crop_label" msgid="8114305803169123050">"Recortar imagen"</string>
-    <string name="trim_label" msgid="7369596929410798458">"Recortar vídeo"</string>
-    <string name="select_image" msgid="3289827722983995546">"Seleccionar foto"</string>
-    <string name="select_video" msgid="882817436381543724">"Seleccionar vídeo"</string>
-    <string name="select_item" msgid="2611103251995672148">"Seleccionar elemento"</string>
-    <string name="select_album" msgid="7946907074045669521">"Seleccionar álbum"</string>
-    <string name="select_group" msgid="7446238738711880170">"Seleccionar grupo"</string>
     <string name="set_image" msgid="3011821258780340803">"Establecer como"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Establecer fondo"</string>
-    <string name="wallpaper" msgid="3542643990146620046">"Estableciendo fondo de pantalla..."</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Fondo de pantalla"</string>
     <string name="delete" msgid="7258764001896874869">"Eliminar"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"¿Eliminar elemento seleccionado?"</item>
     <item quantity="other" msgid="882035505847338991">"¿Eliminar elementos seleccionados?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"Confirmar"</string>
-    <string name="cancel" msgid="3709581234100450763">"Cancelar"</string>
     <string name="share" msgid="319799706929863109">"Compartir"</string>
     <string name="share_panorama" msgid="7488525470543070168">"Compartir panorámica"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"Compartir como foto"</string>
     <string name="deleted" msgid="1144434522200481802">"Eliminado"</string>
     <string name="undo" msgid="7561810819827468379">"DESHACER"</string>
-    <string name="select_all" msgid="3201279798263252094">"Seleccionar todo"</string>
-    <string name="deselect_all" msgid="626233665600163037">"Desmarcar todo"</string>
-    <string name="slideshow" msgid="6249043759236676662">"Presentación de diapositivas"</string>
     <string name="details" msgid="3581943734736871564">"Detalles"</string>
-    <string name="details_title" msgid="681306416468138508">"%1$d de %2$d elementos:"</string>
     <string name="close" msgid="7196876073399885123">"Cerrar"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Cambiar a la cámara"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"%1$d seleccionado(s)"</item>
     <item quantity="one" msgid="4283105620980058761">"%1$d seleccionado(s)"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"Mostrar en el mapa"</string>
     <string name="rotate_left" msgid="6719855780237705569">"Girar a la izquierda"</string>
     <string name="rotate_right" msgid="8558343437940821771">"Girar a la derecha"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"No se ha podido encontrar el elemento."</string>
     <string name="edit" msgid="8457904262004517151">"Editar"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"Edición simple"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"Procesando solicitudes de almacenamiento en caché"</string>
-    <string name="caching_label" msgid="6581817666800160995">"Almacenando..."</string>
     <string name="crop_action" msgid="3281088975169422593">"Recortar"</string>
     <string name="trim_action" msgid="1912063594235898890">"Recortar"</string>
-    <string name="mute_action" msgid="6523005634451795344">"Silenciar"</string>
     <string name="set_as" msgid="7362777416265059096">"Establecer como"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"Error al silenciar el vídeo."</string>
     <string name="video_err" msgid="6747342411484597130">"Error al reproducir el vídeo."</string>
-    <string name="group_by_location" msgid="7885728085506867484">"Por ubicación"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"Por hora"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"Por etiquetas"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"Por personas"</string>
-    <string name="group_by_album" msgid="518334663451373758">"Por álbum"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"Por tamaño"</string>
-    <string name="untagged" msgid="4213803874762026102">"Sin etiquetas"</string>
-    <string name="no_location" msgid="4077330169715063726">"Sin ubicación"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"No se ha podido identificar algunas ubicaciones debido a errores en la red."</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"No se ha podido descargar las fotos del álbum. Inténtalo de nuevo más tarde."</string>
-    <string name="show_images_only" msgid="6498287528900683465">"Solo imágenes"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"Solo vídeos"</string>
-    <string name="show_all" msgid="5621895787382615225">"Imágenes y vídeos"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"Galería de fotos"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"No hay fotos."</string>
     <string name="crop_saved" msgid="6708204358512805637">"La imagen recortada se ha guardado en <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"No hay álbumes disponibles."</string>
-    <string name="empty_album" msgid="7143934241018780840">"No hay imágenes ni vídeos disponibles."</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"Publicaciones"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"Disponible sin conexión"</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"Actualizar"</string>
-    <string name="done" msgid="998934109252173093">"Listo"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d de %2$d elementos:"</string>
     <string name="title" msgid="1465174588508188840">"Título"</string>
     <string name="description" msgid="7012551348834166615">"Descripción"</string>
     <string name="time" msgid="53680310933472250">"Hora"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"Flash activado"</string>
     <string name="flash_off" msgid="7313393221333362406">"Sin flash"</string>
     <string name="unknown" msgid="2211992216750845926">"Desconocido"</string>
-    <string name="ffx_original" msgid="549901223077566047">"Original"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"Vintage"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"Instantánea"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"Decolorar"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"Azul"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"Blanc/negr"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Puñetazo"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"Procesamiento X"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Haciendo que el álbum pueda verse sin conexión."</item>
-    <item quantity="other" msgid="5124932962621695590">"Haciendo que los álbumes puedan verse sin conexión."</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"El elemento se ha almacenado de forma local y está disponible sin conexión."</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"Todos los álbumes"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"Álbumes locales"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"Dispositivos MTP"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Álbumes de Picasa"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> libres"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> o inferior"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> o superior"</string>
-    <string name="size_between" msgid="2266484752949196814">"De <xliff:g id="MIN_SIZE">%1$s</xliff:g> a <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"Importar"</string>
-    <string name="import_complete" msgid="6772771659359964875">"Importación completada"</string>
-    <string name="import_fail" msgid="5162454276035072428">"Error al importar"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"Cámara conectada."</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"Cámara desconectada"</string>
-    <string name="click_import" msgid="5153823057201280612">"Toca aquí para realizar la importación."</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"Seleccionar un álbum"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"Mostrar imágenes aleatoriamente"</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"Seleccionar una imagen"</string>
-    <string name="widget_type" msgid="1607279427350645903">"Seleccionar imágenes"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"Presentación de diapositivas"</string>
-    <string name="albums" msgid="7571656500475430599">"Álbumes"</string>
-    <string name="times" msgid="4738095876364133181">"Horas"</string>
-    <string name="locations" msgid="9050411755300802457">"Ubicaciones"</string>
-    <string name="people" msgid="4059890005675672784">"Usuarios"</string>
-    <string name="tags" msgid="1837044547733525409">"Etiquetas"</string>
-    <string name="group_by" msgid="7228838244265292454">"Agrupar por"</string>
-    <string name="settings" msgid="2408436721619264685">"Ajustes"</string>
-    <string name="add_account" msgid="5407579257925503059">"Añadir cuenta"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"Cámara"</string>
-    <string name="folder_download" msgid="9201141690833756842">"Descargar"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"Fotos online editadas"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"Importadas"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"Captura de pantalla"</string>
-    <string name="help" msgid="2528548040829796056">"Ayuda"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"Sin almacenamiento"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"No hay almacenamiento externo disponible."</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Vista de tira de película"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"Vista de cuadrícula"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Pantalla completa"</string>
-    <string name="trimming" msgid="3297452940449729243">"Recortando"</string>
-    <string name="muting" msgid="4406071974811026243">"Silenciando"</string>
     <string name="please_wait" msgid="99283054995831377">"Espera..."</string>
-    <string name="save_into" msgid="3800886260514315436">"Guardando vídeo en <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"No se puede recortar: el vídeo de destino es demasiado corto."</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"Procesando foto esférica"</string>
-    <string name="save" msgid="4522918253523037970">"Guardar"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"Analizando contenido..."</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"%1$d elementos analizados"</item>
-    <item quantity="one" msgid="6118751779386608938">"%1$d elemento analizado"</item>
-    <item quantity="other" msgid="1091937586315173697">"%1$d elementos analizados"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"Ordenando..."</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"Análisis completo"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"Importando..."</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"No hay contenido disponible para importar en este dispositivo."</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"No hay dispositivos MTP conectados."</string>
     <string name="camera_error_title" msgid="434116066686973315">"Error de cámara"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"No se puede establecer conexión con la cámara."</string>
     <string name="camera_disabled" msgid="4927328535752421596">"Se ha inhabilitado la cámara debido a las políticas de seguridad."</string>
-    <string name="camera_label" msgid="8822012181326078626">"Cámara"</string>
     <string name="wait" msgid="2081747495953883435">"Espera, por favor…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Para poder usar la cámara, activa el almacenamiento USB."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Para poder usar la cámara, inserta una tarjeta SD."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Preparando almacenamiento USB…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"Preparando tarjeta SD..."</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"No se ha podido acceder al almacenamiento USB."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"No se ha podido acceder a la tarjeta SD."</string>
-    <string name="review_cancel" msgid="4681578987722865410">"CANCELAR"</string>
-    <string name="review_ok" msgid="4229133003029778558">"LISTO"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"Grabación a intervalos de tiempo"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Seleccionar cámara"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Trasera"</string>
@@ -301,7 +164,6 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NOCHE"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"ATARDECER"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"FIESTA"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"TEMPORIZADOR DE CUENTA ATRÁS"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"TEMPORIZADOR DESACTIVADO"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SEGUNDO"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SEGUNDOS"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"CÁMARA FRONTAL"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"CÁMARA TRASERA"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"Aceptar"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"No queda espacio en el almacenamiento USB. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"No queda espacio en la tarjeta SD. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"Se ha alcanzado el límite de tamaño."</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"Muy rápido"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"en el espacio"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Atardecer"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Tu vídeo"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"Desactiva el dispositivo.\nDeja de usarlo durante unos minutos."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Toca para hacer una foto mientras grabas un vídeo."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Se ha iniciado la grabación de vídeo."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"La grabación de vídeo se ha detenido."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"La captura de vídeo se inhabilita al activar efectos especiales."</string>
     <string name="clear_effects" msgid="155262355011195942">"Borrar efectos"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"CARAS GRACIOSAS"</string>
     <string name="effect_background" msgid="2260438748276866983">"FONDO"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"Obturador"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"Botón de menú"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Foto más reciente"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Opción de cámara trasera y delantera"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"Cámara, vídeo o modo panorámico"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"Más controles de configuración"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Cerrar controles de configuración"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"Control de zoom"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"Reducir %1$s"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"Aumentar %1$s"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"Casilla de verificación %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Cambiar a la cámara"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Cambiar a vídeo"</string>
@@ -365,10 +217,6 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Revisar cancelación"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Revisar foto o vídeo terminados"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Revisar repetición"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"Ver un vídeo"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"Pausar vídeo"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"Volver a cargar vídeo"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"Barra de tiempo del reproductor de vídeo"</string>
     <string name="capital_on" msgid="5840588038158274585">"ACTIVADO"</string>
     <string name="capital_off" msgid="3199056669644846925">"DESACTIVADO"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Desactivado"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Listo"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Establecer intervalo de tiempo"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"El intervalo de tiempo está desactivado. Activa esta función para establecer un intervalo."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"El temporizador de cuenta atrás está desactivado. Activa esta opción para ver la cuenta atrás antes de hacer una foto."</string>
     <string name="set_duration" msgid="7425045408900251919">"Definir duración en segundos"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Cuenta atrás para hacer una foto"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"¿Recordar ubicaciones de las fotos?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Etiqueta tus fotos y vídeos con las ubicaciones donde se han realizado.\n\nOtras aplicaciones pueden acceder a esta información, así como a las imágenes guardadas."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"No, gracias"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Sí"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"Cámara"</string>
-    <string name="menu_search" msgid="8274896451431033951">"Buscar"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"Fotos"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"Álbumes"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"MÁS OPCIONES"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"AJUSTES"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d foto"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d fotos"</item>
-  </plurals>
 </resources>
