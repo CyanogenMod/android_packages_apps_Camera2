@@ -63,6 +63,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.CameraHardwareException;
 import com.android.camera.CameraHolder;
@@ -638,23 +639,6 @@ public class CameraUtil {
         return true;
     }
 
-    public static void viewUri(Uri uri, Context context) {
-        if (!isUriValid(uri, context.getContentResolver())) {
-            Log.e(TAG, "Uri invalid. uri=" + uri);
-            return;
-        }
-
-        try {
-            context.startActivity(new Intent(CameraUtil.REVIEW_ACTION, uri));
-        } catch (ActivityNotFoundException ex) {
-            try {
-                context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            } catch (ActivityNotFoundException e) {
-                Log.e(TAG, "review image fail. uri=" + uri, e);
-            }
-        }
-    }
-
     public static void dumpRect(RectF rect, String msg) {
         Log.v(TAG, msg + "=(" + rect.left + "," + rect.top
                 + "," + rect.right + "," + rect.bottom + ")");
@@ -826,15 +810,15 @@ public class CameraUtil {
         }
     }
 
-    public static void playVideo(Context context, Uri uri, String title) {
+    public static void playVideo(Activity activity, Uri uri, String title) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "video/*")
                     .putExtra(Intent.EXTRA_TITLE, title)
                     .putExtra(KEY_TREAT_UP_AS_BACK, true);
-            context.startActivity(intent);
+            activity.startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, context.getString(R.string.video_err),
+            Toast.makeText(activity, activity.getString(R.string.video_err),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -843,10 +827,10 @@ public class CameraUtil {
      * Starts GMM with the given location shown. If this fails, and GMM could
      * not be found, we use a geo intent as a fallback.
      *
-     * @param context the Android context to use for starting the activities.
+     * @param activity the activity to use for launching the Maps intent.
      * @param latLong a 2-element array containing {latitude/longitude}.
      */
-    public static void showOnMap(Context context, double[] latLong) {
+    public static void showOnMap(Activity activity, double[] latLong) {
         try {
             // We don't use "geo:latitude,longitude" because it only centers
             // the MapView to the specified location, but we need a marker
@@ -858,13 +842,14 @@ public class CameraUtil {
                     MAPS_CLASS_NAME);
             Intent mapsIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(uri)).setComponent(compName);
-            context.startActivity(mapsIntent);
+            activity.startActivityForResult(mapsIntent,
+                    CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
         } catch (ActivityNotFoundException e) {
             // Use the "geo intent" if no GMM is installed
             Log.e(TAG, "GMM activity not found!", e);
             String url = String.format(Locale.ENGLISH, "geo:%f,%f", latLong[0], latLong[1]);
             Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            context.startActivity(mapsIntent);
+            activity.startActivity(mapsIntent);
         }
     }
 }
