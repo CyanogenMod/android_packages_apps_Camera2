@@ -93,6 +93,19 @@ public class CameraActivity extends Activity
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
+    /**
+     * Request code from an activity we started that indicated that we do not
+     * want to reset the view to the preview in onResume.
+     */
+    public static final int REQ_CODE_DONT_SWITCH_TO_PREVIEW = 142;
+
+    /** Request code for external image editor activities. */
+    private static final int REQ_CODE_EDIT = 1;
+
+
+    /** Whether onResume should reset the view to the preview. */
+    private boolean mResetToPreviewOnResume = true;
+
     // Supported operations at FilmStripView. Different data has different
     // set of supported operations.
     private static final int SUPPORT_DELETE = 1 << 0;
@@ -107,8 +120,6 @@ public class CameraActivity extends Activity
     private static final int SUPPORT_SHOW_ON_MAP = 1 << 9;
     private static final int SUPPORT_ALL = 0xffffffff;
 
-    private static final int EDIT_RESULT = 1;
-
     /** This data adapter is used by FilmStripView. */
     private LocalDataAdapter mDataAdapter;
     /** This data adapter represents the real local camera data. */
@@ -117,7 +128,6 @@ public class CameraActivity extends Activity
     private PanoramaStitchingManager mPanoramaManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
-    private FrameLayout mLayoutRoot;
     private FrameLayout mAboveFilmstripControlLayout;
     private View mCameraModuleRootView;
     private FilmStripView mFilmStripView;
@@ -588,7 +598,7 @@ public class CameraActivity extends Activity
                 intent.setData(currentData.getContentUri());
                 // We need the file path to wrap this into a RandomAccessFile.
                 intent.putExtra(MEDIA_ITEM_PATH, currentData.getPath());
-                startActivity(intent);
+                startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
                 return true;
             }
             case R.id.action_rotate_ccw:
@@ -606,8 +616,8 @@ public class CameraActivity extends Activity
                                 localData.getMimeType())
                         .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.putExtra("mimeType", intent.getType());
-                startActivity(Intent.createChooser(
-                        intent, getString(R.string.set_as)));
+                startActivityForResult(Intent.createChooser(
+                        intent, getString(R.string.set_as)), REQ_CODE_DONT_SWITCH_TO_PREVIEW);
                 return true;
             }
             case R.id.action_details:
@@ -683,8 +693,6 @@ public class CameraActivity extends Activity
                 registerReceiver(sScreenOffReceiver, filter);
             }
         }
-        mLayoutRoot = (FrameLayout) findViewById(R.id.camera_layout_root);
-
         mAboveFilmstripControlLayout =
                 (FrameLayout) findViewById(R.id.camera_above_filmstrip_layout);
         mAboveFilmstripControlLayout.setFitsSystemWindows(true);
@@ -788,6 +796,30 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_CODE_EDIT && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            ContentResolver contentResolver = getContentResolver();
+            if (uri == null) {
+                // If we don't have a particular uri returned, then we have
+                // to refresh all, it is not optimal, but works best so far.
+                // Also don't requestLoad() when in secure camera mode.
+                if (!mSecureCamera) {
+                    mDataAdapter.requestLoad(contentResolver);
+                }
+            } else {
+                mDataAdapter.refresh(contentResolver, uri);
+            }
+        }
+
+        if (requestCode == REQ_CODE_DONT_SWITCH_TO_PREVIEW | requestCode == REQ_CODE_EDIT) {
+            mResetToPreviewOnResume = false;
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public void onResume() {
         // TODO: Handle this in OrientationManager.
         if (Settings.System.getInt(getContentResolver(),
@@ -804,6 +836,15 @@ public class CameraActivity extends Activity
         mCurrentModule.onResumeAfterSuper();
 
         setSwipingEnabled(true);
+
+        if (mResetToPreviewOnResume) {
+            // Go to the preview on resume.
+            mFilmStripView.getController().goToFirstItem();
+        }
+        // Default is showing the preview, unless disabled by explicitly
+        // starting an activity we want to return from to the filmstrip rather
+        // than the preview.
+        mResetToPreviewOnResume = true;
     }
 
     @Override
@@ -991,26 +1032,7 @@ public class CameraActivity extends Activity
         Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(Intent.createChooser(intent, null), EDIT_RESULT);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_RESULT && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            ContentResolver contentResolver = getContentResolver();
-            if (uri == null) {
-                // If we don't have a particular uri returned, then we have
-                // to refresh all, it is not optimal, but works best so far.
-                // Also don't requestLoad() when in secure camera mode.
-                if (!mSecureCamera) {
-                    mDataAdapter.requestLoad(contentResolver);
-                }
-            } else {
-                mDataAdapter.refresh(contentResolver, uri);
-            }
-
-        }
+        startActivityForResult(Intent.createChooser(intent, null), REQ_CODE_EDIT);
     }
 
     private void openModule(CameraModule module) {
