@@ -19,14 +19,13 @@ package com.android.camera;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 
 public interface CameraModule {
 
     public void init(CameraActivity activity, View frame);
 
-    public void onSwitchMode(boolean toCamera);
+    public void onPreviewFocusChanged(boolean previewFocused);
 
     public void onPauseBeforeSuper();
 
@@ -59,8 +58,6 @@ public interface CameraModule {
     public void onUserInteraction();
 
     public boolean updateStorageHintOnResume();
-
-    public void updateCameraAppView();
 
     public void onOrientationChanged(int orientation);
 

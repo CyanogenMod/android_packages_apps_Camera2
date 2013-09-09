@@ -612,20 +612,20 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
-    public void onSwitchMode(boolean toCamera) {
-        if (toCamera) {
+    public void onPreviewFocusChanged(boolean previewFocused) {
+        if (previewFocused) {
             showUI();
         } else {
             hideUI();
         }
         if (mGestures != null) {
-            mGestures.setEnabled(toCamera);
+            mGestures.setEnabled(previewFocused);
         }
         if (mRenderOverlay != null) {
             // this can not happen in capture mode
-            mRenderOverlay.setVisibility(toCamera ? View.VISIBLE : View.GONE);
+            mRenderOverlay.setVisibility(previewFocused ? View.VISIBLE : View.GONE);
         }
-        setShowMenu(toCamera);
+        setShowMenu(previewFocused);
     }
 
     public void initializePopup(PreferenceGroup pref) {
@@ -672,6 +672,7 @@ public class VideoUI implements PieRenderer.PieListener,
         return mTextureView.getVisibility() == View.VISIBLE;
     }
 
+    @Override
     public void onDisplayChanged() {
         mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();

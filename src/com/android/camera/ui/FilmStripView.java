@@ -329,14 +329,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public void onDataFullScreenChange(int dataID, boolean fullScreen);
 
         /**
-         * Callback when entering/leaving camera mode.
-         *
-         * @param toCamera {@code true} if entering camera mode. Otherwise,
-         *            {@code false}
-         */
-        public void onSwitchMode(boolean toCamera);
-
-        /**
          * The callback when the item is centered/off-centered.
          *
          * @param dataID The ID of the image data.
@@ -1984,7 +1976,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
 
             if (mListener != null) {
-                mListener.onSwitchMode(false);
+                mListener.onDataFullScreenChange(mViewItem[mCurrentItem].getId(), false);
                 mBottomControls.setVisibility(View.VISIBLE);
             }
         }
@@ -2005,11 +1997,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         private void enterFullScreen() {
             if (mListener != null) {
-                // TODO: After full size images snapping to fill the screen at
-                // the end of a scroll/fling is implemented, we should only make
-                // this call when the view on the center of the screen is
-                // camera preview
-                mListener.onSwitchMode(true);
+                mListener.onDataFullScreenChange(mViewItem[mCurrentItem].getId(), true);
                 mBottomControls.setVisibility(View.GONE);
             }
         }
@@ -2028,7 +2016,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         private void leaveFullScreen() {
             if (mListener != null) {
-                mListener.onSwitchMode(false);
+                mListener.onDataFullScreenChange(mViewItem[mCurrentItem].getId(), false);
                 mBottomControls.setVisibility(View.VISIBLE);
             }
         }

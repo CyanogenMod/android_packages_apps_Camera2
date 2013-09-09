@@ -463,17 +463,20 @@ public class VideoModule implements CameraModule,
         }
     }
 
+    @Override
     @OnClickAttr
     public void onReviewPlayClicked(View v) {
         startPlayVideoActivity();
     }
 
+    @Override
     @OnClickAttr
     public void onReviewDoneClicked(View v) {
         mIsInReviewMode = false;
         doReturnToCaller(true);
     }
 
+    @Override
     @OnClickAttr
     public void onReviewCancelClicked(View v) {
         mIsInReviewMode = false;
@@ -1490,25 +1493,7 @@ public class VideoModule implements CameraModule,
             mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
         }
 
-        // Set flash mode.
-        String flashMode;
-        if (mUI.isVisible()) {
-            flashMode = mPreferences.getString(
-                    CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE,
-                    mActivity.getString(R.string.pref_camera_video_flashmode_default));
-        } else {
-            flashMode = Parameters.FLASH_MODE_OFF;
-        }
-        List<String> supportedFlash = mParameters.getSupportedFlashModes();
-        if (isSupported(flashMode, supportedFlash)) {
-            mParameters.setFlashMode(flashMode);
-        } else {
-            flashMode = mParameters.getFlashMode();
-            if (flashMode == null) {
-                flashMode = mActivity.getString(
-                        R.string.pref_camera_flashmode_no_flash);
-            }
-        }
+        forceFlashOffIfSupported(!mUI.isVisible());
 
         // Set white balance parameter.
         String whiteBalance = mPreferences.getString(
@@ -1711,27 +1696,46 @@ public class VideoModule implements CameraModule,
         }
     }
 
-    @Override
-    public void updateCameraAppView() {
-        if (!mPreviewing || mParameters.getFlashMode() == null) return;
-
-        // When going to and back from gallery, we need to turn off/on the flash.
-        if (!mUI.isVisible()) {
-            if (mParameters.getFlashMode().equals(Parameters.FLASH_MODE_OFF)) {
-                mRestoreFlash = false;
-                return;
+    private void forceFlashOffIfSupported(boolean forceOff) {
+        String flashMode;
+        if (!forceOff) {
+            flashMode = mPreferences.getString(
+                    CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE,
+                    mActivity.getString(R.string.pref_camera_video_flashmode_default));
+        } else {
+            flashMode = Parameters.FLASH_MODE_OFF;
+        }
+        List<String> supportedFlash = mParameters.getSupportedFlashModes();
+        if (isSupported(flashMode, supportedFlash)) {
+            mParameters.setFlashMode(flashMode);
+        } else {
+            flashMode = mParameters.getFlashMode();
+            if (flashMode == null) {
+                flashMode = mActivity.getString(
+                        R.string.pref_camera_flashmode_no_flash);
             }
-            mRestoreFlash = true;
-            setCameraParameters();
-        } else if (mRestoreFlash) {
-            mRestoreFlash = false;
-            setCameraParameters();
         }
     }
 
+    /**
+     * Used to update the flash mode. Video mode can turn on the flash as torch
+     * mode, which we would like to turn on and off when we switching in and
+     * out to the preview.
+     *
+     * @param forceOff whether we want to force the flash off.
+     */
+    private void forceFlashOff(boolean forceOff) {
+        if (!mPreviewing || mParameters.getFlashMode() == null) {
+            return;
+        }
+        forceFlashOffIfSupported(forceOff);
+        mCameraDevice.setParameters(mParameters);
+    }
+
     @Override
-    public void onSwitchMode(boolean toCamera) {
-        mUI.onSwitchMode(toCamera);
+    public void onPreviewFocusChanged(boolean previewFocused) {
+        mUI.onPreviewFocusChanged(previewFocused);
+        forceFlashOff(!previewFocused);
     }
 
     private final class JpegPictureCallback implements CameraPictureCallback {

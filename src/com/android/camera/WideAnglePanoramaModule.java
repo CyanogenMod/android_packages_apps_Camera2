@@ -308,8 +308,8 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void onSwitchMode(boolean toCamera) {
-        if (toCamera) {
+    public void onPreviewFocusChanged(boolean previewFocused) {
+        if (previewFocused) {
             mUI.showUI();
         } else {
             mUI.hideUI();
@@ -1056,10 +1056,6 @@ public class WideAnglePanoramaModule
     @Override
     public boolean updateStorageHintOnResume() {
         return false;
-    }
-
-    @Override
-    public void updateCameraAppView() {
     }
 
     @Override
