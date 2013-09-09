@@ -107,6 +107,8 @@ public class CameraActivity extends Activity
     private static final int SUPPORT_SHOW_ON_MAP = 1 << 9;
     private static final int SUPPORT_ALL = 0xffffffff;
 
+    private static final int EDIT_RESULT = 1;
+
     /** This data adapter is used by FilmStripView. */
     private LocalDataAdapter mDataAdapter;
     /** This data adapter represents the real local camera data. */
@@ -989,7 +991,26 @@ public class CameraActivity extends Activity
         Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(Intent.createChooser(intent, null));
+        startActivityForResult(Intent.createChooser(intent, null), EDIT_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDIT_RESULT && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            ContentResolver contentResolver = getContentResolver();
+            if (uri == null) {
+                // If we don't have a particular uri returned, then we have
+                // to refresh all, it is not optimal, but works best so far.
+                // Also don't requestLoad() when in secure camera mode.
+                if (!mSecureCamera) {
+                    mDataAdapter.requestLoad(contentResolver);
+                }
+            } else {
+                mDataAdapter.refresh(contentResolver, uri);
+            }
+
+        }
     }
 
     private void openModule(CameraModule module) {
