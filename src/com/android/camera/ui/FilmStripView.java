@@ -19,6 +19,7 @@ package com.android.camera.ui;
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -255,12 +256,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         /**
          * Returns the view to visually present the image data.
          *
-         * @param context The {@link Context} to create the view.
+         * @param activity The {@link Activity} context to create the view.
          * @param dataID The ID of the image data to be presented.
          * @return The view representing the image data. Null if unavailable or
          *         the {@code dataID} is out of range.
          */
-        public View getView(Context context, int dataID);
+        public View getView(Activity activity, int dataID);
 
         /**
          * Returns the {@link ImageData} specified by the ID.
