@@ -458,7 +458,8 @@ public class VideoModule implements CameraModule,
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(mCurrentVideoUri, convertOutputFormatToMimeType(mProfile.fileFormat));
         try {
-            mActivity.startActivity(intent);
+            mActivity
+                    .startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
         } catch (ActivityNotFoundException ex) {
             Log.e(TAG, "Couldn't view video " + mCurrentVideoUri, ex);
         }
