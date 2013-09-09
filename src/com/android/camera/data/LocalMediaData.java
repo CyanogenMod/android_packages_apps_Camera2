@@ -16,6 +16,7 @@
 
 package com.android.camera.data;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -205,9 +206,9 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public View getView(Context ctx,
+    public View getView(Activity activity,
             int decodeWidth, int decodeHeight, Drawable placeHolder) {
-        return fillImageView(ctx, new ImageView(ctx),
+        return fillImageView(activity, new ImageView(activity),
                 decodeWidth, decodeHeight, placeHolder);
     }
 
@@ -680,18 +681,18 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public View getView(final Context ctx,
+        public View getView(final Activity activity,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
 
             // ImageView for the bitmap.
-            ImageView iv = new ImageView(ctx);
+            ImageView iv = new ImageView(activity);
             iv.setLayoutParams(new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-            fillImageView(ctx, iv, decodeWidth, decodeHeight, placeHolder);
+            fillImageView(activity, iv, decodeWidth, decodeHeight, placeHolder);
 
             // ImageView for the play icon.
-            ImageView icon = new ImageView(ctx);
+            ImageView icon = new ImageView(activity);
             icon.setImageResource(R.drawable.ic_control_play);
             icon.setScaleType(ImageView.ScaleType.CENTER);
             icon.setLayoutParams(new FrameLayout.LayoutParams(
@@ -700,11 +701,11 @@ public abstract class LocalMediaData implements LocalData {
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CameraUtil.playVideo(ctx, getContentUri(), mTitle);
+                    CameraUtil.playVideo(activity, getContentUri(), mTitle);
                 }
             });
 
-            FrameLayout f = new FrameLayout(ctx);
+            FrameLayout f = new FrameLayout(activity);
             f.addView(iv);
             f.addView(icon);
             return f;

@@ -16,10 +16,10 @@
 
 package com.android.camera.data;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.view.View;
 
 import com.android.camera.ui.FilmStripView;
@@ -68,7 +68,7 @@ public interface LocalData extends FilmStripView.ImageData {
      */
     public static final int LOCAL_360_PHOTO_SPHERE = 6;
 
-    View getView(Context c, int width, int height, Drawable placeHolder);
+    View getView(Activity a, int width, int height, Drawable placeHolder);
 
     /**
      * Gets the date when this data is created. The returned date is also used
