@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"Kaamera"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"Videopleier"</string>
-    <string name="loading_video" msgid="7506410442678001647">"Video laadimine ..."</string>
-    <string name="loading_image" msgid="2060882673852072952">"Kujutise laadimine ..."</string>
-    <string name="loading_account" msgid="5905155935821293897">"Konto laadimine ..."</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"Jätka videot"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"Kas jätkata esitust alates %s?"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"Jätka esitust"</string>
-    <string name="loading" msgid="1780879367849478548">"Laadimine …"</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"Ei õnnestunud laadida"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"Kujutist ei õnnestunud laadida"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"Pisipilti pole"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"Alusta uuesti"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
-    <string name="ok" msgid="7771534786778882486">"OK"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"Alustamiseks puudutage nägu."</string>
-    <string name="saving_image" msgid="4305990779779942817">"Pildi salvestamine ..."</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"Pildi salvestamine albumisse <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="save_error" msgid="1170362488191167076">"Kärbitud kujutist ei saanud salvestada."</string>
-    <string name="crop_label" msgid="8114305803169123050">"Kärbi pilti"</string>
-    <string name="trim_label" msgid="7369596929410798458">"Kärbi videot"</string>
-    <string name="select_image" msgid="3289827722983995546">"Valige foto"</string>
-    <string name="select_video" msgid="882817436381543724">"Valige video"</string>
-    <string name="select_item" msgid="2611103251995672148">"Valige üksus"</string>
-    <string name="select_album" msgid="7946907074045669521">"Valige album"</string>
-    <string name="select_group" msgid="7446238738711880170">"Valige rühm"</string>
     <string name="set_image" msgid="3011821258780340803">"Määrake pilt kui"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Taustapilt"</string>
-    <string name="wallpaper" msgid="3542643990146620046">"Taustapildi määramine ..."</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Taustapilt"</string>
     <string name="delete" msgid="7258764001896874869">"Kustuta"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"Kas kustutada valitud üksus?"</item>
     <item quantity="other" msgid="882035505847338991">"Kas kustutada valitud üksused?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"Kinnita"</string>
-    <string name="cancel" msgid="3709581234100450763">"Tühista"</string>
     <string name="share" msgid="319799706929863109">"Jaga"</string>
     <string name="share_panorama" msgid="7488525470543070168">"Jaga panoraami"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"Fotona jagamine"</string>
     <string name="deleted" msgid="1144434522200481802">"Kustutatud"</string>
     <string name="undo" msgid="7561810819827468379">"VÕTA TAGASI"</string>
-    <string name="select_all" msgid="3201279798263252094">"Vali kõik"</string>
-    <string name="deselect_all" msgid="626233665600163037">"Tühista kõik valikud"</string>
-    <string name="slideshow" msgid="6249043759236676662">"Slaidiseanss"</string>
     <string name="details" msgid="3581943734736871564">"Üksikasjad"</string>
-    <string name="details_title" msgid="681306416468138508">"%1$d/%2$d üksusest"</string>
     <string name="close" msgid="7196876073399885123">"Sule"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Ava rakendus Kaamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"Valitud on %1$d"</item>
     <item quantity="one" msgid="4283105620980058761">"Valitud on %1$d"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"Kaardil kuvamine"</string>
     <string name="rotate_left" msgid="6719855780237705569">"Pööra vasakule"</string>
     <string name="rotate_right" msgid="8558343437940821771">"Pööra paremale"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"Üksust ei leitud."</string>
     <string name="edit" msgid="8457904262004517151">"Muuda"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"Lihtne muutmine"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"Vahemällu lisamise taotluste töötlemine"</string>
-    <string name="caching_label" msgid="6581817666800160995">"Vahemällu ..."</string>
     <string name="crop_action" msgid="3281088975169422593">"Kärbi"</string>
     <string name="trim_action" msgid="1912063594235898890">"Kärbi"</string>
-    <string name="mute_action" msgid="6523005634451795344">"Summuta"</string>
     <string name="set_as" msgid="7362777416265059096">"Määra kui"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"Video summutamine ei õnnestu."</string>
     <string name="video_err" msgid="6747342411484597130">"Videot ei saa esitada."</string>
-    <string name="group_by_location" msgid="7885728085506867484">"Asukoha järgi"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"Aja järgi"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"Märgendite järgi"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"Inimeste järgi"</string>
-    <string name="group_by_album" msgid="518334663451373758">"Albumi järgi"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"Suuruse järgi"</string>
-    <string name="untagged" msgid="4213803874762026102">"Märgendita"</string>
-    <string name="no_location" msgid="4077330169715063726">"Asukoht puudub"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"Mõnda asukohta ei suudetud võrguprobleemide tõttu tuvastada."</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"Fotosid ei saa sellesse albumisse alla laadida. Proovige hiljem uuesti."</string>
-    <string name="show_images_only" msgid="6498287528900683465">"Ainult kujutised"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"Ainult videod"</string>
-    <string name="show_all" msgid="5621895787382615225">"Kujutised ja videod"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"Fotogalerii"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"Fotod puuduvad."</string>
     <string name="crop_saved" msgid="6708204358512805637">"Kärbitud kujutis salvestati kausta <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"Ühtegi albumit pole saadaval."</string>
-    <string name="empty_album" msgid="7143934241018780840">"O kujutist/videot on saadaval."</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"Postitused"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"Tee kättesaadavaks offlainis"</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"Värskenda"</string>
-    <string name="done" msgid="998934109252173093">"Valmis"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d/%2$d üksusest"</string>
     <string name="title" msgid="1465174588508188840">"Pealkiri"</string>
     <string name="description" msgid="7012551348834166615">"Kirjeldus"</string>
     <string name="time" msgid="53680310933472250">"Aeg"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"Välk on sees"</string>
     <string name="flash_off" msgid="7313393221333362406">"Välguta"</string>
     <string name="unknown" msgid="2211992216750845926">"Teadmata"</string>
-    <string name="ffx_original" msgid="549901223077566047">"Algne"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"Vintage"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"Polaroid"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"Pleekimine"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"Sinine"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"Mustvalge"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Punš"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"X-töötlus"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"Litorgaafia"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Album muudetakse võrguühenduseta kättesaadavaks."</item>
-    <item quantity="other" msgid="5124932962621695590">"Albumid muudetakse võrguühenduseta kättesaadavaks."</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"See üksus on kohalikult salvestatud ja võrguühenduseta saadaval."</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"Kõik albumid"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"Kohalikud albumid"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"MTP-seadmed"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa albumid"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> on tasuta"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> või väiksem"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> või suurem"</string>
-    <string name="size_between" msgid="2266484752949196814">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> kuni <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"Importimine"</string>
-    <string name="import_complete" msgid="6772771659359964875">"Importim. lõpetatud"</string>
-    <string name="import_fail" msgid="5162454276035072428">"Importimine ebaõnnestus"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"Kaamera on ühendatud."</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"Kaamera pole ühendatud."</string>
-    <string name="click_import" msgid="5153823057201280612">"Puudutage importimiseks siin"</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"Vali album"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"Esita kujutised juh. järjek."</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"Vali kujutis"</string>
-    <string name="widget_type" msgid="1607279427350645903">"Kujutiste valimine"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"Slaidiseanss"</string>
-    <string name="albums" msgid="7571656500475430599">"Albumid"</string>
-    <string name="times" msgid="4738095876364133181">"Ajad"</string>
-    <string name="locations" msgid="9050411755300802457">"Asukohad"</string>
-    <string name="people" msgid="4059890005675672784">"Inimesed"</string>
-    <string name="tags" msgid="1837044547733525409">"Märgendid"</string>
-    <string name="group_by" msgid="7228838244265292454">"Rühmitamisalus:"</string>
-    <string name="settings" msgid="2408436721619264685">"Seaded"</string>
-    <string name="add_account" msgid="5407579257925503059">"Lisa konto"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"Kaamera"</string>
-    <string name="folder_download" msgid="9201141690833756842">"Laadi alla"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"Muudetud fotod võrgus"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"Imporditud"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"Ekraanipilt"</string>
-    <string name="help" msgid="2528548040829796056">"Abi"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"Mäluseade puudub"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"Ükski välismäluseade ei ole saadaval"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmiribakuva"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"Ruudustikkuva"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Täisekraani vaade"</string>
-    <string name="trimming" msgid="3297452940449729243">"Kärpimine"</string>
-    <string name="muting" msgid="4406071974811026243">"Summutamine"</string>
     <string name="please_wait" msgid="99283054995831377">"Oodake"</string>
-    <string name="save_into" msgid="3800886260514315436">"Video salvestamine albumisse <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"Ei saa kärpida: lõppvideo on liiga lühike"</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"Photo Sphere\'i renderdamine"</string>
-    <string name="save" msgid="4522918253523037970">"Salvesta"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"Sisu skannimine ..."</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"%1$d üksust on skannitud"</item>
-    <item quantity="one" msgid="6118751779386608938">"%1$d üksus on skannitud"</item>
-    <item quantity="other" msgid="1091937586315173697">"%1$d üksust on skannitud"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"Sortimine ..."</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"Skannimine on lõppenud"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"Importimine ..."</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"Seadmes pole importimiseks saadaval mingit sisu."</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"Ühtegi MTP-seadet pole ühendatud"</string>
     <string name="camera_error_title" msgid="434116066686973315">"Kaamera viga"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"Ei saa kaameraga ühendada."</string>
     <string name="camera_disabled" msgid="4927328535752421596">"Kaamera on keelatud turvaereeglite tõttu."</string>
-    <string name="camera_label" msgid="8822012181326078626">"Kaamera"</string>
     <string name="wait" msgid="2081747495953883435">"Oodake …"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Paigaldage USB-infokandja enne kaamera kasutamist."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Enne kaamera kasutamist sisestage SD-kaart."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"USB-mälu ettevalmistus..."</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"SD-kaardi ettevalmistamine ..."</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"Ei saanud juurdepääsu USB-talletusruumile."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Ei saanud juurdepääsu SD-kaardile."</string>
-    <string name="review_cancel" msgid="4681578987722865410">"TÜHISTA"</string>
-    <string name="review_ok" msgid="4229133003029778558">"VALMIS"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"Aeglustusrežiimis salvestus"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Kaamera valimine"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Tagasi"</string>
@@ -301,7 +164,6 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"ÖÖ"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"PÄIKESELOOJANG"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"PIDU"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"LOENDUSTAIMER"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"TAIMER ON VÄLJAS"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SEKUND"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SEKUNDIT"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"ESIKAAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"TAGAKAAMERA"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"OK"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"Teie USB-salvestusruum saab otsa. Muutke kvaliteediseadeid või kustutage kujutisi või teisi faile."</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"Teie SD-kaardi salvestusruum saab otsa. Muutke kvaliteediseadeid või kustutage kujutisi või teisi faile."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"Suuruspiirang on saavutatud."</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"Liiga kiire"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"Kosmoses"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Päikeseloojang"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Teie video"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"Pange seade käest ära.\nAstuge korraks vaateväljast eemale."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Puudutage salvestamise ajal foto jäädvustamiseks."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Video salvestamine algas."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Video salvestamine lõppes."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Kui eriefektid on sisse lülitatud, on video momentvõte keelatud."</string>
     <string name="clear_effects" msgid="155262355011195942">"Tühista efektid"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"NALJAKAD NÄOD"</string>
     <string name="effect_background" msgid="2260438748276866983">"TAUST"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"Päästik"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"Menüünupp"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Viimane foto"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Esi-/tagakaamera lüliti"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"Kaamera, video või panoraami valija"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"Rohkem seadete juhtnuppe"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Sule seadete juhtnupud"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"Suumi juhtimine"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"Vähenda %1$s"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"Suurenda %1$s"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s märkeruut"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Lülitu fotorežiimile"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Lülitu videorežiimile"</string>
@@ -365,10 +217,6 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Ülevaatamine – tühista"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Ülevaatamine – valmis"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Ülevaatamine – uus võte"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"Esita video"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"Peata video"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"Laadi video uuesti"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"Videomängija ajariba"</string>
     <string name="capital_on" msgid="5840588038158274585">"SEES"</string>
     <string name="capital_off" msgid="3199056669644846925">"VÄLJAS"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Väljas"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Valmis"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Ajavahemiku määramine"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Aeglustusfunktsioon on välja lülitatud. Ajavahemiku määramiseks lülitage funktsioon sisse."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"Loendustaimer on väljas. Lülitage see sisse, et loendada pildi tegemiseni jäänud aega."</string>
     <string name="set_duration" msgid="7425045408900251919">"Määrake kestus sekundites"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Loendus foto jäädvustamiseni"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Kas jätta meelde fotode jäädvustamise asukohad?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Märkige oma fotodele ja videotele jäädvustamise asukoht.\n\nMuud rakendused pääsevad lisaks salvestatud piltidele juurde ka sellele teabele."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Ei, aitäh"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Jah"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"Kaamera"</string>
-    <string name="menu_search" msgid="8274896451431033951">"Otsing"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"Fotod"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"Albumid"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"ROHKEM VALIKUID"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"SEADED"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d foto"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d fotot"</item>
-  </plurals>
 </resources>
