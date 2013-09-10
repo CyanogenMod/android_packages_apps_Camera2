@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"相機"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"影片播放器"</string>
-    <string name="loading_video" msgid="7506410442678001647">"正在載入影片…"</string>
-    <string name="loading_image" msgid="2060882673852072952">"正在載入相片…"</string>
-    <string name="loading_account" msgid="5905155935821293897">"正在載入帳戶…"</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"繼續播放影片"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"要從 %s 繼續播放嗎？"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"恢復播放"</string>
-    <string name="loading" msgid="1780879367849478548">"正在載入…"</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"無法載入"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"無法載入相片"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"無縮圖"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"重新開始"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"確定"</string>
-    <string name="ok" msgid="7771534786778882486">"確定"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"輕觸臉部即可開始。"</string>
-    <string name="saving_image" msgid="4305990779779942817">"正在儲存相片…"</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"正在將相片儲存至「<xliff:g id="ALBUM_NAME">%1$s</xliff:g>」…"</string>
-    <string name="save_error" msgid="1170362488191167076">"無法儲存經裁剪的相片。"</string>
-    <string name="crop_label" msgid="8114305803169123050">"裁剪相片"</string>
-    <string name="trim_label" msgid="7369596929410798458">"剪輯影片"</string>
-    <string name="select_image" msgid="3289827722983995546">"選取相片"</string>
-    <string name="select_video" msgid="882817436381543724">"選取影片"</string>
-    <string name="select_item" msgid="2611103251995672148">"選取項目"</string>
-    <string name="select_album" msgid="7946907074045669521">"選取相簿"</string>
-    <string name="select_group" msgid="7446238738711880170">"選取群組"</string>
     <string name="set_image" msgid="3011821258780340803">"將相片設為"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"設定桌布"</string>
-    <string name="wallpaper" msgid="3542643990146620046">"正在設定桌布…"</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"桌布"</string>
     <string name="delete" msgid="7258764001896874869">"刪除"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"刪除選取的項目？"</item>
     <item quantity="other" msgid="882035505847338991">"刪除選取的項目？"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"確認"</string>
-    <string name="cancel" msgid="3709581234100450763">"取消"</string>
     <string name="share" msgid="319799706929863109">"分享"</string>
     <string name="share_panorama" msgid="7488525470543070168">"分享全景"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"以相片形式分享"</string>
     <string name="deleted" msgid="1144434522200481802">"已刪除"</string>
     <string name="undo" msgid="7561810819827468379">"復原"</string>
-    <string name="select_all" msgid="3201279798263252094">"全部選取"</string>
-    <string name="deselect_all" msgid="626233665600163037">"取消全選"</string>
-    <string name="slideshow" msgid="6249043759236676662">"幻燈片放映"</string>
     <string name="details" msgid="3581943734736871564">"詳細資料"</string>
-    <string name="details_title" msgid="681306416468138508">"第 %1$d 項 (共 %2$d 項)："</string>
     <string name="close" msgid="7196876073399885123">"關閉"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"切換至相機"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"已選取 %1$d 個"</item>
     <item quantity="one" msgid="4283105620980058761">"已選取 %1$d 個"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"在地圖上顯示"</string>
     <string name="rotate_left" msgid="6719855780237705569">"向左旋轉"</string>
     <string name="rotate_right" msgid="8558343437940821771">"向右旋轉"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"找不到項目。"</string>
     <string name="edit" msgid="8457904262004517151">"編輯"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"簡易編輯"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"正在處理快取要求"</string>
-    <string name="caching_label" msgid="6581817666800160995">"正在快取…"</string>
     <string name="crop_action" msgid="3281088975169422593">"裁剪"</string>
     <string name="trim_action" msgid="1912063594235898890">"剪輯"</string>
-    <string name="mute_action" msgid="6523005634451795344">"靜音"</string>
     <string name="set_as" msgid="7362777416265059096">"設為"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"無法將影片設為靜音。"</string>
     <string name="video_err" msgid="6747342411484597130">"無法播放影片。"</string>
-    <string name="group_by_location" msgid="7885728085506867484">"按位置"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"按時間"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"按標記"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"按人物"</string>
-    <string name="group_by_album" msgid="518334663451373758">"按相簿"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"按大小"</string>
-    <string name="untagged" msgid="4213803874762026102">"無標記"</string>
-    <string name="no_location" msgid="4077330169715063726">"沒有位置資料"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"網絡發生問題，因此部分位置無法辨別。"</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"無法下載這本相簿中的相片，請稍後再試。"</string>
-    <string name="show_images_only" msgid="6498287528900683465">"只顯示相片"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"只顯示影片"</string>
-    <string name="show_all" msgid="5621895787382615225">"相片及影片"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"相片集"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"沒有相片。"</string>
     <string name="crop_saved" msgid="6708204358512805637">"裁剪的相片已儲存至「<xliff:g id="FOLDER_NAME">%s</xliff:g>」。"</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"沒有相簿。"</string>
-    <string name="empty_album" msgid="7143934241018780840">"沒有可用的相片/影片。"</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"訊息"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"設為可在離線時瀏覽"</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"重新整理"</string>
-    <string name="done" msgid="998934109252173093">"完成"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"第 %1$d 項 (共 %2$d 項)："</string>
     <string name="title" msgid="1465174588508188840">"名稱"</string>
     <string name="description" msgid="7012551348834166615">"說明"</string>
     <string name="time" msgid="53680310933472250">"時間"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"使用閃光燈"</string>
     <string name="flash_off" msgid="7313393221333362406">"未使用閃光燈"</string>
     <string name="unknown" msgid="2211992216750845926">"不明"</string>
-    <string name="ffx_original" msgid="549901223077566047">"原圖"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"復古"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"即影即有"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"漂白"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"藍色"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"黑白"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"打孔"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"正片負沖"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"褐色"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"石版"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"正在將相簿設為可離線瀏覽。"</item>
-    <item quantity="other" msgid="5124932962621695590">"正在將相簿設為可離線瀏覽。"</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"這個項目已儲存在本機上，並且可供離線使用。"</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"所有相簿"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"本機相簿"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"MTP 裝置"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa 相簿"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"可用空間：<xliff:g id="BYTES">%s</xliff:g>"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> 或以下"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> 或以上"</string>
-    <string name="size_between" msgid="2266484752949196814">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> 至 <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"匯入"</string>
-    <string name="import_complete" msgid="6772771659359964875">"完成匯入"</string>
-    <string name="import_fail" msgid="5162454276035072428">"匯入失敗"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"相機已連線。"</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"相機已中斷連線。"</string>
-    <string name="click_import" msgid="5153823057201280612">"輕觸這裡即可匯入"</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"選擇相簿"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"隨機播放所有相片"</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"選擇相片"</string>
-    <string name="widget_type" msgid="1607279427350645903">"選擇相片"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"幻燈片放映"</string>
-    <string name="albums" msgid="7571656500475430599">"相簿"</string>
-    <string name="times" msgid="4738095876364133181">"時間"</string>
-    <string name="locations" msgid="9050411755300802457">"位置"</string>
-    <string name="people" msgid="4059890005675672784">"人物"</string>
-    <string name="tags" msgid="1837044547733525409">"標記"</string>
-    <string name="group_by" msgid="7228838244265292454">"分組依據"</string>
-    <string name="settings" msgid="2408436721619264685">"設定"</string>
-    <string name="add_account" msgid="5407579257925503059">"新增帳戶"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"相機"</string>
-    <string name="folder_download" msgid="9201141690833756842">"下載"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"已編輯的網上相片"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"已匯入"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"螢幕擷取畫面"</string>
-    <string name="help" msgid="2528548040829796056">"說明"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"沒有儲存裝置"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"沒有可用的外部儲存裝置"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"幻燈片檢視"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"格狀檢視"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"全屏幕畫面"</string>
-    <string name="trimming" msgid="3297452940449729243">"剪輯中"</string>
-    <string name="muting" msgid="4406071974811026243">"正在設為靜音"</string>
     <string name="please_wait" msgid="99283054995831377">"請稍候"</string>
-    <string name="save_into" msgid="3800886260514315436">"正在將影片儲存至「<xliff:g id="ALBUM_NAME">%1$s</xliff:g>」…"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"無法剪輯：目標影片長度過短"</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"正在輸出全景相片"</string>
-    <string name="save" msgid="4522918253523037970">"儲存"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"正在掃描內容…"</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"已掃描 %1$d 個項目"</item>
-    <item quantity="one" msgid="6118751779386608938">"已掃描 %1$d 個項目"</item>
-    <item quantity="other" msgid="1091937586315173697">"已掃描 %1$d 個項目"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"正在排序…"</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"掃描完成"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"正在匯入…"</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"沒有內容可供這部裝置匯入。"</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"未連接任何 MTP 裝置"</string>
     <string name="camera_error_title" msgid="434116066686973315">"相機發生錯誤"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"無法連接相機。"</string>
     <string name="camera_disabled" msgid="4927328535752421596">"基於安全政策，相機已停用。"</string>
-    <string name="camera_label" msgid="8822012181326078626">"相機"</string>
     <string name="wait" msgid="2081747495953883435">"請稍候…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"使用相機前，請先裝上 USB 儲存裝置。"</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"使用相機前，請先插入 SD 卡。"</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"正在準備 USB 儲存裝置…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"正在準備 SD 卡…"</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"無法存取 USB 儲存裝置。"</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"無法存取 SD 卡。"</string>
-    <string name="review_cancel" msgid="4681578987722865410">"取消"</string>
-    <string name="review_ok" msgid="4229133003029778558">"完成"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"延時攝影錄製"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"選擇相機"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"後置鏡頭"</string>
@@ -301,7 +164,6 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"夜景"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"日落"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"派對"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"倒數計時器"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"計時器已關閉"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 秒"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 秒"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"前置鏡頭"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"後置鏡頭"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"確定"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"您的 USB 儲存裝置的空間即將用盡，請變更相片的品質設定，或是刪除部分相片或其他檔案。"</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"您 SD 卡的空間即將用盡，請變更相片的品質設定，或是刪除部分相片或其他檔案。"</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"已達大小上限。"</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"太快"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"太空"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"日落"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"您的影片"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"放下您的裝置。\n暫時離開畫面。"</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"輕觸即可在攝錄期間拍照。"</string>
     <string name="video_recording_started" msgid="1478448043553326540">"錄影已開始。"</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"錄影已停止。"</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"於開啟特效時停用快照。"</string>
     <string name="clear_effects" msgid="155262355011195942">"清除效果"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"趣怪臉"</string>
     <string name="effect_background" msgid="2260438748276866983">"背景"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"快門"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"選單按鈕"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"最近的相片"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"前置和後置鏡頭開關"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"相機、影片或全景選取工具"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"更多設定控制"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"關閉設定控制"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"縮放控制"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"減少%1$s"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"增加%1$s"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s選框"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"切換至相片"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"切換至影片"</string>
@@ -365,10 +217,6 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"[檢視模式] 取消"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"[檢視模式] 完成"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"檢查重拍檔案"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"播放影片"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"暫停影片"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"重新載入影片"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"影片播放器時間軸"</string>
     <string name="capital_on" msgid="5840588038158274585">"開啟"</string>
     <string name="capital_off" msgid="3199056669644846925">"關閉"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"關閉"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"完成"</string>
     <string name="set_time_interval" msgid="844482952911185265">"設定時間間隔"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"延時攝影功能已關閉，請開啟以設定時間間隔。"</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"倒數計時器已關閉。如要在拍照前倒數，請先開啟。"</string>
     <string name="set_duration" msgid="7425045408900251919">"設定倒數時間 (以秒為單位)"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"為拍照倒數中"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"記錄拍攝地點？"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"為您的相片和影片標記拍攝地點。\n\n其他應用程式存取您所儲存的影像時，也可以存取這項資訊。"</string>
     <string name="remember_location_no" msgid="5160772992721036553">"不需要，謝謝"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"是"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"相機"</string>
-    <string name="menu_search" msgid="8274896451431033951">"搜尋"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"相片"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"相簿"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"更多選項"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"設定"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d 張相片"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d 張相片"</item>
-  </plurals>
 </resources>
