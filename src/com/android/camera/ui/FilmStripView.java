@@ -381,7 +381,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * A helper class to tract and calculate the view coordination.
      */
     private static class ViewItem {
-        private int mDataID;
+        private int mDataId;
         /** The position of the left of the view in the whole filmstrip. */
         private int mLeftPosition;
         private View mView;
@@ -396,20 +396,20 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public ViewItem(int id, View v) {
             v.setPivotX(0f);
             v.setPivotY(0f);
-            mDataID = id;
+            mDataId = id;
             mView = v;
             mLeftPosition = -1;
             mViewArea = new RectF();
         }
 
         /** Returns the data id from {@link DataAdapter}. */
-        public int getID() {
-            return mDataID;
+        public int getId() {
+            return mDataId;
         }
 
         /** Sets the data id from {@link DataAdapter}. */
-        public void setID(int id) {
-            mDataID = id;
+        public void setId(int id) {
+            mDataId = id;
         }
 
         /** Sets the left position of the view in the whole filmstrip. */
@@ -666,7 +666,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (mViewItem[mCurrentItem] == null) {
             return false;
         }
-        if (mViewItem[mCurrentItem].getID() == id
+        if (mViewItem[mCurrentItem].getId() == id
                 && mViewItem[mCurrentItem].getCenterX() == mCenterX) {
             return true;
         }
@@ -678,13 +678,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (curr == null) {
             return ImageData.TYPE_NONE;
         }
-        return mDataAdapter.getImageData(curr.getID()).getViewType();
+        return mDataAdapter.getImageData(curr.getId()).getViewType();
     }
 
     @Override
     public void onDraw(Canvas c) {
         if (mViewItem[mCurrentItem] != null && mController.hasNewGeometry()) {
-            layoutChildren();
+            layoutViewItems();
             super.onDraw(c);
         }
     }
@@ -714,7 +714,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     private void measureViewItem(ViewItem item, int boundWidth, int boundHeight) {
-        int id = item.getID();
+        int id = item.getId();
         int[] dim = calculateChildDimension(
                 mDataAdapter.getImageData(id).getWidth(),
                 mDataAdapter.getImageData(id).getHeight(),
@@ -821,7 +821,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
 
-        ImageData data = mDataAdapter.getImageData(mViewItem[itemID].getID());
+        ImageData data = mDataAdapter.getImageData(mViewItem[itemID].getId());
         checkForRemoval(data, mViewItem[itemID].getView());
         mViewItem[itemID] = null;
     }
@@ -843,7 +843,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         // Going to change the current item, notify the listener.
         if (mListener != null) {
-            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getID(), false);
+            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), false);
         }
         int adjust = nearest - mCurrentItem;
         if (adjust > 0) {
@@ -856,7 +856,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             for (int k = BUFFER_SIZE - adjust; k < BUFFER_SIZE; k++) {
                 mViewItem[k] = null;
                 if (mViewItem[k - 1] != null) {
-                    mViewItem[k] = buildItemFromData(mViewItem[k - 1].getID() + 1);
+                    mViewItem[k] = buildItemFromData(mViewItem[k - 1].getId() + 1);
                 }
             }
         } else {
@@ -869,12 +869,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             for (int k = -1 - adjust; k >= 0; k--) {
                 mViewItem[k] = null;
                 if (mViewItem[k + 1] != null) {
-                    mViewItem[k] = buildItemFromData(mViewItem[k + 1].getID() - 1);
+                    mViewItem[k] = buildItemFromData(mViewItem[k + 1].getId() - 1);
                 }
             }
         }
         if (mListener != null) {
-            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getID(), true);
+            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), true);
         }
     }
 
@@ -885,13 +885,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
 
-        if (curr.getID() == 0 && mCenterX < curr.getCenterX()) {
+        if (curr.getId() == 0 && mCenterX < curr.getCenterX()) {
             mCenterX = curr.getCenterX();
             if (mController.isScrolling()) {
                 mController.stopScrolling();
             }
         }
-        if (curr.getID() == mDataAdapter.getTotalNumber() - 1
+        if (curr.getId() == mDataAdapter.getTotalNumber() - 1
                 && mCenterX > curr.getCenterX()) {
             mCenterX = curr.getCenterX();
             if (!mController.isScrolling()) {
@@ -906,6 +906,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 continue;
             bringChildToFront(mViewItem[i].getView());
         }
+        // ZoomView is a special case to always be in the front.
+        bringChildToFront(mZoomView);
     }
 
     /**
@@ -916,7 +918,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     public void onViewPhotoSphere() {
         ViewItem curr = mViewItem[mCurrentItem];
         if (curr != null) {
-            mDataAdapter.getImageData(curr.getID()).viewPhotoSphere(mPanoramaViewHelper);
+            mDataAdapter.getImageData(curr.getId()).viewPhotoSphere(mPanoramaViewHelper);
         }
     }
 
@@ -942,7 +944,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (current == null) {
             return -1;
         }
-        return current.getID();
+        return current.getId();
     }
 
     /**
@@ -989,7 +991,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     private void snapInCenter() {
-        ViewItem currentItem = mViewItem[mCurrentItem];
+        final ViewItem currentItem = mViewItem[mCurrentItem];
         if (currentItem == null || mController.isScrolling() || mIsUserScrolling) {
             return;
         }
@@ -1091,7 +1093,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         currView.setVisibility(VISIBLE);
     }
 
-    private void layoutChildren() {
+    private void layoutViewItems() {
         if (mViewItem[mCurrentItem] == null) {
             return;
         }
@@ -1117,16 +1119,19 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         final int fullScreenWidth = mDrawArea.width() + mViewGap;
 
         // Layout the current ViewItem first.
-        if (scaleFraction == 1
-                && mCenterX < mViewItem[mCurrentItem].getCenterX()) {
-            // In full-screen and it's not the first one and mCenterX is on
-            // the left of the center, we draw the current one to "fade down".
-            fadeAndScaleRightViewItem(mCurrentItem);
-        } else if (scaleFraction == 1
-                && mCenterX > mViewItem[mCurrentItem].getCenterX()) {
-            // In full-screen and it's not the last one and mCenterX is on
-            // the right of the center, we draw the current one translated.
-            translateLeftViewItem(mCurrentItem, fullScreenWidth, scaleFraction);
+        if (scaleFraction == 1) {
+            if (mCenterX < mViewItem[mCurrentItem].getCenterX()) {
+                // In full-screen and it's not the first one and mCenterX is on
+                // the left of the center, we draw the current one to "fade down".
+                fadeAndScaleRightViewItem(mCurrentItem);
+            } else if(mCenterX > mViewItem[mCurrentItem].getCenterX()) {
+                // In full-screen and it's not the last one and mCenterX is on
+                // the right of the center, we draw the current one translated.
+                translateLeftViewItem(mCurrentItem, fullScreenWidth, scaleFraction);
+            } else {
+                mViewItem[mCurrentItem].layoutIn(mDrawArea, mCenterX, mScale);
+                mViewItem[mCurrentItem].setTranslationX(0f, mScale);
+            }
         } else {
             // The normal filmstrip has no translation for the current item. If it has
             // translation before, gradually set it to zero.
@@ -1195,10 +1200,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         updateBottomControls();
         mLastItemId = getCurrentId();
 
-        // Layout zoom view
-        mZoomView.layout(mDrawArea.left, mDrawArea.top, mDrawArea.right, mDrawArea.bottom);
-        bringChildToFront(mZoomView);
-
         invalidate();
     }
 
@@ -1208,11 +1209,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mDrawArea.top = t;
         mDrawArea.right = r;
         mDrawArea.bottom = b;
+        mZoomView.layout(mDrawArea.left, mDrawArea.top, mDrawArea.right, mDrawArea.bottom);
         // TODO: (tianliu) Need a more robust solution to decide when to re-layout
         // If in the middle of zooming, only re-layout when the layout has changed.
         if (!mController.isZoomStarted() || changed) {
             resetZoomView();
-            layoutChildren();
+            layoutViewItems();
         }
     }
 
@@ -1260,15 +1262,15 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 .start();
     }
 
-    private void updateRemoval(int dataID, final ImageData data) {
+    private void animateItemRemoval(int dataID, final ImageData data) {
         int removedItem = findItemByDataID(dataID);
 
         // adjust the data id to be consistent
         for (int i = 0; i < BUFFER_SIZE; i++) {
-            if (mViewItem[i] == null || mViewItem[i].getID() <= dataID) {
+            if (mViewItem[i] == null || mViewItem[i].getId() <= dataID) {
                 continue;
             }
-            mViewItem[i].setID(mViewItem[i].getID() - 1);
+            mViewItem[i].setId(mViewItem[i].getId() - 1);
         }
         if (removedItem == -1) {
             return;
@@ -1284,7 +1286,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         if (removedItem >= mCurrentItem
-                && mViewItem[removedItem].getID() < mDataAdapter.getTotalNumber()) {
+                && mViewItem[removedItem].getId() < mDataAdapter.getTotalNumber()) {
             // Fill the removed item by left shift when the current one or
             // anyone on the right is removed, and there's more data on the
             // right available.
@@ -1296,7 +1298,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             int curr = BUFFER_SIZE - 1;
             int prev = curr - 1;
             if (mViewItem[prev] != null) {
-                mViewItem[curr] = buildItemFromData(mViewItem[prev].getID() + 1);
+                mViewItem[curr] = buildItemFromData(mViewItem[prev].getId() + 1);
             }
 
             // The animation part.
@@ -1318,7 +1320,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // The end of the filmstrip might have been changed.
             // The mCenterX might be out of the bound.
             ViewItem currItem = mViewItem[mCurrentItem];
-            if (currItem.getID() == mDataAdapter.getTotalNumber() - 1
+            if (currItem.getId() == mDataAdapter.getTotalNumber() - 1
                     && mCenterX > currItem.getCenterX()) {
                 int adjustDiff = currItem.getCenterX() - mCenterX;
                 mCenterX = currItem.getCenterX();
@@ -1340,7 +1342,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             int curr = 0;
             int next = curr + 1;
             if (mViewItem[next] != null) {
-                mViewItem[curr] = buildItemFromData(mViewItem[next].getID() - 1);
+                mViewItem[curr] = buildItemFromData(mViewItem[next].getId() - 1);
             }
 
             // Translate the views to their original places.
@@ -1375,14 +1377,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     }
                 })
                 .start();
-        layoutChildren();
+        layoutViewItems();
     }
 
     // returns -1 on failure.
     private int findItemByDataID(int dataID) {
         for (int i = 0; i < BUFFER_SIZE; i++) {
             if (mViewItem[i] != null
-                    && mViewItem[i].getID() == dataID) {
+                    && mViewItem[i].getId() == dataID) {
                 return i;
             }
         }
@@ -1406,10 +1408,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         // adjust the data id to be consistent
         for (int i = 0; i < BUFFER_SIZE; i++) {
-            if (mViewItem[i] == null || mViewItem[i].getID() < dataID) {
+            if (mViewItem[i] == null || mViewItem[i].getId() < dataID) {
                 continue;
             }
-            mViewItem[i].setID(mViewItem[i].getID() + 1);
+            mViewItem[i].setId(mViewItem[i].getId() + 1);
         }
         if (insertedItem == -1) {
             return;
@@ -1491,7 +1493,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             @Override
             public void onDataRemoved(int dataID, ImageData data) {
-                updateRemoval(dataID, data);
+                animateItemRemoval(dataID, data);
             }
         });
     }
@@ -1520,7 +1522,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mDown = MotionEvent.obtain(ev);
             ViewItem viewItem = mViewItem[mCurrentItem];
             // Do not intercept touch if swipe is not enabled
-            if (viewItem != null && !mDataAdapter.canSwipeInFullScreen(viewItem.getID())) {
+            if (viewItem != null && !mDataAdapter.canSwipeInFullScreen(viewItem.getId())) {
                 mCheckToIntercept = false;
             }
             return false;
@@ -1561,10 +1563,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
         removeView(item.getView());
-        ImageData data = mDataAdapter.getImageData(item.getID());
+        ImageData data = mDataAdapter.getImageData(item.getId());
         data.recycle();
 
-        ViewItem newItem = buildItemFromData(item.getID());
+        ViewItem newItem = buildItemFromData(item.getId());
         if (newItem == null) {
             Log.e(TAG, "new item is null");
             // keep using the old data.
@@ -1586,27 +1588,32 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         // Check the current one.
         ViewItem curr = mViewItem[mCurrentItem];
-        int dataID = curr.getID();
-        if (reporter.isDataRemoved(dataID)) {
+        int dataId = curr.getId();
+        if (reporter.isDataRemoved(dataId)) {
             reload();
             return;
         }
-        if (reporter.isDataUpdated(dataID)) {
+        if (reporter.isDataUpdated(dataId)) {
             updateViewItem(mCurrentItem);
+            final ImageData data = mDataAdapter.getImageData(dataId);
+            int[] dim = calculateChildDimension(
+                    data.getWidth(), data.getHeight(),
+                    getMeasuredWidth(), getMeasuredHeight());
+            mCenterX = curr.getLeftPosition() + dim[0] / 2;
         }
 
         // Check left
         for (int i = mCurrentItem - 1; i >= 0; i--) {
             curr = mViewItem[i];
             if (curr != null) {
-                dataID = curr.getID();
-                if (reporter.isDataRemoved(dataID) || reporter.isDataUpdated(dataID)) {
+                dataId = curr.getId();
+                if (reporter.isDataRemoved(dataId) || reporter.isDataUpdated(dataId)) {
                     updateViewItem(i);
                 }
             } else {
                 ViewItem next = mViewItem[i + 1];
                 if (next != null) {
-                    mViewItem[i] = buildItemFromData(next.getID() - 1);
+                    mViewItem[i] = buildItemFromData(next.getId() - 1);
                 }
             }
         }
@@ -1615,14 +1622,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         for (int i = mCurrentItem + 1; i < BUFFER_SIZE; i++) {
             curr = mViewItem[i];
             if (curr != null) {
-                dataID = curr.getID();
-                if (reporter.isDataRemoved(dataID) || reporter.isDataUpdated(dataID)) {
+                dataId = curr.getId();
+                if (reporter.isDataRemoved(dataId) || reporter.isDataUpdated(dataId)) {
                     updateViewItem(i);
                 }
             } else {
                 ViewItem prev = mViewItem[i - 1];
                 if (prev != null) {
-                    mViewItem[i] = buildItemFromData(prev.getID() + 1);
+                    mViewItem[i] = buildItemFromData(prev.getId() + 1);
                 }
             }
         }
@@ -1660,7 +1667,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
         for (int i = mCurrentItem + 1; i < BUFFER_SIZE; i++) {
-            mViewItem[i] = buildItemFromData(mViewItem[i - 1].getID() + 1);
+            mViewItem[i] = buildItemFromData(mViewItem[i - 1].getId() + 1);
             if (mViewItem[i] == null) {
                 break;
             }
@@ -1670,7 +1677,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         // center of the display upon a reload.
         mCenterX = -1;
 
-        layoutChildren();
+        layoutViewItems();
     }
 
     private void promoteData(int itemID, int dataID) {
@@ -1881,13 +1888,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // Estimation of possible length on the left. To ensure the
             // velocity doesn't become too slow eventually, we add a huge number
             // to the estimated maximum.
-            int minX = estimateMinX(item.getID(), item.getLeftPosition(), w);
+            int minX = estimateMinX(item.getId(), item.getLeftPosition(), w);
             // Estimation of possible length on the right. Likewise, exaggerate
             // the possible maximum too.
-            int maxX = estimateMaxX(item.getID(), item.getLeftPosition(), w);
+            int maxX = estimateMaxX(item.getId(), item.getLeftPosition(), w);
             mScroller.fling(mCenterX, 0, (int) -velocityX, 0, minX, maxX, 0, 0);
 
-            layoutChildren();
+            layoutViewItems();
         }
 
         @Override
@@ -1942,7 +1949,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mScaleAnimator.setFloatValues(mScale, scale);
             mScaleAnimator.setInterpolator(mDecelerateInterpolator);
             mScaleAnimator.start();
-            layoutChildren();
+            layoutViewItems();
         }
 
         @Override
@@ -1950,7 +1957,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             scaleTo(FILM_STRIP_SCALE, GEOMETRY_ADJUST_TIME_MS);
 
             final ViewItem nextItem = mViewItem[mCurrentItem + 1];
-            if (mViewItem[mCurrentItem].getID() == 0 &&
+            if (mViewItem[mCurrentItem].getId() == 0 &&
                     getCurrentViewType() == ImageData.TYPE_STICKY_VIEW &&
                     nextItem != null) {
                 // Deal with the special case of swiping in camera preview.
@@ -2012,7 +2019,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (curr == null) {
                 return Uri.EMPTY;
             }
-            return mDataAdapter.getImageData(curr.getID()).getContentUri();
+            return mDataAdapter.getImageData(curr.getId()).getContentUri();
         }
 
         /**
@@ -2022,7 +2029,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          */
         private float getCurrentDataMaxScale() {
             ViewItem curr = mViewItem[mCurrentItem];
-            ImageData imageData = mDataAdapter.getImageData(curr.getID());
+            ImageData imageData = mDataAdapter.getImageData(curr.getId());
             if (curr == null || !imageData
                     .isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return FULL_SCREEN_SCALE;
@@ -2036,7 +2043,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             ViewItem curr = mViewItem[mCurrentItem];
-            if(curr == null || !mDataAdapter.getImageData(curr.getID())
+            if(curr == null || !mDataAdapter.getImageData(curr.getId())
                     .isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return;
             }
@@ -2067,7 +2074,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             mHasNewScale = true;
             mNewScale = (Float) animation.getAnimatedValue();
-            layoutChildren();
+            layoutViewItems();
         }
 
         @Override
@@ -2172,7 +2179,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 if (transY == 0) {
                     continue;
                 }
-                int id = mViewItem[i].getID();
+                int id = mViewItem[i].getId();
 
                 if (mDataAdapter.getImageData(id)
                         .isUIActionSupported(ImageData.ACTION_DEMOTE)
@@ -2238,7 +2245,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                         return false;
                     }
 
-                    ImageData data = mDataAdapter.getImageData(mViewItem[hit].getID());
+                    ImageData data = mDataAdapter.getImageData(mViewItem[hit].getId());
                     float transY = mViewItem[hit].getScaledTranslationY(mScale) - dy / mScale;
                     if (!data.isUIActionSupported(ImageData.ACTION_DEMOTE) && transY > 0f) {
                         transY = 0f;
@@ -2255,7 +2262,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 // Multiplied by 1.2 to make it more easy to swipe.
                 mController.scroll((int) (deltaX * 1.2));
             }
-            layoutChildren();
+            layoutViewItems();
 
             return true;
         }
@@ -2336,18 +2343,18 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 if (mScale <= FILM_STRIP_SCALE) {
                     mScale = FILM_STRIP_SCALE;
                 }
-                layoutChildren();
+                layoutViewItems();
             } else if (mScale < FULL_SCREEN_SCALE && newScale >= FULL_SCREEN_SCALE) {
                 // Going from smaller than screen size to bigger than or equal to screen size
                 mScale = FULL_SCREEN_SCALE;
                 mController.enterFullScreen();
-                layoutChildren();
+                layoutViewItems();
                 mController.setSurroundingViewsVisible(false);
             } else if (mScale >= FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
                 // Going from bigger than or equal to screen size to smaller than screen size
                 mScale = newScale;
                 mController.leaveFullScreen();
-                layoutChildren();
+                layoutViewItems();
                 mController.setSurroundingViewsVisible(true);
             } else {
                 // Scaled view bigger than or equal to screen size both before
