@@ -380,8 +380,6 @@ public class VideoModule implements CameraModule,
 
         initializeVideoControl();
         mPendingSwitchCameraId = -1;
-        mUI.updateOnScreenIndicators(mParameters, mPreferences);
-
     }
 
     // SingleTapListener
@@ -654,8 +652,9 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onResumeAfterSuper() {
-        if (mOpenCameraFail || mCameraDisabled)
+        if (mOpenCameraFail || mCameraDisabled) {
             return;
+        }
         mUI.enableShutter(false);
         mZoomValue = 0;
 
@@ -1567,6 +1566,9 @@ public class VideoModule implements CameraModule,
         mCameraDevice.setParameters(mParameters);
         // Keep preview size up to date.
         mParameters = mCameraDevice.getParameters();
+
+        // Update UI based on the new parameters.
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
     }
 
     @Override
@@ -1592,7 +1594,9 @@ public class VideoModule implements CameraModule,
     @Override
     public void onSharedPreferenceChanged() {
         // ignore the events after "onPause()" or preview has not started yet
-        if (mPaused) return;
+        if (mPaused) {
+            return;
+        }
         synchronized (mPreferences) {
             // If mCameraDevice is not ready then we can set the parameter in
             // startPreview().
@@ -1625,7 +1629,9 @@ public class VideoModule implements CameraModule,
     }
 
     private void switchCamera() {
-        if (mPaused) return;
+        if (mPaused)  {
+            return;
+        }
 
         Log.d(TAG, "Start to switch camera.");
         mCameraId = mPendingSwitchCameraId;
