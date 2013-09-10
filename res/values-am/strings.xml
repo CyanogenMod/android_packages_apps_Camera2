@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"ካሜራ"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"የቪዲዮ ማጫወቻ"</string>
-    <string name="loading_video" msgid="7506410442678001647">"ቪዲዮ በመጫን ላይ…"</string>
-    <string name="loading_image" msgid="2060882673852072952">"ምስል በመጫን ላይ…"</string>
-    <string name="loading_account" msgid="5905155935821293897">"መለያ በመጫን ላይ…"</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"ቪዲዮ ከቆመበት ቀጥል"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"ከ%s ማጫወት ይቀጥል?"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"ከቆመበት ማጫወት ቀጥል"</string>
-    <string name="loading" msgid="1780879367849478548">"በመጫን ላይ…"</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"መጫን አልተቻለም"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"ምስሉን መጫን አልተቻለም"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"ምንም ድንክዬ የለም"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"እንደገና ጀምር"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"እሺ"</string>
-    <string name="ok" msgid="7771534786778882486">"እሺ"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"ለመጀመር አንድ ፊት ይንኩ።"</string>
-    <string name="saving_image" msgid="4305990779779942817">"ስዕል በማስቀመጥ ላይ..."</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"ስዕልን <xliff:g id="ALBUM_NAME">%1$s</xliff:g> ላይ በማስቀመጥ ላይ …"</string>
-    <string name="save_error" msgid="1170362488191167076">"የተከረከመውን ምስል ማስቀመጥ አልተቻለም።"</string>
-    <string name="crop_label" msgid="8114305803169123050">"ፎቶ ከርክም"</string>
-    <string name="trim_label" msgid="7369596929410798458">"ቪዲዮን ከርክም"</string>
-    <string name="select_image" msgid="3289827722983995546">"ፎቶ ይምረጡ"</string>
-    <string name="select_video" msgid="882817436381543724">"ቪዲዮ ይምረጡ"</string>
-    <string name="select_item" msgid="2611103251995672148">"ንጥል ይምረጡ"</string>
-    <string name="select_album" msgid="7946907074045669521">"አልበም ይምረጡ"</string>
-    <string name="select_group" msgid="7446238738711880170">"ቡድን ይምረጡ"</string>
     <string name="set_image" msgid="3011821258780340803">"ስዕል ያዘጋጁ እንደ"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"የግድግዳ ወረቀት ያዘጋጁ"</string>
-    <string name="wallpaper" msgid="3542643990146620046">"የግድግዳ ወረቀት በማዘጋጀት ላይ...."</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"የግድግዳ ወረቀት"</string>
     <string name="delete" msgid="7258764001896874869">"ሰርዝ"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"የተመረጠው ንጥል ይሰረዝ?"</item>
     <item quantity="other" msgid="882035505847338991">"የተመረጡት ንጥሎች ይሰረዙ?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"አረጋግጥ"</string>
-    <string name="cancel" msgid="3709581234100450763">"ይቅር"</string>
     <string name="share" msgid="319799706929863109">"አጋራ"</string>
     <string name="share_panorama" msgid="7488525470543070168">"ፓናሮማ አጋራ"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"እንደ ፎቶ አጋራ"</string>
     <string name="deleted" msgid="1144434522200481802">"ተሰርዟል"</string>
     <string name="undo" msgid="7561810819827468379">"ቀልብስ"</string>
-    <string name="select_all" msgid="3201279798263252094">"ሁሉንም ምረጥ"</string>
-    <string name="deselect_all" msgid="626233665600163037">"ሁሉንም አትምረጥ"</string>
-    <string name="slideshow" msgid="6249043759236676662">"ተንሸራታች ትዕይንት"</string>
     <string name="details" msgid="3581943734736871564">"ዝርዝሮች"</string>
-    <string name="details_title" msgid="681306416468138508">"%1$d ከ%2$d ንጥሎች፦"</string>
     <string name="close" msgid="7196876073399885123">"ዝጋ"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"ወደ ካሜራ ቀይር"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"%1$d ተመርጧል"</item>
     <item quantity="one" msgid="4283105620980058761">"%1$d ተመርጧል"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"ካርታ ላይ አሳይ"</string>
     <string name="rotate_left" msgid="6719855780237705569">"ወደ ግራ አሽከርክር"</string>
     <string name="rotate_right" msgid="8558343437940821771">"ወደ ቀኝ አሽከርክር"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"ንጥል ሊገኝ አልቻለም።"</string>
     <string name="edit" msgid="8457904262004517151">"አርትዕ"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"ቀላል አርትዖት"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"መሸጎጫ ጥያቄዎችን በመስራት ላይ"</string>
-    <string name="caching_label" msgid="6581817666800160995">"በመሸጎጥ ላይ…"</string>
     <string name="crop_action" msgid="3281088975169422593">"ከርክም"</string>
     <string name="trim_action" msgid="1912063594235898890">"አሳጥር"</string>
-    <string name="mute_action" msgid="6523005634451795344">"ድምጸ ከል አድርግ"</string>
     <string name="set_as" msgid="7362777416265059096">"ያዘጋጁ እንደ"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"ቪዲዮ ላይ ድምጸ-ከል ማድረግ አልተቻለም።"</string>
     <string name="video_err" msgid="6747342411484597130">"ቪዲዮ ማጫወት አልተቻለም።"</string>
-    <string name="group_by_location" msgid="7885728085506867484">"በአካባቢ"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"በጊዜ"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"በተሰጡ መለያዎች"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"በሰዎች"</string>
-    <string name="group_by_album" msgid="518334663451373758">"በአልበም"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"በመጠን"</string>
-    <string name="untagged" msgid="4213803874762026102">"መለያ ያልተሰጠው"</string>
-    <string name="no_location" msgid="4077330169715063726">"ምንም አካባቢ የለም"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"አንዳንድ ስፍራዎችን በአውታረ መረብ  ችግር ምክንያት ለየቶ ማወቅ አልተቻለም።"</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"በዚህ አልበም ላይ ያሉ ፎቶዎችን ማውረድ አልተቻለም። በኋላ ደግመው ይሞክሩ።"</string>
-    <string name="show_images_only" msgid="6498287528900683465">"ምስሎች ብቻ"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"ቪዲዮዎች ብቻ"</string>
-    <string name="show_all" msgid="5621895787382615225">"ምስሎች እና ቪዲዮዎች"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"የፎቶ ሥነ ጥበብ ማዕከል"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"ምንም ፎቶዎች የሉም።"</string>
     <string name="crop_saved" msgid="6708204358512805637">"የተከረከመ ምስል <xliff:g id="FOLDER_NAME">%s</xliff:g> ላይ ተቀምጧል።"</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"ምንም አልበሞች አይገኙም።"</string>
-    <string name="empty_album" msgid="7143934241018780840">"0 ምስሎች/ ቪዲዮዎች ይገኛሉ።"</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"ልጥፎች"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"ከመስመር ውጪ እንዲገኝ አድርግ"</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"አድስ"</string>
-    <string name="done" msgid="998934109252173093">"ተጠናቅቋል"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d ከ%2$d ንጥሎች፦"</string>
     <string name="title" msgid="1465174588508188840">"ርዕስ"</string>
     <string name="description" msgid="7012551348834166615">"መግለጫ"</string>
     <string name="time" msgid="53680310933472250">"ሰዓት"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"ብልጭ ብሏል"</string>
     <string name="flash_off" msgid="7313393221333362406">"ብልጭታ የለም"</string>
     <string name="unknown" msgid="2211992216750845926">"የማይታወቅ"</string>
-    <string name="ffx_original" msgid="549901223077566047">"የመጀመሪያው"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"ወይን"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"ቅጽበታዊ"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"ቀለም አፍዝዝ"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"ሰማያዊ"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"ጥቁር/ነጭ"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"ቡጢ"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"X Process"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"ነጣ ያለ ማኪያቶ"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"ፈዘዝ ያለ ቡናማ"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"አልበም ከመስመር ውጪ እንዲገኝ ማድረግ።"</item>
-    <item quantity="other" msgid="5124932962621695590">"አልበሞች ከመስመር ውጪ እንዲገኙ ማድረግ።"</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"ይህ ንጥል በአካባቢው ተቀምጧል እና ከመስመር ውጪ አለ።"</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"ሁሉም አልበሞች"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"አካባቢያዊ አልበሞች"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"የMTP መሣሪያዎች"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa አልበሞች"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> ነጻ"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> ወይም ከዚያ በታች"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> ወይም ከዚያ በላይ"</string>
-    <string name="size_between" msgid="2266484752949196814">"ከ<xliff:g id="MIN_SIZE">%1$s</xliff:g> እስከ <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"ከውጭ አስመጣ"</string>
-    <string name="import_complete" msgid="6772771659359964875">"ማስመጣት ተጠናቅቋል"</string>
-    <string name="import_fail" msgid="5162454276035072428">"ማስመጣት አልተሳካም"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"ካሜራ ተገናኝቷል።"</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"የካሜራ ግንኙነት ተቋርጧል።"</string>
-    <string name="click_import" msgid="5153823057201280612">"ለማስገባት እዚህ ይንኩ"</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"አልበም ይምረጡ"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"ሁሉንም ምስሎች በውዝ"</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"ምስል ይምረጡ"</string>
-    <string name="widget_type" msgid="1607279427350645903">"ምስሎችን ይምረጡ"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"ተንሸራታች ትዕይንት"</string>
-    <string name="albums" msgid="7571656500475430599">"አልበሞች"</string>
-    <string name="times" msgid="4738095876364133181">"ጊዜ"</string>
-    <string name="locations" msgid="9050411755300802457">"አካባቢዎች"</string>
-    <string name="people" msgid="4059890005675672784">"ሰዎች"</string>
-    <string name="tags" msgid="1837044547733525409">"የተሰጡ መለያዎች"</string>
-    <string name="group_by" msgid="7228838244265292454">"ቦድን በ"</string>
-    <string name="settings" msgid="2408436721619264685">"ቅንብሮች"</string>
-    <string name="add_account" msgid="5407579257925503059">"መለያ ያክሉ"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"ካሜራ"</string>
-    <string name="folder_download" msgid="9201141690833756842">"አውርድ"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"አርትዖት የተደረጉ የመስመር ላይ ፎቶዎች"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"ከውጭ የመጡ"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"ቅጽበታዊ ገጽ እይታ"</string>
-    <string name="help" msgid="2528548040829796056">"እገዛ"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"ምንም ማከማቻ የለም"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"ምንም ውጫዊ ማከማቻ የለም"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"የድርድር ፊልም እይታ"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"የፍርግርግ እይታ"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"የሙሉ ማያ ገጽ እይታ"</string>
-    <string name="trimming" msgid="3297452940449729243">"በማሳጠር ላይ"</string>
-    <string name="muting" msgid="4406071974811026243">"ድምጸ-ከል በማድረግ ላይ"</string>
     <string name="please_wait" msgid="99283054995831377">"እባክዎ ይጠብቁ"</string>
-    <string name="save_into" msgid="3800886260514315436">"ቪዲዮ ወደ <xliff:g id="ALBUM_NAME">%1$s</xliff:g> በማስቀመጥ ላይ …"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"ማሳጠር አይቻልም፤ የታለመው ቪዲዮ በጣም አጭር ነው"</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"photo sphere በማዘጋጀት ላይ"</string>
-    <string name="save" msgid="4522918253523037970">"አስቀምጥ"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"ይዘትን በመቃኘት ላይ..."</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"%1$d ንጥሎች ተቃኝተዋል"</item>
-    <item quantity="one" msgid="6118751779386608938">"%1$d ንጥል ተቃኝቷል"</item>
-    <item quantity="other" msgid="1091937586315173697">"%1$d ንጥሎች ተቃኝተዋል"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"በመደርደር ላይ..."</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"ቅኝት ተጠናቅቋል"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"በማስመጣት ላይ…"</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"ወደዚህ መሳሪያ ማስመጣት የሚቻል ምንም የሚገኝ ይዘት የለም።"</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"ምንም የተገናኘ የMTP መሳሪያ የለም"</string>
     <string name="camera_error_title" msgid="434116066686973315">"የካሜራ ስህተት"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"ከካሜራ ጋር መገናኘት አልተቻለም።"</string>
     <string name="camera_disabled" msgid="4927328535752421596">"በደህንነት መመሪያዎች ምክንያት ካሜራ ተሰናክሏል።"</string>
-    <string name="camera_label" msgid="8822012181326078626">"ካሜራ"</string>
     <string name="wait" msgid="2081747495953883435">"እባክዎ ይጠብቁ…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"ካሜራውን ከመጠቀምዎ በፊት USB ያፈናጥጡ።"</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"ካሜራውን ከመጠቀምዎ በፊት የSD ካርድ ያስገቡ።"</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"የUSB ማከማቻ በማዘጋጀት ላይ…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"የSD ካርድ በማዘጋጀት ላይ…"</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"USB ማከማቻን መድረስ አልተቻለም።"</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"SD ካርድን መድረስ አልተቻለም።"</string>
-    <string name="review_cancel" msgid="4681578987722865410">"ተወው"</string>
-    <string name="review_ok" msgid="4229133003029778558">"ተጠናቅቋል"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"የአላፊ ጊዜ ቀረጻ"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"ካሜራ ይምረጡ"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"ተመለስ"</string>
@@ -236,7 +99,7 @@
     <string name="pref_camera_location_label" msgid="725236612912086608">"አካባቢ"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"ሰዓት ቆጣሪ"</string>
   <plurals name="pref_camera_timer_entry">
-    <item quantity="one" msgid="8868342573738742056">"1 ሰከንድ"</item>
+    <item quantity="one" msgid="8868342573738742056">"1 ሴኮንድ"</item>
     <item quantity="other" msgid="3053084895126759755">"%d ሰኮንዶች"</item>
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
@@ -301,9 +164,8 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"ሌሊት"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"ፀሀይ ስትጠልቅ"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"ድግስ"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"ሰዓት ቆጣሪ"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"ሰዓት ቆጣሪ ጠፍቷል"</string>
-    <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 ሰከንድ"</string>
+    <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 ሴኮንድ"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 ሰከንዶች"</string>
     <string name="pref_camera_countdown_label_ten" msgid="8259680166571641702">"10 ሰከንዶች"</string>
     <string name="pref_camera_countdown_label_fifteen" msgid="2251170484933984740">"15 ሰከንዶች"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"የፊት ካሜራ"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"የኋላ ካሜራ"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"እሺ"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"የእርስዎ USB ማህደረ ትውስታ ቦታ እየሞላበት ነው።የጥራት ቅንብር ይለውጡ ወይም አንዳንድ ምስሎችን ወይም ሌላ ፋይሎች ይሰርዙ።"</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"የእርስዎ SD ካርድ ቦታ እየሞላበት ነው። የጥራት ቅንብሩን ይቀይሩ ወይም አንዳንድ ምስሎችን ወይም ሌሎች ፋይሎችን ይሰርዙ።"</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"የመጠኑ ገደብ ላይ ተደርሷል።"</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"በጣም ፈጥኗል"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"ጠፈር ላይ"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"ፀሀይ ስትጠልቅ"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"የእርስዎ ቪዲዮ"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"መሳሪያዎን አዘጋጅተው ያስቀምጡት።\nለአንድ አፍታ ከዕይታ ውጪ ይሁኑ።"</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"እየቀረጹ ሳሉ ፎቶ ለማንሳት ይንኩ።"</string>
     <string name="video_recording_started" msgid="1478448043553326540">"የቪዲዮ ቀረጻ ተጀምሯል።"</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"የቪዲዮ ቀረጻ ቆሟል።"</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"የቪዲዮ ቅጽበተ ፎቶ ልዩ ማሳመሪያዎች ሲበሩ ይሰናከላል።"</string>
     <string name="clear_effects" msgid="155262355011195942">"ማሳመሪያዎች አጽዳ"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"ሞኛሞኝ ፊቶች"</string>
     <string name="effect_background" msgid="2260438748276866983">"ጀርባ"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"የካሜራ ሌንስ መከለያ"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"የምናሌ አዝራር"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"በጣም የቅርብ ጊዜ ፎቶ"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"የፊትና ኋላ ካሜራ ማብሪያና ማጥፊያ"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"የካሜራ፣ ቪድዮ ወይም ፓኖራማ መምረጫ"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"ተጨማሪ የቅንብር መቆጣጠሪያዎች"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"የቅንብር መቆጣጠሪያዎችን ዝጋ"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"የማጉላት መቆጣጠሪያ"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"በ%1$s ቀንስ"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"በ%1$s ጨምር"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s አመልካች ሳጥን"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"ወደ ፎቶ ቀይር"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"ወደ ቪዲዮ ቀይር"</string>
@@ -365,15 +217,11 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"ግምገማ ሰርዝ"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"ግምገማ ተጠናቅቋል"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"ዳግም የተነሳውን ይገምግሙ"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"ቪዲዮ አጫውት"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"ቪዲዮ ለአፍታ አቁም"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"ቪዲዮ ዳግም ጫን"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"የቪዲዮ አጫዋች ሰዓት ቆጣሪ አሞሌ"</string>
     <string name="capital_on" msgid="5840588038158274585">"በርቷል"</string>
     <string name="capital_off" msgid="3199056669644846925">"ጠፍቷል"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"ጠፍቷል"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0.5 ሰከንዶች"</string>
-    <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 ሰከንድ"</string>
+    <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 ሴኮንድ"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="8931945040035127831">"1.5 ሰከንዶች"</string>
     <string name="pref_video_time_lapse_frame_interval_2000" msgid="3939716251293255146">"2 ሰከንዶች"</string>
     <string name="pref_video_time_lapse_frame_interval_2500" msgid="7683749285828898630">"2.5 ሰከንዶች"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"ተጠናቅቋል"</string>
     <string name="set_time_interval" msgid="844482952911185265">"የጊዜ ክፍተት ያዘጋጁ"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"የአላፊ ጊዜ ባህሪ ጠፍቷል። የጊዜ ክፍተቱን ለማዘጋጀት ያብሩት።"</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"የሰዓት ቆጣሪ ጠፍቷል። ስዕል ከማንሳትዎ በፊት ለመቁጠር ያብሩት።"</string>
     <string name="set_duration" msgid="7425045408900251919">"ቆይታን በሰከንዶች ያዘጋጁ"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"ፎቶ ለመውሰድ ወደታች በመቁጠር ላይ"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"የፎቶ አካባቢዎች ይታወሱ?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"የእርስዎን ፎቶዎች እና ቪዲዮዎች በተነሱበት አካባቢዎች መለያ ይስጧቸው።\n\nሌሎች መተግበሪያዎች ይህንን መረጃ ከተቀመጡ የእርስዎ ምስሎች ጋር ሊደርሱባቸው ይችላሉ።"</string>
     <string name="remember_location_no" msgid="5160772992721036553">"አይ፣ አመሰግናለሁ"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"አዎ"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"ካሜራ"</string>
-    <string name="menu_search" msgid="8274896451431033951">"ፍለጋ"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"ፎቶዎች"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"አልበሞች"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"ተጨማሪ አማራጮች"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"ቅንብሮች"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d ፎቶ"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d ፎቶዎች"</item>
-  </plurals>
 </resources>

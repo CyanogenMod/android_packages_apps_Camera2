@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"කැමරාව"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"වීඩියෝ ධාවකය"</string>
-    <string name="loading_video" msgid="7506410442678001647">"විඩියෝව පූරණය වේ…"</string>
-    <string name="loading_image" msgid="2060882673852072952">"පින්තුරය පූරණය වේ…"</string>
-    <string name="loading_account" msgid="5905155935821293897">"ගිණුම පූරණය වේ…"</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"වීඩියෝව යළි පටන්ගන්න"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"%s වෙතින් ධාවනය යළි අරඹන්නද ?"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"ධාවනය නැවත පටන් ගැනීම"</string>
-    <string name="loading" msgid="1780879367849478548">"පූරණය වෙමින්..."</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"පූරණය කළ නොහැකි විය"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"පින්තුරය පූරණය කළ නොහැකි විය"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"සිඟිති රූ නැත"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"යළි මුල සිට අරඹන්න"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"හරි"</string>
-    <string name="ok" msgid="7771534786778882486">"හරි"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"ඇරඹීමට මුහුණක් ස්පර්ශ කරන්න."</string>
-    <string name="saving_image" msgid="4305990779779942817">"පින්තූරය සුරැ‍කේ…"</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"<xliff:g id="ALBUM_NAME">%1$s</xliff:g> වෙත පින්තූරය සුරැකේ …"</string>
-    <string name="save_error" msgid="1170362488191167076">"කප්පාදු කළ පින්තුරය සුරැකීමට නොහැකි විය."</string>
-    <string name="crop_label" msgid="8114305803169123050">"පින්තූරය කප්පාදු කරන්න"</string>
-    <string name="trim_label" msgid="7369596929410798458">"වීඩියෝවේ අහුකොන් කපන්න"</string>
-    <string name="select_image" msgid="3289827722983995546">"ඡායාරූපය තෝරන්න"</string>
-    <string name="select_video" msgid="882817436381543724">"වීඩියෝව තෝරන්න"</string>
-    <string name="select_item" msgid="2611103251995672148">"අයිතමය තෝරන්න"</string>
-    <string name="select_album" msgid="7946907074045669521">"ඇල්බමය තෝරන්න"</string>
-    <string name="select_group" msgid="7446238738711880170">"කණ්ඩායම තෝරන්න"</string>
     <string name="set_image" msgid="3011821258780340803">"ලෙස පින්තූරය සකසන්න"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"බිතුපත සකසන්න"</string>
-    <string name="wallpaper" msgid="3542643990146620046">"බිතුපත සැකසේ…"</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"බිතුපත"</string>
     <string name="delete" msgid="7258764001896874869">"මකන්න"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"තෝරගත් අයිතමය මකන්නද?"</item>
     <item quantity="other" msgid="882035505847338991">"තෝරාගත් අයිතම මකන්නද?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"තහවුරු කරන්න"</string>
-    <string name="cancel" msgid="3709581234100450763">"අවලංගු කරන්න"</string>
     <string name="share" msgid="319799706929863109">"බෙදාගන්න"</string>
     <string name="share_panorama" msgid="7488525470543070168">"පරිදර්ශනය බෙදා ගන්න"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"ඡායාරූපය ලෙස බෙදා ගන්න"</string>
     <string name="deleted" msgid="1144434522200481802">"මකාදමන ලදි"</string>
     <string name="undo" msgid="7561810819827468379">"අස් කරන්න"</string>
-    <string name="select_all" msgid="3201279798263252094">"සියල්ල තෝරන්න"</string>
-    <string name="deselect_all" msgid="626233665600163037">"සියල්ල තේරීම අත්හරින්න"</string>
-    <string name="slideshow" msgid="6249043759236676662">"කදා දර්ශනය"</string>
     <string name="details" msgid="3581943734736871564">"විස්තර"</string>
-    <string name="details_title" msgid="681306416468138508">"අයිතම %2$d කින් %1$d:"</string>
     <string name="close" msgid="7196876073399885123">"වසන්න"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"කැමරාව වෙත මාරු වන්න"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"%1$d තෝරා ගන්නා ලදි"</item>
     <item quantity="one" msgid="4283105620980058761">"%1$d තෝරා ගන්නා ලදි"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"සිතියම මත පෙන්වන්න"</string>
     <string name="rotate_left" msgid="6719855780237705569">"වමට කරකවන්න"</string>
     <string name="rotate_right" msgid="8558343437940821771">"දකුණට හරවන්න"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"අයිතමය සොයාගැනීමට නොහැකි විය."</string>
     <string name="edit" msgid="8457904262004517151">"සංස්කරණය කරන්න"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"සරල සංස්කරණය"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"හැඹිලිගත කිරීමේ ඉල්ලීම් සකස් කෙරේ"</string>
-    <string name="caching_label" msgid="6581817666800160995">"හැඹිලිගත වේ…"</string>
     <string name="crop_action" msgid="3281088975169422593">"කප්පාදු කිරීම"</string>
     <string name="trim_action" msgid="1912063594235898890">"අහුකොන් කපන්න"</string>
-    <string name="mute_action" msgid="6523005634451795344">"නිශ්ශබ්ද කරන්න"</string>
     <string name="set_as" msgid="7362777416265059096">"ලෙස සකසන්න"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"වීඩියෝව නිශ්ශබ්ද කළ නොහැක."</string>
     <string name="video_err" msgid="6747342411484597130">"වීඩියෝව ධාවනය කළ නොහැක."</string>
-    <string name="group_by_location" msgid="7885728085506867484">"ස්ථානය මගින්"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"කාලය මගින්"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"ටැග මගින්"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"පුද්ගලයින් මගින්"</string>
-    <string name="group_by_album" msgid="518334663451373758">"ඇල්බමය මගින්"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"ප්‍රමාණය මගින්"</string>
-    <string name="untagged" msgid="4213803874762026102">"ටැග් නොකළ"</string>
-    <string name="no_location" msgid="4077330169715063726">"ස්ථානයක් නැත"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"ජාල ගැටලු හේතුවෙන් සමහර ස්ථාන හඳුනාගැනීමට නොහැකි විය."</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"මෙම ඇල්බමයෙහි ඡායාරූප බාගැනීමට නොහැකි විය. පසුව යළි උත්සාහ කරන්න."</string>
-    <string name="show_images_only" msgid="6498287528900683465">"පින්තුරය පමණී"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"වීඩියෝ පමණී"</string>
-    <string name="show_all" msgid="5621895787382615225">"පින්තුර සහ වීඩියෝ"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"ඡායාරූප ගැලරිය"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"ඡායාරූප නැත."</string>
     <string name="crop_saved" msgid="6708204358512805637">"<xliff:g id="FOLDER_NAME">%s</xliff:g> වෙත කප්පාදු කළ පින්තුරය සුරැකිණි."</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"ඇල්බම ලබා ගත නොහැක."</string>
-    <string name="empty_album" msgid="7143934241018780840">"O පින්තුර/වීඩියෝ ලබාගත හැක."</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"පළ කිරීම්"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"නොබැඳිව ලබාගත හැකි කිරීම."</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"නැවුම් කරන්න"</string>
-    <string name="done" msgid="998934109252173093">"අවසාන වූ"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"අයිතම %2$d කින් %1$d:"</string>
     <string name="title" msgid="1465174588508188840">"මාතෘකාව"</string>
     <string name="description" msgid="7012551348834166615">"විස්තරය"</string>
     <string name="time" msgid="53680310933472250">"වේලාව"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"සැණෙලි පත්තු කරන ලදී"</string>
     <string name="flash_off" msgid="7313393221333362406">"සැණෙලි නැත"</string>
     <string name="unknown" msgid="2211992216750845926">"නොදනී"</string>
-    <string name="ffx_original" msgid="549901223077566047">"මුල්"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"වින්ටාජ්"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"ක්ෂණික"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"විරංජනය කරන්න"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"නිල්"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"ක/සු"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"පන්ච්"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"X ක්‍රියාවලිය"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"කෝපි වර්ණ"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"ලිතෝ"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"ඇල්බමය නොබැඳිව ලබාගත හැකි කිරීම."</item>
-    <item quantity="other" msgid="5124932962621695590">"ඇල්බමය නොබැඳිව ලබාගත හැකි කිරීම."</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"මෙම අයිතමය ස්ථානිකව ගබඩා කර ඇති අතර නොබැඳිව ලබා ගත හැක."</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"සියලු ඇල්බම"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"ස්ථානික ඇල්බම"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"MTP උපාංග"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa ඇල්බම"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> නිදහස්"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> හෝ පහළ"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> හෝ ඉහළ"</string>
-    <string name="size_between" msgid="2266484752949196814">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> සිට <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"ආයාත කරන්න"</string>
-    <string name="import_complete" msgid="6772771659359964875">"ආයාත කිරීම සම්පුර්ණයි"</string>
-    <string name="import_fail" msgid="5162454276035072428">"ආයාත කිරීම අසාර්ථකයි"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"කැමරාව සම්බන්ධ කරන ලදි."</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"කැමරාව විසන්ධි කරන ලදි."</string>
-    <string name="click_import" msgid="5153823057201280612">"ආයාත කිරීමට මෙහි ස්පර්ශ කරන්න"</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"ඇල්බමයක් තෝරන්න"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"සියලු පින්තුර කළවම් කරන්න"</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"පින්තුරයක් තෝරන්න"</string>
-    <string name="widget_type" msgid="1607279427350645903">"පින්තුර තෝරන්න"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"කදා දර්ශනය"</string>
-    <string name="albums" msgid="7571656500475430599">"ඇල්බම"</string>
-    <string name="times" msgid="4738095876364133181">"වාර ගණන"</string>
-    <string name="locations" msgid="9050411755300802457">"ස්ථාන"</string>
-    <string name="people" msgid="4059890005675672784">"පුද්ගලයින්"</string>
-    <string name="tags" msgid="1837044547733525409">"ලේබල"</string>
-    <string name="group_by" msgid="7228838244265292454">"කාණ්ඩයම මගින්"</string>
-    <string name="settings" msgid="2408436721619264685">"සැකසීම්"</string>
-    <string name="add_account" msgid="5407579257925503059">"ගිණුමක් එකතු කරන්න"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"කැමරාව"</string>
-    <string name="folder_download" msgid="9201141690833756842">"බාගන්න"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"සංස්කරණය කළ සබැඳි ඡායාරූප"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"ආයාත කළ"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"තිර රුව"</string>
-    <string name="help" msgid="2528548040829796056">"සහය"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"USB ආචයනයක් නැත."</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"බාහිර ආචයනයක් ලබා ගත නොහැක"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmstrip දසුන"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"ජාල පෙනුම"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"සම්පුර්ණ තිරයේ පෙනුම"</string>
-    <string name="trimming" msgid="3297452940449729243">"අහුකොන් කැපීම"</string>
-    <string name="muting" msgid="4406071974811026243">"නිහඬ කිරීම"</string>
     <string name="please_wait" msgid="99283054995831377">"කරුණාකර රැඳී සිටින්න"</string>
-    <string name="save_into" msgid="3800886260514315436">"<xliff:g id="ALBUM_NAME">%1$s</xliff:g> වෙත වීඩියෝව සුරැකේ …"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"පෑහීමට නොහැක : ඉලක්ක වීඩියෝව ඉතා කෙටිය"</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"ෆොටෝ ස්පීයර් ප්‍රවාචනය කරමින්"</string>
-    <string name="save" msgid="4522918253523037970">"සුරකින්න"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"අන්තර්ගතය පරිලෝකනය වේ..."</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"අයිතම %1$d ස්කෑන් කරන ලදී"</item>
-    <item quantity="one" msgid="6118751779386608938">"අයිතම %1$d ස්කෑන් කරන ලදී"</item>
-    <item quantity="other" msgid="1091937586315173697">"අයිතම %1$d ස්කෑන් කරන ලදී"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"අනුපිළිවෙලට සැකසේ..."</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"පරිලෝකනය කිරීම නිමයි"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"ආයාත කරමින්..."</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"මෙම උපාංගය මත ආයාත කිරීම සඳහා අන්තර්ගතය ලබාගත නොහැක."</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"MTP උපාංගයක් සබැඳී නොමැත"</string>
     <string name="camera_error_title" msgid="434116066686973315">"කැමරා දෝෂය"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"කැමරාව වෙත සම්බන්ධ කළ නොහැක."</string>
     <string name="camera_disabled" msgid="4927328535752421596">"ආරක්ෂණ ප්‍රතිපත්ති නිසා කැමරාව අබල කර ඇත."</string>
-    <string name="camera_label" msgid="8822012181326078626">"කැමරාව"</string>
     <string name="wait" msgid="2081747495953883435">"කරුණාකර රැඳී සිටින්න..."</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"කැමරාව භාවිතා කිරීමට පෙර USB ආචිත නංවන්න."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"කැමරාව භාවිතා කිරීමට පෙර SD කාඩ් පතක් ඇතුලු කරන්න."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"USB ආචයනය පිළියෙළ කෙරේ…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"SD කාඩ්පත පිළියෙළ කෙරේ…"</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"USB ආචයනයට ප්‍රවේශ විය නොහැක."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"SD කාඩ් පතට ප්‍රවේශ විය නොහැක."</string>
-    <string name="review_cancel" msgid="4681578987722865410">"අවලංගු කිරීම"</string>
-    <string name="review_ok" msgid="4229133003029778558">"හරි"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"කාලය ඉකුත්වීමේ පටිගත කිරීම"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"කැමරාව තෝරන්න"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"ආපසු"</string>
@@ -301,7 +164,6 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"රාත්‍රිය"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"හිරු බැසීම"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"සාදය"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"කාල ගැනීමේ කාල යන්ත්‍රය"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"කාල ගණකය අක්‍රියයි"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"තත්පර 1"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"තත්පර.3"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"ඉදිරිපස කැමරාව"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"පිටුපස කැමරාව"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"හරි"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"ඔබගේ USB ආචයනයේ ඉඩ අවසන් වෙමින් පවතී. ගුණත්ව සැකසීම් වෙනස් කරන්න නැතහොත් සමහර පින්තුර හෝ වෙනත් ගොනු මකන්න."</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"ඔබගේ SD කාඩ් පතේ ඉඩ අවසන් වෙමින් පවතී. ගුණත්ව සැකසීම් වෙනස් කරන්න හෝ සමහර පින්තුරය හෝ වෙනත් ගොනු මකන්න."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"ප්‍රමාණයේ සීමාව ලඟාවී ඇත."</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"ඉතා වේගවත්"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"අවකාශයෙහි"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"ඉර බැසීම"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"ඔබගේ වීඩියෝව"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"ඔබගේ උපාංගය පැත්තකින් තබන්න.\nමොහොතකට දසුනෙන් ඈත් වන්න."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"පටිගත කිරීම අතරතුර ඡායාරූපයක් ගැනීමට ස්පර්ශ කරන්න."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"වීඩියෝව පටිගත කිරීම ඇරඹී ඇත."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"වීඩියෝව පටිගත කිරීම නැවතී ඇත."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"විශේෂ විලාස සක්‍රිය විට වීඩියෝ සැණ රුව අබල කර ඇත."</string>
     <string name="clear_effects" msgid="155262355011195942">"විලාස හිස් කරන්න"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"මෝඩ මුහුණු"</string>
     <string name="effect_background" msgid="2260438748276866983">"පසුබිම"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"ශටරය"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"මෙනු බොත්තම"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"ඉතා මෑතකාලීන ජායාරූප"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"ඉදිරිපස සහ පසුපස කැමරා ස්විචය"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"කැමරාව, වීඩියෝව, හෝ පරිදර්ශනය තෝරන්න"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"වැඩිපුර සැකසීම් පාලන"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"සැකසීම් පාලන වසන්න"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"විශාලනය පාලන"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"%1$s අඩු කරන්න"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"%1$s වැඩි කරන්න"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"සලකුණු කොටු %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"ඡායාරූපය වෙත මාරු වන්න"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"වීඩියෝව වෙත මාරු වන්න"</string>
@@ -365,10 +217,6 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"අවලංගු කිරීම සමාලෝචනය කරන්න"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"සමාලෝචනය අවසන්"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"යළිගැනීම සමාලෝචනය කරන්න"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"වීඩියෝව ධාවනය කරන්න"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"විඩියෝව විරාම කරන්න"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"වීඩියෝව යළි පූරණය කරන්න"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"වීඩියෝ ධාවක කාල තීරය"</string>
     <string name="capital_on" msgid="5840588038158274585">"සක්‍රීයයි"</string>
     <string name="capital_off" msgid="3199056669644846925">"අක්‍රියයි"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"අක්‍රියයි"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"අවසාන වූ"</string>
     <string name="set_time_interval" msgid="844482952911185265">"කාල අන්තරය පිහිටුවන්න"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"කාලය ඉකුත්වීමේ විශේෂාංගය අක්‍රියයි. කාල අන්තරය පිහිටුවීමට එය සක්‍රිය කරන්න."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"ගණනය කිරීමේ කාල ගණකය අක්‍රියයි. පින්තූරයක් ගැනීමට පෙර ගණනය කිරීමට එය සක්‍රිය කරන්න."</string>
     <string name="set_duration" msgid="7425045408900251919">"තත්පර වලින් කාල පරාස සකසන්න"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"ඡායාරූපයක් ගැනීමට ආපස්සට ගණන් කෙරේ"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"ඡායාරූප ස්ථාන මතකද?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"ඔබගේ ඡායාරූප සහ වීඩියෝ ඒවා ගත් ස්ථානය සමගින් ටැග් කරන්න.\n\nවෙනත් යෙදුම් වලට ඔබගේ සුරැකි පින්තුර සමගින් මෙම තොරතුරු වෙත ප්‍රවේශ විය හැක."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"එපා ස්තූතියි"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"ඔව්"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"කැමරාව"</string>
-    <string name="menu_search" msgid="8274896451431033951">"සෙවීම"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"ඡායාරූප"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"ඇල්බම"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"තව විකල්ප"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"සැකසීම්"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"ඡායාරූප %1$d"</item>
-    <item quantity="other" msgid="6337070372269594668">"ඡායාරූප %1$d"</item>
-  </plurals>
 </resources>
