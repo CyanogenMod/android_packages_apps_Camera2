@@ -2142,6 +2142,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (current == null) {
                 return false;
             }
+            if (mController.isScrolling()) {
+                mController.stopScrolling();
+            }
             mController.zoomAt(current, x, y);
             return false;
         }
@@ -2155,6 +2158,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // the lower-res image during a gesture to ensure a responsive experience.
             // TODO: Delay this until gesture starts.
             if (mController.isZoomStarted()) {
+                mController.cancelLoadingZoomedImage();
                 mZoomView.setVisibility(GONE);
             }
             return true;
@@ -2319,7 +2323,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
-            mController.cancelLoadingZoomedImage();
             if (inCameraFullscreen()) {
                 return false;
             }
@@ -2384,8 +2387,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             } else if (mScaleTrend > 1f || mScale > FULL_SCREEN_SCALE - TOLERANCE) {
                 if (mController.isZoomStarted()) {
                     mScale = FULL_SCREEN_SCALE;
-                    mViewItem[mCurrentItem].updateTransform(0f, 0f, 1f, 1f, mDrawArea.width(),
-                            mDrawArea.height());
+                    resetZoomView();
                 }
                 mController.goToFullScreen();
             } else {
