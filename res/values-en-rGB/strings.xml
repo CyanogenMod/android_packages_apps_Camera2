@@ -19,54 +19,19 @@
     <string name="app_name" msgid="8338864393568040722">"Camera"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="5418000271524694534">"Video player"</string>
-    <string name="loading_video" msgid="7506410442678001647">"Loading video…"</string>
-    <string name="loading_image" msgid="2060882673852072952">"Loading image…"</string>
-    <string name="loading_account" msgid="5905155935821293897">"Loading account…"</string>
-    <string name="resume_playing_title" msgid="183661837882331054">"Resume video"</string>
-    <string name="resume_playing_message" msgid="2707046046147124277">"Resume playing from %s ?"</string>
-    <string name="resume_playing_resume" msgid="4273369210087304227">"Resume playing"</string>
-    <string name="loading" msgid="1780879367849478548">"Loading…"</string>
-    <string name="fail_to_load" msgid="8207740590161925891">"Couldn\'t load"</string>
-    <string name="fail_to_load_image" msgid="3133435559287332979">"Couldn\'t load the image"</string>
-    <string name="no_thumbnail" msgid="2070785115093266536">"No thumbnail"</string>
-    <string name="resume_playing_restart" msgid="7874418747024545675">"Start again"</string>
-    <string name="crop_save_text" msgid="8249578825594306063">"OK"</string>
-    <string name="ok" msgid="7771534786778882486">"OK"</string>
-    <string name="multiface_crop_help" msgid="3096903739496991318">"Touch a face to begin."</string>
-    <string name="saving_image" msgid="4305990779779942817">"Saving picture…"</string>
-    <string name="filtershow_saving_image" msgid="4744098915256700747">"Saving picture to <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="save_error" msgid="1170362488191167076">"Couldn\'t save cropped image."</string>
-    <string name="crop_label" msgid="8114305803169123050">"Crop picture"</string>
-    <string name="trim_label" msgid="7369596929410798458">"Trim video"</string>
-    <string name="select_image" msgid="3289827722983995546">"Select photo"</string>
-    <string name="select_video" msgid="882817436381543724">"Select video"</string>
-    <string name="select_item" msgid="2611103251995672148">"Select item"</string>
-    <string name="select_album" msgid="7946907074045669521">"Select album"</string>
-    <string name="select_group" msgid="7446238738711880170">"Select group"</string>
     <string name="set_image" msgid="3011821258780340803">"Set picture as"</string>
-    <string name="set_wallpaper" msgid="4913071112864032079">"Set wallpaper"</string>
-    <string name="wallpaper" msgid="3542643990146620046">"Setting wallpaper..."</string>
-    <string name="camera_setas_wallpaper" msgid="8879027518158614935">"Wallpaper"</string>
     <string name="delete" msgid="7258764001896874869">"Delete"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"Delete selected item?"</item>
     <item quantity="other" msgid="882035505847338991">"Delete selected items?"</item>
   </plurals>
-    <string name="confirm" msgid="6079809872780030117">"Confirm"</string>
-    <string name="cancel" msgid="3709581234100450763">"Cancel"</string>
     <string name="share" msgid="319799706929863109">"Share"</string>
     <string name="share_panorama" msgid="7488525470543070168">"Share panorama"</string>
     <string name="share_as_photo" msgid="8960831195285082544">"Share as photo"</string>
     <string name="deleted" msgid="1144434522200481802">"Deleted"</string>
     <string name="undo" msgid="7561810819827468379">"UNDO"</string>
-    <string name="select_all" msgid="3201279798263252094">"Select all"</string>
-    <string name="deselect_all" msgid="626233665600163037">"Deselect all"</string>
-    <string name="slideshow" msgid="6249043759236676662">"Slideshow"</string>
     <string name="details" msgid="3581943734736871564">"Details"</string>
-    <string name="details_title" msgid="681306416468138508">"%1$d of %2$d items:"</string>
     <string name="close" msgid="7196876073399885123">"Close"</string>
-    <string name="switch_to_camera" msgid="5252691793674565308">"Switch to camera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="629802015400399691">"%1$d selected"</item>
     <item quantity="one" msgid="4283105620980058761">"%1$d selected"</item>
@@ -85,40 +50,12 @@
     <string name="show_on_map" msgid="1986264085815015696">"Show on map"</string>
     <string name="rotate_left" msgid="6719855780237705569">"Rotate left"</string>
     <string name="rotate_right" msgid="8558343437940821771">"Rotate right"</string>
-    <string name="no_such_item" msgid="8109733824863145928">"Couldn\'t find item."</string>
     <string name="edit" msgid="8457904262004517151">"Edit"</string>
-    <string name="simple_edit" msgid="7167857524719035134">"Simple Edit"</string>
-    <string name="process_caching_requests" msgid="6521997636837045412">"Process Caching Requests"</string>
-    <string name="caching_label" msgid="6581817666800160995">"Caching..."</string>
     <string name="crop_action" msgid="3281088975169422593">"Crop"</string>
     <string name="trim_action" msgid="1912063594235898890">"Trim"</string>
-    <string name="mute_action" msgid="6523005634451795344">"Mute"</string>
     <string name="set_as" msgid="7362777416265059096">"Set as"</string>
-    <string name="video_mute_err" msgid="4955516955624461937">"Can\'t mute video."</string>
     <string name="video_err" msgid="6747342411484597130">"Cannot play video"</string>
-    <string name="group_by_location" msgid="7885728085506867484">"By location"</string>
-    <string name="group_by_time" msgid="7606993606977133185">"By time"</string>
-    <string name="group_by_tags" msgid="6973485447235472857">"By tags"</string>
-    <string name="group_by_faces" msgid="3460585100434719851">"By people"</string>
-    <string name="group_by_album" msgid="518334663451373758">"By album"</string>
-    <string name="group_by_size" msgid="3086722779025599249">"By size"</string>
-    <string name="untagged" msgid="4213803874762026102">"Untagged"</string>
-    <string name="no_location" msgid="4077330169715063726">"No location"</string>
-    <string name="no_connectivity" msgid="1400890066380537843">"Some locations couldn\'t be identified due to network problems."</string>
-    <string name="sync_album_error" msgid="3635184059175668833">"Couldn\'t download the photos in this album. Retry later."</string>
-    <string name="show_images_only" msgid="6498287528900683465">"Images only"</string>
-    <string name="show_videos_only" msgid="4359019105151934599">"Videos only"</string>
-    <string name="show_all" msgid="5621895787382615225">"Images &amp; videos"</string>
-    <string name="appwidget_title" msgid="5392520642718789241">"Photo Gallery"</string>
-    <string name="appwidget_empty_text" msgid="7338621200293556250">"No photos."</string>
     <string name="crop_saved" msgid="6708204358512805637">"Cropped image saved to <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="no_albums_alert" msgid="6301185420723201993">"No albums available."</string>
-    <string name="empty_album" msgid="7143934241018780840">"O images/videos available."</string>
-    <string name="picasa_posts" msgid="1266615912017351938">"Posts"</string>
-    <string name="make_available_offline" msgid="4399445722926739810">"Make available offline"</string>
-    <string name="sync_picasa_albums" msgid="6809590273138267530">"Refresh"</string>
-    <string name="done" msgid="998934109252173093">"Finished"</string>
-    <string name="sequence_in_set" msgid="7297278525463370182">"%1$d of %2$d items:"</string>
     <string name="title" msgid="1465174588508188840">"Title"</string>
     <string name="description" msgid="7012551348834166615">"Description"</string>
     <string name="time" msgid="53680310933472250">"Time"</string>
@@ -144,90 +81,16 @@
     <string name="flash_on" msgid="4053187950402210000">"Flash fired"</string>
     <string name="flash_off" msgid="7313393221333362406">"No flash"</string>
     <string name="unknown" msgid="2211992216750845926">"Unknown"</string>
-    <string name="ffx_original" msgid="549901223077566047">"Original"</string>
-    <string name="ffx_vintage" msgid="4873569709320076102">"Vintage"</string>
-    <string name="ffx_instant" msgid="2789796369450602080">"Instant"</string>
-    <string name="ffx_bleach" msgid="2202542296041511846">"Bleach"</string>
-    <string name="ffx_blue_crush" msgid="1345076859609804450">"Blue"</string>
-    <string name="ffx_bw_contrast" msgid="2621607753472841297">"B/W"</string>
-    <string name="ffx_punch" msgid="5506629527921353460">"Punch"</string>
-    <string name="ffx_x_process" msgid="3726293897101289705">"X Process"</string>
-    <string name="ffx_washout" msgid="6941478261736953916">"Latte"</string>
-    <string name="ffx_washout_color" msgid="1694204026157875566">"Litho"</string>
-  <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="9028798463216468312">"Making album available offline."</item>
-    <item quantity="other" msgid="5124932962621695590">"Making albums available offline"</item>
-  </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="1084363257705484486">"This item is stored locally and available offline."</string>
-    <string name="set_label_all_albums" msgid="6609415760077097893">"All albums"</string>
-    <string name="set_label_local_albums" msgid="567749080638164284">"Local albums"</string>
-    <string name="set_label_mtp_devices" msgid="4247105968633555252">"MTP devices"</string>
-    <string name="set_label_picasa_albums" msgid="1648813072177988748">"Picasa albums"</string>
-    <string name="free_space_format" msgid="8580034980559719549">"<xliff:g id="BYTES">%s</xliff:g> free"</string>
-    <string name="size_below" msgid="5331319492812340226">"<xliff:g id="SIZE">%1$s</xliff:g> or below"</string>
-    <string name="size_above" msgid="8622186702359360220">"<xliff:g id="SIZE">%1$s</xliff:g> or above"</string>
-    <string name="size_between" msgid="2266484752949196814">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> to <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
-    <string name="Import" msgid="7415409432995200645">"Import"</string>
-    <string name="import_complete" msgid="6772771659359964875">"Import complete"</string>
-    <string name="import_fail" msgid="5162454276035072428">"Import unsuccessful"</string>
-    <string name="camera_connected" msgid="5972302349448026591">"Camera connected"</string>
-    <string name="camera_disconnected" msgid="7879070561053748598">"Camera disconnected"</string>
-    <string name="click_import" msgid="5153823057201280612">"Touch here to import"</string>
-    <string name="widget_type_album" msgid="8649890012992069317">"Choose an album"</string>
-    <string name="widget_type_shuffle" msgid="3813327035908882115">"Shuffle all images"</string>
-    <string name="widget_type_photo" msgid="2237017593844917491">"Choose an image:"</string>
-    <string name="widget_type" msgid="1607279427350645903">"Choose images"</string>
-    <string name="slideshow_dream_name" msgid="2358714399417036646">"Slideshow"</string>
-    <string name="albums" msgid="7571656500475430599">"Albums"</string>
-    <string name="times" msgid="4738095876364133181">"Times"</string>
-    <string name="locations" msgid="9050411755300802457">"Locations"</string>
-    <string name="people" msgid="4059890005675672784">"People"</string>
-    <string name="tags" msgid="1837044547733525409">"Tags"</string>
-    <string name="group_by" msgid="7228838244265292454">"Group by"</string>
-    <string name="settings" msgid="2408436721619264685">"Settings"</string>
-    <string name="add_account" msgid="5407579257925503059">"Add account"</string>
-    <string name="folder_camera" msgid="9117540100094034097">"Camera"</string>
-    <string name="folder_download" msgid="9201141690833756842">"Download"</string>
-    <string name="folder_edited_online_photos" msgid="7885121837502350691">"Edited Online Photos"</string>
-    <string name="folder_imported" msgid="1652410522850456583">"Imported"</string>
-    <string name="folder_screenshot" msgid="8619432532724304995">"Screenshot"</string>
-    <string name="help" msgid="2528548040829796056">"Help"</string>
-    <string name="no_external_storage_title" msgid="8762156252392350944">"No Storage"</string>
-    <string name="no_external_storage" msgid="9150100688259295300">"No external storage available"</string>
-    <string name="switch_photo_filmstrip" msgid="3127252066531840020">"Filmstrip view"</string>
-    <string name="switch_photo_grid" msgid="3024831878595067734">"Grid view"</string>
-    <string name="switch_photo_fullscreen" msgid="4057526478087143857">"Fullscreen view"</string>
-    <string name="trimming" msgid="3297452940449729243">"Trimming"</string>
-    <string name="muting" msgid="4406071974811026243">"Muting"</string>
     <string name="please_wait" msgid="99283054995831377">"Please wait"</string>
-    <string name="save_into" msgid="3800886260514315436">"Saving video to <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
-    <string name="trim_too_short" msgid="8755328952688477762">"Cannot trim: target video is too short"</string>
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"Rendering photo sphere"</string>
-    <string name="save" msgid="4522918253523037970">"Save"</string>
-    <string name="ingest_scanning" msgid="7413203688783501800">"Scanning content..."</string>
-  <plurals name="ingest_number_of_items_scanned">
-    <item quantity="zero" msgid="2098511451971912797">"%1$d items scanned"</item>
-    <item quantity="one" msgid="6118751779386608938">"%1$d item scanned"</item>
-    <item quantity="other" msgid="1091937586315173697">"%1$d items scanned"</item>
-  </plurals>
-    <string name="ingest_sorting" msgid="8879954253826159484">"Sorting..."</string>
-    <string name="ingest_scanning_done" msgid="6058944721856901890">"Scanning done"</string>
-    <string name="ingest_importing" msgid="3989872111774123311">"Importing..."</string>
-    <string name="ingest_empty_device" msgid="9025143785347635275">"There is no content available for importing on this device."</string>
-    <string name="ingest_no_device" msgid="8065743026716074158">"There is no MTP device connected"</string>
     <string name="camera_error_title" msgid="434116066686973315">"Camera error"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"Can\'t connect to the camera."</string>
     <string name="camera_disabled" msgid="4927328535752421596">"Camera has been disabled because of security policies."</string>
-    <string name="camera_label" msgid="8822012181326078626">"Camera"</string>
     <string name="wait" msgid="2081747495953883435">"Please wait…"</string>
-    <string name="no_storage" product="nosdcard" msgid="7892683900710607322">"Please mount USB storage before using the camera."</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"Insert an SD card before using the camera."</string>
-    <string name="preparing_sd" product="nosdcard" msgid="8251685935531776012">"Preparing USB storage…"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"Preparing SD card…"</string>
-    <string name="access_sd_fail" product="nosdcard" msgid="5044995736520824361">"Couldn\'t access USB storage."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"Couldn\'t access SD card."</string>
-    <string name="review_cancel" msgid="4681578987722865410">"CANCEL"</string>
-    <string name="review_ok" msgid="4229133003029778558">"DONE"</string>
     <string name="time_lapse_title" msgid="264021984782348139">"Time lapse recording"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Choose camera"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Back"</string>
@@ -301,7 +164,6 @@
     <string name="pref_camera_scenemode_label_night" msgid="502442339727709162">"NIGHT"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="7721050709109503669">"SUNSET"</string>
     <string name="pref_camera_scenemode_label_party" msgid="8942534460201242073">"PARTY"</string>
-    <string name="pref_camera_countdown_label" msgid="4311699135435555732">"COUNTDOWN TIMER"</string>
     <string name="pref_camera_countdown_label_off" msgid="1200317172301019900">"TIMER OFF"</string>
     <string name="pref_camera_countdown_label_one" msgid="7105722039618597195">"1 SECOND"</string>
     <string name="pref_camera_countdown_label_three" msgid="113172366823379525">"3 SECONDS"</string>
@@ -316,7 +178,6 @@
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"FRONT CAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"BACK CAMERA"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"OK"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="2617236781146028368">"Your USB storage is running out of space. Change the quality setting or delete some images or other files."</string>
     <string name="spaceIsLow_content" product="default" msgid="9172166257752848178">"Your SD card is running out of space. Change the quality setting or delete some images or other files."</string>
     <string name="video_reach_size_limit" msgid="3243731908069056095">"Size limit reached."</string>
     <string name="pano_too_fast_prompt" msgid="992490587329437459">"Too fast"</string>
@@ -339,24 +200,15 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"In space"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Sunset"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Your video"</string>
-    <string name="bg_replacement_message" msgid="2572170208044781072">"Set your device down.\nMove out of view for a moment."</string>
     <string name="video_snapshot_hint" msgid="56511446769261564">"Touch to take photo while recording."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Video recording has started."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Video recording has stopped."</string>
-    <string name="disable_video_snapshot_hint" msgid="4334057628190276515">"Video snapshot is disabled when special effects are on."</string>
     <string name="clear_effects" msgid="155262355011195942">"Clear effects"</string>
     <string name="effect_silly_faces" msgid="2764749499874707741">"SILLY FACES"</string>
     <string name="effect_background" msgid="2260438748276866983">"BACKGROUND"</string>
     <string name="accessibility_shutter_button" msgid="442677115885353279">"Shutter"</string>
     <string name="accessibility_menu_button" msgid="7265396535447770250">"Menu button"</string>
-    <string name="accessibility_review_thumbnail" msgid="7143704733606524094">"Most recent photo"</string>
-    <string name="accessibility_camera_picker" msgid="9003279178263013363">"Front and back camera switch"</string>
     <string name="accessibility_mode_picker" msgid="5708483984757534790">"Camera, video or panorama selector"</string>
-    <string name="accessibility_second_level_indicators" msgid="7164552210073297985">"More settings controls"</string>
-    <string name="accessibility_back_to_first_level" msgid="4929828302800341447">"Close settings controls"</string>
-    <string name="accessibility_zoom_control" msgid="7124489317642311462">"Zoom control"</string>
-    <string name="accessibility_decrement" msgid="5448728215316193220">"Decrease %1$s"</string>
-    <string name="accessibility_increment" msgid="7569148421415559960">"Increase %1$s"</string>
     <string name="accessibility_check_box" msgid="6190311654361323510">"%1$s tick box"</string>
     <string name="accessibility_switch_to_camera" msgid="8253443632354129201">"Switch to photo"</string>
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Switch to video"</string>
@@ -365,10 +217,6 @@
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Review cancel"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Review done"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Review retake"</string>
-    <string name="accessibility_play_video" msgid="7230042317349119408">"Play video"</string>
-    <string name="accessibility_pause_video" msgid="8737987643497056384">"Pause video"</string>
-    <string name="accessibility_reload_video" msgid="7551133941501337910">"Reload video"</string>
-    <string name="accessibility_time_bar" msgid="2335246714845550375">"Video player time bar"</string>
     <string name="capital_on" msgid="5840588038158274585">"ON"</string>
     <string name="capital_off" msgid="3199056669644846925">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Off"</string>
@@ -417,21 +265,12 @@
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Finished"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Set Time Interval"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Time lapse feature is off. Turn it on to set time interval."</string>
-    <string name="set_timer_help" msgid="5221481839846083210">"Countdown timer is off. Turn it on to count down before taking a picture."</string>
     <string name="set_duration" msgid="7425045408900251919">"Set duration in seconds"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Counting down to take a photo"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Remember photo locations?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Tag your photos and videos with the locations where they are taken.\n\nOther apps can access this information along with your saved images."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"No thanks"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Yes"</string>
-    <string name="menu_camera" msgid="1910174810571362219">"Camera"</string>
-    <string name="menu_search" msgid="8274896451431033951">"Search"</string>
-    <string name="tab_photos" msgid="5966798251406174200">"Photos"</string>
-    <string name="tab_albums" msgid="3792683042889346954">"Albums"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"MORE OPTIONS"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"SETTINGS"</string>
-  <plurals name="number_of_photos">
-    <item quantity="one" msgid="1666588544512497522">"%1$d photo"</item>
-    <item quantity="other" msgid="6337070372269594668">"%1$d photos"</item>
-  </plurals>
 </resources>
