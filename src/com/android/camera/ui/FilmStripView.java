@@ -1233,6 +1233,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         current.resetTransform();
         mController.cancelLoadingZoomedImage();
         mZoomView.setVisibility(GONE);
+        mController.setSurroundingViewsVisible(true);
     }
 
     // Keeps the view in the view hierarchy if it's camera preview.
@@ -2052,6 +2053,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void goToFirstItem() {
+            resetZoomView();
             // TODO: animate to camera if it is still in the mViewItem buffer
             // versus a full reload which will perform an immediate transition
             reload();
