@@ -246,22 +246,22 @@
     <string name="pref_video_time_lapse_frame_interval_720000" msgid="5025274021438060973">"12 ደቂቃዎች"</string>
     <string name="pref_video_time_lapse_frame_interval_900000" msgid="535122783273231729">"15 ደቂቃዎች"</string>
     <string name="pref_video_time_lapse_frame_interval_1440000" msgid="1389025940394108838">"24 ደቂቃዎች"</string>
-    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="3960495676390536948">"0.5 ሰዓታት"</string>
+    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="3960495676390536948">"0.5 ሰዓቶች"</string>
     <string name="pref_video_time_lapse_frame_interval_3600000" msgid="4967310075272642117">"1 ሰዓት"</string>
     <string name="pref_video_time_lapse_frame_interval_5400000" msgid="4381496945219954612">"1.5 ሰዓት"</string>
-    <string name="pref_video_time_lapse_frame_interval_7200000" msgid="6542316368455276228">"2 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_9000000" msgid="7058722410153205915">"2.5 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_10800000" msgid="6261070817876538949">"3 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_14400000" msgid="6980220047958957353">"4 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_18000000" msgid="7199366553142266407">"5 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_21600000" msgid="5736484130500539985">"6 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_36000000" msgid="720554925530517471">"10 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_43200000" msgid="322398198717672456">"12 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_54000000" msgid="4545285575174744076">"15 ሰዓታት"</string>
-    <string name="pref_video_time_lapse_frame_interval_86400000" msgid="225288451792149886">"24 ሰዓታት"</string>
+    <string name="pref_video_time_lapse_frame_interval_7200000" msgid="6542316368455276228">"2 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_9000000" msgid="7058722410153205915">"2.5 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_10800000" msgid="6261070817876538949">"3 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_14400000" msgid="6980220047958957353">"4 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_18000000" msgid="7199366553142266407">"5 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_21600000" msgid="5736484130500539985">"6 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_36000000" msgid="720554925530517471">"10 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_43200000" msgid="322398198717672456">"12 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_54000000" msgid="4545285575174744076">"15 ሰዓቶች"</string>
+    <string name="pref_video_time_lapse_frame_interval_86400000" msgid="225288451792149886">"24 ሰዓቶች"</string>
     <string name="time_lapse_seconds" msgid="6338396613003859047">"ሰከንዶች"</string>
     <string name="time_lapse_minutes" msgid="1610738675813013569">"ደቂቃዎች"</string>
-    <string name="time_lapse_hours" msgid="2466092767364327518">"ሰዓታት"</string>
+    <string name="time_lapse_hours" msgid="2466092767364327518">"ሰዓቶች"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"ተጠናቅቋል"</string>
     <string name="set_time_interval" msgid="844482952911185265">"የጊዜ ክፍተት ያዘጋጁ"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"የአላፊ ጊዜ ባህሪ ጠፍቷል። የጊዜ ክፍተቱን ለማዘጋጀት ያብሩት።"</string>
