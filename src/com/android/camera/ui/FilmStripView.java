@@ -68,6 +68,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private MyController mController;
     private int mCenterX = -1;
     private ViewItem[] mViewItem = new ViewItem[BUFFER_SIZE];
+    private boolean mStopAtFirstPhoto;
 
     private Listener mListener;
     private ZoomView mZoomView = null;
@@ -621,6 +622,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         setWillNotDraw(false);
         mActivity = cameraActivity;
         mScale = 1.0f;
+        mStopAtFirstPhoto = true;
         mController = new MyController(cameraActivity);
         mViewAnimInterpolator = new DecelerateInterpolator();
         mZoomView = new ZoomView(cameraActivity);
@@ -885,18 +887,28 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
 
-        if (curr.getId() == 0 && mCenterX < curr.getCenterX()) {
-            mCenterX = curr.getCenterX();
-            if (mController.isScrolling()) {
-                mController.stopScrolling();
+        boolean stopScroll = false;
+        if (mDataAdapter.getTotalNumber() > 1 &&
+                mDataAdapter.getImageData(0).getViewType() ==
+                        ImageData.TYPE_STICKY_VIEW &&
+                mStopAtFirstPhoto) {
+            // Stop at the first photo which is the second ViewItem.
+            if (curr.getId() == 1 && mCenterX < curr.getCenterX()) {
+                mStopAtFirstPhoto = false;
+                stopScroll = true;
             }
-        }
-        if (curr.getId() == mDataAdapter.getTotalNumber() - 1
+        } else  if (curr.getId() == 0 && mCenterX < curr.getCenterX()) {
+            // Stop at the first ViewItem.
+            stopScroll = true;
+        } if (curr.getId() == mDataAdapter.getTotalNumber() - 1
                 && mCenterX > curr.getCenterX()) {
+            // Stop at the end.
+            stopScroll = true;
+        }
+
+        if (stopScroll && mController.isScrolling()) {
             mCenterX = curr.getCenterX();
-            if (!mController.isScrolling()) {
-                mController.stopScrolling();
-            }
+            mController.stopScrolling();
         }
     }
 
@@ -1094,7 +1106,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     private void layoutViewItems() {
-        if (mViewItem[mCurrentItem] == null) {
+        if (mViewItem[mCurrentItem] == null ||
+                mDrawArea.width() == 0 ||
+                mDrawArea.height() == 0) {
             return;
         }
         if (mAnchorPending) {
@@ -1864,6 +1878,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             mCenterX += deltaX;
+            if (deltaX > 0) {
+                mStopAtFirstPhoto = true;
+            }
             invalidate();
         }
 
@@ -1955,6 +1972,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         @Override
         public void goToFilmStrip() {
             scaleTo(FILM_STRIP_SCALE, GEOMETRY_ADJUST_TIME_MS);
+
+            mStopAtFirstPhoto = true;
 
             final ViewItem nextItem = mViewItem[mCurrentItem + 1];
             if (mViewItem[mCurrentItem].getId() == 0 &&
