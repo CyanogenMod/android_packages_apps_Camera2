@@ -268,7 +268,7 @@
     <string name="set_duration" msgid="7425045408900251919">"अवधि को सेकंड में सेट करें"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"फ़ोटो लेने के लिए उल्टी गिनती कर रहा है"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"फ़ोटो के स्थान याद रखें?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"अपने फ़ोटो और वीडियो उन स्थानों के साथ टैग करें जहां वे लिए गए हैं.\n\nअन्य एप्लिकेशन आपके सहेजे गए चित्रों सहित इस जानकारी का उपयोग कर सकते हैं."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"अपने फ़ोटो और वीडियो उन स्थानों के साथ टैग करें जहां वे लिए गए हैं.\n\nअन्य एप्स आपके सहेजे गए चित्रों सहित इस जानकारी का उपयोग कर सकते हैं."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"नहीं धन्यवाद"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"हां"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"अधिक विकल्प"</string>
