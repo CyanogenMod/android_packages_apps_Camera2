@@ -232,15 +232,10 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onDataFullScreenChange(int dataID, boolean full) {
-                }
-
-                @Override
-                public void onSwitchMode(boolean toCamera) {
-                    mCurrentModule.onSwitchMode(toCamera);
-                    if (toCamera) {
-                        setActionBarVisibilityAndLightsOut(true);
-                    } else {
-                        setActionBarVisibilityAndLightsOut(false);
+                    boolean isCameraID = mDataAdapter.getLocalData(dataID).getLocalDataType() ==
+                            LocalData.LOCAL_CAMERA_PREVIEW;
+                    if (!isCameraID) {
+                        setActionBarVisibilityAndLightsOut(full);
                     }
                 }
 
@@ -249,18 +244,23 @@ public class CameraActivity extends Activity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            LocalData currentData = mDataAdapter.getLocalData(dataID);
+                            if (currentData == null) {
+                                Log.w(TAG, "Current data ID not found.");
+                                hidePanoStitchingProgress();
+                                return;
+                            }
+                            boolean isCameraID = currentData.getLocalDataType() ==
+                                    LocalData.LOCAL_CAMERA_PREVIEW;
                             if (!current) {
+                                if (isCameraID) {
+                                    mCurrentModule.onPreviewFocusChanged(false);
+                                    setActionBarVisibilityAndLightsOut(false);
+                                }
                                 hidePanoStitchingProgress();
                             } else {
-                                LocalData currentData = mDataAdapter.getLocalData(dataID);
-                                if (currentData == null) {
-                                    Log.w(TAG, "Current data ID not found.");
-                                    hidePanoStitchingProgress();
-                                    return;
-                                }
-
-                                if (currentData.getLocalDataType() ==
-                                        LocalData.LOCAL_CAMERA_PREVIEW) {
+                                if (isCameraID) {
+                                    mCurrentModule.onPreviewFocusChanged(true);
                                     // Don't show the action bar in Camera preview.
                                     setActionBarVisibilityAndLightsOut(true);
                                 } else {
