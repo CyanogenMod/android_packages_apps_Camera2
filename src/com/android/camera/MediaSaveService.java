@@ -52,7 +52,7 @@ public class MediaSaveService extends Service {
         public void onQueueStatus(boolean full);
     }
 
-    interface OnMediaSavedListener {
+    public interface OnMediaSavedListener {
         public void onMediaSaved(Uri uri);
     }
 
