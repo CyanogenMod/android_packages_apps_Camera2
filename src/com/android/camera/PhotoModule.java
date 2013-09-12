@@ -722,11 +722,11 @@ public class PhotoModule
                 }
             }
 
+            ExifInterface exif = Exif.getExif(jpegData);
+            int orientation = Exif.getOrientation(exif);
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
                 Size s = mParameters.getPictureSize();
-                ExifInterface exif = Exif.getExif(jpegData);
-                int orientation = Exif.getOrientation(exif);
                 int width, height;
                 if ((mJpegRotation + orientation) % 180 == 0) {
                     width = s.width;
@@ -761,7 +761,7 @@ public class PhotoModule
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
-                    mUI.showPostCaptureAlert();
+                    mUI.showCapturedImageForReview(jpegData, orientation, mMirror);
                 } else {
                     onCaptureDone();
                 }
