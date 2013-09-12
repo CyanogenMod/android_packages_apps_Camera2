@@ -340,9 +340,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         /**
          * Toggles the visibility of the ActionBar.
          *
+         * @param dataID The ID of the image data.
          * @return The ActionBar visibility after the toggle.
          */
-        public boolean onToggleActionBarVisibility();
+        public boolean onToggleActionBarVisibility(int dataID);
     }
 
     /**
@@ -2126,14 +2127,18 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
+            ViewItem centerItem = mViewItem[mCurrentItem];
             if (inFilmStrip()) {
-                ViewItem centerItem = mViewItem[mCurrentItem];
                 if (centerItem != null && centerItem.areaContains(x, y)) {
                     mController.goToFullScreen();
                     return true;
                 }
             } else if (inFullScreen()) {
-                boolean visible = mListener.onToggleActionBarVisibility();
+                int dataID = -1;
+                if (centerItem != null) {
+                    dataID = centerItem.getId();
+                }
+                boolean visible = mListener.onToggleActionBarVisibility(dataID);
                 mBottomControls.setVisibility(visible ? View.VISIBLE : View.GONE);
                 return true;
             }
