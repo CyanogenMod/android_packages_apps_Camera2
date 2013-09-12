@@ -406,6 +406,7 @@ public class PhotoModule
         mUI.showLocationDialog();
     }
 
+    @Override
     public void enableRecordingLocation(boolean enable) {
         setLocationPreference(enable ? RecordLocationPreference.VALUE_ON
                 : RecordLocationPreference.VALUE_OFF);
@@ -505,6 +506,7 @@ public class PhotoModule
 
     }
 
+    @Override
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
         if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
     }
@@ -1160,10 +1162,6 @@ public class PhotoModule
     }
 
     @Override
-    public void updateCameraAppView() {
-    }
-
-    @Override
     public void onResumeBeforeSuper() {
         mPaused = false;
     }
@@ -1768,6 +1766,7 @@ public class PhotoModule
         }
     }
 
+    @Override
     public boolean isCameraIdle() {
         return (mCameraState == IDLE) ||
                 (mCameraState == PREVIEW_STOPPED) ||
@@ -1775,6 +1774,7 @@ public class PhotoModule
                         && (mCameraState != SWITCHING_CAMERA));
     }
 
+    @Override
     public boolean isImageCaptureIntent() {
         String action = mActivity.getIntent().getAction();
         return (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
@@ -1941,8 +1941,8 @@ public class PhotoModule
     }
 
     @Override
-    public void onSwitchMode(boolean toCamera) {
-        mUI.onSwitchMode(toCamera);
+    public void onPreviewFocusChanged(boolean previewFocused) {
+        mUI.onPreviewFocusChanged(previewFocused);
     }
 
 /* Below is no longer needed, except to get rid of compile error
