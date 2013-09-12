@@ -85,6 +85,8 @@ public class PhotoUI implements PieListener,
     private View mReviewCancelButton;
     private View mReviewDoneButton;
     private View mReviewRetakeButton;
+    private ImageView mReviewImage;
+    private DecodeImageForReview mDecodeTaskForReview = null;
 
     private View mMenuButton;
     private PhotoMenu mMenu;
@@ -141,7 +143,7 @@ public class PhotoUI implements PieListener,
         }
     };
 
-    private class DecodeTask extends AsyncTask<Integer, Void, Bitmap> {
+    private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
         private final byte [] mData;
         private int mOrientation;
         private boolean mMirror;
@@ -153,7 +155,7 @@ public class PhotoUI implements PieListener,
         }
 
         @Override
-        protected Bitmap doInBackground(Integer... params) {
+        protected Bitmap doInBackground(Void... params) {
             // Decode image in background.
             Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
             if (mOrientation != 0 || mMirror) {
@@ -173,6 +175,22 @@ public class PhotoUI implements PieListener,
         protected void onPostExecute(Bitmap bitmap) {
             mPreviewThumb.setImageBitmap(bitmap);
             mAnimationManager.startCaptureAnimation(mPreviewThumb);
+        }
+    }
+
+    private class DecodeImageForReview extends DecodeTask {
+        public DecodeImageForReview(byte[] data, int orientation, boolean mirror) {
+            super(data, orientation, mirror);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (isCancelled()) {
+                return;
+            }
+            mReviewImage.setImageBitmap(bitmap);
+            mReviewImage.setVisibility(View.VISIBLE);
+            mDecodeTaskForReview = null;
         }
     }
 
@@ -351,6 +369,7 @@ public class PhotoUI implements PieListener,
             mReviewDoneButton = mRootView.findViewById(R.id.btn_done);
             mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
             mReviewRetakeButton = mRootView.findViewById(R.id.btn_retake);
+            mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
             mReviewCancelButton.setVisibility(View.VISIBLE);
 
             mReviewDoneButton.setOnClickListener(new OnClickListener() {
@@ -598,7 +617,9 @@ public class PhotoUI implements PieListener,
         return ret;
     }
 
-    protected void showPostCaptureAlert() {
+    protected void showCapturedImageForReview(byte[] jpegData, int orientation, boolean mirror) {
+        mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
+        mDecodeTaskForReview.execute();
         mOnScreenIndicators.setVisibility(View.GONE);
         mMenuButton.setVisibility(View.GONE);
         CameraUtil.fadeIn(mReviewDoneButton);
@@ -608,6 +629,10 @@ public class PhotoUI implements PieListener,
     }
 
     protected void hidePostCaptureAlert() {
+        if (mDecodeTaskForReview != null) {
+            mDecodeTaskForReview.cancel(true);
+        }
+        mReviewImage.setVisibility(View.GONE);
         mOnScreenIndicators.setVisibility(View.VISIBLE);
         mMenuButton.setVisibility(View.VISIBLE);
         CameraUtil.fadeOut(mReviewDoneButton);
