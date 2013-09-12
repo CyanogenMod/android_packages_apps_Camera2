@@ -232,11 +232,27 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onDataFullScreenChange(int dataID, boolean full) {
-                    boolean isCameraID = mDataAdapter.getLocalData(dataID).getLocalDataType() ==
-                            LocalData.LOCAL_CAMERA_PREVIEW;
+                    boolean isCameraID = isCameraPreview(dataID);
                     if (!isCameraID) {
                         setActionBarVisibilityAndLightsOut(full);
                     }
+                }
+
+                /**
+                 * Check if the local data corresponding to dataID is the camera
+                 * preview.
+                 *
+                 * @param dataID the ID of the local data
+                 * @return true if the local data is not null and it is the
+                 *         camera preview.
+                 */
+                private boolean isCameraPreview(int dataID) {
+                    LocalData localData = mDataAdapter.getLocalData(dataID);
+                    if (localData == null) {
+                        Log.w(TAG, "Current data ID not found.");
+                        return false;
+                    }
+                    return localData.getLocalDataType() == LocalData.LOCAL_CAMERA_PREVIEW;
                 }
 
                 @Override
@@ -286,13 +302,13 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public boolean onToggleActionBarVisibility() {
+                public boolean onToggleActionBarVisibility(int dataID) {
                     if (mActionBar.isShowing()) {
                         setActionBarVisibilityAndLightsOut(true);
                     } else {
-                        // In the preview, don't show the action bar if that is
-                        // a capture intent.
-                        if (!isCaptureIntent()) {
+                        // Don't show the action bar if that is the camera preview.
+                        boolean isCameraID = isCameraPreview(dataID);
+                        if (!isCameraID) {
                             setActionBarVisibilityAndLightsOut(false);
                         }
                     }
