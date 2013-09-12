@@ -34,6 +34,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
+    <ImageView
+        android:id="@+id/review_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true"
+        android:background="@android:color/black"
+        android:scaleType="fitCenter"/>
     <View
         android:id="@+id/flash_overlay"
         android:layout_width="match_parent"
