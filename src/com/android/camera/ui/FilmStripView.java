@@ -1002,8 +1002,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
         int currentViewCenter = currentItem.getCenterX();
         if (mCenterX != currentViewCenter) {
-            int snapInTime = SNAP_IN_CENTER_TIME_MS
-                    * Math.abs(mCenterX - currentViewCenter) / mDrawArea.width();
+            int snapInTime = (int) (SNAP_IN_CENTER_TIME_MS
+                    * ((float) Math.abs(mCenterX - currentViewCenter))
+                    /  mDrawArea.width());
             mController.scrollToPosition(currentViewCenter,
                     snapInTime, false);
         }
@@ -1126,7 +1127,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         final int fullScreenWidth = mDrawArea.width() + mViewGap;
 
         // Layout the current ViewItem first.
-        if (scaleFraction == 1) {
+        if (scaleFraction == 1f) {
             if (mCenterX < mViewItem[mCurrentItem].getCenterX()) {
                 // In full-screen and it's not the first one and mCenterX is on
                 // the left of the center, we draw the current one to "fade down".
@@ -1138,6 +1139,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             } else {
                 mViewItem[mCurrentItem].layoutIn(mDrawArea, mCenterX, mScale);
                 mViewItem[mCurrentItem].setTranslationX(0f, mScale);
+                mViewItem[mCurrentItem].getView().setAlpha(1f);
             }
         } else {
             // The normal filmstrip has no translation for the current item. If it has
@@ -2237,11 +2239,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             int deltaX = (int) (dx / mScale);
             if (inFilmStrip()) {
                 if (Math.abs(dx) > Math.abs(dy)) {
-                    if (deltaX > 0
-                            && inFullScreen()
-                            && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
-                        mController.goToFilmStrip();
-                    }
                     mController.scroll(deltaX);
                 } else {
                     // Vertical part. Promote or demote.
@@ -2272,7 +2269,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     mViewItem[hit].setTranslationY(transY, mScale);
                 }
             } else if (inFullScreen()) {
-                if (deltaX > 0 && inCameraFullscreen()) {
+                if (deltaX > 0 && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
                     mController.goToFilmStrip();
                 }
                 // Multiplied by 1.2 to make it more easy to swipe.
