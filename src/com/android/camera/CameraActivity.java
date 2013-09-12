@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.animation.Animator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -43,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,6 +151,7 @@ public class CameraActivity extends Activity
     private ActionBar mActionBar;
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
+    private boolean mIsUndoingDeletion = false;
 
     private ShareActionProvider mStandardShareActionProvider;
     private Intent mStandardShareIntent;
@@ -157,6 +160,7 @@ public class CameraActivity extends Activity
 
     private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+    private boolean mPendingDeletion = false;
 
     public void gotoGallery() {
         mFilmStripView.getController().goToNextItem();
@@ -279,6 +283,9 @@ public class CameraActivity extends Activity
                                     mCurrentModule.onPreviewFocusChanged(true);
                                     // Don't show the action bar in Camera preview.
                                     setActionBarVisibilityAndLightsOut(true);
+                                    if (mPendingDeletion) {
+                                        performDeletion();
+                                    }
                                 } else {
                                     updateActionBarMenu(dataID);
                                 }
@@ -463,14 +470,6 @@ public class CameraActivity extends Activity
             item.setVisible(visible);
     }
 
-    private Runnable mDeletionRunnable = new Runnable() {
-            @Override
-            public void run() {
-                hideUndoDeletionBar();
-                mDataAdapter.executeDeletion(CameraActivity.this);
-            }
-        };
-
     private ImageTaskManager.TaskListener mStitchingListener =
             new ImageTaskManager.TaskListener() {
                 @Override
@@ -544,9 +543,13 @@ public class CameraActivity extends Activity
 
     private void removeData(int dataID) {
         mDataAdapter.removeData(CameraActivity.this, dataID);
-        showUndoDeletionBar();
-        mMainHandler.removeCallbacks(mDeletionRunnable);
-        mMainHandler.postDelayed(mDeletionRunnable, 3000);
+        if (mDataAdapter.getTotalNumber() > 1) {
+            showUndoDeletionBar();
+        } else {
+            // If camera preview is the only view left in filmstrip,
+            // no need to show undo bar.
+            performDeletion();
+        }
     }
 
     private void bindMediaSaveService() {
@@ -801,6 +804,21 @@ public class CameraActivity extends Activity
     public void onUserInteraction() {
         super.onUserInteraction();
         mCurrentModule.onUserInteraction();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result = super.dispatchTouchEvent(ev);
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            // Real deletion is postponed until the next user interaction after
+            // the gesture that triggers deletion. Until real deletion is performed,
+            // users can click the undo button to bring back the image that they
+            // chose to delete.
+            if (mPendingDeletion && !mIsUndoingDeletion) {
+                 performDeletion();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -1063,9 +1081,21 @@ public class CameraActivity extends Activity
         ((ViewGroup) mCameraModuleRootView).removeAllViews();
     }
 
-    private void showUndoDeletionBar() {
+    private void performDeletion() {
+        if (!mPendingDeletion) {
+            return;
+        }
+        hideUndoDeletionBar(false);
+        mDataAdapter.executeDeletion(CameraActivity.this);
+    }
+
+    public void showUndoDeletionBar() {
+        if (mPendingDeletion) {
+            performDeletion();
+        }
+        Log.v(TAG, "showing undo bar");
+        mPendingDeletion = true;
         if (mUndoDeletionBar == null) {
-            Log.v(TAG, "showing undo bar");
             ViewGroup v = (ViewGroup) getLayoutInflater().inflate(
                     R.layout.undo_bar, mAboveFilmstripControlLayout, true);
             mUndoDeletionBar = (ViewGroup) v.findViewById(R.id.camera_undo_deletion_bar);
@@ -1074,29 +1104,64 @@ public class CameraActivity extends Activity
                 @Override
                 public void onClick(View view) {
                     mDataAdapter.undoDataRemoval();
-                    mMainHandler.removeCallbacks(mDeletionRunnable);
-                    hideUndoDeletionBar();
+                    hideUndoDeletionBar(true);
+                }
+            });
+            // Setting undo bar clickable to avoid touch events going through
+            // the bar to the buttons (eg. edit button, etc) underneath the bar.
+            mUndoDeletionBar.setClickable(true);
+            // When there is user interaction going on with the undo button, we
+            // do not want to hide the undo bar.
+            button.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                        mIsUndoingDeletion = true;
+                    } else if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                        mIsUndoingDeletion =false;
+                    }
+                    return false;
                 }
             });
         }
         mUndoDeletionBar.setAlpha(0f);
         mUndoDeletionBar.setVisibility(View.VISIBLE);
-        mUndoDeletionBar.animate().setDuration(200).alpha(1f).start();
+        mUndoDeletionBar.animate().setDuration(200).alpha(1f).setListener(null).start();
     }
 
-    private void hideUndoDeletionBar() {
+    private void hideUndoDeletionBar(boolean withAnimation) {
         Log.v(TAG, "Hiding undo deletion bar");
+        mPendingDeletion = false;
         if (mUndoDeletionBar != null) {
-            mUndoDeletionBar.animate()
-                    .setDuration(200)
-                    .alpha(0f)
-                    .withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            mUndoDeletionBar.setVisibility(View.GONE);
-                        }
-                    })
-                    .start();
+            if (withAnimation) {
+                mUndoDeletionBar.animate()
+                        .setDuration(200)
+                        .alpha(0f)
+                        .setListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                // Do nothing.
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                mUndoDeletionBar.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+                                // Do nothing.
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+                                // Do nothing.
+                            }
+                        })
+                        .start();
+            } else {
+                mUndoDeletionBar.setVisibility(View.GONE);
+            }
         }
     }
 
