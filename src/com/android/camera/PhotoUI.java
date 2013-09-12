@@ -265,6 +265,7 @@ public class PhotoUI implements PieListener,
         return true;
     }
 
+    @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         // Do nothing.
     }
@@ -454,8 +455,10 @@ public class PhotoUI implements PieListener,
         }
     }
 
+    @Override
     public void showGpsOnScreenIndicator(boolean hasSignal) { }
 
+    @Override
     public void hideGpsOnScreenIndicator() { }
 
     public void overrideSettings(final String ... keyvalues) {
@@ -518,27 +521,27 @@ public class PhotoUI implements PieListener,
         }
     }
 
-    public void onSwitchMode(boolean toCamera) {
-        if (toCamera) {
+    public void onPreviewFocusChanged(boolean previewFocused) {
+        if (previewFocused) {
             showUI();
         } else {
             hideUI();
         }
         if (mFaceView != null) {
-            mFaceView.setBlockDraw(!toCamera);
+            mFaceView.setBlockDraw(!previewFocused);
         }
         if (mGestures != null) {
-            mGestures.setEnabled(toCamera);
+            mGestures.setEnabled(previewFocused);
         }
         if (mRenderOverlay != null) {
             // this can not happen in capture mode
-            mRenderOverlay.setVisibility(toCamera ? View.VISIBLE : View.GONE);
+            mRenderOverlay.setVisibility(previewFocused ? View.VISIBLE : View.GONE);
         }
         if (mPieRenderer != null) {
-            mPieRenderer.setBlockFocus(!toCamera);
+            mPieRenderer.setBlockFocus(!previewFocused);
         }
-        setShowMenu(toCamera);
-        if (!toCamera && mCountDownView != null) mCountDownView.cancelCountDown();
+        setShowMenu(previewFocused);
+        if (!previewFocused && mCountDownView != null) mCountDownView.cancelCountDown();
     }
 
     public void showPopup(AbstractSettingPopup popup) {
@@ -801,6 +804,7 @@ public class PhotoUI implements PieListener,
         mFaceView.setFaces(faces);
     }
 
+    @Override
     public void onDisplayChanged() {
         mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
