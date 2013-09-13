@@ -92,6 +92,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     // This is true if and only if the user is scrolling,
     private boolean mIsUserScrolling;
+    private ValueAnimator.AnimatorUpdateListener mViewItemUpdateListener;
 
     /**
      * Common interface for all images in the filmstrip.
@@ -381,19 +382,24 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         private View mView;
         private RectF mViewArea;
 
+        private ValueAnimator mTranslationXAnimator;
+
         /**
          * Constructor.
          *
          * @param id The id of the data from {@link DataAdapter}.
          * @param v The {@code View} representing the data.
          */
-        public ViewItem(int id, View v) {
+        public ViewItem(
+                int id, View v, ValueAnimator.AnimatorUpdateListener listener) {
             v.setPivotX(0f);
             v.setPivotY(0f);
             mDataId = id;
             mView = v;
             mLeftPosition = -1;
             mViewArea = new RectF();
+            mTranslationXAnimator = new ValueAnimator();
+            mTranslationXAnimator.addUpdateListener(listener);
         }
 
         /** Returns the data id from {@link DataAdapter}. */
@@ -459,6 +465,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mView.setTranslationX(transX * scale);
         }
 
+        public void animateTranslationX(
+                float targetX, long duration_ms, TimeInterpolator interpolator) {
+            mTranslationXAnimator.setInterpolator(interpolator);
+            mTranslationXAnimator.setDuration(duration_ms);
+            mTranslationXAnimator.setFloatValues(mView.getTranslationX(), targetX);
+            mTranslationXAnimator.start();
+        }
+
         /** Adjusts the translation of X regarding the view scale. */
         public void translateXBy(float transX, float scale) {
             mView.setTranslationX(mView.getTranslationX() + transX * scale);
@@ -514,7 +528,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          * @param scale The current scale of the filmstrip.
          */
         public void layoutIn(Rect drawArea, int refCenter, float scale) {
-            int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter) * scale);
+            final float translationX = (mTranslationXAnimator.isRunning() ?
+                    (Float) mTranslationXAnimator.getAnimatedValue() : 0f);
+            int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter + translationX) * scale);
             int top = (int) (drawArea.centerY() - (mView.getMeasuredHeight() / 2) * scale);
             layoutAt(left, top);
             mView.setScaleX(scale);
@@ -625,6 +641,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mGestureRecognizer =
                 new FilmStripGestureRecognizer(cameraActivity, new MyGestureReceiver());
         mSlop = (int) getContext().getResources().getDimension(R.dimen.pie_touch_slop);
+        mViewItemUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                // Force the geometry update to happen to layout the view items.
+                mController.forceGeometryUpdate();
+                invalidate();
+            }
+        };
     }
 
     /**
@@ -801,7 +825,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (v == null) {
             return null;
         }
-        ViewItem item = new ViewItem(dataID, v);
+        ViewItem item = new ViewItem(dataID, v, mViewItemUpdateListener);
         v = item.getView();
         if (v != mCameraView) {
             addView(item.getView());
@@ -1266,8 +1290,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
     }
 
-    private void slideViewBack(View v) {
-        v.animate().translationX(0)
+    private void slideViewBack(ViewItem item) {
+        item.animateTranslationX(
+                0, GEOMETRY_ADJUST_TIME_MS, mViewAnimInterpolator);
+        item.getView().animate()
                 .alpha(1f)
                 .setDuration(GEOMETRY_ADJUST_TIME_MS)
                 .setInterpolator(mViewAnimInterpolator)
@@ -1369,7 +1395,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         for (int i = 0; i < BUFFER_SIZE; i++) {
             if (mViewItem[i] != null
                     && mViewItem[i].getScaledTranslationX(mScale) != 0f) {
-                slideViewBack(mViewItem[i].getView());
+                slideViewBack(mViewItem[i]);
             }
         }
 
@@ -1461,7 +1487,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 mViewItem[i] = mViewItem[i - 1];
                 if (mViewItem[i] != null) {
                     mViewItem[i].setTranslationX(-offsetX, mScale);
-                    slideViewBack(mViewItem[i].getView());
+                    slideViewBack(mViewItem[i]);
                 }
             }
         } else {
@@ -1475,7 +1501,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             for (int i = 1; i <= insertedItem; i++) {
                 if (mViewItem[i] != null) {
                     mViewItem[i].setTranslationX(offsetX, mScale);
-                    slideViewBack(mViewItem[i].getView());
+                    slideViewBack(mViewItem[i]);
                     mViewItem[i - 1] = mViewItem[i];
                 }
             }
@@ -1734,6 +1760,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         private ValueAnimator mZoomAnimator;
         private boolean mHasNewScale;
         private float mNewScale;
+        private boolean mGeometryUpdateForced;
 
         private final Scroller mScroller;
         private boolean mHasNewPosition;
@@ -1759,6 +1786,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mHasNewPosition = false;
             mCanStopScroll = true;
             mHasNewScale = false;
+            mGeometryUpdateForced = false;
 
             mScaleAnimator = new ValueAnimator();
             mScaleAnimator.addUpdateListener(MyController.this);
@@ -1776,14 +1804,20 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return mScaleAnimator.isRunning();
         }
 
+        void forceGeometryUpdate() {
+            mGeometryUpdateForced = true;
+        }
+
         boolean hasNewGeometry() {
+            boolean forceNewGeometry = mGeometryUpdateForced;
+            mGeometryUpdateForced = false;
             mHasNewPosition = mScroller.computeScrollOffset();
             if (!mHasNewPosition) {
                 mCanStopScroll = true;
             }
             // If the position is locked, then we always return true to force
             // the position value to use the locked value.
-            return (mHasNewPosition || mHasNewScale);
+            return (mHasNewPosition || mHasNewScale || forceNewGeometry);
         }
 
         /**
