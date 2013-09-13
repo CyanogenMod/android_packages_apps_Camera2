@@ -19,12 +19,10 @@ package com.android.camera;
 import android.animation.Animator;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -34,6 +32,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -83,6 +82,12 @@ public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener {
 
     private static final String TAG = "CAM_Activity";
+
+    /**
+     * The visibility flags to use to switch the system in either lights-out
+     * mode (pre-K) or hideybar mode (K and up).
+     */
+    private static final int IMMERSIVE_FLAGS = getImmersiveFlags();
 
     private static final String INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE =
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";
@@ -170,10 +175,6 @@ public class CameraActivity extends Activity
     private Intent mVideoShareIntent;
     private Intent mImageShareIntent;
 
-    public void gotoGallery() {
-        mFilmStripView.getController().goToNextItem();
-    }
-
     private class MyOrientationEventListener
             extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
@@ -246,6 +247,25 @@ public class CameraActivity extends Activity
         public void onReceive(Context context, Intent intent) {
             sFirstStartAfterScreenOn = true;
         }
+    }
+
+    private static int getImmersiveFlags() {
+        if (isKitKatOrHigher()) {
+            return View.SYSTEM_UI_FLAG_IMMERSIVE
+                    | View.SYSTEM_UI_FLAG_TRANSPARENT_STATUS
+                    | View.SYSTEM_UI_FLAG_TRANSPARENT_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        } else {
+            // Pre-KitKat we use lights-out mode.
+            return View.SYSTEM_UI_FLAG_LOW_PROFILE;
+        }
+    }
+
+    public static boolean isKitKatOrHigher() {
+        // TODO: Remove CODENAME check as soon as VERSION_CODES.KITKAT is final.
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                || "KeyLimePie".equals(Build.VERSION.CODENAME);
     }
 
     public static boolean isFirstStartAfterScreenOn() {
@@ -347,31 +367,37 @@ public class CameraActivity extends Activity
                 public boolean onToggleActionBarVisibility(int dataID) {
                     if (mActionBar.isShowing()) {
                         setActionBarVisibilityAndLightsOut(true);
+                        return false;
                     } else {
                         // Don't show the action bar if that is the camera preview.
                         boolean isCameraID = isCameraPreview(dataID);
                         if (!isCameraID) {
                             setActionBarVisibilityAndLightsOut(false);
+                            return true;
                         }
+                        return false;
                     }
-                    return mActionBar.isShowing();
                 }
             };
+
+    public void gotoGallery() {
+        mFilmStripView.getController().goToNextItem();
+    }
 
     /**
      * If enabled, this hides the action bar and switches the system UI to
      * lights-out mode.
      */
     private void setActionBarVisibilityAndLightsOut(boolean enabled) {
+        int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (enabled ? IMMERSIVE_FLAGS
+                : View.SYSTEM_UI_FLAG_VISIBLE);
+        mAboveFilmstripControlLayout
+                .setSystemUiVisibility(visibility);
         if (enabled) {
             mActionBar.hide();
         } else {
             mActionBar.show();
         }
-        int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (enabled ? View.SYSTEM_UI_FLAG_LOW_PROFILE
-                : View.SYSTEM_UI_FLAG_VISIBLE);
-        mAboveFilmstripControlLayout
-                .setSystemUiVisibility(visibility);
     }
 
     private void hidePanoStitchingProgress() {
