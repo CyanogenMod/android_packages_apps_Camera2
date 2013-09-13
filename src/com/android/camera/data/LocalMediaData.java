@@ -581,7 +581,9 @@ public abstract class LocalMediaData implements LocalData {
             String rotation = null;
             try {
                 retriever.setDataSource(path);
-            } catch (IllegalArgumentException ex) {
+            } catch (RuntimeException ex) {
+                // setDataSource() can cause RuntimeException beyond
+                // IllegalArgumentException. e.g: data contain *.avi file.
                 retriever.release();
                 Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
                         + ex.getMessage());
