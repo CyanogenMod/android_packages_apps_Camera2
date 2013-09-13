@@ -1010,6 +1010,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
                 && !mController.isScaling()
                 && mScale != FULL_SCREEN_SCALE) {
+            // Now going to full screen camera
             mController.goToFullScreen();
         }
     }
@@ -1377,10 +1378,25 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 .translationYBy(transY)
                 .setInterpolator(mViewAnimInterpolator)
                 .setDuration(GEOMETRY_ADJUST_TIME_MS)
-                .withEndAction(new Runnable() {
+                .setListener(new Animator.AnimatorListener() {
                     @Override
-                    public void run() {
+                    public void onAnimationStart(Animator animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
                         checkForRemoval(data, removedView);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                        // Do nothing.
                     }
                 })
                 .start();
@@ -1685,6 +1701,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mCenterX = -1;
 
         layoutViewItems();
+
+        mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), true);
     }
 
     private void promoteData(int itemID, int dataID) {
