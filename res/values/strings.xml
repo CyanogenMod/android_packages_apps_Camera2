@@ -625,4 +625,14 @@ CHAR LIMIT = NONE] -->
     <string name="camera_menu_more_label">MORE OPTIONS</string>
     <!-- settings label [CHAR LIMIT=50] -->
     <string name="camera_menu_settings_label">SETTINGS</string>
+
+    <!--  Tiny Planet -->
+    <!-- Button to press for creating a tiny planet image. [CHAR LIMIT = 30] -->
+    <string name="create_tiny_planet">Create Tiny Planet</string>
+    <!-- Message shown while a tiny planet image is being saved. [CHAR LIMIT = 30] -->
+    <string name="saving_tiny_planet">Saving Tiny Planet …</string>
+    <!-- Label above a slider that let's the user set the zoom of a tiny planet image. [CHAR LIMIT = 15] -->
+    <string name="tiny_planet_zoom">Zoom</string>
+    <!-- Label above a slider that let's the user set the rotation of a tiny planet image. [CHAR LIMIT = 15] -->
+    <string name="tiny_planet_rotate">Rotate</string>
 </resources>
