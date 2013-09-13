@@ -173,7 +173,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                         }
                     }
                 }
-            }).execute();
+            }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     };
 
@@ -319,7 +319,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                         image.mSize, image.mSize, 0, null, doneListener, getActivity()
                                 .getContentResolver());
             }
-        }).execute();
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
