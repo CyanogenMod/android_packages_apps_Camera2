@@ -97,7 +97,6 @@ public class WideAnglePanoramaUI implements
 
         createContentView();
         mSwitcher = (ModuleSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        Log.v(TAG, "setting CurrentIndex:" + ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX);
         mSwitcher.setCurrentIndex(ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX);
         mSwitcher.setSwitchListener(mActivity);
     }
@@ -380,6 +379,9 @@ public class WideAnglePanoramaUI implements
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
         mShutterButton.setOnShutterButtonListener(this);
+        // Hide menu and indicators.
+        mRootView.findViewById(R.id.menu).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.on_screen_indicators).setVisibility(View.GONE);
     }
 
     private void showTooFastIndication() {
