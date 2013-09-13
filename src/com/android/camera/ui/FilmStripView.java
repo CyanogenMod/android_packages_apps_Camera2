@@ -938,7 +938,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     @Override
     public void onTinyPlanet() {
-        // TODO: Bring tiny planet to Camera2.
+        ImageData data = mDataAdapter.getImageData(getCurrentId());
+        if (data == null || !(data instanceof LocalData)) {
+            return;
+        }
+        mActivity.launchTinyPlanetEditor((LocalData) data);
     }
 
     /**

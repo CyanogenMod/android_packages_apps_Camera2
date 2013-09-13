@@ -65,6 +65,7 @@ import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
+import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
@@ -75,7 +76,7 @@ import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
 
 public class CameraActivity extends Activity
-    implements ModuleSwitcher.ModuleSwitchListener {
+        implements ModuleSwitcher.ModuleSwitchListener {
 
     private static final String TAG = "CAM_Activity";
 
@@ -167,7 +168,7 @@ public class CameraActivity extends Activity
     }
 
     private class MyOrientationEventListener
-        extends OrientationEventListener {
+            extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
             super(context);
         }
@@ -177,7 +178,9 @@ public class CameraActivity extends Activity
             // We keep the last known orientation. So if the user first orient
             // the camera then point the camera to floor or sky, we still have
             // the correct orientation.
-            if (orientation == ORIENTATION_UNKNOWN) return;
+            if (orientation == ORIENTATION_UNKNOWN) {
+                return;
+            }
             mLastRawOrientation = orientation;
             mCurrentModule.onOrientationChanged(orientation);
         }
@@ -185,18 +188,20 @@ public class CameraActivity extends Activity
 
     private MediaSaveService mMediaSaveService;
     private ServiceConnection mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder b) {
-                mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
-                mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder b) {
+            mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
+            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            if (mMediaSaveService != null) {
+                mMediaSaveService.setListener(null);
+                mMediaSaveService = null;
             }
-            @Override
-            public void onServiceDisconnected(ComponentName className) {
-                if (mMediaSaveService != null) {
-                    mMediaSaveService.setListener(null);
-                    mMediaSaveService = null;
-                }
-            }};
+        }
+    };
 
     // close activity when screen turns off
     private BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
@@ -207,6 +212,7 @@ public class CameraActivity extends Activity
     };
 
     private static BroadcastReceiver sScreenOffReceiver;
+
     private static class ScreenOffReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -281,7 +287,8 @@ public class CameraActivity extends Activity
                             } else {
                                 if (isCameraID) {
                                     mCurrentModule.onPreviewFocusChanged(true);
-                                    // Don't show the action bar in Camera preview.
+                                    // Don't show the action bar in Camera
+                                    // preview.
                                     setActionBarVisibilityAndLightsOut(true);
                                     if (mPendingDeletion) {
                                         performDeletion();
@@ -296,7 +303,7 @@ public class CameraActivity extends Activity
                                     return;
                                 }
                                 int panoStitchingProgress = mPanoramaManager.getTaskProgress(
-                                    contentUri);
+                                        contentUri);
                                 if (panoStitchingProgress < 0) {
                                     hidePanoStitchingProgress();
                                     return;
@@ -376,6 +383,7 @@ public class CameraActivity extends Activity
     /**
      * According to the data type, make the menu items for supported operations
      * visible.
+     *
      * @param dataID the data ID of the current item.
      */
     private void updateActionBarMenu(int dataID) {
@@ -655,7 +663,7 @@ public class CameraActivity extends Activity
             case R.id.action_show_on_map:
                 double[] latLong = localData.getLatLong();
                 if (latLong != null) {
-                  CameraUtil.showOnMap(this, latLong);
+                    CameraUtil.showOnMap(this, latLong);
                 }
                 return true;
             default:
@@ -775,7 +783,8 @@ public class CameraActivity extends Activity
                 mDataAdapter.requestLoad(getContentResolver());
             }
         } else {
-            // Put a lock placeholder as the last image by setting its date to 0.
+            // Put a lock placeholder as the last image by setting its date to
+            // 0.
             ImageView v = (ImageView) getLayoutInflater().inflate(
                     R.layout.secure_album_placeholder, null);
             mDataAdapter = new FixedLastDataAdapter(
@@ -856,8 +865,9 @@ public class CameraActivity extends Activity
     @Override
     public void onResume() {
         // TODO: Handle this in OrientationManager.
+        // Auto-rotate off
         if (Settings.System.getInt(getContentResolver(),
-                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {// auto-rotate off
+                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             mAutoRotateScreen = false;
         } else {
@@ -897,7 +907,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onDestroy() {
-        if (mSecureCamera) unregisterReceiver(mScreenOffReceiver);
+        if (mSecureCamera) {
+            unregisterReceiver(mScreenOffReceiver);
+        }
         super.onDestroy();
     }
 
@@ -909,11 +921,15 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mCurrentModule.onKeyDown(keyCode, event)) return true;
+        if (mCurrentModule.onKeyDown(keyCode, event)) {
+            return true;
+        }
         // Prevent software keyboard or voice search from showing up.
         if (keyCode == KeyEvent.KEYCODE_SEARCH
                 || keyCode == KeyEvent.KEYCODE_MENU) {
-            if (event.isLongPress()) return true;
+            if (event.isLongPress()) {
+                return true;
+            }
         }
 
         return super.onKeyDown(keyCode, event);
@@ -921,7 +937,9 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (mCurrentModule.onKeyUp(keyCode, event)) return true;
+        if (mCurrentModule.onKeyUp(keyCode, event)) {
+            return true;
+        }
         return super.onKeyUp(keyCode, event);
     }
 
@@ -1009,7 +1027,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onModuleSelected(int moduleIndex) {
-        if (mCurrentModuleIndex == moduleIndex) return;
+        if (mCurrentModuleIndex == moduleIndex) {
+            return;
+        }
 
         CameraHolder.instance().keep();
         closeModule(mCurrentModule);
@@ -1028,8 +1048,8 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * Sets the mCurrentModuleIndex, creates a new module instance for the
-     * given index an sets it as mCurrentModule.
+     * Sets the mCurrentModuleIndex, creates a new module instance for the given
+     * index an sets it as mCurrentModule.
      */
     private void setModuleFromIndex(int moduleIndex) {
         mCurrentModuleIndex = moduleIndex;
@@ -1067,6 +1087,22 @@ public class CameraActivity extends Activity
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(Intent.createChooser(intent, null), REQ_CODE_EDIT);
+    }
+
+    /**
+     * Launch the tiny planet editor.
+     *
+     * @param data the data must be a 360 degree stereographically mapped
+     *            panoramic image. It will not be modified, instead a new item
+     *            with the result will be added to the filmstrip.
+     */
+    public void launchTinyPlanetEditor(LocalData data) {
+        TinyPlanetFragment fragment = new TinyPlanetFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(TinyPlanetFragment.ARGUMENT_URI, data.getContentUri().toString());
+        bundle.putString(TinyPlanetFragment.ARGUMENT_TITLE, data.getTitle());
+        fragment.setArguments(bundle);
+        fragment.show(getFragmentManager(), "tiny_planet");
     }
 
     private void openModule(CameraModule module) {
@@ -1170,8 +1206,8 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * Enable/disable swipe-to-filmstrip.
-     * Will always disable swipe if in capture intent.
+     * Enable/disable swipe-to-filmstrip. Will always disable swipe if in
+     * capture intent.
      *
      * @param enable {@code true} to enable swipe.
      */
