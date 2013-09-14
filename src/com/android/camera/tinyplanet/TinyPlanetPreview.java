@@ -79,9 +79,11 @@ public class TinyPlanetPreview extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mLock != null && mLock.tryLock() && mPreview != null && !mPreview.isRecycled()) {
+        if (mLock != null && mLock.tryLock()) {
             try {
-                canvas.drawBitmap(mPreview, 0, 0, mPaint);
+                if (mPreview != null && !mPreview.isRecycled()) {
+                    canvas.drawBitmap(mPreview, 0, 0, mPaint);
+                }
             } finally {
                 mLock.unlock();
             }
