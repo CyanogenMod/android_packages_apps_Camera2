@@ -273,4 +273,8 @@
     <string name="remember_location_yes" msgid="4663333638854720964">"Ano"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"DALŠÍ MOŽNOSTI"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"NASTAVENÍ"</string>
+    <string name="create_tiny_planet" msgid="4872614985532261383">"Vytvořit malou planetu"</string>
+    <string name="saving_tiny_planet" msgid="1959998670020472446">"Ukládání malé planety…"</string>
+    <string name="tiny_planet_zoom" msgid="7743216626024459920">"Lupa"</string>
+    <string name="tiny_planet_rotate" msgid="3677204727401265635">"Otáčení"</string>
 </resources>
