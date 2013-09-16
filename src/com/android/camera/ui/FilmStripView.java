@@ -159,6 +159,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          */
         public int getHeight();
 
+        /**
+         * Returns the orientation of the image.
+         */
+        public int getOrientation();
+
         /** Returns the image data type */
         public int getViewType();
 
@@ -2109,8 +2114,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             ViewItem curr = mViewItem[mCurrentItem];
-            if(curr == null || !mDataAdapter.getImageData(curr.getId())
-                    .isUIActionSupported(ImageData.ACTION_ZOOM)) {
+            if (curr == null) {
+                return;
+            }
+            ImageData imageData = mDataAdapter.getImageData(curr.getId());
+            if(!imageData.isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return;
             }
             Uri uri = getCurrentContentUri();
@@ -2118,7 +2126,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (uri == null || uri == Uri.EMPTY) {
                 return;
             }
-            mZoomView.loadBitmap(uri, viewRect);
+            int orientation = imageData.getOrientation();
+            mZoomView.loadBitmap(uri, orientation, viewRect);
         }
 
         private void cancelLoadingZoomedImage() {
@@ -2435,6 +2444,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 ViewItem curr = mViewItem[mCurrentItem];
                 // Make sure the image is not overly scaled
                 newScale = Math.min(newScale, mMaxScale);
+                if (newScale == mScale) {
+                    return true;
+                }
                 float postScale = newScale / mScale;
                 curr.postScale(focusX, focusY, postScale, mDrawArea.width(), mDrawArea.height());
                 mScale = newScale;
