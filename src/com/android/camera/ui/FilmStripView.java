@@ -2392,7 +2392,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return false;
             }
             mScaleTrend = 1f;
-            mMaxScale = mController.getCurrentDataMaxScale();
+            // If the image is smaller than screen size, we should allow to zoom
+            // in to full screen size
+            mMaxScale = Math.max(mController.getCurrentDataMaxScale(), FULL_SCREEN_SCALE);
             return true;
         }
 
