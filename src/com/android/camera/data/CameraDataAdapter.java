@@ -31,9 +31,7 @@ import com.android.camera.Storage;
 import com.android.camera.ui.FilmStripView.ImageData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * A {@link LocalDataAdapter} that provides data in the camera folder.
@@ -44,7 +42,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private static final int DEFAULT_DECODE_SIZE = 1600;
     private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
 
-    private List<LocalData> mImages;
+    private LocalDataList mImages;
 
     private Listener mListener;
     private Drawable mPlaceHolder;
@@ -55,7 +53,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private LocalData mLocalDataToDelete;
 
     public CameraDataAdapter(Drawable placeHolder) {
-        mImages = new ArrayList<LocalData>();
+        mImages = new LocalDataList();
         mPlaceHolder = placeHolder;
     }
 
@@ -176,16 +174,10 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public int findDataByContentUri(Uri uri) {
-        for (int i = 0; i < mImages.size(); i++) {
-            Uri u = mImages.get(i).getContentUri();
-            if (u == null) {
-                continue;
-            }
-            if (u.equals(uri)) {
-                return i;
-            }
-        }
-        return -1;
+        // LocalDataList will return in O(1) if the uri is not contained.
+        // Otherwise the performance is O(n), but this is acceptable as we will
+        // most often call this to find an element at the beginning of the list.
+        return mImages.indexOf(uri);
     }
 
     @Override
@@ -209,7 +201,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void flush() {
-        replaceData(new ArrayList<LocalData>());
+        replaceData(new LocalDataList());
     }
 
     @Override
@@ -260,7 +252,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     /** Update all the data */
-    private void replaceData(List<LocalData> list) {
+    private void replaceData(LocalDataList list) {
         if (list.size() == 0 && mImages.size() == 0) {
             return;
         }
@@ -270,7 +262,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
     }
 
-    private class QueryTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
+    private class QueryTask extends AsyncTask<ContentResolver, Void, LocalDataList> {
 
         /**
          * Loads all the photo and video data in the camera folder in background
@@ -280,8 +272,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
          * @return An {@link ArrayList} of all loaded data.
          */
         @Override
-        protected List<LocalData> doInBackground(ContentResolver... resolver) {
-            List<LocalData> l = new ArrayList<LocalData>();
+        protected LocalDataList doInBackground(ContentResolver... resolver) {
+            LocalDataList l = new LocalDataList();
             // Photos
             Cursor c = resolver[0].query(
                     LocalMediaData.PhotoData.CONTENT_URI,
@@ -336,14 +328,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
             }
 
             if (l.size() != 0) {
-                Collections.sort(l, new LocalData.NewestFirstComparator());
+                l.sort(new LocalData.NewestFirstComparator());
             }
 
             return l;
         }
 
         @Override
-        protected void onPostExecute(List<LocalData> l) {
+        protected void onPostExecute(LocalDataList l) {
             replaceData(l);
         }
     }
