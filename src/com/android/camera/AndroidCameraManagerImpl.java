@@ -202,6 +202,10 @@ class AndroidCameraManagerImpl implements CameraManager {
                             if (mParamsToSet == null) {
                                 mParamsToSet = mCamera.getParameters();
                             }
+                        } else {
+                            if (msg.obj != null) {
+                                ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                            }
                         }
                         return;
 
@@ -336,8 +340,11 @@ class AndroidCameraManagerImpl implements CameraManager {
     }
 
     @Override
-    public CameraManager.CameraProxy cameraOpen(int cameraId) {
-        mCameraHandler.obtainMessage(OPEN_CAMERA, cameraId, 0).sendToTarget();
+    public CameraManager.CameraProxy cameraOpen(
+        Handler handler, int cameraId, CameraOpenErrorCallback callback) {
+        mCameraHandler.obtainMessage(OPEN_CAMERA, cameraId, 0,
+                CameraOpenErrorCallbackForward.getNewInstance(
+                        handler, callback)).sendToTarget();
         mCameraHandler.waitDone();
         if (mCamera != null) {
             return new AndroidCameraProxyImpl();
@@ -347,8 +354,10 @@ class AndroidCameraManagerImpl implements CameraManager {
     }
 
     /**
-     * A class which implements {@link CameraManager.CameraProxy} and 
+     * A class which implements {@link CameraManager.CameraProxy} and
      * camera handler thread.
+     * TODO: Save the handler for the callback here to avoid passing the same
+     * handler multiple times.
      */
     public class AndroidCameraProxyImpl implements CameraManager.CameraProxy {
 
@@ -370,12 +379,18 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
-        public void reconnect() throws IOException {
+        public boolean reconnect(Handler handler, CameraOpenErrorCallback cb) {
             mCameraHandler.sendEmptyMessage(RECONNECT);
             mCameraHandler.waitDone();
+            CameraOpenErrorCallback cbforward =
+                    CameraOpenErrorCallbackForward.getNewInstance(handler, cb);
             if (mReconnectIOException != null) {
-                throw mReconnectIOException;
+                if (cbforward != null) {
+                    cbforward.onReconnectionFailure(AndroidCameraManagerImpl.this);
+                }
+                return false;
             }
+            return true;
         }
 
         @Override
@@ -772,6 +787,67 @@ class AndroidCameraManagerImpl implements CameraManager {
                 @Override
                 public void run() {
                     mCallback.onFaceDetection(faces, mCamera);
+                }
+            });
+        }
+    }
+
+    /**
+     * A callback helps to invoke the original callback on another
+     * {@link android.os.Handler}.
+     */
+    private static class CameraOpenErrorCallbackForward implements CameraOpenErrorCallback {
+        private final Handler mHandler;
+        private final CameraOpenErrorCallback mCallback;
+
+        /**
+         * Returns a new instance of {@link FaceDetectionCallbackForward}.
+         *
+         * @param handler The handler in which the callback will be invoked in.
+         * @param cb The callback to be invoked.
+         * @return The instance of the {@link FaceDetectionCallbackForward}, or
+         *         null if any parameter is null.
+         */
+        public static CameraOpenErrorCallbackForward getNewInstance(
+                Handler handler, CameraOpenErrorCallback cb) {
+            if (handler == null || cb == null) {
+                return null;
+            }
+            return new CameraOpenErrorCallbackForward(handler, cb);
+        }
+
+        private CameraOpenErrorCallbackForward(
+                Handler h, CameraOpenErrorCallback cb) {
+            mHandler = h;
+            mCallback = cb;
+        }
+
+        @Override
+        public void onCameraDisabled(final int cameraId) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCameraDisabled(cameraId);
+                }
+            });
+        }
+
+        @Override
+        public void onDeviceOpenFailure(final int cameraId) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onDeviceOpenFailure(cameraId);
+                }
+            });
+        }
+
+        @Override
+        public void onReconnectionFailure(final CameraManager mgr) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onReconnectionFailure(mgr);
                 }
             });
         }

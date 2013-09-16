@@ -19,10 +19,12 @@ package com.android.camera;
 import android.animation.Animator;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -74,6 +76,8 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
+
+import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
 public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener {
@@ -202,6 +206,27 @@ public class CameraActivity extends Activity
             }
         }
     };
+
+    private CameraOpenErrorCallback mCameraOpenErrorCallback =
+            new CameraOpenErrorCallback() {
+                @Override
+                public void onCameraDisabled(int cameraId) {
+                    CameraUtil.showErrorAndFinish(CameraActivity.this,
+                            R.string.camera_disabled);
+                }
+
+                @Override
+                public void onDeviceOpenFailure(int cameraId) {
+                    CameraUtil.showErrorAndFinish(CameraActivity.this,
+                            R.string.cannot_connect_camera);
+                }
+
+                @Override
+                public void onReconnectionFailure(CameraManager mgr) {
+                    CameraUtil.showErrorAndFinish(CameraActivity.this,
+                            R.string.cannot_connect_camera);
+                }
+            };
 
     // close activity when screen turns off
     private BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
@@ -1253,5 +1278,9 @@ public class CameraActivity extends Activity
     public boolean isRecording() {
         return (mCurrentModule instanceof VideoModule) ?
                 ((VideoModule) mCurrentModule).isRecording() : false;
+    }
+
+    public CameraOpenErrorCallback getCameraOpenErrorCallback() {
+        return mCameraOpenErrorCallback;
     }
 }

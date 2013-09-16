@@ -208,16 +208,16 @@ public class VideoModule implements CameraModule,
     }
 
     private void openCamera() {
-        try {
-            if (mCameraDevice == null) {
-                mCameraDevice = CameraUtil.openCamera(mActivity, mCameraId);
-            }
-            mParameters = mCameraDevice.getParameters();
-        } catch (CameraHardwareException e) {
-            mOpenCameraFail = true;
-        } catch (CameraDisabledException e) {
-            mCameraDisabled = true;
+        if (mCameraDevice == null) {
+            mCameraDevice = CameraUtil.openCamera(
+                    mActivity, mCameraId, mHandler,
+                    mActivity.getCameraOpenErrorCallback());
         }
+        if (mCameraDevice == null) {
+            // Error.
+            return;
+        }
+        mParameters = mCameraDevice.getParameters();
     }
 
     // This Handler is used to post message back onto the main thread of the

@@ -462,16 +462,14 @@ public class PhotoModule
         // Restart the camera and initialize the UI. From onCreate.
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
-        try {
-            mCameraDevice = CameraUtil.openCamera(mActivity, mCameraId);
-            mParameters = mCameraDevice.getParameters();
-        } catch (CameraHardwareException e) {
-            CameraUtil.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-            return;
-        } catch (CameraDisabledException e) {
-            CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
+        mCameraDevice = CameraUtil.openCamera(
+                mActivity, mCameraId, mHandler,
+                mActivity.getCameraOpenErrorCallback());
+        if (mCameraDevice == null) {
+            Log.e(TAG, "Failed to open camera:" + mCameraId + ", aborting.");
             return;
         }
+        mParameters = mCameraDevice.getParameters();
         initializeCapabilities();
         CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
         mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
@@ -1166,26 +1164,32 @@ public class PhotoModule
         mPaused = false;
     }
 
-    private void prepareCamera() {
-        try {
-            // We need to check whether the activity is paused before long
-            // operations to ensure that onPause() can be done ASAP.
-            mCameraDevice = CameraUtil.openCamera(mActivity, mCameraId);
-            mParameters = mCameraDevice.getParameters();
-
-            initializeCapabilities();
-            if (mFocusManager == null) initializeFocusManager();
-            setCameraParameters(UPDATE_PARAM_ALL);
-            mHandler.sendEmptyMessage(CAMERA_OPEN_DONE);
-            mCameraPreviewParamsReady = true;
-            startPreview();
-            mOnResumeTime = SystemClock.uptimeMillis();
-            checkDisplayRotation();
-        } catch (CameraHardwareException e) {
-            mHandler.sendEmptyMessage(OPEN_CAMERA_FAIL);
-        } catch (CameraDisabledException e) {
-            mHandler.sendEmptyMessage(CAMERA_DISABLED);
+    /**
+     * Opens the camera device.
+     *
+     * @return Whether the camera was opened successfully.
+     */
+    private boolean prepareCamera() {
+        // We need to check whether the activity is paused before long
+        // operations to ensure that onPause() can be done ASAP.
+        mCameraDevice = CameraUtil.openCamera(
+                mActivity, mCameraId, mHandler,
+                mActivity.getCameraOpenErrorCallback());
+        if (mCameraDevice == null) {
+            Log.e(TAG, "Failed to open camera:" + mCameraId);
+            return false;
         }
+        mParameters = mCameraDevice.getParameters();
+
+        initializeCapabilities();
+        if (mFocusManager == null) initializeFocusManager();
+        setCameraParameters(UPDATE_PARAM_ALL);
+        mHandler.sendEmptyMessage(CAMERA_OPEN_DONE);
+        mCameraPreviewParamsReady = true;
+        startPreview();
+        mOnResumeTime = SystemClock.uptimeMillis();
+        checkDisplayRotation();
+        return true;
     }
 
 
@@ -1196,7 +1200,10 @@ public class PhotoModule
         mJpegPictureCallbackTime = 0;
         mZoomValue = 0;
         resetExposureCompensation();
-        prepareCamera();
+        if (!prepareCamera()) {
+            // Camera failure.
+            return;
+        }
 
         // If first time initialization is not finished, put it in the
         // message queue.
@@ -1720,7 +1727,7 @@ public class PhotoModule
     private void updateAutoFocusMoveCallback() {
         if (mParameters.getFocusMode().equals(CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE)) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,
-                    (CameraManager.CameraAFMoveCallback) mAutoFocusMoveCallback);
+                    (CameraAFMoveCallback) mAutoFocusMoveCallback);
         } else {
             mCameraDevice.setAutoFocusMoveCallback(null, null);
         }
