@@ -316,11 +316,19 @@ public class WideAnglePanoramaModule
         }
     }
 
-    private void setupCamera() throws CameraHardwareException, CameraDisabledException {
-        openCamera();
+    /**
+     * Opens camera and sets the parameters.
+     *
+     * @return Whether the camera was opened successfully.
+     */
+    private boolean setupCamera() {
+        if (!openCamera()) {
+            return false;
+        }
         Parameters parameters = mCameraDevice.getParameters();
         setupCaptureParams(parameters);
         configureCamera(parameters);
+        return true;
     }
 
     private void releaseCamera() {
@@ -331,16 +339,27 @@ public class WideAnglePanoramaModule
         }
     }
 
-    private void openCamera() throws CameraHardwareException, CameraDisabledException {
+    /**
+     * Opens the camera device. The back camera has priority over the front
+     * one.
+     *
+     * @return Whether the camera was opened successfully.
+     */
+    private boolean openCamera() {
         int cameraId = CameraHolder.instance().getBackCameraId();
         // If there is no back camera, use the first camera. Camera id starts
         // from 0. Currently if a camera is not back facing, it is front facing.
         // This is also forward compatible if we have a new facing other than
         // back or front in the future.
         if (cameraId == -1) cameraId = 0;
-        mCameraDevice = CameraUtil.openCamera(mActivity, cameraId);
+        mCameraDevice = CameraUtil.openCamera(mActivity, cameraId,
+                mMainHandler, mActivity.getCameraOpenErrorCallback());
+        if (mCameraDevice == null) {
+            return false;
+        }
         mCameraOrientation = CameraUtil.getCameraOrientation(cameraId);
         if (cameraId == CameraHolder.instance().getFrontCameraId()) mUsingFrontCamera = true;
+        return true;
     }
 
     private boolean findBestPreviewSize(List<Size> supportedSizes, boolean need4To3,
@@ -820,13 +839,8 @@ public class WideAnglePanoramaModule
 
         mCaptureState = CAPTURE_STATE_VIEWFINDER;
 
-        try {
-            setupCamera();
-        } catch (CameraHardwareException e) {
-            CameraUtil.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-            return;
-        } catch (CameraDisabledException e) {
-            CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
+        if (!setupCamera()) {
+            Log.e(TAG, "Failed to open camera, aborting");
             return;
         }
 
