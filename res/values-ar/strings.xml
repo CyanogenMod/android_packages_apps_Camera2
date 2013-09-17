@@ -267,18 +267,14 @@
     <string name="set_time_interval_help" msgid="1403571747238933001">"ميزة انقضاء الوقت مغلقة. يمكنك تشغيلها لتعيين الفاصل الزمني."</string>
     <string name="set_duration" msgid="7425045408900251919">"تعيين المدة بالثواني"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"جارٍ بدء العد التنازلي لالتقاط صورة"</string>
-    <string name="remember_location_title" msgid="2290717227833540397">"هل تتذكر مواقع الصور؟"</string>
+    <string name="remember_location_title" msgid="2290717227833540397">"هل تريد حفظ مواقع الصور؟"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"ضع علامة على الصور ومقاطع الفيديو التابعة لك تشير إلى المواقع التي تم التقاطها منها.\n\nيمكن لتطبيقات أخرى الوصول إلى هذه المعلومات والوصول إلى صورك المحفوظة."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"لا شكرًا"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"نعم"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"المزيد من الخيارات"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"إعدادات"</string>
-    <!-- no translation found for create_tiny_planet (4872614985532261383) -->
-    <skip />
-    <!-- no translation found for saving_tiny_planet (1959998670020472446) -->
-    <skip />
-    <!-- no translation found for tiny_planet_zoom (7743216626024459920) -->
-    <skip />
-    <!-- no translation found for tiny_planet_rotate (3677204727401265635) -->
-    <skip />
+    <string name="create_tiny_planet" msgid="4872614985532261383">"إنشاء كوكب صغير"</string>
+    <string name="saving_tiny_planet" msgid="1959998670020472446">"حفظ الكوكب الصغير …"</string>
+    <string name="tiny_planet_zoom" msgid="7743216626024459920">"تكبير/تصغير"</string>
+    <string name="tiny_planet_rotate" msgid="3677204727401265635">"تدوير"</string>
 </resources>
