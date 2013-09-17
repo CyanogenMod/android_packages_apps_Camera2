@@ -1107,27 +1107,26 @@ public class CameraActivity extends Activity
     private void setModuleFromIndex(int moduleIndex) {
         mCurrentModuleIndex = moduleIndex;
         switch (moduleIndex) {
-            case ModuleSwitcher.VIDEO_MODULE_INDEX: {
+            case ModuleSwitcher.VIDEO_MODULE_INDEX:
                 mCurrentModule = new VideoModule();
                 break;
-            }
 
-            case ModuleSwitcher.PHOTO_MODULE_INDEX: {
+            case ModuleSwitcher.PHOTO_MODULE_INDEX:
                 mCurrentModule = new PhotoModule();
                 break;
-            }
 
-            case ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX: {
+            case ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX:
                 mCurrentModule = new WideAnglePanoramaModule();
                 break;
-            }
 
-            case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX: {
+            case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
                 break;
-            }
 
             default:
+                // Fall back to photo mode.
+                mCurrentModule = new PhotoModule();
+                mCurrentModuleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
                 break;
         }
     }
