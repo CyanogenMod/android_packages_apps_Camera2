@@ -342,6 +342,10 @@
 
     <!-- Settings menu, scene mode choices [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_auto">Auto</string>
+    <!-- Scene mode that uses HD (high definition) [CHAR LIMIT=16] -->
+    <string name="pref_camera_scenemode_entry_hd">HD</string>
+    <!-- Scene mode that uses HQ (high quality) [CHAR LIMIT=16] -->
+    <string name="pref_camera_scenemode_entry_hq">HQ</string>
     <!-- Scene mode that uses HDR (high dynamic range) [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_hdr">HDR</string>
     <!-- Scene mode that takes an image quickly with little motion blur. [CHAR LIMIT=16] -->
