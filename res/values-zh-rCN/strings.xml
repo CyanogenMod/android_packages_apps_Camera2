@@ -86,7 +86,7 @@
     <string name="rendering_photo_sphere" msgid="6767345449862157889">"正在渲染全景照片"</string>
     <string name="camera_error_title" msgid="434116066686973315">"相机发生错误"</string>
     <string name="cannot_connect_camera" msgid="3323690925318631453">"无法连接到相机。"</string>
-    <string name="camera_disabled" msgid="4927328535752421596">"由于安全政策的限制，相机已被停用。"</string>
+    <string name="camera_disabled" msgid="4927328535752421596">"由于安全政策的限制，相机已被禁用。"</string>
     <string name="wait" msgid="2081747495953883435">"请稍候…"</string>
     <string name="no_storage" product="default" msgid="5694411578108472132">"使用相机前请先插入 SD 卡。"</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"正在准备 SD 卡…"</string>
@@ -273,12 +273,8 @@
     <string name="remember_location_yes" msgid="4663333638854720964">"是"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"更多选项"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"设置"</string>
-    <!-- no translation found for create_tiny_planet (4872614985532261383) -->
-    <skip />
-    <!-- no translation found for saving_tiny_planet (1959998670020472446) -->
-    <skip />
-    <!-- no translation found for tiny_planet_zoom (7743216626024459920) -->
-    <skip />
-    <!-- no translation found for tiny_planet_rotate (3677204727401265635) -->
-    <skip />
+    <string name="create_tiny_planet" msgid="4872614985532261383">"创建小星球图片"</string>
+    <string name="saving_tiny_planet" msgid="1959998670020472446">"正在保存小星球图片…"</string>
+    <string name="tiny_planet_zoom" msgid="7743216626024459920">"缩放"</string>
+    <string name="tiny_planet_rotate" msgid="3677204727401265635">"旋转"</string>
 </resources>
