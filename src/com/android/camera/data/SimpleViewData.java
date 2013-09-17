@@ -75,6 +75,11 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
+    public int getOrientation() {
+        return 0;
+    }
+
+    @Override
     public int getViewType() {
         return FilmStripView.ImageData.TYPE_REMOVABLE_VIEW;
     }
