@@ -101,12 +101,49 @@ public interface CameraManager {
     }
 
     /**
+     * An interface to be called for any exception caught when opening the
+     * camera device. This error callback is different from the one defined
+     * in the framework, {@link android.hardware.Camera.ErrorCallback}, which
+     * is used after the camera is opened.
+     */
+    public interface CameraOpenErrorCallback {
+        /**
+         * Callback when {@link com.android.camera.CameraDisabledException} is
+         * caught.
+         *
+         * @param cameraId The disabled camera.
+         */
+        public void onCameraDisabled(int cameraId);
+
+        /**
+         * Callback when {@link com.android.camera.CameraHardwareException} is
+         * caught.
+         *
+         * @param cameraId The camera with the hardware failure.
+         */
+        public void onDeviceOpenFailure(int cameraId);
+
+        /**
+         * Callback when {@link java.io.IOException} is caught during
+         * {@link android.hardware.Camera#reconnect()}.
+         *
+         * @param mgr The {@link com.android.camera.CameraManager}
+         *            with the reconnect failure.
+         */
+        public void onReconnectionFailure(CameraManager mgr);
+    }
+
+    /**
      * Opens the camera of the specified ID synchronously.
      *
-     * @param cameraId      The camera ID to open.
+     * @param handler The {@link android.os.Handler} in which the callback
+     *                was handled.
+     * @param callback The callback when any error happens.
+     * @param cameraId The camera ID to open.
      * @return   An instance of {@link CameraProxy} on success. null on failure.
      */
-    public CameraProxy cameraOpen(int cameraId);
+    public CameraProxy cameraOpen(
+            Handler handler, int cameraId, CameraOpenErrorCallback callback);
 
     /**
      * An interface that takes camera operation requests and post messages to the
@@ -132,10 +169,14 @@ public interface CameraManager {
 
         /**
          * Reconnects to the camera device.
-         *
          * @see android.hardware.Camera#reconnect()
+         *
+         * @param handler The {@link android.os.Handler} in which the callback
+         *                was handled.
+         * @param cb The callback when any error happens.
+         * @return {@code false} on errors.
          */
-        public void reconnect() throws IOException;
+        public boolean reconnect(Handler handler, CameraOpenErrorCallback cb);
 
         /**
          * Unlocks the camera device.
@@ -180,7 +221,7 @@ public interface CameraManager {
         /**
          * Sets the callback for preview data.
          *
-         * @param handler    handler in which the callback was handled.
+         * @param handler    The {@link android.os.Handler} in which the callback was handled.
          * @param cb         The callback to be invoked when the preview data is available.
          * @see  android.hardware.Camera#setPreviewCallback(android.hardware.Camera.PreviewCallback)
          */
