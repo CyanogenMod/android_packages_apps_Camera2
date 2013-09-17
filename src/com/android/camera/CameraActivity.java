@@ -163,6 +163,9 @@ public class CameraActivity extends Activity
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
     private boolean mPendingDeletion = false;
 
+    private Intent mVideoShareIntent;
+    private Intent mImageShareIntent;
+
     public void gotoGallery() {
         mFilmStripView.getController().goToNextItem();
     }
@@ -359,14 +362,39 @@ public class CameraActivity extends Activity
     }
 
     private void setStandardShareIntent(Uri contentUri, String mimeType) {
-        if (mStandardShareIntent == null) {
-            mStandardShareIntent = new Intent(Intent.ACTION_SEND);
+        mStandardShareIntent = getShareIntentFromType(mimeType);
+        if (mStandardShareIntent != null) {
+            mStandardShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            mStandardShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (mStandardShareActionProvider != null) {
+                mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
+            }
         }
-        mStandardShareIntent.setType(mimeType);
-        mStandardShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-        if (mStandardShareActionProvider != null) {
-            mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
+    }
+
+    /**
+     * Get the share intent according to the mimeType
+     *
+     * @param mimeType The mimeType of current data.
+     * @return the video/image's ShareIntent or null if mimeType is invalid.
+     */
+    private Intent getShareIntentFromType(String mimeType) {
+        // Lazily create the intent object.
+        if (mimeType.startsWith("video/")) {
+            if (mVideoShareIntent == null) {
+                mVideoShareIntent = new Intent(Intent.ACTION_SEND);
+                mVideoShareIntent.setType("video/*");
+            }
+            return mVideoShareIntent;
+        } else if (mimeType.startsWith("image/")) {
+            if (mImageShareIntent == null) {
+                mImageShareIntent = new Intent(Intent.ACTION_SEND);
+                mImageShareIntent.setType("image/*");
+            }
+            return mImageShareIntent;
         }
+        Log.w(TAG, "unsupported mimeType " + mimeType);
+        return null;
     }
 
     private void setPanoramaShareIntent(Uri contentUri) {
