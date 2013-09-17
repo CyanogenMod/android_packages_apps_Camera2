@@ -127,6 +127,11 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
+    public int getOrientation() {
+        return 0;
+    }
+
+    @Override
     public String getPath() {
         return mPath;
     }
@@ -383,6 +388,7 @@ public abstract class LocalMediaData implements LocalData {
             return result;
         }
 
+        @Override
         public int getOrientation() {
             return mOrientation;
         }
