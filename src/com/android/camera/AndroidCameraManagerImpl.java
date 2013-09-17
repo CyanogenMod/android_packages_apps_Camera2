@@ -333,6 +333,9 @@ class AndroidCameraManagerImpl implements CameraManager {
                         Log.e(TAG, "Fail to release the camera.");
                     }
                     mCamera = null;
+                } else if (mCamera == null) {
+                  Log.w(TAG, "Cannot handle message, mCamera is null.");
+                  return;
                 }
                 throw e;
             }
