@@ -48,6 +48,7 @@ import android.hardware.Camera.Size;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -337,21 +338,20 @@ public class CameraUtil {
     }
 
     public static CameraManager.CameraProxy openCamera(
-            Activity activity, int cameraId)
-            throws CameraHardwareException, CameraDisabledException {
-        throwIfCameraDisabled(activity);
-
+            Activity activity, final int cameraId,
+            Handler handler, final CameraManager.CameraOpenErrorCallback cb) {
         try {
-            return CameraHolder.instance().open(cameraId);
-        } catch (CameraHardwareException e) {
-            // In eng build, we throw the exception so that test tool
-            // can detect it and report it
-            if ("eng".equals(Build.TYPE)) {
-                throw new RuntimeException("openCamera failed", e);
-            } else {
-                throw e;
-            }
+            throwIfCameraDisabled(activity);
+            return CameraHolder.instance().open(handler, cameraId, cb);
+        } catch (CameraDisabledException ex) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    cb.onCameraDisabled(cameraId);
+                }
+            });
         }
+        return null;
     }
 
     public static void showErrorAndFinish(final Activity activity, int msgId) {
