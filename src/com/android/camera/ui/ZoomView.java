@@ -47,35 +47,58 @@ public class ZoomView extends ImageView {
     private DecodePartialBitmap mPartialDecodingTask;
 
     private Uri mUri;
+    private int mOrientation;
 
     private class DecodePartialBitmap extends AsyncTask<RectF, Void, Bitmap> {
 
         @Override
         protected Bitmap doInBackground(RectF... params) {
             RectF endRect = params[0];
+
+            // Calculate the rotation matrix to apply orientation on the original image
+            // rect.
+            RectF fullResRect = new RectF(0, 0, mFullResImageWidth - 1, mFullResImageHeight - 1);
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.setRotate(mOrientation, 0, 0);
+            rotationMatrix.mapRect(fullResRect);
+            // Set the translation of the matrix so that after rotation, the top left
+            // of the image rect is at (0, 0)
+            rotationMatrix.postTranslate(-fullResRect.left, -fullResRect.top);
+            rotationMatrix.mapRect(fullResRect, new RectF(0, 0, mFullResImageWidth - 1,
+                    mFullResImageHeight - 1));
+
             // Find intersection with the screen
             RectF visibleRect = new RectF(endRect);
             visibleRect.intersect(0, 0, mViewportWidth - 1, mViewportHeight - 1);
+            // Calculate the mapping (i.e. transform) between current low res rect
+            // and full res image rect, and apply the mapping on current visible rect
+            // to find out the partial region in the full res image that we need
+            // to decode.
+            Matrix mapping = new Matrix();
+            mapping.setRectToRect(endRect, fullResRect, Matrix.ScaleToFit.CENTER);
+            RectF visibleAfterRotation = new RectF();
+            mapping.mapRect(visibleAfterRotation, visibleRect);
 
-            Matrix m2 = new Matrix();
-            m2.setRectToRect(endRect, new RectF(0, 0, mFullResImageWidth - 1,
-                    mFullResImageHeight - 1), Matrix.ScaleToFit.CENTER);
+            // Now the visible region we have is rotated, we need to reverse the
+            // rotation to find out the region in the original image
             RectF visibleInImage = new RectF();
-            m2.mapRect(visibleInImage, visibleRect);
+            Matrix invertRotation = new Matrix();
+            rotationMatrix.invert(invertRotation);
+            invertRotation.mapRect(visibleInImage, visibleAfterRotation);
 
             // Decode region
-            Rect v = new Rect();
-            visibleInImage.round(v);
+            Rect region = new Rect();
+            visibleInImage.round(region);
 
             // Make sure region to decode is inside the image.
-            v.intersect(0, 0, mFullResImageWidth - 1, mFullResImageHeight - 1);
+            region.intersect(0, 0, mFullResImageWidth - 1, mFullResImageHeight - 1);
 
             if (isCancelled()) {
                 return null;
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = getSampleFactor(v.width(), v.height());
+            options.inSampleSize = getSampleFactor(region.width(), region.height());
             if (mRegionDecoder == null) {
                 InputStream is = getInputStream();
                 try {
@@ -88,8 +111,13 @@ public class ZoomView extends ImageView {
             if (mRegionDecoder == null) {
                 return null;
             }
-            Bitmap b = mRegionDecoder.decodeRegion(v, options);
-            return b;
+            Bitmap b = mRegionDecoder.decodeRegion(region, options);
+            if (isCancelled()) {
+                return null;
+            }
+            Matrix rotation = new Matrix();
+            rotation.setRotate(mOrientation);
+            return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), rotation, false);
         }
 
         @Override
@@ -120,9 +148,10 @@ public class ZoomView extends ImageView {
         });
     }
 
-    public void loadBitmap(Uri uri, RectF imageRect) {
+    public void loadBitmap(Uri uri, int orientation, RectF imageRect) {
         if (!uri.equals(mUri)) {
             mUri = uri;
+            mOrientation = orientation;
             mFullResImageHeight = 0;
             mFullResImageWidth = 0;
             decodeImageSize();
