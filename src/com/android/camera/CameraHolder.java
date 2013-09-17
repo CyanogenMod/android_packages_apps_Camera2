@@ -188,8 +188,9 @@ public class CameraHolder {
         return mInfo;
     }
 
-    public synchronized CameraProxy open(int cameraId)
-            throws CameraHardwareException {
+    public synchronized CameraProxy open(
+            Handler handler, int cameraId,
+            CameraManager.CameraOpenErrorCallback cb) {
         if (DEBUG_OPEN_RELEASE) {
             collectState(cameraId, mCameraDevice);
             if (mCameraOpened) {
@@ -204,28 +205,28 @@ public class CameraHolder {
             mCameraId = -1;
         }
         if (mCameraDevice == null) {
-            try {
-                Log.v(TAG, "open camera " + cameraId);
-                if (mMockCameraInfo == null) {
-                    mCameraDevice = CameraManagerFactory
-                            .getAndroidCameraManager().cameraOpen(cameraId);
-                } else {
-                    if (mMockCamera == null)
-                        throw new RuntimeException();
+            Log.v(TAG, "open camera " + cameraId);
+            if (mMockCameraInfo == null) {
+                mCameraDevice = CameraManagerFactory
+                        .getAndroidCameraManager().cameraOpen(handler, cameraId, cb);
+            } else {
+                if (mMockCamera != null) {
                     mCameraDevice = mMockCamera[cameraId];
+                } else {
+                    Log.e(TAG, "MockCameraInfo found, but no MockCamera provided.");
+                    mCameraDevice = null;
                 }
-                mCameraId = cameraId;
-            } catch (RuntimeException e) {
-                Log.e(TAG, "fail to connect Camera", e);
-                throw new CameraHardwareException(e);
             }
+            if (mCameraDevice == null) {
+                Log.e(TAG, "fail to connect Camera:" + mCameraId + ", aborting.");
+                return null;
+            }
+            mCameraId = cameraId;
             mParameters = mCameraDevice.getParameters();
         } else {
-            try {
-                mCameraDevice.reconnect();
-            } catch (IOException e) {
-                Log.e(TAG, "reconnect failed.");
-                throw new CameraHardwareException(e);
+            if (!mCameraDevice.reconnect(handler, cb)) {
+                Log.e(TAG, "fail to reconnect Camera:" + mCameraId + ", aborting.");
+                return null;
             }
             mCameraDevice.setParameters(mParameters);
         }
@@ -239,17 +240,9 @@ public class CameraHolder {
      * Tries to open the hardware camera. If the camera is being used or
      * unavailable then return {@code null}.
      */
-    public synchronized CameraProxy tryOpen(int cameraId) {
-        try {
-            return !mCameraOpened ? open(cameraId) : null;
-        } catch (CameraHardwareException e) {
-            // In eng build, we throw the exception so that test tool
-            // can detect it and report it
-            if ("eng".equals(Build.TYPE)) {
-                throw new RuntimeException(e);
-            }
-            return null;
-        }
+    public synchronized CameraProxy tryOpen(
+            Handler handler, int cameraId, CameraManager.CameraOpenErrorCallback cb) {
+            return (!mCameraOpened ? open(handler, cameraId, cb) : null);
     }
 
     public synchronized void release() {
