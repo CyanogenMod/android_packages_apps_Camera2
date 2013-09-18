@@ -480,7 +480,10 @@ public class VideoModule implements CameraModule,
     @OnClickAttr
     public void onReviewCancelClicked(View v) {
         mIsInReviewMode = false;
-        stopVideoRecording();
+        // TODO: It should be better to not even insert the URI at all before we
+        // confirm done in review, which means we need to handle temporary video
+        // files in a quite different way than we currently had.
+        mContentResolver.delete(mCurrentVideoUri, null, null);
         doReturnToCaller(false);
     }
 
