@@ -42,8 +42,6 @@ import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
-import com.android.camera.ui.ModuleSwitcher;
-import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
@@ -51,6 +49,7 @@ import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
+import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
@@ -214,14 +213,12 @@ public class PhotoUI implements PieListener,
         mSwitcher.setCurrentIndex(ModuleSwitcher.PHOTO_MODULE_INDEX);
         mSwitcher.setSwitchListener(mActivity);
         mMenuButton = mRootView.findViewById(R.id.menu);
-        if (ApiHelper.HAS_FACE_DETECTION) {
-            ViewStub faceViewStub = (ViewStub) mRootView
-                    .findViewById(R.id.face_view_stub);
-            if (faceViewStub != null) {
-                faceViewStub.inflate();
-                mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
-                setSurfaceTextureSizeChangedListener(mFaceView);
-            }
+        ViewStub faceViewStub = (ViewStub) mRootView
+                .findViewById(R.id.face_view_stub);
+        if (faceViewStub != null) {
+            faceViewStub.inflate();
+            mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
+            setSurfaceTextureSizeChangedListener(mFaceView);
         }
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         ((CameraRootView) mRootView).setDisplayChangeListener(this);

@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -39,7 +40,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.CompoundButton;
 
 import com.android.camera2.R;
-import com.android.camera.util.ApiHelper;
 
 /**
  * A Switch is a two-state toggle switch widget that can select between two
@@ -82,7 +82,6 @@ public class Switch extends CompoundButton {
     private Layout mOnLayout;
     private Layout mOffLayout;
 
-    @SuppressWarnings("hiding")
     private final Rect mTempRect = new Rect();
 
     private static final int[] CHECKED_STATE_SET = {
@@ -151,8 +150,6 @@ public class Switch extends CompoundButton {
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         if (mOnLayout == null) {
             mOnLayout = makeLayout(mTextOn, mSwitchTextMaxWidth);
         }
@@ -180,7 +177,7 @@ public class Switch extends CompoundButton {
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
         super.onPopulateAccessibilityEvent(event);
@@ -464,7 +461,6 @@ public class Switch extends CompoundButton {
         return super.verifyDrawable(who) || who == mThumbDrawable || who == mTrackDrawable;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     @Override
     public void jumpDrawablesToCurrentState() {
         super.jumpDrawablesToCurrentState();
@@ -472,14 +468,12 @@ public class Switch extends CompoundButton {
         mTrackDrawable.jumpToCurrentState();
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
         super.onInitializeAccessibilityEvent(event);
         event.setClassName(Switch.class.getName());
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
