@@ -38,6 +38,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.CameraProfile;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -481,11 +482,9 @@ public class PhotoModule
         mZoomValue = 0;
         openCameraCommon();
 
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            // Start switch camera animation. Post a message because
-            // onFrameAvailable from the old camera may already exist.
-            mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
-        }
+        // Start switch camera animation. Post a message because
+        // onFrameAvailable from the old camera may already exist.
+        mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
     }
 
     protected void setCameraId(int cameraId) {
@@ -594,10 +593,8 @@ public class PhotoModule
         });
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void startFaceDetection() {
-        if (!ApiHelper.HAS_FACE_DETECTION) return;
         if (mFaceDetectionStarted) return;
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = true;
@@ -609,10 +606,8 @@ public class PhotoModule
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void stopFaceDetection() {
-        if (!ApiHelper.HAS_FACE_DETECTION) return;
         if (!mFaceDetectionStarted) return;
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = false;
@@ -710,14 +705,7 @@ public class PhotoModule
 
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
             if (!mIsImageCaptureIntent) {
-                if (ApiHelper.CAN_START_PREVIEW_IN_JPEG_CALLBACK) {
-                    setupPreview();
-                } else {
-                    // Camera HAL of some devices have a bug. Starting preview
-                    // immediately after taking a picture will fail. Wait some
-                    // time before starting the preview.
-                    mHandler.sendEmptyMessageDelayed(SETUP_PREVIEW, 300);
-                }
+                setupPreview();
             }
 
             ExifInterface exif = Exif.getExif(jpegData);
@@ -792,7 +780,7 @@ public class PhotoModule
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private final class AutoFocusMoveCallback
             implements CameraAFMoveCallback {
         @Override
@@ -1446,13 +1434,10 @@ public class PhotoModule
         return false;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void closeCamera() {
         if (mCameraDevice != null) {
             mCameraDevice.setZoomChangeListener(null);
-            if(ApiHelper.HAS_FACE_DETECTION) {
-                mCameraDevice.setFaceDetectionCallback(null, null);
-            }
+            mCameraDevice.setFaceDetectionCallback(null, null);
             mCameraDevice.setErrorCallback(null);
             CameraHolder.instance().release();
             mFaceDetectionStarted = false;
@@ -1566,28 +1551,26 @@ public class PhotoModule
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setAutoExposureLockIfSupported() {
         if (mAeLockSupported) {
             mParameters.setAutoExposureLock(mFocusManager.getAeAwbLock());
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setAutoWhiteBalanceLockIfSupported() {
         if (mAwbLockSupported) {
             mParameters.setAutoWhiteBalanceLock(mFocusManager.getAeAwbLock());
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setFocusAreasIfSupported() {
         if (mFocusAreaSupported) {
             mParameters.setFocusAreas(mFocusManager.getFocusAreas());
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setMeteringAreasIfSupported() {
         if (mMeteringAreaSupported) {
             // Use the same area for focus and metering.
@@ -1723,7 +1706,7 @@ public class PhotoModule
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void updateAutoFocusMoveCallback() {
         if (mParameters.getFocusMode().equals(CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE)) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,

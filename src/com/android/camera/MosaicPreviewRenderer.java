@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.os.ConditionVariable;
 import android.os.Handler;
@@ -24,11 +23,8 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 
-import com.android.camera.util.ApiHelper;
-
 import javax.microedition.khronos.opengles.GL10;
 
-@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB) // uses SurfaceTexture
 public class MosaicPreviewRenderer {
 
     @SuppressWarnings("unused")
@@ -117,11 +113,8 @@ public class MosaicPreviewRenderer {
             mEglThread.quit();
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         private void releaseSurfaceTexture(SurfaceTexture st) {
-            if (ApiHelper.HAS_RELEASE_SURFACE_TEXTURE) {
-                st.release();
-            }
+            st.release();
         }
 
         // Should be called from other thread.

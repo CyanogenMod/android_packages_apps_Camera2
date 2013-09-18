@@ -16,7 +16,6 @@
 
 package com.android.camera.ui;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -31,12 +30,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.android.camera.util.CameraUtil;
 import com.android.camera.PhotoUI;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.android.camera.util.ApiHelper;
 
-@TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class FaceView extends View
     implements FocusIndicator, Rotatable,
     PhotoUI.SurfaceTextureSizeChangedListener {

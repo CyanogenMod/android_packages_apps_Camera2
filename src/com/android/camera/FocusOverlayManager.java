@@ -16,22 +16,22 @@
 
 package com.android.camera;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.Parameters;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /* A class that handles everything about focus in still picture mode.
  * This also handles the metering area because it is the same as focus area.
@@ -316,7 +316,7 @@ public class FocusOverlayManager {
         mPreviousMoving = moving;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void initializeFocusAreas(int x, int y) {
         if (mFocusArea == null) {
             mFocusArea = new ArrayList<Object>();
@@ -327,7 +327,7 @@ public class FocusOverlayManager {
         calculateTapArea(x, y, 1f, ((Area) mFocusArea.get(0)).rect);
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void initializeMeteringAreas(int x, int y) {
         if (mMeteringArea == null) {
             mMeteringArea = new ArrayList<Object>();
