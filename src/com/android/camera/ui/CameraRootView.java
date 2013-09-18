@@ -27,6 +27,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.ApiHelper;
 
@@ -41,6 +42,10 @@ public class CameraRootView extends FrameLayout {
     private int mOffset = 0;
     private Object mDisplayListener;
     private MyDisplayListener mListener;
+
+    // Hideybars are available on K and up.
+    private static final boolean HIDEYBARS_ENABLED = CameraActivity.isKitKatOrHigher();
+
     public interface MyDisplayListener {
         public void onDisplayChanged();
     }
@@ -54,18 +59,22 @@ public class CameraRootView extends FrameLayout {
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        super.fitSystemWindows(insets);
-        mCurrentInsets = insets;
-        // insets include status bar, navigation bar, etc
-        // In this case, we are only concerned with the size of nav bar
-        if (mOffset > 0) return true;
+        if (!HIDEYBARS_ENABLED) {
+            mCurrentInsets = insets;
+            // insets include status bar, navigation bar, etc
+            // In this case, we are only concerned with the size of nav bar
+            if (mOffset > 0) {
+                return true;
+            }
 
-        if (insets.bottom > 0) {
-            mOffset = insets.bottom;
-        } else if (insets.right > 0) {
-            mOffset = insets.right;
+            if (insets.bottom > 0) {
+                mOffset = insets.bottom;
+            } else if (insets.right > 0) {
+                mOffset = insets.right;
+            }
+            return true;
         }
-        return true;
+        return super.fitSystemWindows(insets);
     }
 
     public void initDisplayListener() {
