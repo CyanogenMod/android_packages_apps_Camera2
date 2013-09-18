@@ -16,18 +16,15 @@
 
 package com.android.camera;
 
-import java.io.IOException;
-
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.ErrorCallback;
 import android.hardware.Camera.OnZoomChangeListener;
 import android.hardware.Camera.Parameters;
+import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
-
-import com.android.camera.util.ApiHelper;
 
 /**
  * An interface which provides possible camera device operations.
@@ -196,7 +193,6 @@ public interface CameraManager {
          *
          * @param surfaceTexture The {@link SurfaceTexture} for preview.
          */
-        @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
         public void setPreviewTexture(final SurfaceTexture surfaceTexture);
 
         /**
@@ -262,7 +258,7 @@ public interface CameraManager {
          * @param handler The handler in which the callback will be invoked.
          * @param cb      The callback to be invoked when the preview data is available.
          */
-        @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         public void setAutoFocusMoveCallback(Handler handler, CameraAFMoveCallback cb);
 
         /**
@@ -305,7 +301,6 @@ public interface CameraManager {
          * @param handler  The handler in which the callback will be invoked.
          * @param callback The callback for face detection results.
          */
-        @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         public void setFaceDetectionCallback(Handler handler, CameraFaceDetectionCallback callback);
 
         /**

@@ -21,6 +21,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaActionSound;
 import android.media.SoundPool;
+import android.os.Build;
 import android.util.Log;
 
 import com.android.camera2.R;
@@ -49,6 +50,7 @@ public class SoundClips {
     }
 
     public static int getAudioTypeForSoundPool() {
+        // STREAM_SYSTEM_ENFORCED is hidden API.
         return ApiHelper.getIntFieldIfExists(AudioManager.class,
                 "STREAM_SYSTEM_ENFORCED", null, AudioManager.STREAM_RING);
     }
@@ -57,7 +59,7 @@ public class SoundClips {
      * This class implements SoundClips.Player using MediaActionSound,
      * which exists since API level 16.
      */
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static class MediaActionSoundPlayer implements Player {
         private static final String TAG = "MediaActionSoundPlayer";
         private MediaActionSound mSound;

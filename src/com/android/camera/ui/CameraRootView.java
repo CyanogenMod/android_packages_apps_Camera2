@@ -43,9 +43,6 @@ public class CameraRootView extends FrameLayout {
     private Object mDisplayListener;
     private MyDisplayListener mListener;
 
-    // Hideybars are available on K and up.
-    private static final boolean HIDEYBARS_ENABLED = CameraActivity.isKitKatOrHigher();
-
     public interface MyDisplayListener {
         public void onDisplayChanged();
     }
@@ -59,7 +56,7 @@ public class CameraRootView extends FrameLayout {
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        if (!HIDEYBARS_ENABLED) {
+        if (!ApiHelper.HAS_HIDEYBARS) {
             mCurrentInsets = insets;
             // insets include status bar, navigation bar, etc
             // In this case, we are only concerned with the size of nav bar

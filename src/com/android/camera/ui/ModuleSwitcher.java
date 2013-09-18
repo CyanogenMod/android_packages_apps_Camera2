@@ -34,7 +34,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
-import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
@@ -317,9 +316,6 @@ public class ModuleSwitcher extends RotateImageView
     }
 
     private void popupAnimationSetup() {
-        if (!ApiHelper.HAS_VIEW_PROPERTY_ANIMATOR) {
-            return;
-        }
         layoutPopup();
         mPopup.setScaleX(0.3f);
         mPopup.setScaleY(0.3f);
@@ -329,9 +325,6 @@ public class ModuleSwitcher extends RotateImageView
     }
 
     private boolean animateHidePopup() {
-        if (!ApiHelper.HAS_VIEW_PROPERTY_ANIMATOR) {
-            return false;
-        }
         if (mHideAnimationListener == null) {
             mHideAnimationListener = new AnimatorListenerAdapter() {
                 @Override
@@ -358,9 +351,6 @@ public class ModuleSwitcher extends RotateImageView
     }
 
     private boolean animateShowPopup() {
-        if (!ApiHelper.HAS_VIEW_PROPERTY_ANIMATOR) {
-            return false;
-        }
         if (mNeedsAnimationSetup) {
             popupAnimationSetup();
         }

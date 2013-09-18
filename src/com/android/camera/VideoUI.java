@@ -16,8 +16,6 @@
 
 package com.android.camera;
 
-import java.util.List;
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -53,7 +51,8 @@ import com.android.camera.ui.RotateLayout;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.android.camera.util.ApiHelper;
+
+import java.util.List;
 
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
@@ -559,23 +558,12 @@ public class VideoUI implements PieRenderer.PieListener,
             hideSwitcher();
             mRecordingTimeView.setText("");
             mRecordingTimeView.setVisibility(View.VISIBLE);
-            // The camera is not allowed to be accessed in older api levels during
-            // recording. It is therefore necessary to hide the zoom UI on older
-            // platforms.
-            // See the documentation of android.media.MediaRecorder.start() for
-            // further explanation.
-            if (!ApiHelper.HAS_ZOOM_WHEN_RECORDING && zoomSupported) {
-                // TODO: disable zoom UI here.
-            }
         } else {
             mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
             if (!mController.isVideoCaptureIntent()) {
                 showSwitcher();
             }
             mRecordingTimeView.setVisibility(View.GONE);
-            if (!ApiHelper.HAS_ZOOM_WHEN_RECORDING && zoomSupported) {
-                // TODO: enable zoom UI here.
-            }
         }
     }
 
