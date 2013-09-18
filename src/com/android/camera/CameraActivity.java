@@ -32,7 +32,6 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -250,7 +249,7 @@ public class CameraActivity extends Activity
     }
 
     private static int getImmersiveFlags() {
-        if (isKitKatOrHigher()) {
+        if (ApiHelper.HAS_HIDEYBARS) {
             return View.SYSTEM_UI_FLAG_IMMERSIVE
                     | View.SYSTEM_UI_FLAG_TRANSPARENT_STATUS
                     | View.SYSTEM_UI_FLAG_TRANSPARENT_NAVIGATION
@@ -260,12 +259,6 @@ public class CameraActivity extends Activity
             // Pre-KitKat we use lights-out mode.
             return View.SYSTEM_UI_FLAG_LOW_PROFILE;
         }
-    }
-
-    public static boolean isKitKatOrHigher() {
-        // TODO: Remove CODENAME check as soon as VERSION_CODES.KITKAT is final.
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                || "KeyLimePie".equals(Build.VERSION.CODENAME);
     }
 
     public static boolean isFirstStartAfterScreenOn() {

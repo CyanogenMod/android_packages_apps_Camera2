@@ -26,12 +26,11 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
-import android.util.FloatMath;
 import android.util.Log;
 
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.android.camera.util.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,9 +163,6 @@ public class CameraSettings {
         ListPreference focusMode = group.findPreference(KEY_FOCUS_MODE);
         IconListPreference exposure =
                 (IconListPreference) group.findPreference(KEY_EXPOSURE);
-        CountDownTimerPreference timer =
-                (CountDownTimerPreference) group.findPreference(KEY_TIMER);
-        ListPreference countDownSoundEffects = group.findPreference(KEY_TIMER_SOUND_EFFECTS);
         IconListPreference cameraIdPref =
                 (IconListPreference) group.findPreference(KEY_CAMERA_ID);
         ListPreference videoFlashMode =
@@ -214,19 +210,10 @@ public class CameraSettings {
         if (cameraIdPref != null) buildCameraId(group, cameraIdPref);
 
         if (timeLapseInterval != null) {
-            if (ApiHelper.HAS_TIME_LAPSE_RECORDING) {
-                resetIfInvalid(timeLapseInterval);
-            } else {
-                removePreference(group, timeLapseInterval.getKey());
-            }
+            resetIfInvalid(timeLapseInterval);
         }
         if (videoEffect != null) {
-            if (ApiHelper.HAS_EFFECTS_RECORDING) {
-                initVideoEffect(group, videoEffect);
-                resetIfInvalid(videoEffect);
-            } else {
-                filterUnsupportedOptions(group, videoEffect, null);
-            }
+            filterUnsupportedOptions(group, videoEffect, null);
         }
         if (cameraHdr != null && (!ApiHelper.HAS_CAMERA_HDR
                     || !CameraUtil.isCameraHdrSupported(mParameters))) {
@@ -245,8 +232,8 @@ public class CameraSettings {
         float step = mParameters.getExposureCompensationStep();
 
         // show only integer values for exposure compensation
-        int maxValue = Math.min(3, (int) FloatMath.floor(max * step));
-        int minValue = Math.max(-3, (int) FloatMath.ceil(min * step));
+        int maxValue = Math.min(3, (int) Math.floor(max * step));
+        int minValue = Math.max(-3, (int) Math.ceil(min * step));
         String explabel = mContext.getResources().getString(R.string.pref_exposure_label);
         CharSequence entries[] = new CharSequence[maxValue - minValue + 1];
         CharSequence entryValues[] = new CharSequence[maxValue - minValue + 1];
@@ -453,51 +440,6 @@ public class CameraSettings {
         return 0;
     }
 
-    public static int readEffectType(SharedPreferences pref) {
-        String effectSelection = pref.getString(KEY_VIDEO_EFFECT, "none");
-        if (effectSelection.equals("none")) {
-            return EffectsRecorder.EFFECT_NONE;
-        } else if (effectSelection.startsWith("goofy_face")) {
-            return EffectsRecorder.EFFECT_GOOFY_FACE;
-        } else if (effectSelection.startsWith("backdropper")) {
-            return EffectsRecorder.EFFECT_BACKDROPPER;
-        }
-        Log.e(TAG, "Invalid effect selection: " + effectSelection);
-        return EffectsRecorder.EFFECT_NONE;
-    }
-
-    public static Object readEffectParameter(SharedPreferences pref) {
-        String effectSelection = pref.getString(KEY_VIDEO_EFFECT, "none");
-        if (effectSelection.equals("none")) {
-            return null;
-        }
-        int separatorIndex = effectSelection.indexOf('/');
-        String effectParameter =
-                effectSelection.substring(separatorIndex + 1);
-        if (effectSelection.startsWith("goofy_face")) {
-            if (effectParameter.equals("squeeze")) {
-                return EffectsRecorder.EFFECT_GF_SQUEEZE;
-            } else if (effectParameter.equals("big_eyes")) {
-                return EffectsRecorder.EFFECT_GF_BIG_EYES;
-            } else if (effectParameter.equals("big_mouth")) {
-                return EffectsRecorder.EFFECT_GF_BIG_MOUTH;
-            } else if (effectParameter.equals("small_mouth")) {
-                return EffectsRecorder.EFFECT_GF_SMALL_MOUTH;
-            } else if (effectParameter.equals("big_nose")) {
-                return EffectsRecorder.EFFECT_GF_BIG_NOSE;
-            } else if (effectParameter.equals("small_eyes")) {
-                return EffectsRecorder.EFFECT_GF_SMALL_EYES;
-            }
-        } else if (effectSelection.startsWith("backdropper")) {
-            // Parameter is a string that either encodes the URI to use,
-            // or specifies 'gallery'.
-            return effectParameter;
-        }
-
-        Log.e(TAG, "Invalid effect selection: " + effectSelection);
-        return null;
-    }
-
     public static void restorePreferences(Context context,
             ComboPreferences preferences, Parameters parameters) {
         int currentCameraId = readPreferredCameraId(preferences);
@@ -545,26 +487,5 @@ public class CameraSettings {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
         }
         return supported;
-    }
-
-    private void initVideoEffect(PreferenceGroup group, ListPreference videoEffect) {
-        CharSequence[] values = videoEffect.getEntryValues();
-
-        boolean goofyFaceSupported =
-                EffectsRecorder.isEffectSupported(EffectsRecorder.EFFECT_GOOFY_FACE);
-        boolean backdropperSupported =
-                EffectsRecorder.isEffectSupported(EffectsRecorder.EFFECT_BACKDROPPER) &&
-                CameraUtil.isAutoExposureLockSupported(mParameters) &&
-                CameraUtil.isAutoWhiteBalanceLockSupported(mParameters);
-
-        ArrayList<String> supported = new ArrayList<String>();
-        for (CharSequence value : values) {
-            String effectSelection = value.toString();
-            if (!goofyFaceSupported && effectSelection.startsWith("goofy_face")) continue;
-            if (!backdropperSupported && effectSelection.startsWith("backdropper")) continue;
-            supported.add(effectSelection);
-        }
-
-        filterUnsupportedOptions(group, videoEffect, supported);
     }
 }

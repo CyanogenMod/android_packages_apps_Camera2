@@ -57,10 +57,10 @@ import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.exif.ExifInterface;
-import com.android.camera.util.ApiHelper;
-import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
+import com.android.camera.util.AccessibilityUtils;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -173,9 +173,6 @@ public class VideoModule implements CameraModule,
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
     private int mZoomValue;  // The current zoom value.
-
-    private boolean mRestoreFlash;  // This is used to check if we need to restore the flash
-                                    // status when going back from gallery.
 
     private final MediaSaveService.OnMediaSavedListener mOnVideoSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
@@ -588,13 +585,11 @@ public class VideoModule implements CameraModule,
         }
 
         // Read time lapse recording interval.
-        if (ApiHelper.HAS_TIME_LAPSE_RECORDING) {
-            String frameIntervalStr = mPreferences.getString(
-                    CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
-                    mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
-            mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
-            mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
-        }
+        String frameIntervalStr = mPreferences.getString(
+                CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
+                mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
+        mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
+        mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
         // TODO: This should be checked instead directly +1000.
         if (mCaptureTimeLapse) quality += 1000;
         mProfile = CamcorderProfile.get(mCameraId, quality);
@@ -602,33 +597,28 @@ public class VideoModule implements CameraModule,
         mPreferenceRead = true;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void getDesiredPreviewSize() {
         mParameters = mCameraDevice.getParameters();
-        if (ApiHelper.HAS_GET_SUPPORTED_VIDEO_SIZE) {
-            if (mParameters.getSupportedVideoSizes() == null) {
-                mDesiredPreviewWidth = mProfile.videoFrameWidth;
-                mDesiredPreviewHeight = mProfile.videoFrameHeight;
-            } else {  // Driver supports separates outputs for preview and video.
-                List<Size> sizes = mParameters.getSupportedPreviewSizes();
-                Size preferred = mParameters.getPreferredPreviewSizeForVideo();
-                int product = preferred.width * preferred.height;
-                Iterator<Size> it = sizes.iterator();
-                // Remove the preview sizes that are not preferred.
-                while (it.hasNext()) {
-                    Size size = it.next();
-                    if (size.width * size.height > product) {
-                        it.remove();
-                    }
-                }
-                Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
-                        (double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
-                mDesiredPreviewWidth = optimalSize.width;
-                mDesiredPreviewHeight = optimalSize.height;
-            }
-        } else {
+        if (mParameters.getSupportedVideoSizes() == null) {
             mDesiredPreviewWidth = mProfile.videoFrameWidth;
             mDesiredPreviewHeight = mProfile.videoFrameHeight;
+        } else { // Driver supports separates outputs for preview and video.
+            List<Size> sizes = mParameters.getSupportedPreviewSizes();
+            Size preferred = mParameters.getPreferredPreviewSizeForVideo();
+            int product = preferred.width * preferred.height;
+            Iterator<Size> it = sizes.iterator();
+            // Remove the preview sizes that are not preferred.
+            while (it.hasNext()) {
+                Size size = it.next();
+                if (size.width * size.height > product) {
+                    it.remove();
+                }
+            }
+            Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
+                    (double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
+            mDesiredPreviewWidth = optimalSize.width;
+            mDesiredPreviewHeight = optimalSize.height;
         }
         mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
         Log.v(TAG, "mDesiredPreviewWidth=" + mDesiredPreviewWidth +
@@ -1053,19 +1043,15 @@ public class VideoModule implements CameraModule,
         mMediaRecorder.setOnInfoListener(this);
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private static void setCaptureRate(MediaRecorder recorder, double fps) {
         recorder.setCaptureRate(fps);
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setRecordLocation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            Location loc = mLocationManager.getCurrentLocation();
-            if (loc != null) {
-                mMediaRecorder.setLocation((float) loc.getLatitude(),
-                        (float) loc.getLongitude());
-            }
+        Location loc = mLocationManager.getCurrentLocation();
+        if (loc != null) {
+            mMediaRecorder.setLocation((float) loc.getLatitude(),
+                    (float) loc.getLongitude());
         }
     }
 
@@ -1235,9 +1221,7 @@ public class VideoModule implements CameraModule,
         // recording. We need to alter the parameters if we support camcorder
         // zoom. To reduce latency when setting the parameters during zoom, we
         // update mParameters here once.
-        if (ApiHelper.HAS_ZOOM_WHEN_RECORDING) {
-            mParameters = mCameraDevice.getParameters();
-        }
+        mParameters = mCameraDevice.getParameters();
 
         mUI.enableCameraControls(false);
 
@@ -1658,20 +1642,6 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onCaptureTextureCopied() {
-    }
-
-    // Verifies that the current preview view size is correct before starting
-    // preview. If not, resets the surface texture and resizes the view.
-    private void checkQualityAndStartPreview() {
-        readVideoPreferences();
-        mUI.showTimeLapseUI(mCaptureTimeLapse);
-        Size size = mParameters.getPreviewSize();
-        if (size.width != mDesiredPreviewWidth
-                || size.height != mDesiredPreviewHeight) {
-            resizeForPreviewAspectRatio();
-        }
-        // Start up preview again
-        startPreview();
     }
 
     private void initializeVideoSnapshot() {
