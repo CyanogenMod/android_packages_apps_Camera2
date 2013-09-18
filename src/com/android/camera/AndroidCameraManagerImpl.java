@@ -32,14 +32,13 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
-
-import com.android.camera.util.ApiHelper;
 
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.
@@ -102,22 +101,18 @@ class AndroidCameraManagerImpl implements CameraManager {
             super(looper);
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         private void startFaceDetection() {
             mCamera.startFaceDetection();
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         private void stopFaceDetection() {
             mCamera.stopFaceDetection();
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         private void setFaceDetectionListener(FaceDetectionListener listener) {
             mCamera.setFaceDetectionListener(listener);
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
         private void setPreviewTexture(Object surfaceTexture) {
             try {
                 mCamera.setPreviewTexture((SurfaceTexture) surfaceTexture);
@@ -126,12 +121,12 @@ class AndroidCameraManagerImpl implements CameraManager {
             }
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN_MR1)
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
         private void enableShutterSound(boolean enable) {
             mCamera.enableShutterSound(enable);
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         private void setAutoFocusMoveCallback(
                 android.hardware.Camera camera, Object cb) {
             camera.setAutoFocusMoveCallback((AutoFocusMoveCallback) cb);
@@ -407,7 +402,6 @@ class AndroidCameraManagerImpl implements CameraManager {
             mCameraHandler.sendEmptyMessage(LOCK);
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
         @Override
         public void setPreviewTexture(SurfaceTexture surfaceTexture) {
             mCameraHandler.obtainMessage(SET_PREVIEW_TEXTURE_ASYNC, surfaceTexture).sendToTarget();
@@ -463,7 +457,7 @@ class AndroidCameraManagerImpl implements CameraManager {
             mCameraHandler.sendEmptyMessage(CANCEL_AUTO_FOCUS);
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void setAutoFocusMoveCallback(
                 Handler handler, CameraAFMoveCallback cb) {
@@ -497,7 +491,6 @@ class AndroidCameraManagerImpl implements CameraManager {
             mCameraHandler.obtainMessage(SET_ZOOM_CHANGE_LISTENER, listener).sendToTarget();
         }
 
-        @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         public void setFaceDetectionCallback(
                 Handler handler, CameraFaceDetectionCallback cb) {
             mCameraHandler.obtainMessage(
@@ -591,7 +584,7 @@ class AndroidCameraManagerImpl implements CameraManager {
     }
 
     /** A helper class to forward AutoFocusMoveCallback to another thread. */
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static class AFMoveCallbackForward implements AutoFocusMoveCallback {
         private final Handler mHandler;
         private final CameraAFMoveCallback mCallback;

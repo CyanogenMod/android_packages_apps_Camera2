@@ -16,16 +16,6 @@
 
 package com.android.camera.util;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
@@ -47,15 +37,12 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
-import android.util.FloatMath;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
@@ -66,10 +53,18 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
-import com.android.camera.CameraHardwareException;
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager;
 import com.android.camera2.R;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 /**
  * Collection of utility functions used in this package.
@@ -138,22 +133,14 @@ public class CameraUtil {
         return (supported != null) && supported.contains(SCENE_MODE_HDR);
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static boolean isMeteringAreaSupported(Parameters params) {
-        if (ApiHelper.HAS_CAMERA_METERING_AREA) {
-            return params.getMaxNumMeteringAreas() > 0;
-        }
-        return false;
+        return params.getMaxNumMeteringAreas() > 0;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static boolean isFocusAreaSupported(Parameters params) {
-        if (ApiHelper.HAS_CAMERA_FOCUS_AREA) {
-            return (params.getMaxNumFocusAreas() > 0
-                    && isSupported(Parameters.FOCUS_MODE_AUTO,
-                            params.getSupportedFocusModes()));
-        }
-        return false;
+        return (params.getMaxNumFocusAreas() > 0
+                && isSupported(Parameters.FOCUS_MODE_AUTO,
+                        params.getSupportedFocusModes()));
     }
 
     // Private intent extras. Test only.
@@ -325,15 +312,12 @@ public class CameraUtil {
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private static void throwIfCameraDisabled(Activity activity) throws CameraDisabledException {
         // Check if device policy has disabled the camera.
-        if (ApiHelper.HAS_GET_CAMERA_DISABLED) {
-            DevicePolicyManager dpm = (DevicePolicyManager) activity.getSystemService(
-                    Context.DEVICE_POLICY_SERVICE);
-            if (dpm.getCameraDisabled(null)) {
-                throw new CameraDisabledException();
-            }
+        DevicePolicyManager dpm = (DevicePolicyManager) activity.getSystemService(
+                Context.DEVICE_POLICY_SERVICE);
+        if (dpm.getCameraDisabled(null)) {
+            throw new CameraDisabledException();
         }
     }
 
@@ -395,7 +379,7 @@ public class CameraUtil {
     public static float distance(float x, float y, float sx, float sy) {
         float dx = x - sx;
         float dy = y - sy;
-        return FloatMath.sqrt(dx * dx + dy * dy);
+        return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
     public static int clamp(int x, int min, int max) {
@@ -452,15 +436,8 @@ public class CameraUtil {
         return orientationHistory;
     }
 
-    @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private static Point getDefaultDisplaySize(Activity activity, Point size) {
-        Display d = activity.getWindowManager().getDefaultDisplay();
-        if (Build.VERSION.SDK_INT >= ApiHelper.VERSION_CODES.HONEYCOMB_MR2) {
-            d.getSize(size);
-        } else {
-            size.set(d.getWidth(), d.getHeight());
-        }
+        activity.getWindowManager().getDefaultDisplay().getSize(size);
         return size;
     }
 
