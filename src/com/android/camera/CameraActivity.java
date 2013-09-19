@@ -68,6 +68,7 @@ import com.android.camera.data.FixedFirstDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
+import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
@@ -115,10 +116,6 @@ public class CameraActivity extends Activity
      * want to reset the view to the preview in onResume.
      */
     public static final int REQ_CODE_DONT_SWITCH_TO_PREVIEW = 142;
-
-    /** Request code for external image editor activities. */
-    private static final int REQ_CODE_EDIT = 1;
-
 
     /** Whether onResume should reset the view to the preview. */
     private boolean mResetToPreviewOnResume = true;
@@ -174,6 +171,10 @@ public class CameraActivity extends Activity
     private Intent mStandardShareIntent;
     private ShareActionProvider mPanoramaShareActionProvider;
     private Intent mPanoramaShareIntent;
+    private LocalMediaObserver mLocalImagesObserver;
+    private LocalMediaObserver mLocalVideosObserver;
+    private boolean mActivityPaused;
+    private boolean mMediaDataChangedDuringPause;
 
     private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
@@ -913,6 +914,16 @@ public class CameraActivity extends Activity
         }
 
         setupNfcBeamPush();
+
+        mLocalImagesObserver = new LocalMediaObserver(mMainHandler, this);
+        mLocalVideosObserver = new LocalMediaObserver(mMainHandler, this);
+
+        getContentResolver().registerContentObserver(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
+                mLocalImagesObserver);
+        getContentResolver().registerContentObserver(
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
+                mLocalVideosObserver);
     }
 
     private void setRotationAnimation() {
@@ -951,26 +962,12 @@ public class CameraActivity extends Activity
         mCurrentModule.onPauseBeforeSuper();
         super.onPause();
         mCurrentModule.onPauseAfterSuper();
+        mActivityPaused = true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQ_CODE_EDIT && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            ContentResolver contentResolver = getContentResolver();
-            if (uri == null) {
-                // If we don't have a particular uri returned, then we have
-                // to refresh all, it is not optimal, but works best so far.
-                // Also don't requestLoad() when in secure camera mode.
-                if (!mSecureCamera) {
-                    mDataAdapter.requestLoad(contentResolver);
-                }
-            } else {
-                mDataAdapter.refresh(contentResolver, uri);
-            }
-        }
-
-        if (requestCode == REQ_CODE_DONT_SWITCH_TO_PREVIEW | requestCode == REQ_CODE_EDIT) {
+        if (requestCode == REQ_CODE_DONT_SWITCH_TO_PREVIEW) {
             mResetToPreviewOnResume = false;
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -1004,6 +1001,12 @@ public class CameraActivity extends Activity
         // starting an activity we want to return from to the filmstrip rather
         // than the preview.
         mResetToPreviewOnResume = true;
+
+        mActivityPaused = false;
+        if (mMediaDataChangedDuringPause) {
+            mDataAdapter.requestLoad(getContentResolver());
+            mMediaDataChangedDuringPause = false;
+        }
     }
 
     @Override
@@ -1025,6 +1028,9 @@ public class CameraActivity extends Activity
         if (mSecureCamera) {
             unregisterReceiver(mScreenOffReceiver);
         }
+        getContentResolver().unregisterContentObserver(mLocalImagesObserver);
+        getContentResolver().unregisterContentObserver(mLocalVideosObserver);
+
         super.onDestroy();
     }
 
@@ -1204,7 +1210,8 @@ public class CameraActivity extends Activity
         Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(Intent.createChooser(intent, null), REQ_CODE_EDIT);
+        startActivityForResult(Intent.createChooser(intent, null),
+                REQ_CODE_DONT_SWITCH_TO_PREVIEW);
     }
 
     /**
@@ -1375,5 +1382,15 @@ public class CameraActivity extends Activity
 
     public CameraOpenErrorCallback getCameraOpenErrorCallback() {
         return mCameraOpenErrorCallback;
+    }
+
+    /**
+     * When the activity is paused and MediaObserver get onChange() call, then
+     * we would like to set a dirty bit to reload the data at onResume().
+     */
+    public void setDirtyWhenPaused() {
+        if (mActivityPaused && !mMediaDataChangedDuringPause) {
+            mMediaDataChangedDuringPause = true;
+        }
     }
 }
