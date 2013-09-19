@@ -62,6 +62,7 @@ import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppManagerFactory;
 import com.android.camera.app.PanoramaStitchingManager;
+import com.android.camera.crop.CropActivity;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.CameraPreviewData;
 import com.android.camera.data.FixedFirstDataAdapter;
@@ -747,9 +748,14 @@ public class CameraActivity extends Activity
             case R.id.action_rotate_cw:
                 localData.rotate90Degrees(this, mDataAdapter, currentDataId, true);
                 return true;
-            case R.id.action_crop:
-                // TODO: add the functionality.
+            case R.id.action_crop: {
+                Intent intent = new Intent(CropActivity.CROP_ACTION);
+                intent.setClass(this, CropActivity.class);
+                intent.setDataAndType(localData.getContentUri(), localData.getMimeType())
+                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
                 return true;
+            }
             case R.id.action_setas: {
                 Intent intent = new Intent(Intent.ACTION_ATTACH_DATA)
                         .setDataAndType(localData.getContentUri(),
