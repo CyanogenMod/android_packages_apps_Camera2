@@ -95,7 +95,7 @@
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Seleccionar cámara"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Trasera"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Frontal"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Almacenar ubicación"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Guardar ubicación"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"UBICACIÓN"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"Temporizador de cuenta atrás"</string>
   <plurals name="pref_camera_timer_entry">
@@ -105,7 +105,7 @@
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Sonar en cuenta atrás"</string>
-    <string name="setting_off" msgid="3321226648786639381">"Desactivado"</string>
+    <string name="setting_off" msgid="3321226648786639381">"No"</string>
     <string name="setting_on" msgid="6658320155242340595">"Activado"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Calidad de vídeo"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Alta"</string>
@@ -132,11 +132,11 @@
     <string name="pref_camera_focusmode_label_auto" msgid="3156723882642048128">"AUTOMÁTICO"</string>
     <string name="pref_camera_focusmode_label_infinity" msgid="7911889349060603983">"INFINITO"</string>
     <string name="pref_camera_focusmode_label_macro" msgid="4573817863140007172">"MACRO"</string>
-    <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Modo flash"</string>
-    <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"MODO FLASH"</string>
+    <string name="pref_camera_flashmode_title" msgid="4037454739283955642">"Modo de flash"</string>
+    <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"MODO DE FLASH"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"Automático"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"Activado"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Desactivado"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"No"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="3099050003430647170">"FLASH AUTOMÁTICO"</string>
     <string name="pref_camera_flashmode_label_on" msgid="2719503527558187559">"FLASH ACTIVADO"</string>
     <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"FLASH DESACTIVADO"</string>
@@ -154,7 +154,9 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"NUBLADO"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Modo de escena"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automático"</string>
-    <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"ARD"</string>
+    <string name="pref_camera_scenemode_entry_hd" msgid="8795601748085464733">"HD"</string>
+    <string name="pref_camera_scenemode_entry_hq" msgid="7050481292482345001">"Calidad alta"</string>
+    <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Acción"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Noche"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="8181732673387418710">"Atardecer"</string>
@@ -174,7 +176,7 @@
     <string name="pref_exposure_label" msgid="5586132867242336300">"EXPOSICIÓN"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
     <skip />
-    <string name="pref_camera_hdr_label" msgid="3566769675820087426">"ARD"</string>
+    <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"CÁMARA FRONTAL"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"CÁMARA TRASERA"</string>
     <string name="dialog_ok" msgid="8097436389338241320">"Aceptar"</string>
@@ -218,8 +220,8 @@
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Revisar foto o vídeo terminados"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Revisar repetición"</string>
     <string name="capital_on" msgid="5840588038158274585">"ACTIVADO"</string>
-    <string name="capital_off" msgid="3199056669644846925">"DESACTIVADO"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Desactivado"</string>
+    <string name="capital_off" msgid="3199056669644846925">"NO"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"No"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0,5 segundos"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1 segundo"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="8931945040035127831">"1,5 segundos"</string>
@@ -263,9 +265,9 @@
     <string name="time_lapse_minutes" msgid="1610738675813013569">"minutos"</string>
     <string name="time_lapse_hours" msgid="2466092767364327518">"horas"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Listo"</string>
-    <string name="set_time_interval" msgid="844482952911185265">"Establecer intervalo de tiempo"</string>
+    <string name="set_time_interval" msgid="844482952911185265">"Establece el intervalo de tiempo"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"El intervalo de tiempo está desactivado. Activa esta función para establecer un intervalo."</string>
-    <string name="set_duration" msgid="7425045408900251919">"Definir duración en segundos"</string>
+    <string name="set_duration" msgid="7425045408900251919">"Define la duración en segundos"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Cuenta atrás para hacer una foto"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"¿Recordar ubicaciones de las fotos?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Etiqueta tus fotos y vídeos con las ubicaciones donde se han realizado.\n\nOtras aplicaciones pueden acceder a esta información, así como a las imágenes guardadas."</string>
