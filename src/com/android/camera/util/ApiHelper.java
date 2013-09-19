@@ -22,6 +22,8 @@ import java.lang.reflect.Field;
 
 public class ApiHelper {
     public static final boolean AT_LEAST_16 = Build.VERSION.SDK_INT >= 16;
+    public static final boolean HAS_APP_GALLERY =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1;
     public static final boolean HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     public static final boolean HAS_AUTO_FOCUS_MOVE_CALLBACK =
