@@ -57,6 +57,7 @@ import com.android.camera.CameraManager.CameraAFMoveCallback;
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.CameraManager.CameraShutterCallback;
+import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
@@ -75,6 +76,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class PhotoModule
         implements CameraModule,
@@ -721,8 +723,9 @@ public class PhotoModule
                     width = s.height;
                     height = s.width;
                 }
-                String title = mNamedImages.getTitle();
-                long date = mNamedImages.getDate();
+                NamedEntity name = mNamedImages.getNextNameEntity();
+                String title = (name == null) ? null : name.title;
+                long date = (name == null) ? -1 : name.date;
                 if (title == null) {
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
@@ -790,41 +793,35 @@ public class PhotoModule
         }
     }
 
-    private static class NamedImages {
-        private ArrayList<NamedEntity> mQueue;
-        private NamedEntity mNamedEntity;
+    /**
+     * This class is just a thread-safe queue for name,date holder objects.
+     */
+    public static class NamedImages {
+        private Vector<NamedEntity> mQueue;
 
         public NamedImages() {
-            mQueue = new ArrayList<NamedEntity>();
+            mQueue = new Vector<NamedEntity>();
         }
 
-        public void nameNewImage(ContentResolver resolver, long date) {
+        public void nameNewImage(long date) {
             NamedEntity r = new NamedEntity();
             r.title = CameraUtil.createJpegName(date);
             r.date = date;
             mQueue.add(r);
         }
 
-        public String getTitle() {
-            if (mQueue.isEmpty()) {
-                mNamedEntity = null;
-                return null;
+        public NamedEntity getNextNameEntity() {
+            synchronized(mQueue) {
+                if (!mQueue.isEmpty()) {
+                    return mQueue.remove(0);
+                }
             }
-            mNamedEntity = mQueue.get(0);
-            mQueue.remove(0);
-
-            return mNamedEntity.title;
+            return null;
         }
 
-        // Must be called after getTitle().
-        public long getDate() {
-            if (mNamedEntity == null) return -1;
-            return mNamedEntity.date;
-        }
-
-        private static class NamedEntity {
-            String title;
-            long date;
+        public static class NamedEntity {
+            public String title;
+            public long date;
         }
     }
 
@@ -893,7 +890,7 @@ public class PhotoModule
                 mRawPictureCallback, mPostViewPictureCallback,
                 new JpegPictureCallback(loc));
 
-        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
+        mNamedImages.nameNewImage(mCaptureStartTime);
 
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
