@@ -17,6 +17,7 @@
 package com.android.camera;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -31,7 +32,11 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateBeamUrisCallback;
+import android.nfc.NfcEvent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -162,6 +167,8 @@ public class CameraActivity extends Activity
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
+
+    private Uri[] mNfcPushUris = new Uri[1];
 
     private ShareActionProvider mStandardShareActionProvider;
     private Intent mStandardShareIntent;
@@ -406,6 +413,32 @@ public class CameraActivity extends Activity
         mBottomProgress.setProgress(progress);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setupNfcBeamPush() {
+        NfcAdapter adapter = NfcAdapter.getDefaultAdapter(CameraActivity.this);
+        if (adapter == null) {
+            return;
+        }
+
+        if (!ApiHelper.HAS_SET_BEAM_PUSH_URIS) {
+            // Disable beaming
+            adapter.setNdefPushMessage(null, CameraActivity.this);
+            return;
+        }
+
+        adapter.setBeamPushUris(null, CameraActivity.this);
+        adapter.setBeamPushUrisCallback(new CreateBeamUrisCallback() {
+            @Override
+            public Uri[] createBeamUris(NfcEvent event) {
+                return mNfcPushUris;
+            }
+        }, CameraActivity.this);
+    }
+
+    private void setNfcBeamPushUri(Uri uri) {
+        mNfcPushUris[0] = uri;
+    }
+
     private void setStandardShareIntent(Uri contentUri, String mimeType) {
         mStandardShareIntent = getShareIntentFromType(mimeType);
         if (mStandardShareIntent != null) {
@@ -538,6 +571,7 @@ public class CameraActivity extends Activity
                 }
             }
             setStandardShareIntent(currentData.getContentUri(), currentData.getMimeType());
+            setNfcBeamPushUri(currentData.getContentUri());
         }
 
         boolean itemHasLocation = currentData.getLatLong() != null;
@@ -877,6 +911,8 @@ public class CameraActivity extends Activity
             mDataAdapter.flush();
             mFilmStripView.setDataAdapter(mDataAdapter);
         }
+
+        setupNfcBeamPush();
     }
 
     private void setRotationAnimation() {
