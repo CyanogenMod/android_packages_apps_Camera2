@@ -154,6 +154,8 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"陰天"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"場景模式"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"自動"</string>
+    <string name="pref_camera_scenemode_entry_hd" msgid="8795601748085464733">"HD 高畫質"</string>
+    <string name="pref_camera_scenemode_entry_hq" msgid="7050481292482345001">"HQ 高畫質"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"高動態範圍"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"動作"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"夜景"</string>

@@ -95,9 +95,9 @@
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Kamera seçin"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Arka"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Ön"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Konumu depola"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Konumu kaydet"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"KONUM"</string>
-    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Kronometre"</string>
+    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Geri sayım saati"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8868342573738742056">"1 saniye"</item>
     <item quantity="other" msgid="3053084895126759755">"%d saniye"</item>
@@ -154,6 +154,8 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"BULUTLU"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Sahne modu"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Otomatik"</string>
+    <string name="pref_camera_scenemode_entry_hd" msgid="8795601748085464733">"HD"</string>
+    <string name="pref_camera_scenemode_entry_hq" msgid="7050481292482345001">"HQ"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"İşlem"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Gece"</string>
