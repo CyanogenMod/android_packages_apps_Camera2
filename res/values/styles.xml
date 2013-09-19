@@ -30,6 +30,14 @@
         <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
     </style>
     <style name="Theme.CameraBase" parent="android:Theme.Holo"/>
+    <style name="Theme.Crop" parent="Theme.GalleryBase">
+        <item name="android:displayOptions"></item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <item name="android:colorBackground">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowBackground">@drawable/crop_tiled_background</item>
+    </style>
     <style name="Holo.ActionBar" parent="android:Widget.Holo.ActionBar">
         <item name="android:displayOptions">useLogo|showHome|homeAsUp</item>
         <item name="android:background">@drawable/actionbar_translucent</item>
