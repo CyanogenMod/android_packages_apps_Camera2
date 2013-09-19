@@ -154,6 +154,8 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"ENNUVOLAT"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Mode d\'escena"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automàtic"</string>
+    <string name="pref_camera_scenemode_entry_hd" msgid="8795601748085464733">"Alta definició"</string>
+    <string name="pref_camera_scenemode_entry_hq" msgid="7050481292482345001">"Alta qualitat"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Acció"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Nit"</string>
@@ -268,7 +270,7 @@
     <string name="set_duration" msgid="7425045408900251919">"Configuració de la durada en segons"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Compte enrere per fer una foto"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Vols que es recordin les ubicacions de les fotos?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"Etiqueta les teves fotos i els teus vídeos amb les ubicacions des de les quals es fan.\n\nAltres aplicacions podran accedir a aquesta informació juntament amb les imatges desades."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Etiqueta les teves fotos i els teus vídeos amb les ubicacions on s\'han fet.\n\nAltres aplicacions podran accedir a aquesta informació i a les les imatges desades."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"No, gràcies"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Sí"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"MÉS OPCIONS"</string>
