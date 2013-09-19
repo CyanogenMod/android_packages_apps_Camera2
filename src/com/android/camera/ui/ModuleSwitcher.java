@@ -35,6 +35,7 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -50,11 +51,14 @@ public class ModuleSwitcher extends RotateImageView
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int WIDE_ANGLE_PANO_MODULE_INDEX = 2;
     public static final int LIGHTCYCLE_MODULE_INDEX = 3;
+    public static final int GCAM_MODULE_INDEX = 4;
+
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
             R.drawable.ic_switch_pan,
             R.drawable.ic_switch_photosphere,
+            R.drawable.ic_switch_gcam,
     };
 
     public interface ModuleSwitchListener {
@@ -104,11 +108,18 @@ public class ModuleSwitcher extends RotateImageView
             --numDrawIds;
         }
 
+        if (!GcamHelper.hasGcamCapture(context)) {
+            --numDrawIds;
+        }
+
         int[] drawids = new int[numDrawIds];
         int[] moduleids = new int[numDrawIds];
         int ix = 0;
         for (int i = 0; i < DRAW_IDS.length; i++) {
             if (i == LIGHTCYCLE_MODULE_INDEX && !PhotoSphereHelper.hasLightCycleCapture(context)) {
+                continue; // not enabled, so don't add to UI
+            }
+            if (i == GCAM_MODULE_INDEX && !GcamHelper.hasGcamCapture(context)) {
                 continue; // not enabled, so don't add to UI
             }
             moduleids[ix] = i;
@@ -199,6 +210,10 @@ public class ModuleSwitcher extends RotateImageView
                 case R.drawable.ic_switch_photosphere:
                     item.setContentDescription(getContext().getResources().getString(
                             R.string.accessibility_switch_to_photo_sphere));
+                    break;
+                case R.drawable.ic_switch_gcam:
+                    item.setContentDescription(getContext().getResources().getString(
+                            R.string.accessibility_switch_to_gcam));
                     break;
                 default:
                     break;

@@ -48,7 +48,7 @@ public class MediaSaveService extends Service {
     // Memory used by the total queued save request, in bytes.
     private long mMemoryUse;
 
-    interface Listener {
+    public interface Listener {
         public void onQueueStatus(boolean full);
     }
 
