@@ -154,6 +154,8 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"NUBLADO"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Modo de cenário"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automático"</string>
+    <string name="pref_camera_scenemode_entry_hd" msgid="8795601748085464733">"HD"</string>
+    <string name="pref_camera_scenemode_entry_hq" msgid="7050481292482345001">"HQ"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Ação"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Noite"</string>
@@ -273,8 +275,8 @@
     <string name="remember_location_yes" msgid="4663333638854720964">"Sim"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"MAIS OPÇÕES"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"DEFINIÇÕES"</string>
-    <string name="create_tiny_planet" msgid="4872614985532261383">"Criar Planeta Pequeno"</string>
-    <string name="saving_tiny_planet" msgid="1959998670020472446">"A Guardar Planeta Pequeno…"</string>
+    <string name="create_tiny_planet" msgid="4872614985532261383">"Criar planeta pequeno"</string>
+    <string name="saving_tiny_planet" msgid="1959998670020472446">"A guardar planeta pequeno…"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"Rodar"</string>
 </resources>
