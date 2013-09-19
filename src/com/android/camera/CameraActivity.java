@@ -681,7 +681,12 @@ public class CameraActivity extends Activity
         switch (item.getItemId()) {
             case android.R.id.home:
                 // ActionBar's Up/Home button was clicked
-                mFilmStripView.getController().goToFirstItem();
+                if (ApiHelper.HAS_APP_GALLERY) {
+                    startActivity(Intent.makeMainSelectorActivity(
+                                Intent.ACTION_MAIN, Intent.CATEGORY_APP_GALLERY));
+                } else {
+                    mFilmStripView.getController().goToFirstItem();
+                }
                 return true;
             case R.id.action_delete:
                 removeData(currentDataId);
