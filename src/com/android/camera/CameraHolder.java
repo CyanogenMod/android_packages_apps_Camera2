@@ -262,6 +262,12 @@ public class CameraHolder {
                     mKeepBeforeTime - now);
             return;
         }
+        strongRelease();
+    }
+
+    public synchronized void strongRelease() {
+        if (mCameraDevice == null) return;
+
         mCameraOpened = false;
         mCameraDevice.release();
         mCameraDevice = null;

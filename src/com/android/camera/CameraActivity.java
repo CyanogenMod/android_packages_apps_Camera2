@@ -71,6 +71,7 @@ import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
@@ -843,7 +844,8 @@ public class CameraActivity extends Activity
             // read the module index from the last time the user changed modes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             moduleIndex = prefs.getInt(PREF_STARTUP_MODULE_INDEX, -1);
-            if (moduleIndex < 0) {
+            if ((moduleIndex == ModuleSwitcher.GCAM_MODULE_INDEX &&
+                    !GcamHelper.hasGcamCapture(this)) || moduleIndex < 0) {
                 moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
             }
         }
@@ -1146,7 +1148,11 @@ public class CameraActivity extends Activity
             case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
                 break;
-
+            case ModuleSwitcher.GCAM_MODULE_INDEX:
+                // Force immediate release of Camera instance
+                CameraHolder.instance().strongRelease();
+                mCurrentModule = GcamHelper.createGcamModule();
+                break;
             default:
                 // Fall back to photo mode.
                 mCurrentModule = new PhotoModule();
