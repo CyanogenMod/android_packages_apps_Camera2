@@ -154,6 +154,8 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="7288490282713935868">"BEWOLKT"</string>
     <string name="pref_camera_scenemode_title" msgid="5200975368614697452">"Scènemodus"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7511260833909115424">"Automatisch"</string>
+    <string name="pref_camera_scenemode_entry_hd" msgid="8795601748085464733">"HD"</string>
+    <string name="pref_camera_scenemode_entry_hq" msgid="7050481292482345001">"Hoge kwaliteit"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="1240176231782477736">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="1837585145734214002">"Actie"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="7769610601562643051">"Nacht"</string>
@@ -200,7 +202,7 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"In de ruimte"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Zonsondergang"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Uw video"</string>
-    <string name="video_snapshot_hint" msgid="56511446769261564">"Raak aan om een foto te maken tijdens een opname."</string>
+    <string name="video_snapshot_hint" msgid="56511446769261564">"Tik op het scherm en maak een foto tijdens een opname"</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Video-opname is gestart."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Video-opname is gestopt."</string>
     <string name="clear_effects" msgid="155262355011195942">"Effecten wissen"</string>
