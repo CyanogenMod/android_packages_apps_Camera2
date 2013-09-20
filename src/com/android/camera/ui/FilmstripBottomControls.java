@@ -133,7 +133,7 @@ public class FilmstripBottomControls extends RelativeLayout {
             @Override
             public void run() {
                 view.setVisibility(visible ? View.VISIBLE
-                        : View.GONE);
+                        : View.INVISIBLE);
             }
         });
     }
