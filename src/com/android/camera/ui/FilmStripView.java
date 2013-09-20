@@ -349,9 +349,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          * Toggles the visibility of the ActionBar.
          *
          * @param dataID The ID of the image data.
-         * @return The ActionBar visibility after the toggle.
          */
-        public boolean onToggleActionBarVisibility(int dataID);
+        public void onToggleSystemDecorsVisibility(int dataID);
+
+        /**
+         * Sets the visibility of system decors, including action bar and nav bar
+         * @param visible The visibility of the system decors
+         */
+        public void setSystemDecorsVisibility(boolean visible);
     }
 
     /**
@@ -990,6 +995,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (mBottomControls == null) {
             mBottomControls = (FilmstripBottomControls) ((View) getParent())
                     .findViewById(R.id.filmstrip_bottom_controls);
+            mActivity.setOnActionBarVisibilityListener(mBottomControls);
             mBottomControls.setListener(this);
         }
 
@@ -2061,7 +2067,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             if (mListener != null) {
                 mListener.onDataFullScreenChange(mViewItem[mCurrentItem].getId(), false);
-                mBottomControls.setVisibility(View.VISIBLE);
             }
         }
 
@@ -2077,7 +2082,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         private void enterFullScreen() {
             if (mListener != null) {
                 mListener.onDataFullScreenChange(mViewItem[mCurrentItem].getId(), true);
-                mBottomControls.setVisibility(View.GONE);
             }
         }
 
@@ -2096,7 +2100,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         private void leaveFullScreen() {
             if (mListener != null) {
                 mListener.onDataFullScreenChange(mViewItem[mCurrentItem].getId(), false);
-                mBottomControls.setVisibility(View.VISIBLE);
             }
         }
 
@@ -2218,8 +2221,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 if (centerItem != null) {
                     dataID = centerItem.getId();
                 }
-                boolean visible = mListener.onToggleActionBarVisibility(dataID);
-                mBottomControls.setVisibility(visible ? View.VISIBLE : View.GONE);
+                mListener.onToggleSystemDecorsVisibility(dataID);
                 return true;
             }
             return false;
@@ -2237,6 +2239,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (!mController.stopScrolling(false)) {
                 return false;
             }
+            mListener.setSystemDecorsVisibility(false);
             mController.zoomAt(current, x, y);
             return false;
         }

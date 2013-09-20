@@ -40,6 +40,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -86,7 +88,8 @@ import com.android.camera2.R;
 import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
 public class CameraActivity extends Activity
-        implements ModuleSwitcher.ModuleSwitchListener {
+        implements ModuleSwitcher.ModuleSwitchListener,
+        ActionBar.OnMenuVisibilityListener {
 
     private static final String TAG = "CAM_Activity";
 
@@ -117,6 +120,9 @@ public class CameraActivity extends Activity
      * want to reset the view to the preview in onResume.
      */
     public static final int REQ_CODE_DONT_SWITCH_TO_PREVIEW = 142;
+
+    private static final int HIDE_ACTION_BAR = 1;
+    private static final long SHOW_ACTION_BAR_TIMEOUT_MS = 3000;
 
     /** Whether onResume should reset the view to the preview. */
     private boolean mResetToPreviewOnResume = true;
@@ -162,6 +168,7 @@ public class CameraActivity extends Activity
     private PanoramaViewHelper mPanoramaViewHelper;
     private CameraPreviewData mCameraPreviewData;
     private ActionBar mActionBar;
+    private OnActionBarVisibilityListener mOnActionBarVisibilityListener = null;
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
@@ -258,6 +265,28 @@ public class CameraActivity extends Activity
         }
     }
 
+    private class MainHandler extends Handler {
+        public MainHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == HIDE_ACTION_BAR) {
+                removeMessages(HIDE_ACTION_BAR);
+                CameraActivity.this.setSystemBarsVisibility(false);
+            }
+        }
+    }
+
+    public interface OnActionBarVisibilityListener {
+        public void onActionBarVisibilityChanged(boolean isVisible);
+    }
+
+    public void setOnActionBarVisibilityListener(OnActionBarVisibilityListener listener) {
+        mOnActionBarVisibilityListener = listener;
+    }
+
     private static int getImmersiveFlags() {
         if (ApiHelper.HAS_HIDEYBARS) {
             return View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -295,7 +324,14 @@ public class CameraActivity extends Activity
                 public void onDataFullScreenChange(int dataID, boolean full) {
                     boolean isCameraID = isCameraPreview(dataID);
                     if (!isCameraID) {
-                        setActionBarVisibilityAndLightsOut(full);
+                        if (!full) {
+                            // Always show action bar in filmstrip mode
+                            CameraActivity.this.setSystemBarsVisibility(true, false);
+                        } else if (mActionBar.isShowing()) {
+                            // Hide action bar after time out in full screen mode
+                            mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR,
+                                    SHOW_ACTION_BAR_TIMEOUT_MS);
+                        }
                     }
                 }
 
@@ -318,6 +354,12 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onCurrentDataChanged(final int dataID, final boolean current) {
+                    // Delay hiding action bar if there is any user interaction
+                    if (mMainHandler.hasMessages(HIDE_ACTION_BAR)) {
+                        mMainHandler.removeMessages(HIDE_ACTION_BAR);
+                        mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR,
+                                SHOW_ACTION_BAR_TIMEOUT_MS);
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -332,7 +374,7 @@ public class CameraActivity extends Activity
                             if (!current) {
                                 if (isCameraID) {
                                     mCurrentModule.onPreviewFocusChanged(false);
-                                    setActionBarVisibilityAndLightsOut(false);
+                                    CameraActivity.this.setSystemBarsVisibility(true);
                                 }
                                 hidePanoStitchingProgress();
                             } else {
@@ -340,7 +382,7 @@ public class CameraActivity extends Activity
                                     mCurrentModule.onPreviewFocusChanged(true);
                                     // Don't show the action bar in Camera
                                     // preview.
-                                    setActionBarVisibilityAndLightsOut(true);
+                                    CameraActivity.this.setSystemBarsVisibility(false);
                                     if (mPendingDeletion) {
                                         performDeletion();
                                     }
@@ -367,19 +409,23 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public boolean onToggleActionBarVisibility(int dataID) {
+                public void onToggleSystemDecorsVisibility(int dataID) {
+                    // If action bar is showing, hide it immediately, otherwise
+                    // show action bar and hide it later
                     if (mActionBar.isShowing()) {
-                        setActionBarVisibilityAndLightsOut(true);
-                        return false;
+                        CameraActivity.this.setSystemBarsVisibility(false);
                     } else {
                         // Don't show the action bar if that is the camera preview.
                         boolean isCameraID = isCameraPreview(dataID);
                         if (!isCameraID) {
-                            setActionBarVisibilityAndLightsOut(false);
-                            return true;
+                            CameraActivity.this.setSystemBarsVisibility(true, true);
                         }
-                        return false;
                     }
+                }
+
+                @Override
+                public void setSystemDecorsVisibility(boolean visible) {
+                    CameraActivity.this.setSystemBarsVisibility(visible);
                 }
             };
 
@@ -388,18 +434,40 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * If enabled, this hides the action bar and switches the system UI to
-     * lights-out mode.
+     * If {@param visible} is false, this hides the action bar and switches the system UI
+     * to lights-out mode.
      */
-    private void setActionBarVisibilityAndLightsOut(boolean enabled) {
-        int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (enabled ? IMMERSIVE_FLAGS
-                : View.SYSTEM_UI_FLAG_VISIBLE);
-        mAboveFilmstripControlLayout
-                .setSystemUiVisibility(visibility);
-        if (enabled) {
-            mActionBar.hide();
-        } else {
-            mActionBar.show();
+
+    private void setSystemBarsVisibility(boolean visible) {
+        setSystemBarsVisibility(visible, false);
+    }
+
+    /**
+     * If {@param visible} is false, this hides the action bar and switches the
+     * system UI to lights-out mode. If {@param hideLater} is true, a delayed message
+     * will be sent after a timeout to hide the action bar.
+     */
+    private void setSystemBarsVisibility(boolean visible, boolean hideLater) {
+        mMainHandler.removeMessages(HIDE_ACTION_BAR);
+        boolean currentlyVisible = mActionBar.isShowing();
+
+        if (visible != currentlyVisible) {
+            int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
+                    : IMMERSIVE_FLAGS);
+            mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
+            if (visible) {
+                mActionBar.show();
+            } else {
+                mActionBar.hide();
+            }
+            if (mOnActionBarVisibilityListener != null) {
+                mOnActionBarVisibilityListener.onActionBarVisibilityChanged(visible);
+            }
+        }
+
+        // Now delay hiding the bars
+        if (visible && hideLater) {
+            mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
         }
     }
 
@@ -485,6 +553,15 @@ public class CameraActivity extends Activity
         mPanoramaShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         if (mPanoramaShareActionProvider != null) {
             mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
+        }
+    }
+
+    @Override
+    public void onMenuVisibilityChanged(boolean isVisible) {
+        // If menu is showing, we need to make sure action bar does not go away.
+        mMainHandler.removeMessages(HIDE_ACTION_BAR);
+        if (!isVisible) {
+            mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
         }
     }
 
@@ -806,10 +883,13 @@ public class CameraActivity extends Activity
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.camera_filmstrip);
         mActionBar = getActionBar();
+        mActionBar.addOnMenuVisibilityListener(this);
 
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
         }
+
+        mMainHandler = new MainHandler(getMainLooper());
         // Check if this is in the secure camera mode.
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -844,7 +924,7 @@ public class CameraActivity extends Activity
         mAboveFilmstripControlLayout.setFitsSystemWindows(true);
         // Hide action bar first since we are in full screen mode first, and
         // switch the system UI to lights-out mode.
-        setActionBarVisibilityAndLightsOut(true);
+        this.setSystemBarsVisibility(false);
         mPanoramaManager = AppManagerFactory.getInstance(this)
                 .getPanoramaStitchingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
@@ -894,7 +974,6 @@ public class CameraActivity extends Activity
         mOrientationListener = new MyOrientationEventListener(this);
         setModuleFromIndex(moduleIndex);
         mCurrentModule.init(this, mCameraModuleRootView);
-        mMainHandler = new Handler(getMainLooper());
 
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
