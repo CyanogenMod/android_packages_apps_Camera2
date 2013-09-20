@@ -829,4 +829,16 @@ public class CameraUtil {
             activity.startActivity(mapsIntent);
         }
     }
+
+    public static String dumpStackTrace(int level) {
+        StackTraceElement[] elems = Thread.currentThread().getStackTrace();
+        // Ignore the first 3 elements.
+        level += 3;
+        level = (level == 0 ? elems.length : Math.min(level, elems.length));
+        String ret = new String();
+        for (int i = 3; i < level; i++) {
+            ret = ret + elems[i].toString() + '\n';
+        }
+        return ret;
+    }
 }
