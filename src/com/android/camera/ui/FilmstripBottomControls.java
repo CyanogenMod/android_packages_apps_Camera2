@@ -22,13 +22,15 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import com.android.camera.CameraActivity;
 import com.android.camera2.R;
 
 /**
  * Shows controls at the bottom of the screen for editing, viewing a photo
  * sphere image and creating a tiny planet from a photo sphere image.
  */
-public class FilmstripBottomControls extends RelativeLayout {
+public class FilmstripBottomControls extends RelativeLayout
+    implements CameraActivity.OnActionBarVisibilityListener {
 
     /**
      * Classes implementing this interface can listen for events on the bottom
@@ -136,5 +138,11 @@ public class FilmstripBottomControls extends RelativeLayout {
                         : View.INVISIBLE);
             }
         });
+    }
+
+    @Override
+    public void onActionBarVisibilityChanged(boolean isVisible) {
+        // TODO: Fade in and out
+        setVisibility(isVisible ? VISIBLE : INVISIBLE);
     }
 }
