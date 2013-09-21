@@ -402,7 +402,7 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public int getViewType() {
-            return TYPE_REMOVABLE_VIEW;
+            return VIEW_TYPE_REMOVABLE;
         }
 
         @Override
@@ -638,7 +638,7 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public int getViewType() {
-            return TYPE_REMOVABLE_VIEW;
+            return VIEW_TYPE_REMOVABLE;
         }
 
         @Override
