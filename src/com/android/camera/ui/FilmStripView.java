@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -118,9 +119,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         // View types.
-        public static final int TYPE_NONE = 0;
-        public static final int TYPE_STICKY_VIEW = 1;
-        public static final int TYPE_REMOVABLE_VIEW = 2;
+        public static final int VIEW_TYPE_NONE = 0;
+        public static final int VIEW_TYPE_STICKY = 1;
+        public static final int VIEW_TYPE_REMOVABLE = 2;
 
         // Actions allowed to be performed on the image data.
         // The actions are defined bit-wise so we can use bit operations like
@@ -705,7 +706,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private int getCurrentViewType() {
         ViewItem curr = mViewItem[mCurrentItem];
         if (curr == null) {
-            return ImageData.TYPE_NONE;
+            return ImageData.VIEW_TYPE_NONE;
         }
         return mDataAdapter.getImageData(curr.getId()).getViewType();
     }
@@ -1048,7 +1049,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 /  mDrawArea.width());
         mController.scrollToPosition(currentViewCenter,
                 snapInTime, false);
-        if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
+        if (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY
                 && !mController.isScaling()
                 && mScale != FULL_SCREEN_SCALE) {
             // Now going to full screen camera
@@ -1332,7 +1333,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     // Keeps the view in the view hierarchy if it's camera preview.
     // Remove from the hierarchy otherwise.
     private void checkForRemoval(ImageData data, View v) {
-        if (data.getViewType() != ImageData.TYPE_STICKY_VIEW) {
+        if (data.getViewType() != ImageData.VIEW_TYPE_STICKY) {
             removeView(v);
             data.recycle();
         } else {
@@ -1615,7 +1616,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     public boolean inCameraFullscreen() {
         return isDataAtCenter(0) && inFullScreen()
-                && (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW);
+                && (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY);
     }
 
     @Override
@@ -1816,10 +1817,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * MyController controls all the geometry animations. It passively tells the
      * geometry information on demand.
      */
-    private class MyController implements
-            Controller,
-            ValueAnimator.AnimatorUpdateListener,
-            Animator.AnimatorListener {
+    private class MyController implements Controller {
 
         private final ValueAnimator mScaleAnimator;
         private ValueAnimator mZoomAnimator;
@@ -1827,50 +1825,50 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         private final Scroller mScroller;
         private boolean mCanStopScroll;
         private final DecelerateInterpolator mDecelerateInterpolator;
-        private final TimeInterpolator mDecelerateAccelerateInterpolator =
-                new TimeInterpolator() {
-                    private final TimeInterpolator interpolator =
-                            new AccelerateInterpolator();
+
+        private final MyScroller.Listener mScrollerListener =
+                new MyScroller.Listener() {
+                    @Override
+                    public void onScrollUpdate(int currX, int currY) {
+                        mCenterX = currX;
+                        clampCenterX();
+                        invalidate();
+                    }
 
                     @Override
-                    public float getInterpolation(float v) {
-                        float v2 = v * 2f;
-                        return ((v2 < 1f) ?
-                                mDecelerateInterpolator.getInterpolation(v2) / 2f :
-                                interpolator.getInterpolation(v2 - 1f) / 2f + 0.5f);
-                    }
-                };
-
-        private final Runnable mScrollUpdater = new Runnable() {
-            @Override
-            public void run() {
-                boolean newPosition = !mScroller.isFinished();
-                if (!newPosition) {
-                    mCanStopScroll = true;
-                    if (mViewItem[mCurrentItem] != null) {
+                    public void onScrollEnd() {
+                        mCanStopScroll = true;
+                        if (mViewItem[mCurrentItem] == null) {
+                            return;
+                        }
                         snapInCenter();
                         if (mCenterX == mViewItem[mCurrentItem].getCenterX()
-                            && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
+                                && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
+                            // Special case for the scrolling end on the camera preview.
                             goToFullScreen();
                         }
                     }
-                    return;
-                }
-                mScroller.computeScrollOffset();
-                mCenterX = mScroller.getCurrX();
-                clampCenterX();
-                invalidate();
-                FilmStripView.this.post(this);
-            }
-        };
+                };
+
+        private ValueAnimator.AnimatorUpdateListener mScaleAnimatorUpdateListener =
+                new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if (mViewItem[mCurrentItem] == null) {
+                            return;
+                        }
+                        mScale = (Float) animation.getAnimatedValue();
+                        invalidate();
+                    }
+                };
 
         MyController(Context context) {
-            mScroller = new Scroller(context);
+            mScroller = new MyScroller(mActivity,
+                    new Handler(mActivity.getMainLooper()), mScrollerListener);
             mCanStopScroll = true;
 
             mScaleAnimator = new ValueAnimator();
-            mScaleAnimator.addUpdateListener(MyController.this);
-            mScaleAnimator.addListener(MyController.this);
+            mScaleAnimator.addUpdateListener(mScaleAnimatorUpdateListener);
             mDecelerateInterpolator = new DecelerateInterpolator(1.5f);
         }
 
@@ -1983,7 +1981,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
 
             float scaledVelocityX = velocityX / mScale;
-            if (inFullScreen() && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
+            if (inFullScreen() && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY
                     && scaledVelocityX < 0) {
                 // Swipe left in camera preview.
                 goToFilmStrip();
@@ -1998,7 +1996,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // the possible maximum too.
             int maxX = estimateMaxX(item.getId(), item.getLeftPosition(), w);
             mScroller.fling(mCenterX, 0, (int) -velocityX, 0, minX, maxX, 0, 0);
-            FilmStripView.this.post(mScrollUpdater);
         }
 
         @Override
@@ -2024,21 +2021,21 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mCanStopScroll = interruptible;
             mScroller.startScroll(mCenterX, 0, position - mCenterX,
                     0, duration);
-            FilmStripView.this.post(mScrollUpdater);
         }
 
         @Override
         public boolean goToNextItem() {
-            ViewItem nextItem = mViewItem[mCurrentItem + 1];
+            final ViewItem nextItem = mViewItem[mCurrentItem + 1];
             if (nextItem == null) {
                 return false;
             }
-            stopScale();
+            stopScrolling(true);
             scrollToPosition(nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS * 2, false);
-            mScaleAnimator.setFloatValues(FULL_SCREEN_SCALE, FILM_STRIP_SCALE, FULL_SCREEN_SCALE);
-            mScaleAnimator.setInterpolator(mDecelerateAccelerateInterpolator);
-            mScaleAnimator.setDuration(GEOMETRY_ADJUST_TIME_MS * 2);
-            mScaleAnimator.start();
+
+            if (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
+                // Special case when moving from camera preview.
+                scaleTo(FILM_STRIP_SCALE, GEOMETRY_ADJUST_TIME_MS);
+            }
             return true;
         }
 
@@ -2059,7 +2056,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             final ViewItem nextItem = mViewItem[mCurrentItem + 1];
             if (mViewItem[mCurrentItem].getId() == 0 &&
-                    getCurrentViewType() == ImageData.TYPE_STICKY_VIEW &&
+                    getCurrentViewType() == ImageData.VIEW_TYPE_STICKY &&
                     nextItem != null) {
                 // Deal with the special case of swiping in camera preview.
                 scrollToPosition(nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, false);
@@ -2160,46 +2157,71 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             reload();
         }
 
-        @Override
-        public void onAnimationUpdate(ValueAnimator animation) {
-            if (mViewItem[mCurrentItem] == null) {
-                return;
-            }
-            mScale = (Float) animation.getAnimatedValue();
-            invalidate();
-        }
-
-        @Override
-        public void onAnimationStart(Animator anim) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animator anim) {
-            ViewItem item = mViewItem[mCurrentItem];
-            if (item == null) {
-                return;
-            }
-            if (mCenterX != item.getCenterX()) {
-                if (inFilmStrip()) {
-                    snapInCenter();
-                }
-            }
-        }
-
-        @Override
-        public void onAnimationCancel(Animator anim) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator anim) {
-        }
-
         public boolean isZoomStarted() {
             return mScale > FULL_SCREEN_SCALE;
         }
 
         public boolean isZoomAnimationRunning() {
             return mZoomAnimator != null && mZoomAnimator.isRunning();
+        }
+    }
+
+    private static class MyScroller extends Scroller {
+        public interface Listener {
+            public void onScrollUpdate(int currX, int currY);
+            public void onScrollEnd();
+        }
+
+        private Handler mHandler;
+        private Listener mListener;
+        private Runnable mScrollChecker = new Runnable() {
+            @Override
+            public void run() {
+                boolean newPosition = computeScrollOffset();
+                if (!newPosition) {
+                    mListener.onScrollEnd();
+                    return;
+                }
+                mListener.onScrollUpdate(getCurrX(), getCurrY());
+                mHandler.removeCallbacks(this);
+                mHandler.post(this);
+            }
+        };
+
+        public MyScroller(Context ctx, Handler handler, Listener listener) {
+            super(ctx);
+            mHandler = handler;
+            mListener = listener;
+        }
+
+        @Override
+        public void fling(
+                int startX, int startY,
+                int velocityX, int velocityY,
+                int minX, int maxX,
+                int minY, int maxY) {
+            super.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
+            runChecker();
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy) {
+            super.startScroll(startX, startY, dx, dy);
+            runChecker();
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+            super.startScroll(startX, startY, dx, dy, duration);
+            runChecker();
+        }
+
+        private void runChecker() {
+            if (mHandler == null || mListener == null) {
+                return;
+            }
+            mHandler.removeCallbacks(mScrollChecker);
+            mHandler.post(mScrollChecker);
         }
     }
 
@@ -2305,7 +2327,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
             if (mCenterX > currItem.getCenterX() + CAMERA_PREVIEW_SWIPE_THRESHOLD
                     && currItem.getId() == 0
-                    && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW
+                    && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY
                     && mDataIdOnUserScrolling == 0) {
                 mController.goToFilmStrip();
                 // Special case to go from camera preview to the next photo.
@@ -2318,7 +2340,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     snapInCenter();
                 }
             } if (mCenterX == currItem.getCenterX() && currItem.getId() == 0
-                    && getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
+                    && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
                 mController.goToFullScreen();
             } else {
                 if (mDataIdOnUserScrolling  == 0 && currItem.getId() != 0) {
@@ -2436,7 +2458,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                         }
                         mController.scrollToPosition(
                                 nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, true);
-                        if (getCurrentViewType() == ImageData.TYPE_STICKY_VIEW) {
+                        if (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
                             mController.goToFilmStrip();
                         }
                     }
