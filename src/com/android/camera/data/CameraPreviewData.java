@@ -41,7 +41,7 @@ public class CameraPreviewData extends SimpleViewData {
 
     @Override
     public int getViewType() {
-        return ImageData.TYPE_STICKY_VIEW;
+        return ImageData.VIEW_TYPE_STICKY;
     }
 
     @Override

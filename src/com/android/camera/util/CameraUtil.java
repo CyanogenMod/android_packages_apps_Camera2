@@ -830,14 +830,20 @@ public class CameraUtil {
         }
     }
 
+    /**
+     * Dumps the stack trace.
+     *
+     * @param level How many levels of the stack are dumped. 0 means all.
+     * @return A {@link java.lang.String} of all the output with newline
+     * between each.
+     */
     public static String dumpStackTrace(int level) {
         StackTraceElement[] elems = Thread.currentThread().getStackTrace();
         // Ignore the first 3 elements.
-        level += 3;
-        level = (level == 0 ? elems.length : Math.min(level, elems.length));
+        level = (level == 0 ? elems.length : Math.min(level + 3, elems.length));
         String ret = new String();
         for (int i = 3; i < level; i++) {
-            ret = ret + elems[i].toString() + '\n';
+            ret = ret + "\t" + elems[i].toString() + '\n';
         }
         return ret;
     }
