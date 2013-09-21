@@ -81,7 +81,7 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public int getViewType() {
-        return FilmStripView.ImageData.TYPE_REMOVABLE_VIEW;
+        return FilmStripView.ImageData.VIEW_TYPE_REMOVABLE;
     }
 
     @Override
