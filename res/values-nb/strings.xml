@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Bytt til video"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Bytt til panorama"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Bytt til bildeboble"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Bytt til høy kvalitet"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Avbryt redigeringen"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Redigeringen er fullført"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Ta nytt bilde/video"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"Lagrer miniplanet …"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"Rotér"</string>
+    <string name="crop_save" msgid="4032662755325734093">"Lagre"</string>
 </resources>
