@@ -228,18 +228,14 @@
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
-    <!-- The default quality value is 5 (720p) -->
-    <string name="pref_video_quality_default" translatable="false">5</string>
+    <!-- The default quality value is 3 (CIF) -->
+    <string name="pref_video_quality_default" translatable="false">3</string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_1080p" translatable="false">HD 1080p</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_720p" translatable="false">HD 720p</string>
     <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_480p" translatable="false">SD 480p</string>
-    <!-- Video quality setting entry. Videos will be recorded in the highest quality available on the device. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_high">High</string>
-    <!-- Video quality setting entry. Videos will be recorded in the lowest quality available on the device. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_low">Low</string>
 
     <!-- Describes the preference dialog for choosing interval between frame capture for
     time lapse recording. Appears at top of the dialog. [CHAR LIMIT=30] -->
@@ -257,6 +253,8 @@
 
     <!-- Settings screen, dialog choice for 13 megapixels picture size [CHAR LIMIT=20] -->
     <string name="pref_camera_picturesize_entry_13mp">13M pixels</string>
+    <!-- Settings screen, dialog choice for 12 megapixels picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_12mp">12M pixels</string>
     <!-- Settings screen, dialog choice for 8 megapixels picture size [CHAR LIMIT=20] -->
     <string name="pref_camera_picturesize_entry_8mp">8M pixels</string>
     <!-- Settings screen, dialog choice for 5 megapixels picture size [CHAR LIMIT=20] -->

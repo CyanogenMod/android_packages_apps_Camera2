@@ -16,12 +16,14 @@
 
 package com.android.camera;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
@@ -36,6 +38,7 @@ import com.android.camera2.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.os.Build;
 
 /**
  *  Provides utilities and keys for Camera settings.
@@ -67,6 +70,9 @@ public class CameraSettings {
     public static final String KEY_PHOTOSPHERE_PICTURESIZE = "pref_photosphere_picturesize_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
 
+    public static final String KEY_VIDEO_ENCODER = "pref_camera_videoencoder_key";
+    public static final String KEY_AUDIO_ENCODER = "pref_camera_audioencoder_key";
+    public static final String KEY_VIDEO_DURATION = "pref_camera_video_duration_key";
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
     public static final int CURRENT_VERSION = 5;
@@ -96,10 +102,10 @@ public class CameraSettings {
     }
 
     public static String getSupportedHighestVideoQuality(int cameraId,
-            String defaultQuality) {
+            String defaultQuality,Parameters parameters) {
         // When launching the camera app first time, we will set the video quality
         // to the first one (i.e. highest quality) in the supported list
-        List<String> supported = getSupportedVideoQuality(cameraId);
+        List<String> supported = getSupportedVideoQuality(cameraId,parameters);
         if (supported == null) {
             Log.e(TAG, "No supported video quality is found");
             return defaultQuality;
@@ -177,7 +183,8 @@ public class CameraSettings {
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
         if (videoQuality != null) {
-            filterUnsupportedOptions(group, videoQuality, getSupportedVideoQuality(mCameraId));
+            filterUnsupportedOptions(group, videoQuality, getSupportedVideoQuality(
+                   mCameraId,mParameters));
         }
 
         if (pictureSize != null) {
@@ -484,19 +491,96 @@ public class CameraSettings {
         initialCameraPictureSize(context, parameters);
         writePreferredCameraId(preferences, currentCameraId);
     }
+    private static boolean checkSupportedVideoQuality(Parameters parameters,int width, int height){
+        List <Size> supported = parameters.getSupportedVideoSizes();
+        int flag = 0;
+        for (Size size : supported){
+            //since we are having two profiles with same height, we are checking with height
+            if (size.height == 480) {
+                if (size.height == height && size.width == width) {
+                    flag = 1;
+                    break;
+                }
+            } else {
+                if (size.width == width) {
+                    flag = 1;
+                    break;
+                }
+            }
+        }
+        if (flag == 1)
+            return true;
 
-    private static ArrayList<String> getSupportedVideoQuality(int cameraId) {
+        return false;
+    }
+    private static ArrayList<String> getSupportedVideoQuality(int cameraId,Parameters parameters) {
         ArrayList<String> supported = new ArrayList<String>();
         // Check for supported quality
+        if (ApiHelper.HAS_FINE_RESOLUTION_QUALITY_LEVELS) {
+        getFineResolutionQuality(supported,cameraId,parameters);
+        } else {
+            supported.add(Integer.toString(CamcorderProfile.QUALITY_HIGH));
+            CamcorderProfile high = CamcorderProfile.get(
+                    cameraId, CamcorderProfile.QUALITY_HIGH);
+            CamcorderProfile low = CamcorderProfile.get(
+                    cameraId, CamcorderProfile.QUALITY_LOW);
+            if (high.videoFrameHeight * high.videoFrameWidth >
+                    low.videoFrameHeight * low.videoFrameWidth) {
+                supported.add(Integer.toString(CamcorderProfile.QUALITY_LOW));
+            }
+        }
+
+        return supported;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private static void getFineResolutionQuality(ArrayList<String> supported,
+                                                 int cameraId,Parameters parameters) {
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
-            supported.add(Integer.toString(CamcorderProfile.QUALITY_1080P));
+           if (checkSupportedVideoQuality(parameters,1920,1080)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_1080P));
+           }
         }
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
-            supported.add(Integer.toString(CamcorderProfile.QUALITY_720P));
+           if (checkSupportedVideoQuality(parameters,1280,720)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_720P));
+           }
         }
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
-            supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
+           if (checkSupportedVideoQuality(parameters,720,480)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
+           }
         }
-        return supported;
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_FWVGA)) {
+           if (checkSupportedVideoQuality(parameters,864,480)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_FWVGA));
+           }
+        }
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_WVGA)) {
+           if (checkSupportedVideoQuality(parameters,800,480)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_WVGA));
+           }
+        }
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_VGA)) {
+           if (checkSupportedVideoQuality(parameters,640,480)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_VGA));
+           }
+        }
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_CIF)) {
+           if (checkSupportedVideoQuality(parameters,352,288)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_CIF));
+           }
+        }
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_QVGA)) {
+           if (checkSupportedVideoQuality(parameters,320,240)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_QVGA));
+           }
+        }
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_QCIF)) {
+           if (checkSupportedVideoQuality(parameters,176,144)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_QCIF));
+           }
+        }
+
     }
 }

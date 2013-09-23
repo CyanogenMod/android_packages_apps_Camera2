@@ -70,6 +70,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 public class VideoModule implements CameraModule,
     VideoController,
@@ -215,6 +216,72 @@ public class VideoModule implements CameraModule,
         }
         mParameters = mCameraDevice.getParameters();
     }
+
+    //QCOM data Members Starts here
+    static class DefaultHashMap<K, V> extends HashMap<K, V> {
+        private V mDefaultValue;
+
+        public void putDefault(V defaultValue) {
+            mDefaultValue = defaultValue;
+        }
+
+        @Override
+        public V get(Object key) {
+            V value = super.get(key);
+            return (value == null) ? mDefaultValue : value;
+        }
+        public K getKey(V toCheck) {
+            Iterator<K> it = this.keySet().iterator();
+            V val;
+            K key;
+            while(it.hasNext()) {
+                key = it.next();
+                val = this.get(key);
+                if (val.equals(toCheck)) {
+                    return key;
+                }
+            }
+        return null;
+        }
+    }
+
+
+    private static final DefaultHashMap<String, Integer>
+            OUTPUT_FORMAT_TABLE = new DefaultHashMap<String, Integer>();
+    private static final DefaultHashMap<String, Integer>
+            VIDEO_ENCODER_TABLE = new DefaultHashMap<String, Integer>();
+    private static final DefaultHashMap<String, Integer>
+            AUDIO_ENCODER_TABLE = new DefaultHashMap<String, Integer>();
+    private static final DefaultHashMap<String, Integer>
+            VIDEOQUALITY_BITRATE_TABLE = new DefaultHashMap<String, Integer>();
+
+    static {
+        OUTPUT_FORMAT_TABLE.put("3gp", MediaRecorder.OutputFormat.THREE_GPP);
+        OUTPUT_FORMAT_TABLE.put("mp4", MediaRecorder.OutputFormat.MPEG_4);
+        OUTPUT_FORMAT_TABLE.putDefault(MediaRecorder.OutputFormat.DEFAULT);
+
+        VIDEO_ENCODER_TABLE.put("h263", MediaRecorder.VideoEncoder.H263);
+        VIDEO_ENCODER_TABLE.put("h264", MediaRecorder.VideoEncoder.H264);
+        VIDEO_ENCODER_TABLE.put("m4v", MediaRecorder.VideoEncoder.MPEG_4_SP);
+        VIDEO_ENCODER_TABLE.putDefault(MediaRecorder.VideoEncoder.DEFAULT);
+
+        AUDIO_ENCODER_TABLE.put("amrnb", MediaRecorder.AudioEncoder.AMR_NB);
+        // Enabled once support is added in MediaRecorder.
+        // AUDIO_ENCODER_TABLE.put("qcelp", MediaRecorder.AudioEncoder.QCELP);
+        // AUDIO_ENCODER_TABLE.put("evrc", MediaRecorder.AudioEncoder.EVRC);
+        AUDIO_ENCODER_TABLE.put("amrwb", MediaRecorder.AudioEncoder.AMR_WB);
+        AUDIO_ENCODER_TABLE.put("aac", MediaRecorder.AudioEncoder.AAC);
+        AUDIO_ENCODER_TABLE.putDefault(MediaRecorder.AudioEncoder.DEFAULT);
+
+    }
+
+    private int mVideoEncoder;
+    private int mAudioEncoder;
+    private boolean mRestartPreview = false;
+    private int videoWidth;
+    private int videoHeight;
+    boolean mUnsupportedResolution = false;
+
 
     // This Handler is used to post message back onto the main thread of the
     // application
@@ -547,15 +614,53 @@ public class VideoModule implements CameraModule,
         mUI.setShutterPressed(pressed);
     }
 
+    private void qcomReadVideoPreferences() {
+        String videoEncoder = mPreferences.getString(
+               CameraSettings.KEY_VIDEO_ENCODER,
+               mActivity.getString(R.string.pref_camera_videoencoder_default));
+        mVideoEncoder = VIDEO_ENCODER_TABLE.get(videoEncoder);
+
+        Log.v(TAG, "Video Encoder selected = " +mVideoEncoder);
+
+        String audioEncoder = mPreferences.getString(
+               CameraSettings.KEY_AUDIO_ENCODER,
+               mActivity.getString(R.string.pref_camera_audioencoder_default));
+        mAudioEncoder = AUDIO_ENCODER_TABLE.get(audioEncoder);
+
+        Log.v(TAG, "Audio Encoder selected = " +mAudioEncoder);
+
+        String minutesStr = mPreferences.getString(
+              CameraSettings.KEY_VIDEO_DURATION,
+              mActivity.getString(R.string.pref_camera_video_duration_default));
+        int minutes = -1;
+        try {
+            minutes = Integer.parseInt(minutesStr);
+        } catch(NumberFormatException npe) {
+            // use default value continue
+            minutes = Integer.parseInt(mActivity.getString(
+                         R.string.pref_camera_video_duration_default));
+        }
+        if (minutes == -1) {
+            // User wants lowest, set 30s */
+            mMaxVideoDurationInMs = 30000;
+        } else {
+            // 1 minute = 60000ms
+            mMaxVideoDurationInMs = 60000 * minutes;
+        }
+
+   }
+
     private void readVideoPreferences() {
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
         String videoQuality = mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY,
                         null);
         if (videoQuality == null) {
+             mParameters = mCameraDevice.getParameters();
             // check for highest quality before setting default value
             videoQuality = CameraSettings.getSupportedHighestVideoQuality(mCameraId,
-                    mActivity.getResources().getString(R.string.pref_video_quality_default));
+                    mActivity.getResources().getString(R.string.pref_video_quality_default),
+                                                       mParameters);
             mPreferences.edit().putString(CameraSettings.KEY_VIDEO_QUALITY, videoQuality);
         }
         int quality = Integer.valueOf(videoQuality);
@@ -592,6 +697,7 @@ public class VideoModule implements CameraModule,
         if (mCaptureTimeLapse) quality += 1000;
         mProfile = CamcorderProfile.get(mCameraId, quality);
         getDesiredPreviewSize();
+        qcomReadVideoPreferences();
         mPreferenceRead = true;
     }
 
@@ -945,6 +1051,19 @@ public class VideoModule implements CameraModule,
         Intent intent = mActivity.getIntent();
         Bundle myExtras = intent.getExtras();
 
+        videoWidth = mProfile.videoFrameWidth;
+        videoHeight = mProfile.videoFrameHeight;
+        mUnsupportedResolution = false;
+
+        if (mVideoEncoder == MediaRecorder.VideoEncoder.H263) {
+            if (videoWidth >= 1280 && videoHeight >= 720) {
+                    mUnsupportedResolution = true;
+                    Toast.makeText(mActivity, R.string.error_app_unsupported,
+                    Toast.LENGTH_LONG).show();
+                    return;
+            }
+        }
+
         long requestedSizeLimit = 0;
         closeVideoFileDescriptor();
         mCurrentVideoUriFromMediaSaved = false;
@@ -970,8 +1089,13 @@ public class VideoModule implements CameraModule,
         mMediaRecorder.setCamera(mCameraDevice.getCamera());
         if (!mCaptureTimeLapse) {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+            mProfile.audioCodec = mAudioEncoder;
         }
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        mProfile.videoCodec = mVideoEncoder;
+        mProfile.duration = mMaxVideoDurationInMs;
+
         mMediaRecorder.setProfile(mProfile);
         mMediaRecorder.setMaxDuration(mMaxVideoDurationInMs);
         if (mCaptureTimeLapse) {
@@ -1183,6 +1307,10 @@ public class VideoModule implements CameraModule,
         mCurrentVideoUri = null;
 
         initializeRecorder();
+        if (mUnsupportedResolution == true) {
+              Log.v(TAG, "Unsupported Resolution according to target");
+              return;
+        }
         if (mMediaRecorder == null) {
             Log.e(TAG, "Fail to initialize media recorder");
             return;
@@ -1472,7 +1600,11 @@ public class VideoModule implements CameraModule,
         }
 
         forceFlashOffIfSupported(!mUI.isVisible());
-
+        videoWidth = mProfile.videoFrameWidth;
+        videoHeight = mProfile.videoFrameHeight;
+        String recordSize = videoWidth + "x" + videoHeight;
+        Log.e(TAG,"Video dimension in App->"+recordSize);
+        mParameters.set("video-size", recordSize);
         // Set white balance parameter.
         String whiteBalance = mPreferences.getString(
                 CameraSettings.KEY_WHITE_BALANCE,
