@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Превключване към видеокамера"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Превключване към панорама"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Превключване към Photo Sphere"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Превключване към високо качество"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Анулиране на прегледа"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Прегледът приключи"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Презаснемане на преглеждания елемент"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"Мини планетата се запазва…"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"Мащаб: Промяна"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"Завъртане"</string>
+    <string name="crop_save" msgid="4032662755325734093">"Запазване"</string>
 </resources>

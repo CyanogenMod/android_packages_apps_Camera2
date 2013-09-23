@@ -91,7 +91,7 @@
     <string name="no_storage" product="default" msgid="5694411578108472132">"카메라를 사용하기 전에 SD 카드를 삽입하세요."</string>
     <string name="preparing_sd" product="default" msgid="5062635071578247325">"SD 카드 준비 중..."</string>
     <string name="access_sd_fail" product="default" msgid="7705342436207795167">"SD 카드에 액세스할 수 없습니다."</string>
-    <string name="time_lapse_title" msgid="264021984782348139">"시간 경과 기록"</string>
+    <string name="time_lapse_title" msgid="264021984782348139">"시간 경과 모드"</string>
     <string name="pref_camera_id_title" msgid="8027686978170301915">"카메라 선택"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"후면"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"전면"</string>
@@ -104,8 +104,8 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"카운트다운하는 동안 신호음 울리기"</string>
-    <string name="setting_off" msgid="3321226648786639381">"Off"</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"카운트다운 신호음 켜기"</string>
+    <string name="setting_off" msgid="3321226648786639381">"OFF"</string>
     <string name="setting_on" msgid="6658320155242340595">"On"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"동영상 화질"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"높음"</string>
@@ -136,7 +136,7 @@
     <string name="pref_camera_flashmode_label" msgid="6684291276546279860">"플래시 모드"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="415227229724303061">"자동"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="88773476344754314">"On"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"Off"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8251029141614172527">"OFF"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="3099050003430647170">"자동 플래시"</string>
     <string name="pref_camera_flashmode_label_on" msgid="2719503527558187559">"플래시 사용"</string>
     <string name="pref_camera_flashmode_label_off" msgid="1018914822085714107">"플래시 사용 안함"</string>
@@ -216,12 +216,13 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"동영상으로 전환"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"파노라마로 전환"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Photo Sphere로 전환"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"고화질로 전환"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"리뷰 취소"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"리뷰 완료"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"다시 찍기"</string>
     <string name="capital_on" msgid="5840588038158274585">"ON"</string>
     <string name="capital_off" msgid="3199056669644846925">"OFF"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"Off"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="8999446316706593179">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="8756750735297085410">"0.5초"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="7640704589637632218">"1초"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="8931945040035127831">"1.5초"</string>
@@ -270,7 +271,7 @@
     <string name="set_duration" msgid="7425045408900251919">"시간 설정(초)"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"사진을 찍으려면 카운트다운하세요."</string>
     <string name="remember_location_title" msgid="2290717227833540397">"사진 위치를 기록하시겠습니까?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"촬영한 위치로 사진과 동영상에 태그를 지정하세요.\n\n다른 앱이 저장된 이미지와 더불어 이 정보에 액세스할 수 있습니다."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"촬영한 위치로 사진과 동영상에 태그를 지정하세요.\n\n다른 앱이 저장된 이미지와 함께 이 정보를 볼 수 있습니다."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"아니요"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"예"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"옵션 더보기"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"작은 행성 저장 중 …"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"확대/축소"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"회전"</string>
+    <string name="crop_save" msgid="4032662755325734093">"저장"</string>
 </resources>
