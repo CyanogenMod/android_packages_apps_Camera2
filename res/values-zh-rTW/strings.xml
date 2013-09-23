@@ -113,7 +113,7 @@
     <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"延時攝影"</string>
     <string name="pref_camera_settings_category" msgid="4286755118301278593">"相機設定"</string>
     <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"攝錄影機設定"</string>
-    <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"圖片大小"</string>
+    <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"相片大小"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="3084140665950405601">"1300 萬像素"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"800 萬像素"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="8813718385379530965">"500 萬像素"</string>
@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"切換至錄影模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"切換至全景模式"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"切換至全景拍攝"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"切換至高畫質"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"檢閱取消"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"檢閱完成"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"檢查重拍"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"正在儲存小星球視角相片…"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"縮放"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"旋轉"</string>
+    <string name="crop_save" msgid="4032662755325734093">"儲存"</string>
 </resources>
