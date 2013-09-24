@@ -30,6 +30,9 @@ import com.android.camera.IconListPreference;
 import com.android.camera.ListPreference;
 import com.android.camera2.R;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * This is a popup window that allows users to turn on/off time lapse feature,
  * and to select a time interval for taking a time lapse video.
@@ -60,8 +63,21 @@ public class TimeIntervalPopup extends AbstractSettingPopup {
 
         Resources res = context.getResources();
         mUnits = res.getStringArray(R.array.pref_video_time_lapse_frame_interval_units);
-        mDurations = res
-                .getStringArray(R.array.pref_video_time_lapse_frame_interval_duration_values);
+        mDurations = localizeNumbers(res
+                .getStringArray(R.array.pref_video_time_lapse_frame_interval_duration_values));
+    }
+
+    /**
+     * Localizes an array of US formatted numbers.
+     */
+    private static String[] localizeNumbers(String[] mDurations) {
+        NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+        String[] result = new String[mDurations.length];
+        for (int i = 0; i < mDurations.length; ++i) {
+            double value = Double.valueOf(mDurations[i]);
+            result[i] = format.format(value);
+        }
+        return result;
     }
 
     public void initialize(IconListPreference preference) {
