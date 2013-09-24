@@ -93,12 +93,6 @@ public class CameraActivity extends Activity
 
     private static final String TAG = "CAM_Activity";
 
-    /**
-     * The visibility flags to use to switch the system in either lights-out
-     * mode (pre-K) or hideybar mode (K and up).
-     */
-    private static final int IMMERSIVE_FLAGS = getImmersiveFlags();
-
     private static final String INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE =
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";
     public static final String ACTION_IMAGE_CAPTURE_SECURE =
@@ -287,19 +281,6 @@ public class CameraActivity extends Activity
         mOnActionBarVisibilityListener = listener;
     }
 
-    private static int getImmersiveFlags() {
-        if (ApiHelper.HAS_HIDEYBARS) {
-            return View.SYSTEM_UI_FLAG_IMMERSIVE
-                    | View.SYSTEM_UI_FLAG_TRANSPARENT_STATUS
-                    | View.SYSTEM_UI_FLAG_TRANSPARENT_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        } else {
-            // Pre-KitKat we use lights-out mode.
-            return View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        }
-    }
-
     public static boolean isFirstStartAfterScreenOn() {
         return sFirstStartAfterScreenOn;
     }
@@ -453,7 +434,7 @@ public class CameraActivity extends Activity
 
         if (visible != currentlyVisible) {
             int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
-                    : IMMERSIVE_FLAGS);
+                    : View.SYSTEM_UI_FLAG_LOW_PROFILE);
             mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
             if (visible) {
                 mActionBar.show();
