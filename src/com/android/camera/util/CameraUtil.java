@@ -899,4 +899,21 @@ public class CameraUtil {
         }
         return ret;
     }
+
+    /**
+     * Launches apps supporting action {@link Intent.ACTION_MAIN} of category
+     * {@link Intent.CATEGORY_APP_GALLERY}. Note that
+     * {@link Intent.CATEGORY_APP_GALLERY} is only available on API level 15+.
+     *
+     * @param ctx The {@link android.content.Context} to launch the app.
+     * @return {@code true} on success.
+     */
+    public static boolean launchGallery(Context ctx) {
+        if (ApiHelper.HAS_APP_GALLERY) {
+            ctx.startActivity(Intent.makeMainSelectorActivity(
+                    Intent.ACTION_MAIN, Intent.CATEGORY_APP_GALLERY));
+            return true;
+        }
+        return false;
+    }
 }
