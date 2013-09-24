@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Växla till video"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Byt till panorama"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Byt till Photo Sphere"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Byt till hög kvalitet"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Avbryt"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Granskningen är klar"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Omtagning"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"Den lilla planeten sparas..."</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"Zooma"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"Rotera"</string>
+    <string name="crop_save" msgid="4032662755325734093">"Spara"</string>
 </resources>
