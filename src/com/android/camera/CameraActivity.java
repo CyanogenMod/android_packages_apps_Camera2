@@ -795,10 +795,7 @@ public class CameraActivity extends Activity
         switch (item.getItemId()) {
             case android.R.id.home:
                 // ActionBar's Up/Home button was clicked
-                if (ApiHelper.HAS_APP_GALLERY) {
-                    startActivity(Intent.makeMainSelectorActivity(
-                                Intent.ACTION_MAIN, Intent.CATEGORY_APP_GALLERY));
-                } else {
+                if (!CameraUtil.launchGallery(CameraActivity.this)) {
                     mFilmStripView.getController().goToFirstItem();
                 }
                 return true;
@@ -986,6 +983,13 @@ public class CameraActivity extends Activity
             // 0.
             ImageView v = (ImageView) getLayoutInflater().inflate(
                     R.layout.secure_album_placeholder, null);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CameraUtil.launchGallery(CameraActivity.this);
+                    finish();
+                }
+            });
             mDataAdapter = new FixedLastDataAdapter(
                     mWrappedDataAdapter,
                     new SimpleViewData(
