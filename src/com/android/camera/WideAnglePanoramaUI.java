@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.ui.CameraControls;
@@ -71,6 +72,8 @@ public class WideAnglePanoramaUI implements
     private PanoProgressBar mCaptureProgressBar;
     private PanoProgressBar mSavingProgressBar;
     private TextView mTooFastPrompt;
+    private View mPreviewLayout;
+    private ViewGroup mReviewControl;
     private TextureView mTextureView;
     private ShutterButton mShutterButton;
     private CameraControls mCameraControls;
@@ -265,14 +268,11 @@ public class WideAnglePanoramaUI implements
         if (threadRunning) lowResReview = mReview.getDrawable();
 
         // Change layout in response to configuration change
-        /* TODO (shkong):mCaptureLayout.setOrientation(
-                newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-                        ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);*/
         LayoutInflater inflater = (LayoutInflater)
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        mPanoLayout.removeView(mReviewLayout);
-        inflater.inflate(R.layout.pano_module_review, mPanoLayout);
+        mReviewControl.removeAllViews();
+        inflater.inflate(R.layout.pano_review_control, mReviewControl, true);
 
         mPanoLayout.bringChildToFront(mCameraControls);
         setViews(mActivity.getResources());
@@ -324,25 +324,21 @@ public class WideAnglePanoramaUI implements
     }
 
     private void createContentView() {
-        LayoutInflater inflator = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflator = (LayoutInflater) mActivity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflator.inflate(R.layout.panorama_module, mRootView, true);
-        mPanoLayout = (ViewGroup) mRootView.findViewById(R.id.pano_layout);
+
         Resources appRes = mActivity.getResources();
         mIndicatorColor = appRes.getColor(R.color.pano_progress_indication);
         mReviewBackground = appRes.getColor(R.color.review_background);
         mIndicatorColorFast = appRes.getColor(R.color.pano_progress_indication_fast);
-        mDialogHelper = new DialogHelper();
-        setViews(appRes);
-    }
 
-    private void setViews(Resources appRes) {
+        mPanoLayout = (ViewGroup) mRootView.findViewById(R.id.pano_layout);
+        mPreviewLayout = mRootView.findViewById(R.id.pano_preview_layout);
+        mReviewControl = (ViewGroup) mRootView.findViewById(R.id.pano_review_control);
+        mReviewLayout = mRootView.findViewById(R.id.pano_review_layout);
+        mReview = (ImageView) mRootView.findViewById(R.id.pano_reviewarea);
         mCaptureLayout = (FrameLayout) mRootView.findViewById(R.id.panorama_capture_layout);
-        // TODO (shkong): set display change listener properly.
-        ((CameraRootView) mRootView).setDisplayChangeListener(null);
-        mTextureView = (TextureView) mRootView.findViewById(R.id.pano_preview_textureview);
-        mTextureView.setSurfaceTextureListener(this);
-        mTextureView.addOnLayoutChangeListener(this);
-        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mCaptureProgressBar = (PanoProgressBar) mRootView.findViewById(R.id.pano_pan_progress_bar);
         mCaptureProgressBar.setBackgroundColor(appRes.getColor(R.color.pano_progress_empty));
         mCaptureProgressBar.setDoneColor(appRes.getColor(R.color.pano_progress_done));
@@ -356,6 +352,37 @@ public class WideAnglePanoramaUI implements
         mLeftIndicator.setEnabled(false);
         mRightIndicator.setEnabled(false);
         mTooFastPrompt = (TextView) mRootView.findViewById(R.id.pano_capture_too_fast_textview);
+        mCaptureIndicator = mRootView.findViewById(R.id.pano_capture_indicator);
+
+        mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
+        mShutterButton.setImageResource(R.drawable.btn_new_shutter);
+        mShutterButton.setOnShutterButtonListener(this);
+        // Hide menu and indicators.
+        mRootView.findViewById(R.id.menu).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.on_screen_indicators).setVisibility(View.GONE);
+        mReview.setBackgroundColor(mReviewBackground);
+
+        // TODO: set display change listener properly.
+        ((CameraRootView) mRootView).setDisplayChangeListener(null);
+        mTextureView = (TextureView) mRootView.findViewById(R.id.pano_preview_textureview);
+        mTextureView.setSurfaceTextureListener(this);
+        mTextureView.addOnLayoutChangeListener(this);
+        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
+
+        mDialogHelper = new DialogHelper();
+        setViews(appRes);
+    }
+
+    private void setViews(Resources appRes) {
+        int weight = appRes.getInteger(R.integer.SRI_pano_layout_weight);
+
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mPreviewLayout.getLayoutParams();
+        lp.weight = weight;
+        mPreviewLayout.setLayoutParams(lp);
+
+        lp = (LinearLayout.LayoutParams) mReview.getLayoutParams();
+        lp.weight = weight;
+        mPreviewLayout.setLayoutParams(lp);
 
         mSavingProgressBar = (PanoProgressBar) mRootView.findViewById(R.id.pano_saving_progress_bar);
         mSavingProgressBar.setIndicatorWidth(0);
@@ -363,11 +390,6 @@ public class WideAnglePanoramaUI implements
         mSavingProgressBar.setBackgroundColor(appRes.getColor(R.color.pano_progress_empty));
         mSavingProgressBar.setDoneColor(appRes.getColor(R.color.pano_progress_indication));
 
-        mCaptureIndicator = mRootView.findViewById(R.id.pano_capture_indicator);
-
-        mReviewLayout = mRootView.findViewById(R.id.pano_review_layout);
-        mReview = (ImageView) mRootView.findViewById(R.id.pano_reviewarea);
-        mReview.setBackgroundColor(mReviewBackground);
         View cancelButton = mRootView.findViewById(R.id.pano_review_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -376,12 +398,7 @@ public class WideAnglePanoramaUI implements
             }
         });
 
-        mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
-        mShutterButton.setImageResource(R.drawable.btn_new_shutter);
-        mShutterButton.setOnShutterButtonListener(this);
-        // Hide menu and indicators.
-        mRootView.findViewById(R.id.menu).setVisibility(View.GONE);
-        mRootView.findViewById(R.id.on_screen_indicators).setVisibility(View.GONE);
+
     }
 
     private void showTooFastIndication() {
