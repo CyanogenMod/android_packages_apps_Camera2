@@ -27,9 +27,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.android.camera.CameraActivity;
-import com.android.camera.util.CameraUtil;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.CameraUtil;
 
 @SuppressLint("NewApi")
 public class CameraRootView extends FrameLayout {
@@ -56,22 +55,19 @@ public class CameraRootView extends FrameLayout {
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        if (!ApiHelper.HAS_HIDEYBARS) {
-            mCurrentInsets = insets;
-            // insets include status bar, navigation bar, etc
-            // In this case, we are only concerned with the size of nav bar
-            if (mOffset > 0) {
-                return true;
-            }
-
-            if (insets.bottom > 0) {
-                mOffset = insets.bottom;
-            } else if (insets.right > 0) {
-                mOffset = insets.right;
-            }
+        mCurrentInsets = insets;
+        // insets include status bar, navigation bar, etc
+        // In this case, we are only concerned with the size of nav bar
+        if (mOffset > 0) {
             return true;
         }
-        return super.fitSystemWindows(insets);
+
+        if (insets.bottom > 0) {
+            mOffset = insets.bottom;
+        } else if (insets.right > 0) {
+            mOffset = insets.right;
+        }
+        return true;
     }
 
     public void initDisplayListener() {
