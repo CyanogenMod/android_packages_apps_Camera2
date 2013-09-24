@@ -115,7 +115,7 @@
     <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Camcorder settings"</string>
     <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Picture size"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="3084140665950405601">"13 M pixels"</string>
-    <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"8M pixels"</string>
+    <string name="pref_camera_picturesize_entry_8mp" msgid="6497793506352769366">"8 M pixels"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="8813718385379530965">"5 M pixels"</string>
     <string name="pref_camera_picturesize_entry_4mp" msgid="8546276478576735924">"4 M pixels"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="6233692859150247237">"3 M pixels"</string>
@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Switch to video"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Switch to panorama"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Switch to Photo Sphere"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Switch to high quality"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Review cancel"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Review done"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Review retake"</string>
@@ -264,14 +265,14 @@
     <string name="time_lapse_seconds" msgid="6338396613003859047">"seconds"</string>
     <string name="time_lapse_minutes" msgid="1610738675813013569">"minutes"</string>
     <string name="time_lapse_hours" msgid="2466092767364327518">"hours"</string>
-    <string name="time_lapse_interval_set" msgid="5430624261132317167">"Finished"</string>
+    <string name="time_lapse_interval_set" msgid="5430624261132317167">"Done"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Set Time Interval"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Time lapse feature is off. Turn it on to set time interval."</string>
     <string name="set_duration" msgid="7425045408900251919">"Set duration in seconds"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Counting down to take a photo"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Remember photo locations?"</string>
     <string name="remember_location_prompt" msgid="6856517328973384896">"Tag your photos and videos with the locations where they are taken.\n\nOther apps can access this information along with your saved images."</string>
-    <string name="remember_location_no" msgid="5160772992721036553">"No thanks"</string>
+    <string name="remember_location_no" msgid="5160772992721036553">"No, thanks"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Yes"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"MORE OPTIONS"</string>
     <string name="camera_menu_settings_label" msgid="2038476709578884568">"SETTINGS"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"Saving Tiny Planet …"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"Rotate"</string>
+    <string name="crop_save" msgid="4032662755325734093">"Save"</string>
 </resources>

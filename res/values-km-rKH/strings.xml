@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"ប្ដូរ​ទៅ​វីដេអូ"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"ប្ដូរ​ទៅ​ទេសភាព"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"ប្ដូរ​ទៅ​រូបថត​វិល​ជុំ"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"ប្ដូរ​ទៅ​គុណភាព​ខ្ពស់"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"បោះបង់​ការ​ពិនិត្យ"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"បាន​ពិនិត្យ​រួចរាល់"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"ពិនិត្យ​ឡើងវិញ"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"កំពុង​រក្សាទុក​ពិភព​ដ៏​តូច..."</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"ពង្រីក/បង្រួម"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"បង្វិល"</string>
+    <string name="crop_save" msgid="4032662755325734093">"រក្សាទុក"</string>
 </resources>
