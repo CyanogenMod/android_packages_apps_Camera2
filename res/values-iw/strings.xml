@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"עבור לצילום וידאו"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"עבור לצילום פנורמה"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"עבור לצילום Photo Sphere"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"עבור לאיכות גבוהה"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"ביטול בדיקה"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"בדיקה בוצעה"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"הצג צילום חוזר"</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"שומר את הפלנטה הקטנה…"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"שנה מרחק מתצוגה"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"סובב"</string>
+    <string name="crop_save" msgid="4032662755325734093">"שמור"</string>
 </resources>

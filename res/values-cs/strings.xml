@@ -95,7 +95,7 @@
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Zvolit fotoaparát"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Zpět"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Přední"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Ukládat geografické souřadnice"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Ukládat polohu"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"POLOHA"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"Časovač odpočítávání"</string>
   <plurals name="pref_camera_timer_entry">
@@ -216,6 +216,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Přepnout na video"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Přepnout do panoramatického režimu"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Přepnout do režimu Photo Sphere"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Přepnout na vysokou kvalitu"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Zrušit"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Hotovo"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Pořídit další"</string>
@@ -261,9 +262,9 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="322398198717672456">"12 hodin"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="4545285575174744076">"15 hodin"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="225288451792149886">"24 hodin"</string>
-    <string name="time_lapse_seconds" msgid="6338396613003859047">"sekundy"</string>
-    <string name="time_lapse_minutes" msgid="1610738675813013569">"minuty"</string>
-    <string name="time_lapse_hours" msgid="2466092767364327518">"hodiny"</string>
+    <string name="time_lapse_seconds" msgid="6338396613003859047">"s"</string>
+    <string name="time_lapse_minutes" msgid="1610738675813013569">"min"</string>
+    <string name="time_lapse_hours" msgid="2466092767364327518">"hod"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Hotovo"</string>
     <string name="set_time_interval" msgid="844482952911185265">"Nastavit časový interval"</string>
     <string name="set_time_interval_help" msgid="1403571747238933001">"Funkce časosběr je vypnutá. Zapněte ji a nastavte časový interval."</string>
@@ -279,4 +280,5 @@
     <string name="saving_tiny_planet" msgid="1959998670020472446">"Ukládání malé planety…"</string>
     <string name="tiny_planet_zoom" msgid="7743216626024459920">"Lupa"</string>
     <string name="tiny_planet_rotate" msgid="3677204727401265635">"Otáčení"</string>
+    <string name="crop_save" msgid="4032662755325734093">"Uložit"</string>
 </resources>
