@@ -29,4 +29,8 @@ public class GcamHelper {
         return false;
     }
 
+    public static boolean hasGcamAsHDRMode() {
+        return false;
+    }
+
 }
