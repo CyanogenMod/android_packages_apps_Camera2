@@ -137,7 +137,8 @@ public class PhotoUI implements PieListener,
                 mPreviewWidth = width;
                 mPreviewHeight = height;
                 setTransformMatrix(width, height);
-                mController.onScreenSizeChanged(width, height, w, h);
+                mController.onScreenSizeChanged((int) mSurfaceTextureUncroppedWidth,
+                        (int) mSurfaceTextureUncroppedHeight);
             }
         }
     };
