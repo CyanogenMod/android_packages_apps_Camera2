@@ -431,6 +431,12 @@ public class PhotoModule
         stopPreview();
     }
 
+    private void setGcamPreference(String value) {
+        mPreferences.edit()
+                .putString(CameraSettings.KEY_CAMERA_HQ, value)
+                .apply();
+    }
+
     private void setLocationPreference(String value) {
         mPreferences.edit()
                 .putString(CameraSettings.KEY_RECORD_LOCATION, value)
@@ -1749,8 +1755,11 @@ public class PhotoModule
 
         mCameraDevice.setParameters(mParameters);
 
-        // Switch to gcam module if HDR was selected
+        // Switch to gcam module if HQ was selected
         if (doModeSwitch) {
+            // Disable HQ so we don't reopen gcam when returning to the regular photo mode
+            setGcamPreference(mActivity.getString(R.string.setting_off_value));
+            // Switch to gcam module
             mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
         }
     }
