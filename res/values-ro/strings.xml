@@ -176,6 +176,8 @@
     <string name="pref_exposure_label" msgid="5586132867242336300">"EXPUNERE"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
     <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"CAMERA FOTO FAȚĂ"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"CAMERA FOTO SPATE"</string>
@@ -216,7 +218,7 @@
     <string name="accessibility_switch_to_video" msgid="685379350229791000">"Comutați la modul video"</string>
     <string name="accessibility_switch_to_panorama" msgid="4367290605860986266">"Comutați la panoramă"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="7282333436078515422">"Comutați la Photo Sphere"</string>
-    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Comutaţi la calitate înaltă"</string>
+    <string name="accessibility_switch_to_gcam" msgid="8765816830112429738">"Comutați la calitate înaltă"</string>
     <string name="accessibility_review_cancel" msgid="8233210011810145540">"Anulați în modul de examinare"</string>
     <string name="accessibility_review_ok" msgid="1919818908740908312">"Terminați în modul de examinare"</string>
     <string name="accessibility_review_retake" msgid="3256541538259494381">"Refaceți în modul de examinare"</string>
