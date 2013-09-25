@@ -1001,7 +1001,7 @@ public class VideoModule implements CameraModule,
         }
 
         // Set maximum file size.
-        long maxFileSize = mActivity.getStorageSpace() - Storage.LOW_STORAGE_THRESHOLD;
+        long maxFileSize = mActivity.getStorageSpaceBytes() - Storage.LOW_STORAGE_THRESHOLD_BYTES;
         if (requestedSizeLimit > 0 && requestedSizeLimit < maxFileSize) {
             maxFileSize = requestedSizeLimit;
         }
@@ -1182,7 +1182,7 @@ public class VideoModule implements CameraModule,
         mUI.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();
-        if (mActivity.getStorageSpace() <= Storage.LOW_STORAGE_THRESHOLD) {
+        if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             Log.v(TAG, "Storage issue, ignore the start request");
             return;
         }
