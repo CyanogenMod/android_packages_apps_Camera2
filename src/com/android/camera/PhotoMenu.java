@@ -55,6 +55,12 @@ public class PhotoMenu extends PieController
         Locale locale = res.getConfiguration().locale;
         // the order is from left to right in the menu
 
+        // hq (GCam)
+        if (group.findPreference(CameraSettings.KEY_CAMERA_HQ) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HQ, true);
+            mRenderer.addItem(item);
+        }
+
         // hdr
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
             item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR, true);
