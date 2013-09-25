@@ -513,13 +513,19 @@ public class FocusOverlayManager {
     }
 
     private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
-        int areaSize = (int) (Math.min(mPreviewWidth, mPreviewHeight) * areaMultiple / 20);
-        int left = CameraUtil.clamp(x - areaSize, 0, mPreviewWidth - 2 * areaSize);
-        int top = CameraUtil.clamp(y - areaSize, 0, mPreviewHeight - 2 * areaSize);
+        int areaSize = (int) (getAreaSize() * areaMultiple);
+        int left = CameraUtil.clamp(x - areaSize / 2, 0, mPreviewWidth - areaSize);
+        int top = CameraUtil.clamp(y - areaSize / 2, 0, mPreviewHeight - areaSize);
 
-        RectF rectF = new RectF(left, top, left + 2 * areaSize, top + 2 * areaSize);
+        RectF rectF = new RectF(left, top, left + areaSize, top + areaSize);
         mMatrix.mapRect(rectF);
         CameraUtil.rectFToRect(rectF, rect);
+    }
+
+    private int getAreaSize() {
+        // Recommended focus area size from the manufacture is 1/8 of the image
+        // width
+        return Math.min(mPreviewWidth, mPreviewHeight) / 8;
     }
 
     /* package */ int getFocusState() {

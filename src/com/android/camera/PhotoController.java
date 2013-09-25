@@ -54,7 +54,7 @@ public interface PhotoController extends OnShutterButtonListener {
 
     public void onCountDownFinished();
 
-    public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight);
+    public void onScreenSizeChanged(int width, int height);
 
     public void updateCameraOrientation();
 
