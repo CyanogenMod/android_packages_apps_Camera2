@@ -506,7 +506,7 @@ public class PhotoModule
     }
 
     @Override
-    public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
+    public void onScreenSizeChanged(int width, int height) {
         if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
     }
 
