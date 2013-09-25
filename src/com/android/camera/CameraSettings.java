@@ -218,12 +218,12 @@ public class CameraSettings {
         if (videoEffect != null) {
             filterUnsupportedOptions(group, videoEffect, null);
         }
-        if (cameraHdr != null && !ApiHelper.HAS_CAMERA_HDR
-                || !CameraUtil.isCameraHdrSupported(mParameters)) {
+        if (cameraHdr != null && (!ApiHelper.HAS_CAMERA_HDR
+                || !CameraUtil.isCameraHdrSupported(mParameters))) {
             removePreference(group, cameraHdr.getKey());
         }
         if (cameraHq != null && (!ApiHelper.HAS_CAMERA_HQ
-                | !GcamHelper.hasGcamAsHDRMode())) {
+                || !GcamHelper.hasGcamAsHDRMode())) {
             removePreference(group, cameraHq.getKey());
         }
     }
