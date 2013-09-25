@@ -1619,12 +1619,16 @@ public class PhotoModule
         // Since changing scene mode may change supported values, set scene mode
         // first. HDR is a scene mode. To promote it in UI, it is stored in a
         // separate preference.
+        String onValue = mActivity.getString(R.string.setting_on_value);
         String hdr = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR,
                 mActivity.getString(R.string.pref_camera_hdr_default));
-        boolean doGcamModeSwitch = false;
-        String onValue = mActivity.getString(R.string.setting_on_value);
+        String hq = mPreferences.getString(CameraSettings.KEY_CAMERA_HQ,
+                mActivity.getString(R.string.pref_camera_hq_default));
         boolean hdrOn = onValue.equals(hdr);
-        if ( hdrOn && GcamHelper.hasGcamAsHDRMode()) {
+        boolean hqOn = onValue.equals(hq);
+
+        boolean doGcamModeSwitch = false;
+        if (hqOn && GcamHelper.hasGcamCapture()) {
             // Kick off mode switch to gcam.
             doGcamModeSwitch = true;
         } else {

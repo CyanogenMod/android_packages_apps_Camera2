@@ -108,7 +108,7 @@ public class ModuleSwitcher extends RotateImageView
             --numDrawIds;
         }
 
-        if (!GcamHelper.hasGcamCapture(context) || GcamHelper.hasGcamAsHDRMode()) {
+        if (!GcamHelper.hasGcamCapture() || GcamHelper.hasGcamAsHDRMode()) {
             --numDrawIds;
         }
 
@@ -120,7 +120,7 @@ public class ModuleSwitcher extends RotateImageView
                 continue; // not enabled, so don't add to UI
             }
             if (i == GCAM_MODULE_INDEX
-                    && (!GcamHelper.hasGcamCapture(context) || GcamHelper.hasGcamAsHDRMode())) {
+                    && (!GcamHelper.hasGcamCapture() || GcamHelper.hasGcamAsHDRMode())) {
                 continue; // not enabled, so don't add to UI
             }
             moduleids[ix] = i;

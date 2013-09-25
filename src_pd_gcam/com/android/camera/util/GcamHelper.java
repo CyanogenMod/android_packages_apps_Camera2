@@ -25,7 +25,7 @@ public class GcamHelper {
         return null;
     }
 
-    public static boolean hasGcamCapture(Context context) {
+    public static boolean hasGcamCapture() {
         return false;
     }
 
