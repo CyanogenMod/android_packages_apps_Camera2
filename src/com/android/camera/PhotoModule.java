@@ -76,7 +76,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -1095,9 +1094,9 @@ public class PhotoModule
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
         // Do not take the picture if there is not enough storage.
-        if (mActivity.getStorageSpace() <= Storage.LOW_STORAGE_THRESHOLD) {
+        if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             Log.i(TAG, "Not enough space or storage not ready. remaining="
-                    + mActivity.getStorageSpace());
+                    + mActivity.getStorageSpaceBytes());
             return;
         }
         Log.v(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
@@ -1350,7 +1349,7 @@ public class PhotoModule
     }
 
     private boolean canTakePicture() {
-        return isCameraIdle() && (mActivity.getStorageSpace() > Storage.LOW_STORAGE_THRESHOLD);
+        return isCameraIdle() && (mActivity.getStorageSpaceBytes() > Storage.LOW_STORAGE_THRESHOLD_BYTES);
     }
 
     @Override
