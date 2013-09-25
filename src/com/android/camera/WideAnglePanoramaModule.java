@@ -573,18 +573,28 @@ public class WideAnglePanoramaModule
     public void onShutterButtonClick() {
         // If mCameraTexture == null then GL setup is not finished yet.
         // No buttons can be pressed.
-        if (mPaused || mThreadRunning || mCameraTexture == null) return;
+        if (mPaused || mThreadRunning || mCameraTexture == null) {
+            return;
+        }
         // Since this button will stay on the screen when capturing, we need to check the state
         // right now.
         switch (mCaptureState) {
             case CAPTURE_STATE_VIEWFINDER:
-                if(mActivity.getStorageSpace() <= Storage.LOW_STORAGE_THRESHOLD) return;
+                final long storageSpaceBytes = mActivity.getStorageSpaceBytes();
+                if(storageSpaceBytes <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
+                    Log.w(TAG, "Low storage warning: " + storageSpaceBytes);
+                    return;
+                }
                 mSoundPlayer.play(SoundClips.START_VIDEO_RECORDING);
                 startCapture();
                 break;
             case CAPTURE_STATE_MOSAIC:
                 mSoundPlayer.play(SoundClips.STOP_VIDEO_RECORDING);
                 stopCapture(false);
+                break;
+            default:
+                Log.w(TAG, "Unknown capture state: " + mCaptureState);
+                break;
         }
     }
 
@@ -696,11 +706,7 @@ public class WideAnglePanoramaModule
         mActivity.setSwipingEnabled(true);
         // Orientation change will trigger onLayoutChange->configMosaicPreview->
         // resetToPreview. Do not show the capture UI in film strip.
-        /* if (mActivity.mShowCameraAppView) {
-            mCaptureLayout.setVisibility(View.VISIBLE); */
         mUI.showPreviewUI();
-        /*} else {
-        }*/
         mMosaicFrameProcessor.reset();
     }
 
@@ -711,7 +717,9 @@ public class WideAnglePanoramaModule
             return;
         }
         reset();
-        if (!mPaused) startCameraPreview();
+        if (!mPaused) {
+            startCameraPreview();
+        }
     }
 
     private void showFinalMosaic(Bitmap bitmap) {
@@ -863,6 +871,7 @@ public class WideAnglePanoramaModule
             mPreviewUIWidth = size.x;
             mPreviewUIHeight = size.y;
             configMosaicPreview();
+            mActivity.updateStorageSpaceAndHint();
         }
         keepScreenOnAwhile();
 
@@ -1009,6 +1018,7 @@ public class WideAnglePanoramaModule
                     }
                 }
             }
+            mActivity.updateStorageSpace();
             return null;
         }
 
@@ -1023,6 +1033,7 @@ public class WideAnglePanoramaModule
             mPreviewUIHeight = size.y;
             configMosaicPreview();
             resetToPreviewIfPossible();
+            mActivity.updateStorageHint(mActivity.getStorageSpaceBytes());
         }
     }
 

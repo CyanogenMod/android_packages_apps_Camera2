@@ -51,7 +51,7 @@ public class Storage {
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
-    public static final long LOW_STORAGE_THRESHOLD = 50000000;
+    public static final long LOW_STORAGE_THRESHOLD_BYTES = 50000000;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
