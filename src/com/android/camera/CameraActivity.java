@@ -151,7 +151,7 @@ public class CameraActivity extends Activity
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
-    private long mStorageSpace = Storage.LOW_STORAGE_THRESHOLD;
+    private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
     // This is a hack to speed up the start of SecureCamera.
@@ -1148,24 +1148,16 @@ public class CameraActivity extends Activity
     }
 
     protected void updateStorageSpace() {
-        mStorageSpace = Storage.getAvailableSpace();
+        mStorageSpaceBytes = Storage.getAvailableSpace();
     }
 
-    protected long getStorageSpace() {
-        return mStorageSpace;
+    protected long getStorageSpaceBytes() {
+        return mStorageSpaceBytes;
     }
 
     protected void updateStorageSpaceAndHint() {
         updateStorageSpace();
-        updateStorageHint(mStorageSpace);
-    }
-
-    protected void updateStorageHint() {
-        updateStorageHint(mStorageSpace);
-    }
-
-    protected boolean updateStorageHintOnResume() {
-        return true;
+        updateStorageHint(mStorageSpaceBytes);
     }
 
     protected void updateStorageHint(long storageSpace) {
@@ -1176,7 +1168,7 @@ public class CameraActivity extends Activity
             message = getString(R.string.preparing_sd);
         } else if (storageSpace == Storage.UNKNOWN_SIZE) {
             message = getString(R.string.access_sd_fail);
-        } else if (storageSpace <= Storage.LOW_STORAGE_THRESHOLD) {
+        } else if (storageSpace <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             message = getString(R.string.spaceIsLow_content);
         }
 
