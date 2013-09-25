@@ -30,6 +30,7 @@ import android.util.Log;
 
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GcamHelper;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
@@ -215,8 +216,8 @@ public class CameraSettings {
         if (videoEffect != null) {
             filterUnsupportedOptions(group, videoEffect, null);
         }
-        if (cameraHdr != null && (!ApiHelper.HAS_CAMERA_HDR
-                    || !CameraUtil.isCameraHdrSupported(mParameters))) {
+        if (cameraHdr != null && !GcamHelper.hasGcamAsHDRMode()
+                && (!ApiHelper.HAS_CAMERA_HDR || !CameraUtil.isCameraHdrSupported(mParameters))) {
             removePreference(group, cameraHdr.getKey());
         }
     }

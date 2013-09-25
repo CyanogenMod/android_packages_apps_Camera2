@@ -62,10 +62,12 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
+import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GcamHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
@@ -1575,7 +1577,7 @@ public class PhotoModule
         }
     }
 
-    private void updateCameraParametersPreference() {
+    private boolean updateCameraParametersPreference() {
         setAutoExposureLockIfSupported();
         setAutoWhiteBalanceLockIfSupported();
         setFocusAreasIfSupported();
@@ -1619,12 +1621,20 @@ public class PhotoModule
         // separate preference.
         String hdr = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR,
                 mActivity.getString(R.string.pref_camera_hdr_default));
-        if (mActivity.getString(R.string.setting_on_value).equals(hdr)) {
-            mSceneMode = CameraUtil.SCENE_MODE_HDR;
+        boolean doGcamModeSwitch = false;
+        String onValue = mActivity.getString(R.string.setting_on_value);
+        boolean hdrOn = onValue.equals(hdr);
+        if ( hdrOn && GcamHelper.hasGcamAsHDRMode()) {
+            // Kick off mode switch to gcam.
+            doGcamModeSwitch = true;
         } else {
-            mSceneMode = mPreferences.getString(
-                    CameraSettings.KEY_SCENE_MODE,
-                    mActivity.getString(R.string.pref_camera_scenemode_default));
+            if (hdrOn) {
+                mSceneMode = CameraUtil.SCENE_MODE_HDR;
+            } else {
+                mSceneMode = mPreferences.getString(
+                        CameraSettings.KEY_SCENE_MODE,
+                        mActivity.getString(R.string.pref_camera_scenemode_default));
+            }
         }
         if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
             if (!mParameters.getSceneMode().equals(mSceneMode)) {
@@ -1701,6 +1711,8 @@ public class PhotoModule
         if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
             updateAutoFocusMoveCallback();
         }
+
+        return doGcamModeSwitch;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -1717,6 +1729,8 @@ public class PhotoModule
     // the subsets actually need updating. The PREFERENCE set needs extra
     // locking because the preference can be changed from GLThread as well.
     private void setCameraParameters(int updateSet) {
+        boolean doModeSwitch = false;
+
         if ((updateSet & UPDATE_PARAM_INITIALIZE) != 0) {
             updateCameraParametersInitialize();
         }
@@ -1726,10 +1740,15 @@ public class PhotoModule
         }
 
         if ((updateSet & UPDATE_PARAM_PREFERENCE) != 0) {
-            updateCameraParametersPreference();
+            doModeSwitch = updateCameraParametersPreference();
         }
 
         mCameraDevice.setParameters(mParameters);
+
+        // Switch to gcam module if HDR was selected
+        if (doModeSwitch) {
+            mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
+        }
     }
 
     // If the Camera is idle, update the parameters immediately, otherwise
