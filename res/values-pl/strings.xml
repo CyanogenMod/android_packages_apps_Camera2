@@ -58,7 +58,7 @@
     <string name="crop_saved" msgid="6708204358512805637">"Przycięte zdjęcie zapisano w folderze <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="title" msgid="1465174588508188840">"Tytuł"</string>
     <string name="description" msgid="7012551348834166615">"Opis"</string>
-    <string name="time" msgid="53680310933472250">"Godzina"</string>
+    <string name="time" msgid="53680310933472250">"Data/godzina"</string>
     <string name="location" msgid="7836832588874777265">"Lokalizacja"</string>
     <string name="path" msgid="7641372546343443225">"Ścieżka"</string>
     <string name="width" msgid="4689895076320623907">"Szerokość"</string>
@@ -95,7 +95,7 @@
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Wybierz aparat"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Tylny"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Przedni"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Zapisuj lokalizację"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Zapis lokalizacji"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"LOKALIZACJA"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"Samowyzwalacz"</string>
   <plurals name="pref_camera_timer_entry">
@@ -176,6 +176,8 @@
     <string name="pref_exposure_label" msgid="5586132867242336300">"EKSPOZYCJA"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
     <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"PRZEDNI APARAT"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"TYLNY APARAT"</string>
@@ -202,7 +204,7 @@
     <string name="effect_backdropper_space" msgid="5794499374151237559">"Kosmos"</string>
     <string name="effect_backdropper_sunset" msgid="2431035827232871903">"Zachód słońca"</string>
     <string name="effect_backdropper_gallery" msgid="3292606781700530872">"Twój film"</string>
-    <string name="video_snapshot_hint" msgid="56511446769261564">"Kliknij, by zrobić zdjęcie podczas nagrywania."</string>
+    <string name="video_snapshot_hint" msgid="56511446769261564">"Dotknij, by zrobić zdjęcie podczas nagrywania."</string>
     <string name="video_recording_started" msgid="1478448043553326540">"Rozpoczęto nagrywanie filmu."</string>
     <string name="video_recording_stopped" msgid="2676770458529207322">"Zatrzymano nagrywanie filmu."</string>
     <string name="clear_effects" msgid="155262355011195942">"Usuń efekty"</string>
@@ -264,14 +266,14 @@
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="225288451792149886">"24 godziny"</string>
     <string name="time_lapse_seconds" msgid="6338396613003859047">"s"</string>
     <string name="time_lapse_minutes" msgid="1610738675813013569">"min"</string>
-    <string name="time_lapse_hours" msgid="2466092767364327518">"godziny"</string>
+    <string name="time_lapse_hours" msgid="2466092767364327518">"godz"</string>
     <string name="time_lapse_interval_set" msgid="5430624261132317167">"Gotowe"</string>
-    <string name="set_time_interval" msgid="844482952911185265">"Ustaw interwał czasu"</string>
-    <string name="set_time_interval_help" msgid="1403571747238933001">"Funkcja filmu poklatkowego jest wyłączona. Włącz ją, by ustawić interwał czasu."</string>
+    <string name="set_time_interval" msgid="844482952911185265">"Ustaw odstęp czasu"</string>
+    <string name="set_time_interval_help" msgid="1403571747238933001">"Funkcja filmu poklatkowego jest wyłączona. Włącz ją, by ustawić odstęp czasu."</string>
     <string name="set_duration" msgid="7425045408900251919">"Ustaw czas w sekundach"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Odliczanie czasu pozostałego do zrobienia zdjęcia"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Zapamiętywać lokalizacje zdjęć?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"Dodawaj tagi lokalizacji, w których zostały zrobione zdjęcia lub nagrane filmy.\n\nInne aplikacje mają dostęp do tych informacji wraz z zapisanymi zdjęciami."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Dodawaj tagi do swoich zdjęć i filmów, aby pokazać, gdzie zostały zrobione lub nagrane.\n\nInne aplikacje mają dostęp do tych informacji wraz z zapisanymi obrazami."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Nie, dziękuję"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Tak"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"WIĘCEJ OPCJI"</string>

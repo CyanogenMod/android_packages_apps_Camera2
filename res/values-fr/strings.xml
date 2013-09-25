@@ -97,7 +97,7 @@
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Frontale"</string>
     <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Enregistrer la position"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"LOCALISATION"</string>
-    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Compte à rebours"</string>
+    <string name="pref_camera_timer_title" msgid="6917581164323911874">"Retardateur"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8868342573738742056">"1 seconde"</item>
     <item quantity="other" msgid="3053084895126759755">"%d secondes"</item>
@@ -175,6 +175,8 @@
     <string name="pref_exposure_title" msgid="5211801488740367403">"Exposition"</string>
     <string name="pref_exposure_label" msgid="5586132867242336300">"EXPOSITION"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
+    <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"CAMÉRA FRONTALE"</string>

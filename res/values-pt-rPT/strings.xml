@@ -19,7 +19,7 @@
     <string name="app_name" msgid="8338864393568040722">"Câmara"</string>
     <string name="details_ms" msgid="4368407634456462224">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="681695897098326459">"%1$d:%2$02d:%3$02d"</string>
-    <string name="set_image" msgid="3011821258780340803">"Definir imagem como:"</string>
+    <string name="set_image" msgid="3011821258780340803">"Definir imagem como"</string>
     <string name="delete" msgid="7258764001896874869">"Eliminar"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="2984228592820245170">"Eliminar item selecionado?"</item>
@@ -104,8 +104,8 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6748128807889344413) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Beep contagem decr"</string>
-    <string name="setting_off" msgid="3321226648786639381">"Desativada"</string>
+    <string name="pref_camera_timer_sound_title" msgid="8640712080164781141">"Beep contagem"</string>
+    <string name="setting_off" msgid="3321226648786639381">"Desativado"</string>
     <string name="setting_on" msgid="6658320155242340595">"Ativada"</string>
     <string name="pref_video_quality_title" msgid="133986891365610568">"Qualidade do vídeo"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Elevada"</string>
@@ -175,6 +175,8 @@
     <string name="pref_exposure_title" msgid="5211801488740367403">"Exposição"</string>
     <string name="pref_exposure_label" msgid="5586132867242336300">"EXPOSIÇÃO"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
+    <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"CÂMARA FRONTAL"</string>
