@@ -944,7 +944,7 @@ public class CameraActivity extends Activity
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             moduleIndex = prefs.getInt(PREF_STARTUP_MODULE_INDEX, -1);
             if ((moduleIndex == ModuleSwitcher.GCAM_MODULE_INDEX &&
-                    !GcamHelper.hasGcamCapture(this)) || moduleIndex < 0) {
+                    !GcamHelper.hasGcamCapture()) || moduleIndex < 0) {
                 moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
             }
         }
