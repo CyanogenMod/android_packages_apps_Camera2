@@ -161,6 +161,9 @@ public class DetailsDialog {
                         value = "\n" + detail.getValue().toString();
                         path = detail.getValue().toString();
                         break;
+                    case MediaDetails.INDEX_ORIENTATION:
+                        value = toLocalInteger(detail.getValue());
+                        break;
                     case MediaDetails.INDEX_ISO:
                         value = toLocalNumber(Integer.parseInt((String) detail.getValue()));
                         break;
