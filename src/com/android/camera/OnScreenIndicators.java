@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -30,6 +31,8 @@ import com.android.camera2.R;
  * settings in the viewfinder.
  */
 public class OnScreenIndicators {
+    public static final String SCENE_MODE_HQ = "hq";
+
     private final int[] mWBArray;
     private final View mOnScreenIndicators;
     private final ImageView mExposureIndicator;
@@ -164,13 +167,17 @@ public class OnScreenIndicators {
     /**
      * Set the scene indicator depending on the given scene mode.
      *
-     * @param value the current Parameters.SCENE_MODE_* value.
+     * @param value the current Parameters.SCENE_MODE_* value or
+     *            {@link #SCENE_MODE_HQ}.
      */
     public void updateSceneOnScreenIndicator(String value) {
         if (mSceneIndicator == null) {
             return;
         }
-        if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)) {
+
+        if (SCENE_MODE_HQ.equals(value)) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_hq_on);
+        } else if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
         } else if (Parameters.SCENE_MODE_HDR.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_hdr);
