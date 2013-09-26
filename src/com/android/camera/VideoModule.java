@@ -57,7 +57,6 @@ import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.exif.ExifInterface;
-import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.util.ApiHelper;
@@ -689,8 +688,6 @@ public class VideoModule implements CameraModule,
             mOnResumeTime = SystemClock.uptimeMillis();
             mHandler.sendEmptyMessageDelayed(CHECK_DISPLAY_ROTATION, 100);
         }
-        // Dismiss open menu if exists.
-        PopupManager.getInstance(mActivity).notifyShowPopup(null);
 
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "VideoModule");
