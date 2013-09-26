@@ -63,7 +63,6 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.ModuleSwitcher;
-import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -1206,8 +1205,6 @@ public class PhotoModule
         }
         keepScreenOnAwhile();
 
-        // Dismiss open menu if exists.
-        PopupManager.getInstance(mActivity).notifyShowPopup(null);
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PhotoModule");
 
