@@ -47,7 +47,6 @@ import android.view.WindowManager;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.exif.ExifInterface;
-import com.android.camera.ui.PopupManager;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -881,8 +880,6 @@ public class WideAnglePanoramaModule
                 mContentResolver);
         mLocationManager.recordLocation(recordLocation);
 
-        // Dismiss open menu if exists.
-        PopupManager.getInstance(mActivity).notifyShowPopup(null);
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PanoramaModule");
     }
