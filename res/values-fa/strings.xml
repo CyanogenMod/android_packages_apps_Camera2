@@ -176,6 +176,8 @@
     <string name="pref_exposure_label" msgid="5586132867242336300">"نوردهی"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
     <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"دوربین جلو"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"دوربین پشت"</string>

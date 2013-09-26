@@ -95,7 +95,7 @@
     <string name="pref_camera_id_title" msgid="8027686978170301915">"Выберите камеру"</string>
     <string name="pref_camera_id_entry_back" msgid="8034690205259224353">"Задняя"</string>
     <string name="pref_camera_id_entry_front" msgid="2982741805298041753">"Передняя"</string>
-    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Записывать местоположение"</string>
+    <string name="pref_camera_recordlocation_title" msgid="9032205520216091730">"Записывать место"</string>
     <string name="pref_camera_location_label" msgid="725236612912086608">"МЕСТОПОЛОЖЕНИЕ"</string>
     <string name="pref_camera_timer_title" msgid="6917581164323911874">"Автоспуск"</string>
   <plurals name="pref_camera_timer_entry">
@@ -110,7 +110,7 @@
     <string name="pref_video_quality_title" msgid="133986891365610568">"Качество видео"</string>
     <string name="pref_video_quality_entry_high" msgid="2738623967850850381">"Высокое"</string>
     <string name="pref_video_quality_entry_low" msgid="5153461037045200762">"Низкое"</string>
-    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Замедленная съемка"</string>
+    <string name="pref_video_time_lapse_frame_interval_title" msgid="5673396270006768004">"Замедл. съемка"</string>
     <string name="pref_camera_settings_category" msgid="4286755118301278593">"Настройки камеры"</string>
     <string name="pref_camcorder_settings_category" msgid="4617708050480193189">"Настройки видеокамеры"</string>
     <string name="pref_camera_picturesize_title" msgid="7285867796470070880">"Размер изображения"</string>
@@ -175,6 +175,8 @@
     <string name="pref_exposure_title" msgid="5211801488740367403">"Выдержка"</string>
     <string name="pref_exposure_label" msgid="5586132867242336300">"ВЫДЕРЖКА"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
+    <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"ПЕРЕДНЯЯ КАМЕРА"</string>
