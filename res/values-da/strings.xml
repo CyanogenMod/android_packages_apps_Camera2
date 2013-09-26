@@ -176,6 +176,8 @@
     <string name="pref_exposure_label" msgid="5586132867242336300">"EKSPONERING"</string>
     <!-- no translation found for pref_camera_hdr_default (2725798708765488564) -->
     <skip />
+    <!-- no translation found for pref_camera_hq_default (469144299845125114) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="3566769675820087426">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="6322318969185513097">"FRONTKAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="3244743091065982114">"BAGSIDEKAMERA"</string>
@@ -271,7 +273,7 @@
     <string name="set_duration" msgid="7425045408900251919">"Indstil varigheden i sekunder"</string>
     <string name="count_down_title_text" msgid="8269417928362735617">"Der tælles ned for at tage et billede"</string>
     <string name="remember_location_title" msgid="2290717227833540397">"Skal billedplaceringer huskes?"</string>
-    <string name="remember_location_prompt" msgid="6856517328973384896">"Tag dine billeder og videoer med de placeringer, hvor de blev taget.\n\nAndre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
+    <string name="remember_location_prompt" msgid="6856517328973384896">"Mærk dine billeder og videoer med de placeringer, hvor de blev taget.\n\nAndre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
     <string name="remember_location_no" msgid="5160772992721036553">"Nej tak"</string>
     <string name="remember_location_yes" msgid="4663333638854720964">"Ja"</string>
     <string name="camera_menu_more_label" msgid="3997839063378329544">"FLERE VALGMULIGHEDER"</string>
