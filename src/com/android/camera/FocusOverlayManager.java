@@ -524,8 +524,8 @@ public class FocusOverlayManager {
 
     private int getAreaSize() {
         // Recommended focus area size from the manufacture is 1/8 of the image
-        // width
-        return Math.min(mPreviewWidth, mPreviewHeight) / 8;
+        // width (i.e. longer edge of the image)
+        return Math.max(mPreviewWidth, mPreviewHeight) / 8;
     }
 
     /* package */ int getFocusState() {
