@@ -54,20 +54,10 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.media.action.VIDEO_CAMERA" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.media.action.VIDEO_CAPTURE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -90,6 +80,22 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Video camera and capture use the Camcorder label and icon. -->
+        <activity-alias
+            android:name="com.android.camera.VideoCamera"
+            android:icon="@mipmap/ic_launcher_video_camera"
+            android:label="@string/video_camera_label"
+            android:targetActivity="com.android.camera.CameraActivity">
+            <intent-filter>
+                <action android:name="android.media.action.VIDEO_CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.VIDEO_CAPTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity-alias>
 
