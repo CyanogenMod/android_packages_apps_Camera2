@@ -723,6 +723,7 @@ public class CameraActivity extends Activity
         } else {
             // If camera preview is the only view left in filmstrip,
             // no need to show undo bar.
+            mPendingDeletion = true;
             performDeletion();
         }
     }
@@ -1028,6 +1029,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onPause() {
+        // Delete photos that are pending deletion
+        performDeletion();
         mOrientationListener.disable();
         mCurrentModule.onPauseBeforeSuper();
         super.onPause();
