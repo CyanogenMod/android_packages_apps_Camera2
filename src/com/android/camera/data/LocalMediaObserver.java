@@ -17,10 +17,6 @@
 package com.android.camera.data;
 
 import android.database.ContentObserver;
-import android.net.Uri;
-import android.os.Handler;
-
-import com.android.camera.CameraActivity;
 
 /**
  * Listening to the changes to the local image and video data. onChange will
@@ -28,20 +24,32 @@ import com.android.camera.CameraActivity;
  */
 public class LocalMediaObserver extends ContentObserver {
 
-    private final CameraActivity mActivity;
+    private boolean mActivityPaused = false;
+    private boolean mMediaDataChangedDuringPause = false;
 
-    public LocalMediaObserver(Handler handler, CameraActivity activity) {
-        super(handler);
-        mActivity = activity;
+    public LocalMediaObserver() {
+        super(null);
     }
 
+    /**
+     * When the activity is paused and MediaObserver get onChange() call, then
+     * we would like to set a dirty bit to reload the data at onResume().
+     */
     @Override
     public void onChange(boolean selfChange) {
-        this.onChange(selfChange, null);
+        if (mActivityPaused) {
+            mMediaDataChangedDuringPause = true;
+        }
     }
 
-    @Override
-    public void onChange(boolean selfChange, Uri uri) {
-        mActivity.setDirtyWhenPaused();
+    public void setActivityPaused(boolean paused) {
+        mActivityPaused = paused;
+        if (!paused) {
+            mMediaDataChangedDuringPause = false;
+        }
+    }
+
+    public boolean isMediaDataChangedDuringPause() {
+        return mMediaDataChangedDuringPause;
     }
 }
