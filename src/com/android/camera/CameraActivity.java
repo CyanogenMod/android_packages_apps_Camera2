@@ -175,8 +175,6 @@ public class CameraActivity extends Activity
     private Intent mPanoramaShareIntent;
     private LocalMediaObserver mLocalImagesObserver;
     private LocalMediaObserver mLocalVideosObserver;
-    private boolean mActivityPaused;
-    private boolean mMediaDataChangedDuringPause;
 
     private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
@@ -985,8 +983,8 @@ public class CameraActivity extends Activity
 
         setupNfcBeamPush();
 
-        mLocalImagesObserver = new LocalMediaObserver(mMainHandler, this);
-        mLocalVideosObserver = new LocalMediaObserver(mMainHandler, this);
+        mLocalImagesObserver = new LocalMediaObserver();
+        mLocalVideosObserver = new LocalMediaObserver();
 
         getContentResolver().registerContentObserver(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
@@ -1032,7 +1030,9 @@ public class CameraActivity extends Activity
         mCurrentModule.onPauseBeforeSuper();
         super.onPause();
         mCurrentModule.onPauseAfterSuper();
-        mActivityPaused = true;
+
+        mLocalImagesObserver.setActivityPaused(true);
+        mLocalVideosObserver.setActivityPaused(true);
     }
 
     @Override
@@ -1072,11 +1072,12 @@ public class CameraActivity extends Activity
         // than the preview.
         mResetToPreviewOnResume = true;
 
-        mActivityPaused = false;
-        if (mMediaDataChangedDuringPause) {
+        if (mLocalVideosObserver.isMediaDataChangedDuringPause()
+                || mLocalImagesObserver.isMediaDataChangedDuringPause()) {
             mDataAdapter.requestLoad(getContentResolver());
-            mMediaDataChangedDuringPause = false;
         }
+        mLocalImagesObserver.setActivityPaused(false);
+        mLocalVideosObserver.setActivityPaused(false);
     }
 
     @Override
@@ -1444,15 +1445,5 @@ public class CameraActivity extends Activity
 
     public CameraOpenErrorCallback getCameraOpenErrorCallback() {
         return mCameraOpenErrorCallback;
-    }
-
-    /**
-     * When the activity is paused and MediaObserver get onChange() call, then
-     * we would like to set a dirty bit to reload the data at onResume().
-     */
-    public void setDirtyWhenPaused() {
-        if (mActivityPaused && !mMediaDataChangedDuringPause) {
-            mMediaDataChangedDuringPause = true;
-        }
     }
 }
