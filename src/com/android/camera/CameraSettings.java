@@ -73,10 +73,45 @@ public class CameraSettings {
     public static final String KEY_VIDEO_ENCODER = "pref_camera_videoencoder_key";
     public static final String KEY_AUDIO_ENCODER = "pref_camera_audioencoder_key";
     public static final String KEY_VIDEO_DURATION = "pref_camera_video_duration_key";
+    public static final String KEY_POWER_MODE = "pref_camera_powermode_key";
+    public static final String KEY_PICTURE_FORMAT = "pref_camera_pictureformat_key";
+    public static final String KEY_ZSL = "pref_camera_zsl_key";
+    public static final String KEY_COLOR_EFFECT = "pref_camera_coloreffect_key";
+    public static final String KEY_FACE_DETECTION = "pref_camera_facedetection_key";
+    public static final String KEY_TOUCH_AF_AEC = "pref_camera_touchafaec_key";
+    public static final String KEY_SELECTABLE_ZONE_AF = "pref_camera_selectablezoneaf_key";
+    public static final String KEY_SATURATION = "pref_camera_saturation_key";
+    public static final String KEY_CONTRAST = "pref_camera_contrast_key";
+    public static final String KEY_SHARPNESS = "pref_camera_sharpness_key";
+    public static final String KEY_AUTOEXPOSURE = "pref_camera_autoexposure_key";
+    public static final String KEY_ANTIBANDING = "pref_camera_antibanding_key";
+    public static final String KEY_ISO = "pref_camera_iso_key";
+    public static final String KEY_LENSSHADING = "pref_camera_lensshading_key";
+    public static final String KEY_HISTOGRAM = "pref_camera_histogram_key";
+    public static final String KEY_DENOISE = "pref_camera_denoise_key";
+    public static final String KEY_REDEYE_REDUCTION = "pref_camera_redeyereduction_key";
+    public static final String KEY_AE_BRACKET_HDR = "pref_camera_ae_bracket_hdr_key";
+
+    public static final String KEY_VIDEO_SNAPSHOT_SIZE = "pref_camera_videosnapsize_key";
+    public static final String KEY_VIDEO_HIGH_FRAME_RATE = "pref_camera_hfr_key";
+    public static final String DEFAULT_VIDEO_QUALITY_VALUE = "custom";
+    public static final String KEY_SKIN_TONE_ENHANCEMENT = "pref_camera_skinToneEnhancement_key";
+    public static final String KEY_SKIN_TONE_ENHANCEMENT_FACTOR = "pref_camera_skinToneEnhancement_factor_key";
+
+    private static final String VIDEO_QUALITY_HIGH = "high";
+    private static final String VIDEO_QUALITY_MMS = "mms";
+    private static final String VIDEO_QUALITY_YOUTUBE = "youtube";
+
+
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
     public static final int CURRENT_VERSION = 5;
     public static final int CURRENT_LOCAL_VERSION = 2;
+
+    public static final int DEFAULT_VIDEO_DURATION = 0; // no limit
+    private static final int MMS_VIDEO_DURATION = (CamcorderProfile.get(CamcorderProfile.QUALITY_LOW) != null) ?
+          CamcorderProfile.get(CamcorderProfile.QUALITY_LOW).duration :30;
+    private static final int YOUTUBE_VIDEO_DURATION = 15 * 60; // 15 mins
 
     private static final String TAG = "CameraSettings";
 
@@ -162,6 +197,83 @@ public class CameraSettings {
         return duration;
     }
 
+    private void qcomInitPreferences(PreferenceGroup group){
+        //Qcom Preference add here
+        ListPreference powerMode = group.findPreference(KEY_POWER_MODE);
+        ListPreference zsl = group.findPreference(KEY_ZSL);
+        ListPreference colorEffect = group.findPreference(KEY_COLOR_EFFECT);
+        ListPreference faceDetection = group.findPreference(KEY_FACE_DETECTION);
+        ListPreference touchAfAec = group.findPreference(KEY_TOUCH_AF_AEC);
+        ListPreference selectableZoneAf = group.findPreference(KEY_SELECTABLE_ZONE_AF);
+        ListPreference saturation = group.findPreference(KEY_SATURATION);
+        ListPreference contrast = group.findPreference(KEY_CONTRAST);
+        ListPreference sharpness = group.findPreference(KEY_SHARPNESS);
+        ListPreference autoExposure = group.findPreference(KEY_AUTOEXPOSURE);
+        ListPreference antiBanding = group.findPreference(KEY_ANTIBANDING);
+        ListPreference mIso = group.findPreference(KEY_ISO);
+        ListPreference lensShade = group.findPreference(KEY_LENSSHADING);
+        ListPreference histogram = group.findPreference(KEY_HISTOGRAM);
+        ListPreference denoise = group.findPreference(KEY_DENOISE);
+        ListPreference redeyeReduction = group.findPreference(KEY_REDEYE_REDUCTION);
+        ListPreference hdr = group.findPreference(KEY_AE_BRACKET_HDR);
+        ListPreference jpegQuality = group.findPreference(KEY_JPEG_QUALITY);
+        ListPreference videoSnapSize = group.findPreference(KEY_VIDEO_SNAPSHOT_SIZE);
+
+
+        if (touchAfAec != null) {
+            filterUnsupportedOptions(group,
+                    touchAfAec, mParameters.getSupportedTouchAfAec());
+        }
+
+        if (selectableZoneAf != null) {
+            filterUnsupportedOptions(group,
+                    selectableZoneAf, mParameters.getSupportedSelectableZoneAf());
+        }
+
+        if (mIso != null) {
+            filterUnsupportedOptions(group,
+                    mIso, mParameters.getSupportedIsoValues());
+        }
+
+        if (redeyeReduction != null) {
+            filterUnsupportedOptions(group,
+                    redeyeReduction, mParameters.getSupportedRedeyeReductionModes());
+        }
+
+        if (denoise != null) {
+            filterUnsupportedOptions(group,
+                    denoise, mParameters.getSupportedDenoiseModes());
+        }
+
+        if (colorEffect != null) {
+            filterUnsupportedOptions(group,
+                    colorEffect, mParameters.getSupportedColorEffects());
+        }
+
+        if (antiBanding != null) {
+            filterUnsupportedOptions(group,
+                    antiBanding, mParameters.getSupportedAntibanding());
+        }
+
+        if (autoExposure != null) {
+            filterUnsupportedOptions(group,
+                    autoExposure, mParameters.getSupportedAutoexposure());
+        }
+
+        if (!mParameters.isPowerModeSupported()){
+            filterUnsupportedOptions(group,
+                    videoSnapSize, null);
+        } else {
+            filterUnsupportedOptions(group, videoSnapSize, sizeListToStringList(
+                        mParameters.getSupportedPictureSizes()));
+        }
+
+        if (histogram!= null) {
+            filterUnsupportedOptions(group,
+                    histogram, mParameters.getSupportedHistogramModes());
+        }
+
+    }
     private void initPreference(PreferenceGroup group) {
         ListPreference videoQuality = group.findPreference(KEY_VIDEO_QUALITY);
         ListPreference timeLapseInterval = group.findPreference(KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
@@ -234,6 +346,7 @@ public class CameraSettings {
                 !GcamHelper.hasGcamCapture() || isFrontCamera)) {
             removePreference(group, cameraHdrPlus.getKey());
         }
+        qcomInitPreferences(group);
     }
 
     private void buildExposureCompensation(
@@ -579,5 +692,13 @@ public class CameraSettings {
            }
         }
 
+    }
+    public static int getVideoDurationInMillis(String quality) {
+        if (VIDEO_QUALITY_MMS.equals(quality)) {
+            return MMS_VIDEO_DURATION * 1000;
+        } else if (VIDEO_QUALITY_YOUTUBE.equals(quality)) {
+            return YOUTUBE_VIDEO_DURATION * 1000;
+        }
+        return DEFAULT_VIDEO_DURATION * 1000;
     }
 }

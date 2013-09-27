@@ -62,12 +62,12 @@ public class FocusOverlayManager {
     private static final int RESET_TOUCH_FOCUS_DELAY = 3000;
 
     private int mState = STATE_IDLE;
-    private static final int STATE_IDLE = 0; // Focus is not active.
-    private static final int STATE_FOCUSING = 1; // Focus is in progress.
+    public static final int STATE_IDLE = 0; // Focus is not active.
+    public static final int STATE_FOCUSING = 1; // Focus is in progress.
     // Focus is in progress and the camera should take a picture after focus finishes.
-    private static final int STATE_FOCUSING_SNAP_ON_FINISH = 2;
-    private static final int STATE_SUCCESS = 3; // Focus finishes and succeeds.
-    private static final int STATE_FAIL = 4; // Focus finishes and fails.
+    public static final int STATE_FOCUSING_SNAP_ON_FINISH = 2;
+    public static final int STATE_SUCCESS = 3; // Focus finishes and succeeds.
+    public static final int STATE_FAIL = 4; // Focus finishes and fails.
 
     private boolean mInitialized;
     private boolean mFocusAreaSupported;
@@ -91,6 +91,7 @@ public class FocusOverlayManager {
     Listener mListener;
     private boolean mPreviousMoving;
     private boolean mFocusDefault;
+    private boolean mZslEnabled = false;  //QCom Parameter to disable focus for ZSL
 
     private FocusUI mUI;
 
@@ -190,7 +191,7 @@ public class FocusOverlayManager {
     }
 
     private void lockAeAwbIfNeeded() {
-        if (mLockAeAwbNeeded && !mAeAwbLock) {
+        if (mLockAeAwbNeeded && !mAeAwbLock && !mZslEnabled) {
             mAeAwbLock = true;
             mListener.setFocusParameters();
         }
@@ -540,6 +541,10 @@ public class FocusOverlayManager {
         return mState == STATE_SUCCESS || mState == STATE_FAIL;
     }
 
+    public int getCurrentFocusState() {
+        return mState;
+    }
+
     public boolean isFocusingSnapOnFinish() {
         return mState == STATE_FOCUSING_SNAP_ON_FINISH;
     }
@@ -561,9 +566,14 @@ public class FocusOverlayManager {
     }
 
     private boolean needAutoFocusCall() {
+        if(mZslEnabled) return false;
         String focusMode = getFocusMode();
         return !(focusMode.equals(Parameters.FOCUS_MODE_INFINITY)
                 || focusMode.equals(Parameters.FOCUS_MODE_FIXED)
                 || focusMode.equals(Parameters.FOCUS_MODE_EDOF));
+    }
+
+    public void setZslEnable(boolean value) {
+        mZslEnabled = value;
     }
 }

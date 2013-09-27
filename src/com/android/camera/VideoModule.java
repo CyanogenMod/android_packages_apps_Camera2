@@ -29,6 +29,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
+import android.graphics.ImageFormat;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
@@ -41,6 +42,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.provider.MediaStore;
@@ -281,7 +283,8 @@ public class VideoModule implements CameraModule,
     private int videoWidth;
     private int videoHeight;
     boolean mUnsupportedResolution = false;
-
+    private boolean mUnsupportedHFRVideoSize = false;
+    private boolean mUnsupportedHFRVideoCodec = false;
 
     // This Handler is used to post message back onto the main thread of the
     // application
@@ -1614,6 +1617,63 @@ public class VideoModule implements CameraModule,
         return supported == null ? false : supported.indexOf(value) >= 0;
     }
 
+     private void qcomSetCameraParameters(){
+        // add QCOM Parameters here
+        // Set color effect parameter.
+        String colorEffect = mPreferences.getString(
+            CameraSettings.KEY_COLOR_EFFECT,
+            mActivity.getString(R.string.pref_camera_coloreffect_default));
+        Log.v(TAG, "Color effect value =" + colorEffect);
+        if (isSupported(colorEffect, mParameters.getSupportedColorEffects())) {
+            mParameters.setColorEffect(colorEffect);
+        }
+
+        mUnsupportedHFRVideoSize = false;
+        mUnsupportedHFRVideoCodec = false;
+        // To set preview format as YV12 , run command
+        // "adb shell setprop "debug.camera.yv12" true"
+        String yv12formatset = SystemProperties.get("debug.camera.yv12");
+        if(yv12formatset.equals("true")) {
+            Log.v(TAG, "preview format set to YV12");
+            mParameters.setPreviewFormat (ImageFormat.YV12);
+        }
+
+        // Set High Frame Rate.
+        String HighFrameRate = mPreferences.getString(
+            CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
+            mActivity. getString(R.string.pref_camera_hfr_default));
+        if(!("off".equals(HighFrameRate))){
+            mUnsupportedHFRVideoSize = true;
+            String hfrsize = videoWidth+"x"+videoHeight;
+            Log.v(TAG, "current set resolution is : "+hfrsize);
+            try {
+                for(Size size :  mParameters.getSupportedHfrSizes()){
+                    if(size != null) {
+                        Log.v(TAG, "supported hfr size : "+ size.width+ " "+size.height);
+                        if(videoWidth <= size.width && videoHeight <= size.height) {
+                            mUnsupportedHFRVideoSize = false;
+                            Log.v(TAG,"Current hfr resolution is supported");
+                            break;
+                        }
+                    }
+                }
+            } catch (NullPointerException e){
+                Log.e(TAG, "supported hfr sizes is null");
+            }
+
+            if(mUnsupportedHFRVideoSize)
+                Log.v(TAG,"Unsupported hfr resolution");
+
+            if(mVideoEncoder != MediaRecorder.VideoEncoder.H264)
+                mUnsupportedHFRVideoCodec = true;
+        }
+        if (isSupported(HighFrameRate,
+                mParameters.getSupportedVideoHighFrameRateModes()) &&
+                !mUnsupportedHFRVideoSize) {
+            mParameters.setVideoHighFrameRate(HighFrameRate);
+            } else
+            mParameters.setVideoHighFrameRate("off");
+    }
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
@@ -1686,7 +1746,8 @@ public class VideoModule implements CameraModule,
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
-
+        //Call Qcom related Camera Parameters
+        qcomSetCameraParameters();
         mCameraDevice.setParameters(mParameters);
         // Keep preview size up to date.
         mParameters = mCameraDevice.getParameters();

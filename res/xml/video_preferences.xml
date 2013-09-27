@@ -90,4 +90,28 @@
             camera:largeIcons="@array/camera_recordlocation_largeicons"
             camera:entries="@array/pref_camera_recordlocation_entries"
             camera:entryValues="@array/pref_camera_recordlocation_entryvalues" />
+    <ListPreference
+            camera:key="pref_camera_powermode_key"
+            camera:defaultValue="@string/pref_camera_powermode_default"
+            camera:title="@string/pref_camera_powermode_title"
+            camera:entries="@array/pref_camera_powermode_entries"
+            camera:entryValues="@array/pref_camera_powermode_entryvalues" />
+    <ListPreference
+            camera:key="pref_camera_coloreffect_key"
+            camera:defaultValue="@string/pref_camera_coloreffect_default"
+            camera:title="@string/pref_camera_coloreffect_title"
+            camera:entries="@array/pref_camera_coloreffect_entries"
+            camera:entryValues="@array/pref_camera_coloreffect_entryvalues" />
+    <ListPreference
+            camera:key="pref_camera_hfr_key"
+            camera:defaultValue="@string/pref_camera_hfr_default"
+            camera:title="@string/pref_camera_hfr_title"
+            camera:entries="@array/pref_camera_hfr_entries"
+            camera:entryValues="@array/pref_camera_hfr_entryvalues"/>
+    <ListPreference
+            camera:key="pref_camera_videosnapsize_key"
+            camera:defaultValue="@string/pref_camera_videosnapsize_default"
+            camera:title="@string/pref_camera_picturesize_title"
+            camera:entries="@array/pref_camera_picturesize_entries"
+            camera:entryValues="@array/pref_camera_picturesize_entryvalues" />
 </PreferenceGroup>
