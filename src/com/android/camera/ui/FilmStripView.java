@@ -2251,10 +2251,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onDoubleTap(float x, float y) {
-            if (mScale < FULL_SCREEN_SCALE || inCameraFullscreen()) {
+            ViewItem current = mViewItem[mCurrentItem];
+            if (inFilmStrip() && current != null) {
+                mController.goToFullScreen();
+                return true;
+            } else if (mScale < FULL_SCREEN_SCALE || inCameraFullscreen()) {
                 return false;
             }
-            ViewItem current = mViewItem[mCurrentItem];
             if (current == null) {
                 return false;
             }
@@ -2263,7 +2266,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             mListener.setSystemDecorsVisibility(false);
             mController.zoomAt(current, x, y);
-            return false;
+            return true;
         }
 
         @Override
@@ -2325,8 +2328,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
             }
 
+            int currId = currItem.getId();
             if (mCenterX > currItem.getCenterX() + CAMERA_PREVIEW_SWIPE_THRESHOLD
-                    && currItem.getId() == 0
+                    && currId == 0
                     && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY
                     && mDataIdOnUserScrolling == 0) {
                 mController.goToFilmStrip();
@@ -2339,15 +2343,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     // No next photo.
                     snapInCenter();
                 }
-            } if (mCenterX == currItem.getCenterX() && currItem.getId() == 0
+            } if (mCenterX == currItem.getCenterX() && currId == 0
                     && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
                 mController.goToFullScreen();
             } else {
-                if (mDataIdOnUserScrolling  == 0 && currItem.getId() != 0) {
+                if (mDataIdOnUserScrolling  == 0 && currId != 0) {
                     // Special case to go to filmstrip when the user scroll away
                     // from the camera preview and the current one is not the
                     // preview anymore.
                     mController.goToFilmStrip();
+                    mDataIdOnUserScrolling = currId;
                 }
                 snapInCenter();
             }
