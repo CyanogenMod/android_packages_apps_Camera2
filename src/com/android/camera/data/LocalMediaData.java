@@ -432,6 +432,7 @@ public abstract class LocalMediaData implements LocalData {
         public MediaDetails getMediaDetails(Context context) {
             MediaDetails mediaDetails = super.getMediaDetails(context);
             MediaDetails.extractExifInfo(mediaDetails, mPath);
+            mediaDetails.addDetail(MediaDetails.INDEX_ORIENTATION, mOrientation);
             return mediaDetails;
         }
 
