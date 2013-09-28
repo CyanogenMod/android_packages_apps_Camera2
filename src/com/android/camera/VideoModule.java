@@ -505,6 +505,11 @@ public class VideoModule implements CameraModule,
 
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
+            Log.v(TAG, "onOrientationChanged, update parameters");
+            if (mParameters != null) {
+                setCameraParameters();
+            }
+
         }
 
         // Show the toast after getting the first orientation changed.
@@ -1673,6 +1678,49 @@ public class VideoModule implements CameraModule,
             mParameters.setVideoHighFrameRate(HighFrameRate);
             } else
             mParameters.setVideoHighFrameRate("off");
+
+        // Read Flip mode from adb command
+        //value: 0(default) - FLIP_MODE_OFF
+        //value: 1 - FLIP_MODE_H
+        //value: 2 - FLIP_MODE_V
+        //value: 3 - FLIP_MODE_VH
+        int preview_flip_value = SystemProperties.getInt("debug.camera.preview.flip", 0);
+        int video_flip_value = SystemProperties.getInt("debug.camera.video.flip", 0);
+        int picture_flip_value = SystemProperties.getInt("debug.camera.picture.flip", 0);
+        int rotation = CameraUtil.getJpegRotation(mCameraId, mOrientation);
+        mParameters.setRotation(rotation);
+        if (rotation == 90 || rotation == 270) {
+            // in case of 90 or 270 degree, V/H flip should reverse
+            if (preview_flip_value == 1) {
+                preview_flip_value = 2;
+            } else if (preview_flip_value == 2) {
+                preview_flip_value = 1;
+            }
+            if (video_flip_value == 1) {
+                video_flip_value = 2;
+            } else if (video_flip_value == 2) {
+                video_flip_value = 1;
+            }
+            if (picture_flip_value == 1) {
+                picture_flip_value = 2;
+            } else if (picture_flip_value == 2) {
+                picture_flip_value = 1;
+            }
+        }
+        String preview_flip = CameraUtil.getFilpModeString(preview_flip_value);
+        String video_flip = CameraUtil.getFilpModeString(video_flip_value);
+        String picture_flip = CameraUtil.getFilpModeString(picture_flip_value);
+
+        if(CameraUtil.isSupported(preview_flip, CameraSettings.getSupportedFlipMode(mParameters))){
+            mParameters.set(CameraSettings.KEY_QC_PREVIEW_FLIP, preview_flip);
+        }
+        if(CameraUtil.isSupported(video_flip, CameraSettings.getSupportedFlipMode(mParameters))){
+            mParameters.set(CameraSettings.KEY_QC_VIDEO_FLIP, video_flip);
+        }
+        if(CameraUtil.isSupported(picture_flip, CameraSettings.getSupportedFlipMode(mParameters))){
+            mParameters.set(CameraSettings.KEY_QC_SNAPSHOT_PICTURE_FLIP, picture_flip);
+        }
+
         // Set Video HDR.
         String videoHDR = mPreferences.getString(
                 CameraSettings.KEY_VIDEO_HDR,

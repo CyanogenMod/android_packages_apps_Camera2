@@ -56,7 +56,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager;
-import com.android.camera.util.IntentHelper;
+import com.android.camera.CameraSettings;
 import com.android.camera2.R;
 
 import java.io.Closeable;
@@ -795,7 +795,20 @@ public class CameraUtil {
             }
         }
     }
-
+   public static String getFilpModeString(int value){
+        switch(value){
+            case 0:
+                return CameraSettings.FLIP_MODE_OFF;
+            case 1:
+                return CameraSettings.FLIP_MODE_H;
+            case 2:
+                return CameraSettings.FLIP_MODE_V;
+            case 3:
+                return CameraSettings.FLIP_MODE_VH;
+            default:
+                return null;
+        }
+    }
     /**
      * For still image capture, we need to get the right fps range such that the
      * camera can slow down the framerate to allow for less-noisy/dark
