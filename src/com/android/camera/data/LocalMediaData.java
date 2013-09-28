@@ -18,6 +18,7 @@ package com.android.camera.data;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -201,20 +203,23 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     protected ImageView fillImageView(Context ctx, ImageView v,
-            int decodeWidth, int decodeHeight, Drawable placeHolder) {
+            int decodeWidth, int decodeHeight, Drawable placeHolder,
+            LocalDataAdapter adapter) {
         v.setScaleType(ImageView.ScaleType.FIT_XY);
         v.setImageDrawable(placeHolder);
 
-        BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight);
+        BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight,
+                ctx.getContentResolver(), adapter);
         task.execute();
         return v;
     }
 
     @Override
     public View getView(Activity activity,
-            int decodeWidth, int decodeHeight, Drawable placeHolder) {
+            int decodeWidth, int decodeHeight, Drawable placeHolder,
+            LocalDataAdapter adapter) {
         return fillImageView(activity, new ImageView(activity),
-                decodeWidth, decodeHeight, placeHolder);
+                decodeWidth, decodeHeight, placeHolder, adapter);
     }
 
     @Override
@@ -277,7 +282,8 @@ public abstract class LocalMediaData implements LocalData {
     public abstract int getViewType();
 
     protected abstract BitmapLoadTask getBitmapLoadTask(
-            ImageView v, int decodeWidth, int decodeHeight);
+            ImageView v, int decodeWidth, int decodeHeight,
+            ContentResolver resolver, LocalDataAdapter adapter);
 
     public static final class PhotoData extends LocalMediaData {
         private static final String TAG = "CAM_PhotoData";
@@ -466,18 +472,28 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight) {
-            return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight);
+                ImageView v, int decodeWidth, int decodeHeight,
+                ContentResolver resolver, LocalDataAdapter adapter) {
+            return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight,
+                    resolver, adapter);
         }
 
         private final class PhotoBitmapLoadTask extends BitmapLoadTask {
-            private int mDecodeWidth;
-            private int mDecodeHeight;
+            private final int mDecodeWidth;
+            private final int mDecodeHeight;
+            private final ContentResolver mResolver;
+            private final LocalDataAdapter mAdapter;
 
-            public PhotoBitmapLoadTask(ImageView v, int decodeWidth, int decodeHeight) {
+            private boolean mNeedsRefresh;
+
+            public PhotoBitmapLoadTask(ImageView v, int decodeWidth,
+                    int decodeHeight, ContentResolver resolver,
+                    LocalDataAdapter adapter) {
                 super(v);
                 mDecodeWidth = decodeWidth;
                 mDecodeHeight = decodeHeight;
+                mResolver = resolver;
+                mAdapter = adapter;
             }
 
             @Override
@@ -496,6 +512,40 @@ public abstract class LocalMediaData implements LocalData {
                     return null;
                 }
                 Bitmap b = BitmapFactory.decodeFile(mPath, opts);
+
+                // For correctness, we need to double check the size here. The
+                // good news is that decoding bounds take much less time than
+                // decoding samples like < 1%.
+                // TODO: better organize the decoding and sampling by using a
+                // image cache.
+                int width = 0;
+                int height = 0;
+                BitmapFactory.Options justBoundsOpts = new BitmapFactory.Options();
+                justBoundsOpts.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(mPath, justBoundsOpts);
+                if (justBoundsOpts.outWidth > 0 && justBoundsOpts.outHeight > 0) {
+                    width = justBoundsOpts.outWidth;
+                    height = justBoundsOpts.outHeight;
+                }
+                if (mOrientation == 90 || mOrientation == 270) {
+                    int temp = width;
+                    width = height;
+                    height = temp;
+                }
+
+                // If the decoded width and height is valid and not matching the
+                // values from MediaStore, then update the MediaStore. This only
+                // happened when the MediaStore had been told a wrong data.
+                if (width > 0 && height > 0 && (width != mWidth || height != mHeight)) {
+                    ContentValues values = new ContentValues();
+                    values.put(Images.Media.WIDTH, width);
+                    values.put(Images.Media.HEIGHT, height);
+                    mResolver.update(getContentUri(), values, null, null);
+                    mNeedsRefresh = true;
+                    Log.w(TAG, "MediaStore has been updated with correct size!");
+                    return null;
+                }
+
                 if (mOrientation != 0 && b != null) {
                     if (isCancelled() || !isUsing()) {
                         return null;
@@ -505,6 +555,14 @@ public abstract class LocalMediaData implements LocalData {
                     b = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, false);
                 }
                 return b;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                if (mNeedsRefresh && mAdapter != null) {
+                    mAdapter.refresh(mResolver, getContentUri());
+                }
             }
         }
 
@@ -691,14 +749,16 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public View getView(final Activity activity,
-                int decodeWidth, int decodeHeight, Drawable placeHolder) {
+                int decodeWidth, int decodeHeight, Drawable placeHolder,
+                LocalDataAdapter adapter) {
 
             // ImageView for the bitmap.
             ImageView iv = new ImageView(activity);
             iv.setLayoutParams(new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-            fillImageView(activity, iv, decodeWidth, decodeHeight, placeHolder);
+            fillImageView(activity, iv, decodeWidth, decodeHeight, placeHolder,
+                    adapter);
 
             // ImageView for the play icon.
             ImageView icon = new ImageView(activity);
@@ -727,7 +787,8 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight) {
+                ImageView v, int decodeWidth, int decodeHeight,
+                ContentResolver resolver, LocalDataAdapter adapter) {
             return new VideoBitmapLoadTask(v);
         }
 
