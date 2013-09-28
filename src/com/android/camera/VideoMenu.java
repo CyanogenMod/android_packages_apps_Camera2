@@ -38,15 +38,15 @@ public class VideoMenu extends PieController
     private VideoUI mUI;
     private String[] mOtherKeys1;
     private String[] mOtherKeys2;
-    private MoreSettingPopup mPopup1;
-    private MoreSettingPopup mPopup2;
 
-    private AbstractSettingPopup mPopup;
+    private AbstractSettingPopup mPopup1;
+    private AbstractSettingPopup mPopup2;
 
     private static final int POPUP_NONE = 0;
     private static final int POPUP_FIRST_LEVEL = 1;
     private static final int POPUP_SECOND_LEVEL = 2;
     private int mPopupStatus;
+    private int popupNum;
     private CameraActivity mActivity;
 
     public VideoMenu(CameraActivity activity, VideoUI ui, PieRenderer pie) {
@@ -57,9 +57,9 @@ public class VideoMenu extends PieController
 
     public void initialize(PreferenceGroup group) {
         super.initialize(group);
-        mPopup = null;
         mPopup1 = null;
         mPopup2 = null;
+        popupNum = 0;
         mPopupStatus = POPUP_NONE;
         PieItem item = null;
         // settings popup
@@ -93,6 +93,7 @@ public class VideoMenu extends PieController
                     mPopupStatus = POPUP_FIRST_LEVEL;
                 }
                 mUI.showPopup(mPopup1);
+                popupNum = 1;
             }
         });
         mRenderer.addItem(item1);
@@ -107,6 +108,7 @@ public class VideoMenu extends PieController
                     mPopupStatus = POPUP_FIRST_LEVEL;
                 }
                 mUI.showPopup(mPopup2);
+                popupNum = 2;
             }
         });
         mRenderer.addItem(item2);
@@ -159,11 +161,12 @@ public class VideoMenu extends PieController
     @Override
     public void overrideSettings(final String ... keyvalues) {
         super.overrideSettings(keyvalues);
-        if (mPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
+        if (((mPopup1 == null) && (mPopup2 == null)) || mPopupStatus != POPUP_FIRST_LEVEL) {
             mPopupStatus = POPUP_FIRST_LEVEL;
             initializePopup();
         }
-        ((MoreSettingPopup) mPopup).overrideSettings(keyvalues);
+        ((MoreSettingPopup) mPopup1).overrideSettings(keyvalues);
+        ((MoreSettingPopup) mPopup2).overrideSettings(keyvalues);
     }
 
     @Override
@@ -172,6 +175,8 @@ public class VideoMenu extends PieController
         if (mPopup1 != null && mPopup2 != null) {
             if (mPopupStatus == POPUP_SECOND_LEVEL) {
                 mUI.dismissPopup(true);
+                mPopup1.reloadPreference();
+                mPopup2.reloadPreference();
             }
         }
         super.onSettingChanged(pref);
@@ -203,7 +208,12 @@ public class VideoMenu extends PieController
         if (mPopupStatus == POPUP_SECOND_LEVEL) {
             initializePopup();
             mPopupStatus = POPUP_FIRST_LEVEL;
-            if (topPopupOnly) mUI.showPopup(mPopup);
+            if (topPopupOnly) {
+                if(popupNum == 1) mUI.showPopup(mPopup1);
+                else if(popupNum == 2) mUI.showPopup(mPopup2);
+            }
+        } else {
+            initializePopup();
         }
     }
 
@@ -222,16 +232,16 @@ public class VideoMenu extends PieController
             timeInterval.initialize((IconListPreference) pref);
             timeInterval.setSettingChangedListener(this);
             mUI.dismissPopup(true);
-            mPopup = timeInterval;
+            mPopup1 = timeInterval;
         } else {
             ListPrefSettingPopup basic = (ListPrefSettingPopup) inflater.inflate(
                     R.layout.list_pref_setting_popup, null, false);
             basic.initialize(pref);
             basic.setSettingChangedListener(this);
             mUI.dismissPopup(true);
-            mPopup = basic;
+            mPopup1 = basic;
         }
-        mUI.showPopup(mPopup);
+        mUI.showPopup(mPopup1);
         mPopupStatus = POPUP_SECOND_LEVEL;
     }
 

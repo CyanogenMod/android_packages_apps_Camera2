@@ -210,10 +210,8 @@ public class PhotoMenu extends PieController
     @Override
     // Hit when an item in a popup gets selected
     public void onListPrefChanged(ListPreference pref) {
-        if (mPopup1 != null && mPopup2 != null && mPopup3 != null) {
-           if (mPopupStatus == POPUP_SECOND_LEVEL) {
+        if (mPopup != null && mPopup1 != null && mPopup2 != null && mPopup3 != null) {
                mUI.dismissPopup();
-           }
         }
         onSettingChanged(pref);
     }
