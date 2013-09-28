@@ -781,6 +781,16 @@ public class PhotoModule
             Log.v(TAG, "mJpegCallbackFinishTime = "
                     + mJpegCallbackFinishTime + "ms");
             mJpegPictureCallbackTime = 0;
+            if (mHiston && (mSnapshotMode ==CameraInfo.CAMERA_SUPPORT_MODE_ZSL)) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (mGraphView != null) {
+                            mGraphView.setVisibility(View.VISIBLE);
+                            mGraphView.PreviewChanged();
+                        }
+                    }
+                });
+            }
         }
     }
 
