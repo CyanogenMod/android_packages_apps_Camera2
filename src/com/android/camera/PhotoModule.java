@@ -192,7 +192,7 @@ public class PhotoModule
     // Constant from android.hardware.Camera.Parameters
     private static final String KEY_PICTURE_FORMAT = "picture-format";
     private static final String KEY_QC_RAW_PICUTRE_SIZE = "raw-size";
-    private static final String PIXEL_FORMAT_JPEG = "jpeg";
+    public static final String PIXEL_FORMAT_JPEG = "jpeg";
 
     private static final int MIN_SCE_FACTOR = -10;
     private static final int MAX_SCE_FACTOR = +10;
@@ -863,6 +863,19 @@ public class PhotoModule
                     width = s.height;
                     height = s.width;
                 }
+
+                String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
+                if (pictureFormat != null && !pictureFormat.equalsIgnoreCase(PIXEL_FORMAT_JPEG)) {
+                    // overwrite width and height if raw picture
+                    String pair = mParameters.get(KEY_QC_RAW_PICUTRE_SIZE);
+                    if (pair != null) {
+                        int pos = pair.indexOf('x');
+                        if (pos != -1) {
+                            width = Integer.parseInt(pair.substring(0, pos));
+                            height = Integer.parseInt(pair.substring(pos + 1));
+                        }
+                    }
+                }
                 NamedEntity name = mNamedImages.getNextNameEntity();
                 String title = (name == null) ? null : name.title;
                 long date = (name == null) ? -1 : name.date;
@@ -893,9 +906,10 @@ public class PhotoModule
                         exif.setTag(directionRefTag);
                         exif.setTag(directionTag);
                     }
+                    String mPictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
                     mActivity.getMediaSaveService().addImage(
                             jpegData, title, date, mLocation, width, height,
-                            orientation, exif, mOnMediaSavedListener, mContentResolver);
+                            orientation, exif, mOnMediaSavedListener, mContentResolver, mPictureFormat);
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
                 mUI.animateCapture(jpegData, orientation, mMirror);

@@ -43,6 +43,7 @@ public class Storage {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
 
     public static final String DIRECTORY = DCIM + "/Camera";
+    public static final String RAW_DIRECTORY = DCIM + "/Camera/raw";
 
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
@@ -80,32 +81,41 @@ public class Storage {
     // Save the image and add it to media store.
     public static Uri addImage(ContentResolver resolver, String title,
             long date, Location location, int orientation, ExifInterface exif,
-            byte[] jpeg, int width, int height) {
+            byte[] jpeg, int width, int height, String pictureFormat) {
         // Save the image.
-        String path = generateFilepath(title);
-        if (exif != null) {
+        String path = generateFilepath(title, pictureFormat);
+        if (exif != null && (pictureFormat == null ||
+            pictureFormat.equalsIgnoreCase("jpeg"))) {
             try {
                 exif.writeExif(jpeg, path);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to write data", e);
             }
         } else {
+            if (!(pictureFormat.equalsIgnoreCase("jpeg") || pictureFormat == null)) {
+                 File dir = new File(RAW_DIRECTORY);
+                 dir.mkdirs();
+            }
             writeFile(path, jpeg);
         }
         return addImage(resolver, title, date, location, orientation,
-                jpeg.length, path, width, height);
+                jpeg.length, path, width, height, pictureFormat);
     }
 
     // Add the image to media store.
     public static Uri addImage(ContentResolver resolver, String title,
             long date, Location location, int orientation, int jpegLength,
-            String path, int width, int height) {
+            String path, int width, int height, String pictureFormat) {
         // Insert into MediaStore.
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
-        values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
+        if (pictureFormat.equalsIgnoreCase("jpeg") || pictureFormat == null) {
+            values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
+        } else {
+            values.put(ImageColumns.DISPLAY_NAME, title + ".raw");
+        }
         values.put(ImageColumns.DATE_TAKEN, date);
-        values.put(ImageColumns.MIME_TYPE, LocalData.MIME_TYPE_JPEG);
+        values.put(ImageColumns.MIME_TYPE, "image/jpeg");
         // Clockwise rotation in degrees. 0, 90, 180, or 270.
         values.put(ImageColumns.ORIENTATION, orientation);
         values.put(ImageColumns.DATA, path);
@@ -140,8 +150,12 @@ public class Storage {
         }
     }
 
-    public static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+    public static String generateFilepath(String title, String pictureFormat) {
+        if (pictureFormat.equalsIgnoreCase("jpeg") || pictureFormat == null) {
+            return DIRECTORY + '/' + title + ".jpg";
+        } else {
+            return RAW_DIRECTORY + '/' + title + ".raw";
+        }
     }
 
     public static long getAvailableSpace() {

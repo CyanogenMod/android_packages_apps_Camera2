@@ -65,7 +65,7 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
-
+import com.android.camera.PhotoModule;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -1962,10 +1962,11 @@ public class VideoModule implements CameraModule,
         String title = CameraUtil.createJpegName(dateTaken);
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
-
+        Size s = mParameters.getPictureSize();
         mActivity.getMediaSaveService().addImage(
-                data, title, dateTaken, loc, orientation,
-                exif, mOnPhotoSavedListener, mContentResolver);
+                data, title, dateTaken, loc, s.width, s.height, orientation,
+                exif, mOnPhotoSavedListener, mContentResolver,
+                PhotoModule.PIXEL_FORMAT_JPEG);
     }
 
     private String convertOutputFormatToMimeType(int outputFileFormat) {

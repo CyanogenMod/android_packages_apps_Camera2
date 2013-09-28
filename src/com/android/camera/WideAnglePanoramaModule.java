@@ -43,7 +43,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-
+import com.android.camera.PhotoModule;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.exif.ExifInterface;
@@ -742,7 +742,8 @@ public class WideAnglePanoramaModule
         if (jpegData != null) {
             String filename = PanoUtil.createName(
                     mActivity.getResources().getString(R.string.pano_file_name_format), mTimeTaken);
-            String filepath = Storage.generateFilepath(filename);
+            String filepath = Storage.generateFilepath(filename,
+                              PhotoModule.PIXEL_FORMAT_JPEG);
 
             Location loc = mLocationManager.getCurrentLocation();
             ExifInterface exif = new ExifInterface();
@@ -761,7 +762,8 @@ public class WideAnglePanoramaModule
             }
             int jpegLength = (int) (new File(filepath).length());
             return Storage.addImage(mContentResolver, filename, mTimeTaken,
-                    loc, orientation, jpegLength, filepath, width, height);
+                    loc, orientation, jpegLength, filepath, width, height,
+                    PhotoModule.PIXEL_FORMAT_JPEG);
         }
         return null;
     }
