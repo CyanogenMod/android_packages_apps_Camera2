@@ -136,7 +136,8 @@ public class PhotoMenu extends PieController
                 CameraSettings.KEY_EXPOSURE,
                 CameraSettings.KEY_WHITE_BALANCE,
                 CameraSettings.KEY_FLASH_MODE,
-                CameraSettings.KEY_REDEYE_REDUCTION
+                CameraSettings.KEY_REDEYE_REDUCTION,
+                CameraSettings.KEY_AE_BRACKET_HDR
         };
 
         PieItem item1 = makeItem(R.drawable.ic_settings_holo_light);

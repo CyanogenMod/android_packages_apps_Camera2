@@ -1945,6 +1945,15 @@ public class PhotoModule
         if((0 <= sharpness) && (sharpness <= mParameters.getMaxSharpness())){
             mParameters.setSharpness(sharpness);
         }
+        // Set AE Bracketing
+        String aeBracketing = mPreferences.getString(
+                CameraSettings.KEY_AE_BRACKET_HDR,
+                mActivity.getString(R.string.pref_camera_ae_bracket_hdr_default));
+        Log.v(TAG, "AE Bracketing value =" + aeBracketing);
+        if (CameraUtil.isSupported(aeBracketing,
+                CameraSettings.getSupportedAEBracketingModes(mParameters))) {
+            mParameters.set(CameraSettings.KEY_QC_AE_BRACKETING, aeBracketing);
+        }
         // Set auto exposure parameter.
         String autoExposure = mPreferences.getString(
                 CameraSettings.KEY_AUTOEXPOSURE,
