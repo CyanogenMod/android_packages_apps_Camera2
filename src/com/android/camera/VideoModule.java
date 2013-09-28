@@ -1302,6 +1302,18 @@ public class VideoModule implements CameraModule,
             return;
         }
 
+        if( mUnsupportedHFRVideoSize == true) {
+            Log.e(TAG, "Unsupported HFR and video size combinations");
+            Toast.makeText(mActivity,R.string.error_app_unsupported_hfr, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if( mUnsupportedHFRVideoCodec == true) {
+            Log.e(TAG, "Unsupported HFR and video codec combinations");
+            Toast.makeText(mActivity, R.string.error_app_unsupported_hfr_codec,
+            Toast.LENGTH_SHORT).show();
+            return;
+        }
         //??
         //if (!mCameraDevice.waitDone()) return;
         mCurrentVideoUri = null;
