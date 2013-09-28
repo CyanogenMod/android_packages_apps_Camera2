@@ -44,14 +44,18 @@ import com.adobe.xmp.XMPMeta;
 import com.android.camera.CameraActivity;
 import com.android.camera.MediaSaveService;
 import com.android.camera.MediaSaveService.OnMediaSavedListener;
+import com.android.camera.exif.ExifInterface;
 import com.android.camera.tinyplanet.TinyPlanetPreview.PreviewSizeListener;
 import com.android.camera.util.XmpUtil;
 import com.android.camera2.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -358,7 +362,27 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
 
         ByteArrayOutputStream jpeg = new ByteArrayOutputStream();
         resultBitmap.compress(CompressFormat.JPEG, 100, jpeg);
-        return new TinyPlanetImage(jpeg.toByteArray(), outputSize);
+        return new TinyPlanetImage(addExif(jpeg.toByteArray()), outputSize);
+    }
+
+    /**
+     * Adds basic EXIF data to the tiny planet image so it an be rewritten
+     * later.
+     *
+     * @param jpeg the JPEG data of the tiny planet.
+     * @return The JPEG data containing basic EXIF.
+     */
+    private byte[] addExif(byte[] jpeg) {
+        ExifInterface exif = new ExifInterface();
+        exif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME, System.currentTimeMillis(),
+                TimeZone.getDefault());
+        ByteArrayOutputStream jpegOut = new ByteArrayOutputStream();
+        try {
+            exif.writeExif(jpeg, jpegOut);
+        } catch (IOException e) {
+            Log.e(TAG, "Could not write EXIF", e);
+        }
+        return jpegOut.toByteArray();
     }
 
     private int getDisplaySize() {
