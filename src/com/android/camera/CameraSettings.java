@@ -94,6 +94,7 @@ public class CameraSettings {
 
     public static final String KEY_VIDEO_SNAPSHOT_SIZE = "pref_camera_videosnapsize_key";
     public static final String KEY_VIDEO_HIGH_FRAME_RATE = "pref_camera_hfr_key";
+    public static final String KEY_VIDEO_HDR = "pref_camera_video_hdr_key";
     public static final String DEFAULT_VIDEO_QUALITY_VALUE = "custom";
     public static final String KEY_SKIN_TONE_ENHANCEMENT = "pref_camera_skinToneEnhancement_key";
     public static final String KEY_SKIN_TONE_ENHANCEMENT_FACTOR = "pref_camera_skinToneEnhancement_factor_key";
@@ -218,6 +219,7 @@ public class CameraSettings {
         ListPreference hdr = group.findPreference(KEY_AE_BRACKET_HDR);
         ListPreference jpegQuality = group.findPreference(KEY_JPEG_QUALITY);
         ListPreference videoSnapSize = group.findPreference(KEY_VIDEO_SNAPSHOT_SIZE);
+        ListPreference videoHdr = group.findPreference(KEY_VIDEO_HDR);
 
 
         if (touchAfAec != null) {
@@ -243,6 +245,11 @@ public class CameraSettings {
         if (denoise != null) {
             filterUnsupportedOptions(group,
                     denoise, mParameters.getSupportedDenoiseModes());
+        }
+
+        if (videoHdr != null) {
+            filterUnsupportedOptions(group,
+                    videoHdr, mParameters.getSupportedVideoHDRModes());
         }
 
         if (colorEffect != null) {
