@@ -107,6 +107,8 @@ public class PhotoModule
     private static final int MAX_SHARPNESS_LEVEL = 6;
     private boolean mRestartPreview = false;
     private int mSnapshotMode;
+    private int mBurstSnapNum = 1;
+    private int mReceivedSnapNum = 0;
     public boolean mFaceDetectionEnabled = false;
 
    /*Histogram variables*/
@@ -805,7 +807,15 @@ public class PhotoModule
                 mUI.setSwipingEnabled(true);
             }
 
+            mReceivedSnapNum = mReceivedSnapNum + 1;
             mJpegPictureCallbackTime = System.currentTimeMillis();
+            if(mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
+                Log.v(TAG, "JpegPictureCallback : in zslmode");
+                mParameters = mCameraDevice.getParameters();
+                mBurstSnapNum = mParameters.getInt("num-snaps-per-shutter");
+            }
+            Log.v(TAG, "JpegPictureCallback: Received = " + mReceivedSnapNum +
+                      "Burst count = " + mBurstSnapNum);
             // If postview callback has arrived, the captured image is displayed
             // in postview callback. If not, the captured image is displayed in
             // raw picture callback.
@@ -824,14 +834,25 @@ public class PhotoModule
                     + mPictureDisplayedToJpegCallbackTime + "ms");
 
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
-            if (!mIsImageCaptureIntent) {
+
+            boolean needRestartPreview = !mIsImageCaptureIntent
+                      && (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL)
+                      && (mReceivedSnapNum == mBurstSnapNum);
+            if (needRestartPreview) {
                 setupPreview();
+            }else if (mReceivedSnapNum == mBurstSnapNum){
+                mFocusManager.resetTouchFocus();
+                setCameraState(IDLE);
             }
 
             ExifInterface exif = Exif.getExif(jpegData);
             int orientation = Exif.getOrientation(exif);
 
             if (!mIsImageCaptureIntent) {
+                // Burst snapshot. Generate new image name.
+                if (mReceivedSnapNum > 1)
+                    mNamedImages.nameNewImage(mCaptureStartTime);
+
                 // Calculate the width and the height of the jpeg.
                 Size s = mParameters.getPictureSize();
                 int width, height;
@@ -897,7 +918,9 @@ public class PhotoModule
             mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
             Log.v(TAG, "mJpegCallbackFinishTime = "
                     + mJpegCallbackFinishTime + "ms");
-            mJpegPictureCallbackTime = 0;
+            if (mReceivedSnapNum == mBurstSnapNum)
+                mJpegPictureCallbackTime = 0;
+
             if (mHiston && (mSnapshotMode ==CameraInfo.CAMERA_SUPPORT_MODE_ZSL)) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -1081,6 +1104,10 @@ public class PhotoModule
         }
         CameraUtil.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
+        mParameters = mCameraDevice.getParameters();
+
+        mBurstSnapNum = mParameters.getInt("num-snaps-per-shutter");
+        mReceivedSnapNum = 0;
 
         // We don't want user to press the button again while taking a
         // multi-second HDR photo.
