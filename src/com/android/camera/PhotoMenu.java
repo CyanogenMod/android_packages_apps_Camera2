@@ -199,9 +199,14 @@ public class PhotoMenu extends PieController
         // set to non-auto.
         if (notSame(pref, CameraSettings.KEY_CAMERA_HDR, mSettingOff)) {
             setPreference(CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
+            setPreference(CameraSettings.KEY_ZSL,mSettingOff);
         } else if (notSame(pref, CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO)) {
+            setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
+        }
+        if (notSame(pref,CameraSettings.KEY_ZSL,mSettingOff)){
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
         }
         super.onSettingChanged(pref);
     }
+
 }
