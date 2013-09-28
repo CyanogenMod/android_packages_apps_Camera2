@@ -1945,6 +1945,15 @@ public class PhotoModule
         if((0 <= sharpness) && (sharpness <= mParameters.getMaxSharpness())){
             mParameters.setSharpness(sharpness);
         }
+        // Set Face Recognition
+        String faceRC = mPreferences.getString(
+                CameraSettings.KEY_FACE_RECOGNITION,
+                mActivity.getString(R.string.pref_camera_facerc_default));
+        Log.v(TAG, "Face Recognition value = " + faceRC);
+        if (CameraUtil.isSupported(faceRC,
+                CameraSettings.getSupportedFaceRecognitionModes(mParameters))) {
+            mParameters.set(CameraSettings.KEY_QC_FACE_RECOGNITION, faceRC);
+        }
         // Set AE Bracketing
         String aeBracketing = mPreferences.getString(
                 CameraSettings.KEY_AE_BRACKET_HDR,

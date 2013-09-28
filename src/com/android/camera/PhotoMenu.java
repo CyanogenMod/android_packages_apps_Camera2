@@ -121,6 +121,7 @@ public class PhotoMenu extends PieController
         mOtherKeys2 = new String[] {
                 CameraSettings.KEY_COLOR_EFFECT,
                 CameraSettings.KEY_FACE_DETECTION,
+                CameraSettings.KEY_FACE_RECOGNITION,
                 CameraSettings.KEY_TOUCH_AF_AEC,
                 CameraSettings.KEY_SELECTABLE_ZONE_AF,
                 CameraSettings.KEY_SATURATION,
