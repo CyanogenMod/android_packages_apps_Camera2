@@ -507,13 +507,10 @@ public class FocusOverlayManager {
         // Put focus indicator to the center. clear reset position
         mUI.clearFocus();
         // Initialize mFocusArea.
-        if (mFocusAreaSupported) {
-            initializeFocusAreas(mPreviewWidth / 2, mPreviewHeight / 2);
-        }
-        // Reset metering area when no specific region is selected.
-        if (mMeteringAreaSupported) {
-            resetMeteringAreas();
-        }
+        mFocusArea = null;
+        // Initialize mMeteringArea.
+        mMeteringArea = null;
+
         mFocusDefault = true;
     }
 
