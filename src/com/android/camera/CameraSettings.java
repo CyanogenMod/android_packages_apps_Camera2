@@ -100,10 +100,14 @@ public class CameraSettings {
     public static final String KEY_SKIN_TONE_ENHANCEMENT_FACTOR = "pref_camera_skinToneEnhancement_factor_key";
 
     public static final String KEY_FACE_RECOGNITION = "pref_camera_facerc_key";
+    public static final String KEY_DIS = "pref_camera_dis_key";
+
     private static final String KEY_QC_SUPPORTED_AE_BRACKETING_MODES = "ae-bracket-hdr-values";
     private static final String KEY_QC_SUPPORTED_FACE_RECOGNITION_MODES = "face-recognition-values";
+    private static final String KEY_QC_SUPPORTED_DIS_MODES = "dis-values";
     public static final String KEY_QC_AE_BRACKETING = "ae-bracket-hdr";
     public static final String KEY_QC_FACE_RECOGNITION = "face-recognition";
+    public static final String KEY_QC_DIS_MODE = "dis";
 
     //for flip
     public static final String KEY_QC_PREVIEW_FLIP = "preview-flip";
@@ -223,6 +227,15 @@ public class CameraSettings {
         }
         return split(str);
     }
+
+    public static List<String> getSupportedDISModes(Parameters params) {
+        String str = params.get(KEY_QC_SUPPORTED_DIS_MODES);
+        if (str == null) {
+            return null;
+        }
+        return split(str);
+    }
+
     public static List<String> getSupportedAEBracketingModes(Parameters params) {
         String str = params.get(KEY_QC_SUPPORTED_AE_BRACKETING_MODES);
         if (str == null) {
@@ -379,7 +392,9 @@ public class CameraSettings {
                 group.findPreference(KEY_VIDEOCAMERA_FLASH_MODE);
         ListPreference videoEffect = group.findPreference(KEY_VIDEO_EFFECT);
         ListPreference cameraHdr = group.findPreference(KEY_CAMERA_HDR);
-        ListPreference cameraHdrPlus = group.findPreference(KEY_CAMERA_HDR_PLUS);
+        ListPreference cameraHq = group.findPreference(KEY_CAMERA_HQ);
+        ListPreference disMode = group.findPreference(KEY_DIS);
+
 
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
@@ -404,6 +419,10 @@ public class CameraSettings {
         if (flashMode != null) {
             filterUnsupportedOptions(group,
                     flashMode, mParameters.getSupportedFlashModes());
+        }
+        if (disMode != null) {
+            filterUnsupportedOptions(group,
+                    disMode, getSupportedDISModes(mParameters));
         }
         if (focusMode != null) {
             if (!CameraUtil.isFocusAreaSupported(mParameters)) {

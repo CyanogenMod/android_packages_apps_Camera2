@@ -1633,6 +1633,15 @@ public class VideoModule implements CameraModule,
             mParameters.setColorEffect(colorEffect);
         }
 
+        String disMode = mPreferences.getString(
+                CameraSettings.KEY_DIS,
+                mActivity.getString(R.string.pref_camera_dis_default));
+        Log.v(TAG, "DIS value =" + disMode);
+        if (isSupported(disMode,
+                        CameraSettings.getSupportedDISModes(mParameters))) {
+            mParameters.set(CameraSettings.KEY_QC_DIS_MODE, disMode);
+        }
+
         mUnsupportedHFRVideoSize = false;
         mUnsupportedHFRVideoCodec = false;
         // To set preview format as YV12 , run command
