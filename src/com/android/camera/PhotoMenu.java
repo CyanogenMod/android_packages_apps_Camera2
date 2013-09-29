@@ -253,6 +253,23 @@ public class PhotoMenu extends PieController
      popup3.setSettingChangedListener(this);
      popup3.initialize(mPreferenceGroup, mOtherKeys3);
      mPopup3 = popup3;
+
+     ListPreference pref = mPreferenceGroup.findPreference(
+             CameraSettings.KEY_SCENE_MODE);
+     String sceneMode = pref.getValue();
+     pref = mPreferenceGroup.findPreference(CameraSettings.KEY_FACE_DETECTION);
+     String faceDetection = pref.getValue();
+     if (!Parameters.SCENE_MODE_AUTO.equals(sceneMode)){
+         popup1.setPreferenceEnabled(CameraSettings.KEY_FOCUS_MODE,false);
+         popup2.setPreferenceEnabled(CameraSettings.KEY_AUTOEXPOSURE,false);
+         popup2.setPreferenceEnabled(CameraSettings.KEY_TOUCH_AF_AEC,false);
+         popup3.setPreferenceEnabled(CameraSettings.KEY_FLASH_MODE,false);
+         popup3.setPreferenceEnabled(CameraSettings.KEY_WHITE_BALANCE,false);
+         popup3.setPreferenceEnabled(CameraSettings.KEY_EXPOSURE,false);
+     }
+     if (!Parameters.FACE_DETECTION_ON.equals(faceDetection)){
+         popup2.setPreferenceEnabled(CameraSettings.KEY_FACE_RECOGNITION,false);
+     }
      }
 
     public void popupDismissed() {
