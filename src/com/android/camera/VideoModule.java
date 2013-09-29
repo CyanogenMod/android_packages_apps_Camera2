@@ -648,6 +648,17 @@ public class VideoModule implements CameraModule,
             mMaxVideoDurationInMs = 60000 * minutes;
         }
 
+        if(mParameters.isPowerModeSupported()) {
+            String powermode = mPreferences.getString(
+                    CameraSettings.KEY_POWER_MODE,
+                    mActivity.getString(R.string.pref_camera_powermode_default));
+            Log.v(TAG, "read videopreferences power mode =" +powermode);
+            String old_mode = mParameters.getPowerMode();
+            if(!old_mode.equals(powermode) && mPreviewing)
+                mRestartPreview = true;
+
+            mParameters.setPowerMode(powermode);
+        }
    }
 
     private void readVideoPreferences() {
@@ -1722,7 +1733,7 @@ public class VideoModule implements CameraModule,
             // We need to restart the preview if preview size is changed.
             Size size = mParameters.getPreviewSize();
             if (size.width != mDesiredPreviewWidth
-                    || size.height != mDesiredPreviewHeight) {
+                    || size.height != mDesiredPreviewHeight || mRestartPreview) {
 
                 stopPreview();
                 resizeForPreviewAspectRatio();
@@ -1730,6 +1741,7 @@ public class VideoModule implements CameraModule,
             } else {
                 setCameraParameters();
             }
+            mRestartPreview = false;
             mUI.updateOnScreenIndicators(mParameters, mPreferences);
         }
     }
