@@ -39,7 +39,8 @@ public class CountDownTimerPreference extends ListPreference {
                 entries[0] = context.getString(R.string.setting_off); // Off
             } else {
                 entries[i] = context.getResources()
-                        .getQuantityString(R.plurals.pref_camera_timer_entry, i, i);
+                        .getQuantityString(R.plurals.pref_camera_timer_entry, i,
+                        DURATIONS[i]);
             }
         }
         setEntries(entries);
