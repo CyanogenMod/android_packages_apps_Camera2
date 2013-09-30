@@ -1753,9 +1753,6 @@ public class PhotoModule
 
         // Switch to gcam module if HQ was selected
         if (doModeSwitch) {
-            // Disable HQ so we don't reopen gcam when returning to the regular photo mode
-            setGcamPreference(mActivity.getString(R.string.setting_off_value));
-            // Switch to gcam module
             mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
         }
     }
