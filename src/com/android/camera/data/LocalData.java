@@ -68,7 +68,8 @@ public interface LocalData extends FilmStripView.ImageData {
      */
     public static final int LOCAL_360_PHOTO_SPHERE = 6;
 
-    View getView(Activity a, int width, int height, Drawable placeHolder);
+    View getView(Activity a, int width, int height, Drawable placeHolder,
+            LocalDataAdapter adapter);
 
     /**
      * Gets the date when this data is created. The returned date is also used

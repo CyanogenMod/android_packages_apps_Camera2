@@ -100,7 +100,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
         return mImages.get(dataID).getView(
                 activity, mSuggestedWidth, mSuggestedHeight,
-                mPlaceHolder.getConstantState().newDrawable());
+                mPlaceHolder.getConstantState().newDrawable(), this);
     }
 
     @Override
