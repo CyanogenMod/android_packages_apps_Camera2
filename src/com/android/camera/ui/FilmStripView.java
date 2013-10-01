@@ -636,11 +636,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     private void init(CameraActivity cameraActivity) {
-        // This is for positioning camera controller at the same place in
-        // different orientations.
-        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-
         setWillNotDraw(false);
         mActivity = cameraActivity;
         mScale = 1.0f;
