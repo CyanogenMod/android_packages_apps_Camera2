@@ -76,6 +76,10 @@ public class PreviewGestures
 
         @Override
         public boolean onScroll (MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (e1 == null) {
+                // e1 can be null if for some cases.
+                return false;
+            }
             if (mZoomOnly || mMode == MODE_ZOOM) return false;
             int deltaX = (int) (e1.getX() - e2.getX());
             int deltaY = (int) (e1.getY() - e2.getY());
