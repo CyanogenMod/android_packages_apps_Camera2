@@ -716,6 +716,7 @@ public class CameraActivity extends Activity
 
     private void removeData(int dataID) {
         mDataAdapter.removeData(CameraActivity.this, dataID);
+        updateActionBarMenu(dataID);
         if (mDataAdapter.getTotalNumber() > 1) {
             showUndoDeletionBar();
         } else {
