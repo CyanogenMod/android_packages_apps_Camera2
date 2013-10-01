@@ -513,39 +513,6 @@ public abstract class LocalMediaData implements LocalData {
                 }
                 Bitmap b = BitmapFactory.decodeFile(mPath, opts);
 
-                // For correctness, we need to double check the size here. The
-                // good news is that decoding bounds take much less time than
-                // decoding samples like < 1%.
-                // TODO: better organize the decoding and sampling by using a
-                // image cache.
-                int width = 0;
-                int height = 0;
-                BitmapFactory.Options justBoundsOpts = new BitmapFactory.Options();
-                justBoundsOpts.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(mPath, justBoundsOpts);
-                if (justBoundsOpts.outWidth > 0 && justBoundsOpts.outHeight > 0) {
-                    width = justBoundsOpts.outWidth;
-                    height = justBoundsOpts.outHeight;
-                }
-                if (mOrientation == 90 || mOrientation == 270) {
-                    int temp = width;
-                    width = height;
-                    height = temp;
-                }
-
-                // If the decoded width and height is valid and not matching the
-                // values from MediaStore, then update the MediaStore. This only
-                // happened when the MediaStore had been told a wrong data.
-                if (width > 0 && height > 0 && (width != mWidth || height != mHeight)) {
-                    ContentValues values = new ContentValues();
-                    values.put(Images.Media.WIDTH, width);
-                    values.put(Images.Media.HEIGHT, height);
-                    mResolver.update(getContentUri(), values, null, null);
-                    mNeedsRefresh = true;
-                    Log.w(TAG, "MediaStore has been updated with correct size!");
-                    return null;
-                }
-
                 if (mOrientation != 0 && b != null) {
                     if (isCancelled() || !isUsing()) {
                         return null;
@@ -557,13 +524,6 @@ public abstract class LocalMediaData implements LocalData {
                 return b;
             }
 
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                super.onPostExecute(bitmap);
-                if (mNeedsRefresh && mAdapter != null) {
-                    mAdapter.refresh(mResolver, getContentUri());
-                }
-            }
         }
 
         @Override
