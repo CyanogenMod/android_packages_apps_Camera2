@@ -1700,10 +1700,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (reporter.isDataUpdated(dataId)) {
             updateViewItem(mCurrentItem);
             final ImageData data = mDataAdapter.getImageData(dataId);
-            int[] dim = calculateChildDimension(
-                    data.getWidth(), data.getHeight(),
-                    getMeasuredWidth(), getMeasuredHeight());
-            mCenterX = curr.getLeftPosition() + dim[0] / 2;
+            if (!mIsUserScrolling && !mController.isScrolling()) {
+                // If there is no scrolling at all, adjust mCenterX to place
+                // the current item at the center.
+                int[] dim = calculateChildDimension(
+                        data.getWidth(), data.getHeight(),
+                        getMeasuredWidth(), getMeasuredHeight());
+                mCenterX = curr.getLeftPosition() + dim[0] / 2;
+            }
         }
 
         // Check left
