@@ -49,8 +49,6 @@ public class CameraRootView extends FrameLayout {
     public CameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initDisplayListener();
-        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     }
 
     @Override
