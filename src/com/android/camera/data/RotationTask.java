@@ -103,6 +103,7 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
             if (tag != null) {
                 exifInterface.setTag(tag);
                 try {
+                    // Note: This only works if the file already has some EXIF.
                     exifInterface.forceRewriteExif(filePath);
                     long fileSize = new File(filePath).length();
                     values.put(Images.Media.SIZE, fileSize);
