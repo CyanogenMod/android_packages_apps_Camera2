@@ -505,6 +505,43 @@ public abstract class LocalMediaData implements LocalData {
                     sampleSize = Math.max(heightRatio, widthRatio);
                 }
 
+                // For correctness, we need to double check the size here. The
+                // good news is that decoding bounds take much less time than
+                // decoding samples like < 1%.
+                // TODO: better organize the decoding and sampling by using a
+                // image cache.
+                int decodedWidth = 0;
+                int decodedHeight = 0;
+                BitmapFactory.Options justBoundsOpts = new BitmapFactory.Options();
+                justBoundsOpts.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(mPath, justBoundsOpts);
+                if (justBoundsOpts.outWidth > 0 && justBoundsOpts.outHeight > 0) {
+                    decodedWidth = justBoundsOpts.outWidth;
+                    decodedHeight = justBoundsOpts.outHeight;
+                }
+
+                int viewWidth = decodedWidth;
+                int viewHeight = decodedHeight;
+                if (mOrientation == 90 || mOrientation == 270) {
+                    viewWidth = decodedHeight;
+                    viewHeight = decodedWidth;
+                }
+
+                // If the width and height is valid and not matching the values
+                // from MediaStore, then update the MediaStore. This only
+                // happened when the MediaStore had been told a wrong data.
+                if (viewWidth > 0 && viewHeight > 0 &&
+                        (viewWidth != mWidth || viewHeight != mHeight)) {
+                    ContentValues values = new ContentValues();
+                    values.put(Images.Media.WIDTH, decodedWidth);
+                    values.put(Images.Media.HEIGHT, decodedHeight);
+                    mResolver.update(getContentUri(), values, null, null);
+                    mNeedsRefresh = true;
+                    Log.w(TAG, "Uri " + getContentUri() + " has been updated with" +
+                            " correct size!");
+                    return null;
+                }
+
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inSampleSize = sampleSize;
                 opts.inTempStorage = DECODE_TEMP_STORAGE;
@@ -524,6 +561,13 @@ public abstract class LocalMediaData implements LocalData {
                 return b;
             }
 
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                if (mNeedsRefresh && mAdapter != null) {
+                    mAdapter.refresh(mResolver, getContentUri());
+                }
+            }
         }
 
         @Override
