@@ -34,7 +34,6 @@
 
     <application
         android:name="com.android.camera.app.CameraApp"
-        android:backupAgent="com.android.camera.CameraBackupAgent"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher_camera"
         android:label="@string/app_name"
