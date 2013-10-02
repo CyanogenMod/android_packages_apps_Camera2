@@ -127,7 +127,7 @@
 
         <activity
             android:name="com.android.camera.crop.CropActivity"
-            android:label="@string/crop"
+            android:label="@string/crop_action"
             android:theme="@style/Theme.Crop"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
