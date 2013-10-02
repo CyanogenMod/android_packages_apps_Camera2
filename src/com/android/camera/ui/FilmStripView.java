@@ -903,11 +903,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * Check the bounds of {@code mCenterX}. Always call this function after:
      * 1. Any changes to {@code mCenterX}. 2. Any size change of the view
      * items.
+     *
+     * @return Whether clamp happened.
      */
-    private void clampCenterX() {
+    private boolean clampCenterX() {
         ViewItem curr = mViewItem[mCurrentItem];
         if (curr == null) {
-            return;
+            return false;
         }
 
         boolean stopScroll = false;
@@ -925,11 +927,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         if (stopScroll) {
-            if (mController.isScrolling()) {
-                mController.stopScrolling(true);
-            }
             mCenterX = curr.getCenterX();
         }
+        return stopScroll;
     }
 
     private void adjustChildZOrder() {
@@ -1679,7 +1679,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
         newItem.copyGeometry(item);
         mViewItem[itemID] = newItem;
-        clampCenterX();
+        if (clampCenterX()) {
+            mController.stopScrolling(true);
+        }
     }
 
     /** Some of the data is changed. */
@@ -1821,16 +1823,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         private final ValueAnimator mScaleAnimator;
         private ValueAnimator mZoomAnimator;
 
-        private final Scroller mScroller;
+        private final MyScroller mScroller;
         private boolean mCanStopScroll;
-        private final DecelerateInterpolator mDecelerateInterpolator;
 
         private final MyScroller.Listener mScrollerListener =
                 new MyScroller.Listener() {
                     @Override
                     public void onScrollUpdate(int currX, int currY) {
                         mCenterX = currX;
-                        clampCenterX();
+                        if (clampCenterX()) {
+                            mController.stopScrolling(true);
+                        }
                         invalidate();
                     }
 
@@ -1862,13 +1865,15 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 };
 
         MyController(Context context) {
+            TimeInterpolator decelerateInterpolator = new DecelerateInterpolator(1.5f);
             mScroller = new MyScroller(mActivity,
-                    new Handler(mActivity.getMainLooper()), mScrollerListener);
+                    new Handler(mActivity.getMainLooper()),
+                    mScrollerListener, decelerateInterpolator);
             mCanStopScroll = true;
 
             mScaleAnimator = new ValueAnimator();
             mScaleAnimator.addUpdateListener(mScaleAnimatorUpdateListener);
-            mDecelerateInterpolator = new DecelerateInterpolator(1.5f);
+            mScaleAnimator.setInterpolator(decelerateInterpolator);
         }
 
         @Override
@@ -1965,7 +1970,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             mCenterX += deltaX;
-            clampCenterX();
+            if (clampCenterX()) {
+                mController.stopScrolling(true);
+            }
             invalidate();
         }
 
@@ -2014,7 +2021,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public void scrollToPosition(int position, int duration, boolean interruptible) {
-            if (!stopScrolling(false)) {
+            if (mViewItem[mCurrentItem] == null) {
                 return;
             }
             mCanStopScroll = interruptible;
@@ -2045,7 +2052,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             stopScale();
             mScaleAnimator.setDuration(duration);
             mScaleAnimator.setFloatValues(mScale, scale);
-            mScaleAnimator.setInterpolator(mDecelerateInterpolator);
             mScaleAnimator.start();
         }
 
@@ -2165,7 +2171,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
     }
 
-    private static class MyScroller extends Scroller {
+    private static class MyScroller {
         public interface Listener {
             public void onScrollUpdate(int currX, int currY);
             public void onScrollEnd();
@@ -2173,46 +2179,98 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         private Handler mHandler;
         private Listener mListener;
+
+        private final Scroller mScroller;
+
+        private final ValueAnimator mXScrollAnimator;
         private Runnable mScrollChecker = new Runnable() {
             @Override
             public void run() {
-                boolean newPosition = computeScrollOffset();
+                boolean newPosition = mScroller.computeScrollOffset();
                 if (!newPosition) {
                     mListener.onScrollEnd();
                     return;
                 }
-                mListener.onScrollUpdate(getCurrX(), getCurrY());
+                mListener.onScrollUpdate(mScroller.getCurrX(), mScroller.getCurrY());
                 mHandler.removeCallbacks(this);
                 mHandler.post(this);
             }
         };
 
-        public MyScroller(Context ctx, Handler handler, Listener listener) {
-            super(ctx);
+        private ValueAnimator.AnimatorUpdateListener mXScrollAnimatorUpdateListener =
+                new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        mListener.onScrollUpdate((Integer) animation.getAnimatedValue(), 0);
+                    }
+                };
+
+        private Animator.AnimatorListener mXScrollAnimatorListener =
+                new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mListener.onScrollEnd();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        // Do nothing.
+                    }
+                };
+
+
+        public MyScroller(Context ctx, Handler handler, Listener listener,
+                TimeInterpolator interpolator) {
             mHandler = handler;
             mListener = listener;
+            mScroller = new Scroller(ctx);
+            mXScrollAnimator = new ValueAnimator();
+            mXScrollAnimator.addUpdateListener(mXScrollAnimatorUpdateListener);
+            mXScrollAnimator.addListener(mXScrollAnimatorListener);
+            mXScrollAnimator.setInterpolator(interpolator);
         }
 
-        @Override
         public void fling(
                 int startX, int startY,
                 int velocityX, int velocityY,
                 int minX, int maxX,
                 int minY, int maxY) {
-            super.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
+            mScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
             runChecker();
         }
 
-        @Override
         public void startScroll(int startX, int startY, int dx, int dy) {
-            super.startScroll(startX, startY, dx, dy);
+            mScroller.startScroll(startX, startY, dx, dy);
             runChecker();
         }
 
-        @Override
+        /** Only starts and updates scroll in x-axis. */
         public void startScroll(int startX, int startY, int dx, int dy, int duration) {
-            super.startScroll(startX, startY, dx, dy, duration);
-            runChecker();
+            mXScrollAnimator.cancel();
+            mXScrollAnimator.setDuration(duration);
+            mXScrollAnimator.setIntValues(startX, startX + dx);
+            mXScrollAnimator.start();
+        }
+
+        public boolean isFinished() {
+            return (mScroller.isFinished() && !mXScrollAnimator.isRunning());
+        }
+
+        public void forceFinished(boolean finished) {
+            mScroller.forceFinished(finished);
+            if (finished) {
+                mXScrollAnimator.cancel();
+            }
         }
 
         private void runChecker() {
