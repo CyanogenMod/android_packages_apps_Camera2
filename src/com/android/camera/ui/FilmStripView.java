@@ -984,10 +984,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     /**
-     * Updates the visibility of the bottom controls depending on the current
-     * data item.
+     * Updates the visibility of the bottom controls.
+     *
+     * @param force update the bottom controls even if the current id
+     *              has been checked for button visibilities
      */
-    private void updateBottomControls() {
+    private void updateBottomControls(boolean force) {
         if (mBottomControls == null) {
             mBottomControls = (FilmstripBottomControls) ((View) getParent())
                     .findViewById(R.id.filmstrip_bottom_controls);
@@ -997,10 +999,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         final int requestId = getCurrentId();
 
-        // Check if the item has changed since the last time we updated the
-        // visibility status. Only then check of the current image is a photo
-        // sphere.
-        if (requestId == mLastItemId || requestId < 0) {
+        if (requestId < 0) {
+            return;
+        }
+
+        // If not a forced update, check if the item has changed since the last
+        // time we updated the visibility status. Only then check if the current
+        // image is a photo sphere.
+        if (!force && requestId == mLastItemId) {
             return;
         }
 
@@ -1273,7 +1279,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         stepIfNeeded();
         adjustChildZOrder();
-        updateBottomControls();
+        updateBottomControls(false /* no forced update */);
         mLastItemId = getCurrentId();
     }
 
@@ -1743,8 +1749,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
             }
         }
-        // request a layout to find the measured width/height of the view first.
+        // Request a layout to find the measured width/height of the view first.
         requestLayout();
+        // Update photo sphere visibility after metadata fully written.
+        updateBottomControls(true /* forced update */);
     }
 
     /**
