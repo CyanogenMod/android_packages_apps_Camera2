@@ -689,6 +689,7 @@ public class PhotoUI implements PieListener,
         @Override
         public void onZoomStart() {
             if (mPieRenderer != null) {
+                mPieRenderer.hide();
                 mPieRenderer.setBlockFocus(true);
             }
         }
