@@ -432,7 +432,7 @@ public class CameraActivity extends Activity
 
         if (visible != currentlyVisible) {
             int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
-                    : View.SYSTEM_UI_FLAG_LOW_PROFILE);
+                    : View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
             mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
             if (visible) {
                 mActionBar.show();
