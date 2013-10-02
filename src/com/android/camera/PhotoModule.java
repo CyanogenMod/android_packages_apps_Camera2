@@ -286,6 +286,7 @@ public class PhotoModule
     private FocusOverlayManager mFocusManager;
 
     private String mSceneMode;
+    private String mCurrTouchAfAec = Parameters.TOUCH_AF_AEC_ON;
 
     private final Handler mHandler = new MainHandler();
     private PreferenceGroup mPreferenceGroup;
@@ -1174,7 +1175,7 @@ public class PhotoModule
             overrideCameraSettings(mParameters.getFlashMode(),
                     mParameters.getWhiteBalance(), mParameters.getFocusMode(),
                     Integer.toString(mParameters.getExposureCompensation()),
-                    mParameters.getTouchAfAec(), mParameters.getAutoExposure());
+                    mCurrTouchAfAec, mParameters.getAutoExposure());
         } else {
             overrideCameraSettings(null, null, null, null, null, null);
         }
@@ -1886,6 +1887,7 @@ public class PhotoModule
                  CameraSettings.KEY_TOUCH_AF_AEC,
                  mActivity.getString(R.string.pref_camera_touchafaec_default));
             if (CameraUtil.isSupported(touchAfAec, mParameters.getSupportedTouchAfAec())) {
+                mCurrTouchAfAec = touchAfAec;
                 mParameters.setTouchAfAec(touchAfAec);
             }
         } else {
