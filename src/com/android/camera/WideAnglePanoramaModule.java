@@ -637,12 +637,17 @@ public class WideAnglePanoramaModule
         // device orientation at capture and the camera orientation respective to
         // the natural orientation of the device.
         int orientation;
+        int cameraOrientation = mCameraOrientation;
+        if(mDeviceOrientationAtCapture == 270 || mDeviceOrientationAtCapture == 90) {
+            if(mCameraOrientation == 0)
+                cameraOrientation = 180;
+        }
         if (mUsingFrontCamera) {
             // mCameraOrientation is negative with respect to the front facing camera.
             // See document of android.hardware.Camera.Parameters.setRotation.
-            orientation = (mDeviceOrientationAtCapture - mCameraOrientation + 360) % 360;
+            orientation = (mDeviceOrientationAtCapture - cameraOrientation + 360) % 360;
         } else {
-            orientation = (mDeviceOrientationAtCapture + mCameraOrientation) % 360;
+            orientation = (mDeviceOrientationAtCapture + cameraOrientation) % 360;
         }
         return orientation;
     }
@@ -971,8 +976,12 @@ public class WideAnglePanoramaModule
             // Set the display orientation to 0, so that the underlying mosaic
             // library can always get undistorted mCameraPreviewWidth x mCameraPreviewHeight
             // image data from SurfaceTexture.
+            if (mCameraOrientation == 0)
+            mCameraDevice.setDisplayOrientation(270);
+            else
             mCameraDevice.setDisplayOrientation(0);
 
+            if (mCameraTexture != null)
             mCameraTexture.setOnFrameAvailableListener(this);
             mCameraDevice.setPreviewTexture(mCameraTexture);
         }
