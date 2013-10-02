@@ -65,6 +65,7 @@
             android:layout_width="@dimen/capture_size"
             android:layout_height="@dimen/capture_size"
             android:scaleType="centerInside"
-            android:layout_gravity="top|right" />
+            android:layout_gravity="top|right"
+            android:contentDescription="@string/switch_photo_filmstrip" />
 
 </com.android.camera.ui.CameraControls>
