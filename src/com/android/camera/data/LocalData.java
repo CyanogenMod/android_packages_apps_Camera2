@@ -67,6 +67,12 @@ public interface LocalData extends FilmStripView.ImageData {
      * Constant for denoting a still image, with valid 360 PhotoSphere metadata.
      */
     public static final int LOCAL_360_PHOTO_SPHERE = 6;
+    /**
+     * Constant for denoting an in-progress item which should not be touched
+     * before the related task is done. Data of this type should not support
+     * any actions like sharing, editing, etc.
+     */
+    public static final int LOCAL_IN_PROGRESS_DATA = 7;
 
     View getView(Activity a, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter);
@@ -110,8 +116,10 @@ public interface LocalData extends FilmStripView.ImageData {
      * @param adapter Used to update the view.
      * @param currentDataId Used to update the view.
      * @param clockwise True if the rotation goes clockwise.
+     *
+     * @return Whether the rotation is supported.
      */
-    void rotate90Degrees(Context context, LocalDataAdapter adapter,
+    boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
             int currentDataId, boolean clockwise);
 
     void onFullScreen(boolean fullScreen);
@@ -187,8 +195,8 @@ public interface LocalData extends FilmStripView.ImageData {
     }
 
     /**
-     * @return the Id of the data.
+     * @return the {@link android.content.ContentResolver} Id of the data.
      */
-    long getId();
+    long getContentId();
 }
 
