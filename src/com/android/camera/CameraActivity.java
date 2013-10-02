@@ -552,6 +552,9 @@ public class CameraActivity extends Activity
      */
     private void updateActionBarMenu(int dataID) {
         LocalData currentData = mDataAdapter.getLocalData(dataID);
+        if (currentData == null) {
+            return;
+        }
         int type = currentData.getLocalDataType();
 
         if (mActionBarMenu == null) {
@@ -716,7 +719,7 @@ public class CameraActivity extends Activity
 
     private void removeData(int dataID) {
         mDataAdapter.removeData(CameraActivity.this, dataID);
-        updateActionBarMenu(dataID);
+        updateActionBarMenu(mFilmStripView.getCurrentId());
         if (mDataAdapter.getTotalNumber() > 1) {
             showUndoDeletionBar();
         } else {
