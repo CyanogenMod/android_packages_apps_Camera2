@@ -129,6 +129,7 @@ public class WideAnglePanoramaModule
     private int mDeviceOrientation;
     private int mDeviceOrientationAtCapture;
     private int mCameraOrientation;
+    private int mPanoAngle;
     private int mOrientationCompensation;
 
     private SoundClips.Player mSoundPlayer;
@@ -637,17 +638,12 @@ public class WideAnglePanoramaModule
         // device orientation at capture and the camera orientation respective to
         // the natural orientation of the device.
         int orientation;
-        int cameraOrientation = mCameraOrientation;
-        if(mDeviceOrientationAtCapture == 270 || mDeviceOrientationAtCapture == 90) {
-            if(mCameraOrientation == 0)
-                cameraOrientation = 180;
-        }
         if (mUsingFrontCamera) {
             // mCameraOrientation is negative with respect to the front facing camera.
             // See document of android.hardware.Camera.Parameters.setRotation.
-            orientation = (mDeviceOrientationAtCapture - cameraOrientation + 360) % 360;
+            orientation = (mDeviceOrientationAtCapture - mCameraOrientation - mPanoAngle + 360) % 360;
         } else {
-            orientation = (mDeviceOrientationAtCapture + cameraOrientation) % 360;
+            orientation = (mDeviceOrientationAtCapture + mCameraOrientation - mPanoAngle) % 360;
         }
         return orientation;
     }
@@ -976,10 +972,11 @@ public class WideAnglePanoramaModule
             // Set the display orientation to 0, so that the underlying mosaic
             // library can always get undistorted mCameraPreviewWidth x mCameraPreviewHeight
             // image data from SurfaceTexture.
-            if (mCameraOrientation == 0)
-            mCameraDevice.setDisplayOrientation(270);
-            else
-            mCameraDevice.setDisplayOrientation(0);
+            // as Panoroma will add 90 degree rotation compensation during
+            // postprocessing, we need to consider both camera mount angle and
+            // this compensation angle
+            mPanoAngle = (mCameraOrientation - 90 + 360) % 360;
+            mCameraDevice.setDisplayOrientation(mPanoAngle);
 
             if (mCameraTexture != null)
             mCameraTexture.setOnFrameAvailableListener(this);
