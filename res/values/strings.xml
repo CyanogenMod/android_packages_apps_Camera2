@@ -657,4 +657,7 @@ CHAR LIMIT = NONE] -->
     <!-- Label for the save button in the crop activity action bar [CHAR LIMIT=20] -->
     <string name="crop_save">Save</string>
 
+    <!-- Label for album filmstrip button -->
+    <string name="switch_photo_filmstrip">Filmstrip view</string>
+
 </resources>
