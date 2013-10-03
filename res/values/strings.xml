@@ -656,7 +656,8 @@ CHAR LIMIT = NONE] -->
     <!-- Crop -->
     <!-- Label for the save button in the crop activity action bar [CHAR LIMIT=20] -->
     <string name="crop_save">Save</string>
-
+    <!--  String shown when we cannot load the image when starting the activity [CHAR LIMIT=NONE] -->
+    <string name="cannot_load_image">Cannot load the image!</string>
     <!-- Label for album filmstrip button -->
     <string name="switch_photo_filmstrip">Filmstrip view</string>
 
