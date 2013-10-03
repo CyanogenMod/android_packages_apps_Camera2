@@ -144,7 +144,7 @@
     <string name="pref_camera_whitebalance_title" msgid="7962809566612868179">"Cân bằng trắng"</string>
     <string name="pref_camera_whitebalance_label" msgid="7370366644738746700">"CÂN BẰNG TRẮNG"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="1390631794449502796">"Tự động"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="1140391575294372706">"Ánh sáng nóng"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="1140391575294372706">"Sáng chói"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="757833578153467254">"Ánh sáng ban ngày"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="5157027611220790970">"Huỳnh quang"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3569589102226796875">"Nhiều mây"</string>

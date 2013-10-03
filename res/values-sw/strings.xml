@@ -70,17 +70,17 @@
     <string name="file_size" msgid="6841070748357980676">"Ukubwa wa faili"</string>
     <string name="maker" msgid="698691509121545856">"Mtengenezaji"</string>
     <string name="model" msgid="8547493604023069452">"Muundo"</string>
-    <string name="flash" msgid="995041910749174196">"Mweka"</string>
+    <string name="flash" msgid="995041910749174196">"Mweko"</string>
     <string name="aperture" msgid="2453802098282814022">"Kitundu cha kamera"</string>
-    <string name="focal_length" msgid="8351221512187346229">"Urefu wa Lengo"</string>
+    <string name="focal_length" msgid="8351221512187346229">"Urefu wa Fokasi"</string>
     <string name="white_balance" msgid="1600142743496129085">"Usawazishaji weupe"</string>
     <string name="exposure_time" msgid="949787291620767754">"Muda ambao kitundu cha kamera kinakaa wazi"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"mm"</string>
     <string name="manual" msgid="2444400953521760140">"Mwongozo"</string>
-    <string name="auto" msgid="2552649885114400474">"Kiotomatiki"</string>
-    <string name="flash_on" msgid="6573457197393807642">"Mweka umeanzishwa"</string>
-    <string name="flash_off" msgid="7889323512830926273">"Hakuna mweka"</string>
+    <string name="auto" msgid="2552649885114400474">"Otomatiki"</string>
+    <string name="flash_on" msgid="6573457197393807642">"Mweko umeanzishwa"</string>
+    <string name="flash_off" msgid="7889323512830926273">"Hakuna mweko"</string>
     <string name="unknown" msgid="564184550182858146">"Haijulikani"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Kipengee hiki kimehifadhiwa karibu na kinapatikana nje ya mtandao."</string>
     <string name="please_wait" msgid="1416313324505140068">"Tafadhali subiri"</string>
@@ -92,7 +92,7 @@
     <string name="no_storage" product="default" msgid="5922012950780548098">"Chomeka kadi ya SD kabla ya kutumia kamera."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"Inatayarisha kadi ya SD..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Haikuweza kufikia kadi ya SD."</string>
-    <string name="time_lapse_title" msgid="3267978566401228497">"Kurekodi muda ukipita"</string>
+    <string name="time_lapse_title" msgid="3267978566401228497">"Kurekodi wa muda ukipita"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Chagua kamera"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Nyuma"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Mbele"</string>
@@ -201,16 +201,16 @@
     <string name="effect_goofy_face_big_mouth" msgid="2064008284599552683">"Mdomo mkubwa"</string>
     <string name="effect_goofy_face_small_mouth" msgid="3105849596912069261">"Mdomo mdogo"</string>
     <string name="effect_goofy_face_big_nose" msgid="6936976307035428164">"Pua kubwa"</string>
-    <string name="effect_goofy_face_small_eyes" msgid="558042211252573238">"Macho Madogo"</string>
+    <string name="effect_goofy_face_small_eyes" msgid="558042211252573238">"Macho madogo"</string>
     <string name="effect_backdropper_space" msgid="9133825395915767627">"Kwenya nafasi"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"Machweo"</string>
     <string name="effect_backdropper_gallery" msgid="2333888391153564920">"Video yako"</string>
     <string name="video_snapshot_hint" msgid="2707403607250082339">"Gusa ili upige picha unaporekodi."</string>
-    <string name="video_recording_started" msgid="3374878415050991030">"Kurekodi kwa video kumeanza."</string>
+    <string name="video_recording_started" msgid="3374878415050991030">"Kurekodi video kumeanza."</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"Kurekodi video kumesimamishwa."</string>
     <string name="clear_effects" msgid="6192797848995967992">"Futa madoido"</string>
     <string name="effect_silly_faces" msgid="7952713419757286453">"SURA PUMBAVU"</string>
-    <string name="effect_background" msgid="1358432220077975015">"MANDHARI-NYUMA"</string>
+    <string name="effect_background" msgid="1358432220077975015">"MANDHARINYUMA"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"Kilango cha kamera"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Kitufe cha menyu"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"Kichagua kamera, video au Picha ya mandhari"</string>
@@ -221,7 +221,7 @@
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Badilisha hadi kwa video"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Badilisha hadi kwa panorama"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Badilisha hadi kwa Photo Sphere"</string>
-    <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Badili hadi utumie ubora wa juu"</string>
+    <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Badili hadi ubora wa juu"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Ukaguzi umeghairiwa"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Ukaguzi umekamilika"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Kagua upigaji tena wa picha"</string>

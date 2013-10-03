@@ -95,7 +95,7 @@
     <string name="time_lapse_title" msgid="3267978566401228497">"Časozberný záznam"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Vybrať fotoaparát"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Späť"</string>
-    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Spredu"</string>
+    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Predný"</string>
     <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Ukladať polohu"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"POLOHA"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Časovač odpočítavania"</string>
