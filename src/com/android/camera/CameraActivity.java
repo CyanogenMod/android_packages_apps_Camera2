@@ -587,6 +587,11 @@ public class CameraActivity extends Activity
                 break;
         }
 
+        // In secure camera mode, we only support delete operation.
+        if (isSecureCamera()) {
+            supported &= SUPPORT_DELETE;
+        }
+
         setMenuItemVisible(mActionBarMenu, R.id.action_delete,
                 (supported & SUPPORT_DELETE) != 0);
         setMenuItemVisible(mActionBarMenu, R.id.action_rotate_ccw,
