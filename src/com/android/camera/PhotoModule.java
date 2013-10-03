@@ -1574,7 +1574,6 @@ public class PhotoModule
 
     private void setMeteringAreasIfSupported() {
         if (mMeteringAreaSupported) {
-            // Use the same area for focus and metering.
             mParameters.setMeteringAreas(mFocusManager.getMeteringAreas());
         }
     }
