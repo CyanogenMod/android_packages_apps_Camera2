@@ -34,7 +34,7 @@
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
             android:visible="false"
-            android:showAsAction="never" />
+            android:showAsAction="ifRoom" />
     <item android:id="@+id/action_edit"
             android:title="@string/edit"
             android:showAsAction="never"
