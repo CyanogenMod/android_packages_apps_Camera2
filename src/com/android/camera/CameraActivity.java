@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -779,10 +780,15 @@ public class CameraActivity extends Activity
         switch (item.getItemId()) {
             case android.R.id.home:
                 // ActionBar's Up/Home button was clicked
-                if (!CameraUtil.launchGallery(CameraActivity.this)) {
-                    mFilmStripView.getController().goToFirstItem();
+                try {
+                    if (!CameraUtil.launchGallery(CameraActivity.this)) {
+                        mFilmStripView.getController().goToFirstItem();
+                    }
+                    return true;
+                } catch (ActivityNotFoundException e) {
+                    Log.w(TAG, "No activity found to handle APP_GALLERY category!");
+                    finish();
                 }
-                return true;
             case R.id.action_delete:
                 removeData(currentDataId);
                 return true;
