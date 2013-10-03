@@ -32,7 +32,7 @@ import com.android.camera2.R;
 public class PhotoMenu extends PieController
         implements CountdownTimerPopup.Listener,
         ListPrefSettingPopup.Listener {
-    private static String TAG = "CAM_photomenu";
+    private static String TAG = "PhotoMenu";
 
     private final String mSettingOff;
 
@@ -53,36 +53,37 @@ public class PhotoMenu extends PieController
         PieItem item = null;
         final Resources res = mActivity.getResources();
         Locale locale = res.getConfiguration().locale;
-        // the order is from left to right in the menu
+        // The order is from left to right in the menu.
 
-        // hq (GCam)
-        if (group.findPreference(CameraSettings.KEY_CAMERA_HQ) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HQ, true);
+        // HDR+ (GCam).
+        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR_PLUS) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR_PLUS, true);
             mRenderer.addItem(item);
         }
 
-        // hdr
+        // HDR.
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
             item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR, true);
             mRenderer.addItem(item);
         }
-        // exposure compensation
+        // Exposure compensation.
         if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
             item = makeItem(CameraSettings.KEY_EXPOSURE);
             item.setLabel(res.getString(R.string.pref_exposure_label));
             mRenderer.addItem(item);
         }
-        // more settings
+        // More settings.
         PieItem more = makeItem(R.drawable.ic_settings_holo_light);
         more.setLabel(res.getString(R.string.camera_menu_more_label));
         mRenderer.addItem(more);
-        // flash
+
+        // Flash.
         if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
             item = makeItem(CameraSettings.KEY_FLASH_MODE);
             item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
             mRenderer.addItem(item);
         }
-        // camera switcher
+        // Camera switcher.
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
             final PieItem fitem = item;
@@ -104,7 +105,7 @@ public class PhotoMenu extends PieController
             });
             mRenderer.addItem(item);
         }
-        // location
+        // Location.
         if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
             item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
             more.addItem(item);
@@ -113,7 +114,7 @@ public class PhotoMenu extends PieController
                 item.setEnabled(false);
             }
         }
-        // countdown timer
+        // Countdown timer.
         final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
         final ListPreference beeppref = group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
         item = makeItem(R.drawable.ic_timer);
@@ -131,7 +132,7 @@ public class PhotoMenu extends PieController
             }
         });
         more.addItem(item);
-        // image size
+        // Image size.
         item = makeItem(R.drawable.ic_imagesize);
         final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
         item.setLabel(res.getString(R.string.pref_camera_picturesize_title).toUpperCase(locale));
@@ -148,13 +149,13 @@ public class PhotoMenu extends PieController
             }
         });
         more.addItem(item);
-        // white balance
+        // White balance.
         if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
             item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
             item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
             more.addItem(item);
         }
-        // scene mode
+        // Scene mode.
         if (group.findPreference(CameraSettings.KEY_SCENE_MODE) != null) {
             IconListPreference pref = (IconListPreference) group.findPreference(
                     CameraSettings.KEY_SCENE_MODE);
