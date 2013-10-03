@@ -98,7 +98,7 @@
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Frontale"</string>
     <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Enregistrer le lieu"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"LIEU"</string>
-    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Compte à rebours"</string>
+    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Retardateur"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8919878087230098328">"1 seconde"</item>
     <item quantity="other" msgid="5782794798884172289">"%d secondes"</item>
@@ -218,7 +218,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Passer en mode Appareil photo"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Passer en mode Vidéo"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Passer en mode Panoramique"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Passer en mode Photo-sphère"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Passer en mode Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Passer en haute qualité"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Examen – Annuler"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Examen – OK"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Rotation"</string>
     <string name="crop_save" msgid="2841974981340098579">"Enregistrer"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Pellicule"</string>
 </resources>

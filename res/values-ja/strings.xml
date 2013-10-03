@@ -213,9 +213,9 @@
     <string name="effect_background" msgid="1358432220077975015">"背景"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"シャッター"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"メニューボタン"</string>
-    <string name="accessibility_mode_picker" msgid="5107120667206453381">"カメラ、動画、パノラマの切り替え"</string>
+    <string name="accessibility_mode_picker" msgid="5107120667206453381">"写真、動画、パノラマの切り替え"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$sチェックボックス"</string>
-    <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"カメラに切り替え"</string>
+    <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"写真に切り替え"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"動画に切り替え"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"パノラマに切り替え"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphereに切り替え"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ズーム"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"回転"</string>
     <string name="crop_save" msgid="2841974981340098579">"保存"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"フィルムストリップ表示"</string>
 </resources>

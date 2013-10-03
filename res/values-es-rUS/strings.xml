@@ -95,10 +95,10 @@
     <string name="time_lapse_title" msgid="3267978566401228497">"Grabación en intervalos"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Elegir cámara"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Trasera"</string>
-    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Delantera"</string>
+    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Frontal"</string>
     <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Ubicación de almacenamiento"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"UBICACIÓN"</string>
-    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Temp. de cuenta regresiva"</string>
+    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Temporiz. de cuenta regresiva"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8919878087230098328">"1 segundo"</item>
     <item quantity="other" msgid="5782794798884172289">"%d segundos"</item>
@@ -180,7 +180,7 @@
     <!-- no translation found for pref_camera_hq_default (4772072038191191096) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
-    <string name="pref_camera_id_label_back" msgid="1645608049757733858">"CÁMARA DELANTERA"</string>
+    <string name="pref_camera_id_label_back" msgid="1645608049757733858">"CÁMARA FRONTAL"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"CÁMARA TRASERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"Aceptar"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Tu tarjeta SD se está quedando sin espacio. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>
@@ -270,18 +270,19 @@
     <string name="time_lapse_hours" msgid="5294001144133261436">"horas"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"Listo"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"Establecer intervalo de tiempo"</string>
-    <string name="set_time_interval_help" msgid="64145154088021389">"La función de intervalo de tiempo está desactivada. Actívala para definir el intervalo de tiempo."</string>
+    <string name="set_time_interval_help" msgid="64145154088021389">"La función de intervalo de tiempo está desactivada. Actívala para definir el intervalo."</string>
     <string name="set_duration" msgid="1638453882581604341">"Configurar la duración en segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Cuenta regresiva para tomar una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"¿Recordar ubicaciones de las fotos?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiqueta tus fotos y videos con la ubicación donde se realizaron.\n\nOtras aplicaciones pueden acceder a esta información junto con las imágenes guardadas."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Agrega una etiqueta a tus fotos y videos con la ubicación donde se tomaron.\n\nOtras aplicaciones pueden acceder a esta información junto con las imágenes guardadas."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gracias"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÁS OPCIONES"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"CONFIGURACIÓN"</string>
-    <string name="create_tiny_planet" msgid="5186918191372107343">"Crear planeta en miniatura"</string>
-    <string name="saving_tiny_planet" msgid="8828265180177375494">"Guardando planeta en miniatura…"</string>
+    <string name="create_tiny_planet" msgid="5186918191372107343">"Crear efecto miniplaneta"</string>
+    <string name="saving_tiny_planet" msgid="8828265180177375494">"Guardando efecto Miniplaneta…"</string>
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Girar"</string>
     <string name="crop_save" msgid="2841974981340098579">"Guardar"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Vista de tira película"</string>
 </resources>
