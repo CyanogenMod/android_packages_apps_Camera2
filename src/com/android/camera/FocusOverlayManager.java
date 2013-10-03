@@ -340,6 +340,10 @@ public class FocusOverlayManager {
         calculateTapArea(x, y, 1.5f, ((Area) mMeteringArea.get(0)).rect);
     }
 
+    private void resetMeteringAreas() {
+        mMeteringArea = null;
+    }
+
     public void onSingleTapUp(int x, int y) {
         if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) return;
 
@@ -505,9 +509,9 @@ public class FocusOverlayManager {
         if (mFocusAreaSupported) {
             initializeFocusAreas(mPreviewWidth / 2, mPreviewHeight / 2);
         }
-        // Initialize mMeteringArea.
+        // Reset metering area when no specific region is selected.
         if (mMeteringAreaSupported) {
-            initializeMeteringAreas(mPreviewWidth / 2, mPreviewHeight / 2);
+            resetMeteringAreas();
         }
         mFocusDefault = true;
     }
