@@ -53,7 +53,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final int SNAP_IN_CENTER_TIME_MS = 600;
     private static final int ZOOM_ANIMATION_DURATION_MS = 200;
     private static final int CAMERA_PREVIEW_SWIPE_THRESHOLD = 300;
-    private static final float FILM_STRIP_SCALE = 0.6f;
+    private static final float FILM_STRIP_SCALE = 0.5f;
     private static final float FULL_SCREEN_SCALE = 1f;
 
     private static final float TOLERANCE = 0.1f;
