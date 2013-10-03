@@ -36,17 +36,17 @@
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="9217673864242686656">"%1$d sélectionné"</item>
     <item quantity="one" msgid="5806616411905812727">"%1$d sélectionné"</item>
-    <item quantity="other" msgid="3767743589502328221">"%1$d sélectionné"</item>
+    <item quantity="other" msgid="3767743589502328221">"%1$d sélectionné(s)"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
     <item quantity="zero" msgid="8095100906728830821">"%1$d sélectionné"</item>
-    <item quantity="one" msgid="9063509704521984072">"%1$d sélectionné(s)"</item>
-    <item quantity="other" msgid="135044054552480485">"%1$d sélectionné"</item>
+    <item quantity="one" msgid="9063509704521984072">"%1$d sélectionné"</item>
+    <item quantity="other" msgid="135044054552480485">"%1$d sélectionné(s)"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
     <item quantity="zero" msgid="1942343672734097509">"%1$d sélectionné"</item>
     <item quantity="one" msgid="1456436514367094505">"%1$d sélectionné"</item>
-    <item quantity="other" msgid="1511467088339194694">"%1$d sélectionné"</item>
+    <item quantity="other" msgid="1511467088339194694">"%1$d sélectionné(s)"</item>
   </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"Afficher sur la carte"</string>
     <string name="rotate_left" msgid="2618440058490662604">"Rotation vers la gauche"</string>
@@ -95,19 +95,19 @@
     <string name="time_lapse_title" msgid="3267978566401228497">"Enregistr. mode Intervalle temps"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Sélectionner appareil"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Précédent"</string>
-    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Frontale"</string>
+    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Frontal"</string>
     <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Enregistrer la position"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"POSITION"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Retardateur"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8919878087230098328">"1 seconde"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d secondes"</item>
+    <item quantity="other" msgid="5782794798884172289">"%d seconde(s)"</item>
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Compte à rebours sonore"</string>
     <string name="setting_off" msgid="6782191065550276632">"Désactivé"</string>
-    <string name="setting_on" msgid="9086728135773197891">"ACTIVÉ"</string>
+    <string name="setting_on" msgid="9086728135773197891">"Activé"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Qualité vidéo"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Élevée"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Faible"</string>
@@ -204,7 +204,7 @@
     <string name="effect_goofy_face_small_eyes" msgid="558042211252573238">"Petits yeux"</string>
     <string name="effect_backdropper_space" msgid="9133825395915767627">"Dans l\'espace"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"C. de soleil"</string>
-    <string name="effect_backdropper_gallery" msgid="2333888391153564920">"Vos vidéos"</string>
+    <string name="effect_backdropper_gallery" msgid="2333888391153564920">"Votre vidéo"</string>
     <string name="video_snapshot_hint" msgid="2707403607250082339">"Touchez pour prendre une photo pendant l\'enregistr."</string>
     <string name="video_recording_started" msgid="3374878415050991030">"L\'enregistrement vidéo a commencé."</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"L\'enregistrement vidéo est arrêté."</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoomer"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Pivoter"</string>
     <string name="crop_save" msgid="2841974981340098579">"Enregistrer"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Pellicule"</string>
 </resources>

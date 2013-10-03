@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"ไม่ทราบ"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"รายการนี้จัดเก็บภายในเครื่องและสามารถใช้งานแบบออฟไลน์"</string>
     <string name="please_wait" msgid="1416313324505140068">"โปรดรอสักครู่"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"กำลังแสดงผล"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"กำลังแสดงผลโฟโตสเฟียร์"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"ข้อผิดพลาดกล้องถ่ายรูป"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"ไม่สามารถเชื่อมต่อกับกล้องถ่ายรูป"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"กล้องถ่ายรูปถูกปิดใช้งานเนื่องจากนโยบายด้านความปลอดภัย"</string>
@@ -121,7 +121,7 @@
     <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 ล้านพิกเซล"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 ล้านพิกเซล"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 ล้านพิกเซล"</string>
-    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2M พิกเซล(16:9)"</string>
+    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 ล้านพิกเซล (16:9)"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1.3 ล้านพิกเซล"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1 ล้านพิกเซล"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
@@ -183,10 +183,10 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"กล้องด้านหน้า"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"กล้องด้านหลัง"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ตกลง"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"การ์ด SD ของคุณไม่มีพื้นที่เหลือ ให้เปลี่ยนการตั้งค่าคุณภาพหรือลบบางภาพหรือไฟล์อื่นๆ"</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"การ์ด SD ของคุณมีพื้นที่เหลือน้อยแล้ว ให้เปลี่ยนการตั้งค่าคุณภาพหรือลบบางภาพหรือไฟล์อื่นๆ ออก"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"ขนาดถึงขีดจำกัดแล้ว"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"เร็วเกินไป"</string>
-    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"กำลังสร้างพาโนรามา"</string>
+    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"กำลังสร้างภาพพาโนรามา"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"ไม่สามารถบันทึกภาพพาโนรามา"</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"พาโนรามา"</string>
     <string name="pano_capture_indication" msgid="4002128831255023954">"กำลังจับภาพพาโนรามา"</string>
@@ -216,7 +216,7 @@
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"ตัวเลือกกล้องถ่ายรูป วิดีโอ หรือภาพพาโนรามา"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"ช่องทำเครื่องหมาย %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"เปลี่ยนเป็นภาพถ่าย"</string>
-    <string name="accessibility_switch_to_video" msgid="8174781871592793967">"สลับเป็นวิดีโอ"</string>
+    <string name="accessibility_switch_to_video" msgid="8174781871592793967">"เปลี่ยนเป็นวิดีโอ"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"เปลี่ยนเป็นภาพพาโนรามา"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็นโฟโตสเฟียร์"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"เปลี่ยนเป็นคุณภาพสูง"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ซูม"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"หมุน"</string>
     <string name="crop_save" msgid="2841974981340098579">"บันทึก"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"มุมมองฟิล์มภาพยนตร์"</string>
 </resources>
