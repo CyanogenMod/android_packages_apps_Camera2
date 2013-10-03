@@ -436,8 +436,8 @@
     </string-array>
 
     <string-array name="pref_camera_hq_labels" translatable="false">
-        <item>@string/pref_camera_scenemode_entry_hq</item>
-        <item>@string/pref_camera_scenemode_entry_hq</item>
+        <item>@string/pref_camera_scenemode_entry_hdr_plus</item>
+        <item>@string/pref_camera_scenemode_entry_hdr_plus</item>
     </string-array>
 
     <string-array name="pref_camera_hq_icons" translatable="false">
