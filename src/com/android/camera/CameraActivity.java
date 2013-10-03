@@ -70,6 +70,7 @@ import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.CameraPreviewData;
 import com.android.camera.data.FixedFirstDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
+import com.android.camera.data.InProgressDataWrapper;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalMediaObserver;
@@ -563,6 +564,7 @@ public class CameraActivity extends Activity
         }
 
         int supported = 0;
+
         switch (type) {
             case LocalData.LOCAL_IMAGE:
                 supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
@@ -660,6 +662,14 @@ public class CameraActivity extends Activity
                         @Override
                         public void run() {
                             notifyNewMedia(imageUri);
+                            int dataID = mDataAdapter.findDataByContentUri(imageUri);
+                            if (dataID != -1) {
+                                // Don't allow special UI actions (swipe to
+                                // delete, for example) on in-progress data.
+                                LocalData d = mDataAdapter.getLocalData(dataID);
+                                InProgressDataWrapper newData = new InProgressDataWrapper(d);
+                                mDataAdapter.updateData(dataID, newData);
+                            }
                         }
                     });
                 }

@@ -141,7 +141,7 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
                 longitude = latLong[1];
             }
 
-            result = new PhotoData(data.getId(), data.getTitle(),
+            result = new PhotoData(data.getContentId(), data.getTitle(),
                     data.getMimeType(), data.getDateTaken(), data.getDateModified(),
                     data.getPath(), newOrientation, newWidth, newHeight,
                     data.getSizeInBytes(), latitude, longitude);
