@@ -160,12 +160,12 @@
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Ação"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Noite"</string>
-    <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Pôr-do-sol"</string>
+    <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Pôr do sol"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="401232668169066415">"Festa"</string>
     <string name="pref_camera_scenemode_label_auto" msgid="2874586883608401615">"NENHUMA"</string>
     <string name="pref_camera_scenemode_label_action" msgid="1822814017595414923">"AÇÃO"</string>
     <string name="pref_camera_scenemode_label_night" msgid="7764371228088101131">"NOITE"</string>
-    <string name="pref_camera_scenemode_label_sunset" msgid="3443610538453611123">"PÔR-DO-SOL"</string>
+    <string name="pref_camera_scenemode_label_sunset" msgid="3443610538453611123">"PÔR DO SOL"</string>
     <string name="pref_camera_scenemode_label_party" msgid="917499272505930322">"FESTA"</string>
     <string name="pref_camera_countdown_label_off" msgid="3986433580620011481">"TEMPORIZADOR DESATIVADO"</string>
     <string name="pref_camera_countdown_label_one" msgid="7647972711796868848">"1 SEGUNDO"</string>
@@ -203,7 +203,7 @@
     <string name="effect_goofy_face_big_nose" msgid="6936976307035428164">"Nariz grande"</string>
     <string name="effect_goofy_face_small_eyes" msgid="558042211252573238">"Olhos pequenos"</string>
     <string name="effect_backdropper_space" msgid="9133825395915767627">"No espaço"</string>
-    <string name="effect_backdropper_sunset" msgid="7354053769863638757">"Pôr-do-sol"</string>
+    <string name="effect_backdropper_sunset" msgid="7354053769863638757">"Pôr do sol"</string>
     <string name="effect_backdropper_gallery" msgid="2333888391153564920">"O seu vídeo"</string>
     <string name="video_snapshot_hint" msgid="2707403607250082339">"Toque para tirar uma fotografia durante a gravação."</string>
     <string name="video_recording_started" msgid="3374878415050991030">"A gravação de vídeo foi iniciada."</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Rodar"</string>
     <string name="crop_save" msgid="2841974981340098579">"Guardar"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Vista de película"</string>
 </resources>

@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"Unbekannt"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Dieses Element ist lokal gespeichert und offline verfügbar."</string>
     <string name="please_wait" msgid="1416313324505140068">"Bitte warten"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Panoramaaufnahme wird gerendert…"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Panoramaaufnahme wird gerendert"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Kamerafehler"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Keine Verbindung zur Kamera möglich"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Die Kamera wurde aufgrund von Sicherheitsrichtlinien deaktiviert."</string>
@@ -162,7 +162,7 @@
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Nachtaufnahme"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Sonnenuntergang"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="401232668169066415">"Party"</string>
-    <string name="pref_camera_scenemode_label_auto" msgid="2874586883608401615">"Keiner"</string>
+    <string name="pref_camera_scenemode_label_auto" msgid="2874586883608401615">"Ohne"</string>
     <string name="pref_camera_scenemode_label_action" msgid="1822814017595414923">"Bewegung"</string>
     <string name="pref_camera_scenemode_label_night" msgid="7764371228088101131">"Nachtaufnahme"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="3443610538453611123">"Sonnenuntergang"</string>
@@ -186,13 +186,13 @@
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Auf Ihrer SD-Karte ist nicht mehr genügend Speicherplatz vorhanden. Ändern Sie die Qualitätseinstellung oder löschen Sie Bilder oder andere Dateien."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Maximale Größe erreicht"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Zu schnell"</string>
-    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Panorama wird vorbereitet…"</string>
+    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Panorama wird vorbereitet"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"Speichern des Panoramas nicht möglich"</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"Panorama"</string>
-    <string name="pano_capture_indication" msgid="4002128831255023954">"Panorama aufnehmen…"</string>
+    <string name="pano_capture_indication" msgid="4002128831255023954">"Panorama aufnehmen"</string>
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"Warten auf vorheriges Panorama"</string>
-    <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"Speichern…"</string>
-    <string name="pano_review_rendering" msgid="2743087719999377155">"Panorama wird gerendert…"</string>
+    <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"Speichern"</string>
+    <string name="pano_review_rendering" msgid="2743087719999377155">"Panorama wird gerendert"</string>
     <string name="tap_to_focus" msgid="3519718196270593468">"Zum Fokussieren tippen"</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"Effekte"</string>
     <string name="effect_none" msgid="3102797925086872636">"Kein"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoomen"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Drehen"</string>
     <string name="crop_save" msgid="2841974981340098579">"Speichern"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Ansicht als Filmstreifen"</string>
 </resources>

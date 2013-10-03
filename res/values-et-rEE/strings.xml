@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Suumimine"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Pööramine"</string>
     <string name="crop_save" msgid="2841974981340098579">"Salvesta"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Filmiribakuva"</string>
 </resources>
