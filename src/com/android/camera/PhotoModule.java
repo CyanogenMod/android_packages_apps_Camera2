@@ -429,12 +429,6 @@ public class PhotoModule
         stopPreview();
     }
 
-    private void setGcamPreference(String value) {
-        mPreferences.edit()
-                .putString(CameraSettings.KEY_CAMERA_HQ, value)
-                .apply();
-    }
-
     private void setLocationPreference(String value) {
         mPreferences.edit()
                 .putString(CameraSettings.KEY_RECORD_LOCATION, value)
@@ -1623,13 +1617,13 @@ public class PhotoModule
         String onValue = mActivity.getString(R.string.setting_on_value);
         String hdr = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR,
                 mActivity.getString(R.string.pref_camera_hdr_default));
-        String hq = mPreferences.getString(CameraSettings.KEY_CAMERA_HQ,
-                mActivity.getString(R.string.pref_camera_hq_default));
+        String hdrPlus = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR_PLUS,
+                mActivity.getString(R.string.pref_camera_hdr_plus_default));
         boolean hdrOn = onValue.equals(hdr);
-        boolean hqOn = onValue.equals(hq);
+        boolean hdrPlusOn = onValue.equals(hdrPlus);
 
         boolean doGcamModeSwitch = false;
-        if (hqOn && GcamHelper.hasGcamCapture()) {
+        if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
             // Kick off mode switch to gcam.
             doGcamModeSwitch = true;
         } else {
@@ -1750,7 +1744,7 @@ public class PhotoModule
 
         mCameraDevice.setParameters(mParameters);
 
-        // Switch to gcam module if HQ was selected
+        // Switch to gcam module if HDR+ was selected
         if (doModeSwitch) {
             mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
         }

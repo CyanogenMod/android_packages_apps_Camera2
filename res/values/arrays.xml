@@ -430,22 +430,22 @@
         <item>@drawable/ic_video_effects_background_normal_holo_dark</item>
     </array>
 
-    <string-array name="pref_camera_hq_entries" translatable="false">
+    <string-array name="pref_camera_hdr_plus_entries" translatable="false">
         <item>@string/setting_off</item>
         <item>@string/setting_on</item>
     </string-array>
 
-    <string-array name="pref_camera_hq_labels" translatable="false">
+    <string-array name="pref_camera_hdr_plus_labels" translatable="false">
         <item>@string/pref_camera_scenemode_entry_hdr_plus</item>
         <item>@string/pref_camera_scenemode_entry_hdr_plus</item>
     </string-array>
 
-    <string-array name="pref_camera_hq_icons" translatable="false">
-        <item>@drawable/ic_hq_disabled</item>
-        <item>@drawable/ic_hq_normal</item>
+    <string-array name="pref_camera_hdr_plus_icons" translatable="false">
+        <item>@drawable/ic_hdr_plus_disabled</item>
+        <item>@drawable/ic_hdr_plus_normal</item>
     </string-array>
 
-    <string-array name="pref_camera_hq_entryvalues" translatable="false">
+    <string-array name="pref_camera_hdr_plus_entryvalues" translatable="false">
         <item>@string/setting_off_value</item>
         <item>@string/setting_on_value</item>
     </string-array>
