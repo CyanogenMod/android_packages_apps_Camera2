@@ -31,7 +31,7 @@ import com.android.camera2.R;
  * settings in the viewfinder.
  */
 public class OnScreenIndicators {
-    public static final String SCENE_MODE_HQ = "hq";
+    public static final String SCENE_MODE_HDR_PLUS = "hdr_plus";
 
     private final int[] mWBArray;
     private final View mOnScreenIndicators;
@@ -168,15 +168,15 @@ public class OnScreenIndicators {
      * Set the scene indicator depending on the given scene mode.
      *
      * @param value the current Parameters.SCENE_MODE_* value or
-     *            {@link #SCENE_MODE_HQ}.
+     *            {@link #SCENE_MODE_HDR_PLUS}.
      */
     public void updateSceneOnScreenIndicator(String value) {
         if (mSceneIndicator == null) {
             return;
         }
 
-        if (SCENE_MODE_HQ.equals(value)) {
-            mSceneIndicator.setImageResource(R.drawable.ic_indicator_hq_on);
+        if (SCENE_MODE_HDR_PLUS.equals(value)) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_hdr_plus_on);
         } else if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
         } else if (Parameters.SCENE_MODE_HDR.equals(value)) {
