@@ -65,7 +65,7 @@
     <string name="width" msgid="7045750687833828758">"너비"</string>
     <string name="height" msgid="5186001199353423689">"높이"</string>
     <string name="orientation" msgid="3883761294106680270">"방향"</string>
-    <string name="duration" msgid="5316211067383665008">"기간"</string>
+    <string name="duration" msgid="5316211067383665008">"길이"</string>
     <string name="mimetype" msgid="6415940055077963944">"MIME 유형"</string>
     <string name="file_size" msgid="6841070748357980676">"파일 크기"</string>
     <string name="maker" msgid="698691509121545856">"제조업체"</string>
@@ -106,8 +106,8 @@
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"카운트다운 신호음 켜기"</string>
-    <string name="setting_off" msgid="6782191065550276632">"Off"</string>
-    <string name="setting_on" msgid="9086728135773197891">"On"</string>
+    <string name="setting_off" msgid="6782191065550276632">"OFF"</string>
+    <string name="setting_on" msgid="9086728135773197891">"ON"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"동영상 화질"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"높음"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"낮음"</string>
@@ -128,16 +128,16 @@
     <string name="pref_camera_picturesize_entry_qvga" msgid="6134562622041084167">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"초점 모드"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"자동"</string>
-    <string name="pref_camera_focusmode_entry_infinity" msgid="3887667853236656322">"무한"</string>
+    <string name="pref_camera_focusmode_entry_infinity" msgid="3887667853236656322">"무한대"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="7632276686726851426">"매크로"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="4884418453600317694">"자동"</string>
-    <string name="pref_camera_focusmode_label_infinity" msgid="1673352016120343314">"무한"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="1673352016120343314">"무한대"</string>
     <string name="pref_camera_focusmode_label_macro" msgid="5065639298027996399">"매크로"</string>
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"플래시 모드"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"플래시 모드"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"자동"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"On"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"Off"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"ON"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"OFF"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"자동 플래시"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"플래시 사용"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"플래시 사용 안함"</string>
@@ -158,12 +158,12 @@
     <string name="pref_camera_scenemode_entry_hd" msgid="2194755994575191142">"HD"</string>
     <string name="pref_camera_scenemode_entry_hq" msgid="6784456971235328315">"고화질"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
-    <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"작업"</string>
+    <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"액션"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"밤"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"일몰"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="401232668169066415">"파티"</string>
     <string name="pref_camera_scenemode_label_auto" msgid="2874586883608401615">"없음"</string>
-    <string name="pref_camera_scenemode_label_action" msgid="1822814017595414923">"작업"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="1822814017595414923">"액션"</string>
     <string name="pref_camera_scenemode_label_night" msgid="7764371228088101131">"밤"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="3443610538453611123">"일몰"</string>
     <string name="pref_camera_scenemode_label_party" msgid="917499272505930322">"파티"</string>
@@ -225,7 +225,7 @@
     <string name="accessibility_review_retake" msgid="2547112860787022130">"다시 찍기"</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Off"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5초"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1초"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1.5초"</string>
@@ -274,7 +274,7 @@
     <string name="set_duration" msgid="1638453882581604341">"시간 설정(초)"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"사진을 찍으려면 카운트다운하세요."</string>
     <string name="remember_location_title" msgid="3045040613094030429">"사진 위치를 기록하시겠습니까?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"촬영한 위치로 사진과 동영상에 태그를 지정하세요.\n\n다른 앱이 저장된 이미지와 더불어 이 정보에 액세스할 수 있습니다."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"촬영한 위치로 사진과 동영상에 태그를 지정하세요.\n\n다른 앱이 저장된 이미지와 함께 이 정보를 볼 수 있습니다."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"아니요"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"예"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"옵션 더보기"</string>

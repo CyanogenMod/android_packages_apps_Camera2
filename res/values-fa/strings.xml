@@ -144,12 +144,12 @@
     <string name="pref_camera_whitebalance_title" msgid="7962809566612868179">"توازن سفیدی"</string>
     <string name="pref_camera_whitebalance_label" msgid="7370366644738746700">"توازن سفیدی"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="1390631794449502796">"خودکار"</string>
-    <string name="pref_camera_whitebalance_entry_incandescent" msgid="1140391575294372706">"تابان"</string>
+    <string name="pref_camera_whitebalance_entry_incandescent" msgid="1140391575294372706">"لامپ رشته‌ای"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="757833578153467254">"روشنایی روز"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="5157027611220790970">"فلورسنت"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3569589102226796875">"ابری"</string>
     <string name="pref_camera_whitebalance_label_auto" msgid="4305837287360485369">"خودکار"</string>
-    <string name="pref_camera_whitebalance_label_incandescent" msgid="2860805668879945185">"تابان"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="2860805668879945185">"لامپ رشته‌ای"</string>
     <string name="pref_camera_whitebalance_label_daylight" msgid="4562002095198912409">"روشنایی روز"</string>
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="10552295745391742">"فلورسنت"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="4880793739075193336">"ابری"</string>
@@ -172,7 +172,7 @@
     <string name="pref_camera_countdown_label_three" msgid="3154170918067103541">"۳ ثانیه"</string>
     <string name="pref_camera_countdown_label_ten" msgid="4372650985906500604">"۱۰ ثانیه"</string>
     <string name="pref_camera_countdown_label_fifteen" msgid="8469955900530268867">"۱۵ ثانیه"</string>
-    <string name="not_selectable_in_scene_mode" msgid="3260801086980522611">"در حالت صحنه قابل انتخاب نیست."</string>
+    <string name="not_selectable_in_scene_mode" msgid="3260801086980522611">"در حالت منظره قابل انتخاب نیست."</string>
     <string name="pref_exposure_title" msgid="7525751789152582800">"نوردهی"</string>
     <string name="pref_exposure_label" msgid="2604738602400261218">"نوردهی"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->

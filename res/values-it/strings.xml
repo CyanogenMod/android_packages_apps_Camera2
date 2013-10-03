@@ -106,8 +106,8 @@
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Bip conto alla rov."</string>
-    <string name="setting_off" msgid="6782191065550276632">"Off"</string>
-    <string name="setting_on" msgid="9086728135773197891">"On"</string>
+    <string name="setting_off" msgid="6782191065550276632">"OFF"</string>
+    <string name="setting_on" msgid="9086728135773197891">"ON"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Qualità video"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Alta"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Bassa"</string>
@@ -136,8 +136,8 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"Modalità flash"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"MODALITÀ FLASH"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"Automatica"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"On"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"Off"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"ON"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"OFF"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"FLASH AUTOMATICO"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"FLASH ATTIVO"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"FLASH DISATTIVATO"</string>
@@ -225,7 +225,7 @@
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Scatta/Riprendi di nuovo per recensione"</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Off"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 secondi"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 secondo"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1,5 secondi"</string>

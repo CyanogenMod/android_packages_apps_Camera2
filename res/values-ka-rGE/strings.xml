@@ -24,7 +24,7 @@
     <string name="delete" msgid="2714492172818940424">"წაშლა"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="8811352590292754044">"წაიშალოს არჩეული ერთეული?"</item>
-    <item quantity="other" msgid="5075283252850066610">"გსურთ შერჩეული ერთეულების წაშლა?"</item>
+    <item quantity="other" msgid="5075283252850066610">"გსურთ, შერჩეული ერთეულების წაშლა?"</item>
   </plurals>
     <string name="share" msgid="8581089487762243115">"გაზიარება"</string>
     <string name="share_panorama" msgid="3558466186935359444">"პანორამის გაზიარება"</string>
@@ -116,8 +116,8 @@
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"ვიდეოჩამწერის პარამეტრები"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"სურათის ზომა"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 მეგაპიქსელი"</string>
-    <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 მპიქსელი"</string>
-    <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 მპიქსელი"</string>
+    <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 მეგაპიქსელი"</string>
+    <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 მეგაპიქსელი"</string>
     <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 მეგაპიქსელი"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 მეგაპიქსელი"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 მეგაპიქსელი"</string>
@@ -130,7 +130,7 @@
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"ავტომატური"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3887667853236656322">"უსასრულობა"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="7632276686726851426">"მაკრო"</string>
-    <string name="pref_camera_focusmode_label_auto" msgid="4884418453600317694">"ავტო."</string>
+    <string name="pref_camera_focusmode_label_auto" msgid="4884418453600317694">"ავტო"</string>
     <string name="pref_camera_focusmode_label_infinity" msgid="1673352016120343314">"უსასრულობა"</string>
     <string name="pref_camera_focusmode_label_macro" msgid="5065639298027996399">"მაკრო"</string>
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"ბლიცის რეჟიმი"</string>
@@ -230,7 +230,7 @@
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 წამი"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1,5 წამი"</string>
     <string name="pref_video_time_lapse_frame_interval_2000" msgid="1821755013078449188">"2 წამი"</string>
-    <string name="pref_video_time_lapse_frame_interval_2500" msgid="8027471301321122045">"2,5 წამი"</string>
+    <string name="pref_video_time_lapse_frame_interval_2500" msgid="8027471301321122045">"2.5 წამი"</string>
     <string name="pref_video_time_lapse_frame_interval_3000" msgid="1411114492405867872">"3 წამი"</string>
     <string name="pref_video_time_lapse_frame_interval_4000" msgid="1197483421014140132">"4 წამი"</string>
     <string name="pref_video_time_lapse_frame_interval_5000" msgid="7211885329755347592">"5 წამი"</string>
@@ -252,7 +252,7 @@
     <string name="pref_video_time_lapse_frame_interval_720000" msgid="259321148909130247">"12 წუთი"</string>
     <string name="pref_video_time_lapse_frame_interval_900000" msgid="6814816608134052996">"15 წუთი"</string>
     <string name="pref_video_time_lapse_frame_interval_1440000" msgid="5691479246748705053">"24 წუთი"</string>
-    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="8331728629455012478">"05 საათი"</string>
+    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="8331728629455012478">"0.5 საათი"</string>
     <string name="pref_video_time_lapse_frame_interval_3600000" msgid="4829442147263610121">"1 საათი"</string>
     <string name="pref_video_time_lapse_frame_interval_5400000" msgid="7011488725038113884">"1,5 საათი"</string>
     <string name="pref_video_time_lapse_frame_interval_7200000" msgid="7399563587870916008">"2 საათი"</string>
@@ -265,7 +265,7 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"12 საათი"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"15 საათი"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"24 საათი"</string>
-    <string name="time_lapse_seconds" msgid="7319683099532506270">"წამი"</string>
+    <string name="time_lapse_seconds" msgid="7319683099532506270">"წამები"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"წუთი"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"საათი"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"დასრულდა"</string>
