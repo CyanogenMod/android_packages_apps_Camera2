@@ -139,8 +139,8 @@
     <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Aktif"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"Nonaktif"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"FLASH OTOMATIS"</string>
-    <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"FLASH AKTIF"</string>
-    <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"FLASH NONAKTIF"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"FLASH NYALA"</string>
+    <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"FLASH MATI"</string>
     <string name="pref_camera_whitebalance_title" msgid="7962809566612868179">"Keseimbangan putih"</string>
     <string name="pref_camera_whitebalance_label" msgid="7370366644738746700">"KESEIMBANGAN PUTIH"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="1390631794449502796">"Otomatis"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Putar"</string>
     <string name="crop_save" msgid="2841974981340098579">"Simpan"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tampilan strip film"</string>
 </resources>

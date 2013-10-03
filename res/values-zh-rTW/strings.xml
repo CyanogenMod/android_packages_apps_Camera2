@@ -34,19 +34,19 @@
     <string name="details" msgid="4404020741542549488">"詳細資訊"</string>
     <string name="close" msgid="4826166926297479820">"關閉"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"已選取 %1$d 個項目"</item>
-    <item quantity="one" msgid="5806616411905812727">"已選取 %1$d 個項目"</item>
-    <item quantity="other" msgid="3767743589502328221">"已選取 %1$d 個項目"</item>
+    <item quantity="zero" msgid="9217673864242686656">"已選取 %1$d 個"</item>
+    <item quantity="one" msgid="5806616411905812727">"已選取 %1$d 個"</item>
+    <item quantity="other" msgid="3767743589502328221">"已選取 %1$d 個"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"已選取 %1$d 個項目"</item>
-    <item quantity="one" msgid="9063509704521984072">"已選取 %1$d 個項目"</item>
-    <item quantity="other" msgid="135044054552480485">"已選取 %1$d 個項目"</item>
+    <item quantity="zero" msgid="8095100906728830821">"已選取 %1$d 本"</item>
+    <item quantity="one" msgid="9063509704521984072">"已選取 %1$d 本"</item>
+    <item quantity="other" msgid="135044054552480485">"已選取 %1$d 本"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"已選取 %1$d 個項目"</item>
-    <item quantity="one" msgid="1456436514367094505">"已選取 %1$d 個項目"</item>
-    <item quantity="other" msgid="1511467088339194694">"已選取 %1$d 個項目"</item>
+    <item quantity="zero" msgid="1942343672734097509">"已選取 %1$d 個"</item>
+    <item quantity="one" msgid="1456436514367094505">"已選取 %1$d 個"</item>
+    <item quantity="other" msgid="1511467088339194694">"已選取 %1$d 個"</item>
   </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"在地圖上顯示"</string>
     <string name="rotate_left" msgid="2618440058490662604">"向左旋轉"</string>
@@ -68,7 +68,7 @@
     <string name="duration" msgid="5316211067383665008">"時間長度"</string>
     <string name="mimetype" msgid="6415940055077963944">"MIME 類型"</string>
     <string name="file_size" msgid="6841070748357980676">"檔案大小"</string>
-    <string name="maker" msgid="698691509121545856">"廠牌"</string>
+    <string name="maker" msgid="698691509121545856">"製造商"</string>
     <string name="model" msgid="8547493604023069452">"型號"</string>
     <string name="flash" msgid="995041910749174196">"閃光燈"</string>
     <string name="aperture" msgid="2453802098282814022">"光圈"</string>
@@ -183,13 +183,13 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"前置鏡頭"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"後置鏡頭"</string>
     <string name="dialog_ok" msgid="774141340500181131">"確定"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"您 SD 卡的空間即將不足，請變更圖片的品質設定，或是刪除部分圖片或其他檔案。"</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"您 SD 卡的空間即將用盡，請變更圖片的品質設定，或是刪除部分圖片或其他檔案。"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"已達大小上限。"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"速度過快"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"正在準備全景預覽"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"無法儲存全景。"</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"全景"</string>
-    <string name="pano_capture_indication" msgid="4002128831255023954">"全景拍攝中"</string>
+    <string name="pano_capture_indication" msgid="4002128831255023954">"正在拍攝全景"</string>
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"正在等待先前的全景處理完成"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"儲存中…"</string>
     <string name="pano_review_rendering" msgid="2743087719999377155">"正在進行全景成像作業"</string>
@@ -209,20 +209,20 @@
     <string name="video_recording_started" msgid="3374878415050991030">"錄影程序已啟動。"</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"錄影程序已暫停。"</string>
     <string name="clear_effects" msgid="6192797848995967992">"清除效果"</string>
-    <string name="effect_silly_faces" msgid="7952713419757286453">"耍笨臉"</string>
+    <string name="effect_silly_faces" msgid="7952713419757286453">"趣味表情"</string>
     <string name="effect_background" msgid="1358432220077975015">"背景"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"快門"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"選單按鈕"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"相機、影片或全景選取工具"</string>
-    <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s 核取方塊"</string>
+    <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s核取方塊"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"切換至拍照模式"</string>
-    <string name="accessibility_switch_to_video" msgid="8174781871592793967">"切換至錄影模式"</string>
+    <string name="accessibility_switch_to_video" msgid="8174781871592793967">"切換至影片模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"切換至全景模式"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至全景拍攝"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至 Photo Sphere 全景拍攝"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"切換至高畫質"</string>
-    <string name="accessibility_review_cancel" msgid="5462850829869569629">"檢閱取消"</string>
-    <string name="accessibility_review_ok" msgid="3486465319880320270">"檢閱完成"</string>
-    <string name="accessibility_review_retake" msgid="2547112860787022130">"檢查重拍"</string>
+    <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
+    <string name="accessibility_review_ok" msgid="3486465319880320270">"完成"</string>
+    <string name="accessibility_review_retake" msgid="2547112860787022130">"重拍"</string>
     <string name="capital_on" msgid="1118214824959797269">"開啟"</string>
     <string name="capital_off" msgid="3020696135020167263">"關閉"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"關閉"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"縮放"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"旋轉"</string>
     <string name="crop_save" msgid="2841974981340098579">"儲存"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"幻燈片檢視"</string>
 </resources>

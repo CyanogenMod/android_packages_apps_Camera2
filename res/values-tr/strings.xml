@@ -54,7 +54,7 @@
     <string name="edit" msgid="2776879395749004347">"Düzenle"</string>
     <string name="crop_action" msgid="6933589718464132714">"Kırp"</string>
     <string name="trim_action" msgid="4736803320203951827">"Kırp"</string>
-    <string name="set_as" msgid="5469055085024870081">"Arka plan yap"</string>
+    <string name="set_as" msgid="5469055085024870081">"Şu şekilde ayarla"</string>
     <string name="video_err" msgid="1562566029875081552">"Video oynatılamıyor."</string>
     <string name="crop_saved" msgid="4465794038855602739">"Kırpılan resim <xliff:g id="FOLDER_NAME">%s</xliff:g> klasörüne kaydedildi."</string>
     <string name="title" msgid="8061744305671964703">"Başlık"</string>
@@ -68,7 +68,7 @@
     <string name="duration" msgid="5316211067383665008">"Süre"</string>
     <string name="mimetype" msgid="6415940055077963944">"MIME türü"</string>
     <string name="file_size" msgid="6841070748357980676">"Dosya boyutu"</string>
-    <string name="maker" msgid="698691509121545856">"Yapımcı"</string>
+    <string name="maker" msgid="698691509121545856">"Üretici"</string>
     <string name="model" msgid="8547493604023069452">"Model"</string>
     <string name="flash" msgid="995041910749174196">"Flaş"</string>
     <string name="aperture" msgid="2453802098282814022">"Diyafram"</string>
@@ -94,7 +94,7 @@
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD karta erişilemedi."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Zaman atlamalı kayıt"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Kamera seçin"</string>
-    <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Geri"</string>
+    <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Arka"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Ön"</string>
     <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Konumu kaydet"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"KONUM"</string>
@@ -273,7 +273,7 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Zaman atlama özelliği kapalı. Zaman aralığını ayarlamak için etkinleştirin."</string>
     <string name="set_duration" msgid="1638453882581604341">"Süreyi saniye cinsinden ayarla"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Fotoğraf çekmek için geri sayılıyor"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Fotoğrafların çekildiği yerler hatırlansın mı?"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Fotoğrafların çekildiği konumlar hatırlansın mı?"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"Fotoğraflarınızı ve videolarınızı çekildikleri konumlarla etiketleyin.\n\nDiğer uygulamalar, kaydedilen görüntülerle birlikte bu bilgilere erişebilir."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Hayır, teşekkürler"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Evet"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zum"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Döndürme"</string>
     <string name="crop_save" msgid="2841974981340098579">"Kaydet"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Film şeridi görünümü"</string>
 </resources>
