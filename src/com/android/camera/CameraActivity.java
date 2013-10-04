@@ -1141,14 +1141,16 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mCurrentModule.onKeyDown(keyCode, event)) {
-            return true;
-        }
-        // Prevent software keyboard or voice search from showing up.
-        if (keyCode == KeyEvent.KEYCODE_SEARCH
-                || keyCode == KeyEvent.KEYCODE_MENU) {
-            if (event.isLongPress()) {
+        if (mFilmStripView.inCameraFullscreen()) {
+            if (mCurrentModule.onKeyDown(keyCode, event)) {
                 return true;
+            }
+            // Prevent software keyboard or voice search from showing up.
+            if (keyCode == KeyEvent.KEYCODE_SEARCH
+                    || keyCode == KeyEvent.KEYCODE_MENU) {
+                if (event.isLongPress()) {
+                    return true;
+                }
             }
         }
 
@@ -1157,7 +1159,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (mCurrentModule.onKeyUp(keyCode, event)) {
+        if (mFilmStripView.inCameraFullscreen() && mCurrentModule.onKeyUp(keyCode, event)) {
             return true;
         }
         return super.onKeyUp(keyCode, event);
