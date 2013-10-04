@@ -55,7 +55,7 @@ import java.util.Locale;
  * return a bitmap.
  */
 public abstract class LocalMediaData implements LocalData {
-    protected final long mId;
+    protected final long mContentId;
     protected final String mTitle;
     protected final String mMimeType;
     protected final long mDateTakenInSeconds;
@@ -80,11 +80,11 @@ public abstract class LocalMediaData implements LocalData {
      */
     protected Boolean mUsing = false;
 
-    public LocalMediaData (long id, String title, String mimeType,
+    public LocalMediaData (long contentId, String title, String mimeType,
             long dateTakenInSeconds, long dateModifiedInSeconds, String path,
             int width, int height, long sizeInBytes, double latitude,
             double longitude) {
-        mId = id;
+        mContentId = contentId;
         mTitle = new String(title);
         mMimeType = new String(mimeType);
         mDateTakenInSeconds = dateTakenInSeconds;
@@ -95,7 +95,6 @@ public abstract class LocalMediaData implements LocalData {
         mSizeInBytes = sizeInBytes;
         mLatitude = latitude;
         mLongitude = longitude;
-        return;
     }
 
     @Override
@@ -109,8 +108,8 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public long getId() {
-        return mId;
+    public long getContentId() {
+        return mContentId;
     }
 
     @Override
@@ -368,7 +367,7 @@ public abstract class LocalMediaData implements LocalData {
                     Log.w(TAG, "Dimension decode failed for " + path);
                     Bitmap b = BitmapFactory.decodeFile(path);
                     if (b == null) {
-                        Log.w(TAG, "PhotoData skipeped."
+                        Log.w(TAG, "PhotoData skipped."
                                 + " Decoding " + path + "failed.");
                         return null;
                     }
@@ -424,14 +423,14 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public boolean delete(Context c) {
             ContentResolver cr = c.getContentResolver();
-            cr.delete(CONTENT_URI, MediaStore.Images.ImageColumns._ID + "=" + mId, null);
+            cr.delete(CONTENT_URI, MediaStore.Images.ImageColumns._ID + "=" + mContentId, null);
             return super.delete(c);
         }
 
         @Override
         public Uri getContentUri() {
             Uri baseUri = CONTENT_URI;
-            return baseUri.buildUpon().appendPath(String.valueOf(mId)).build();
+            return baseUri.buildUpon().appendPath(String.valueOf(mContentId)).build();
         }
 
         @Override
@@ -571,12 +570,12 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public void rotate90Degrees(Context context, LocalDataAdapter adapter,
+        public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
                 int currentDataId, boolean clockwise) {
             RotationTask task = new RotationTask(context, adapter,
                     currentDataId, clockwise);
             task.execute(this);
-            return;
+            return true;
         }
     }
 
@@ -717,14 +716,14 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public boolean delete(Context ctx) {
             ContentResolver cr = ctx.getContentResolver();
-            cr.delete(CONTENT_URI, MediaStore.Video.VideoColumns._ID + "=" + mId, null);
+            cr.delete(CONTENT_URI, MediaStore.Video.VideoColumns._ID + "=" + mContentId, null);
             return super.delete(ctx);
         }
 
         @Override
         public Uri getContentUri() {
             Uri baseUri = CONTENT_URI;
-            return baseUri.buildUpon().appendPath(String.valueOf(mId)).build();
+            return baseUri.buildUpon().appendPath(String.valueOf(mContentId)).build();
         }
 
         @Override
@@ -830,11 +829,11 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public void rotate90Degrees(Context context, LocalDataAdapter adapter,
+        public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
                 int currentDataId, boolean clockwise) {
             // We don't support rotation for video data.
             Log.e(TAG, "Unexpected call in rotate90Degrees()");
-            return;
+            return false;
         }
     }
 
