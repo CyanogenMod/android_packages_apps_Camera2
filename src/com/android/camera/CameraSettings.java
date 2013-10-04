@@ -222,8 +222,11 @@ public class CameraSettings {
                 || !CameraUtil.isCameraHdrSupported(mParameters))) {
             removePreference(group, cameraHdr.getKey());
         }
-        if (cameraHdrPlus != null && (!ApiHelper.HAS_CAMERA_HDR_PLUS
-                || !GcamHelper.hasGcamAsHDRMode())) {
+
+        int frontCameraId = CameraHolder.instance().getFrontCameraId();
+        boolean isFrontCamera = (frontCameraId == mCameraId);
+        if (cameraHdrPlus != null && (!ApiHelper.HAS_CAMERA_HDR_PLUS ||
+                !GcamHelper.hasGcamAsHDRMode() || isFrontCamera)) {
             removePreference(group, cameraHdrPlus.getKey());
         }
     }
