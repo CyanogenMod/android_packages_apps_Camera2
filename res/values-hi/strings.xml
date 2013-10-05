@@ -138,7 +138,7 @@
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"स्वतः"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"चालू"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"बंद"</string>
-    <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"फ़्लैश स्वत:"</string>
+    <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"फ़्लैश अपनेआप:"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"फ़्लैश चालू"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"फ़्लैश बंद"</string>
     <string name="pref_camera_whitebalance_title" msgid="7962809566612868179">"श्वेत संतुलन"</string>
@@ -273,9 +273,9 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"समय अंतराल सुविधा बंद है. समय अंतराल सेट करने के लिए इसे चालू करें."</string>
     <string name="set_duration" msgid="1638453882581604341">"अवधि को सेकंड में सेट करें"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"फ़ोटो लेने के लिए उल्टी गिनती कर रहा है"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"फ़ोटो के स्थान याद रखें?"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"फ़ोटो के स्थान याद रखना हैं?"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"अपने फ़ोटो और वीडियो को उन स्थानों के साथ टैग करें जहां वे लिए गए हैं.\n\nअन्य एप्लिकेशन आपके सहेजे गए चित्रों सहित इस जानकारी का उपयोग कर सकते हैं."</string>
-    <string name="remember_location_no" msgid="4412802756840226925">"नहीं धन्यवाद"</string>
+    <string name="remember_location_no" msgid="4412802756840226925">"नहीं,रहने दें"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"हां"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"अधिक विकल्प"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"सेटिंग"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ज़ूम करें"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"घुमाएं"</string>
     <string name="crop_save" msgid="2841974981340098579">"सहेजें"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"फ़िल्मस्ट्रिप दृश्य"</string>
 </resources>

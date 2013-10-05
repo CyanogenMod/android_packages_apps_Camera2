@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"縮放"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"旋轉"</string>
     <string name="crop_save" msgid="2841974981340098579">"儲存"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"幻燈片檢視"</string>
 </resources>
