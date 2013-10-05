@@ -273,8 +273,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funkcia časozberného videa je vypnutá. Zapnite ju a a nastavte časový interval."</string>
     <string name="set_duration" msgid="1638453882581604341">"Nastavte dobu trvania v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítavanie spúšte fotoaparátu"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Zapamätať si, kde boli fotografie vytvorené?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Označte pre fotografie a videá polohy, kde boli zaznamenané.\n\nOstatné aplikácie môžu pristupovať k týmto informáciám aj k vašim uloženým snímkam."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Zapamätať si, kde boli fotky vytvorené?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridajte k fotkám a videám polohy, kde boli zaznamenané.\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, nemám záujem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Áno"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ĎALŠIE MOŽNOSTI"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Lupa"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Otáčanie"</string>
     <string name="crop_save" msgid="2841974981340098579">"Uložiť"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Zobrazenie filmového pásu"</string>
 </resources>

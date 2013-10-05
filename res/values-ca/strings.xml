@@ -274,7 +274,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Configuració de la durada en segons"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Compte enrere per fer una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vols que es recordin les ubicacions de les fotos?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiqueta les teves fotos i els teus vídeos amb les ubicacions des de les quals s\'han fet.\n\nAltres aplicacions podran accedir a aquesta informació, juntament amb les imatges desades."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiqueta les teves fotos i els teus vídeos amb les ubicacions des de les quals s\'han fet.\n\nAltres aplicacions podran accedir a aquesta informació i a les imatges desades."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gràcies"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÉS OPCIONS"</string>
@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Gira"</string>
     <string name="crop_save" msgid="2841974981340098579">"Desa"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Visualització de tira de pel·lícula"</string>
 </resources>

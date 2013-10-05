@@ -227,7 +227,7 @@
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Kagua upigaji tena wa picha"</string>
     <string name="capital_on" msgid="1118214824959797269">"WASHA"</string>
     <string name="capital_off" msgid="3020696135020167263">"ZIMA"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Imezimwa"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Kimezimwa"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"Sekunde 0.5"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"Sekunde 1"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"Sekunde 1.5"</string>
@@ -286,4 +286,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Kuza"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Zungusha"</string>
     <string name="crop_save" msgid="2841974981340098579">"Hifadhi"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Mwonekano wa utepe wa filamu"</string>
 </resources>

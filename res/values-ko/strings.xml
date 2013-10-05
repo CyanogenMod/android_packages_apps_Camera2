@@ -284,4 +284,5 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"확대/축소"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"회전"</string>
     <string name="crop_save" msgid="2841974981340098579">"저장"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"슬라이드 보기"</string>
 </resources>
