@@ -342,18 +342,6 @@ public class PhotoModule
         }
     }
 
-    private BroadcastReceiver mReceiver = null;
-
-    private class ShutterBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(CameraUtil.ACTION_CAMERA_SHUTTER_CLICK)) {
-                onShutterButtonFocus(true);
-                onShutterButtonClick();
-            }
-        }
-    }
 
     @Override
     public void init(CameraActivity activity, View parent) {
@@ -1132,11 +1120,7 @@ public class PhotoModule
 
     @Override
     public void installIntentFilter() {
-        // Install an intent filter to receive remote shutter events.
-        IntentFilter intentFilter =
-                new IntentFilter(CameraUtil.ACTION_CAMERA_SHUTTER_CLICK);
-        mReceiver = new ShutterBroadcastReceiver();
-        mActivity.registerReceiver(mReceiver, intentFilter);
+        // Do nothing.
     }
 
     @Override
@@ -1211,23 +1195,10 @@ public class PhotoModule
         if (msensor != null) {
             mSensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
-        installIntentFilter();
-        Intent intent = new Intent(CameraUtil.ACTION_CAMERA_STARTED);
-        mActivity.sendBroadcast(intent);
     }
 
     @Override
     public void onPauseBeforeSuper() {
-
-        Intent intent = new Intent(CameraUtil.ACTION_CAMERA_STOPPED);
-        mActivity.sendBroadcast(intent);
-
-        if (mReceiver != null) {
-            mActivity.unregisterReceiver(mReceiver);
-            mReceiver = null;
-        }
-
         mPaused = true;
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
