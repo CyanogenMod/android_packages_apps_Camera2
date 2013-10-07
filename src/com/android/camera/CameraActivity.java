@@ -63,6 +63,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
+import com.android.camera.CameraManager.CameraOpenErrorCallback;
 import com.android.camera.app.AppManagerFactory;
 import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
@@ -78,18 +79,17 @@ import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
-import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
+import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.RefocusHelper;
 import com.android.camera2.R;
-
-import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
 public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener,
@@ -1373,6 +1373,9 @@ public class CameraActivity extends Activity
                 // Force immediate release of Camera instance
                 CameraHolder.instance().strongRelease();
                 mCurrentModule = GcamHelper.createGcamModule();
+                break;
+            case ModuleSwitcher.REFOCUS_MODULE_INDEX:
+                mCurrentModule = RefocusHelper.createRefocusModule();
                 break;
             default:
                 // Fall back to photo mode.

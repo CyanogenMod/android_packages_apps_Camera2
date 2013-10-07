@@ -525,6 +525,8 @@
     <string name="accessibility_switch_to_photo_sphere">Switch to Photo Sphere</string>
     <!-- The button to switch to the high quality mode. [CHAR LIMIT = NONE] -->
     <string name="accessibility_switch_to_gcam">Switch to high quality</string>
+    <!-- The button to switch to the Re-Focus mode. [CHAR LIMIT = NONE] -->
+    <string name="accessibility_switch_to_refocus">Switch to Refocus</string>
     <!-- The button in review mode indicating that the photo taking, video recording, and panorama saving session should be canceled [CHAR LIMIT = NONE] -->
     <string name="accessibility_review_cancel">Review cancel</string>
     <!-- The button in review mode indicating that the taken photo/video is OK to be attached/uploaded [CHAR LIMIT = NONE] -->

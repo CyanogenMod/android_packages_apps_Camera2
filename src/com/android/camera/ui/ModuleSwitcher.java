@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.RefocusHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
@@ -51,13 +52,15 @@ public class ModuleSwitcher extends RotateImageView
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int WIDE_ANGLE_PANO_MODULE_INDEX = 2;
     public static final int LIGHTCYCLE_MODULE_INDEX = 3;
-    public static final int GCAM_MODULE_INDEX = 4;
+    public static final int REFOCUS_MODULE_INDEX = 4;
+    public static final int GCAM_MODULE_INDEX = 5;
 
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
             R.drawable.ic_switch_pan,
             R.drawable.ic_switch_photosphere,
+            R.drawable.ic_switch_refocus,
             R.drawable.ic_switch_gcam,
     };
 
@@ -107,8 +110,11 @@ public class ModuleSwitcher extends RotateImageView
         if (!PhotoSphereHelper.hasLightCycleCapture(context)) {
             --numDrawIds;
         }
+        if (!RefocusHelper.hasRefocusCapture(context)) {
+            --numDrawIds;
+        }
 
-        // Always decrement one because of GCam.
+        // Always subtract one for GCam as we never show it.
         --numDrawIds;
 
         int[] drawids = new int[numDrawIds];
@@ -116,6 +122,9 @@ public class ModuleSwitcher extends RotateImageView
         int ix = 0;
         for (int i = 0; i < DRAW_IDS.length; i++) {
             if (i == LIGHTCYCLE_MODULE_INDEX && !PhotoSphereHelper.hasLightCycleCapture(context)) {
+                continue; // not enabled, so don't add to UI
+            }
+            if (i == REFOCUS_MODULE_INDEX && !RefocusHelper.hasRefocusCapture(context)) {
                 continue; // not enabled, so don't add to UI
             }
             if (i == GCAM_MODULE_INDEX) {
@@ -213,6 +222,10 @@ public class ModuleSwitcher extends RotateImageView
                 case R.drawable.ic_switch_photosphere:
                     item.setContentDescription(getContext().getResources().getString(
                             R.string.accessibility_switch_to_photo_sphere));
+                    break;
+                case R.drawable.ic_switch_refocus:
+                    item.setContentDescription(getContext().getResources().getString(
+                            R.string.accessibility_switch_to_refocus));
                     break;
                 case R.drawable.ic_switch_gcam:
                     item.setContentDescription(getContext().getResources().getString(
