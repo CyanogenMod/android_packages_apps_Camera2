@@ -155,8 +155,7 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="4880793739075193336">"NUBLADO"</string>
     <string name="pref_camera_scenemode_title" msgid="5709932164781367066">"Modo Escena"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"Automático"</string>
-    <string name="pref_camera_scenemode_entry_hd" msgid="2194755994575191142">"HD"</string>
-    <string name="pref_camera_scenemode_entry_hq" msgid="6784456971235328315">"HQ"</string>
+    <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"HDR+"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Acción"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Noche"</string>
@@ -177,7 +176,7 @@
     <string name="pref_exposure_label" msgid="2604738602400261218">"EXPOSICIÓN"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
     <skip />
-    <!-- no translation found for pref_camera_hq_default (4772072038191191096) -->
+    <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"CÁMARA FRONTAL"</string>
@@ -284,5 +283,6 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Girar"</string>
     <string name="crop_save" msgid="2841974981340098579">"Guardar"</string>
+    <string name="cannot_load_image" msgid="4100136187076585580">"No se puede cargar la imagen."</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tira de diapositivas"</string>
 </resources>
