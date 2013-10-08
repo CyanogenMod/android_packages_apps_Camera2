@@ -112,7 +112,7 @@
     <string name="height">Height</string>
     <!-- Text indicating the orientation of a media item in details window [CHAR LIMIT=14] -->
     <string name="orientation">Orientation</string>
-    <!-- Text indicating the duration of a video item in details window [CHAR LIMIT=14] -->
+    <!-- Text indicating the duration of a video item in details window [CHAR LIMIT=18] -->
     <string name="duration">Duration</string>
     <!-- Text indicating the mime type of a media item in details window [CHAR LIMIT=14] -->
     <string name="mimetype">MIME type</string>
@@ -128,7 +128,7 @@
     <string name="aperture">Aperture</string>
     <!-- Text indicating the focal length of a media item in details window [CHAR LIMIT=14] -->
     <string name="focal_length">Focal Length</string>
-    <!-- Text indicating the white balance of a media item in details window [CHAR LIMIT=14] -->
+    <!-- Text indicating the white balance of a media item in details window [CHAR LIMIT=18] -->
     <string name="white_balance">White balance</string>
     <!-- Text indicating the exposure time of a media item in details window [CHAR LIMIT=14] -->
     <string name="exposure_time">Exposure time</string>
@@ -137,9 +137,9 @@
     <!-- String indicating the time units in seconds. [CHAR LIMIT=8] -->
     <!-- String indicating the length units in milli-meters. [CHAR LIMIT=8] -->
     <string name="unit_mm">mm</string>
-    <!-- String indicating how camera shooting feature is used. [CHAR LIMIT=8] -->
+    <!-- String indicating how camera shooting feature is used. [CHAR LIMIT=12] -->
     <string name="manual">Manual</string>
-    <!-- String indicating how camera shooting feature is used. [CHAR LIMIT=8] -->
+    <!-- String indicating how camera shooting feature is used. [CHAR LIMIT=12 -->
     <string name="auto">Auto</string>
     <!-- String indicating camera flash is fired. [CHAR LIMIT=14] -->
     <string name="flash_on">Flash fired</string>
