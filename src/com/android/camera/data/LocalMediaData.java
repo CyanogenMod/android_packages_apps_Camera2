@@ -379,11 +379,7 @@ public abstract class LocalMediaData implements LocalData {
                     }
                 }
             }
-            if (orientation == 90 || orientation == 270) {
-                int b = width;
-                width = height;
-                height = b;
-            }
+
             long sizeInBytes = c.getLong(COL_SIZE);
             double latitude = c.getDouble(COL_LATITUDE);
             double longitude = c.getDouble(COL_LONGITUDE);
@@ -519,18 +515,11 @@ public abstract class LocalMediaData implements LocalData {
                     decodedHeight = justBoundsOpts.outHeight;
                 }
 
-                int viewWidth = decodedWidth;
-                int viewHeight = decodedHeight;
-                if (mOrientation == 90 || mOrientation == 270) {
-                    viewWidth = decodedHeight;
-                    viewHeight = decodedWidth;
-                }
-
                 // If the width and height is valid and not matching the values
                 // from MediaStore, then update the MediaStore. This only
                 // happened when the MediaStore had been told a wrong data.
-                if (viewWidth > 0 && viewHeight > 0 &&
-                        (viewWidth != mWidth || viewHeight != mHeight)) {
+                if (decodedWidth > 0 && decodedHeight > 0 &&
+                        (decodedWidth != mWidth || decodedHeight != mHeight)) {
                     ContentValues values = new ContentValues();
                     values.put(Images.Media.WIDTH, decodedWidth);
                     values.put(Images.Media.HEIGHT, decodedHeight);

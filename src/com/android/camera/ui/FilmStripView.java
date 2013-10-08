@@ -145,8 +145,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public static final int SIZE_FULL = -2;
 
         /**
-         * Returns the width of the image. The final layout of the view returned
-         * by {@link DataAdapter#getView(android.app.Activity, int)} will
+         * Returns the width of the image before orientation applied.
+         * The final layout of the view returned by
+         * {@link DataAdapter#getView(android.app.Activity, int)} will
          * preserve the aspect ratio of
          * {@link com.android.camera.ui.FilmStripView.ImageData#getWidth()} and
          * {@link com.android.camera.ui.FilmStripView.ImageData#getHeight()}.
@@ -154,8 +155,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public int getWidth();
 
         /**
-         * Returns the width of the image. The final layout of the view returned
-         * by {@link DataAdapter#getView(android.app.Activity, int)} will
+         * Returns the height of the image before orientation applied.
+         * The final layout of the view returned by
+         * {@link DataAdapter#getView(android.app.Activity, int)} will
          * preserve the aspect ratio of
          * {@link com.android.camera.ui.FilmStripView.ImageData#getWidth()} and
          * {@link com.android.camera.ui.FilmStripView.ImageData#getHeight()}.
@@ -708,9 +710,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     /** Returns [width, height] preserving image aspect ratio. */
     private int[] calculateChildDimension(
-            int imageWidth, int imageHeight,
+            int imageWidth, int imageHeight, int imageOrientation,
             int boundWidth, int boundHeight) {
-
+        if (imageOrientation == 90 || imageOrientation == 270) {
+            // Swap width and height.
+            int savedWidth = imageWidth;
+            imageWidth = imageHeight;
+            imageHeight = savedWidth;
+        }
         if (imageWidth == ImageData.SIZE_FULL
                 || imageHeight == ImageData.SIZE_FULL) {
             imageWidth = boundWidth;
@@ -732,10 +739,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     private void measureViewItem(ViewItem item, int boundWidth, int boundHeight) {
         int id = item.getId();
-        int[] dim = calculateChildDimension(
-                mDataAdapter.getImageData(id).getWidth(),
-                mDataAdapter.getImageData(id).getHeight(),
-                boundWidth, boundHeight);
+        ImageData imageData = mDataAdapter.getImageData(id);
+        int[] dim = calculateChildDimension(imageData.getWidth(), imageData.getHeight(),
+                imageData.getOrientation(), boundWidth, boundHeight);
 
         item.getView().measure(
                 MeasureSpec.makeMeasureSpec(
@@ -1528,7 +1534,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         final ImageData data = mDataAdapter.getImageData(dataID);
         int[] dim = calculateChildDimension(
-                data.getWidth(), data.getHeight(),
+                data.getWidth(), data.getHeight(), data.getOrientation(),
                 getMeasuredWidth(), getMeasuredHeight());
         final int offsetX = dim[0] + mViewGap;
         ViewItem viewItem = buildItemFromData(dataID);
@@ -1712,7 +1718,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 // If there is no scrolling at all, adjust mCenterX to place
                 // the current item at the center.
                 int[] dim = calculateChildDimension(
-                        data.getWidth(), data.getHeight(),
+                        data.getWidth(), data.getHeight(), data.getOrientation(),
                         getMeasuredWidth(), getMeasuredHeight());
                 mCenterX = curr.getLeftPosition() + dim[0] / 2;
             }
@@ -2133,8 +2139,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     .isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return FULL_SCREEN_SCALE;
             }
-            float imageWidth = (float) imageData.getWidth();
-            return imageWidth / (float) curr.getWidth();
+            float imageWidth = imageData.getWidth();
+            if (imageData.getOrientation() == 90 || imageData.getOrientation() == 270) {
+                imageWidth = imageData.getHeight();
+            }
+            return imageWidth / curr.getWidth();
         }
 
         private void loadZoomedImage() {
