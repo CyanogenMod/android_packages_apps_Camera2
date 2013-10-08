@@ -487,6 +487,10 @@ public class PhotoModule
         loadCameraPreferences();
 
         mUI.onCameraOpened(mPreferenceGroup, mPreferences, mParameters, this);
+        if (mIsImageCaptureIntent) {
+            mUI.overrideSettings(CameraSettings.KEY_CAMERA_HDR_PLUS,
+                    mActivity.getString(R.string.setting_off_value));
+        }
         updateSceneMode();
         showTapToFocusToastIfNeeded();
 
@@ -1716,7 +1720,7 @@ public class PhotoModule
         mCameraDevice.setParameters(mParameters);
 
         // Switch to gcam module if HDR+ was selected
-        if (doModeSwitch) {
+        if (doModeSwitch && !mIsImageCaptureIntent) {
             mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
         }
     }
