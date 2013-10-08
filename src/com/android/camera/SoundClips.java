@@ -35,6 +35,7 @@ public class SoundClips {
     public static final int FOCUS_COMPLETE = 0;
     public static final int START_VIDEO_RECORDING = 1;
     public static final int STOP_VIDEO_RECORDING = 2;
+    public static final int SHUTTER_CLICK = 3;
 
     public interface Player {
         public void release();
@@ -77,6 +78,7 @@ public class SoundClips {
             mSound.load(MediaActionSound.START_VIDEO_RECORDING);
             mSound.load(MediaActionSound.STOP_VIDEO_RECORDING);
             mSound.load(MediaActionSound.FOCUS_COMPLETE);
+            mSound.load(MediaActionSound.SHUTTER_CLICK);
         }
 
         @Override
@@ -90,6 +92,9 @@ public class SoundClips {
                     break;
                 case STOP_VIDEO_RECORDING:
                     mSound.play(MediaActionSound.STOP_VIDEO_RECORDING);
+                    break;
+                case SHUTTER_CLICK:
+                    mSound.play(MediaActionSound.SHUTTER_CLICK);
                     break;
                 default:
                     Log.w(TAG, "Unrecognized action:" + action);
@@ -107,15 +112,15 @@ public class SoundClips {
         private static final String TAG = "SoundPoolPlayer";
         private static final int NUM_SOUND_STREAMS = 1;
         private static final int[] SOUND_RES = { // Soundtrack res IDs.
-            R.raw.focus_complete,
-            R.raw.video_record
+                R.raw.focus_complete,
+                R.raw.video_record,
         };
 
         // ID returned by load() should be non-zero.
         private static final int ID_NOT_LOADED = 0;
 
         // Maps a sound action to the id;
-        private final int[] mSoundRes = {0, 1, 1};
+        private final int[] mSoundRes = {0, 1, 1, 1};
         // Store the context for lazy loading.
         private Context mContext;
         // mSoundPool is created every time load() is called and cleared every
