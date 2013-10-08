@@ -103,7 +103,17 @@ public class ZoomView extends ImageView {
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = getSampleFactor(region.width(), region.height());
+
+            if ((mOrientation + 360) % 180 == 0) {
+                options.inSampleSize = getSampleFactor(region.width(), region.height());
+            } else {
+                // The decoded region will be rotated 90/270 degrees before showing
+                // on screen. In other words, the width and height will be swapped.
+                // Therefore, sample factor should be calculated using swapped width
+                // and height.
+                options.inSampleSize = getSampleFactor(region.height(), region.width());
+            }
+
             if (mRegionDecoder == null) {
                 InputStream is = getInputStream();
                 try {
