@@ -155,8 +155,7 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="4880793739075193336">"NHIỀU MÂY"</string>
     <string name="pref_camera_scenemode_title" msgid="5709932164781367066">"Chế độ phong cảnh"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"Tự động"</string>
-    <!-- no translation found for pref_camera_scenemode_entry_hdr_plus (6759085555519758794) -->
-    <skip />
+    <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"HDR+"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Tác vụ"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Đêm"</string>
@@ -284,7 +283,6 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Thu phóng"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Xoay"</string>
     <string name="crop_save" msgid="2841974981340098579">"Lưu"</string>
-    <!-- no translation found for cannot_load_image (4100136187076585580) -->
-    <skip />
+    <string name="cannot_load_image" msgid="4100136187076585580">"Không thể tải hình ảnh!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Chế độ xem cuộn phim"</string>
 </resources>
