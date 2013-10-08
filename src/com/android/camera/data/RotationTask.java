@@ -121,14 +121,6 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
 
         PhotoData result = null;
         if (success) {
-            // Swap width and height after rotation. The new width and height
-            // will be used to create the PhotoData, not used to update
-            // MediaStore or Exif. Because we will re-calculate the width and
-            // height based on the orientation info.
-            int oldWidth = imageData.getWidth();
-            int newWidth = imageData.getHeight();
-            int newHeight = oldWidth;
-
             // MediaStore using SQLite is thread safe.
             values.put(Images.Media.ORIENTATION, finalRotationDegrees);
             mContext.getContentResolver().update(imageData.getContentUri(),
@@ -143,8 +135,8 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
 
             result = new PhotoData(data.getContentId(), data.getTitle(),
                     data.getMimeType(), data.getDateTaken(), data.getDateModified(),
-                    data.getPath(), newOrientation, newWidth, newHeight,
-                    data.getSizeInBytes(), latitude, longitude);
+                    data.getPath(), newOrientation, imageData.getWidth(),
+                    imageData.getHeight(), data.getSizeInBytes(), latitude, longitude);
         }
 
         return result;
