@@ -1225,7 +1225,7 @@ public class VideoModule implements CameraModule,
         mMediaRecorderRecording = true;
         mOrientationManager.lockOrientation();
         mRecordingStartTime = SystemClock.uptimeMillis();
-        mUI.showRecordingUI(true, mParameters.isZoomSupported());
+        mUI.showRecordingUI(true);
 
         updateRecordingTime();
         keepScreenOn();
@@ -1306,7 +1306,7 @@ public class VideoModule implements CameraModule,
                 closeCamera();
             }
 
-            mUI.showRecordingUI(false, mParameters.isZoomSupported());
+            mUI.showRecordingUI(false);
             if (!mIsVideoCaptureIntent) {
                 mUI.enableCameraControls(true);
             }

@@ -85,6 +85,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private View mMenuButton;
     private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
+    private boolean mRecordingStarted = false;
     private SurfaceTexture mSurfaceTexture;
     private VideoController mController;
     private int mZoomMax;
@@ -431,7 +432,10 @@ public class VideoUI implements PieRenderer.PieListener,
         mPreviewThumb.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mActivity.gotoGallery();
+                // Do not allow navigation to filmstrip during video recording
+                if (!mRecordingStarted) {
+                    mActivity.gotoGallery();
+                }
             }
         });
     }
@@ -550,7 +554,8 @@ public class VideoUI implements PieRenderer.PieListener,
         mController.onSingleTapUp(view, x, y);
     }
 
-    public void showRecordingUI(boolean recording, boolean zoomSupported) {
+    public void showRecordingUI(boolean recording) {
+        mRecordingStarted = recording;
         mMenuButton.setVisibility(recording ? View.GONE : View.VISIBLE);
         mOnScreenIndicators.setVisibility(recording ? View.GONE : View.VISIBLE);
         if (recording) {
