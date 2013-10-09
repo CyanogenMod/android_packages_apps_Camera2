@@ -1027,9 +1027,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         // We cannot rely on the requestIds to check for data changes,
         // because an item hands its id to its rightmost neighbor on
         // deletion. To avoid loading the ImageData, we check if the DataAdapter
-        // has fewer total items.
+        // has fewer total items. We don't want to miss setting the controls
+        // for a photo while we're still in capture mode, so ignore its fixed
+        // requestId (0).
         int total = mDataAdapter.getTotalNumber();
-        if (!force && mLastTotalNumber == total) {
+        if (!force && (requestId == 0 || mLastTotalNumber == total)) {
             return;
         }
         mLastTotalNumber = total;
