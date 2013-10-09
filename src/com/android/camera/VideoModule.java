@@ -475,16 +475,17 @@ public class VideoModule implements CameraModule,
     @Override
     @OnClickAttr
     public void onReviewCancelClicked(View v) {
-        mIsInReviewMode = false;
         // TODO: It should be better to not even insert the URI at all before we
         // confirm done in review, which means we need to handle temporary video
         // files in a quite different way than we currently had.
         // When the video capture intent doesn't contain the Uri info and the
         // review is cancelled before taking a video, mCurrentVideoUri can be
-        // null.
-        if (mCurrentVideoUri != null) {
+        // null. Also make sure we don't delete the Uri sent from the video
+        // capture intent.
+        if (mIsInReviewMode && mCurrentVideoUri != null) {
             mContentResolver.delete(mCurrentVideoUri, null, null);
         }
+        mIsInReviewMode = false;
         doReturnToCaller(false);
     }
 
