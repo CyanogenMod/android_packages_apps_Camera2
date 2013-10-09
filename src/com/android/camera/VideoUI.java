@@ -662,7 +662,7 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public boolean isVisible() {
-        return mTextureView.getVisibility() == View.VISIBLE;
+        return mCameraControls.getVisibility() == View.VISIBLE;
     }
 
     @Override
