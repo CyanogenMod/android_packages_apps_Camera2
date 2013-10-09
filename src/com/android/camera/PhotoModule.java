@@ -158,6 +158,8 @@ public class PhotoModule
     private String mCropValue;
     private Uri mSaveUri;
 
+    private Uri mDebugUri;
+
     // We use a queue to generated names of the images to be used later
     // when the image is ready to be saved.
     private NamedImages mNamedImages;
@@ -704,7 +706,11 @@ public class PhotoModule
 
             ExifInterface exif = Exif.getExif(jpegData);
             int orientation = Exif.getOrientation(exif);
-            if (!mIsImageCaptureIntent) {
+
+            if (mDebugUri != null) {
+                // If using a debug uri, save jpeg there
+                saveToDebugUri(jpegData);
+            }else if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
                 Size s = mParameters.getPictureSize();
                 int width, height;
@@ -1923,6 +1929,27 @@ public class PhotoModule
     @Override
     public void onPreviewFocusChanged(boolean previewFocused) {
         mUI.onPreviewFocusChanged(previewFocused);
+    }
+
+    // For debugging only.
+    public void setDebugUri(Uri uri) {
+        mDebugUri = uri;
+    }
+
+    // For debugging only.
+    private void saveToDebugUri(byte[] data) {
+        if (mDebugUri != null) {
+            OutputStream outputStream = null;
+            try {
+                outputStream = mContentResolver.openOutputStream(mDebugUri);
+                outputStream.write(data);
+                outputStream.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Exception while writing debug jpeg file", e);
+            } finally {
+                CameraUtil.closeSilently(outputStream);
+            }
+        }
     }
 
 /* Below is no longer needed, except to get rid of compile error

@@ -115,6 +115,8 @@ public class CameraActivity extends Activity
      */
     public static final int REQ_CODE_DONT_SWITCH_TO_PREVIEW = 142;
 
+    public static final int REQ_CODE_GCAM_DEBUG_POSTCAPTURE = 999;
+
     private static final int HIDE_ACTION_BAR = 1;
     private static final long SHOW_ACTION_BAR_TIMEOUT_MS = 3000;
 
@@ -1473,5 +1475,10 @@ public class CameraActivity extends Activity
 
     public CameraOpenErrorCallback getCameraOpenErrorCallback() {
         return mCameraOpenErrorCallback;
+    }
+
+    // For debugging purposes only.
+    public CameraModule getCurrentModule() {
+        return mCurrentModule;
     }
 }
