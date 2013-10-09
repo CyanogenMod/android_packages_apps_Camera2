@@ -48,6 +48,12 @@
                 android:layout_marginBottom="14dip"
                 android:layout_marginLeft="30dip"
                 android:layout_marginRight="30dip" />
+            <com.android.camera.GraphView
+                android:id="@+id/graph_view"
+                android:layout_width="200dip"
+                android:layout_height="200dip"
+                android:layout_marginTop="15dip"
+                android:layout_marginLeft="15dip" />
             <TableLayout
                 android:id="@+id/relative_seek"
                 android:layout_width="match_parent"
@@ -89,12 +95,6 @@
             </TableLayout>
         </RelativeLayout>
     </FrameLayout>
-    <com.android.camera.GraphView
-        android:id="@+id/graph_view"
-        android:layout_width="200dip"
-        android:layout_height="200dip"
-        android:layout_marginTop="15dip"
-        android:layout_marginLeft="15dip" />
     <ImageView
         android:id="@+id/review_image"
         android:layout_width="match_parent"

@@ -2765,13 +2765,6 @@ class GraphView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         Log.v(TAG, "in Camera.java ondraw");
-           //don't display histogram if user swipes to gallery during preview
-        //boolean inCamPreview = ActivityBase.getCameraAppViewStatus();
-        if(mPhotoModule != null){
-            PreviewChanged();
-            return;
-        }
-
         if(mPhotoModule == null || !mPhotoModule.mHiston ) {
             Log.e(TAG, "returning as histogram is off ");
             return;
