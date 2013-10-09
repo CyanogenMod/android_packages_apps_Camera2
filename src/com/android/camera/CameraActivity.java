@@ -103,8 +103,6 @@ public class CameraActivity extends Activity
             "com.android.camera.action.TRIM";
     public static final String MEDIA_ITEM_PATH = "media-item-path";
 
-    private static final String PREF_STARTUP_MODULE_INDEX = "camera.startup_module";
-
     // The intent extra for camera from secure lock screen. True if the gallery
     // should only show newly captured pictures. sSecureAlbumId does not
     // increment. This is used when switching between camera, camcorder, and
@@ -966,7 +964,7 @@ public class CameraActivity extends Activity
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            moduleIndex = prefs.getInt(PREF_STARTUP_MODULE_INDEX, -1);
+            moduleIndex = prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1);
             if ((moduleIndex == ModuleSwitcher.GCAM_MODULE_INDEX &&
                     !GcamHelper.hasGcamCapture()) || moduleIndex < 0) {
                 moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
@@ -1258,7 +1256,7 @@ public class CameraActivity extends Activity
         // Store the module index so we can use it the next time the Camera
         // starts up.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putInt(PREF_STARTUP_MODULE_INDEX, moduleIndex).apply();
+        prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, moduleIndex).apply();
     }
 
     /**
