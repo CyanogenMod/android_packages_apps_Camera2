@@ -479,7 +479,12 @@ public class VideoModule implements CameraModule,
         // TODO: It should be better to not even insert the URI at all before we
         // confirm done in review, which means we need to handle temporary video
         // files in a quite different way than we currently had.
-        mContentResolver.delete(mCurrentVideoUri, null, null);
+        // When the video capture intent doesn't contain the Uri info and the
+        // review is cancelled before taking a video, mCurrentVideoUri can be
+        // null.
+        if (mCurrentVideoUri != null) {
+            mContentResolver.delete(mCurrentVideoUri, null, null);
+        }
         doReturnToCaller(false);
     }
 
