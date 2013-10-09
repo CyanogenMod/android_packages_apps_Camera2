@@ -100,6 +100,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private ValueAnimator.AnimatorUpdateListener mViewItemUpdateListener;
     private float mOverScaleFactor = 1f;
 
+    private int mLastTotalNumber = 0;
+
     /**
      * Common interface for all images in the filmstrip.
      */
@@ -1022,12 +1024,15 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
 
-        // If not a forced update, check if the item has changed since the last
-        // time we updated the visibility status. Only then check if the current
-        // image is a photo sphere.
-        if (!force && requestId == mLastItemId) {
+        // We cannot rely on the requestIds to check for data changes,
+        // because an item hands its id to its rightmost neighbor on
+        // deletion. To avoid loading the ImageData, we check if the DataAdapter
+        // has fewer total items.
+        int total = mDataAdapter.getTotalNumber();
+        if (!force && mLastTotalNumber == total) {
             return;
         }
+        mLastTotalNumber = total;
 
         ImageData data = mDataAdapter.getImageData(requestId);
 
