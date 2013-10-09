@@ -25,9 +25,11 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -96,6 +98,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private boolean mIsUserScrolling;
     private int mDataIdOnUserScrolling;
     private ValueAnimator.AnimatorUpdateListener mViewItemUpdateListener;
+    private float mOverScaleFactor = 1f;
 
     /**
      * Common interface for all images in the filmstrip.
@@ -657,6 +660,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 invalidate();
             }
         };
+        DisplayMetrics metrics = new DisplayMetrics();
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        // Allow over scaling because on high density screens, pixels are too
+        // tiny to clearly see the details at 1:1 zoom. We should not scale
+        // beyond what 1:1 would look like on a medium density screen, as
+        // scaling beyond that would only yield blur.
+        mOverScaleFactor = (float) metrics.densityDpi / (float) DisplayMetrics.DENSITY_MEDIUM;
+        if (mOverScaleFactor < 1f) {
+            mOverScaleFactor = 1f;
+        }
     }
 
     /**
@@ -1917,7 +1930,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 mZoomAnimator.end();
             }
             // Calculate end scale
-            final float maxScale = getCurrentDataMaxScale();
+            final float maxScale = getCurrentDataMaxScale(false);
             final float endScale = mScale < maxScale - maxScale * TOLERANCE
                     ? maxScale : FULL_SCREEN_SCALE;
 
@@ -2132,7 +2145,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          * actual pixels). The max scale that we can apply on the view should
          * make the view same size as the image, in pixels.
          */
-        private float getCurrentDataMaxScale() {
+        private float getCurrentDataMaxScale(boolean allowOverScale) {
             ViewItem curr = mViewItem[mCurrentItem];
             ImageData imageData = mDataAdapter.getImageData(curr.getId());
             if (curr == null || !imageData
@@ -2143,7 +2156,14 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (imageData.getOrientation() == 90 || imageData.getOrientation() == 270) {
                 imageWidth = imageData.getHeight();
             }
-            return imageWidth / curr.getWidth();
+            float scale = imageWidth / curr.getWidth();
+            if (allowOverScale) {
+                // In addition to the scale we apply to the view for 100% view
+                // (i.e. each pixel on screen corresponds to a pixel in image)
+                // we allow scaling beyond that for better detail viewing.
+                scale *= mOverScaleFactor;
+            }
+            return scale;
         }
 
         private void loadZoomedImage() {
@@ -2558,7 +2578,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mScaleTrend = 1f;
             // If the image is smaller than screen size, we should allow to zoom
             // in to full screen size
-            mMaxScale = Math.max(mController.getCurrentDataMaxScale(), FULL_SCREEN_SCALE);
+            mMaxScale = Math.max(mController.getCurrentDataMaxScale(true), FULL_SCREEN_SCALE);
             return true;
         }
 
