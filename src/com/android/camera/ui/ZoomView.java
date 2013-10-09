@@ -148,7 +148,7 @@ public class ZoomView extends ImageView {
 
     public ZoomView(Context context) {
         super(context);
-        setScaleType(ScaleType.CENTER_INSIDE);
+        setScaleType(ScaleType.FIT_CENTER);
         addOnLayoutChangeListener(new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom,
