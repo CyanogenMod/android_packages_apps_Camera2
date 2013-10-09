@@ -1191,21 +1191,36 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
         // Right items.
         for (int itemID = mCurrentItem + 1; itemID < BUFFER_SIZE; itemID++) {
-            ViewItem curr = mViewItem[itemID];
+            final ViewItem curr = mViewItem[itemID];
             if (curr == null) {
                 break;
             }
 
             // First, layout relatively to the previous one.
-            ViewItem prev = mViewItem[itemID - 1];
-            int currLeft =
+            final ViewItem prev = mViewItem[itemID - 1];
+            final int currLeft =
                     prev.getLeftPosition() + prev.getView().getMeasuredWidth()
                             + mViewGap;
             curr.setLeftPosition(currLeft);
         }
 
+        // Special case for the one immediately on the right of the camera
+        // preview.
+        boolean immediateRight =
+                (mViewItem[mCurrentItem].getId() == 1 &&
+                mDataAdapter.getImageData(0).getViewType() == ImageData.VIEW_TYPE_STICKY);
+
         // Layout the current ViewItem first.
-        if (scaleFraction == 1f) {
+        if (immediateRight) {
+            // Just do a simple layout without any special translation or
+            // fading.  The implementation in Gallery does not push the first
+            // photo to the bottom of the camera preview. Simply place the
+            // photo on the right of the preview.
+            final ViewItem currItem = mViewItem[mCurrentItem];
+            currItem.layoutIn(mDrawArea, mCenterX, mScale);
+            currItem.setTranslationX(0f, mScale);
+            currItem.getView().setAlpha(1f);
+        } else if (scaleFraction == 1f) {
             final ViewItem currItem = mViewItem[mCurrentItem];
             final int currCenterX = currItem.getCenterX();
             if (mCenterX < currCenterX) {
@@ -1254,13 +1269,19 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         // Items on the right
         for (int itemID = mCurrentItem + 1; itemID < BUFFER_SIZE; itemID++) {
-            ViewItem curr = mViewItem[itemID];
+            final ViewItem curr = mViewItem[itemID];
             if (curr == null) {
                 break;
             }
 
             curr.layoutIn(mDrawArea, mCenterX, mScale);
-            View currView = curr.getView();
+            if (curr.getId() == 1 && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
+                // Special case for the one next to the camera preview.
+                curr.getView().setAlpha(1f);
+                continue;
+            }
+
+            final View currView = curr.getView();
             if (scaleFraction == 1) {
                 // It's in full-screen mode.
                 fadeAndScaleRightViewItem(itemID);
