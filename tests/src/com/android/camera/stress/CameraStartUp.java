@@ -40,7 +40,7 @@ public class CameraStartUp extends InstrumentationTestCase {
     private String TAG = "CameraStartUp";
     private static final String CAMERA_TEST_OUTPUT_FILE =
             Environment.getExternalStorageDirectory().toString() + "/mediaStressOut.txt";
-    private static int WAIT_TIME_FOR_PREVIEW = 1500; //1.5 second
+    private static int WAIT_TIME_FOR_PREVIEW = 4 * 1000; //4 seconds.
 
     private long launchCamera() {
         long startupTime = 0;
@@ -55,7 +55,7 @@ public class CameraStartUp extends InstrumentationTestCase {
             Thread.sleep(WAIT_TIME_FOR_PREVIEW);
             cameraActivity.finish();
             startupTime = cameraStarted - beforeStart;
-            Thread.sleep(1000);
+            Thread.sleep(2 * 1000); //sleep for 2 seconds.
             Log.v(TAG, "camera startup time: " + startupTime);
         } catch (Exception e) {
             Log.v(TAG, "Got exception", e);
@@ -75,11 +75,12 @@ public class CameraStartUp extends InstrumentationTestCase {
             Instrumentation inst = getInstrumentation();
             Activity recorderActivity = inst.startActivitySync(intent);
             long cameraStarted = System.currentTimeMillis();
+            Thread.sleep(WAIT_TIME_FOR_PREVIEW);
             recorderActivity.finish();
             startupTime = cameraStarted - beforeStart;
             Log.v(TAG, "Video Startup Time = " + startupTime);
             // wait for 1s to make sure it reach a clean stage
-            Thread.sleep(WAIT_TIME_FOR_PREVIEW);
+            Thread.sleep(2 * 1000); //sleep for 2 seconds.
             Log.v(TAG, "video startup time: " + startupTime);
         } catch (Exception e) {
             Log.v(TAG, "Got exception", e);
