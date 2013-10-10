@@ -40,8 +40,8 @@ import android.app.Activity;
 
 public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivity> {
     private String TAG = "ImageCapture";
-    private static final long WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN = 1500;   //1.5 sedconds
-    private static final long WAIT_FOR_SWITCH_CAMERA = 3000; //3 seconds
+    private static final long WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN = 4 * 1000;   //4 seconds
+    private static final long WAIT_FOR_SWITCH_CAMERA = 4 * 1000; //4 seconds
 
     private TestUtil testUtil = new TestUtil();
 
@@ -101,6 +101,9 @@ public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         Thread.sleep(WAIT_FOR_SWITCH_CAMERA);
         captureImages("Back Camera Image Capture\n", inst);
         act.finish();
+        // Wait for a clean finish.
+        Thread.sleep(2 * 1000); //sleep for 2 seconds.
+
     }
 
     public void testFrontImageCapture() throws Exception {
@@ -115,5 +118,7 @@ public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         Thread.sleep(WAIT_FOR_SWITCH_CAMERA);
         captureImages("Front Camera Image Capture\n", inst);
         act.finish();
+        // Wait for a clean finish.
+        Thread.sleep(2 * 1000); //sleep for 2 seconds.
     }
 }

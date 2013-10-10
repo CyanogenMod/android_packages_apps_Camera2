@@ -41,8 +41,8 @@ import com.android.camera.stress.CameraStressTestRunner;
  */
 
 public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivity> {
-    private static final long WAIT_FOR_PREVIEW = 1500; //1.5 seconds
-    private static final long WAIT_FOR_SWITCH_CAMERA = 3000; //2 seconds
+    private static final long WAIT_FOR_PREVIEW = 4 * 1000; //4 seconds
+    private static final long WAIT_FOR_SWITCH_CAMERA = 4 * 1000; //4 seconds
 
     // Private intent extras which control the camera facing.
     private final static String EXTRAS_CAMERA_FACING =
@@ -94,6 +94,9 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         Thread.sleep(WAIT_FOR_SWITCH_CAMERA);
         captureVideos("Back Camera Video Capture\n", inst);
         act.finish();
+        // Wait for a clean finish.
+        Thread.sleep(2 * 1000); //sleep for 2 seconds
+
     }
 
     public void testFrontVideoCapture() throws Exception {
@@ -108,5 +111,8 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         Thread.sleep(WAIT_FOR_SWITCH_CAMERA);
         captureVideos("Front Camera Video Capture\n", inst);
         act.finish();
+        // Wait for a clean finish.
+        Thread.sleep(2 * 1000); //sleep for 2 seconds.
+
     }
 }
