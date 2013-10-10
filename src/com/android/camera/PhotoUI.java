@@ -126,13 +126,6 @@ public class PhotoUI implements PieListener,
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
-            // Full-screen preview
-            int w = width;
-            int h = height;
-            if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
-                w = height;
-                h = width;
-            }
             if (mPreviewWidth != width || mPreviewHeight != height) {
                 mPreviewWidth = width;
                 mPreviewHeight = height;
@@ -266,6 +259,11 @@ public class PhotoUI implements PieListener,
         Log.v(TAG, "SurfaceTexture ready.");
         mSurfaceTexture = surface;
         mController.onPreviewUIReady();
+        // Workaround for b/11168275, see b/10981460 for more details
+        if (mPreviewWidth != 0 && mPreviewHeight != 0) {
+            // Re-apply transform matrix for new surface texture
+            setTransformMatrix(mPreviewWidth, mPreviewHeight);
+        }
     }
 
     @Override
