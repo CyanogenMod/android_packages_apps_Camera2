@@ -15,7 +15,7 @@
  */
 package com.android.camera.util;
 
-import android.content.Context;
+import android.content.ContentResolver;
 
 import com.android.camera.CameraModule;
 
@@ -33,4 +33,6 @@ public class GcamHelper {
         return false;
     }
 
+    public static void init(ContentResolver contentResolver) {
+    }
 }

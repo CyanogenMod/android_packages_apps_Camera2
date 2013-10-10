@@ -108,9 +108,8 @@ public class ModuleSwitcher extends RotateImageView
             --numDrawIds;
         }
 
-        if (!GcamHelper.hasGcamCapture() || GcamHelper.hasGcamAsHDRMode()) {
-            --numDrawIds;
-        }
+        // Always decrement one because of GCam.
+        --numDrawIds;
 
         int[] drawids = new int[numDrawIds];
         int[] moduleids = new int[numDrawIds];
@@ -119,9 +118,8 @@ public class ModuleSwitcher extends RotateImageView
             if (i == LIGHTCYCLE_MODULE_INDEX && !PhotoSphereHelper.hasLightCycleCapture(context)) {
                 continue; // not enabled, so don't add to UI
             }
-            if (i == GCAM_MODULE_INDEX
-                    && (!GcamHelper.hasGcamCapture() || GcamHelper.hasGcamAsHDRMode())) {
-                continue; // not enabled, so don't add to UI
+            if (i == GCAM_MODULE_INDEX) {
+                continue; // don't add to UI
             }
             moduleids[ix] = i;
             drawids[ix++] = DRAW_IDS[i];
@@ -136,11 +134,11 @@ public class ModuleSwitcher extends RotateImageView
 
     public void setCurrentIndex(int i) {
         mCurrentIndex = i;
-        if (i == GCAM_MODULE_INDEX && GcamHelper.hasGcamAsHDRMode()) {
-            setImageResource(R.drawable.ic_switch_camera);
-            return;
+        if (i == GCAM_MODULE_INDEX) {
+          setImageResource(R.drawable.ic_switch_camera);
+        } else {
+          setImageResource(mDrawIds[i]);
         }
-        setImageResource(mDrawIds[i]);
     }
 
     public void setSwitchListener(ModuleSwitchListener l) {
