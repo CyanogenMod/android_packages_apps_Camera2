@@ -1706,6 +1706,7 @@ public class VideoModule implements CameraModule,
         }
         forceFlashOffIfSupported(forceOff);
         mCameraDevice.setParameters(mParameters);
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
     }
 
     @Override
