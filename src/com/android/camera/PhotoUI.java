@@ -575,6 +575,10 @@ public class PhotoUI implements PieListener,
                     mPopup = null;
                     mMenu.popupDismissed();
                     showUI();
+
+                    // Switch back into fullscreen/lights-out mode after popup
+                    // is dimissed.
+                    mActivity.setSystemBarsVisibility(false);
                 }
             });
         }
