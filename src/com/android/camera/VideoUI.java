@@ -150,6 +150,10 @@ public class VideoUI implements PieRenderer.PieListener,
             popupDismissed();
             showUI();
             mVideoMenu.popupDismissed(topLevelOnly);
+
+            // Switch back into fullscreen/lights-out mode after popup
+            // is dimissed.
+            mActivity.setSystemBarsVisibility(false);
         }
 
         @Override
