@@ -227,7 +227,7 @@ public class CameraSettings {
         int frontCameraId = CameraHolder.instance().getFrontCameraId();
         boolean isFrontCamera = (frontCameraId == mCameraId);
         if (cameraHdrPlus != null && (!ApiHelper.HAS_CAMERA_HDR_PLUS ||
-                !GcamHelper.hasGcamAsHDRMode() || isFrontCamera)) {
+                !GcamHelper.hasGcamCapture() || isFrontCamera)) {
             removePreference(group, cameraHdrPlus.getKey());
         }
     }
