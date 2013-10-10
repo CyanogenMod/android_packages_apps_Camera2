@@ -447,11 +447,25 @@ public class CameraUtil {
 
     public static Size getOptimalPreviewSize(Activity currentActivity,
             List<Size> sizes, double targetRatio) {
-        // Use a very small tolerance because we want an exact match.
-        final double ASPECT_TOLERANCE = 0.001;
-        if (sizes == null) return null;
 
-        Size optimalSize = null;
+        Point[] points = new Point[sizes.size()];
+
+        int index = 0;
+        for (Size s : sizes) {
+            points[index++] = new Point(s.width, s.height);
+        }
+
+        int optimalPickIndex = getOptimalPreviewSize(currentActivity, points, targetRatio);
+        return (optimalPickIndex == -1) ? null : sizes.get(optimalPickIndex);
+    }
+
+    public static int getOptimalPreviewSize(Activity currentActivity,
+            Point[] sizes, double targetRatio) {
+        // Use a very small tolerance because we want an exact match.
+        final double ASPECT_TOLERANCE = 0.01;
+        if (sizes == null) return -1;
+
+        int optimalSizeIndex = -1;
         double minDiff = Double.MAX_VALUE;
 
         // Because of bugs of overlay and layout, we sometimes will try to
@@ -462,27 +476,29 @@ public class CameraUtil {
         Point point = getDefaultDisplaySize(currentActivity, new Point());
         int targetHeight = Math.min(point.x, point.y);
         // Try to find an size match aspect ratio and size
-        for (Size size : sizes) {
-            double ratio = (double) size.width / size.height;
+        for (int i = 0; i < sizes.length; i++) {
+            Point size = sizes[i];
+            double ratio = (double) size.x / size.y;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (Math.abs(size.height - targetHeight) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
+            if (Math.abs(size.y - targetHeight) < minDiff) {
+                optimalSizeIndex = i;
+                minDiff = Math.abs(size.y - targetHeight);
             }
         }
         // Cannot find the one match the aspect ratio. This should not happen.
         // Ignore the requirement.
-        if (optimalSize == null) {
+        if (optimalSizeIndex == -1) {
             Log.w(TAG, "No preview size match the aspect ratio");
             minDiff = Double.MAX_VALUE;
-            for (Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
+            for (int i = 0; i < sizes.length; i++) {
+                Point size = sizes[i];
+                if (Math.abs(size.y - targetHeight) < minDiff) {
+                    optimalSizeIndex = i;
+                    minDiff = Math.abs(size.y - targetHeight);
                 }
             }
         }
-        return optimalSize;
+        return optimalSizeIndex;
     }
 
     // Returns the largest picture size which matches the given aspect ratio.
