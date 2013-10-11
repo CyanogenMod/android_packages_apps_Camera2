@@ -19,12 +19,14 @@ package com.android.camera.app;
 import android.app.Application;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.UsageStatistics;
 
 public class CameraApp extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+        UsageStatistics.initialize(this);
         CameraUtil.initialize(this);
     }
 }
