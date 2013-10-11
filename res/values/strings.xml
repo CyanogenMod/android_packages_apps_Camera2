@@ -354,6 +354,14 @@
     <string name="pref_camera_scenemode_entry_hdr_plus">HDR+</string>
     <!-- Scene mode that uses HDR (high dynamic range) [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_hdr">HDR</string>
+    <!-- Scene mode to turn on HDR (better high dynamic range) [CHAR LIMIT=50] -->
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on">Turn HDR+ On</string>
+    <!-- Scene mode to turn off HDR (better high dynamic range) [CHAR LIMIT=50] -->
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off">Turn HDR+ Off</string>
+    <!-- Scene mode to turn on HDR (high dynamic range) [CHAR LIMIT=50] -->
+    <string name="pref_camera_scenemode_entry_turn_hdr_on">Turn HDR On</string>
+    <!-- Scene mode to turn off HDR (high dynamic range) [CHAR LIMIT=50] -->
+    <string name="pref_camera_scenemode_entry_turn_hdr_off">Turn HDR Off</string>
     <!-- Scene mode that takes an image quickly with little motion blur. [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_action">Action</string>
     <!-- Scene mode that takes long exposures to capture night scenes without flash. [CHAR LIMIT=16] -->
