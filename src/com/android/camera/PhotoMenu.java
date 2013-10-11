@@ -256,10 +256,10 @@ public class PhotoMenu extends PieController
 
      ListPreference pref = mPreferenceGroup.findPreference(
              CameraSettings.KEY_SCENE_MODE);
-     String sceneMode = pref.getValue();
+     String sceneMode = (pref != null) ? pref.getValue() : null;
      pref = mPreferenceGroup.findPreference(CameraSettings.KEY_FACE_DETECTION);
-     String faceDetection = pref.getValue();
-     if (!Parameters.SCENE_MODE_AUTO.equals(sceneMode)){
+     String faceDetection = (pref != null) ? pref.getValue() : null;
+     if ((sceneMode != null) && !Parameters.SCENE_MODE_AUTO.equals(sceneMode)){
          popup1.setPreferenceEnabled(CameraSettings.KEY_FOCUS_MODE,false);
          popup2.setPreferenceEnabled(CameraSettings.KEY_AUTOEXPOSURE,false);
          popup2.setPreferenceEnabled(CameraSettings.KEY_TOUCH_AF_AEC,false);
@@ -267,7 +267,7 @@ public class PhotoMenu extends PieController
          popup3.setPreferenceEnabled(CameraSettings.KEY_WHITE_BALANCE,false);
          popup3.setPreferenceEnabled(CameraSettings.KEY_EXPOSURE,false);
      }
-     if (!Parameters.FACE_DETECTION_ON.equals(faceDetection)){
+     if ((faceDetection != null) && !Parameters.FACE_DETECTION_ON.equals(faceDetection)){
          popup2.setPreferenceEnabled(CameraSettings.KEY_FACE_RECOGNITION,false);
      }
      }
