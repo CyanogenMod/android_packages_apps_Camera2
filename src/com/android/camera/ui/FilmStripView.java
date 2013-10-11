@@ -17,6 +17,7 @@
 package com.android.camera.ui;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -25,7 +26,6 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -34,7 +34,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
@@ -53,6 +52,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final int BUFFER_SIZE = 5;
     private static final int GEOMETRY_ADJUST_TIME_MS = 400;
     private static final int SNAP_IN_CENTER_TIME_MS = 600;
+    private static final float FLING_COASTING_DURATION_S = 0.05f;
     private static final int ZOOM_ANIMATION_DURATION_MS = 200;
     private static final int CAMERA_PREVIEW_SWIPE_THRESHOLD = 300;
     private static final float FILM_STRIP_SCALE = 0.5f;
@@ -61,6 +61,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final float TOLERANCE = 0.1f;
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
+    private static final int DECELERATION_FACTOR = 4;
 
     private CameraActivity mActivity;
     private FilmStripGestureRecognizer mGestureRecognizer;
@@ -376,6 +377,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public void scroll(float deltaX);
 
         public void fling(float velocity);
+
+        public void flingInsideZoomView (float velocityX, float velocityY);
 
         public void scrollToPosition(int position, int duration, boolean interruptible);
 
@@ -1372,6 +1375,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
         mScale = FULL_SCREEN_SCALE;
+        mController.cancelZoomAnimation();
+        mController.cancelFlingAnimation();
         current.resetTransform();
         mController.cancelLoadingZoomedImage();
         mZoomView.setVisibility(GONE);
@@ -1882,6 +1887,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         private final ValueAnimator mScaleAnimator;
         private ValueAnimator mZoomAnimator;
+        private AnimatorSet mFlingAnimator;
 
         private final MyScroller mScroller;
         private boolean mCanStopScroll;
@@ -2065,6 +2071,94 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         @Override
+        public void flingInsideZoomView(float velocityX, float velocityY) {
+            if (!isZoomStarted()) {
+                return;
+            }
+
+            final ViewItem current = mViewItem[mCurrentItem];
+            if (current == null) {
+                return;
+            }
+
+            final int factor = DECELERATION_FACTOR;
+            // Deceleration curve for distance:
+            // S(t) = s + (e - s) * (1 - (1 - t/T) ^ factor)
+            // Need to find the ending distance (e), so that the starting velocity
+            // is the velocity of fling.
+            // Velocity is the derivative of distance
+            // V(t) = (e - s) * factor * (-1) * (1 - t/T) ^ (factor - 1) * (-1/T)
+            //      = (e - s) * factor * (1 - t/T) ^ (factor - 1) / T
+            // Since V(0) = V0, we have e = T / factor * V0 + s
+
+            // Duration T should be long enough so that at the end of the fling,
+            // image moves at 1 pixel/s for about P = 50ms = 0.05s
+            // i.e. V(T - P) = 1
+            // V(T - P) = V0 * (1 - (T -P) /T) ^ (factor - 1) = 1
+            // T = P * V0 ^ (1 / (factor -1))
+
+            final float velocity = Math.max(Math.abs(velocityX), Math.abs(velocityY));
+            // Dynamically calculate duration
+            final float duration = (float) (FLING_COASTING_DURATION_S
+                    * Math.pow(velocity, (1f/ (factor - 1f))));
+
+            final float translationX = current.getTranslationX();
+            final float translationY = current.getTranslationY();
+
+            final ValueAnimator decelerationX = ValueAnimator.ofFloat(translationX,
+                    translationX + duration / factor * velocityX);
+            final ValueAnimator decelerationY = ValueAnimator.ofFloat(translationY,
+                    translationY + duration / factor * velocityY);
+
+            decelerationY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float transX = (Float) decelerationX.getAnimatedValue();
+                    float transY = (Float) decelerationY.getAnimatedValue();
+
+                    current.updateTransform(transX, transY, mScale,
+                            mScale, mDrawArea.width(), mDrawArea.height());
+                }
+            });
+
+            mFlingAnimator = new AnimatorSet();
+            mFlingAnimator.play(decelerationX).with(decelerationY);
+            mFlingAnimator.setDuration((int) (duration * 1000));
+            mFlingAnimator.setInterpolator(new TimeInterpolator() {
+                @Override
+                public float getInterpolation(float input) {
+                    return (float)(1.0f - Math.pow((1.0f - input), factor));
+                }
+            });
+            mFlingAnimator.addListener(new Animator.AnimatorListener() {
+                private boolean mCancelled = false;
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (!mCancelled) {
+                        loadZoomedImage();
+                    }
+                    mFlingAnimator = null;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    mCancelled = true;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            mFlingAnimator.start();
+        }
+
+        @Override
         public boolean stopScrolling(boolean forced) {
             if (!isScrolling()) {
                 return true;
@@ -2139,6 +2233,19 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             enterFullScreen();
             scaleTo(1f, GEOMETRY_ADJUST_TIME_MS);
+        }
+
+        private void cancelFlingAnimation() {
+            // Cancels flinging for zoomed images
+            if (isFlingAnimationRunning()) {
+                mFlingAnimator.cancel();
+            }
+        }
+
+        private void cancelZoomAnimation() {
+            if (isZoomAnimationRunning()) {
+                mZoomAnimator.cancel();
+            }
         }
 
         private void enterFullScreen() {
@@ -2234,6 +2341,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         public boolean isZoomStarted() {
             return mScale > FULL_SCREEN_SCALE;
+        }
+
+        public boolean isFlingAnimationRunning() {
+            return mFlingAnimator != null && mFlingAnimator.isRunning();
         }
 
         public boolean isZoomAnimationRunning() {
@@ -2398,6 +2509,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onDown(float x, float y) {
+            mController.cancelFlingAnimation();
             if (!mController.stopScrolling(false)) {
                 return false;
             }
@@ -2417,7 +2529,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (currItem == null) {
                 return false;
             }
-            if (mController.isZoomAnimationRunning()) {
+            if (mController.isZoomAnimationRunning() || mController.isFlingAnimationRunning()) {
                 return false;
             }
             if (mController.isZoomStarted()) {
@@ -2553,6 +2665,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (currItem == null) {
                 return false;
             }
+            if (mController.isZoomStarted()) {
+                // Fling within the zoomed image
+                mController.flingInsideZoomView(velocityX, velocityY);
+                return true;
+            }
             if (Math.abs(velocityX) < Math.abs(velocityY)) {
                 // ignore vertical fling.
                 return true;
@@ -2661,7 +2778,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             return true;
         }
-
 
         @Override
         public void onScaleEnd() {
