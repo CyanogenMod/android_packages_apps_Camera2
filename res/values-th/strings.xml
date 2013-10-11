@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"บันทึก"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"ไม่สามารถโหลดภาพ!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"มุมมองฟิล์มภาพยนตร์"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"กำลังตั้งค่าวอลเปเปอร์"</string>
 </resources>

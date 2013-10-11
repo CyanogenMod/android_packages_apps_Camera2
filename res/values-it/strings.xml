@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"Salva"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Impossibile caricare l\'immagine."</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Visualizzazione sequenza"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"Impostazione dello sfondo"</string>
 </resources>

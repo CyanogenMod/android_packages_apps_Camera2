@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"저장"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"이미지를 로드할 수 없습니다."</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"슬라이드 보기"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"배경화면 설정 중"</string>
 </resources>

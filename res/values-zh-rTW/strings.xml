@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"儲存"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"無法載入圖片！"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"幻燈片檢視"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"正在設定桌布"</string>
 </resources>
