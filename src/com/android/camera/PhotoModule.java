@@ -18,12 +18,10 @@ package com.android.camera;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -528,7 +526,9 @@ public class PhotoModule
     // once only. We could have done these things in onCreate() but we want to
     // make preview screen appear as soon as possible.
     private void initializeFirstTime() {
-        if (mFirstTimeInitialized) return;
+        if (mFirstTimeInitialized || mPaused) {
+            return;
+        }
 
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(
