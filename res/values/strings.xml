@@ -659,4 +659,6 @@ CHAR LIMIT = NONE] -->
     <!-- Label for album filmstrip button -->
     <string name="switch_photo_filmstrip">Filmstrip view</string>
 
-</resources>
+    <!--  String shown when setting the homepage wallpaper in the background [CHAR LIMIT=NONE] -->
+    <string name="setting_wallpaper">Setting wallpaper</string>
+ </resources>
