@@ -860,7 +860,9 @@ public class CameraActivity extends Activity
 
                     @Override
                     protected void onPostExecute(MediaDetails mediaDetails) {
-                        DetailsDialog.create(CameraActivity.this, mediaDetails).show();
+                        if (mediaDetails != null) {
+                            DetailsDialog.create(CameraActivity.this, mediaDetails).show();
+                        }
                     }
                 }).execute();
                 return true;
