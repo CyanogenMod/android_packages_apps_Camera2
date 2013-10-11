@@ -340,6 +340,27 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public void onDataFullScreenChange(int dataID, boolean fullScreen);
 
         /**
+         * Called by {@link reload}.
+         */
+        public void onReload();
+
+        /**
+         * Called by {@link checkCurrentDataCentered} when the
+         * data is centered in the film strip.
+         *
+         * @param dataID the ID of the local data
+         */
+        public void onCurrentDataCentered(int dataID);
+
+        /**
+         * Called by {@link checkCurrentDataCentered} when the
+         * data is off centered in the film strip.
+         *
+         * @param dataID the ID of the local data
+         */
+        public void onCurrentDataOffCentered(int dataID);
+
+        /**
          * The callback when the item is centered/off-centered.
          *
          * @param dataID The ID of the image data.
@@ -712,7 +733,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * @param id The id of the data to check.
      * @return {@code True} if the data is currently at the center.
      */
-    protected boolean isDataAtCenter(int id) {
+    private boolean isDataAtCenter(int id) {
         if (mViewItem[mCurrentItem] == null) {
             return false;
         }
@@ -826,6 +847,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (nearest == BUFFER_SIZE) {
             return -1;
         }
+
         int min = Math.abs(pointX - mViewItem[nearest].getCenterX());
 
         for (int itemID = nearest + 1; itemID < BUFFER_SIZE && mViewItem[itemID] != null; itemID++) {
@@ -961,7 +983,25 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (stopScroll) {
             mCenterX = curr.getCenterX();
         }
+
         return stopScroll;
+    }
+
+    /**
+     * Checks if the item is centered in the film strip, and calls
+     * {@link #onCurrentDataCentered} or {@link #onCurrentDataOffCentered}.
+     * TODO: refactor.
+     *
+     * @param dataID the ID of the image data.
+     */
+    private void checkCurrentDataCentered(int dataID) {
+        if (mListener != null) {
+            if (isDataAtCenter(dataID)) {
+                mListener.onCurrentDataCentered(dataID);
+            } else {
+                mListener.onCurrentDataOffCentered(dataID);
+            }
+        }
     }
 
     /**
@@ -1688,6 +1728,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         return (mScale == FULL_SCREEN_SCALE);
     }
 
+    public boolean isCameraPreview() {
+        return (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY);
+    }
+
     public boolean inCameraFullscreen() {
         return isDataAtCenter(0) && inFullScreen()
                 && (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY);
@@ -1758,7 +1802,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
         newItem.copyGeometry(item);
         mViewItem[itemID] = newItem;
-        if (clampCenterX()) {
+
+        boolean stopScroll = clampCenterX();
+        checkCurrentDataCentered(getCurrentId());
+        if (stopScroll) {
             mController.stopScrolling(true);
         }
         adjustChildZOrder();
@@ -1883,6 +1930,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         invalidate();
 
         if (mListener != null) {
+            mListener.onReload();
             mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
         }
     }
@@ -1917,7 +1965,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     @Override
                     public void onScrollUpdate(int currX, int currY) {
                         mCenterX = currX;
-                        if (clampCenterX()) {
+
+                        boolean stopScroll = clampCenterX();
+                        checkCurrentDataCentered(getCurrentId());
+                        if (stopScroll) {
                             mController.stopScrolling(true);
                         }
                         invalidate();
@@ -2056,7 +2107,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             mCenterX += deltaX;
-            if (clampCenterX()) {
+
+            boolean stopScroll = clampCenterX();
+            checkCurrentDataCentered(getCurrentId());
+            if (stopScroll) {
                 mController.stopScrolling(true);
             }
             invalidate();
@@ -2201,6 +2255,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mCanStopScroll = interruptible;
             mScroller.startScroll(mCenterX, 0, position - mCenterX,
                     0, duration);
+
+            checkCurrentDataCentered(mViewItem[mCurrentItem].getId());
         }
 
         @Override

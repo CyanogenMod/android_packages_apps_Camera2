@@ -137,6 +137,18 @@ public class WideAnglePanoramaUI implements
         mCameraControls.setVisibility(View.VISIBLE);
     }
 
+    public void onPreviewFocusChanged(boolean previewFocused) {
+        if (previewFocused) {
+            showUI();
+        } else {
+            hideUI();
+        }
+    }
+
+    public boolean arePreviewControlsVisible() {
+        return (mCameraControls.getVisibility() == View.VISIBLE);
+    }
+
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
     }
