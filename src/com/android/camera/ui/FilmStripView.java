@@ -41,6 +41,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.data.LocalData;
 import com.android.camera.ui.FilmStripView.ImageData.PanoramaSupportCallback;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
 
@@ -881,16 +882,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             // not in transition.
             return;
         }
-        int nearest = findTheNearestView(mCenterX);
+        final int nearest = findTheNearestView(mCenterX);
         // no change made.
-        if (nearest == -1 || nearest == mCurrentItem)
+        if (nearest == -1 || nearest == mCurrentItem) {
             return;
+        }
 
         // Going to change the current item, notify the listener.
         if (mListener != null) {
             mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), false);
         }
-        int adjust = nearest - mCurrentItem;
+        final int adjust = nearest - mCurrentItem;
         if (adjust > 0) {
             for (int k = 0; k < adjust; k++) {
                 removeItem(k);
@@ -904,6 +906,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     mViewItem[k] = buildItemFromData(mViewItem[k - 1].getId() + 1);
                 }
             }
+            adjustChildZOrder();
         } else {
             for (int k = BUFFER_SIZE - 1; k >= BUFFER_SIZE + adjust; k--) {
                 removeItem(k);
@@ -918,6 +921,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
             }
         }
+        invalidate();
         if (mListener != null) {
             mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), true);
         }
@@ -956,6 +960,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         return stopScroll;
     }
 
+    /**
+     * Reorders the child views to be consistent with their data ID. This
+     * method should be called after adding/removing views.
+     */
     private void adjustChildZOrder() {
         for (int i = BUFFER_SIZE - 1; i >= 0; i--) {
             if (mViewItem[i] == null)
@@ -1326,7 +1334,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         stepIfNeeded();
-        adjustChildZOrder();
         updateBottomControls(false /* no forced update */);
         mLastItemId = getCurrentId();
     }
@@ -1541,6 +1548,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     }
                 })
                 .start();
+        adjustChildZOrder();
         invalidate();
     }
 
@@ -1628,6 +1636,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 .setInterpolator(mViewAnimInterpolator)
                 .setDuration(GEOMETRY_ADJUST_TIME_MS)
                 .start();
+        adjustChildZOrder();
         invalidate();
     }
 
@@ -1743,6 +1752,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (clampCenterX()) {
             mController.stopScrolling(true);
         }
+        adjustChildZOrder();
+        invalidate();
     }
 
     /** Some of the data is changed. */
@@ -1804,6 +1815,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
             }
         }
+        adjustChildZOrder();
         // Request a layout to find the measured width/height of the view first.
         requestLayout();
         // Update photo sphere visibility after metadata fully written.
@@ -1858,6 +1870,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mCenterX = -1;
         mScale = FULL_SCREEN_SCALE;
 
+        adjustChildZOrder();
         invalidate();
 
         if (mListener != null) {
