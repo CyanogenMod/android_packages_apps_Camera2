@@ -114,6 +114,8 @@ public class PhotoModule
     // after screen on if the activity is started from secure lock screen.
     private static final int KEEP_CAMERA_TIMEOUT = 1000; // ms
 
+    private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
+
     // copied from Camera hierarchy
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
@@ -707,10 +709,7 @@ public class PhotoModule
             ExifInterface exif = Exif.getExif(jpegData);
             int orientation = Exif.getOrientation(exif);
 
-            if (mDebugUri != null) {
-                // If using a debug uri, save jpeg there
-                saveToDebugUri(jpegData);
-            }else if (!mIsImageCaptureIntent) {
+            if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
                 Size s = mParameters.getPictureSize();
                 int width, height;
@@ -724,6 +723,18 @@ public class PhotoModule
                 NamedEntity name = mNamedImages.getNextNameEntity();
                 String title = (name == null) ? null : name.title;
                 long date = (name == null) ? -1 : name.date;
+
+                // Handle debug mode outputs
+                if (mDebugUri != null) {
+                    // If using a debug uri, save jpeg there.
+                    saveToDebugUri(jpegData);
+
+                    // Adjust the title of the debug image shown in mediastore.
+                    if (title != null) {
+                        title = DEBUG_IMAGE_PREFIX + title;
+                    }
+                }
+
                 if (title == null) {
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
