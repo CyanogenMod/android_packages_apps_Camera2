@@ -167,7 +167,6 @@ public class VideoUI implements PieRenderer.PieListener,
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
-        ((CameraRootView) mRootView).setDisplayChangeListener(this);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (ModuleSwitcher) mRootView.findViewById(R.id.camera_switcher);
@@ -375,6 +374,14 @@ public class VideoUI implements PieRenderer.PieListener,
         if (mPieRenderer != null && mPieRenderer.showsItems()) {
             mPieRenderer.hide();
         }
+    }
+
+    public void initDisplayChangeListener() {
+        ((CameraRootView) mRootView).setDisplayChangeListener(this);
+    }
+
+    public void removeDisplayChangeListener() {
+        ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
     public void overrideSettings(final String... keyvalues) {

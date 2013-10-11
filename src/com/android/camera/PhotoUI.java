@@ -222,7 +222,6 @@ public class PhotoUI implements PieListener,
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
-        ((CameraRootView) mRootView).setDisplayChangeListener(this);
         mAnimationManager = new AnimationManager();
     }
 
@@ -761,6 +760,14 @@ public class PhotoUI implements PieListener,
         mLocationDialog = null;
         mPreviewWidth = 0;
         mPreviewHeight = 0;
+    }
+
+    public void initDisplayChangeListener() {
+        ((CameraRootView) mRootView).setDisplayChangeListener(this);
+    }
+
+    public void removeDisplayChangeListener() {
+        ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
     // focus UI implementation
