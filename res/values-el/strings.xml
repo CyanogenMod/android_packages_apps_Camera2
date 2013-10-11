@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"Αποθήκευση"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Δεν είναι δυνατή η φόρτωση της εικόνας!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Προβολή σε φιλμ"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"Ορισμός ταπετσαρίας"</string>
 </resources>

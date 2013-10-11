@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"Salvați"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Nu se poate încărca imaginea!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Afișare tip peliculă"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"Se setează imaginea de fundal"</string>
 </resources>

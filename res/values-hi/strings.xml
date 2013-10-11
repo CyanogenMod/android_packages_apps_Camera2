@@ -285,4 +285,5 @@
     <string name="crop_save" msgid="2841974981340098579">"सहेजें"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"चित्र लोड नहीं हो सकता!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"फ़िल्मस्ट्रिप दृश्य"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"वॉलपेपर सेट हो रहा है"</string>
 </resources>
