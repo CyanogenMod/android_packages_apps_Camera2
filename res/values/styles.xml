@@ -20,7 +20,7 @@
     </style>
 
     <style name="Theme.Camera" parent="Theme.CameraBase">
-        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowTitleSize">0dp</item>
         <item name="android:windowActionBarOverlay">true</item>
