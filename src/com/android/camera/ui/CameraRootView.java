@@ -88,6 +88,10 @@ public class CameraRootView extends FrameLayout {
         }
     }
 
+    public void removeDisplayChangeListener() {
+        mListener = null;
+    }
+
     public void setDisplayChangeListener(MyDisplayListener listener) {
         mListener = listener;
     }
