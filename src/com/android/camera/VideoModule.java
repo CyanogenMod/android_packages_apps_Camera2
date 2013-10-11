@@ -679,6 +679,7 @@ public class VideoModule implements CameraModule,
             mUI.enableShutter(true);
         }
 
+        mUI.initDisplayChangeListener();
         // Initializing it here after the preview is started.
         mUI.initializeZoom(mParameters);
 
@@ -827,6 +828,7 @@ public class VideoModule implements CameraModule,
         mPreferenceRead = false;
 
         mUI.collapseCameraControls();
+        mUI.removeDisplayChangeListener();
     }
 
     @Override
