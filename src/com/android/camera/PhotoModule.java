@@ -1191,6 +1191,7 @@ public class PhotoModule
         } else {
             initializeSecondTime();
         }
+        mUI.initDisplayChangeListener();
         keepScreenOnAwhile();
 
         UsageStatistics.onContentViewChanged(
@@ -1261,6 +1262,7 @@ public class PhotoModule
         if (s != null) {
             s.setListener(null);
         }
+        mUI.removeDisplayChangeListener();
     }
 
     /**
