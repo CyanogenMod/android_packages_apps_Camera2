@@ -418,7 +418,7 @@ public class CameraActivity extends Activity
      * If {@param visible} is false, this hides the action bar and switches the system UI
      * to lights-out mode.
      */
-
+    // TODO: This should not be called outside of the activity.
     public void setSystemBarsVisibility(boolean visible) {
         setSystemBarsVisibility(visible, false);
     }
@@ -432,17 +432,11 @@ public class CameraActivity extends Activity
         mMainHandler.removeMessages(HIDE_ACTION_BAR);
         boolean currentlyVisible = mActionBar.isShowing();
 
-        // We need to set these flags independently of the action bar
-        // visibility, as the system can change the system UI visibility
-        // independently.
-        // Note: setSystemUiVisibitliy will be a no-op if the flag passed in is
-        // the same as the current one, so it's OK to call this often. Adding an
-        // additional check here is therefore unnecessary.
-        int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
-                : View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
-        mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
-
         if (visible != currentlyVisible) {
+            int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
+                    : View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
+
             if (visible) {
                 mActionBar.show();
             } else {
