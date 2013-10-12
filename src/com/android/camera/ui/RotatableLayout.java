@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera2.R;
 
 /* RotatableLayout rotates itself as well as all its children when orientation
  * changes. Specifically, when going from portrait to landscape, camera
@@ -42,20 +43,26 @@ public class RotatableLayout extends FrameLayout {
     // Initial orientation of the layout (ORIENTATION_PORTRAIT, or ORIENTATION_LANDSCAPE)
     private int mInitialOrientation;
     private int mPrevRotation = UNKOWN_ORIENTATION;
+    private boolean mIsTablet = false;
 
     public RotatableLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mInitialOrientation = getResources().getConfiguration().orientation;
+        init();
     }
 
     public RotatableLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mInitialOrientation = getResources().getConfiguration().orientation;
+        init();
     }
 
     public RotatableLayout(Context context) {
         super(context);
+        init();
+    }
+
+    private void init() {
         mInitialOrientation = getResources().getConfiguration().orientation;
+        mIsTablet = getResources().getBoolean(R.bool.is_tablet);
     }
 
     @Override
@@ -65,63 +72,21 @@ public class RotatableLayout extends FrameLayout {
         // we need to rotate the view if necessary. After that, onConfigurationChanged
         // call will track all the subsequent device rotation.
         if (mPrevRotation == UNKOWN_ORIENTATION) {
-            mPrevRotation = CameraUtil.getDisplayRotation((Activity) getContext());
+            if (mIsTablet) {
+                // Natural orientation for tablet is landscape
+                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE ?
+                        0 : 90;
+            } else {
+                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_PORTRAIT ?
+                        0 : 90;
+            }
+
             // check if there is any rotation before the view is attached to window
-            int currentOrientation = getResources().getConfiguration().orientation;
-            int orientation = getUnifiedRotation();
-            if (mInitialOrientation == currentOrientation && orientation < 180) {
-                return;
-            }
-
-            if (mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE
-                    && currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                rotateLayout(true);
-            } else if (mInitialOrientation == Configuration.ORIENTATION_PORTRAIT
-                    && currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                rotateLayout(false);
-            }
-            // In reverse landscape and reverse portrait, camera controls will be laid out
-            // on the wrong side of the screen. We need to make adjustment to move the controls
-            // to the USB side
-            if (orientation >= 180) {
-                flipChildren();
-            }
+            rotateIfNeeded();
         }
     }
 
-    protected int getUnifiedRotation() {
-        // all the layout code assumes camera device orientation to be portrait
-        // adjust rotation for landscape
-        int orientation = getResources().getConfiguration().orientation;
-        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
-        int camOrientation = (rotation % 180 == 0) ? Configuration.ORIENTATION_PORTRAIT
-                : Configuration.ORIENTATION_LANDSCAPE;
-        if (camOrientation != orientation) {
-            return (rotation + 90) % 360;
-        }
-        return rotation;
-    }
-
-    public void checkLayoutFlip() {
-        int currentRotation = CameraUtil.getDisplayRotation((Activity) getContext());
-        if ((currentRotation - mPrevRotation + 360) % 360 == 180) {
-            mPrevRotation = currentRotation;
-            flipChildren();
-            getParent().requestLayout();
-        }
-    }
-
-    @Override
-    public void onWindowVisibilityChanged(int visibility) {
-        if (visibility == View.VISIBLE) {
-            // Make sure when coming back from onPause, the layout is rotated correctly
-            checkLayoutFlip();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
+    private void rotateIfNeeded() {
         if (mPrevRotation == UNKOWN_ORIENTATION) {
             return;
         }
@@ -140,6 +105,39 @@ public class RotatableLayout extends FrameLayout {
         boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
         mPrevRotation = rotation;
         rotateLayout(clockwise);
+    }
+
+    protected int getUnifiedRotation() {
+        // all the layout code assumes camera device orientation to be portrait
+        // adjust rotation for landscape
+        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
+        if (mIsTablet) {
+            return (rotation + 90) % 360;
+        }
+        return rotation;
+    }
+
+    public void checkLayoutFlip() {
+        int currentRotation = CameraUtil.getDisplayRotation((Activity) getContext());
+        if ((currentRotation - mPrevRotation + 360) % 360 == 180) {
+            mPrevRotation = currentRotation;
+            flipChildren();
+            requestLayout();
+        }
+    }
+
+    @Override
+    public void onWindowVisibilityChanged(int visibility) {
+        if (visibility == View.VISIBLE) {
+            // Make sure when coming back from onPause, the layout is rotated correctly
+            checkLayoutFlip();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        rotateIfNeeded();
     }
 
     protected void rotateLayout(boolean clockwise) {
