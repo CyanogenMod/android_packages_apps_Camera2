@@ -155,9 +155,16 @@
     <string name="pref_camera_whitebalance_label_cloudy" msgid="4880793739075193336">"ԱՄՊԱՄԱԾ"</string>
     <string name="pref_camera_scenemode_title" msgid="5709932164781367066">"Տեսարանային ռեժիմ"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"Ավտոմատ"</string>
-    <!-- no translation found for pref_camera_scenemode_entry_hdr_plus (6759085555519758794) -->
-    <skip />
+    <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"HDR+"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_plus_on (4762986338359862238) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_plus_off (8027383906480914303) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_on (8567522693524539332) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_off (1121637502250585531) -->
+    <skip />
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Գործողություն"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Գիշերային"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Մայրամուտ"</string>
@@ -284,7 +291,7 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Խոշորացնել"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Պտտել"</string>
     <string name="crop_save" msgid="2841974981340098579">"Պահել"</string>
-    <!-- no translation found for cannot_load_image (4100136187076585580) -->
-    <skip />
+    <string name="cannot_load_image" msgid="4100136187076585580">"Չհաջողվեց բեռնել պատկերը:"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Կինոժապավենի տեսք"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"Պաստառը տեղադրվում է"</string>
 </resources>
