@@ -89,13 +89,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private PanoramaViewHelper mPanoramaViewHelper;
     private long mLastItemId = -1;
 
-    // This is used to resolve the misalignment problem when the device
-    // orientation is changed. If the current item is in fullscreen, it might
-    // be shifted because mCenterX is not adjusted with the orientation.
-    // Set this to true when onSizeChanged is called to make sure we adjust
-    // mCenterX accordingly.
-    private boolean mConfigurationChanged;
-
     // This is true if and only if the user is scrolling,
     private boolean mIsUserScrolling;
     private int mDataIdOnUserScrolling;
@@ -564,8 +557,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             int l = mView.getLeft();
             int t = mView.getTop();
             mViewArea.set(l, t,
-                    l + mView.getWidth() * scale,
-                    t + mView.getHeight() * scale);
+                    l + mView.getMeasuredWidth() * scale,
+                    t + mView.getMeasuredHeight() * scale);
         }
 
         /** Returns true if the point is in the view. */
@@ -626,6 +619,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mView.setScaleY(FULL_SCREEN_SCALE);
             mView.setTranslationX(0f);
             mView.setTranslationY(0f);
+        }
+
+        @Override
+        public String toString() {
+            return "DataID = " + mDataId + "\n\t left = " + mLeftPosition
+                    + "\n\t viewArea = " + mViewArea
+                    + "\n\t centerX = " + getCenterX()
+                    + "\n\t view MeasuredSize = "
+                    + mView.getMeasuredWidth() + ',' + mView.getMeasuredHeight()
+                    + "\n\t view Size = " + mView.getWidth() + ',' + mView.getHeight()
+                    + "\n\t view scale = " + mView.getScaleX();
         }
     }
 
@@ -1179,17 +1183,18 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         currView.setVisibility(VISIBLE);
     }
 
-    private void layoutViewItems() {
+    private void layoutViewItems(boolean layoutChanged) {
         if (mViewItem[mCurrentItem] == null ||
                 mDrawArea.width() == 0 ||
                 mDrawArea.height() == 0) {
             return;
         }
 
-        if (mConfigurationChanged) {
+        // If the layout changed, we need to adjust the current position so
+        // that if an item is centered before the change, it's still centered.
+        if (layoutChanged) {
             mViewItem[mCurrentItem].setLeftPosition(
                     mCenterX - mViewItem[mCurrentItem].getView().getMeasuredWidth() / 2);
-            mConfigurationChanged = false;
         }
 
         if (mController.isZoomStarted()) {
@@ -1340,7 +1345,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     @Override
     public void onDraw(Canvas c) {
-        layoutViewItems();
+        // TODO: remove layoutViewItems() here.
+        layoutViewItems(false);
         super.onDraw(c);
     }
 
@@ -1355,14 +1361,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         // If in the middle of zooming, only re-layout when the layout has changed.
         if (!mController.isZoomStarted() || changed) {
             resetZoomView();
-            layoutViewItems();
+            layoutViewItems(changed);
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        mConfigurationChanged = true;
     }
 
     /**
