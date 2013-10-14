@@ -14,8 +14,7 @@
      limitations under the License.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pano_layout"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,4 +23,4 @@
     <include layout="@layout/camera_controls"
              android:layout_gravity="center"
              style="@style/CameraControls"/>
-</FrameLayout>
+</merge>
