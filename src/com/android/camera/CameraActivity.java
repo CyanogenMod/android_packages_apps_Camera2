@@ -334,13 +334,16 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onCurrentDataChanged(final int dataID, final boolean current) {
+                public void onDataFocusChanged(final int dataID, final boolean focused) {
                     // Delay hiding action bar if there is any user interaction
                     if (mMainHandler.hasMessages(HIDE_ACTION_BAR)) {
                         mMainHandler.removeMessages(HIDE_ACTION_BAR);
                         mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR,
                                 SHOW_ACTION_BAR_TIMEOUT_MS);
                     }
+                    // TODO: This callback is UI event callback, should always
+                    // happen on UI thread. Find the reason for this
+                    // runOnUiThread() and fix it.
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -352,7 +355,7 @@ public class CameraActivity extends Activity
                             }
                             boolean isCameraID = currentData.getLocalDataType() ==
                                     LocalData.LOCAL_CAMERA_PREVIEW;
-                            if (!current) {
+                            if (!focused) {
                                 if (isCameraID) {
                                     mCurrentModule.onPreviewFocusChanged(false);
                                     CameraActivity.this.setSystemBarsVisibility(true);

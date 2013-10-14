@@ -343,10 +343,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
          * The callback when the item is centered/off-centered.
          *
          * @param dataID The ID of the image data.
-         * @param current {@code true} if the data is the current one.
+         * @param focused {@code true} if the data is focused.
          *            {@code false} otherwise.
          */
-        public void onCurrentDataChanged(int dataID, boolean current);
+        public void onDataFocusChanged(int dataID, boolean focused);
 
         /**
          * Toggles the visibility of the ActionBar.
@@ -894,7 +894,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         // Going to change the current item, notify the listener.
         if (mListener != null) {
-            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), false);
+            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), false);
         }
         final int adjust = nearest - mCurrentItem;
         if (adjust > 0) {
@@ -927,7 +927,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
         invalidate();
         if (mListener != null) {
-            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), true);
+            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
         }
     }
 
@@ -1056,6 +1056,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         // If this is a photo sphere, show the button to view it. If it's a full
         // 360 photo sphere, show the tiny planet button.
+        if (data.getViewType() == ImageData.VIEW_TYPE_STICKY) {
+            // This is a workaround to prevent an unnecessary update of
+            // PhotoSphere metadata which fires a data focus change callback
+            // at a weird timing.
+            return;
+        }
+        // TODO: Remove this from FilmstripView as it breaks the design.
         data.isPhotoSphere(mActivity, new PanoramaSupportCallback() {
             @Override
             public void panoramaInfoAvailable(final boolean isPanorama,
@@ -1063,7 +1070,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 // Make sure the returned data is for the current image.
                 if (requestId == getCurrentId()) {
                     if (mListener != null) {
-                        mListener.onCurrentDataChanged(requestId, true);
+                        // TODO: Remove this hack since there is no data focus
+                        // change actually.
+                        mListener.onDataFocusChanged(requestId, true);
                     }
                     mBottomControls.setViewPhotoSphereButtonVisibility(isPanorama);
                     mBottomControls.setTinyPlanetButtonVisibility(isPanorama360);
@@ -1833,7 +1842,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mDataIdOnUserScrolling = 0;
         // Remove all views from the mViewItem buffer, except the camera view.
         if (mListener != null && mViewItem[mCurrentItem] != null) {
-            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), false);
+            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), false);
         }
         for (int i = 0; i < mViewItem.length; i++) {
             if (mViewItem[i] == null) {
@@ -1874,7 +1883,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         invalidate();
 
         if (mListener != null) {
-            mListener.onCurrentDataChanged(mViewItem[mCurrentItem].getId(), true);
+            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
         }
     }
 
