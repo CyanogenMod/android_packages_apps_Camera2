@@ -19,14 +19,16 @@ package com.android.camera.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera.util.CameraUtil;
-import com.android.camera2.R;
 
 /* RotatableLayout rotates itself as well as all its children when orientation
  * changes. Specifically, when going from portrait to landscape, camera
@@ -43,7 +45,7 @@ public class RotatableLayout extends FrameLayout {
     // Initial orientation of the layout (ORIENTATION_PORTRAIT, or ORIENTATION_LANDSCAPE)
     private int mInitialOrientation;
     private int mPrevRotation = UNKOWN_ORIENTATION;
-    private boolean mIsTablet = false;
+    private boolean mIsDefaultToPortrait = false;
 
     public RotatableLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -62,7 +64,6 @@ public class RotatableLayout extends FrameLayout {
 
     private void init() {
         mInitialOrientation = getResources().getConfiguration().orientation;
-        mIsTablet = getResources().getBoolean(R.bool.is_tablet);
     }
 
     @Override
@@ -72,18 +73,35 @@ public class RotatableLayout extends FrameLayout {
         // we need to rotate the view if necessary. After that, onConfigurationChanged
         // call will track all the subsequent device rotation.
         if (mPrevRotation == UNKOWN_ORIENTATION) {
-            if (mIsTablet) {
+            calculateDefaultOrientation();
+            if (mIsDefaultToPortrait) {
                 // Natural orientation for tablet is landscape
-                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE ?
+                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_PORTRAIT ?
                         0 : 90;
             } else {
-                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_PORTRAIT ?
+                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE ?
                         0 : 90;
             }
 
             // check if there is any rotation before the view is attached to window
             rotateIfNeeded();
         }
+    }
+
+    private void calculateDefaultOrientation() {
+        Display currentDisplay = getDisplay();
+        Point displaySize = new Point();
+        currentDisplay.getSize(displaySize);
+        int orientation = currentDisplay.getRotation();
+        int naturalWidth, naturalHeight;
+        if (orientation == Surface.ROTATION_0 || orientation == Surface.ROTATION_180) {
+            naturalWidth = displaySize.x;
+            naturalHeight = displaySize.y;
+        } else {
+            naturalWidth = displaySize.y;
+            naturalHeight = displaySize.x;
+        }
+        mIsDefaultToPortrait = naturalWidth < naturalHeight;
     }
 
     private void rotateIfNeeded() {
@@ -111,7 +129,7 @@ public class RotatableLayout extends FrameLayout {
         // all the layout code assumes camera device orientation to be portrait
         // adjust rotation for landscape
         int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
-        if (mIsTablet) {
+        if (!mIsDefaultToPortrait) {
             return (rotation + 90) % 360;
         }
         return rotation;
