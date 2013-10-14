@@ -136,6 +136,7 @@ public class VideoModule implements CameraModule,
     // examined by the user.
     private String mCurrentVideoFilename;
     private Uri mCurrentVideoUri;
+    private boolean mCurrentVideoUriFromMediaSaved;
     private ContentValues mCurrentVideoValues;
 
     private CamcorderProfile mProfile;
@@ -179,6 +180,7 @@ public class VideoModule implements CameraModule,
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
                         mCurrentVideoUri = uri;
+                        mCurrentVideoUriFromMediaSaved = true;
                         onVideoSaved();
                         mActivity.notifyNewMedia(uri);
                     }
@@ -478,11 +480,8 @@ public class VideoModule implements CameraModule,
         // TODO: It should be better to not even insert the URI at all before we
         // confirm done in review, which means we need to handle temporary video
         // files in a quite different way than we currently had.
-        // When the video capture intent doesn't contain the Uri info and the
-        // review is cancelled before taking a video, mCurrentVideoUri can be
-        // null. Also make sure we don't delete the Uri sent from the video
-        // capture intent.
-        if (mIsInReviewMode && mCurrentVideoUri != null) {
+        // Make sure we don't delete the Uri sent from the video capture intent.
+        if (mCurrentVideoUriFromMediaSaved) {
             mContentResolver.delete(mCurrentVideoUri, null, null);
         }
         mIsInReviewMode = false;
@@ -962,6 +961,7 @@ public class VideoModule implements CameraModule,
 
         long requestedSizeLimit = 0;
         closeVideoFileDescriptor();
+        mCurrentVideoUriFromMediaSaved = false;
         if (mIsVideoCaptureIntent && myExtras != null) {
             Uri saveUri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
             if (saveUri != null) {
