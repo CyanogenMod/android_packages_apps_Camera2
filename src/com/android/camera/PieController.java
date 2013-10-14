@@ -156,6 +156,9 @@ public class PieController {
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
+                    if (!item.isEnabled()) {
+                        return;
+                    }
                     IconListPreference pref = (IconListPreference) mPreferenceGroup
                             .findPreference(prefKey);
                     int index = pref.findIndexOfValue(pref.getValue());
