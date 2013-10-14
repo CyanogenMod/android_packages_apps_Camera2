@@ -1717,6 +1717,11 @@ public class VideoModule implements CameraModule,
         forceFlashOff(!previewFocused);
     }
 
+    @Override
+    public boolean arePreviewControlsVisible() {
+        return mUI.arePreviewControlsVisible();
+    }
+
     private final class JpegPictureCallback implements CameraPictureCallback {
         Location mLocation;
 
