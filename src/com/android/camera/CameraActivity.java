@@ -1106,7 +1106,11 @@ public class CameraActivity extends Activity
 
         if (mLocalVideosObserver.isMediaDataChangedDuringPause()
                 || mLocalImagesObserver.isMediaDataChangedDuringPause()) {
-            mDataAdapter.requestLoad(getContentResolver());
+            if (!mSecureCamera) {
+                // If it's secure camera, requestLoad() should not be called
+                // as it will load all the data.
+                mDataAdapter.requestLoad(getContentResolver());
+            }
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
