@@ -1902,9 +1902,13 @@ public class VideoModule implements CameraModule,
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
+
+        Util.dumpParameters(mParameters);
+
         //Call Qcom related Camera Parameters
         qcomSetCameraParameters();
         mCameraDevice.setParameters(mParameters);
+
         // Keep preview size up to date.
         mParameters = mCameraDevice.getParameters();
 

@@ -2619,6 +2619,7 @@ public class PhotoModule
             doModeSwitch = updateCameraParametersPreference();
         }
 
+        Util.dumpParameters(mParameters);
         mCameraDevice.setParameters(mParameters);
 
         // Switch to gcam module if HDR+ was selected

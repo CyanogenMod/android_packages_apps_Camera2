@@ -64,10 +64,14 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 /**
  * Collection of utility functions used in this package.
@@ -563,13 +567,25 @@ public class CameraUtil {
         return optimalSize;
     }
 
-    public static void dumpParameters(Parameters parameters) {
-        String flattened = parameters.flatten();
-        StringTokenizer tokenizer = new StringTokenizer(flattened, ";");
-        Log.d(TAG, "Dump all camera parameters:");
-        while (tokenizer.hasMoreElements()) {
-            Log.d(TAG, tokenizer.nextToken());
+    public static void dumpParameters(Parameters params) {
+        Set<String> sortedParams = new TreeSet<String>();
+        sortedParams.addAll(Arrays.asList(params.flatten().split(";")));
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        Iterator<String> i = sortedParams.iterator();
+        while (i.hasNext()) {
+            String nextParam = i.next();
+            if ((sb.length() + nextParam.length()) > 2044) {
+                Log.d(TAG, "Parameters: " + sb.toString());
+                sb = new StringBuilder();
+            }
+            sb.append(nextParam);
+            if (i.hasNext()) {
+                sb.append(", ");
+            }
         }
+        sb.append("]");
+        Log.d(TAG, "Parameters: " + sb.toString());
     }
 
     /**
