@@ -43,6 +43,7 @@ import android.widget.TextView;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.ModuleSwitcher;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 /**
@@ -51,6 +52,7 @@ import com.android.camera2.R;
 public class WideAnglePanoramaUI implements
         TextureView.SurfaceTextureListener,
         ShutterButton.OnShutterButtonListener,
+        CameraRootView.MyDisplayListener,
         View.OnLayoutChangeListener {
 
     @SuppressWarnings("unused")
@@ -61,7 +63,6 @@ public class WideAnglePanoramaUI implements
 
     private ViewGroup mRootView;
     private ModuleSwitcher mSwitcher;
-    private ViewGroup mPanoLayout;
     private FrameLayout mCaptureLayout;
     private View mReviewLayout;
     private ImageView mReview;
@@ -274,7 +275,7 @@ public class WideAnglePanoramaUI implements
         mReviewControl.removeAllViews();
         inflater.inflate(R.layout.pano_review_control, mReviewControl, true);
 
-        mPanoLayout.bringChildToFront(mCameraControls);
+        mRootView.bringChildToFront(mCameraControls);
         setViews(mActivity.getResources());
         if (threadRunning) {
             mReview.setImageDrawable(lowResReview);
@@ -333,7 +334,6 @@ public class WideAnglePanoramaUI implements
         mReviewBackground = appRes.getColor(R.color.review_background);
         mIndicatorColorFast = appRes.getColor(R.color.pano_progress_indication_fast);
 
-        mPanoLayout = (ViewGroup) mRootView.findViewById(R.id.pano_layout);
         mPreviewLayout = mRootView.findViewById(R.id.pano_preview_layout);
         mReviewControl = (ViewGroup) mRootView.findViewById(R.id.pano_review_control);
         mReviewLayout = mRootView.findViewById(R.id.pano_review_layout);
@@ -416,6 +416,29 @@ public class WideAnglePanoramaUI implements
         mCaptureProgressBar.setIndicatorColor(mIndicatorColor);
         mLeftIndicator.setEnabled(false);
         mRightIndicator.setEnabled(false);
+    }
+
+    public void flipPreviewIfNeeded() {
+        if (CameraUtil.getDisplayRotation(mActivity) >= 180) {
+            // In either reverse landscape or reverse portrait
+            mTextureView.setRotation(180);
+        } else {
+            mTextureView.setRotation(0);
+        }
+    }
+
+    @Override
+    public void onDisplayChanged() {
+        mCameraControls.checkLayoutFlip();
+        flipPreviewIfNeeded();
+    }
+
+    public void initDisplayChangeListener() {
+        ((CameraRootView) mRootView).setDisplayChangeListener(this);
+    }
+
+    public void removeDisplayChangeListener() {
+        ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
     private class DialogHelper {
