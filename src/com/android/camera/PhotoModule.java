@@ -1950,6 +1950,11 @@ public class PhotoModule
         mUI.onPreviewFocusChanged(previewFocused);
     }
 
+    @Override
+    public boolean arePreviewControlsVisible() {
+        return mUI.arePreviewControlsVisible();
+    }
+
     // For debugging only.
     public void setDebugUri(Uri uri) {
         mDebugUri = uri;
