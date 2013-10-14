@@ -392,6 +392,12 @@ public class CameraUtil {
         return x;
     }
 
+    public static float clamp(float x, float min, float max) {
+        if (x > max) return max;
+        if (x < min) return min;
+        return x;
+    }
+
     public static int getDisplayRotation(Activity activity) {
         int rotation = activity.getWindowManager().getDefaultDisplay()
                 .getRotation();
@@ -825,7 +831,7 @@ public class CameraUtil {
     }
 
     private static class ImageFileNamer {
-        private SimpleDateFormat mFormat;
+        private final SimpleDateFormat mFormat;
 
         // The date (in milliseconds) used to generate the last name.
         private long mLastDate;
