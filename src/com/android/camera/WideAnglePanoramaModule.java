@@ -144,6 +144,7 @@ public class WideAnglePanoramaModule
     private OrientationManager mOrientationManager;
     private ComboPreferences mPreferences;
     private boolean mMosaicPreviewConfigured;
+    private boolean mPreviewFocused;
 
     @Override
     public void onPreviewUIReady() {
@@ -308,11 +309,13 @@ public class WideAnglePanoramaModule
 
     @Override
     public void onPreviewFocusChanged(boolean previewFocused) {
-        if (previewFocused) {
-            mUI.showUI();
-        } else {
-            mUI.hideUI();
-        }
+        mPreviewFocused = previewFocused;
+        mUI.onPreviewFocusChanged(previewFocused);
+    }
+
+    @Override
+    public boolean arePreviewControlsVisible() {
+        return mUI.arePreviewControlsVisible();
     }
 
     /**
@@ -705,7 +708,9 @@ public class WideAnglePanoramaModule
         mActivity.setSwipingEnabled(true);
         // Orientation change will trigger onLayoutChange->configMosaicPreview->
         // resetToPreview. Do not show the capture UI in film strip.
-        mUI.showPreviewUI();
+        if (mPreviewFocused) {
+            mUI.showPreviewUI();
+        }
         mMosaicFrameProcessor.reset();
     }
 

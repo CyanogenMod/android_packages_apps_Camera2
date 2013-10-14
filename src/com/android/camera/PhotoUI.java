@@ -398,6 +398,10 @@ public class PhotoUI implements PieListener,
         mCameraControls.setVisibility(View.VISIBLE);
     }
 
+    public boolean arePreviewControlsVisible() {
+        return (mCameraControls.getVisibility() == View.VISIBLE);
+    }
+
     public void hideSwitcher() {
         mSwitcher.closePopup();
         mSwitcher.setVisibility(View.INVISIBLE);
