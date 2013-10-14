@@ -857,11 +857,19 @@ public class CameraUtil {
 
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW)
-                    .setDataAndType(uri, "video/*")
-                    .putExtra(Intent.EXTRA_TITLE, title)
-                    .putExtra(KEY_TREAT_UP_AS_BACK, true);
-            activity.startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
+            if (!isSecureCamera) {
+                Intent intent = new Intent(Intent.ACTION_VIEW)
+                        .setDataAndType(uri, "video/*")
+                        .putExtra(Intent.EXTRA_TITLE, title)
+                        .putExtra(KEY_TREAT_UP_AS_BACK, true);
+                activity.startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            } else {
+                // In order not to send out any intent to be intercepted and
+                // show the lock screen immediately, we just let the secure
+                // camera activity finish.
+                activity.finish();
+            }
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, activity.getString(R.string.video_err),
                     Toast.LENGTH_SHORT).show();
