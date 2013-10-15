@@ -784,6 +784,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private void measureViewItem(ViewItem item, int boundWidth, int boundHeight) {
         int id = item.getId();
         ImageData imageData = mDataAdapter.getImageData(id);
+        if (imageData == null) {
+            Log.e(TAG, "trying to measure a null item");
+            return;
+        }
+
         int[] dim = calculateChildDimension(imageData.getWidth(), imageData.getHeight(),
                 imageData.getOrientation(), boundWidth, boundHeight);
 
@@ -892,8 +897,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         if (itemID >= mViewItem.length || mViewItem[itemID] == null) {
             return;
         }
-
         ImageData data = mDataAdapter.getImageData(mViewItem[itemID].getId());
+        if (data == null) {
+            Log.e(TAG, "trying to remove a null item");
+            return;
+        }
         checkForRemoval(data, mViewItem[itemID].getView());
         mViewItem[itemID] = null;
     }
@@ -1789,7 +1797,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
         removeView(item.getView());
+
         ImageData data = mDataAdapter.getImageData(item.getId());
+        if (data == null) {
+            Log.e(TAG, "trying recycle a null item");
+            return;
+        }
         data.recycle();
 
         ViewItem newItem = buildItemFromData(item.getId());
