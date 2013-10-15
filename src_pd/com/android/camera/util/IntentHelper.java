@@ -17,6 +17,7 @@ package com.android.camera.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 public class IntentHelper {
 
@@ -31,7 +32,7 @@ public class IntentHelper {
 
     public static Intent getVideoPlayerIntent(Context context, Uri uri) {
         return new Intent(Intent.ACTION_VIEW)
-            .setPackageName(GALLERY_PACKAGE_NAME)
+            .setPackage(GALLERY_PACKAGE_NAME)
             .setDataAndType(uri, "video/*");
     }
 }
