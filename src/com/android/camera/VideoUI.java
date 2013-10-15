@@ -345,6 +345,10 @@ public class VideoUI implements PieRenderer.PieListener,
         mCameraControls.setVisibility(View.VISIBLE);
     }
 
+    public boolean arePreviewControlsVisible() {
+        return (mCameraControls.getVisibility() == View.VISIBLE);
+    }
+
     public void hideSwitcher() {
         mSwitcher.closePopup();
         mSwitcher.setVisibility(View.INVISIBLE);
