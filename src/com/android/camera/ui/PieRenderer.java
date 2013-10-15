@@ -905,6 +905,7 @@ public class PieRenderer extends OverlayRenderer
     }
 
     public void setFocus(int x, int y) {
+        mOverlay.removeCallbacks(mDisappear);
         mFocusX = x;
         mFocusY = y;
         setCircle(mFocusX, mFocusY);
