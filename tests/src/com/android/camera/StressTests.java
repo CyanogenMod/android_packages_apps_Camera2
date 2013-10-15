@@ -40,7 +40,7 @@ public class StressTests extends TestSuite {
         result.addTestSuite(CameraLatency.class);
         result.addTestSuite(CameraStartUp.class);
         result.addTestSuite(ImageCapture.class);
-//      result.addTestSuite(SwitchPreview.class);
+        result.addTestSuite(SwitchPreview.class);
         return result;
     }
 }
