@@ -163,8 +163,6 @@ public class VideoModule implements CameraModule,
     private OrientationManager mOrientationManager;
 
     private int mPendingSwitchCameraId;
-    private boolean mOpenCameraFail;
-    private boolean mCameraDisabled;
     private final Handler mHandler = new MainHandler();
     private VideoUI mUI;
     private CameraProxy mCameraDevice;
@@ -352,11 +350,7 @@ public class VideoModule implements CameraModule,
         // Make sure camera device is opened.
         try {
             cameraOpenThread.join();
-            if (mOpenCameraFail) {
-                CameraUtil.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-                return;
-            } else if (mCameraDisabled) {
-                CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
+            if (mCameraDevice == null) {
                 return;
             }
         } catch (InterruptedException ex) {
@@ -603,6 +597,9 @@ public class VideoModule implements CameraModule,
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void getDesiredPreviewSize() {
+        if (mCameraDevice == null) {
+            return;
+        }
         mParameters = mCameraDevice.getParameters();
         if (mParameters.getSupportedVideoSizes() == null) {
             mDesiredPreviewWidth = mProfile.videoFrameWidth;
@@ -652,9 +649,6 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onResumeAfterSuper() {
-        if (mOpenCameraFail || mCameraDisabled) {
-            return;
-        }
         mUI.enableShutter(false);
         mZoomValue = 0;
 
@@ -662,12 +656,7 @@ public class VideoModule implements CameraModule,
 
         if (!mPreviewing) {
             openCamera();
-            if (mOpenCameraFail) {
-                CameraUtil.showErrorAndFinish(mActivity,
-                        R.string.cannot_connect_camera);
-                return;
-            } else if (mCameraDisabled) {
-                CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
+            if (mCameraDevice == null) {
                 return;
             }
             readVideoPreferences();
@@ -734,7 +723,10 @@ public class VideoModule implements CameraModule,
         Log.v(TAG, "startPreview");
 
         SurfaceTexture surfaceTexture = mUI.getSurfaceTexture();
-        if (!mPreferenceRead || surfaceTexture == null || mPaused == true) return;
+        if (!mPreferenceRead || surfaceTexture == null || mPaused == true ||
+                mCameraDevice == null) {
+            return;
+        }
 
         mCameraDevice.setErrorCallback(mErrorCallback);
         if (mPreviewing == true) {
@@ -753,12 +745,6 @@ public class VideoModule implements CameraModule,
         } catch (Throwable ex) {
             closeCamera();
             throw new RuntimeException("startPreview failed", ex);
-        } finally {
-            if (mOpenCameraFail) {
-                CameraUtil.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-            } else if (mCameraDisabled) {
-                CameraUtil.showErrorAndFinish(mActivity, R.string.camera_disabled);
-            }
         }
     }
 
