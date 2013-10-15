@@ -334,6 +334,35 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
+                public void onReload() {
+                    setPreviewControlsVisibility(true);
+                }
+
+                @Override
+                public void onCurrentDataCentered(int dataID) {
+                    if (dataID != 0 && !mFilmStripView.isCameraPreview()) {
+                        // For now, We ignore all items that are not the camera preview.
+                        return;
+                    }
+
+                    if(!arePreviewControlsVisible()) {
+                        setPreviewControlsVisibility(true);
+                    }
+                }
+
+                @Override
+                public void onCurrentDataOffCentered(int dataID) {
+                    if (dataID != 0 && !mFilmStripView.isCameraPreview()) {
+                        // For now, We ignore all items that are not the camera preview.
+                        return;
+                    }
+
+                    if (arePreviewControlsVisible()) {
+                        setPreviewControlsVisibility(false);
+                    }
+                }
+
+                @Override
                 public void onDataFocusChanged(final int dataID, final boolean focused) {
                     // Delay hiding action bar if there is any user interaction
                     if (mMainHandler.hasMessages(HIDE_ACTION_BAR)) {
@@ -363,10 +392,10 @@ public class CameraActivity extends Activity
                                 hidePanoStitchingProgress();
                             } else {
                                 if (isCameraID) {
-                                    mCurrentModule.onPreviewFocusChanged(true);
                                     // Don't show the action bar in Camera
                                     // preview.
                                     CameraActivity.this.setSystemBarsVisibility(false);
+
                                     if (mPendingDeletion) {
                                         performDeletion();
                                     }
@@ -1447,6 +1476,26 @@ public class CameraActivity extends Activity
         } else {
             mCameraPreviewData.lockPreview(!enable);
         }
+    }
+
+
+    /**
+     * Check whether camera controls are visible.
+     *
+     * @return whether controls are visible.
+     */
+    private boolean arePreviewControlsVisible() {
+        return mCurrentModule.arePreviewControlsVisible();
+    }
+
+    /**
+     * Show or hide the {@link CameraControls} using the current module's
+     * implementation of {@link #onPreviewFocusChanged}.
+     *
+     * @param showControls whether to show camera controls.
+     */
+    private void setPreviewControlsVisibility(boolean showControls) {
+        mCurrentModule.onPreviewFocusChanged(showControls);
     }
 
     // Accessor methods for getting latency times used in performance testing
