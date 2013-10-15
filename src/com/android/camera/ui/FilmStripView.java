@@ -2611,7 +2611,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
-            if (mViewItem[mCurrentItem] == null) {
+            ViewItem currItem = mViewItem[mCurrentItem];
+            if (currItem == null) {
+                return false;
+            }
+            if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
                 return false;
             }
             // When image is zoomed in to be bigger than the screen
@@ -2674,6 +2678,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public boolean onFling(float velocityX, float velocityY) {
             final ViewItem currItem = mViewItem[mCurrentItem];
             if (currItem == null) {
+                return false;
+            }
+            if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
                 return false;
             }
             if (mController.isZoomStarted()) {
