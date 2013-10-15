@@ -606,6 +606,9 @@ public class PhotoUI implements PieListener,
     }
 
     public boolean collapseCameraControls() {
+        // TODO: Mode switcher should behave like a popup and should hide itself when there
+        // is a touch outside of it.
+        mSwitcher.closePopup();
         // Remove all the popups/dialog boxes
         boolean ret = false;
         if (mPopup != null) {
