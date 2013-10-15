@@ -454,7 +454,7 @@ public class WideAnglePanoramaModule
         final boolean isLandscape =
                 (mActivity.getResources().getConfiguration().orientation ==
                         Configuration.ORIENTATION_LANDSCAPE);
-
+        mUI.flipPreviewIfNeeded();
         MosaicPreviewRenderer renderer = new MosaicPreviewRenderer(
                 mUI.getSurfaceTexture(),
                 mPreviewUIWidth, mPreviewUIHeight, isLandscape);
@@ -819,6 +819,7 @@ public class WideAnglePanoramaModule
             mWaitProcessorTask = null;
         }
         resetScreenOn();
+        mUI.removeDisplayChangeListener();
         if (mSoundPlayer != null) {
             mSoundPlayer.release();
             mSoundPlayer = null;
@@ -879,7 +880,7 @@ public class WideAnglePanoramaModule
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
         mLocationManager.recordLocation(recordLocation);
-
+        mUI.initDisplayChangeListener();
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PanoramaModule");
     }
