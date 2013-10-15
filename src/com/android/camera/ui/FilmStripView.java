@@ -1074,6 +1074,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      *              has been checked for button visibilities
      */
     private void updateBottomControls(boolean force) {
+        if (mActivity.isSecureCamera()) {
+            // We cannot show buttons in secure camera that send out of app intents,
+            // because another app with the same name can parade as the intented
+            // Activity.
+            return;
+        }
+
         if (mBottomControls == null) {
             mBottomControls = (FilmstripBottomControls) ((View) getParent())
                     .findViewById(R.id.filmstrip_bottom_controls);
@@ -1082,7 +1089,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         }
 
         final int requestId = getCurrentId();
-
         if (requestId < 0) {
             return;
         }
