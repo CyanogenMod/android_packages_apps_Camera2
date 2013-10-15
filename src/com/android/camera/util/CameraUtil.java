@@ -55,6 +55,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager;
+import com.android.camera.util.IntentHelper;
 import com.android.camera2.R;
 
 import java.io.Closeable;
@@ -859,8 +860,7 @@ public class CameraUtil {
         try {
             boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
             if (!isSecureCamera) {
-                Intent intent = new Intent(Intent.ACTION_VIEW)
-                        .setDataAndType(uri, "video/*")
+                Intent intent = IntentHelper.getVideoPlayerIntent(activity, uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
                         .putExtra(KEY_TREAT_UP_AS_BACK, true);
                 activity.startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
@@ -934,8 +934,7 @@ public class CameraUtil {
      */
     public static boolean launchGallery(Context ctx) {
         if (ApiHelper.HAS_APP_GALLERY) {
-            ctx.startActivity(Intent.makeMainSelectorActivity(
-                    Intent.ACTION_MAIN, Intent.CATEGORY_APP_GALLERY));
+            ctx.startActivity(IntentHelper.getGalleryIntent(ctx));
             return true;
         }
         return false;
