@@ -764,8 +764,6 @@ public class PhotoUI implements PieListener,
             mLocationDialog.dismiss();
         }
         mLocationDialog = null;
-        mPreviewWidth = 0;
-        mPreviewHeight = 0;
     }
 
     public void initDisplayChangeListener() {
@@ -842,6 +840,7 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onDisplayChanged() {
+        Log.d(TAG, "Device flip detected.");
         mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
     }
