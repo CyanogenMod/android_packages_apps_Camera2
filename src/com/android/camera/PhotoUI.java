@@ -777,6 +777,7 @@ public class PhotoUI implements PieListener,
                 (ViewGroup) mRootView, true);
         mCountDownView = (CountDownView) (mRootView.findViewById(R.id.count_down_to_capture));
         mCountDownView.setCountDownFinishedListener((OnCountDownFinishedListener) mController);
+        mCountDownView.bringToFront();
     }
 
     public boolean isCountingDown() {
