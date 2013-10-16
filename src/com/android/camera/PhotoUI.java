@@ -115,6 +115,7 @@ public class PhotoUI implements PieListener,
     private TextureView mTextureView;
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
+    private View mPreviewCover;
 
     public interface SurfaceTextureSizeChangedListener {
         public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
@@ -196,6 +197,7 @@ public class PhotoUI implements PieListener,
                 (ViewGroup) mRootView, true);
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
+        mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
@@ -256,6 +258,7 @@ public class PhotoUI implements PieListener,
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         Log.v(TAG, "SurfaceTexture ready.");
+        mPreviewCover.setVisibility(View.GONE);
         mSurfaceTexture = surface;
         mController.onPreviewUIReady();
         // Workaround for b/11168275, see b/10981460 for more details
@@ -753,6 +756,10 @@ public class PhotoUI implements PieListener,
         mNotSelectableToast.show();
     }
 
+    public void showPreviewCover() {
+        mPreviewCover.setVisibility(View.VISIBLE);
+    }
+
     public void onPause() {
         cancelCountDown();
 
@@ -764,8 +771,6 @@ public class PhotoUI implements PieListener,
             mLocationDialog.dismiss();
         }
         mLocationDialog = null;
-        mPreviewWidth = 0;
-        mPreviewHeight = 0;
     }
 
     public void initDisplayChangeListener() {

@@ -89,6 +89,7 @@ public class WideAnglePanoramaUI implements
     private int mIndicatorColorFast;
     private int mReviewBackground;
     private SurfaceTexture mSurfaceTexture;
+    private View mPreviewCover;
 
     /** Constructor. */
     public WideAnglePanoramaUI(
@@ -225,6 +226,7 @@ public class WideAnglePanoramaUI implements
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) {
         mSurfaceTexture = surfaceTexture;
+        mPreviewCover.setVisibility(View.GONE);
         mController.onPreviewUIReady();
     }
 
@@ -346,6 +348,7 @@ public class WideAnglePanoramaUI implements
         mReviewBackground = appRes.getColor(R.color.review_background);
         mIndicatorColorFast = appRes.getColor(R.color.pano_progress_indication_fast);
 
+        mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         mPreviewLayout = mRootView.findViewById(R.id.pano_preview_layout);
         mReviewControl = (ViewGroup) mRootView.findViewById(R.id.pano_review_control);
         mReviewLayout = mRootView.findViewById(R.id.pano_review_layout);
@@ -451,6 +454,10 @@ public class WideAnglePanoramaUI implements
 
     public void removeDisplayChangeListener() {
         ((CameraRootView) mRootView).removeDisplayChangeListener();
+    }
+
+    public void showPreviewCover() {
+        mPreviewCover.setVisibility(View.VISIBLE);
     }
 
     private class DialogHelper {
