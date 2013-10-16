@@ -43,6 +43,7 @@ import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
@@ -409,6 +410,28 @@ public class CameraUtil {
             case Surface.ROTATION_270: return 270;
         }
         return 0;
+    }
+
+    /**
+     * Calculate the default orientation of the device based on the width and
+     * height of the display when rotation = 0 (i.e. natural width and height)
+     * @param activity the activity context
+     * @return whether the default orientation of the device is portrait
+     */
+    public static boolean isDefaultToPortrait(Activity activity) {
+        Display currentDisplay = activity.getWindowManager().getDefaultDisplay();
+        Point displaySize = new Point();
+        currentDisplay.getSize(displaySize);
+        int orientation = currentDisplay.getRotation();
+        int naturalWidth, naturalHeight;
+        if (orientation == Surface.ROTATION_0 || orientation == Surface.ROTATION_180) {
+            naturalWidth = displaySize.x;
+            naturalHeight = displaySize.y;
+        } else {
+            naturalWidth = displaySize.y;
+            naturalHeight = displaySize.x;
+        }
+        return naturalWidth < naturalHeight;
     }
 
     public static int getDisplayOrientation(int degrees, int cameraId) {
