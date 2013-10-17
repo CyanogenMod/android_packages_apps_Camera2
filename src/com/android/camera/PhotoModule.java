@@ -2647,7 +2647,51 @@ public class PhotoModule
     public void onPreviewFocusChanged(boolean previewFocused) {
         mUI.onPreviewFocusChanged(previewFocused);
     }
-    // TODO: Delete this function after old camera code is removed
+
+    private void enableSkinToneSeekBar() {
+        int progress;
+        if(brightnessProgressBar != null)
+            brightnessProgressBar.setVisibility(View.INVISIBLE);
+        skinToneSeekBar.setMax(MAX_SCE_FACTOR-MIN_SCE_FACTOR);
+        skinToneSeekBar.setVisibility(View.VISIBLE);
+        skinToneSeekBar.requestFocus();
+        if (mskinToneValue != 0) {
+            progress = (mskinToneValue/SCE_FACTOR_STEP)-MIN_SCE_FACTOR;
+            mskinToneSeekListener.onProgressChanged(skinToneSeekBar, progress, false);
+        } else {
+            progress = (MAX_SCE_FACTOR-MIN_SCE_FACTOR)/2;
+            RightValue.setText("");
+            LeftValue.setText("");
+        }
+        skinToneSeekBar.setProgress(progress);
+        mActivity.findViewById(R.id.linear).bringToFront();
+        skinToneSeekBar.bringToFront();
+        Title.setText("Skin Tone Enhancement");
+        Title.setVisibility(View.VISIBLE);
+        RightValue.setVisibility(View.VISIBLE);
+        LeftValue.setVisibility(View.VISIBLE);
+        mSkinToneSeekBar = true;
+    }
+
+    private void disableSkinToneSeekBar() {
+        skinToneSeekBar.setVisibility(View.INVISIBLE);
+        Title.setVisibility(View.INVISIBLE);
+        RightValue.setVisibility(View.INVISIBLE);
+        LeftValue.setVisibility(View.INVISIBLE);
+        mskinToneValue = 0;
+        mSkinToneSeekBar = false;
+        Editor editor = mPreferences.edit();
+        editor.putString(CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR,
+            Integer.toString(mskinToneValue - MIN_SCE_FACTOR));
+        editor.apply();
+        if(brightnessProgressBar != null)
+             brightnessProgressBar.setVisibility(View.VISIBLE);
+}
+
+/*
+ * Provide a mapping for Jpeg encoding quality levels
+ * from String representation to numeric representation.
+ */
     @Override
     public void onRestorePreferencesClicked() {}
     private void setSkinToneFactor() {
