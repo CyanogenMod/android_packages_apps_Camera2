@@ -805,7 +805,7 @@ public class WideAnglePanoramaModule
             stopCapture(true);
             reset();
         }
-
+        mUI.showPreviewCover();
         releaseCamera();
         synchronized (mRendererLock) {
             mCameraTexture = null;
