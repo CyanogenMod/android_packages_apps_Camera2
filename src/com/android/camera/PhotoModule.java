@@ -102,6 +102,7 @@ public class PhotoModule
     private static final int CAMERA_OPEN_DONE = 8;
     private static final int OPEN_CAMERA_FAIL = 9;
     private static final int CAMERA_DISABLED = 10;
+    private static final int SWITCH_TO_GCAM_MODULE = 11;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -340,6 +341,10 @@ public class PhotoModule
                     CameraUtil.showErrorAndFinish(mActivity,
                             R.string.camera_disabled);
                     break;
+                }
+
+                case SWITCH_TO_GCAM_MODULE: {
+                    mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
                 }
             }
         }
@@ -1746,7 +1751,7 @@ public class PhotoModule
 
         // Switch to gcam module if HDR+ was selected
         if (doModeSwitch && !mIsImageCaptureIntent) {
-            mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
+            mHandler.sendEmptyMessage(SWITCH_TO_GCAM_MODULE);
         }
     }
 
