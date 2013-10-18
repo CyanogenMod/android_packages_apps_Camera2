@@ -117,7 +117,7 @@ class AndroidCameraManagerImpl implements CameraManager {
             try {
                 mCamera.setPreviewTexture((SurfaceTexture) surfaceTexture);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                Log.e(TAG, "Could not set preview texture", e);
             }
         }
 
