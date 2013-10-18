@@ -1196,6 +1196,7 @@ public class PhotoModule
 
     @Override
     public void onResumeAfterSuper() {
+        Log.v(TAG, "On resume.");
         if (mOpenCameraFail || mCameraDisabled) return;
 
         mJpegPictureCallbackTime = 0;
@@ -1246,6 +1247,8 @@ public class PhotoModule
 
     @Override
     public void onPauseAfterSuper() {
+        Log.v(TAG, "On pause.");
+        mUI.showPreviewCover();
         // When camera is started from secure lock screen for the first time
         // after screen on, the activity gets onCreate->onResume->onPause->onResume.
         // To reduce the latency, keep the camera for a short time so it does

@@ -19,6 +19,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/pano_module_capture" />
+    <View
+        android:id="@+id/preview_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="gone" />
     <include layout="@layout/pano_module_review" />
     <include layout="@layout/camera_controls"
              android:layout_gravity="center"
