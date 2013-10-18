@@ -19,11 +19,8 @@ package com.android.camera.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Point;
 import android.util.AttributeSet;
-import android.view.Display;
 import android.view.Gravity;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -73,35 +70,21 @@ public class RotatableLayout extends FrameLayout {
         // we need to rotate the view if necessary. After that, onConfigurationChanged
         // call will track all the subsequent device rotation.
         if (mPrevRotation == UNKOWN_ORIENTATION) {
-            calculateDefaultOrientation();
+            mIsDefaultToPortrait = CameraUtil.isDefaultToPortrait((Activity) getContext());
             if (mIsDefaultToPortrait) {
                 // Natural orientation for tablet is landscape
                 mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_PORTRAIT ?
                         0 : 90;
             } else {
+                // When tablet orientation is 0 or 270 (i.e. getUnifiedOrientation
+                // = 0 or 90), we load the layout resource without any rotation.
                 mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE ?
-                        0 : 90;
+                        0 : 270;
             }
 
             // check if there is any rotation before the view is attached to window
             rotateIfNeeded();
         }
-    }
-
-    private void calculateDefaultOrientation() {
-        Display currentDisplay = getDisplay();
-        Point displaySize = new Point();
-        currentDisplay.getSize(displaySize);
-        int orientation = currentDisplay.getRotation();
-        int naturalWidth, naturalHeight;
-        if (orientation == Surface.ROTATION_0 || orientation == Surface.ROTATION_180) {
-            naturalWidth = displaySize.x;
-            naturalHeight = displaySize.y;
-        } else {
-            naturalWidth = displaySize.y;
-            naturalHeight = displaySize.x;
-        }
-        mIsDefaultToPortrait = naturalWidth < naturalHeight;
     }
 
     private void rotateIfNeeded() {
