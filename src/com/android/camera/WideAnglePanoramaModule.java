@@ -647,6 +647,13 @@ public class WideAnglePanoramaModule
         return orientation;
     }
 
+    /** The orientation of the camera image. The value is the angle that the camera
+     *  image needs to be rotated clockwise so it shows correctly on the display
+     *  in its natural orientation. It should be 0, 90, 180, or 270.*/
+    public int getCameraOrientation() {
+        return mCameraOrientation;
+    }
+
     public void saveHighResMosaic() {
         runBackgroundThread(new Thread() {
             @Override
