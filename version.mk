@@ -29,12 +29,16 @@
 # NOTE: arch needs to be more significant than density because x86 devices support running ARM
 # code in emulation mode, so all x86 versions must be higher than all ARM versions to ensure
 # we deliver true x86 code to those devices.
+#
+# HISTORY:
+# 2.0.001 - Factory ROM and 0-day OTA 4.4 (KK)
+# 2.0.002 - 4.4 MR1 system image
 
 # Specify the following manually.  Note that base_version_minor must be exactly 1 digit and
 # base_version_build must be exactly 3 digits.
 base_version_major := 2
 base_version_minor := 0
-base_version_build := 001
+base_version_build := 002
 
 #####################################################
 #####################################################
