@@ -144,7 +144,7 @@ public class WideAnglePanoramaModule
     private OrientationManager mOrientationManager;
     private ComboPreferences mPreferences;
     private boolean mMosaicPreviewConfigured;
-    private boolean mPreviewFocused;
+    private boolean mPreviewFocused = true;
 
     @Override
     public void onPreviewUIReady() {
