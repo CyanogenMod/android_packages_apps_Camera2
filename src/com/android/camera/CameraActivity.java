@@ -347,6 +347,7 @@ public class CameraActivity extends Activity
 
                     if(!arePreviewControlsVisible()) {
                         setPreviewControlsVisibility(true);
+                        CameraActivity.this.setSystemBarsVisibility(false);
                     }
                 }
 
@@ -1381,7 +1382,10 @@ public class CameraActivity extends Activity
         }
         hideUndoDeletionBar(false);
         mDataAdapter.executeDeletion(CameraActivity.this);
-        updateActionBarMenu(mFilmStripView.getCurrentId());
+
+        int currentId = mFilmStripView.getCurrentId();
+        updateActionBarMenu(currentId);
+        mFilmStripListener.onCurrentDataCentered(currentId);
     }
 
     public void showUndoDeletionBar() {
