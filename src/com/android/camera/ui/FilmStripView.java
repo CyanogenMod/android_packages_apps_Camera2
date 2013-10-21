@@ -1906,10 +1906,19 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mController.stopScrolling(true);
         mController.stopScale();
         mDataIdOnUserScrolling = 0;
-        // Remove all views from the mViewItem buffer, except the camera view.
+        // Reload has a side effect that after this call, it will show the
+        // camera preview. So we want to know whether it starts from the camera
+        // preview to decide whether we need to call onDataFocusChanged.
+        boolean stayInPreview = false;
+
         if (mListener != null && mViewItem[mCurrentItem] != null) {
-            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), false);
+            stayInPreview = mViewItem[mCurrentItem].getId() == 0;
+            if (!stayInPreview) {
+                mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), false);
+            }
         }
+
+        // Remove all views from the mViewItem buffer, except the camera view.
         for (int i = 0; i < mViewItem.length; i++) {
             if (mViewItem[i] == null) {
                 continue;
@@ -1950,7 +1959,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         if (mListener != null) {
             mListener.onReload();
-            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
+            if (!stayInPreview) {
+                mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
+            }
         }
     }
 
