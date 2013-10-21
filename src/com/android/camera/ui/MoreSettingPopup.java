@@ -82,13 +82,14 @@ public class MoreSettingPopup extends AbstractSettingPopup
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView != null) return convertView;
-
             ListPreference pref = mListItem.get(position);
-
             int viewLayoutId = getSettingLayoutId(pref);
-            InLineSettingItem view = (InLineSettingItem)
-                    mInflater.inflate(viewLayoutId, parent, false);
+            InLineSettingItem view = (InLineSettingItem)convertView;
+
+            if (view == null) {
+                view = (InLineSettingItem)
+                        mInflater.inflate(viewLayoutId, parent, false);
+            }
 
             view.initialize(pref); // no init for restore one
             view.setSettingChangedListener(MoreSettingPopup.this);
