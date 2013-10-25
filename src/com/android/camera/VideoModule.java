@@ -175,6 +175,12 @@ public class VideoModule implements CameraModule,
 
     private int mZoomValue;  // The current zoom value.
 
+    private boolean mStartRecPending = false;
+    private boolean mStopRecPending = false;
+    private boolean mStartPrevPending = false;
+    private boolean mStopPrevPending = false;
+
+
     private final MediaSaveService.OnMediaSavedListener mOnVideoSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
                 @Override
@@ -596,11 +602,31 @@ public class VideoModule implements CameraModule,
         // Consume clicks
     }
 
+    public boolean isPreviewReady() {
+        if ((mStartPrevPending == true || mStopPrevPending == true))
+            return false;
+        else
+            return true;
+    }
+
+    public boolean isRecorderReady() {
+        if ((mStartRecPending == true || mStopRecPending == true))
+            return false;
+        else
+            return true;
+    }
+
     @Override
     public void onShutterButtonClick() {
         if (mUI.collapseCameraControls() || mSwitchingCamera) return;
 
         boolean stop = mMediaRecorderRecording;
+
+        if (isPreviewReady() == false)
+            return;
+
+        if (isRecorderReady() == false)
+            return;
 
         if (stop) {
             onStopVideoRecording();
@@ -858,10 +884,12 @@ public class VideoModule implements CameraModule,
 
     private void startPreview() {
         Log.v(TAG, "startPreview");
+        mStartPrevPending = true;
 
         SurfaceTexture surfaceTexture = mUI.getSurfaceTexture();
         if (!mPreferenceRead || surfaceTexture == null || mPaused == true ||
                 mCameraDevice == null) {
+            mStartPrevPending = false;
             return;
         }
 
@@ -883,6 +911,7 @@ public class VideoModule implements CameraModule,
             closeCamera();
             throw new RuntimeException("startPreview failed", ex);
         }
+        mStartPrevPending = false;
     }
 
     private void onPreviewStarted() {
@@ -891,9 +920,15 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void stopPreview() {
-        if (!mPreviewing) return;
+        mStopPrevPending = true;
+
+        if (!mPreviewing) {
+            mStopPrevPending = false;
+            return;
+        }
         mCameraDevice.stopPreview();
         mPreviewing = false;
+        mStopPrevPending = false;
     }
 
     private void closeCamera() {
@@ -1328,18 +1363,21 @@ public class VideoModule implements CameraModule,
 
     private void startVideoRecording() {
         Log.v(TAG, "startVideoRecording");
+        mStartRecPending = true;
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             Log.v(TAG, "Storage issue, ignore the start request");
+            mStartRecPending = false;
             return;
         }
 
         if( mUnsupportedHFRVideoSize == true) {
             Log.e(TAG, "Unsupported HFR and video size combinations");
             Toast.makeText(mActivity,R.string.error_app_unsupported_hfr, Toast.LENGTH_SHORT).show();
+            mStartRecPending = false;
             return;
         }
 
@@ -1347,6 +1385,7 @@ public class VideoModule implements CameraModule,
             Log.e(TAG, "Unsupported HFR and video codec combinations");
             Toast.makeText(mActivity, R.string.error_app_unsupported_hfr_codec,
             Toast.LENGTH_SHORT).show();
+            mStartRecPending = false;
             return;
         }
         //??
@@ -1356,10 +1395,12 @@ public class VideoModule implements CameraModule,
         initializeRecorder();
         if (mUnsupportedResolution == true) {
               Log.v(TAG, "Unsupported Resolution according to target");
+              mStartRecPending = false;
               return;
         }
         if (mMediaRecorder == null) {
             Log.e(TAG, "Fail to initialize media recorder");
+            mStartRecPending = false;
             return;
         }
 
@@ -1372,6 +1413,7 @@ public class VideoModule implements CameraModule,
             releaseMediaRecorder();
             // If start fails, frameworks will not lock the camera for us.
             mCameraDevice.lock();
+            mStartRecPending = false;
             return;
         }
 
@@ -1400,6 +1442,7 @@ public class VideoModule implements CameraModule,
         keepScreenOn();
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_CAPTURE_START, "Video");
+        mStartRecPending = false;
     }
 
     private Bitmap getVideoThumbnail() {
@@ -1441,6 +1484,7 @@ public class VideoModule implements CameraModule,
 
     private boolean stopVideoRecording() {
         Log.v(TAG, "stopVideoRecording");
+        mStopRecPending = true;
         mUI.setSwipingEnabled(true);
         if (!isVideoCaptureIntent()) {
             mUI.showSwitcher();
@@ -1510,6 +1554,7 @@ public class VideoModule implements CameraModule,
                 fail ? UsageStatistics.ACTION_CAPTURE_FAIL :
                     UsageStatistics.ACTION_CAPTURE_DONE, "Video",
                     SystemClock.uptimeMillis() - mRecordingStartTime);
+        mStopRecPending = false;
         return fail;
     }
 
