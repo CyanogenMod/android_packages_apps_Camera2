@@ -131,6 +131,9 @@ public class PhotoModule
     private static final int CAMERA_DISABLED = 10;
     private static final int SET_SKIN_TONE_FACTOR = 11;
     private static final int SET_PHOTO_UI_PARAMS = 12;
+    private static final int SWITCH_TO_GCAM_MODULE = 13;
+    private static final int CONFIGURE_SKIN_TONE_FACTOR = 14;
+
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
     private static final int UPDATE_PARAM_ZOOM = 2;
@@ -394,32 +397,19 @@ public class PhotoModule
                             R.string.camera_disabled);
                     break;
                 }
-               case SET_SKIN_TONE_FACTOR: {
-                    Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
-                    setSkinToneFactor();
-                    mSeekBarInitialized = true;
-                    // skin tone ie enabled only for party and portrait BSM
-                    // when color effects are not enabled
-                    String colorEffect = mPreferences.getString(
-                        CameraSettings.KEY_COLOR_EFFECT,
-                        mActivity.getString(R.string.pref_camera_coloreffect_default));
-                    if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
-                        Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode))&&
-                        (Parameters.EFFECT_NONE.equals(colorEffect))) {
-                        ;
-                    }
-                    else{
-                        Log.v(TAG, "Skin tone bar: disable");
-                        disableSkinToneSeekBar();
+
+                case SWITCH_TO_GCAM_MODULE: {
+                    mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
+                }
+
+                case CONFIGURE_SKIN_TONE_FACTOR: {
+                     if (isCameraIdle()) {
+                         mParameters = mCameraDevice.getParameters();
+                         mParameters.set("skinToneEnhancement", String.valueOf(msg.arg1));
+                         mCameraDevice.setParameters(mParameters);
                     }
                     break;
-               }
-               case SET_PHOTO_UI_PARAMS: {
-                    setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-                    mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
-                        mPreferences);
-                    break;
-               }
+                }
             }
         }
     }
@@ -990,6 +980,11 @@ public class PhotoModule
         // no support
         }
 
+    private OnSeekBarChangeListener mskinToneSeekListener = new OnSeekBarChangeListener() {
+        public void onStartTrackingTouch(SeekBar bar) {
+        // no support
+        }
+
         public void onProgressChanged(SeekBar bar, int progress, boolean fromtouch) {
             int value = (progress + MIN_SCE_FACTOR) * SCE_FACTOR_STEP;
             if(progress > (MAX_SCE_FACTOR - MIN_SCE_FACTOR)/2){
@@ -1002,11 +997,10 @@ public class PhotoModule
                 LeftValue.setText("");
                 RightValue.setText("");
             }
-            if(value != mskinToneValue && mCameraDevice != null) {
+            if (value != mskinToneValue && mCameraDevice != null) {
                 mskinToneValue = value;
-                mParameters = mCameraDevice.getParameters();
-                mParameters.set("skinToneEnhancement", String.valueOf(mskinToneValue));
-                mCameraDevice.setParameters(mParameters);
+                Message msg = mHandler.obtainMessage(CONFIGURE_SKIN_TONE_FACTOR, mskinToneValue, 0);
+                mHandler.sendMessage(msg);
             }
         }
 
