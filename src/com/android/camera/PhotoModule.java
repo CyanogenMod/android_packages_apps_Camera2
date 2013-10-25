@@ -541,6 +541,7 @@ public class PhotoModule
         int height = root.getHeight();
         mFocusManager.setPreviewSize(width, height);
         openCameraCommon();
+        resizeForPreviewAspectRatio();
     }
 
     private void switchCamera() {
@@ -577,6 +578,7 @@ public class PhotoModule
 
         // reset zoom value index
         mZoomValue = 0;
+        resizeForPreviewAspectRatio();
         openCameraCommon();
 
         // Start switch camera animation. Post a message because
@@ -619,6 +621,24 @@ public class PhotoModule
             editor.apply();
         }
     }
+
+    void setPreviewFrameLayoutCameraOrientation(){
+        CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+        //if camera mount angle is 0 or 180, we want to resize preview
+        if (info.orientation % 180 == 0){
+            mUI.cameraOrientationPreviewResize(true);
+        } else{
+            mUI.cameraOrientationPreviewResize(false);
+        }
+    }
+
+    private void resizeForPreviewAspectRatio() {
+        setPreviewFrameLayoutCameraOrientation();
+        Size size = mParameters.getPictureSize();
+        Log.e(TAG,"Width = "+ size.width+ "Height = "+size.height);
+        mUI.setAspectRatio((float) size.width / size.height);
+    }
+
 
     private void keepMediaProviderInstance() {
         // We want to keep a reference to MediaProvider in camera's lifecycle.
@@ -1586,6 +1606,7 @@ public class PhotoModule
     public void onConfigurationChanged(Configuration newConfig) {
         Log.v(TAG, "onConfigurationChanged");
         setDisplayOrientation();
+        resizeForPreviewAspectRatio();
     }
 
     @Override
@@ -2401,6 +2422,7 @@ public class PhotoModule
              if(mRestartPreview && mCameraState != PREVIEW_STOPPED) {
                 Log.v(TAG, "Restarting Preview...");
                 stopPreview();
+                resizeForPreviewAspectRatio();
                 startPreview();
                 setCameraState(IDLE);
             }
@@ -2466,6 +2488,7 @@ public class PhotoModule
         } else {
             mHandler.sendEmptyMessage(SET_PHOTO_UI_PARAMS);
         }
+        resizeForPreviewAspectRatio();
         if (mSeekBarInitialized == true){
             Log.v(TAG, "onSharedPreferenceChanged Skin tone bar: change");
             // skin tone is enabled only for party and portrait BSM

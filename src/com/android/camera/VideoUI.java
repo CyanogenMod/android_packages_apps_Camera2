@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -92,6 +93,8 @@ public class VideoUI implements PieRenderer.PieListener,
     private List<Integer> mZoomRatios;
     private View mPreviewThumb;
     private View mFlashOverlay;
+    private boolean mOrientationResize;
+    private boolean mPrevOrientationResize;
 
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
@@ -99,6 +102,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
     private float mAspectRatio = 4f / 3f;
+    private boolean mAspectRatioResize;
     private Matrix mMatrix = null;
     private final AnimationManager mAnimationManager;
     private final Handler mHandler = new Handler() {
@@ -126,10 +130,13 @@ public class VideoUI implements PieRenderer.PieListener,
                 w = height;
                 h = width;
             }
-            if (mPreviewWidth != width || mPreviewHeight != height) {
+            if (mPreviewWidth != width || mPreviewHeight != height
+                    || (mOrientationResize != mPrevOrientationResize)
+                    || (mAspectRatioResize)) {
                 mPreviewWidth = width;
                 mPreviewHeight = height;
                 onScreenSizeChanged(width, height, w, h);
+                mAspectRatioResize = false;
             }
         }
     };
@@ -180,8 +187,14 @@ public class VideoUI implements PieRenderer.PieListener,
         initializeControlByIntent();
         initializeOverlay();
         mAnimationManager = new AnimationManager();
+        mOrientationResize = false;
+        mPrevOrientationResize = false;
     }
 
+    public void cameraOrientationPreviewResize(boolean orientation){
+       mPrevOrientationResize = mOrientationResize;
+       mOrientationResize = orientation;
+    }
 
     public void initializeSurfaceView() {
         mSurfaceView = new SurfaceView(mActivity);
@@ -241,10 +254,21 @@ public class VideoUI implements PieRenderer.PieListener,
             Log.w(TAG, "Preview size should not be 0.");
             return;
         }
+        float ratio;
         if (width > height) {
-            mAspectRatio = (float) width / height;
+            ratio = (float) width / height;
         } else {
-            mAspectRatio = (float) height / width;
+            ratio = (float) height / width;
+        }
+        if (mOrientationResize &&
+                mActivity.getResources().getConfiguration().orientation
+                != Configuration.ORIENTATION_PORTRAIT) {
+            ratio = 1 / ratio;
+        }
+
+        if (ratio != mAspectRatio){
+            mAspectRatioResize = true;
+            mAspectRatio = ratio;
         }
         mHandler.sendEmptyMessage(UPDATE_TRANSFORM_MATRIX);
     }
@@ -266,16 +290,26 @@ public class VideoUI implements PieRenderer.PieListener,
         int orientation = CameraUtil.getDisplayRotation(mActivity);
         float scaleX = 1f, scaleY = 1f;
         float scaledTextureWidth, scaledTextureHeight;
-        if (width > height) {
-            scaledTextureWidth = Math.max(width,
-                    (int) (height * mAspectRatio));
-            scaledTextureHeight = Math.max(height,
-                    (int)(width / mAspectRatio));
+        if (mOrientationResize){
+            if (width/mAspectRatio > height){
+                scaledTextureHeight = height;
+                scaledTextureWidth = (int)(height * mAspectRatio + 0.5f);
+            } else {
+                scaledTextureWidth = width;
+                scaledTextureHeight = (int)(width / mAspectRatio + 0.5f);
+            }
         } else {
-            scaledTextureWidth = Math.max(width,
-                    (int) (height / mAspectRatio));
-            scaledTextureHeight = Math.max(height,
-                    (int) (width * mAspectRatio));
+            if (width > height) {
+                scaledTextureWidth = Math.max(width,
+                        (int) (height * mAspectRatio));
+                scaledTextureHeight = Math.max(height,
+                        (int)(width / mAspectRatio));
+            } else {
+                scaledTextureWidth = Math.max(width,
+                        (int) (height / mAspectRatio));
+                scaledTextureHeight = Math.max(height,
+                        (int) (width * mAspectRatio));
+            }
         }
 
         if (mSurfaceTextureUncroppedWidth != scaledTextureWidth ||
@@ -483,7 +517,18 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void setAspectRatio(double ratio) {
-      //  mPreviewFrameLayout.setAspectRatio(ratio);
+        if (mOrientationResize &&
+                mActivity.getResources().getConfiguration().orientation
+                != Configuration.ORIENTATION_PORTRAIT) {
+            ratio = 1 / ratio;
+        }
+
+        if (ratio != mAspectRatio){
+            mAspectRatioResize = true;
+            mAspectRatio = (float)ratio;
+        }
+        mHandler.sendEmptyMessage(UPDATE_TRANSFORM_MATRIX);
+
     }
 
     public void showTimeLapseUI(boolean enable) {
