@@ -743,7 +743,7 @@ public class VideoUI implements PieRenderer.PieListener,
         @Override
         public void onZoomStart() {
             if (mPieRenderer != null) {
-                mPieRenderer.hide();
+                if (!mRecordingStarted) mPieRenderer.hide();
                 mPieRenderer.setBlockFocus(true);
             }
         }
