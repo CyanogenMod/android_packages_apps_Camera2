@@ -722,12 +722,12 @@ public class WideAnglePanoramaModule
     }
 
     private void resetToPreviewIfPossible() {
+        reset();
         if (!mMosaicFrameProcessorInitialized
                 || mUI.getSurfaceTexture() == null
                 || !mMosaicPreviewConfigured) {
             return;
         }
-        reset();
         if (!mPaused) {
             startCameraPreview();
         }
