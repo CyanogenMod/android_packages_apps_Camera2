@@ -56,7 +56,7 @@
     <color name="time_lapse_arc">#FFC5C5C5</color>
     <color name="indicator_background">#40000000</color>
     <color name="popup_title_color">#ff33b5e5</color>
-    <color name="popup_background">#ff282828</color>
+    <color name="popup_background">#A0282828</color>
     <color name="pano_progress_empty">#FF2E2E2E</color>
     <color name="pano_progress_done">#FF33525E</color>
     <color name="pano_progress_indication">#FF0099CC</color>
