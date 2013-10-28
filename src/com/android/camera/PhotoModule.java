@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -505,8 +506,8 @@ public class PhotoModule
     }
 
     @Override
-    public void onScreenSizeChanged(int width, int height) {
-        if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
+    public void onPreviewRectChanged(Rect previewRect) {
+        if (mFocusManager != null) mFocusManager.setPreviewRect(previewRect);
     }
 
     private void resetExposureCompensation() {
