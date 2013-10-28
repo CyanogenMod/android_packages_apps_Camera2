@@ -1472,7 +1472,7 @@ public class PhotoModule
 
     // This can only be called by UI Thread.
     private void startPreview() {
-        if (mPaused) {
+        if (mPaused || mCameraDevice == null) {
             return;
         }
         SurfaceTexture st = mUI.getSurfaceTexture();
