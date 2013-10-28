@@ -1606,6 +1606,10 @@ public class PhotoModule
         Size original = mParameters.getPreviewSize();
         if (!original.equals(optimalSize)) {
             mParameters.setPreviewSize(optimalSize.width, optimalSize.height);
+            if(optimalSize.width != 0 && optimalSize.height != 0) {
+                mUI.updatePreviewAspectRatio((float) optimalSize.width
+                        / (float) optimalSize.height);
+            }
 
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
