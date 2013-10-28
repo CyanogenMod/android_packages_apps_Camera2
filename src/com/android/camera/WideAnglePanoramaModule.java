@@ -46,6 +46,7 @@ import android.view.WindowManager;
 
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
@@ -759,8 +760,8 @@ public class WideAnglePanoramaModule
                 Storage.writeFile(filepath, jpegData);
             }
             int jpegLength = (int) (new File(filepath).length());
-            return Storage.addImage(mContentResolver, filename, mTimeTaken,
-                    loc, orientation, jpegLength, filepath, width, height);
+            return Storage.addImage(mContentResolver, filename, mTimeTaken, loc, orientation,
+                    jpegLength, filepath, width, height, LocalData.MIME_TYPE_JPEG);
         }
         return null;
     }

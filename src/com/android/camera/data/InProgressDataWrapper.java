@@ -22,8 +22,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera2.R;
 
 /**
  * A wrapper class for in-progress data. Data that's still being processed
@@ -34,16 +36,34 @@ import com.android.camera.util.PhotoSphereHelper;
 public class InProgressDataWrapper implements LocalData {
 
     final LocalData mLocalData;
+    private boolean mHasProgressBar;
 
     public InProgressDataWrapper(LocalData wrappedData) {
         mLocalData = wrappedData;
+    }
+
+    public InProgressDataWrapper(LocalData wrappedData, boolean hasProgressBar) {
+        this(wrappedData);
+        mHasProgressBar = hasProgressBar;
     }
 
     @Override
     public View getView(
             Activity a, int width, int height,
             Drawable placeHolder, LocalDataAdapter adapter) {
-        return mLocalData.getView(a, width, height, placeHolder, adapter);
+        View v =  mLocalData.getView(a, width, height, placeHolder, adapter);
+
+        if (mHasProgressBar) {
+            // Return a framelayout with the progressbar and imageview.
+            FrameLayout frame = new FrameLayout(a);
+            frame.setLayoutParams(new FrameLayout.LayoutParams(width, height));
+            frame.addView(v);
+            a.getLayoutInflater()
+                    .inflate(R.layout.placeholder_progressbar, frame);
+            return frame;
+        }
+
+        return v;
     }
 
     @Override
