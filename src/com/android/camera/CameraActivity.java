@@ -64,6 +64,7 @@ import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
 import com.android.camera.crop.CropActivity;
 import com.android.camera.data.CameraDataAdapter;
@@ -143,6 +144,7 @@ public class CameraActivity extends Activity
     private LocalDataAdapter mWrappedDataAdapter;
 
     private PanoramaStitchingManager mPanoramaManager;
+    private PlaceholderManager mPlaceholderManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
     private FrameLayout mAboveFilmstripControlLayout;
@@ -688,6 +690,41 @@ public class CameraActivity extends Activity
             item.setVisible(visible);
     }
 
+    private ImageTaskManager.TaskListener mPlaceholderListener =
+            new ImageTaskManager.TaskListener() {
+
+                @Override
+                public void onTaskQueued(String filePath, final Uri imageUri) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyNewMedia(imageUri);
+                            int dataID = mDataAdapter.findDataByContentUri(imageUri);
+                            if (dataID != -1) {
+                                LocalData d = mDataAdapter.getLocalData(dataID);
+                                InProgressDataWrapper newData = new InProgressDataWrapper(d, true);
+                                mDataAdapter.updateData(dataID, newData);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onTaskDone(String filePath, final Uri imageUri) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDataAdapter.refresh(getContentResolver(), imageUri);
+                        }
+                    });
+                }
+
+                @Override
+                public void onTaskProgress(String filePath, Uri imageUri, int progress) {
+                    // Do nothing
+                }
+    };
+
     private ImageTaskManager.TaskListener mStitchingListener =
             new ImageTaskManager.TaskListener() {
                 @Override
@@ -760,6 +797,8 @@ public class CameraActivity extends Activity
             CameraUtil.broadcastNewPicture(this, uri);
             mDataAdapter.addNewPhoto(cr, uri);
         } else if (mimeType.startsWith("application/stitching-preview")) {
+            mDataAdapter.addNewPhoto(cr, uri);
+        } else if (mimeType.startsWith(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
             mDataAdapter.addNewPhoto(cr, uri);
         } else {
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
@@ -966,7 +1005,10 @@ public class CameraActivity extends Activity
         this.setSystemBarsVisibility(false);
         mPanoramaManager = AppManagerFactory.getInstance(this)
                 .getPanoramaStitchingManager();
+        mPlaceholderManager = AppManagerFactory.getInstance(this)
+                .getGcamProcessingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
+        mPlaceholderManager.addTaskListener(mPlaceholderListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mCameraModuleRootView = rootLayout.findViewById(R.id.camera_app_root);
