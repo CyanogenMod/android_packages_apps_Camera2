@@ -814,7 +814,10 @@ class AndroidCameraManagerImpl implements CameraManager {
 
         private CameraOpenErrorCallbackForward(
                 Handler h, CameraOpenErrorCallback cb) {
-            mHandler = h;
+            // Given that we are using the main thread handler, we can create it
+            // here instead of holding onto the PhotoModule objects. In this
+            // way, we can avoid memory leak.
+            mHandler = new Handler(Looper.getMainLooper());
             mCallback = cb;
         }
 
