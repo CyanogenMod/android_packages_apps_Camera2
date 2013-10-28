@@ -329,8 +329,14 @@ class AndroidCameraManagerImpl implements CameraManager {
                     }
                     mCamera = null;
                 } else if (mCamera == null) {
-                  Log.w(TAG, "Cannot handle message, mCamera is null.");
-                  return;
+                    if (msg.what == OPEN_CAMERA) {
+                        if (msg.obj != null) {
+                            ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                        }
+                    } else {
+                        Log.w(TAG, "Cannot handle message, mCamera is null.");
+                    }
+                    return;
                 }
                 throw e;
             }
