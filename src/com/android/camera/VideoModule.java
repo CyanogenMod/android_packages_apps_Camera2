@@ -33,6 +33,7 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.location.Location;
+import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.CameraProfile;
 import android.media.MediaRecorder;
@@ -1128,12 +1129,8 @@ public class VideoModule implements CameraModule, ModuleController, VideoControl
      * MediaPlaybackService to pause playback.
      */
     private void pauseAudioPlayback() {
-        // Shamelessly copied from MediaPlaybackService.java, which
-        // should be public, but isn't.
-        Intent i = new Intent("com.android.music.musicservicecommand");
-        i.putExtra("command", "pause");
-
-        mActivity.sendBroadcast(i);
+        AudioManager am = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
+        am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
     // For testing.
