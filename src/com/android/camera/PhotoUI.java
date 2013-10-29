@@ -153,11 +153,11 @@ public class PhotoUI implements PieListener,
             Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
             if (mOrientation != 0 || mMirror) {
                 Matrix m = new Matrix();
-                m.preRotate(mOrientation);
                 if (mMirror) {
                     // Flip horizontally
                     m.setScale(-1f, 1f);
                 }
+                m.preRotate(mOrientation);
                 return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
                         false);
             }
