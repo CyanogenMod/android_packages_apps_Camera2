@@ -678,6 +678,16 @@ public class CameraUtil {
         rect.bottom = Math.round(rectF.bottom);
     }
 
+    public static Rect rectFToRect(RectF rectF) {
+        Rect rect = new Rect();
+        rectFToRect(rectF, rect);
+        return rect;
+    }
+
+    public static RectF rectToRectF(Rect r) {
+        return new RectF(r.left, r.top, r.right, r.bottom);
+    }
+
     public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
             int viewWidth, int viewHeight) {
         // Need mirror for front camera.
@@ -688,6 +698,21 @@ public class CameraUtil {
         // UI coordinates range from (0, 0) to (width, height).
         matrix.postScale(viewWidth / 2000f, viewHeight / 2000f);
         matrix.postTranslate(viewWidth / 2f, viewHeight / 2f);
+    }
+
+    public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
+                                     Rect previewRect) {
+        // Need mirror for front camera.
+        matrix.setScale(mirror ? -1 : 1, 1);
+        // This is the value for android.hardware.Camera.setDisplayOrientation.
+        matrix.postRotate(displayOrientation);
+
+        // Camera driver coordinates range from (-1000, -1000) to (1000, 1000).
+        // We need to map camera driver coordinates to preview rect coordinates
+        Matrix mapping = new Matrix();
+        mapping.setRectToRect(new RectF(-1000, -1000, 1000, 1000), rectToRectF(previewRect),
+                Matrix.ScaleToFit.FILL);
+        matrix.setConcat(mapping, matrix);
     }
 
     public static String createJpegName(long dateTaken) {
