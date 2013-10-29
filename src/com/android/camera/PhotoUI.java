@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
@@ -131,8 +132,6 @@ public class PhotoUI implements PieListener,
                 mPreviewWidth = width;
                 mPreviewHeight = height;
                 setTransformMatrix(width, height);
-                mController.onScreenSizeChanged((int) mSurfaceTextureUncroppedWidth,
-                        (int) mSurfaceTextureUncroppedHeight);
             }
         }
     };
@@ -271,6 +270,11 @@ public class PhotoUI implements PieListener,
         scaleY = scaledTextureHeight / height;
         mMatrix.setScale(scaleX, scaleY, (float) width / 2, (float) height / 2);
         mTextureView.setTransform(mMatrix);
+
+        // Calculate the new preview rectangle.
+        RectF previewRect = new RectF(0, 0, width, height);
+        mMatrix.mapRect(previewRect);
+        mController.onPreviewRectChanged(CameraUtil.rectFToRect(previewRect));
     }
 
     @Override
