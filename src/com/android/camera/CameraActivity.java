@@ -84,6 +84,7 @@ import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
+import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera2.R;
@@ -868,12 +869,10 @@ public class CameraActivity extends Activity
             case android.R.id.home:
                 // ActionBar's Up/Home button was clicked
                 try {
-                    if (!CameraUtil.launchGallery(CameraActivity.this)) {
-                        mFilmStripView.getController().goToFirstItem();
-                    }
+                    startActivity(IntentHelper.getGalleryIntent(this));
                     return true;
                 } catch (ActivityNotFoundException e) {
-                    Log.w(TAG, "No activity found to handle APP_GALLERY category!");
+                    Log.w(TAG, "Failed to launch gallery activity, closing");
                     finish();
                 }
             case R.id.action_delete:
@@ -1070,7 +1069,11 @@ public class CameraActivity extends Activity
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CameraUtil.launchGallery(CameraActivity.this);
+                    try {
+                        startActivity(IntentHelper.getGalleryIntent(CameraActivity.this));
+                    } catch (ActivityNotFoundException e) {
+                        Log.w(TAG, "Failed to launch gallery activity, closing");
+                    }
                     finish();
                 }
             });
