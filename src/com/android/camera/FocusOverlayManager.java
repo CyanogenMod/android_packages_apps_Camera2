@@ -511,6 +511,13 @@ public class FocusOverlayManager {
         // Initialize mMeteringArea.
         mMeteringArea = null;
 
+        if (mFocusAreaSupported) {
+            initializeFocusAreas(mPreviewWidth / 2, mPreviewHeight / 2);
+        }
+        // Reset metering area when no specific region is selected.
+        if (mMeteringAreaSupported) {
+            resetMeteringAreas();
+        }
         mFocusDefault = true;
     }
 

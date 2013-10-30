@@ -397,6 +397,32 @@ public class PhotoModule
                             R.string.camera_disabled);
                     break;
                 }
+               case SET_SKIN_TONE_FACTOR: {
+                    Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
+                    setSkinToneFactor();
+                    mSeekBarInitialized = true;
+                    // skin tone ie enabled only for party and portrait BSM
+                    // when color effects are not enabled
+                    String colorEffect = mPreferences.getString(
+                        CameraSettings.KEY_COLOR_EFFECT,
+                        mActivity.getString(R.string.pref_camera_coloreffect_default));
+                    if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
+                        Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode))&&
+                        (Parameters.EFFECT_NONE.equals(colorEffect))) {
+                        ;
+                    }
+                    else{
+                        Log.v(TAG, "Skin tone bar: disable");
+                        disableSkinToneSeekBar();
+                    }
+                    break;
+               }
+               case SET_PHOTO_UI_PARAMS: {
+                    setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
+                    mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
+                        mPreferences);
+                    break;
+               }
 
                 case SWITCH_TO_GCAM_MODULE: {
                     mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
@@ -413,17 +439,8 @@ public class PhotoModule
             }
         }
     }
-	private BroadcastReceiver mReceiver = null;
-	private class ShutterBroadcastReceiver extends BroadcastReceiver {
-	@Override
-	public void onReceive(Context context, Intent intent) {
-	     String action = intent.getAction();
-	     if (action.equals(CameraUtil.ACTION_CAMERA_SHUTTER_CLICK)) {
-		onShutterButtonFocus(true);
-	        onShutterButtonClick();	
-		}
-	}
-   }	
+
+
     @Override
     public void init(CameraActivity activity, View parent) {
         mActivity = activity;
@@ -951,6 +968,7 @@ public class PhotoModule
             mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
             Log.v(TAG, "mJpegCallbackFinishTime = "
                     + mJpegCallbackFinishTime + "ms");
+
             if (mReceivedSnapNum == mBurstSnapNum)
                 mJpegPictureCallbackTime = 0;
 
@@ -975,11 +993,6 @@ public class PhotoModule
         public void onStopTrackingTouch(SeekBar bar) {
         }
     };
-
-    private OnSeekBarChangeListener mskinToneSeekListener = new OnSeekBarChangeListener() {
-        public void onStartTrackingTouch(SeekBar bar) {
-        // no support
-        }
 
     private OnSeekBarChangeListener mskinToneSeekListener = new OnSeekBarChangeListener() {
         public void onStartTrackingTouch(SeekBar bar) {
@@ -2111,10 +2124,6 @@ public class PhotoModule
                 mFaceDetectionEnabled = false;
             }
         }
-        //Set Skin Tone Correction factor
-        Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
-        if(mSeekBarInitialized == true)
-             mHandler.sendEmptyMessage(SET_SKIN_TONE_FACTOR);
         // skin tone ie enabled only for auto,party and portrait BSM
         // when color effects are not enabled
         if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
@@ -2652,51 +2661,7 @@ public class PhotoModule
     public void onPreviewFocusChanged(boolean previewFocused) {
         mUI.onPreviewFocusChanged(previewFocused);
     }
-
-    private void enableSkinToneSeekBar() {
-        int progress;
-        if(brightnessProgressBar != null)
-            brightnessProgressBar.setVisibility(View.INVISIBLE);
-        skinToneSeekBar.setMax(MAX_SCE_FACTOR-MIN_SCE_FACTOR);
-        skinToneSeekBar.setVisibility(View.VISIBLE);
-        skinToneSeekBar.requestFocus();
-        if (mskinToneValue != 0) {
-            progress = (mskinToneValue/SCE_FACTOR_STEP)-MIN_SCE_FACTOR;
-            mskinToneSeekListener.onProgressChanged(skinToneSeekBar, progress, false);
-        } else {
-            progress = (MAX_SCE_FACTOR-MIN_SCE_FACTOR)/2;
-            RightValue.setText("");
-            LeftValue.setText("");
-        }
-        skinToneSeekBar.setProgress(progress);
-        mActivity.findViewById(R.id.linear).bringToFront();
-        skinToneSeekBar.bringToFront();
-        Title.setText("Skin Tone Enhancement");
-        Title.setVisibility(View.VISIBLE);
-        RightValue.setVisibility(View.VISIBLE);
-        LeftValue.setVisibility(View.VISIBLE);
-        mSkinToneSeekBar = true;
-    }
-
-    private void disableSkinToneSeekBar() {
-        skinToneSeekBar.setVisibility(View.INVISIBLE);
-        Title.setVisibility(View.INVISIBLE);
-        RightValue.setVisibility(View.INVISIBLE);
-        LeftValue.setVisibility(View.INVISIBLE);
-        mskinToneValue = 0;
-        mSkinToneSeekBar = false;
-        Editor editor = mPreferences.edit();
-        editor.putString(CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR,
-            Integer.toString(mskinToneValue - MIN_SCE_FACTOR));
-        editor.apply();
-        if(brightnessProgressBar != null)
-             brightnessProgressBar.setVisibility(View.VISIBLE);
-}
-
-/*
- * Provide a mapping for Jpeg encoding quality levels
- * from String representation to numeric representation.
- */
+    // TODO: Delete this function after old camera code is removed
     @Override
     public void onRestorePreferencesClicked() {}
     private void setSkinToneFactor() {
@@ -2749,6 +2714,8 @@ public class PhotoModule
             LeftValue.setText("");
         }
         skinToneSeekBar.setProgress(progress);
+        mActivity.findViewById(R.id.linear).bringToFront();
+        skinToneSeekBar.bringToFront();
         Title.setText("Skin Tone Enhancement");
         Title.setVisibility(View.VISIBLE);
         RightValue.setVisibility(View.VISIBLE);
@@ -2769,8 +2736,42 @@ public class PhotoModule
         editor.apply();
         if(brightnessProgressBar != null)
              brightnessProgressBar.setVisibility(View.VISIBLE);
+}
+
+/*
+ * Provide a mapping for Jpeg encoding quality levels
+ * from String representation to numeric representation.
+ */
+    @Override
+    public boolean arePreviewControlsVisible() {
+        return mUI.arePreviewControlsVisible();
+    }
+
+    // For debugging only.
+    public void setDebugUri(Uri uri) {
+        mDebugUri = uri;
+    }
+
+    // For debugging only.
+    private void saveToDebugUri(byte[] data) {
+        if (mDebugUri != null) {
+            OutputStream outputStream = null;
+            try {
+                outputStream = mContentResolver.openOutputStream(mDebugUri);
+                outputStream.write(data);
+                outputStream.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Exception while writing debug jpeg file", e);
+            } finally {
+                CameraUtil.closeSilently(outputStream);
+            }
+        }
     }
 }
+
+/* Below is no longer needed, except to get rid of compile error
+ * TODO: Remove these
+ */
 class JpegEncodingQualityMappings {
     private static final String TAG = "JpegEncodingQualityMappings";
     private static final int DEFAULT_QUALITY = 85;
