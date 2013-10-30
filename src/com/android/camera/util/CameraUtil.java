@@ -831,7 +831,10 @@ public class CameraUtil {
      *         the right range.
      */
     public static int[] getPhotoPreviewFpsRange(Parameters params) {
-        List<int[]> frameRates = params.getSupportedPreviewFpsRange();
+        return getPhotoPreviewFpsRange(params.getSupportedPreviewFpsRange());
+    }
+
+    public static int[] getPhotoPreviewFpsRange(List<int[]> frameRates) {
         if (frameRates.size() == 0) {
             Log.e(TAG, "No suppoted frame rates returned!");
             return null;
