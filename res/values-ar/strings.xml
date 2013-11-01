@@ -34,19 +34,19 @@
     <string name="details" msgid="4404020741542549488">"التفاصيل"</string>
     <string name="close" msgid="4826166926297479820">"إغلاق"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"تم تحديد %1$d"</item>
-    <item quantity="one" msgid="5806616411905812727">"تم تحديد %1$d"</item>
-    <item quantity="other" msgid="3767743589502328221">"تم تحديد %1$d"</item>
+    <item quantity="zero" msgid="9217673864242686656">"‏تم تحديد %1$d"</item>
+    <item quantity="one" msgid="5806616411905812727">"‏تم تحديد %1$d"</item>
+    <item quantity="other" msgid="3767743589502328221">"‏تم تحديد %1$d"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"تم تحديد %1$d"</item>
-    <item quantity="one" msgid="9063509704521984072">"تم تحديد %1$d"</item>
-    <item quantity="other" msgid="135044054552480485">"تم تحديد %1$d"</item>
+    <item quantity="zero" msgid="8095100906728830821">"‏تم تحديد %1$d"</item>
+    <item quantity="one" msgid="9063509704521984072">"‏تم تحديد %1$d"</item>
+    <item quantity="other" msgid="135044054552480485">"‏تم تحديد %1$d"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"تم تحديد %1$d"</item>
-    <item quantity="one" msgid="1456436514367094505">"تم تحديد %1$d"</item>
-    <item quantity="other" msgid="1511467088339194694">"تم تحديد %1$d"</item>
+    <item quantity="zero" msgid="1942343672734097509">"‏تم تحديد %1$d"</item>
+    <item quantity="one" msgid="1456436514367094505">"‏تم تحديد %1$d"</item>
+    <item quantity="other" msgid="1511467088339194694">"‏تم تحديد %1$d"</item>
   </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"عرض على الخريطة"</string>
     <string name="rotate_left" msgid="2618440058490662604">"تدوير لليسار"</string>
@@ -66,7 +66,7 @@
     <string name="height" msgid="5186001199353423689">"الارتفاع"</string>
     <string name="orientation" msgid="3883761294106680270">"الاتجاه"</string>
     <string name="duration" msgid="5316211067383665008">"المدة"</string>
-    <string name="mimetype" msgid="6415940055077963944">"نوع MIME"</string>
+    <string name="mimetype" msgid="6415940055077963944">"‏نوع MIME"</string>
     <string name="file_size" msgid="6841070748357980676">"حجم الملف"</string>
     <string name="maker" msgid="698691509121545856">"منشئ العنصر"</string>
     <string name="model" msgid="8547493604023069452">"النموذج"</string>
@@ -89,9 +89,9 @@
     <string name="cannot_connect_camera" msgid="4311259792784598381">"يتعذر الاتصال بالكاميرا."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"تم تعطيل الكاميرا بسبب سياسات الأمان."</string>
     <string name="wait" msgid="765601745709933047">"الرجاء الانتظار…"</string>
-    <string name="no_storage" product="default" msgid="5922012950780548098">"أدرج بطاقة SD قبل استخدام الكاميرا."</string>
-    <string name="preparing_sd" product="default" msgid="7435693655017362767">"جارٍ تحضير بطاقة SD…"</string>
-    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"تعذر الدخول إلى بطاقة SD."</string>
+    <string name="no_storage" product="default" msgid="5922012950780548098">"‏أدرج بطاقة SD قبل استخدام الكاميرا."</string>
+    <string name="preparing_sd" product="default" msgid="7435693655017362767">"‏جارٍ تحضير بطاقة SD…"</string>
+    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"‏تعذر الدخول إلى بطاقة SD."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"التسجيل في وضع انقضاء الوقت"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"اختيار كاميرا"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"الخلفية"</string>
@@ -101,7 +101,7 @@
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"موقّت العد التنازلي"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8919878087230098328">"ثانية واحدة"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d من الثواني"</item>
+    <item quantity="other" msgid="5782794798884172289">"‏%d من الثواني"</item>
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
@@ -186,7 +186,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"الكاميرا الأمامية"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"الكاميرا الخلفية"</string>
     <string name="dialog_ok" msgid="774141340500181131">"موافق"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"أوشكت المساحة الخالية في بطاقة SD على النفاد. غيّر إعداد الجودة أو احذف بعض الصور أو الملفات الأخرى."</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"‏أوشكت المساحة الخالية في بطاقة SD على النفاد. غيّر إعداد الجودة أو احذف بعض الصور أو الملفات الأخرى."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"تم بلوغ الحد الأقصى للحجم."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"سريع جدًا"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"جارٍ تحضير الصورة البانورامية"</string>
@@ -217,7 +217,7 @@
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"الغالق"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"زر القائمة"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"محدّد الكاميرا أو الفيديو أو البانوراما"</string>
-    <string name="accessibility_check_box" msgid="1084094675439953723">"مربع اختيار %1$s"</string>
+    <string name="accessibility_check_box" msgid="1084094675439953723">"‏مربع اختيار %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"تبديل إلى وضع الصور"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"تبديل إلى وضع الفيديو"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"تبديل إلى بانوراما"</string>
