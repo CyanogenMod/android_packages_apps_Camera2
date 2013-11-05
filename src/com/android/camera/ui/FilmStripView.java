@@ -1451,6 +1451,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mController.setSurroundingViewsVisible(true);
     }
 
+    private void hideZoomView() {
+        if (mController.isZoomStarted()) {
+            mController.cancelLoadingZoomedImage();
+            mZoomView.setVisibility(GONE);
+        }
+    }
+
     // Keeps the view in the view hierarchy if it's camera preview.
     // Remove from the hierarchy otherwise.
     private void checkForRemoval(ImageData data, View v) {
@@ -2619,13 +2626,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (!mController.stopScrolling(false)) {
                 return false;
             }
-            // A down event is usually followed by a gesture, we apply gesture on
-            // the lower-res image during a gesture to ensure a responsive experience.
-            // TODO: Delay this until gesture starts.
-            if (mController.isZoomStarted()) {
-                mController.cancelLoadingZoomedImage();
-                mZoomView.setVisibility(GONE);
-            }
+
             return true;
         }
 
@@ -2713,9 +2714,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
                 return false;
             }
+            hideZoomView();
             // When image is zoomed in to be bigger than the screen
             if (mController.isZoomStarted()) {
-                mController.cancelLoadingZoomedImage();
                 ViewItem curr = mViewItem[mCurrentItem];
                 float transX = curr.getTranslationX() - dx;
                 float transY = curr.getTranslationY() - dy;
@@ -2838,6 +2839,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (inCameraFullscreen()) {
                 return false;
             }
+
+            hideZoomView();
             mScaleTrend = 1f;
             // If the image is smaller than screen size, we should allow to zoom
             // in to full screen size
