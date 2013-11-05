@@ -87,13 +87,17 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+
+import java.io.File;
 
 import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
 public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener,
-        ActionBar.OnMenuVisibilityListener {
+        ActionBar.OnMenuVisibilityListener,
+        ShareActionProvider.OnShareTargetSelectedListener {
 
     private static final String TAG = "CAM_Activity";
 
@@ -228,18 +232,27 @@ public class CameraActivity extends Activity
             new CameraOpenErrorCallback() {
                 @Override
                 public void onCameraDisabled(int cameraId) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_OPEN_FAIL, "security");
+
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.camera_disabled);
                 }
 
                 @Override
                 public void onDeviceOpenFailure(int cameraId) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_OPEN_FAIL, "open");
+
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.cannot_connect_camera);
                 }
 
                 @Override
                 public void onReconnectionFailure(CameraManager mgr) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_OPEN_FAIL, "reconnect");
+
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.cannot_connect_camera);
                 }
@@ -292,15 +305,30 @@ public class CameraActivity extends Activity
         sFirstStartAfterScreenOn = false;
     }
 
+    private String fileNameFromDataID(int dataID) {
+        final LocalData localData = mDataAdapter.getLocalData(dataID);
+
+        File localFile = new File(localData.getPath());
+        return localFile.getName();
+    }
+
     private FilmStripView.Listener mFilmStripListener =
             new FilmStripView.Listener() {
                 @Override
                 public void onDataPromoted(int dataID) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_DELETE, "promoted", 0,
+                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)));
+
                     removeData(dataID);
                 }
 
                 @Override
                 public void onDataDemoted(int dataID) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_DELETE, "demoted", 0,
+                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)));
+
                     removeData(dataID);
                 }
 
@@ -448,6 +476,9 @@ public class CameraActivity extends Activity
             };
 
     public void gotoGallery() {
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_FILMSTRIP,
+                "thumbnailTap");
+
         mFilmStripView.getController().goToNextItem();
     }
 
@@ -586,6 +617,18 @@ public class CameraActivity extends Activity
         if (!isVisible) {
             mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
         }
+    }
+
+    @Override
+    public boolean onShareTargetSelected(ShareActionProvider shareActionProvider, Intent intent) {
+        int currentDataId = mFilmStripView.getCurrentId();
+        if (currentDataId < 0) {
+            return false;
+        }
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_SHARE,
+                intent.getComponent().getPackageName(), 0,
+                UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
+        return true;
     }
 
     /**
@@ -858,6 +901,9 @@ public class CameraActivity extends Activity
             mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
         }
 
+        mStandardShareActionProvider.setOnShareTargetSelectedListener(this);
+        mPanoramaShareActionProvider.setOnShareTargetSelectedListener(this);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -881,9 +927,15 @@ public class CameraActivity extends Activity
                     finish();
                 }
             case R.id.action_delete:
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                        UsageStatistics.ACTION_DELETE, null, 0,
+                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                 removeData(currentDataId);
                 return true;
             case R.id.action_edit:
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                        UsageStatistics.ACTION_EDIT, null, 0,
+                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                 launchEditor(localData);
                 return true;
             case R.id.action_trim: {
@@ -904,6 +956,9 @@ public class CameraActivity extends Activity
                 localData.rotate90Degrees(this, mDataAdapter, currentDataId, true);
                 return true;
             case R.id.action_crop: {
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                        UsageStatistics.ACTION_CROP, null, 0,
+                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                 Intent intent = new Intent(CropActivity.CROP_ACTION);
                 intent.setClass(this, CropActivity.class);
                 intent.setDataAndType(localData.getContentUri(), localData.getMimeType())
@@ -1075,6 +1130,8 @@ public class CameraActivity extends Activity
                 @Override
                 public void onClick(View view) {
                     try {
+                        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                                UsageStatistics.ACTION_GALLERY, null);
                         startActivity(IntentHelper.getGalleryIntent(CameraActivity.this));
                     } catch (ActivityNotFoundException e) {
                         Log.w(TAG, "Failed to launch gallery activity, closing");
@@ -1171,6 +1228,10 @@ public class CameraActivity extends Activity
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
             mAutoRotateScreen = true;
         }
+
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
+
         mOrientationListener.enable();
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();
