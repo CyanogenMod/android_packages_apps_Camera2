@@ -122,6 +122,7 @@
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"300만 화소"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"200만 화소"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"200만 화소(16:9)"</string>
+    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"150만 화소"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"130만 화소"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"100만 화소"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
