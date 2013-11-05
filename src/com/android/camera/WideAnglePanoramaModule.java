@@ -205,6 +205,9 @@ public class WideAnglePanoramaModule
         mActivity = activity;
         mRootView = parent;
 
+        // Power shutter
+        mActivity.initPowerShutter(mPreferences);
+
         mOrientationManager = new OrientationManager(activity);
         mCaptureState = CAPTURE_STATE_VIEWFINDER;
         mUI = new WideAnglePanoramaUI(mActivity, this, (ViewGroup) mRootView);
@@ -835,6 +838,10 @@ public class WideAnglePanoramaModule
         }
         mUI.showPreviewCover();
         releaseCamera();
+
+        // Load the power shutter
+        mActivity.initPowerShutter(mPreferences);
+
         synchronized (mRendererLock) {
             mCameraTexture = null;
 
@@ -1096,14 +1103,38 @@ public class WideAnglePanoramaModule
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
+            case KeyEvent.KEYCODE_CAMERA:
+                if (event.getRepeatCount() == 0) {
+                    onShutterButtonClick();
+                }
+                return true;
+            case KeyEvent.KEYCODE_POWER:
+                return true;
+        }
         return false;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
+                    onShutterButtonClick();
+                }
+                return true;
+            case KeyEvent.KEYCODE_POWER:
+                if (CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
+                    onShutterButtonClick();
+                }
+                return true;
+        }
         return false;
     }
 
