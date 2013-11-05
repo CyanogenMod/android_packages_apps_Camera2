@@ -118,6 +118,9 @@ public class CameraUtil {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
 
+    // Hardware camera key mask
+    private static final int KEY_MASK_CAMERA = 0x20;
+
     private static boolean sEnableZSL;
 
     // Do not change the focus mode when TTF is used
@@ -161,6 +164,10 @@ public class CameraUtil {
         return (supported != null) && supported.contains(SCENE_MODE_ASD) && (params.get("asd-mode") != null);
     }
 
+    public static boolean hasCameraKey() {
+        return (sDeviceKeysPresent & KEY_MASK_CAMERA) != 0;
+    }
+
     public static boolean isMeteringAreaSupported(Parameters params) {
         return params.getMaxNumMeteringAreas() > 0;
     }
@@ -196,6 +203,9 @@ public class CameraUtil {
     // Use samsung HDR format
     private static boolean sSamsungHDRFormat;
 
+    // Get available hardware keys
+    private static int sDeviceKeysPresent;
+
     private CameraUtil() {
     }
 
@@ -211,6 +221,8 @@ public class CameraUtil {
         sNoFocusModeChangeForTouch = context.getResources().getBoolean(
                 R.bool.useContinuosFocusForTouch);
         sSamsungHDRFormat = context.getResources().getBoolean(R.bool.needsSamsungHDRFormat);
+        sDeviceKeysPresent = context.getResources().getInteger(
+                com.android.internal.R.integer.config_deviceHardwareKeys);
     }
 
     public static int dpToPixel(int dp) {
