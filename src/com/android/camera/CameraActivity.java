@@ -1392,8 +1392,7 @@ public class CameraActivity extends Activity
         Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(Intent.createChooser(intent, null),
-                REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
     }
 
     /**
