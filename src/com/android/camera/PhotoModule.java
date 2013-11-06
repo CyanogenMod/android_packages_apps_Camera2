@@ -48,25 +48,27 @@ import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 
+import com.android.camera.PhotoModule.NamedImages.NamedEntity;
+import com.android.camera.app.AppController;
 import com.android.camera.app.CameraManager.CameraAFCallback;
 import com.android.camera.app.CameraManager.CameraAFMoveCallback;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.CameraManager.CameraShutterCallback;
-import com.android.camera.PhotoModule.NamedImages.NamedEntity;
-import com.android.camera.app.AppController;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
+import com.android.camera.util.SmartCameraHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
@@ -388,6 +390,7 @@ public class PhotoModule
     private void onPreviewStarted() {
         setCameraState(IDLE);
         startFaceDetection();
+        startSmartCamera();
         locationFirstRun();
     }
 
@@ -547,6 +550,15 @@ public class PhotoModule
                 return false;
             }
         });
+    }
+
+    private void startSmartCamera() {
+        SmartCameraHelper.register(mCameraDevice, mParameters.getPreviewSize(), mActivity,
+                (CameraRootView) mActivity.findViewById(R.id.camera_app_root));
+    }
+
+    private void stopSmartCamera() {
+        SmartCameraHelper.tearDown();
     }
 
     @Override
@@ -1170,6 +1182,7 @@ public class PhotoModule
             // Note: onPauseAfterSuper() will delete this runnable, so we will
             // at most have 1 copy queued up.
             mHandler.postDelayed(new Runnable() {
+                @Override
                 public void run() {
                     onResumeTasks();
                 }
@@ -1453,6 +1466,7 @@ public class PhotoModule
         }
         setCameraState(PREVIEW_STOPPED);
         if (mFocusManager != null) mFocusManager.onPreviewStopped();
+        stopSmartCamera();
     }
 
     @SuppressWarnings("deprecation")
