@@ -122,8 +122,7 @@
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 M piksel"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 M piksel"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 M px (16:9)"</string>
-    <!-- no translation found for pref_camera_picturesize_entry_1_5mp (7089801019442294745) -->
-    <skip />
+    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1,5M piksel"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1,3 M piksel"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1 M piksel"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
@@ -159,10 +158,14 @@
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"Otomatis"</string>
     <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"HDR+"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on" msgid="4762986338359862238">"Aktifkan HDR+"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off" msgid="8027383906480914303">"Nonaktifkan HDR+"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_on" msgid="8567522693524539332">"Aktifkan HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_off" msgid="1121637502250585531">"Nonaktifkan HDR"</string>
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_plus_on (1096746750342289067) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_plus_off (2668770361856397834) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_on (5232394324298489502) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_off (7694606461440250206) -->
+    <skip />
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Tindakan"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Malam"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Terbenam"</string>

@@ -158,10 +158,14 @@
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"Okuzenzakalelayo"</string>
     <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"I-HDR+"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"I-HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on" msgid="4762986338359862238">"Vula i-HDR+"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off" msgid="8027383906480914303">"Vala i-HDR+"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_on" msgid="8567522693524539332">"Vula i-HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_off" msgid="1121637502250585531">"Vala i-HDR"</string>
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_plus_on (1096746750342289067) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_plus_off (2668770361856397834) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_on (5232394324298489502) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_entry_turn_hdr_off (7694606461440250206) -->
+    <skip />
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Isenzo"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Ebusuku"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Ukushona kwelanga"</string>

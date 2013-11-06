@@ -122,7 +122,7 @@
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3M εικονοστοιχεία"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2M εικονοστοιχεία"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2M εικονοστ. (16:9)"</string>
-    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1.5M εικονοστοιχεία"</string>
+    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1.5M pixel"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1.3M εικονοστοιχεία"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1M εικονοστοιχεία"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
@@ -158,10 +158,10 @@
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"Αυτόματα"</string>
     <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"HDR+"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on" msgid="4762986338359862238">"Ενεργοποίηση του HDR+"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off" msgid="8027383906480914303">"Απενεργοποίηση του HDR+"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_on" msgid="8567522693524539332">"Ενεργοποίηση του HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_off" msgid="1121637502250585531">"Απενεργοποίηση του HDR"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on" msgid="1096746750342289067">"ΕΝΕΡΓΟΠΟΙΗΣΗ HDR+"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off" msgid="2668770361856397834">"ΑΠΕΝΕΡΓΟΠΟΙΗΣΗ HDR+"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_on" msgid="5232394324298489502">"ΕΝΕΡΓΟΠΟΙΗΣΗ HDR"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_off" msgid="7694606461440250206">"ΑΠΕΝΕΡΓΟΠΟΙΗΣΗ HDR"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"Ενέργεια"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Βράδυ"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Ηλιοβασίλεμα"</string>
