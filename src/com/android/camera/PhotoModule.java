@@ -1438,7 +1438,14 @@ public class PhotoModule
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
             mCameraDevice.setErrorCallback(null);
-            CameraHolder.instance().release();
+
+            if (mActivity.isSecureCamera() && !CameraActivity.isFirstStartAfterScreenOn()) {
+                // Blocks until camera is actually released.
+                CameraHolder.instance().strongRelease();
+            } else {
+                CameraHolder.instance().release();
+            }
+
             mFaceDetectionStarted = false;
             mCameraDevice = null;
             setCameraState(PREVIEW_STOPPED);
