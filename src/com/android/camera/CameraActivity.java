@@ -339,6 +339,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onReload() {
                     setPreviewControlsVisibility(true);
+                    CameraActivity.this.setSystemBarsVisibility(false);
                 }
 
                 @Override
@@ -466,13 +467,17 @@ public class CameraActivity extends Activity
      */
     private void setSystemBarsVisibility(boolean visible, boolean hideLater) {
         mMainHandler.removeMessages(HIDE_ACTION_BAR);
-        boolean currentlyVisible = mActionBar.isShowing();
 
-        if (visible != currentlyVisible) {
-            int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
-                    : View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
-            mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
+        int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
+        int newSystemUIVisibility = DEFAULT_SYSTEM_UI_VISIBILITY |
+                (visible ? View.SYSTEM_UI_FLAG_VISIBLE :
+                        View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        if (newSystemUIVisibility != currentSystemUIVisibility) {
+            mAboveFilmstripControlLayout.setSystemUiVisibility(newSystemUIVisibility);
+        }
 
+        boolean currentActionBarVisibility = mActionBar.isShowing();
+        if (visible != currentActionBarVisibility) {
             if (visible) {
                 mActionBar.show();
             } else {
