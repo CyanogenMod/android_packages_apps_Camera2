@@ -316,6 +316,9 @@ public class WideAnglePanoramaUI implements
     }
 
     @Override
+    public void onShutterButtonLongClick() {}
+
+    @Override
     public void onLayoutChange(
             View v, int l, int t, int r, int b,
             int oldl, int oldt, int oldr, int oldb) {

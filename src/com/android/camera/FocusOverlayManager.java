@@ -580,4 +580,8 @@ public class FocusOverlayManager {
     public void setZslEnable(boolean value) {
         mZslEnabled = value;
     }
+
+    public boolean isZslEnabled() {
+        return mZslEnabled;
+    }
 }

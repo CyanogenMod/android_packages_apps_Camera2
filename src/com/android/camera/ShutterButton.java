@@ -29,7 +29,18 @@ import android.widget.ImageView;
  */
 public class ShutterButton extends ImageView {
 
+    private class LongClickListener implements View.OnLongClickListener {
+         public boolean onLongClick(View v) {
+             if ( null != mListener ) {
+                 mListener.onShutterButtonLongClick();
+                 return true;
+             }
+             return false;
+         }
+    }
+
     private boolean mTouchEnabled = true;
+    private LongClickListener mLongClick = new LongClickListener();
 
     /**
      * A callback to be invoked when a ShutterButton's pressed state changes.
@@ -42,6 +53,7 @@ public class ShutterButton extends ImageView {
          */
         void onShutterButtonFocus(boolean pressed);
         void onShutterButtonClick();
+        void onShutterButtonLongClick();
     }
 
     private OnShutterButtonListener mListener;
@@ -53,6 +65,7 @@ public class ShutterButton extends ImageView {
 
     public void setOnShutterButtonListener(OnShutterButtonListener listener) {
         mListener = listener;
+        setOnLongClickListener(mLongClick);
     }
 
     @Override
@@ -66,6 +79,7 @@ public class ShutterButton extends ImageView {
 
     public void enableTouch(boolean enable) {
         mTouchEnabled = enable;
+        setLongClickable(enable);
     }
 
     /**

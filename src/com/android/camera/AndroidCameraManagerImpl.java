@@ -88,6 +88,8 @@ class AndroidCameraManagerImpl implements CameraManager {
     // Histogram
     private static final int SET_HISTOGRAM_MODE =    601;
     private static final int SEND_HISTOGRAM_DATA =   602;
+    //LONGSHOT
+    private static final int SET_LONGSHOT = 701;
 
     private CameraHandler mCameraHandler;
     private android.hardware.Camera mCamera;
@@ -329,6 +331,11 @@ class AndroidCameraManagerImpl implements CameraManager {
                     case SEND_HISTOGRAM_DATA:
                         mCamera.sendHistogramData();
                         break;
+
+                    case SET_LONGSHOT:
+                        mCamera.setLongshot((Boolean) msg.obj);
+                        break;
+
                     default:
                         throw new RuntimeException("Invalid CameraProxy message=" + msg.what);
                 }
@@ -552,6 +559,13 @@ class AndroidCameraManagerImpl implements CameraManager {
             mCameraHandler.obtainMessage(
                     ENABLE_SHUTTER_SOUND, (enable ? 1 : 0), 0).sendToTarget();
         }
+
+        @Override
+        public void setLongshot(boolean enable) {
+            mCameraHandler.obtainMessage(SET_LONGSHOT,
+                    new Boolean(enable)).sendToTarget();
+        }
+
         @Override
         public void setHistogramMode(CameraDataCallback cb) {
             mCameraHandler.obtainMessage(SET_HISTOGRAM_MODE, cb).sendToTarget();
