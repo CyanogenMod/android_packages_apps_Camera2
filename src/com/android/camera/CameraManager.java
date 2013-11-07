@@ -361,5 +361,12 @@ public interface CameraManager {
          *
         */
         public void sendHistogramData();
+        /**
+         * Enables/Disables longshot mode.
+         *
+         * @param enable   {@code true} to enable longshot mode,
+         *                 {@code false} to disable it.
+        */
+        public void setLongshot(boolean enable);
     }
 }

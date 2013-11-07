@@ -178,6 +178,7 @@ public class PhotoModule
     private boolean mAwbLockSupported;
     private boolean mContinuousFocusSupported;
     private boolean mTouchAfAecFlag;
+    private boolean mLongshotSave = false;
 
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
@@ -187,6 +188,9 @@ public class PhotoModule
 
     private ContentProviderClient mMediaProviderClient;
     private boolean mFaceDetectionStarted = false;
+
+    private static final String PERSIST_LONG_ENABLE = "persist.camera.longshot.enable";
+    private static final String PERSIST_LONG_SAVE = "persist.camera.longshot.save";
 
     private static final int MINIMUM_BRIGHTNESS = 0;
     private static final int MAXIMUM_BRIGHTNESS = 6;
@@ -756,6 +760,34 @@ public class PhotoModule
         }
     }
 
+    private final class LongshotShutterCallback
+            implements CameraShutterCallback {
+
+        @Override
+        public void onShutter(CameraProxy camera) {
+            mShutterCallbackTime = System.currentTimeMillis();
+            mShutterLag = mShutterCallbackTime - mCaptureStartTime;
+            Log.e(TAG, "[KPI Perf] PROFILE_SHUTTER_LAG mShutterLag = " + mShutterLag + "ms");
+            synchronized(mCameraDevice) {
+
+                if (mCameraState != LONGSHOT) {
+                    return;
+                }
+
+                if (mLongshotSave) {
+                    mCameraDevice.takePicture(mHandler,
+                            new LongshotShutterCallback(),
+                            mRawPictureCallback, mPostViewPictureCallback,
+                            new LongshotPictureCallback(null));
+                } else {
+                    mCameraDevice.takePicture(mHandler,new LongshotShutterCallback(),
+                            mRawPictureCallback, mPostViewPictureCallback,
+                            new JpegPictureCallback(null));
+                }
+            }
+        }
+    }
+
     private final class ShutterCallback
             implements CameraShutterCallback {
 
@@ -821,6 +853,64 @@ public class PhotoModule
         }
     }
 
+    private final class LongshotPictureCallback implements CameraPictureCallback {
+        Location mLocation;
+
+        public LongshotPictureCallback(Location loc) {
+            mLocation = loc;
+        }
+
+        @Override
+        public void onPictureTaken(final byte [] jpegData, CameraProxy camera) {
+            if (mPaused) {
+                return;
+            }
+
+            mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
+
+            String jpegFilePath = new String(jpegData);
+            mNamedImages.nameNewImage(mCaptureStartTime);
+            NamedEntity name = mNamedImages.getNextNameEntity();
+            String title = (name == null) ? null : name.title;
+            long date = (name == null) ? -1 : name.date;
+
+            if (title == null) {
+                Log.e(TAG, "Unbalanced name/data pair");
+                return;
+            }
+
+
+            if  (date == -1 ) {
+                Log.e(TAG, "Invalid filename date");
+                return;
+            }
+
+            String dstPath = Storage.DIRECTORY;
+            File sdCard = android.os.Environment.getExternalStorageDirectory();
+            File dstFile = new File(dstPath);
+            if (dstFile == null) {
+                Log.e(TAG, "Destination file path invalid");
+                return;
+            }
+
+            File srcFile = new File(jpegFilePath);
+            if (srcFile == null) {
+                Log.e(TAG, "Source file path invalid");
+                return;
+            }
+
+            if ( srcFile.renameTo(dstFile) ) {
+                Size s = mParameters.getPictureSize();
+                String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
+                mActivity.getMediaSaveService().addImage(
+                       null, title, date, mLocation, s.width, s.height,
+                       0, null, mOnMediaSavedListener, mContentResolver, pictureFormat);
+            } else {
+                Log.e(TAG, "Failed to move jpeg file");
+            }
+        }
+    }
+
     private final class JpegPictureCallback
             implements CameraPictureCallback {
         Location mLocation;
@@ -872,11 +962,13 @@ public class PhotoModule
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
 
             boolean needRestartPreview = !mIsImageCaptureIntent
+                      && (mCameraState != LONGSHOT)
                       && (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL)
                       && (mReceivedSnapNum == mBurstSnapNum);
             if (needRestartPreview) {
                 setupPreview();
-            }else if (mReceivedSnapNum == mBurstSnapNum){
+            }else if ((mReceivedSnapNum == mBurstSnapNum)
+                        && (mCameraState != LONGSHOT)){
                 mFocusManager.resetTouchFocus();
                 setCameraState(IDLE);
             }
@@ -1086,6 +1178,7 @@ public class PhotoModule
         switch (state) {
             case PhotoController.PREVIEW_STOPPED:
             case PhotoController.SNAPSHOT_IN_PROGRESS:
+            case PhotoController.LONGSHOT:
             case PhotoController.SWITCHING_CAMERA:
                 mUI.enableGestures(false);
                 break;
@@ -1162,15 +1255,30 @@ public class PhotoModule
         // We don't want user to press the button again while taking a
         // multi-second HDR photo.
         mUI.enableShutter(false);
-        mCameraDevice.takePicture(mHandler,
-                new ShutterCallback(!animateBefore),
-                mRawPictureCallback, mPostViewPictureCallback,
-                new JpegPictureCallback(loc));
+
+        if (mCameraState == LONGSHOT) {
+            if(mLongshotSave) {
+                mCameraDevice.takePicture(mHandler,
+                        new LongshotShutterCallback(),
+                        mRawPictureCallback, mPostViewPictureCallback,
+                        new LongshotPictureCallback(loc));
+            } else {
+                mCameraDevice.takePicture(mHandler,
+                        new LongshotShutterCallback(),
+                        mRawPictureCallback, mPostViewPictureCallback,
+                        new JpegPictureCallback(loc));
+            }
+        } else {
+            mCameraDevice.takePicture(mHandler,
+                    new ShutterCallback(!animateBefore),
+                    mRawPictureCallback, mPostViewPictureCallback,
+                    new JpegPictureCallback(loc));
+            setCameraState(SNAPSHOT_IN_PROGRESS);
+        }
 
         mNamedImages.nameNewImage(mCaptureStartTime);
 
         mFaceDetectionStarted = false;
-        setCameraState(SNAPSHOT_IN_PROGRESS);
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_CAPTURE_DONE, "Photo");
         return true;
@@ -1375,6 +1483,18 @@ public class PhotoModule
                 || (mCameraState == SNAPSHOT_IN_PROGRESS)
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
+        synchronized(mCameraDevice) {
+           if (mCameraState == LONGSHOT) {
+               mCameraDevice.setLongshot(false);
+               if (!mFocusManager.isZslEnabled()) {
+                   setupPreview();
+               } else {
+                   setCameraState(IDLE);
+                   mFocusManager.resetTouchFocus();
+               }
+           }
+        }
+
         // Do not do focus if there is not enough storage.
         if (pressed && !canTakePicture()) return;
 
@@ -1444,6 +1564,21 @@ public class PhotoModule
         } else {
             mSnapshotOnIdle = false;
             mFocusManager.doSnap();
+        }
+    }
+
+    @Override
+    public void onShutterButtonLongClick() {
+        if ((null != mCameraDevice) && (mCameraState == IDLE)) {
+            boolean enable = false;
+            enable = SystemProperties.getBoolean(PERSIST_LONG_ENABLE, false);
+            if ( enable ) {
+                enable = SystemProperties.getBoolean(PERSIST_LONG_SAVE, false);
+                mLongshotSave = enable;
+                mCameraDevice.setLongshot(true);
+                setCameraState(PhotoController.LONGSHOT);
+                mFocusManager.doSnap();
+            }
         }
     }
 
