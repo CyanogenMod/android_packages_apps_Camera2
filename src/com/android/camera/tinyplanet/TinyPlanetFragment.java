@@ -42,8 +42,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.camera.CameraActivity;
-import com.android.camera.MediaSaveService;
-import com.android.camera.MediaSaveService.OnMediaSavedListener;
+import com.android.camera.app.MediaSaver.OnMediaSavedListener;
+import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.tinyplanet.TinyPlanetPreview.PreviewSizeListener;
 import com.android.camera.util.XmpUtil;
@@ -53,7 +53,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.locks.Lock;
@@ -305,7 +304,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
             protected void onPostExecute(TinyPlanetImage image) {
                 // Once created, store the new file and add it to the filmstrip.
                 final CameraActivity activity = (CameraActivity) getActivity();
-                MediaSaveService mediaSaveService = activity.getMediaSaveService();
+                MediaSaver mediaSaver = activity.getMediaSaver();
                 OnMediaSavedListener doneListener =
                         new OnMediaSavedListener() {
                             @Override
@@ -318,7 +317,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                             }
                         };
                 String tinyPlanetTitle = FILENAME_PREFIX + mOriginalTitle;
-                mediaSaveService.addImage(image.mJpegData, tinyPlanetTitle, (new Date()).getTime(),
+                mediaSaver.addImage(image.mJpegData, tinyPlanetTitle, (new Date()).getTime(),
                         null,
                         image.mSize, image.mSize, 0, null, doneListener, getActivity()
                                 .getContentResolver());

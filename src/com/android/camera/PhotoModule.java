@@ -58,6 +58,7 @@ import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.CameraManager.CameraShutterCallback;
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
+import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
@@ -83,8 +84,7 @@ public class PhotoModule
         PhotoController,
         FocusOverlayManager.Listener,
         CameraPreference.OnPreferenceChangedListener,
-        ShutterButton.OnShutterButtonListener,
-        MediaSaveService.Listener,
+        ShutterButton.OnShutterButtonListener, MediaSaver.QueueListener,
         OnCountDownFinishedListener,
         SensorEventListener {
 
@@ -263,8 +263,8 @@ public class PhotoModule
     // True if all the parameters needed to start preview is ready.
     private boolean mCameraPreviewParamsReady = false;
 
-    private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
-            new MediaSaveService.OnMediaSavedListener() {
+    private MediaSaver.OnMediaSavedListener mOnMediaSavedListener =
+            new MediaSaver.OnMediaSavedListener() {
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
@@ -645,11 +645,11 @@ public class PhotoModule
         keepMediaProviderInstance();
 
         mUI.initializeFirstTime();
-        MediaSaveService s = mActivity.getMediaSaveService();
+        MediaSaver s = mActivity.getMediaSaver();
         // We set the listener only when both service and shutterbutton
         // are initialized.
         if (s != null) {
-            s.setListener(this);
+            s.setQueueListener(this);
         }
 
         mNamedImages = new NamedImages();
@@ -667,9 +667,9 @@ public class PhotoModule
         boolean recordLocation = RecordLocationPreference.get(
                 mPreferences, mContentResolver);
         mLocationManager.recordLocation(recordLocation);
-        MediaSaveService s = mActivity.getMediaSaveService();
+        MediaSaver s = mActivity.getMediaSaver();
         if (s != null) {
-            s.setListener(this);
+            s.setQueueListener(this);
         }
         mNamedImages = new NamedImages();
         mUI.initializeSecondTime(mParameters);
@@ -855,7 +855,7 @@ public class PhotoModule
                         exif.setTag(directionRefTag);
                         exif.setTag(directionTag);
                     }
-                    mActivity.getMediaSaveService().addImage(
+                    mActivity.getMediaSaver().addImage(
                             jpegData, title, date, mLocation, width, height,
                             orientation, exif, mOnMediaSavedListener, mContentResolver);
                 }
@@ -968,8 +968,8 @@ public class PhotoModule
         // is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
                 || mCameraState == SWITCHING_CAMERA
-                || mActivity.getMediaSaveService() == null
-                || mActivity.getMediaSaveService().isQueueFull()) {
+                || mActivity.getMediaSaver() == null
+                || mActivity.getMediaSaver().isQueueFull()) {
             return false;
         }
         mCaptureStartTime = System.currentTimeMillis();
@@ -1370,9 +1370,9 @@ public class PhotoModule
 
         mPendingSwitchCameraId = -1;
         if (mFocusManager != null) mFocusManager.removeMessages();
-        MediaSaveService s = mActivity.getMediaSaveService();
+        MediaSaver s = mActivity.getMediaSaver();
         if (s != null) {
-            s.setListener(null);
+            s.setQueueListener(null);
         }
         mUI.removeDisplayChangeListener();
     }
@@ -2030,11 +2030,11 @@ public class PhotoModule
     }
 
     @Override
-    public void onMediaSaveServiceConnected(MediaSaveService s) {
+    public void onMediaSaverAvailable(MediaSaver s) {
         // We set the listener only when both service and shutterbutton
         // are initialized.
         if (mFirstTimeInitialized) {
-            s.setListener(this);
+            s.setQueueListener(this);
         }
     }
 

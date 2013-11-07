@@ -65,6 +65,7 @@ import android.widget.ShareActionProvider;
 
 import com.android.camera.CameraManager.CameraOpenErrorCallback;
 import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.MediaSaver;
 import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
 import com.android.camera.crop.CropActivity;
@@ -207,19 +208,19 @@ public class CameraActivity extends Activity
         }
     }
 
-    private MediaSaveService mMediaSaveService;
+    private MediaSaver mMediaSaver;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder b) {
-            mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
-            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+            mMediaSaver = ((MediaSaveService.LocalBinder) b).getService();
+            mCurrentModule.onMediaSaverAvailable(mMediaSaver);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName className) {
-            if (mMediaSaveService != null) {
-                mMediaSaveService.setListener(null);
-                mMediaSaveService = null;
+            if (mMediaSaver != null) {
+                mMediaSaver.setQueueListener(null);
+                mMediaSaver = null;
             }
         }
     };
@@ -789,8 +790,8 @@ public class CameraActivity extends Activity
                 }
             };
 
-    public MediaSaveService getMediaSaveService() {
-        return mMediaSaveService;
+    public MediaSaver getMediaSaver() {
+        return mMediaSaver;
     }
 
     public void notifyNewMedia(Uri uri) {
@@ -1342,8 +1343,8 @@ public class CameraActivity extends Activity
 
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
-        if (mMediaSaveService != null) {
-            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+        if (mMediaSaver != null) {
+            mCurrentModule.onMediaSaverAvailable(mMediaSaver);
         }
 
         // Store the module index so we can use it the next time the Camera

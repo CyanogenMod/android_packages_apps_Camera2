@@ -29,14 +29,15 @@ import android.os.IBinder;
 import android.provider.MediaStore.Video;
 import android.util.Log;
 
+import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 
 import java.io.File;
 
-/*
- * Service for saving images in the background thread.
+/**
+ * A class implementing {@link com.android.camera.app.MediaSaver}.
  */
-public class MediaSaveService extends Service {
+public class MediaSaveService extends Service implements MediaSaver {
     public static final String VIDEO_BASE_URI = "content://media/external/video/media";
 
     // The memory limit for unsaved image is 20MB.
@@ -44,20 +45,12 @@ public class MediaSaveService extends Service {
     private static final String TAG = "CAM_" + MediaSaveService.class.getSimpleName();
 
     private final IBinder mBinder = new LocalBinder();
-    private Listener mListener;
+    private QueueListener mQueueListener;
     // Memory used by the total queued save request, in bytes.
     private long mMemoryUse;
 
-    public interface Listener {
-        public void onQueueStatus(boolean full);
-    }
-
-    public interface OnMediaSavedListener {
-        public void onMediaSaved(Uri uri);
-    }
-
     class LocalBinder extends Binder {
-        public MediaSaveService getService() {
+        public MediaSaver getService() {
             return MediaSaveService.this;
         }
     }
@@ -81,13 +74,15 @@ public class MediaSaveService extends Service {
         mMemoryUse = 0;
     }
 
+    @Override
     public boolean isQueueFull() {
         return (mMemoryUse >= SAVE_TASK_MEMORY_LIMIT);
     }
 
-    public void addImage(final byte[] data, String title, long date, Location loc,
-            int width, int height, int orientation, ExifInterface exif,
-            OnMediaSavedListener l, ContentResolver resolver) {
+    @Override
+    public void addImage(final byte[] data, String title, long date, Location loc, int width,
+            int height, int orientation, ExifInterface exif, OnMediaSavedListener l,
+            ContentResolver resolver) {
         if (isQueueFull()) {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
@@ -103,39 +98,41 @@ public class MediaSaveService extends Service {
         t.execute();
     }
 
-    public void addImage(final byte[] data, String title, long date, Location loc,
-                         int orientation, ExifInterface exif,
-                         OnMediaSavedListener l, ContentResolver resolver) {
+    @Override
+    public void addImage(final byte[] data, String title, long date, Location loc, int orientation,
+            ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver) {
         // When dimensions are unknown, pass 0 as width and height,
         // and decode image for width and height later in a background thread
         addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver);
     }
-    public void addImage(final byte[] data, String title, Location loc,
-            int width, int height, int orientation, ExifInterface exif,
-            OnMediaSavedListener l, ContentResolver resolver) {
+    @Override
+    public void addImage(final byte[] data, String title, Location loc, int width, int height,
+            int orientation, ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver) {
         addImage(data, title, System.currentTimeMillis(), loc, width, height,
                 orientation, exif, l, resolver);
     }
 
-    public void addVideo(String path, long duration, ContentValues values,
-            OnMediaSavedListener l, ContentResolver resolver) {
+    @Override
+    public void addVideo(String path, long duration, ContentValues values, OnMediaSavedListener l,
+            ContentResolver resolver) {
         // We don't set a queue limit for video saving because the file
         // is already in the storage. Only updating the database.
         new VideoSaveTask(path, duration, values, l, resolver).execute();
     }
 
-    public void setListener(Listener l) {
-        mListener = l;
+    @Override
+    public void setQueueListener(QueueListener l) {
+        mQueueListener = l;
         if (l == null) return;
         l.onQueueStatus(isQueueFull());
     }
 
     private void onQueueFull() {
-        if (mListener != null) mListener.onQueueStatus(true);
+        if (mQueueListener != null) mQueueListener.onQueueStatus(true);
     }
 
     private void onQueueAvailable() {
-        if (mListener != null) mListener.onQueueStatus(false);
+        if (mQueueListener != null) mQueueListener.onQueueStatus(false);
     }
 
     private class ImageSaveTask extends AsyncTask <Void, Void, Uri> {

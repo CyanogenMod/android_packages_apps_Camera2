@@ -45,6 +45,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
@@ -1099,7 +1100,7 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void onMediaSaveServiceConnected(MediaSaveService s) {
+    public void onMediaSaverAvailable(MediaSaver s) {
         // do nothing.
     }
 }
