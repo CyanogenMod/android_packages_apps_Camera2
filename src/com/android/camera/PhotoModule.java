@@ -1013,7 +1013,8 @@ public class PhotoModule
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_CAPTURE_DONE, "Photo");
+                UsageStatistics.ACTION_CAPTURE_DONE, "Photo", 0,
+                UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"));
         return true;
     }
 
