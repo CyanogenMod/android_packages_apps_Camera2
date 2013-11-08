@@ -21,6 +21,8 @@ import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.android.camera.app.MediaSaver;
+
 public interface CameraModule {
 
     public void init(CameraActivity activity, View frame);
@@ -63,7 +65,7 @@ public interface CameraModule {
 
     public void onShowSwitcherPopup();
 
-    public void onMediaSaveServiceConnected(MediaSaveService s);
+    public void onMediaSaverAvailable(MediaSaver s);
 
     public boolean arePreviewControlsVisible();
 }

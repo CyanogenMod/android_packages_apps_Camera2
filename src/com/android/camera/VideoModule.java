@@ -55,6 +55,7 @@ import android.widget.Toast;
 
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.ui.RotateTextToast;
@@ -172,8 +173,8 @@ public class VideoModule implements CameraModule,
 
     private int mZoomValue;  // The current zoom value.
 
-    private final MediaSaveService.OnMediaSavedListener mOnVideoSavedListener =
-            new MediaSaveService.OnMediaSavedListener() {
+    private final MediaSaver.OnMediaSavedListener mOnVideoSavedListener =
+            new MediaSaver.OnMediaSavedListener() {
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
@@ -185,8 +186,8 @@ public class VideoModule implements CameraModule,
                 }
             };
 
-    private final MediaSaveService.OnMediaSavedListener mOnPhotoSavedListener =
-            new MediaSaveService.OnMediaSavedListener() {
+    private final MediaSaver.OnMediaSavedListener mOnPhotoSavedListener =
+            new MediaSaver.OnMediaSavedListener() {
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
@@ -387,7 +388,7 @@ public class VideoModule implements CameraModule,
             if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress) {
                 return;
             }
-            MediaSaveService s = mActivity.getMediaSaveService();
+            MediaSaver s = mActivity.getMediaSaver();
             if (s == null || s.isQueueFull()) {
                 return;
             }
@@ -1095,7 +1096,7 @@ public class VideoModule implements CameraModule,
             } else {
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
-            mActivity.getMediaSaveService().addVideo(mCurrentVideoFilename,
+            mActivity.getMediaSaver().addVideo(mCurrentVideoFilename,
                     duration, mCurrentVideoValues,
                     mOnVideoSavedListener, mContentResolver);
         }
@@ -1731,7 +1732,7 @@ public class VideoModule implements CameraModule,
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
 
-        mActivity.getMediaSaveService().addImage(
+        mActivity.getMediaSaver().addImage(
                 data, title, dateTaken, loc, orientation,
                 exif, mOnPhotoSavedListener, mContentResolver);
     }
@@ -1797,7 +1798,7 @@ public class VideoModule implements CameraModule,
     }
 
     @Override
-    public void onMediaSaveServiceConnected(MediaSaveService s) {
+    public void onMediaSaverAvailable(MediaSaver s) {
         // do nothing.
     }
 
