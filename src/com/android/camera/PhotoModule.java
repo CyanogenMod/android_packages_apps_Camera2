@@ -245,9 +245,9 @@ public class PhotoModule
     private final Handler mHandler = new MainHandler();
 
     /** A thread separate from the UI thread for camera startup. */
-    private HandlerThread mOpenCameraThread;
+    private volatile HandlerThread mOpenCameraThread;
     /** A handler to run on the camera startup thread. */
-    private Handler mOpenCameraHandler;
+    private volatile Handler mOpenCameraHandler;
     /** This lock should always protect openCamera and closeCamera. */
     private final Object mCameraOpenLock = new Object();
 
@@ -505,7 +505,10 @@ public class PhotoModule
     @Override
     public void onPreviewUIReady() {
         // Requires that OPEN_CAMERA_ASYNC has been already sent.
-        mOpenCameraHandler.sendEmptyMessage(START_PREVIEW_ASYNC);
+        Handler openCameraHandler = mOpenCameraHandler;
+        if (openCameraHandler != null) {
+            openCameraHandler.sendEmptyMessage(START_PREVIEW_ASYNC);
+        }
     }
 
     @Override
@@ -1355,14 +1358,19 @@ public class PhotoModule
         // Postpones actually releasing for KEEP_CAMERA_TIMEOUT,
         // so if onResume is directly called after this, the camera
         // simply needs to reconnect (takes about 2-5ms).
-        mOpenCameraHandler.removeMessages(OPEN_CAMERA_ASYNC);
-        mOpenCameraHandler.removeMessages(START_PREVIEW_ASYNC);
+        if (mOpenCameraHandler != null) {
+            mOpenCameraHandler.removeMessages(OPEN_CAMERA_ASYNC);
+            mOpenCameraHandler.removeMessages(START_PREVIEW_ASYNC);
+            mOpenCameraHandler = null;
+        }
         synchronized (mCameraOpenLock) {
             closeCamera();
         }
         // Stop the long running open camera thread.
-        mOpenCameraThread.quitSafely();
-        mOpenCameraThread = null;
+        if (mOpenCameraThread != null) {
+            mOpenCameraThread.quitSafely();
+            mOpenCameraThread = null;
+        }
         Log.e(TAG, "Done quiting safely.");
 
         resetScreenOn();
