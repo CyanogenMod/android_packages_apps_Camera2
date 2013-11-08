@@ -47,6 +47,7 @@
         android:largeHeap="true"
         android:logo="@mipmap/ic_launcher_camera"
         android:restoreAnyVersion="true"
+        android:supportsRtl="true"
         android:theme="@style/Theme.Camera" >
         <activity
             android:name="com.android.camera.CameraActivity"
