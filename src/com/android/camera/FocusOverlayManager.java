@@ -29,6 +29,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.UsageStatistics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -356,6 +357,9 @@ public class FocusOverlayManager {
 
     public void onSingleTapUp(int x, int y) {
         if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) return;
+
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_TOUCH_FOCUS, x + "," + y);
 
         // Let users be able to cancel previous touch focus.
         if ((!mFocusDefault) && (mState == STATE_FOCUSING ||
