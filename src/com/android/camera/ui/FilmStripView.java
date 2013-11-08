@@ -43,6 +43,7 @@ import com.android.camera.ui.FilmStripView.ImageData.PanoramaSupportCallback;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 import java.util.Arrays;
@@ -1790,6 +1791,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     && deltaX < mSlop * (-1)) {
                 // intercept left swipe
                 if (Math.abs(deltaX) >= Math.abs(deltaY) * 2) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_FILMSTRIP, null);
                     return true;
                 }
             }
