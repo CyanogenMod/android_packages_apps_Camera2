@@ -157,11 +157,20 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 LocalMediaData.PhotoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalMediaData.PhotoData.QUERY_ORDER);
-        if (c == null || !c.moveToFirst()) {
-            return;
+        LocalMediaData.PhotoData newData = null;
+
+        try {
+            if (c == null || !c.moveToFirst()) {
+                return;
+            }
+            newData = LocalMediaData.PhotoData.buildFromCursor(c);
+        } finally {
+            // Ensure cursor is closed before returning
+            if (c != null) {
+                c.close();
+            }
         }
         int pos = findDataByContentUri(uri);
-        LocalMediaData.PhotoData newData = LocalMediaData.PhotoData.buildFromCursor(c);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
             Log.v(TAG, "found duplicate photo");
