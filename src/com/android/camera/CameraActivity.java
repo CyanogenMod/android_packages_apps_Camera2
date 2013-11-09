@@ -1090,7 +1090,6 @@ public class CameraActivity extends Activity
     @Override
     public void onPause() {
         // Delete photos that are pending deletion
-        mFilmStripView.getController().clearSurfaceViews();
         performDeletion();
         mOrientationListener.disable();
         mCurrentModule.onPauseBeforeSuper();
