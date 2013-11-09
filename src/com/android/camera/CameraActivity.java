@@ -168,6 +168,7 @@ public class CameraActivity extends Activity
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
+    private boolean mIsEditActivityInProgress = false;
 
     private Uri[] mNfcPushUris = new Uri[1];
 
@@ -1104,6 +1105,7 @@ public class CameraActivity extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_CODE_DONT_SWITCH_TO_PREVIEW) {
             mResetToPreviewOnResume = false;
+            mIsEditActivityInProgress = false;
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -1341,11 +1343,14 @@ public class CameraActivity extends Activity
      * Launches an ACTION_EDIT intent for the given local data item.
      */
     public void launchEditor(LocalData data) {
-        Intent intent = new Intent(Intent.ACTION_EDIT)
-                .setDataAndType(data.getContentUri(), data.getMimeType())
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(Intent.createChooser(intent, null),
-                REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        if (!mIsEditActivityInProgress) {
+            Intent intent = new Intent(Intent.ACTION_EDIT)
+                    .setDataAndType(data.getContentUri(), data.getMimeType())
+                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(Intent.createChooser(intent, null),
+                    REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            mIsEditActivityInProgress = true;
+        }
     }
 
     /**
