@@ -56,7 +56,6 @@ import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager;
-import com.android.camera.util.IntentHelper;
 import com.android.camera2.R;
 
 import java.io.Closeable;
@@ -329,7 +328,7 @@ public class CameraUtil {
 
     public static CameraManager.CameraProxy openCamera(
             Activity activity, final int cameraId,
-            Handler handler, final CameraManager.CameraOpenErrorCallback cb) {
+            Handler handler, final CameraManager.CameraOpenCallback cb) {
         try {
             throwIfCameraDisabled(activity);
             return CameraHolder.instance().open(handler, cameraId, cb);

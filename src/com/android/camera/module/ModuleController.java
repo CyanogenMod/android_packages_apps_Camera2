@@ -28,7 +28,7 @@ public interface ModuleController {
      * Initializes the module.
      * @param app The app which initializes this module.
      */
-    public void init(AppController app);
+    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent);
 
     /**
      * Resumes the module. Always call this method whenever it's being put in

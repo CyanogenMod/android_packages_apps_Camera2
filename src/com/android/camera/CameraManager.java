@@ -103,7 +103,12 @@ public interface CameraManager {
      * in the framework, {@link android.hardware.Camera.ErrorCallback}, which
      * is used after the camera is opened.
      */
-    public interface CameraOpenErrorCallback {
+    public interface CameraOpenCallback {
+        /**
+         * Callback when camera open succeeds.
+         */
+        public void onCameraOpened(CameraProxy camera);
+
         /**
          * Callback when {@link com.android.camera.CameraDisabledException} is
          * caught.
@@ -140,7 +145,7 @@ public interface CameraManager {
      * @return   An instance of {@link CameraProxy} on success. null on failure.
      */
     public CameraProxy cameraOpen(
-            Handler handler, int cameraId, CameraOpenErrorCallback callback);
+            Handler handler, int cameraId, CameraOpenCallback callback);
 
     /**
      * An interface that takes camera operation requests and post messages to the
@@ -173,7 +178,7 @@ public interface CameraManager {
          * @param cb The callback when any error happens.
          * @return {@code false} on errors.
          */
-        public boolean reconnect(Handler handler, CameraOpenErrorCallback cb);
+        public boolean reconnect(Handler handler, CameraOpenCallback cb);
 
         /**
          * Unlocks the camera device.

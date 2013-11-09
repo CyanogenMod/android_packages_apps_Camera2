@@ -21,7 +21,6 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 
-import com.android.camera.ImageTaskManager;
 import com.android.camera.Storage;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;

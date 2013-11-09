@@ -20,7 +20,6 @@ import static com.android.camera.util.CameraUtil.Assert;
 
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -29,7 +28,6 @@ import android.util.Log;
 
 import com.android.camera.CameraManager.CameraProxy;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -190,7 +188,7 @@ public class CameraHolder {
 
     public synchronized CameraProxy open(
             Handler handler, int cameraId,
-            CameraManager.CameraOpenErrorCallback cb) {
+            CameraManager.CameraOpenCallback cb) {
         if (DEBUG_OPEN_RELEASE) {
             collectState(cameraId, mCameraDevice);
             if (mCameraOpened) {
@@ -241,7 +239,7 @@ public class CameraHolder {
      * unavailable then return {@code null}.
      */
     public synchronized CameraProxy tryOpen(
-            Handler handler, int cameraId, CameraManager.CameraOpenErrorCallback cb) {
+            Handler handler, int cameraId, CameraManager.CameraOpenCallback cb) {
             return (!mCameraOpened ? open(handler, cameraId, cb) : null);
     }
 

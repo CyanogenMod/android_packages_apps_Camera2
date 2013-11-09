@@ -199,7 +199,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                             }
                         } else {
                             if (msg.obj != null) {
-                                ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                                ((CameraOpenCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
                             }
                         }
                         return;
@@ -331,7 +331,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                 } else if (mCamera == null) {
                     if (msg.what == OPEN_CAMERA) {
                         if (msg.obj != null) {
-                            ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                            ((CameraOpenCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
                         }
                     } else {
                         Log.w(TAG, "Cannot handle message, mCamera is null.");
@@ -345,10 +345,9 @@ class AndroidCameraManagerImpl implements CameraManager {
 
     @Override
     public CameraManager.CameraProxy cameraOpen(
-        Handler handler, int cameraId, CameraOpenErrorCallback callback) {
+        Handler handler, int cameraId, CameraOpenCallback callback) {
         mCameraHandler.obtainMessage(OPEN_CAMERA, cameraId, 0,
-                CameraOpenErrorCallbackForward.getNewInstance(
-                        handler, callback)).sendToTarget();
+                CameraOpenCallbackForward.getNewInstance(handler, callback)).sendToTarget();
         mCameraHandler.waitDone();
         if (mCamera != null) {
             return new AndroidCameraProxyImpl();
@@ -383,11 +382,11 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
-        public boolean reconnect(Handler handler, CameraOpenErrorCallback cb) {
+        public boolean reconnect(Handler handler, CameraOpenCallback cb) {
             mCameraHandler.sendEmptyMessage(RECONNECT);
             mCameraHandler.waitDone();
-            CameraOpenErrorCallback cbforward =
-                    CameraOpenErrorCallbackForward.getNewInstance(handler, cb);
+            CameraOpenCallback cbforward =
+                    CameraOpenCallbackForward.getNewInstance(handler, cb);
             if (mReconnectIOException != null) {
                 if (cbforward != null) {
                     cbforward.onReconnectionFailure(AndroidCameraManagerImpl.this);
@@ -798,9 +797,9 @@ class AndroidCameraManagerImpl implements CameraManager {
      * A callback helps to invoke the original callback on another
      * {@link android.os.Handler}.
      */
-    private static class CameraOpenErrorCallbackForward implements CameraOpenErrorCallback {
+    private static class CameraOpenCallbackForward implements CameraOpenCallback {
         private final Handler mHandler;
-        private final CameraOpenErrorCallback mCallback;
+        private final CameraOpenCallback mCallback;
 
         /**
          * Returns a new instance of {@link FaceDetectionCallbackForward}.
@@ -810,21 +809,30 @@ class AndroidCameraManagerImpl implements CameraManager {
          * @return The instance of the {@link FaceDetectionCallbackForward}, or
          *         null if any parameter is null.
          */
-        public static CameraOpenErrorCallbackForward getNewInstance(
-                Handler handler, CameraOpenErrorCallback cb) {
+        public static CameraOpenCallbackForward getNewInstance(
+                Handler handler, CameraOpenCallback cb) {
             if (handler == null || cb == null) {
                 return null;
             }
-            return new CameraOpenErrorCallbackForward(handler, cb);
+            return new CameraOpenCallbackForward(handler, cb);
         }
 
-        private CameraOpenErrorCallbackForward(
-                Handler h, CameraOpenErrorCallback cb) {
+        private CameraOpenCallbackForward(Handler h, CameraOpenCallback cb) {
             // Given that we are using the main thread handler, we can create it
             // here instead of holding onto the PhotoModule objects. In this
             // way, we can avoid memory leak.
             mHandler = new Handler(Looper.getMainLooper());
             mCallback = cb;
+        }
+
+        @Override
+        public void onCameraOpened(final CameraProxy camera) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCameraOpened(camera);
+                }
+            });
         }
 
         @Override

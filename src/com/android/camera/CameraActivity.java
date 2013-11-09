@@ -63,8 +63,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
-import com.android.camera.CameraManager.CameraOpenErrorCallback;
 import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.ImageTaskManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
@@ -79,9 +79,12 @@ import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
+import com.android.camera.filmstrip.FilmstripController;
+import com.android.camera.filmstrip.FilmstripImageData;
+import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
-import com.android.camera.ui.FilmStripView;
+import com.android.camera.ui.FilmstripView;
 import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -95,8 +98,6 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 import java.io.File;
-
-import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
 public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener,
@@ -158,7 +159,7 @@ public class CameraActivity extends Activity
     private CameraModule mCurrentModule;
     private FrameLayout mAboveFilmstripControlLayout;
     private View mCameraModuleRootView;
-    private FilmStripView mFilmStripView;
+    private FilmstripController mFilmstripController;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
     private int mResultCodeForTesting;
@@ -232,8 +233,13 @@ public class CameraActivity extends Activity
         }
     };
 
-    private CameraOpenErrorCallback mCameraOpenErrorCallback =
-            new CameraOpenErrorCallback() {
+    private CameraManager.CameraOpenCallback mCameraOpenCallback =
+            new CameraManager.CameraOpenCallback() {
+                @Override
+                public void onCameraOpened(CameraManager.CameraProxy camera) {
+                    // TODO: implement this.
+                }
+
                 @Override
                 public void onCameraDisabled(int cameraId) {
                     UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
@@ -316,8 +322,8 @@ public class CameraActivity extends Activity
         return localFile.getName();
     }
 
-    private FilmStripView.Listener mFilmStripListener =
-            new FilmStripView.Listener() {
+    private FilmstripListener mFilmStripListener =
+            new FilmstripListener() {
                 @Override
                 public void onDataPromoted(int dataID) {
                     UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
@@ -376,7 +382,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onCurrentDataCentered(int dataID) {
-                    if (dataID != 0 && !mFilmStripView.isCameraPreview()) {
+                    if (dataID != 0 && !mFilmstripController.isCameraPreview()) {
                         // For now, We ignore all items that are not the camera preview.
                         return;
                     }
@@ -389,7 +395,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onCurrentDataOffCentered(int dataID) {
-                    if (dataID != 0 && !mFilmStripView.isCameraPreview()) {
+                    if (dataID != 0 && !mFilmstripController.isCameraPreview()) {
                         // For now, We ignore all items that are not the camera preview.
                         return;
                     }
@@ -483,7 +489,7 @@ public class CameraActivity extends Activity
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_FILMSTRIP,
                 "thumbnailTap");
 
-        mFilmStripView.getController().goToNextItem();
+        mFilmstripController.goToNextItem();
     }
 
     /**
@@ -625,7 +631,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onShareTargetSelected(ShareActionProvider shareActionProvider, Intent intent) {
-        int currentDataId = mFilmStripView.getCurrentId();
+        int currentDataId = mFilmstripController.getCurrentId();
         if (currentDataId < 0) {
             return false;
         }
@@ -805,7 +811,7 @@ public class CameraActivity extends Activity
                         @Override
                         public void run() {
                             int doneID = mDataAdapter.findDataByContentUri(imageUri);
-                            int currentDataId = mFilmStripView.getCurrentId();
+                            int currentDataId = mFilmstripController.getCurrentId();
 
                             if (currentDataId == doneID) {
                                 hidePanoStitchingProgress();
@@ -823,7 +829,7 @@ public class CameraActivity extends Activity
                     mMainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            int currentDataId = mFilmStripView.getCurrentId();
+                            int currentDataId = mFilmstripController.getCurrentId();
                             if (currentDataId == -1) {
                                 return;
                             }
@@ -913,7 +919,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int currentDataId = mFilmStripView.getCurrentId();
+        int currentDataId = mFilmstripController.getCurrentId();
         if (currentDataId < 0) {
             return false;
         }
@@ -945,8 +951,7 @@ public class CameraActivity extends Activity
             case R.id.action_trim: {
                 // This is going to be handled by the Gallery app.
                 Intent intent = new Intent(ACTION_TRIM_VIDEO);
-                LocalData currentData = mDataAdapter.getLocalData(
-                        mFilmStripView.getCurrentId());
+                LocalData currentData = mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
                 intent.setData(currentData.getContentUri());
                 // We need the file path to wrap this into a RandomAccessFile.
                 intent.putExtra(MEDIA_ITEM_PATH, currentData.getPath());
@@ -1078,21 +1083,21 @@ public class CameraActivity extends Activity
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
-                FilmStripView.ImageData.SIZE_FULL,
-                FilmStripView.ImageData.SIZE_FULL);
+                FilmstripImageData.SIZE_FULL,
+                FilmstripImageData.SIZE_FULL);
         // Put a CameraPreviewData at the first position.
         mWrappedDataAdapter = new FixedFirstDataAdapter(
                 new CameraDataAdapter(new ColorDrawable(
                         getResources().getColor(R.color.photo_placeholder))),
                 mCameraPreviewData);
-        mFilmStripView = (FilmStripView) findViewById(R.id.filmstrip_view);
-        mFilmStripView.setViewGap(
+        mFilmstripController = ((FilmstripView) findViewById(R.id.filmstrip_view)).getController();
+        mFilmstripController.setViewGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
-        mFilmStripView.setPanoramaViewHelper(mPanoramaViewHelper);
+        mFilmstripController.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
-        mFilmStripView.setListener(mFilmStripListener);
+        mFilmstripController.setListener(mFilmStripListener);
 
         int moduleIndex = -1;
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
@@ -1121,7 +1126,7 @@ public class CameraActivity extends Activity
 
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
-            mFilmStripView.setDataAdapter(mDataAdapter);
+            mFilmstripController.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
                 mDataAdapter.requestLoad(getContentResolver());
             }
@@ -1152,7 +1157,7 @@ public class CameraActivity extends Activity
                             0, 0));
             // Flush out all the original data.
             mDataAdapter.flush();
-            mFilmStripView.setDataAdapter(mDataAdapter);
+            mFilmstripController.setDataAdapter(mDataAdapter);
         }
 
         setupNfcBeamPush();
@@ -1245,7 +1250,7 @@ public class CameraActivity extends Activity
 
         if (mResetToPreviewOnResume) {
             // Go to the preview on resume.
-            mFilmStripView.getController().goToFirstItem();
+            mFilmstripController.goToFirstItem();
         }
         // Default is showing the preview, unless disabled by explicitly
         // starting an activity we want to return from to the filmstrip rather
@@ -1297,7 +1302,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mFilmStripView.inCameraFullscreen()) {
+        if (mFilmstripController.inCameraFullscreen()) {
             if (mCurrentModule.onKeyDown(keyCode, event)) {
                 return true;
             }
@@ -1315,7 +1320,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (mFilmStripView.inCameraFullscreen() && mCurrentModule.onKeyUp(keyCode, event)) {
+        if (mFilmstripController.inCameraFullscreen() && mCurrentModule.onKeyUp(keyCode, event)) {
             return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -1323,8 +1328,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onBackPressed() {
-        if (!mFilmStripView.inCameraFullscreen()) {
-            mFilmStripView.getController().goToFirstItem();
+        if (!mFilmstripController.inCameraFullscreen()) {
+            mFilmstripController.goToFirstItem();
         } else if (!mCurrentModule.onBackPressed()) {
             super.onBackPressed();
         }
@@ -1505,7 +1510,7 @@ public class CameraActivity extends Activity
         hideUndoDeletionBar(false);
         mDataAdapter.executeDeletion(CameraActivity.this);
 
-        int currentId = mFilmStripView.getCurrentId();
+        int currentId = mFilmstripController.getCurrentId();
         updateActionBarMenu(currentId);
         mFilmStripListener.onCurrentDataCentered(currentId);
     }
@@ -1660,8 +1665,8 @@ public class CameraActivity extends Activity
                 ((VideoModule) mCurrentModule).isRecording() : false;
     }
 
-    public CameraOpenErrorCallback getCameraOpenErrorCallback() {
-        return mCameraOpenErrorCallback;
+    public CameraManager.CameraOpenCallback getCameraOpenErrorCallback() {
+        return mCameraOpenCallback;
     }
 
     // For debugging purposes only.

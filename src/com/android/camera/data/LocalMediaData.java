@@ -38,7 +38,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.camera.ui.FilmStripView;
+import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
@@ -323,9 +323,9 @@ public abstract class LocalMediaData implements LocalData {
         };
 
         private static final int mSupportedUIActions =
-                FilmStripView.ImageData.ACTION_DEMOTE
-                        | FilmStripView.ImageData.ACTION_PROMOTE
-                        | FilmStripView.ImageData.ACTION_ZOOM;
+                FilmstripImageData.ACTION_DEMOTE
+                        | FilmstripImageData.ACTION_PROMOTE
+                        | FilmstripImageData.ACTION_ZOOM;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE;
 
@@ -586,8 +586,8 @@ public abstract class LocalMediaData implements LocalData {
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
         private static final int mSupportedUIActions =
-                FilmStripView.ImageData.ACTION_DEMOTE
-                        | FilmStripView.ImageData.ACTION_PROMOTE;
+                FilmstripImageData.ACTION_DEMOTE
+                        | FilmstripImageData.ACTION_PROMOTE;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE
                         | LocalData.ACTION_PLAY;

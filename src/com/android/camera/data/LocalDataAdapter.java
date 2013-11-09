@@ -20,13 +20,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
-import static com.android.camera.ui.FilmStripView.DataAdapter;
+import com.android.camera.filmstrip.FilmstripDataAdapter;
 
 /**
- * An interface which extends {@link DataAdapter} and defines operations on
+ * An interface which extends {@link com.android.camera.filmstrip.FilmstripDataAdapter} and defines operations on
  * the data in the local camera folder.
  */
-public interface LocalDataAdapter extends DataAdapter {
+public interface LocalDataAdapter extends FilmstripDataAdapter {
 
     /**
      * Request for loading the local data.

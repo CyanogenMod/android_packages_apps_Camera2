@@ -21,7 +21,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 
-import com.android.camera.ui.FilmStripView;
+import com.android.camera.filmstrip.FilmstripImageData;
 
 /**
  * A {@link LocalDataAdapter} which puts a {@link LocalData} fixed at the last
@@ -124,7 +124,7 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public FilmStripView.ImageData getImageData(int dataID) {
+    public FilmstripImageData getImageData(int dataID) {
         int totalNumber = mAdapter.getTotalNumber();
 
         if (dataID < totalNumber) {

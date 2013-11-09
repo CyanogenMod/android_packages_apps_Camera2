@@ -21,8 +21,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 
-import com.android.camera.ui.FilmStripView.DataAdapter;
-import com.android.camera.ui.FilmStripView.ImageData;
+import com.android.camera.filmstrip.FilmstripDataAdapter;
+import com.android.camera.filmstrip.FilmstripImageData;
 
 /**
  * A {@link LocalDataAdapter} which puts a {@link LocalData} fixed at the first
@@ -30,7 +30,7 @@ import com.android.camera.ui.FilmStripView.ImageData;
  * {@link LocalDataAdapter}.
  */
 public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
-        implements DataAdapter.Listener {
+        implements FilmstripDataAdapter.Listener {
 
     @SuppressWarnings("unused")
     private static final String TAG = "CAM_FixedFirstDataAdapter";
@@ -116,7 +116,7 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public ImageData getImageData(int dataID) {
+    public FilmstripImageData getImageData(int dataID) {
         if (dataID == 0) {
             return mFirstData;
         }
@@ -176,12 +176,12 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public void onDataInserted(int dataID, ImageData data) {
+    public void onDataInserted(int dataID, FilmstripImageData data) {
         mListener.onDataInserted(dataID + 1, data);
     }
 
     @Override
-    public void onDataRemoved(int dataID, ImageData data) {
+    public void onDataRemoved(int dataID, FilmstripImageData data) {
         mListener.onDataRemoved(dataID + 1, data);
     }
 }
