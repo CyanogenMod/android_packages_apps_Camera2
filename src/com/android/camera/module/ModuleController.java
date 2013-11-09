@@ -26,7 +26,7 @@ public interface ModuleController {
 
     /**
      * Initializes the module.
-     * @param app
+     * @param app The app which initializes this module.
      */
     public void init(AppController app);
 
@@ -47,4 +47,24 @@ public interface ModuleController {
      * by this module.
      */
     public void destory();
+
+    /**
+     * Called by the app when the preview size is changed.
+     *
+     * @param width The new width.
+     * @param height The new height.
+     */
+    public void onPreviewSizeChanged(int width, int height);
+
+    /**
+     * Called by the app when the camera is available. The module should use
+     * {@link com.android.camera.app.AppController#}
+     */
+    public void onCameraAvailable();
+
+    /**
+     * Called by the app when the {@link com.android.camera.app.MediaSaver} is
+     * available.
+     */
+    public void onMediaSaverAvailable();
 }

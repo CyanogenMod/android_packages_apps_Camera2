@@ -17,7 +17,13 @@
 package com.android.camera.app;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.widget.FrameLayout;
+
+import com.android.camera.CameraManager;
+import com.android.camera.LocationManager;
 
 /**
  * The controller at app level.
@@ -25,31 +31,57 @@ import android.net.Uri;
 public interface AppController {
 
     /**
+     * An interface which defines the shutter events listener.
+     */
+    public interface ShutterEventsListener {
+        /**
+         * Called when the shutter state is changed to pressed.
+         */
+        public void onShutterPressed();
+
+        /**
+         * Called when the shutter state is changed to released.
+         */
+        public void onShutterReleased();
+
+        /**
+         * Called when the shutter is clicked.
+         */
+        public void onShutterClicked();
+
+        /**
+         * Called when the shutter is long pressed.
+         */
+        public void onShutterLongPressed();
+    }
+
+    /**
      * Returns the {@link android.content.Context} being used.
      */
     public Context getAndroidContext();
 
-    // Shutter button.
+    /********************** UI / Camera preview**********************/
 
     /**
-     * Sets the callback when the shutter is clicked.
+     * Returns the {@link android.graphics.SurfaceTexture} used by the preview
+     * UI.
      */
-    public void setOnShutterClickedCallback(Runnable r);
+    public SurfaceTexture getPreviewBuffer();
 
     /**
-     * Sets the callback when the shutter is long-pressed.
+     * Returns the {@link android.widget.FrameLayout} as the root of the module
+     * layout.
      */
-    public void setOnShutterLongPressCallback(Runnable r);
+    public FrameLayout getModuleLayoutRoot();
+
+    /********************** Shutter button  **********************/
 
     /**
-     * Sets the callback when the shutter is pressed.
+     * Sets the shutter events listener.
+     *
+     * @param listener The listener.
      */
-    public void setOnShutterPressedCallback(Runnable r);
-
-    /**
-     * Sets the callback when the shutter is released.
-     */
-    public void setOnShutterReleasedCallback(Runnable r);
+    public void setShutterEventsListener(ShutterEventsListener listener);
 
     /**
      * Enables/Disables the shutter.
@@ -61,10 +93,69 @@ public interface AppController {
      */
     public boolean isShutterEnabled();
 
-    // Media saving.
+    /********************** Capture animation **********************/
+
+    /**
+     * Starts the pre-capture animation.
+     */
+    public void startPreCaptureAnimation();
+
+    /**
+     * Cancels the pre-capture animation.
+     */
+    public void cancelPreCaptureAnimation();
+
+    /**
+     * Starts the post-capture animation with the current preview image.
+     */
+    public void startPostCaptureAnimation();
+
+    /**
+     * Starts the post-capture animation with the given thumbnail.
+     *
+     * @param thumbnail The thumbnail for the animation.
+     */
+    public void startPostCaptureAnimation(Bitmap thumbnail);
+
+    /**
+     * Cancels the post-capture animation.
+     */
+    public void cancelPostCaptureAnimatio();
+
+    /********************** Media saving **********************/
 
     /**
      * Adds a new media to the filmstrip.
      */
     public void addNewMediaToFilmstrip(Uri uri);
+
+    /********************** App-level resources **********************/
+
+    /**
+     * Returns the camera device proxy.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public CameraManager.CameraProxy getCameraProxy();
+
+    /**
+     * Returns the {@link com.android.camera.app.MediaSaver}.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public MediaSaver getMediaSaver();
+
+    /**
+     * Returns the {@link com.android.camera.app.OrientationManager}.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public OrientationManager getOrientationManager();
+
+    /**
+     * Returns the {@link com.android.camera.LocationManager}.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public LocationManager getLocationManager();
 }
