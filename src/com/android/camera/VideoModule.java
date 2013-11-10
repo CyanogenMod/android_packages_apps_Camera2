@@ -57,6 +57,7 @@ import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.AccessibilityUtils;
@@ -161,7 +162,6 @@ public class VideoModule implements CameraModule,
     private ContentResolver mContentResolver;
 
     private LocationManager mLocationManager;
-    private OrientationManager mOrientationManager;
 
     private int mPendingSwitchCameraId;
     private final Handler mHandler = new MainHandler();
@@ -331,8 +331,6 @@ public class VideoModule implements CameraModule,
 
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
-
-        mOrientationManager = new OrientationManager(mActivity);
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -674,7 +672,6 @@ public class VideoModule implements CameraModule,
 
         keepScreenOnAwhile();
 
-        mOrientationManager.resume();
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
@@ -805,7 +802,6 @@ public class VideoModule implements CameraModule,
         resetScreenOn();
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
-        mOrientationManager.pause();
 
         mHandler.removeMessages(CHECK_DISPLAY_ROTATION);
         mHandler.removeMessages(SWITCH_CAMERA);
@@ -1219,7 +1215,7 @@ public class VideoModule implements CameraModule,
         mUI.enableCameraControls(false);
 
         mMediaRecorderRecording = true;
-        mOrientationManager.lockOrientation();
+        mActivity.lockOrientation();
         mRecordingStartTime = SystemClock.uptimeMillis();
         mUI.showRecordingUI(true);
 
@@ -1293,7 +1289,7 @@ public class VideoModule implements CameraModule,
                 fail = true;
             }
             mMediaRecorderRecording = false;
-            mOrientationManager.unlockOrientation();
+            mActivity.unlockOrientation();
 
             // If the activity is paused, this means activity is interrupted
             // during recording. Release the camera as soon as possible because

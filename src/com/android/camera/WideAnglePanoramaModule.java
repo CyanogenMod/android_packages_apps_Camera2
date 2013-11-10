@@ -47,6 +47,7 @@ import android.view.WindowManager;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
@@ -143,7 +144,6 @@ public class WideAnglePanoramaModule
     private boolean mPaused;
 
     private LocationManager mLocationManager;
-    private OrientationManager mOrientationManager;
     private ComboPreferences mPreferences;
     private boolean mMosaicPreviewConfigured;
     private boolean mPreviewFocused = true;
@@ -206,7 +206,6 @@ public class WideAnglePanoramaModule
         mActivity = activity;
         mRootView = parent;
 
-        mOrientationManager = new OrientationManager(activity);
         mCaptureState = CAPTURE_STATE_VIEWFINDER;
         mUI = new WideAnglePanoramaUI(mActivity, this, (ViewGroup) mRootView);
         mUI.setCaptureProgressOnDirectionChangeListener(
@@ -532,7 +531,7 @@ public class WideAnglePanoramaModule
         mDeviceOrientationAtCapture = mDeviceOrientation;
         keepScreenOn();
         // TODO: mActivity.getOrientationManager().lockOrientation();
-        mOrientationManager.lockOrientation();
+        mActivity.lockOrientation();
         int degrees = CameraUtil.getDisplayRotation(mActivity);
         int cameraId = CameraHolder.instance().getBackCameraId();
         int orientation = CameraUtil.getDisplayOrientation(degrees, cameraId);
@@ -712,7 +711,7 @@ public class WideAnglePanoramaModule
     private void reset() {
         mCaptureState = CAPTURE_STATE_VIEWFINDER;
 
-        mOrientationManager.unlockOrientation();
+        mActivity.unlockOrientation();
         mUI.reset();
         mActivity.setSwipingEnabled(true);
         // Orientation change will trigger onLayoutChange->configMosaicPreview->
@@ -803,7 +802,6 @@ public class WideAnglePanoramaModule
     public void onPauseBeforeSuper() {
         mPaused = true;
         if (mLocationManager != null) mLocationManager.recordLocation(false);
-        mOrientationManager.pause();
     }
 
     @Override
@@ -893,7 +891,6 @@ public class WideAnglePanoramaModule
         }
         keepScreenOnAwhile();
 
-        mOrientationManager.resume();
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);

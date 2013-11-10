@@ -16,13 +16,16 @@
 
 package com.android.camera.module;
 
+import android.content.res.Configuration;
+
 import com.android.camera.app.AppController;
 
 /**
  * The controller at app level.
  */
 public interface ModuleController {
-    // Lifecycle controls.
+
+    /********************** Life cycle management **********************/
 
     /**
      * Initializes the module.
@@ -48,6 +51,8 @@ public interface ModuleController {
      */
     public void destory();
 
+    /********************** UI / Camera preview **********************/
+
     /**
      * Called by the app when the preview size is changed.
      *
@@ -55,6 +60,22 @@ public interface ModuleController {
      * @param height The new height.
      */
     public void onPreviewSizeChanged(int width, int height);
+
+    /**
+     * Called when the
+     * {@link android.app.Activity#onConfigurationChanged(android.content.res.Configuration)}
+     * happened.
+     */
+    public void onConfigurationChanged(Configuration config);
+
+    /**
+     * Called when the UI orientation is changed.
+     *
+     * @param orientation The new orientation.
+     */
+    public void onOrientationChanged(int orientation);
+
+    /********************** App-level resources **********************/
 
     /**
      * Called by the app when the camera is available. The module should use

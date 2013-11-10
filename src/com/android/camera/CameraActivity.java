@@ -31,6 +31,8 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -63,9 +65,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
+import com.android.camera.app.AppController;
 import com.android.camera.app.AppManagerFactory;
 import com.android.camera.app.ImageTaskManager;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.OrientationManager;
+import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
 import com.android.camera.crop.CropActivity;
@@ -100,9 +105,9 @@ import com.android.camera2.R;
 import java.io.File;
 
 public class CameraActivity extends Activity
-        implements ModuleSwitcher.ModuleSwitchListener,
-        ActionBar.OnMenuVisibilityListener,
-        ShareActionProvider.OnShareTargetSelectedListener {
+        implements AppController, ModuleSwitcher.ModuleSwitchListener,
+        ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
+        OrientationManager.OnOrientationChangeListener {
 
     private static final String TAG = "CAM_Activity";
 
@@ -158,7 +163,7 @@ public class CameraActivity extends Activity
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
     private FrameLayout mAboveFilmstripControlLayout;
-    private View mCameraModuleRootView;
+    private FrameLayout mCameraModuleRootView;
     private FilmstripController mFilmstripController;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
@@ -171,7 +176,7 @@ public class CameraActivity extends Activity
     // This is a hack to speed up the start of SecureCamera.
     private static boolean sFirstStartAfterScreenOn = true;
     private int mLastRawOrientation;
-    private MyOrientationEventListener mOrientationListener;
+    private OrientationManagerImpl mOrientationManager;
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
     private CameraPreviewData mCameraPreviewData;
@@ -196,25 +201,6 @@ public class CameraActivity extends Activity
 
     private Intent mVideoShareIntent;
     private Intent mImageShareIntent;
-
-    private class MyOrientationEventListener
-            extends OrientationEventListener {
-        public MyOrientationEventListener(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void onOrientationChanged(int orientation) {
-            // We keep the last known orientation. So if the user first orient
-            // the camera then point the camera to floor or sky, we still have
-            // the correct orientation.
-            if (orientation == ORIENTATION_UNKNOWN) {
-                return;
-            }
-            mLastRawOrientation = orientation;
-            mCurrentModule.onOrientationChanged(orientation);
-        }
-    }
 
     private MediaSaver mMediaSaver;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -842,10 +828,96 @@ public class CameraActivity extends Activity
                 }
             };
 
+    @Override
+    public Context getAndroidContext() {
+        return this;
+    }
+
+    @Override
+    public SurfaceTexture getPreviewBuffer() {
+        // TODO: implement this
+        return null;
+    }
+
+    @Override
+    public FrameLayout getModuleLayoutRoot() {
+        return mCameraModuleRootView;
+    }
+
+    @Override
+    public void setShutterEventsListener(ShutterEventsListener listener) {
+        // TODO: implement this
+    }
+
+    @Override
+    public void setShutterEnabled(boolean enabled) {
+        // TODO: implement this
+    }
+
+    @Override
+    public boolean isShutterEnabled() {
+        // TODO: implement this
+        return false;
+    }
+
+    @Override
+    public void startPreCaptureAnimation() {
+        // TODO: implement this
+    }
+
+    @Override
+    public void cancelPreCaptureAnimation() {
+        // TODO: implement this
+    }
+
+    @Override
+    public void startPostCaptureAnimation() {
+        // TODO: implement this
+    }
+
+    @Override
+    public void startPostCaptureAnimation(Bitmap thumbnail) {
+        // TODO: implement this
+    }
+
+    @Override
+    public void cancelPostCaptureAnimation() {
+        // TODO: implement this
+    }
+
+    @Override
+    public CameraManager.CameraProxy getCameraProxy() {
+        // TODO: implement this
+        return null;
+    }
+
+    @Override
     public MediaSaver getMediaSaver() {
         return mMediaSaver;
     }
 
+    @Override
+    public OrientationManager getOrientationManager() {
+        return mOrientationManager;
+    }
+
+    @Override
+    public LocationManager getLocationManager() {
+        // TODO: implement this
+        return null;
+    }
+
+    @Override
+    public void lockOrientation() {
+        mOrientationManager.lockOrientation();
+    }
+
+    @Override
+    public void unlockOrientation() {
+        mOrientationManager.unlockOrientation();
+    }
+
+    @Override
     public void notifyNewMedia(Uri uri) {
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
@@ -1079,7 +1151,7 @@ public class CameraActivity extends Activity
         mPlaceholderManager.addTaskListener(mPlaceholderListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
-        mCameraModuleRootView = rootLayout.findViewById(R.id.camera_app_root);
+        mCameraModuleRootView = (FrameLayout) rootLayout.findViewById(R.id.camera_app_root);
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
@@ -1120,7 +1192,8 @@ public class CameraActivity extends Activity
             }
         }
 
-        mOrientationListener = new MyOrientationEventListener(this);
+        mOrientationManager = new OrientationManagerImpl(this);
+        mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
         setModuleFromIndex(moduleIndex);
         mCurrentModule.init(this, mCameraModuleRootView);
 
@@ -1207,8 +1280,8 @@ public class CameraActivity extends Activity
     public void onPause() {
         // Delete photos that are pending deletion
         performDeletion();
-        mOrientationListener.disable();
         mCurrentModule.onPauseBeforeSuper();
+        mOrientationManager.pause();
         super.onPause();
         mCurrentModule.onPauseAfterSuper();
 
@@ -1241,7 +1314,7 @@ public class CameraActivity extends Activity
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
-        mOrientationListener.enable();
+        mOrientationManager.resume();
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();
         mCurrentModule.onResumeAfterSuper();
@@ -1593,6 +1666,20 @@ public class CameraActivity extends Activity
 
     @Override
     public void onShowSwitcherPopup() {
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+        // We keep the last known orientation. So if the user first orient
+        // the camera then point the camera to floor or sky, we still have
+        // the correct orientation.
+        if (orientation == OrientationManager.ORIENTATION_UNKNOWN) {
+            return;
+        }
+        mLastRawOrientation = orientation;
+        if (mCurrentModule != null) {
+            mCurrentModule.onOrientationChanged(orientation);
+        }
     }
 
     /**

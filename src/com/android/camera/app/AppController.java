@@ -60,7 +60,7 @@ public interface AppController {
      */
     public Context getAndroidContext();
 
-    /********************** UI / Camera preview**********************/
+    /********************** UI / Camera preview **********************/
 
     /**
      * Returns the {@link android.graphics.SurfaceTexture} used by the preview
@@ -73,6 +73,16 @@ public interface AppController {
      * layout.
      */
     public FrameLayout getModuleLayoutRoot();
+
+    /**
+     * Locks the system orientation.
+     */
+    public void lockOrientation();
+
+    /**
+     * Unlocks the system orientation.
+     */
+    public void unlockOrientation();
 
     /********************** Shutter button  **********************/
 
@@ -120,14 +130,14 @@ public interface AppController {
     /**
      * Cancels the post-capture animation.
      */
-    public void cancelPostCaptureAnimatio();
+    public void cancelPostCaptureAnimation();
 
     /********************** Media saving **********************/
 
     /**
-     * Adds a new media to the filmstrip.
+     * Notifies the app of the newly captured media.
      */
-    public void addNewMediaToFilmstrip(Uri uri);
+    public void notifyNewMedia(Uri uri);
 
     /********************** App-level resources **********************/
 
@@ -146,7 +156,7 @@ public interface AppController {
     public MediaSaver getMediaSaver();
 
     /**
-     * Returns the {@link com.android.camera.app.OrientationManager}.
+     * Returns the {@link OrientationManagerImpl}.
      *
      * @return {@code null} if not available yet.
      */
