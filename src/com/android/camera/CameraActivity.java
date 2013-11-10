@@ -90,7 +90,7 @@ import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmstripView;
-import com.android.camera.ui.ModuleSwitcher;
+import com.android.camera.ui.ModeListView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -105,7 +105,7 @@ import com.android.camera2.R;
 import java.io.File;
 
 public class CameraActivity extends Activity
-        implements AppController, ModuleSwitcher.ModuleSwitchListener,
+        implements AppController, ModeListView.ModeSwitchListener,
         ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
@@ -1099,9 +1099,16 @@ public class CameraActivity extends Activity
         GcamHelper.init(getContentResolver());
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        setContentView(R.layout.camera_filmstrip);
+        setContentView(R.layout.activity_main);
         mActionBar = getActionBar();
         mActionBar.addOnMenuVisibilityListener(this);
+
+        ModeListView modeListView = (ModeListView) findViewById(R.id.mode_list_layout);
+        if (modeListView != null) {
+            modeListView.setModeSwitchListener(this);
+        } else {
+            Log.e(TAG, "Cannot find mode list in the view hierarchy");
+        }
 
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
@@ -1174,27 +1181,27 @@ public class CameraActivity extends Activity
         int moduleIndex = -1;
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            moduleIndex = ModuleSwitcher.VIDEO_MODULE_INDEX;
+            moduleIndex = ModeListView.MODE_VIDEO;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
-            moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+            moduleIndex = ModeListView.MODE_PHOTO;
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1)
-                        == ModuleSwitcher.GCAM_MODULE_INDEX && GcamHelper.hasGcamCapture()) {
-                moduleIndex = ModuleSwitcher.GCAM_MODULE_INDEX;
+                        == ModeListView.MODE_GCAM && GcamHelper.hasGcamCapture()) {
+                moduleIndex = ModeListView.MODE_GCAM;
             }
         } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+            moduleIndex = ModeListView.MODE_PHOTO;
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             moduleIndex = prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1);
-            if ((moduleIndex == ModuleSwitcher.GCAM_MODULE_INDEX &&
+            if ((moduleIndex == ModeListView.MODE_GCAM &&
                     !GcamHelper.hasGcamCapture()) || moduleIndex < 0) {
-                moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+                moduleIndex = ModeListView.MODE_PHOTO;
             }
         }
 
@@ -1480,7 +1487,7 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onModuleSelected(int moduleIndex) {
+    public void onModeSelected(int moduleIndex) {
         if (mCurrentModuleIndex == moduleIndex) {
             return;
         }
@@ -1508,33 +1515,33 @@ public class CameraActivity extends Activity
     private void setModuleFromIndex(int moduleIndex) {
         mCurrentModuleIndex = moduleIndex;
         switch (moduleIndex) {
-            case ModuleSwitcher.VIDEO_MODULE_INDEX:
+            case ModeListView.MODE_VIDEO:
                 mCurrentModule = new VideoModule();
                 break;
 
-            case ModuleSwitcher.PHOTO_MODULE_INDEX:
+            case ModeListView.MODE_PHOTO:
                 mCurrentModule = new PhotoModule();
                 break;
 
-            case ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX:
+            case ModeListView.MODE_WIDEANGLE:
                 mCurrentModule = new WideAnglePanoramaModule();
                 break;
 
-            case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX:
+            case ModeListView.MODE_PHOTOSPHERE:
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
                 break;
-            case ModuleSwitcher.GCAM_MODULE_INDEX:
+            case ModeListView.MODE_GCAM:
                 // Force immediate release of Camera instance
                 CameraHolder.instance().strongRelease();
                 mCurrentModule = GcamHelper.createGcamModule();
                 break;
-            case ModuleSwitcher.REFOCUS_MODULE_INDEX:
+            case ModeListView.MODE_CRAFT:
                 mCurrentModule = RefocusHelper.createRefocusModule();
                 break;
             default:
                 // Fall back to photo mode.
                 mCurrentModule = new PhotoModule();
-                mCurrentModuleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+                mCurrentModuleIndex = ModeListView.MODE_PHOTO;
                 break;
         }
     }
@@ -1668,11 +1675,6 @@ public class CameraActivity extends Activity
                 mUndoDeletionBar.setVisibility(View.GONE);
             }
         }
-    }
-
-    @Override
-    public void onShowSwitcherPopup() {
-        mCurrentModule.onShowSwitcherPopup();
     }
 
     @Override

@@ -1265,9 +1265,6 @@ public class VideoModule implements CameraModule,
     private boolean stopVideoRecording() {
         Log.v(TAG, "stopVideoRecording");
         mUI.setSwipingEnabled(true);
-        if (!isVideoCaptureIntent()) {
-            mUI.showSwitcher();
-        }
 
         boolean fail = false;
         if (mMediaRecorderRecording) {

@@ -57,7 +57,7 @@ public class CameraRootView extends FrameLayout {
         // insets include status bar, navigation bar, etc
         // In this case, we are only concerned with the size of nav bar
         if (mOffset > 0) {
-            return true;
+            return false;
         }
 
         if (insets.bottom > 0) {
@@ -65,7 +65,7 @@ public class CameraRootView extends FrameLayout {
         } else if (insets.right > 0) {
             mOffset = insets.right;
         }
-        return true;
+        return false;
     }
 
     public void initDisplayListener() {

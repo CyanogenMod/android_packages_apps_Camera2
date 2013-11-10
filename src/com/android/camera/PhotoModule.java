@@ -63,7 +63,7 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
-import com.android.camera.ui.ModuleSwitcher;
+import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -429,7 +429,7 @@ public class PhotoModule
                 }
 
                 case SWITCH_TO_GCAM_MODULE: {
-                    mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
+                    mActivity.onModeSelected(ModeListView.MODE_GCAM);
                     break;
                 }
 
@@ -787,7 +787,6 @@ public class PhotoModule
                 stopPreview();
             }
             if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
-                mUI.showSwitcher();
                 mUI.setSwipingEnabled(true);
             }
 
@@ -1214,7 +1213,6 @@ public class PhotoModule
         Log.v(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
         if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
-            mUI.hideSwitcher();
             mUI.setSwipingEnabled(false);
         }
         // If the user wants to do a snapshot while the previous one is still

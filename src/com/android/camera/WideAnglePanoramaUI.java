@@ -42,7 +42,6 @@ import android.widget.TextView;
 
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
-import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
@@ -62,7 +61,6 @@ public class WideAnglePanoramaUI implements
     private WideAnglePanoramaController mController;
 
     private ViewGroup mRootView;
-    private ModuleSwitcher mSwitcher;
     private FrameLayout mCaptureLayout;
     private View mReviewLayout;
     private ImageView mReview;
@@ -101,13 +99,9 @@ public class WideAnglePanoramaUI implements
         mRootView = root;
 
         createContentView();
-        mSwitcher = (ModuleSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        mSwitcher.setCurrentIndex(ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX);
-        mSwitcher.setSwitchListener(mActivity);
     }
 
     public void onStartCapture() {
-        hideSwitcher();
         mShutterButton.setImageResource(R.drawable.btn_shutter_recording);
         mCaptureIndicator.setVisibility(View.VISIBLE);
         showDirectionIndicators(PanoProgressBar.DIRECTION_NONE);
@@ -124,18 +118,11 @@ public class WideAnglePanoramaUI implements
         hideDirectionIndicators();
     }
 
-    public void hideSwitcher() {
-        mSwitcher.closePopup();
-        mSwitcher.setVisibility(View.INVISIBLE);
-    }
-
     public void hideUI() {
-        hideSwitcher();
         mCameraControls.setVisibility(View.INVISIBLE);
     }
 
     public void showUI() {
-        showSwitcher();
         mCameraControls.setVisibility(View.VISIBLE);
     }
 
@@ -149,10 +136,6 @@ public class WideAnglePanoramaUI implements
 
     public boolean arePreviewControlsVisible() {
         return (mCameraControls.getVisibility() == View.VISIBLE);
-    }
-
-    public void showSwitcher() {
-        mSwitcher.setVisibility(View.VISIBLE);
     }
 
     public void setCaptureProgressOnDirectionChangeListener(

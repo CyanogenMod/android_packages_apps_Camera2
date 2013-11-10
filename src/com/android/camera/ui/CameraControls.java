@@ -30,7 +30,6 @@ public class CameraControls extends RotatableLayout {
 
     private View mBackgroundView;
     private View mShutter;
-    private View mSwitcher;
     private View mMenu;
     private View mIndicators;
     private View mPreview;
@@ -49,7 +48,6 @@ public class CameraControls extends RotatableLayout {
     public void onFinishInflate() {
         super.onFinishInflate();
         mBackgroundView = findViewById(R.id.blocker);
-        mSwitcher = findViewById(R.id.camera_switcher);
         mShutter = findViewById(R.id.shutter_button);
         mMenu = findViewById(R.id.menu);
         mIndicators = findViewById(R.id.on_screen_indicators);
@@ -91,7 +89,6 @@ public class CameraControls extends RotatableLayout {
         }
         center(mShutter, l, t, r, b, orientation, rotation, shutter);
         center(mBackgroundView, l, t, r, b, orientation, rotation, new Rect());
-        toLeft(mSwitcher, shutter, rotation);
         toRight(mMenu, shutter, rotation);
         toRight(mIndicators, shutter, rotation);
         View retake = findViewById(R.id.btn_retake);

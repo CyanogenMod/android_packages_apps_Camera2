@@ -1486,6 +1486,10 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        // TODO: Design a better touch flow
+        if (!inCameraFullscreen()) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
         mGestureRecognizer.onTouchEvent(ev);
         return true;
     }

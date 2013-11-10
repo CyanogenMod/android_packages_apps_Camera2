@@ -50,7 +50,6 @@ import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
-import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
@@ -90,7 +89,6 @@ public class PhotoUI implements PieListener,
 
     private View mMenuButton;
     private PhotoMenu mMenu;
-    private ModuleSwitcher mSwitcher;
     private CameraControls mCameraControls;
     private AlertDialog mLocationDialog;
 
@@ -205,9 +203,6 @@ public class PhotoUI implements PieListener,
         initIndicators();
 
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
-        mSwitcher = (ModuleSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        mSwitcher.setCurrentIndex(ModuleSwitcher.PHOTO_MODULE_INDEX);
-        mSwitcher.setSwitchListener(mActivity);
         mMenuButton = mRootView.findViewById(R.id.menu);
         ViewStub faceViewStub = (ViewStub) mRootView
                 .findViewById(R.id.face_view_stub);
@@ -393,7 +388,6 @@ public class PhotoUI implements PieListener,
             }
         });
         if (mController.isImageCaptureIntent()) {
-            hideSwitcher();
             ViewGroup cameraControls = (ViewGroup) mRootView.findViewById(R.id.camera_controls);
             mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
 
@@ -427,7 +421,6 @@ public class PhotoUI implements PieListener,
 
     public void hideUI() {
         mCameraControls.setVisibility(View.INVISIBLE);
-        mSwitcher.closePopup();
     }
 
     public void showUI() {
@@ -438,14 +431,6 @@ public class PhotoUI implements PieListener,
         return (mCameraControls.getVisibility() == View.VISIBLE);
     }
 
-    public void hideSwitcher() {
-        mSwitcher.closePopup();
-        mSwitcher.setVisibility(View.INVISIBLE);
-    }
-
-    public void showSwitcher() {
-        mSwitcher.setVisibility(View.VISIBLE);
-    }
     // called from onResume but only the first time
     public  void initializeFirstTime() {
         // Initialize shutter button.
@@ -646,9 +631,6 @@ public class PhotoUI implements PieListener,
     }
 
     public boolean collapseCameraControls() {
-        // TODO: Mode switcher should behave like a popup and should hide itself when there
-        // is a touch outside of it.
-        mSwitcher.closePopup();
         // Remove all the popups/dialog boxes
         boolean ret = false;
         if (mPopup != null) {
@@ -743,8 +725,6 @@ public class PhotoUI implements PieListener,
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }
-        // Close module selection menu when pie menu is opened.
-        mSwitcher.closePopup();
     }
 
     @Override

@@ -44,7 +44,6 @@ import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
-import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateLayout;
@@ -71,7 +70,6 @@ public class VideoUI implements PieRenderer.PieListener,
     private View mReviewDoneButton;
     private View mReviewPlayButton;
     private ShutterButton mShutterButton;
-    private ModuleSwitcher mSwitcher;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
     private View mTimeLapseLabel;
@@ -179,9 +177,6 @@ public class VideoUI implements PieRenderer.PieListener,
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
-        mSwitcher = (ModuleSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        mSwitcher.setCurrentIndex(ModuleSwitcher.VIDEO_MODULE_INDEX);
-        mSwitcher.setSwitchListener(mActivity);
         initializeMiscControls();
         initializeControlByIntent();
         initializeOverlay();
@@ -211,7 +206,6 @@ public class VideoUI implements PieRenderer.PieListener,
                 mRootView.findViewById(R.id.on_screen_indicators));
         mOnScreenIndicators.resetToDefault();
         if (mController.isVideoCaptureIntent()) {
-            hideSwitcher();
             mActivity.getLayoutInflater().inflate(R.layout.review_module_control,
                     (ViewGroup) mCameraControls);
             // Cannot use RotateImageView for "done" and "cancel" button because
@@ -344,7 +338,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void hideUI() {
         mCameraControls.setVisibility(View.INVISIBLE);
-        mSwitcher.closePopup();
     }
 
     public void showUI() {
@@ -353,15 +346,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public boolean arePreviewControlsVisible() {
         return (mCameraControls.getVisibility() == View.VISIBLE);
-    }
-
-    public void hideSwitcher() {
-        mSwitcher.closePopup();
-        mSwitcher.setVisibility(View.INVISIBLE);
-    }
-
-    public void showSwitcher() {
-        mSwitcher.setVisibility(View.VISIBLE);
     }
 
     public boolean collapseCameraControls() {
@@ -553,8 +537,6 @@ public class VideoUI implements PieRenderer.PieListener,
     @Override
     public void onPieOpened(int centerX, int centerY) {
         setSwipingEnabled(false);
-        // Close module selection menu when pie menu is opened.
-        mSwitcher.closePopup();
     }
 
     @Override
@@ -583,14 +565,10 @@ public class VideoUI implements PieRenderer.PieListener,
         mOnScreenIndicators.setVisibility(recording ? View.GONE : View.VISIBLE);
         if (recording) {
             mShutterButton.setImageResource(R.drawable.btn_shutter_video_recording);
-            hideSwitcher();
             mRecordingTimeView.setText("");
             mRecordingTimeView.setVisibility(View.VISIBLE);
         } else {
             mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
-            if (!mController.isVideoCaptureIntent()) {
-                showSwitcher();
-            }
             mRecordingTimeView.setVisibility(View.GONE);
         }
     }

@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/camera_layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -25,7 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!--com.android.camera.ui.FitSystemUiFrameLayout-->
     <FrameLayout
         android:id="@+id/camera_above_filmstrip_layout"
         android:layout_width="match_parent"
@@ -68,6 +67,5 @@
                 android:layout_gravity="bottom|center_horizontal" />
         </LinearLayout>
     </FrameLayout>
-    <!--/com.android.camera.ui.FitSystemUiFrameLayout-->
 
-</FrameLayout>
+</merge>

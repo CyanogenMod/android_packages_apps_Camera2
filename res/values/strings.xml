@@ -676,4 +676,14 @@ CHAR LIMIT = NONE] -->
 
     <!--  String shown when setting the homepage wallpaper in the background [CHAR LIMIT=NONE] -->
     <string name="setting_wallpaper">Setting wallpaper</string>
+
+    <!-- Camera modes. [CHAR LIMIT = 25] -->
+    <string name="mode_settings">Settings</string>
+    <string name="mode_camera">Camera</string>
+    <string name="mode_video">Video</string>
+    <string name="mode_photosphere">Photosphere</string>
+    <string name="mode_craft">Craft</string>
+    <string name="mode_timelapse">Timelapse</string>
+    <string name="mode_wideangle">Wideangle</string>
+
  </resources>

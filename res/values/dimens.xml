@@ -153,4 +153,8 @@
     <dimen name="photoeditor_text_padding">10dp</dimen>
     <dimen name="photoeditor_original_text_size">18dp</dimen>
     <dimen name="photoeditor_original_text_margin">4dp</dimen>
+
+    <!-- Mode selector icon width -->
+    <dimen name="mode_selector_icon_block_width">84dp</dimen>
+    <dimen name="mode_selector_icon_drawable_size">32dp</dimen>
 </resources>
