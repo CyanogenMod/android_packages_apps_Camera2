@@ -1621,7 +1621,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             if (v != mCameraView) {
                 removeView(v);
             }
-            ImageData imageData = mDataAdapter.getImageData(mViewItem[i].getId());
+            FilmstripImageData imageData = mDataAdapter.getImageData(mViewItem[i].getId());
             if (imageData != null) {
                 imageData.recycle();
             }
