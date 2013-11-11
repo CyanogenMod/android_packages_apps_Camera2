@@ -286,7 +286,6 @@ public class PhotoUI implements PieListener,
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         synchronized (mSurfaceTextureLock) {
             Log.v(TAG, "SurfaceTexture ready.");
-            mPreviewCover.setVisibility(View.GONE);
             mSurfaceTexture = surface;
             mController.onPreviewUIReady();
             // Workaround for b/11168275, see b/10981460 for more details
@@ -314,7 +313,10 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Do nothing.
+        // Make sure preview cover is hidden if preview data is available.
+        if (mPreviewCover.getVisibility() != View.GONE) {
+            mPreviewCover.setVisibility(View.GONE);
+        }
     }
 
     public View getRootView() {

@@ -226,7 +226,6 @@ public class WideAnglePanoramaUI implements
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) {
         mSurfaceTexture = surfaceTexture;
-        mPreviewCover.setVisibility(View.GONE);
         mController.onPreviewUIReady();
     }
 
@@ -245,6 +244,10 @@ public class WideAnglePanoramaUI implements
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+        // Make sure preview cover is hidden if preview data is available.
+        if (mPreviewCover.getVisibility() != View.GONE) {
+            mPreviewCover.setVisibility(View.GONE);
+        }
     }
 
     private void hideDirectionIndicators() {
