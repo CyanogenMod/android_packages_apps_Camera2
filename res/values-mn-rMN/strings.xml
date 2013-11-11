@@ -93,8 +93,7 @@
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD карт бэлдэж байна…"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD картад хандаж чадсангүй."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Цагийн урсгал бичигдэж байна"</string>
-    <!-- no translation found for capturing (5255164204641920893) -->
-    <skip />
+    <string name="capturing" msgid="5255164204641920893">"Авч байна"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Камер сонгох"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Буцах"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Өмнөх"</string>
