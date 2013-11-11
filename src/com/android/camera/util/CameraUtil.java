@@ -916,6 +916,8 @@ public class CameraUtil {
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
             boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                    UsageStatistics.ACTION_PLAY_VIDEO, null);
             if (!isSecureCamera) {
                 Intent intent = IntentHelper.getVideoPlayerIntent(activity, uri)
                         .putExtra(Intent.EXTRA_TITLE, title)

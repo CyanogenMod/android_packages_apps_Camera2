@@ -744,6 +744,10 @@ public class WideAnglePanoramaModule
                     mActivity.getResources().getString(R.string.pano_file_name_format), mTimeTaken);
             String filepath = Storage.generateFilepath(filename);
 
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_PANORAMA,
+                    UsageStatistics.ACTION_CAPTURE_DONE, null, 0,
+                    UsageStatistics.hashFileName(filename + ".jpg"));
+
             Location loc = mLocationManager.getCurrentLocation();
             ExifInterface exif = new ExifInterface();
             try {
