@@ -93,6 +93,7 @@
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"Forbereder SD-kort.."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Det var ikke muligt at få adgang til SD-kortet."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Optagelse af tidsforløb"</string>
+    <string name="capturing" msgid="5255164204641920893">"Fotograferer"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Vælg kamera"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Tilbage"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Front"</string>
