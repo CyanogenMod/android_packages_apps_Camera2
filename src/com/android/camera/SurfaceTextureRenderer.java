@@ -51,8 +51,10 @@ public class SurfaceTextureRenderer {
         @Override
         public void run() {
             synchronized (mRenderLock) {
-                mFrameDrawer.onDrawFrame(mGl);
-                mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+                if (mEglDisplay != null && mEglSurface != null) {
+                    mFrameDrawer.onDrawFrame(mGl);
+                    mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+                }
                 mRenderLock.notifyAll();
             }
         }
