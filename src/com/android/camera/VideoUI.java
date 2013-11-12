@@ -553,6 +553,8 @@ public class VideoUI implements PieRenderer.PieListener,
     @Override
     public void onPieOpened(int centerX, int centerY) {
         setSwipingEnabled(false);
+        // Close module selection menu when pie menu is opened.
+        mSwitcher.closePopup();
     }
 
     @Override

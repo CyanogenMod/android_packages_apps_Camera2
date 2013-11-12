@@ -743,6 +743,8 @@ public class PhotoUI implements PieListener,
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }
+        // Close module selection menu when pie menu is opened.
+        mSwitcher.closePopup();
     }
 
     @Override

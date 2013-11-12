@@ -1672,6 +1672,7 @@ public class CameraActivity extends Activity
 
     @Override
     public void onShowSwitcherPopup() {
+        mCurrentModule.onShowSwitcherPopup();
     }
 
     @Override
