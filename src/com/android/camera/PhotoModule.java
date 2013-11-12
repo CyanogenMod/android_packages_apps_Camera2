@@ -40,7 +40,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
@@ -104,10 +103,6 @@ public class PhotoModule
     private static final int OPEN_CAMERA_FAIL = 9;
     private static final int CAMERA_DISABLED = 10;
     private static final int SWITCH_TO_GCAM_MODULE = 11;
-    private static final int CAMERA_PREVIEW_DONE = 12;
-
-    private static final int OPEN_CAMERA_ASYNC = 1;
-    private static final int START_PREVIEW_ASYNC = 2;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -244,13 +239,6 @@ public class PhotoModule
 
     private final Handler mHandler = new MainHandler();
 
-    /** A thread separate from the UI thread for camera startup. */
-    private volatile HandlerThread mOpenCameraThread;
-    /** A handler to run on the camera startup thread. */
-    private volatile Handler mOpenCameraHandler;
-    /** This lock should always protect openCamera and closeCamera. */
-    private final Object mCameraOpenLock = new Object();
-
     private PreferenceGroup mPreferenceGroup;
 
     private boolean mQuickCapture;
@@ -290,74 +278,6 @@ public class PhotoModule
                 }
             }, 100);
         }
-    }
-
-    /**
-     * This Handler is used to open the camera.
-     */
-    private class OpenCameraHandler extends Handler {
-        public OpenCameraHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case OPEN_CAMERA_ASYNC: {
-                    // Prevent closeCamera from thinking the camera
-                    // is already closed when it is still opening.
-                    //
-                    // This happens during the lockscreen sequence:
-                    // onResume -> onPause -> onResume.
-                    synchronized (mCameraOpenLock) {
-                        Log.v(TAG, "openCamera");
-                        if (mCameraDevice != null) {
-                            throw new IllegalArgumentException("Camera already open.");
-                        }
-
-                        mCameraDevice = CameraUtil.openCamera(
-                            mActivity, mCameraId, mHandler,
-                            mActivity.getCameraOpenErrorCallback());
-
-                        if (mCameraDevice == null) {
-                            Log.e(TAG, "Failed to open camera:" + mCameraId);
-                            break;
-                        }
-                        mParameters = mCameraDevice.getParameters();
-
-                        initializeCapabilities();
-                        if (mFocusManager == null) {
-                            initializeFocusManager();
-                        }
-
-                        // The views can't be updated from a non UI thread.
-                        mHandler.sendEmptyMessage(CAMERA_OPEN_DONE);
-
-                        setCameraParameters(UPDATE_PARAM_ALL);
-                        mCameraPreviewParamsReady = true;
-
-                        // This will exit early if the surface texture
-                        // isn't ready. We also need to protect the surface
-                        // texture from concurrent updates/checks.
-                        startPreview();
-                    }
-                    break;
-                }
-
-                case START_PREVIEW_ASYNC: {
-                    if (mCameraDevice == null) {
-                        throw new IllegalStateException("Camera not yet opened.");
-                    }
-
-                    startPreview();
-                    break;
-                }
-
-                default: {
-                    throw new UnsupportedOperationException("Unknown message " + msg.what);
-                }
-            }
-        };
     }
 
     /**
@@ -430,12 +350,6 @@ public class PhotoModule
 
                 case SWITCH_TO_GCAM_MODULE: {
                     mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
-                    break;
-                }
-
-                case CAMERA_PREVIEW_DONE: {
-                    // Modifies views, so must be executed on the UI thread.
-                    onPreviewStarted();
                 }
             }
         }
@@ -504,11 +418,7 @@ public class PhotoModule
 
     @Override
     public void onPreviewUIReady() {
-        // Requires that OPEN_CAMERA_ASYNC has been already sent.
-        Handler openCameraHandler = mOpenCameraHandler;
-        if (openCameraHandler != null) {
-            openCameraHandler.sendEmptyMessage(START_PREVIEW_ASYNC);
-        }
+        startPreview();
     }
 
     @Override
@@ -548,11 +458,7 @@ public class PhotoModule
         setCameraId(mCameraId);
 
         // from onPause
-        mOpenCameraHandler.removeMessages(OPEN_CAMERA_ASYNC);
-        mOpenCameraHandler.removeMessages(START_PREVIEW_ASYNC);
-        synchronized (mCameraOpenLock) {
-            closeCamera();
-        }
+        closeCamera();
         mUI.collapseCameraControls();
         mUI.clearFaces();
         if (mFocusManager != null) mFocusManager.removeMessages();
@@ -560,12 +466,10 @@ public class PhotoModule
         // Restart the camera and initialize the UI. From onCreate.
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
-        synchronized (mCameraOpenLock) {
-            Log.v(TAG, "openCamera");
-            mCameraDevice = CameraUtil.openCamera(
+        mCameraDevice = CameraUtil.openCamera(
                 mActivity, mCameraId, mHandler,
                 mActivity.getCameraOpenErrorCallback());
-        }
+
         if (mCameraDevice == null) {
             Log.e(TAG, "Failed to open camera:" + mCameraId + ", aborting.");
             return;
@@ -1264,25 +1168,41 @@ public class PhotoModule
         mPaused = false;
     }
 
+    private boolean prepareCamera() {
+        // We need to check whether the activity is paused before long
+        // operations to ensure that onPause() can be done ASAP.
+        mCameraDevice = CameraUtil.openCamera(
+                mActivity, mCameraId, mHandler,
+                mActivity.getCameraOpenErrorCallback());
+        if (mCameraDevice == null) {
+            Log.e(TAG, "Failed to open camera:" + mCameraId);
+            return false;
+        }
+        mParameters = mCameraDevice.getParameters();
+
+        initializeCapabilities();
+        if (mFocusManager == null) initializeFocusManager();
+        setCameraParameters(UPDATE_PARAM_ALL);
+        mHandler.sendEmptyMessage(CAMERA_OPEN_DONE);
+        mCameraPreviewParamsReady = true;
+        startPreview();
+        mOnResumeTime = SystemClock.uptimeMillis();
+        checkDisplayRotation();
+        return true;
+    }
+
     @Override
     public void onResumeAfterSuper() {
         Log.v(TAG, "On resume.");
         if (mOpenCameraFail || mCameraDisabled) return;
 
-        if (mOpenCameraThread == null) {
-            Log.e("DEBUG", "new OpenCameraThread");
-            mOpenCameraThread = new HandlerThread("OpenCameraThread");
-            mOpenCameraThread.start();
-            mOpenCameraHandler = new OpenCameraHandler(mOpenCameraThread.getLooper());
-        }
-
         mJpegPictureCallbackTime = 0;
         mZoomValue = 0;
         resetExposureCompensation();
-
-        mOpenCameraHandler.sendEmptyMessage(OPEN_CAMERA_ASYNC);
-        mOnResumeTime = SystemClock.uptimeMillis();
-        checkDisplayRotation();
+        if (!prepareCamera()) {
+            // Camera failure.
+            return;
+        }
 
         // If first time initialization is not finished, put it in the
         // message queue.
@@ -1359,20 +1279,7 @@ public class PhotoModule
         // Postpones actually releasing for KEEP_CAMERA_TIMEOUT,
         // so if onResume is directly called after this, the camera
         // simply needs to reconnect (takes about 2-5ms).
-        if (mOpenCameraHandler != null) {
-            mOpenCameraHandler.removeMessages(OPEN_CAMERA_ASYNC);
-            mOpenCameraHandler.removeMessages(START_PREVIEW_ASYNC);
-            mOpenCameraHandler = null;
-        }
-        synchronized (mCameraOpenLock) {
-            closeCamera();
-        }
-        // Stop the long running open camera thread.
-        if (mOpenCameraThread != null) {
-            mOpenCameraThread.quitSafely();
-            mOpenCameraThread = null;
-        }
-        Log.e(TAG, "Done quiting safely.");
+        closeCamera();
 
         resetScreenOn();
         mUI.onPause();
@@ -1534,7 +1441,6 @@ public class PhotoModule
     }
 
     private void closeCamera() {
-        Log.v(TAG, "closeCamera");
         if (mCameraDevice != null) {
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
@@ -1580,55 +1486,47 @@ public class PhotoModule
             return;
         }
 
-        Object textureLock = mUI.getSurfaceTextureLock();
-
          // Any decisions we make based on the surface texture state
          // need to be protected.
-        synchronized (textureLock) {
-            SurfaceTexture st = mUI.getSurfaceTexture();
-            if (st == null) {
-                Log.w(TAG, "startPreview: surfaceTexture is not ready.");
-                return;
+        SurfaceTexture st = mUI.getSurfaceTexture();
+        if (st == null) {
+            Log.w(TAG, "startPreview: surfaceTexture is not ready.");
+            return;
+        }
+
+        if (!mCameraPreviewParamsReady) {
+            Log.w(TAG, "startPreview: parameters for preview is not ready.");
+            return;
+        }
+        mCameraDevice.setErrorCallback(mErrorCallback);
+        // ICS camera frameworks has a bug. Face detection state is not cleared 1589
+        // after taking a picture. Stop the preview to work around it. The bug
+        // was fixed in JB.
+        if (mCameraState != PREVIEW_STOPPED) {
+            stopPreview();
+        }
+
+        setDisplayOrientation();
+
+        if (!mSnapshotOnIdle) {
+            // If the focus mode is continuous autofocus, call cancelAutoFocus to
+            // resume it because it may have been paused by autoFocus call.
+            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusManager.getFocusMode())) {
+                mCameraDevice.cancelAutoFocus();
             }
+            mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
+        }
+        setCameraParameters(UPDATE_PARAM_ALL);
+        // Let UI set its expected aspect ratio
+        mCameraDevice.setPreviewTexture(st);
 
-            if (!mCameraPreviewParamsReady) {
-                Log.w(TAG, "startPreview: parameters for preview is not ready.");
-                return;
-            }
-            mCameraDevice.setErrorCallback(mErrorCallback);
-            // ICS camera frameworks has a bug. Face detection state is not cleared 1589
-            // after taking a picture. Stop the preview to work around it. The bug
-            // was fixed in JB.
-            if (mCameraState != PREVIEW_STOPPED) {
-                stopPreview();
-            }
+        Log.v(TAG, "startPreview");
+        mCameraDevice.startPreview();
+        mFocusManager.onPreviewStarted();
+        onPreviewStarted();
 
-            setDisplayOrientation();
-
-            if (!mSnapshotOnIdle) {
-                // If the focus mode is continuous autofocus, call cancelAutoFocus to
-                // resume it because it may have been paused by autoFocus call.
-                if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusManager.getFocusMode())) {
-                    mCameraDevice.cancelAutoFocus();
-                }
-                mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
-            }
-            setCameraParameters(UPDATE_PARAM_ALL);
-            // Let UI set its expected aspect ratio
-            mCameraDevice.setPreviewTexture(st);
-
-            Log.v(TAG, "startPreview");
-            mCameraDevice.startPreview();
-
-            // Since the preview actually started, remove any messages to
-            // start it again.
-            mOpenCameraHandler.removeMessages(START_PREVIEW_ASYNC);
-            mFocusManager.onPreviewStarted();
-
-            if (mSnapshotOnIdle) {
-                mHandler.post(mDoSnapRunnable);
-            }
-            mHandler.sendEmptyMessage(CAMERA_PREVIEW_DONE);
+        if (mSnapshotOnIdle) {
+            mHandler.post(mDoSnapRunnable);
         }
     }
 
