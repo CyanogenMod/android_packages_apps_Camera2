@@ -21,14 +21,16 @@ package com.android.camera.filmstrip;
  */
 public interface FilmstripListener {
     /**
-     * Callback when the data is promoted.
+     * Callback when the data is promoted. A data is promoted if the user swipe
+     * up a data vertically.
      *
      * @param dataID The ID of the promoted data.
      */
     public void onDataPromoted(int dataID);
 
     /**
-     * Callback when the data is demoted.
+     * Callback when the data is demoted. A data is promoted if the user swipe
+     * down a data vertically.
      *
      * @param dataID The ID of the demoted data.
      */
@@ -45,9 +47,9 @@ public interface FilmstripListener {
     public void onDataFullScreenChange(int dataID, boolean fullScreen);
 
     /**
-     * Called when the data is reloaded.
+     * Called when all the data has been reloaded.
      */
-    public void onReload();
+    public void onDataReloaded();
 
     /**
      * Called when the data is centered in the film strip.

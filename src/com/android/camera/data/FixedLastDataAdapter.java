@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
@@ -110,13 +109,13 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public View getView(Activity activity, int dataID) {
+    public View getView(Context context, int dataID) {
         int totalNumber = mAdapter.getTotalNumber();
 
         if (dataID < totalNumber) {
-            return mAdapter.getView(activity, dataID);
+            return mAdapter.getView(context, dataID);
         } else if (dataID == totalNumber) {
-            return mLastData.getView(activity,
+            return mLastData.getView(context,
                     mSuggestedWidth, mSuggestedHeight, null, null);
         }
 

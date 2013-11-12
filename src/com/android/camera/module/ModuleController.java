@@ -29,7 +29,10 @@ public interface ModuleController {
 
     /**
      * Initializes the module.
+     *
      * @param app The app which initializes this module.
+     * @param isSecureCamera Whether the app is in secure camera mode.
+     * @param isCaptureIntent Whether the app is in capture intent mode.
      */
     public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent);
 

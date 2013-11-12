@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -120,7 +119,7 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public View getView(Activity activity, int width, int height, Drawable placeHolder,
+    public View getView(Context ctx, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter) {
         return mView;
     }

@@ -32,7 +32,7 @@ public interface FilmstripImageData {
      */
     public static interface PanoramaSupportCallback {
         /**
-         * Called then photo sphere info has been loaded.
+         * Called when photo sphere info has been loaded.
          *
          * @param isPanorama whether the image is a valid photo sphere
          * @param isPanorama360 whether the photo sphere is a full 360
@@ -68,9 +68,9 @@ public interface FilmstripImageData {
     public static final int SIZE_FULL = -2;
 
     /**
-     * Returns the width of the image before orientation applied.
+     * Returns the width in pixel of the image before orientation applied.
      * The final layout of the view returned by
-     * {@link FilmstripDataAdapter#getView(android.app.Activity, int)} will
+     * {@link FilmstripDataAdapter#getView(Context, int)} will
      * preserve the aspect ratio of
      * {@link FilmstripImageData#getWidth()} and
      * {@link FilmstripImageData#getHeight()}.
@@ -78,9 +78,9 @@ public interface FilmstripImageData {
     public int getWidth();
 
     /**
-     * Returns the height of the image before orientation applied.
+     * Returns the height in pixel of the image before orientation applied.
      * The final layout of the view returned by
-     * {@link FilmstripDataAdapter#getView(android.app.Activity, int)} will
+     * {@link FilmstripDataAdapter#getView(Context, int)} will
      * preserve the aspect ratio of
      * {@link FilmstripImageData#getWidth()} and
      * {@link FilmstripImageData#getHeight()}.
@@ -88,11 +88,15 @@ public interface FilmstripImageData {
     public int getHeight();
 
     /**
-     * Returns the orientation of the image.
+     * Returns the orientation of the image in degrees. The valid values are
+     * 0, 90, 180, and 270.
      */
     public int getOrientation();
 
-    /** Returns the image data type */
+    /** Returns the image data type. The current valid values are
+     * {@code VIEW_TYPE_NONE}, {@code VIEW_TYPE_STICKY}, and
+     * {@code VIEW_TYPE_REMOVABLE}.
+     */
     public int getViewType();
 
     /**
@@ -107,8 +111,8 @@ public interface FilmstripImageData {
      * Checks if the UI action is supported.
      *
      * @param action The UI actions to check.
-     * @return {@code false} if at least one of the actions is not
-     *         supported. {@code true} otherwise.
+     * @return Whether at all of the actions set in {@code action} are
+     * supported.
      */
     public boolean isUIActionSupported(int action);
 
@@ -128,7 +132,7 @@ public interface FilmstripImageData {
     public void recycle();
 
     /**
-     * Asynchronously checks if the image is a photo sphere. Notified the
+     * Asynchronously checks if the image is a photo sphere. Notifies the
      * callback when the results are available.
      */
     public void isPhotoSphere(Context context, PanoramaSupportCallback callback);

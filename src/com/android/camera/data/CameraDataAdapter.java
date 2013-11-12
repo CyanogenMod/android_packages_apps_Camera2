@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -94,13 +93,13 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public View getView(Activity activity, int dataID) {
+    public View getView(Context context, int dataID) {
         if (dataID >= mImages.size() || dataID < 0) {
             return null;
         }
 
         return mImages.get(dataID).getView(
-                activity, mSuggestedWidth, mSuggestedHeight,
+                context, mSuggestedWidth, mSuggestedHeight,
                 mPlaceHolder.getConstantState().newDrawable(), this);
     }
 

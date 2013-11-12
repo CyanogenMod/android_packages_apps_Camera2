@@ -36,35 +36,95 @@ public interface FilmstripController {
      */
     public int getCurrentId();
 
+    /**
+     * Sets the {@link com.android.camera.filmstrip.FilmstripDataAdapter}.
+     */
     public void setDataAdapter(FilmstripDataAdapter adapter);
 
+    /**
+     * Returns whether the filmstrip is in filmstrip view.
+     */
     public boolean inFilmstrip();
 
+    /**
+     * Returns whether the filmstrip is in full-screen view.
+     */
     public boolean inFullScreen();
 
+    /**
+     * Returns whether the current view in filmstrip is camera preview.
+     */
     public boolean isCameraPreview();
 
+    /**
+     * Returns whether the filmstrip is in full-screen camrea preview.
+     */
     public boolean inCameraFullscreen();
 
+    /**
+     * Returns whether the filmstrip is in scaling animation.
+     * @return
+     */
     public boolean isScaling();
 
+    /**
+     * Scrolls the filmstrip horizontally.
+     *
+     * @param deltaX The distance in pixel The filmstrip will be scrolled by.
+     */
     public void scroll(float deltaX);
 
+    /**
+     * Flings the filmstrip horizontally.
+     *
+     * @param velocity
+     */
     public void fling(float velocity);
 
-    public void flingInsideZoomView(float velocityX, float velocityY);
-
+    /**
+     * Scrolls the filmstrip horizontally to a specific position.
+     *
+     * @param position The final position.
+     * @param duration The duration of this scrolling.
+     * @param interruptible Whether this scrolling can be interrupted.
+     */
     public void scrollToPosition(int position, int duration, boolean interruptible);
 
+    /**
+     * Scrolls the filmstrip horizontally to the center of the next item.
+     *
+     * @return Whether the next item exists.
+     */
     public boolean goToNextItem();
 
+    /**
+     * Stops the scrolling.
+     *
+     * @param forced Forces to stop even if the scrolling can not be
+     *               interrupted.
+     * @return Whether the scrolling is stopped.
+     */
     public boolean stopScrolling(boolean forced);
 
+    /**
+     * Returns whether the filmstrip is scrolling.
+     * @return
+     */
     public boolean isScrolling();
 
+    /**
+     * Puts the first item in the center in full-screen.
+     */
     public void goToFirstItem();
 
+    /**
+     * Scales down to filmstrip mode. If the current item is camera preview,
+     * scrolls to the next item.
+     */
     public void goToFilmStrip();
 
+    /**
+     * Scales up to full-screen mode.
+     */
     public void goToFullScreen();
 }
