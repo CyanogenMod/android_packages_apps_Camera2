@@ -44,12 +44,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.app.CameraManager.CameraProxy;
+import com.android.camera.app.AppController;
 import com.android.camera.app.MediaSaver;
-import com.android.camera.app.OrientationManager;
-import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.module.ModuleController;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -64,7 +64,7 @@ import java.util.TimeZone;
  * Activity to handle panorama capturing.
  */
 public class WideAnglePanoramaModule
-        implements CameraModule, WideAnglePanoramaController,
+        implements CameraModule, ModuleController, WideAnglePanoramaController,
         SurfaceTexture.OnFrameAvailableListener {
 
     public static final int DEFAULT_SWEEP_ANGLE = 160;
@@ -844,12 +844,47 @@ public class WideAnglePanoramaModule
     }
 
     @Override
+    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
+        // TODO: implement this.
+        init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
+    }
+
+    @Override
+    public void resume() {
+        // TODO: implement this.
+        onResumeBeforeSuper();
+        onResumeAfterSuper();
+    }
+
+    @Override
+    public void pause() {
+        // TODO: implement this.
+        onPauseBeforeSuper();
+        onPauseAfterSuper();
+    }
+
+    @Override
+    public void destroy() {
+        // TODO: implement this.
+    }
+
+    @Override
+    public void onPreviewSizeChanged(int width, int height) {
+        // TODO: implement this.
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         mUI.onConfigurationChanged(newConfig, mThreadRunning);
     }
 
     @Override
     public void onOrientationChanged(int orientation) {
+    }
+
+    @Override
+    public void onCameraAvailable(CameraProxy cameraProxy) {
+        // TODO: implement this.
     }
 
     @Override

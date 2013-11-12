@@ -18,7 +18,9 @@ package com.android.camera.module;
 
 import android.content.res.Configuration;
 
+import com.android.camera.app.CameraManager;
 import com.android.camera.app.AppController;
+import com.android.camera.app.MediaSaver;
 
 /**
  * The controller at app level.
@@ -52,7 +54,7 @@ public interface ModuleController {
      * Destroys the module. Always call this method to release the resources used
      * by this module.
      */
-    public void destory();
+    public void destroy();
 
     /********************** UI / Camera preview **********************/
 
@@ -83,12 +85,16 @@ public interface ModuleController {
     /**
      * Called by the app when the camera is available. The module should use
      * {@link com.android.camera.app.AppController#}
+     *
+     * @param cameraProxy The camera device proxy.
      */
-    public void onCameraAvailable();
+    public void onCameraAvailable(CameraManager.CameraProxy cameraProxy);
 
     /**
      * Called by the app when the {@link com.android.camera.app.MediaSaver} is
      * available.
+     *
+     * @param mediaSaver The {@link com.android.camera.app.MediaSaver} to use.
      */
-    public void onMediaSaverAvailable();
+    public void onMediaSaverAvailable(MediaSaver mediaSaver);
 }

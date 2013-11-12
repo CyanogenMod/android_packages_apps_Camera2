@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.android.camera.app.MediaSaver;
 
+@Deprecated
 public interface CameraModule {
 
     public void init(CameraActivity activity, View frame);

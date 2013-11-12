@@ -30,7 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.camera.CameraHolder;
-import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.util.CameraUtil;
 import com.android.gallery3d.R;
 

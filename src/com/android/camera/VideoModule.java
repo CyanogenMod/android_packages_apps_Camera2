@@ -53,12 +53,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.android.camera.CameraManager.CameraPictureCallback;
-import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.app.CameraManager.CameraPictureCallback;
+import com.android.camera.app.CameraManager.CameraProxy;
+import com.android.camera.app.AppController;
 import com.android.camera.app.MediaSaver;
-import com.android.camera.app.OrientationManager;
-import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.module.ModuleController;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.util.ApiHelper;
@@ -73,12 +73,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class VideoModule implements CameraModule,
-    VideoController,
-    CameraPreference.OnPreferenceChangedListener,
-    ShutterButton.OnShutterButtonListener,
-    MediaRecorder.OnErrorListener,
-    MediaRecorder.OnInfoListener {
+public class VideoModule implements CameraModule, ModuleController, VideoController,
+        CameraPreference.OnPreferenceChangedListener, ShutterButton.OnShutterButtonListener,
+        MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener {
 
     private static final String TAG = "CAM_VideoModule";
 
@@ -195,14 +192,6 @@ public class VideoModule implements CameraModule,
                     }
                 }
             };
-
-
-    protected class CameraOpenThread extends Thread {
-        @Override
-        public void run() {
-            openCamera();
-        }
-    }
 
     private void openCamera() {
         if (mCameraDevice == null) {
@@ -336,8 +325,7 @@ public class VideoModule implements CameraModule,
          * To reduce startup time, we start the preview in another thread.
          * We make sure the preview is started at the end of onCreate.
          */
-        CameraOpenThread cameraOpenThread = new CameraOpenThread();
-        cameraOpenThread.start();
+        requestCamera(mCameraId);
 
         mContentResolver = mActivity.getContentResolver();
 
@@ -346,17 +334,6 @@ public class VideoModule implements CameraModule,
         mIsVideoCaptureIntent = isVideoCaptureIntent();
         initializeSurfaceView();
 
-        // Make sure camera device is opened.
-        try {
-            cameraOpenThread.join();
-            if (mCameraDevice == null) {
-                return;
-            }
-        } catch (InterruptedException ex) {
-            // ignore
-        }
-
-        readVideoPreferences();
         mUI.setPrefChangedListener(this);
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
@@ -366,10 +343,6 @@ public class VideoModule implements CameraModule,
         setDisplayOrientation();
 
         mUI.showTimeLapseUI(mCaptureTimeLapse);
-        initializeVideoSnapshot();
-        resizeForPreviewAspectRatio();
-
-        initializeVideoControl();
         mPendingSwitchCameraId = -1;
     }
 
@@ -392,7 +365,7 @@ public class VideoModule implements CameraModule,
             }
 
             // Set rotation and gps data.
-            int rotation = CameraUtil.getJpegRotation(mCameraId, mOrientation);
+            int rotation = CameraUtil.getJpegRotation(mActivity, mCameraId, mOrientation);
             mParameters.setRotation(rotation);
             Location loc = mLocationManager.getCurrentLocation();
             CameraUtil.setGpsParameters(mParameters, loc);
@@ -413,7 +386,7 @@ public class VideoModule implements CameraModule,
 
     private void loadCameraPreferences() {
         CameraSettings settings = new CameraSettings(mActivity, mParameters,
-                mCameraId, CameraHolder.instance().getCameraInfo());
+                mCameraId, mActivity.getCameraProvider().getCameraInfo());
         // Remove the video quality preference setting when the quality is given in the intent.
         mPreferenceGroup = filterPreferenceScreenByIntent(
                 settings.getPreferenceGroup(R.xml.video_preferences));
@@ -441,6 +414,17 @@ public class VideoModule implements CameraModule,
             mHandler.removeMessages(SHOW_TAP_TO_SNAPSHOT_TOAST);
             showTapToSnapshotToast();
         }
+    }
+
+    @Override
+    public void onCameraAvailable(CameraProxy cameraProxy) {
+        mCameraDevice = cameraProxy;
+        readVideoPreferences();
+        resizeForPreviewAspectRatio();
+        startPreview();
+        initializeVideoSnapshot();
+        initializeVideoControl();
+        mUI.initializeZoom(mParameters);
     }
 
     private void startPlayVideoActivity() {
@@ -654,21 +638,13 @@ public class VideoModule implements CameraModule,
         showVideoSnapshotUI(false);
 
         if (!mPreviewing) {
-            openCamera();
-            if (mCameraDevice == null) {
-                return;
-            }
-            readVideoPreferences();
-            resizeForPreviewAspectRatio();
-            startPreview();
+            requestCamera(mCameraId);
         } else {
             // preview already started
             mUI.enableShutter(true);
         }
 
         mUI.initDisplayChangeListener();
-        // Initializing it here after the preview is started.
-        mUI.initializeZoom(mParameters);
 
         keepScreenOnAwhile();
 
@@ -765,7 +741,7 @@ public class VideoModule implements CameraModule,
         }
         mCameraDevice.setZoomChangeListener(null);
         mCameraDevice.setErrorCallback(null);
-        CameraHolder.instance().release();
+        mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
         mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
@@ -786,6 +762,7 @@ public class VideoModule implements CameraModule,
             // Camera will be released in onStopVideoRecording.
             onStopVideoRecording();
         } else {
+            stopPreview();
             closeCamera();
             releaseMediaRecorder();
         }
@@ -1011,7 +988,7 @@ public class VideoModule implements CameraModule,
         // which is the orientation the graphics need to rotate in order to render correctly.
         int rotation = 0;
         if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+            CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
             if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
                 rotation = (info.orientation - mOrientation + 360) % 360;
             } else {  // back-facing camera
@@ -1111,8 +1088,7 @@ public class VideoModule implements CameraModule,
             PreferenceGroup screen) {
         Intent intent = mActivity.getIntent();
         if (intent.hasExtra(MediaStore.EXTRA_VIDEO_QUALITY)) {
-            CameraSettings.removePreferenceFromScreen(screen,
-                    CameraSettings.KEY_VIDEO_QUALITY);
+            CameraSettings.removePreferenceFromScreen(screen, CameraSettings.KEY_VIDEO_QUALITY);
         }
 
         if (intent.hasExtra(MediaStore.EXTRA_DURATION_LIMIT)) {
@@ -1244,7 +1220,7 @@ public class VideoModule implements CameraModule,
         if (bitmap != null) {
             // MetadataRetriever already rotates the thumbnail. We should rotate
             // it to match the UI orientation (and mirror if it is front-facing camera).
-            CameraInfo[] info = CameraHolder.instance().getCameraInfo();
+            CameraInfo[] info = mActivity.getCameraProvider().getCameraInfo();
             boolean mirror = (info[mCameraId].facing == CameraInfo.CAMERA_FACING_FRONT);
             bitmap = CameraUtil.rotateAndMirror(bitmap, 0, mirror);
         }
@@ -1535,6 +1511,33 @@ public class VideoModule implements CameraModule,
     }
 
     @Override
+    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
+        init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
+    }
+
+    @Override
+    public void resume() {
+        onResumeBeforeSuper();
+        onResumeAfterSuper();
+    }
+
+    @Override
+    public void pause() {
+        onPauseBeforeSuper();
+        onPauseAfterSuper();
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+    @Override
+    public void onPreviewSizeChanged(int width, int height) {
+        // TODO: implement this
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Log.v(TAG, "onConfigurationChanged");
         setDisplayOrientation();
@@ -1597,20 +1600,14 @@ public class VideoModule implements CameraModule,
         setCameraId(mCameraId);
 
         closeCamera();
+        requestCamera(mCameraId);
         mUI.collapseCameraControls();
         // Restart the camera and initialize the UI. From onCreate.
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
-        openCamera();
-        readVideoPreferences();
-        startPreview();
-        initializeVideoSnapshot();
-        resizeForPreviewAspectRatio();
-        initializeVideoControl();
 
         // From onResume
         mZoomValue = 0;
-        mUI.initializeZoom(mParameters);
         mUI.setOrientationIndicator(0, false);
 
         // Start switch camera animation. Post a message because
@@ -1776,9 +1773,7 @@ public class VideoModule implements CameraModule,
 
         mPendingSwitchCameraId = cameraId;
         Log.d(TAG, "Start to copy texture.");
-        // We need to keep a preview frame for the animation before
-        // releasing the camera. This will trigger onPreviewTextureCopied.
-        // TODO: ((CameraScreenNail) mActivity.mCameraScreenNail).copyTexture();
+
         // Disable all camera controls.
         mSwitchingCamera = true;
         switchCamera();
@@ -1803,5 +1798,9 @@ public class VideoModule implements CameraModule,
     @Override
     public void onPreviewUIDestroyed() {
         stopPreview();
+    }
+
+    private void requestCamera(int id) {
+        mActivity.getCameraProvider().requestCamera(id);
     }
 }
