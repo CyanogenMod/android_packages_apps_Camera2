@@ -1937,7 +1937,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (v != mCameraView) {
                 removeView(v);
             }
-            mDataAdapter.getImageData(mViewItem[i].getId()).recycle();
+            ImageData imageData = mDataAdapter.getImageData(mViewItem[i].getId());
+            if (imageData != null) {
+                imageData.recycle();
+            }
         }
 
         // Clear out the mViewItems and rebuild with camera in the center.
