@@ -1096,8 +1096,14 @@ public class CameraActivity extends Activity
             moduleIndex = ModuleSwitcher.VIDEO_MODULE_INDEX;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
-                        .getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
+                        .getAction())) {
+            moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1)
+                        == ModuleSwitcher.GCAM_MODULE_INDEX && GcamHelper.hasGcamCapture()) {
+                moduleIndex = ModuleSwitcher.GCAM_MODULE_INDEX;
+            }
+        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
             moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
         } else {
