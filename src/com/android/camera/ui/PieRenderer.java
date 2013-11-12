@@ -16,9 +16,6 @@
 
 package com.android.camera.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
@@ -40,7 +37,11 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 import com.android.camera.drawable.TextDrawable;
+import com.android.camera.ui.ProgressRenderer.VisibilityListener;
 import com.android.camera2.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An overlay renderer that is used to display focus state and progress state.
@@ -709,6 +710,11 @@ public class PieRenderer extends OverlayRenderer
         return false;
     }
 
+    @Override
+    public boolean isVisible() {
+        return super.isVisible() || mProgressRenderer.isVisible();
+    }
+
     private boolean pulledToCenter(PointF polarCoords) {
         return polarCoords.y < mArcRadius - mRadiusInc;
     }
@@ -1014,11 +1020,27 @@ public class PieRenderer extends OverlayRenderer
         mState = STATE_IDLE;
     }
 
+    public void clear(boolean waitUntilProgressIsHidden) {
+        if (mState == STATE_PIE)
+            return;
+        cancelFocus();
+
+        if (waitUntilProgressIsHidden) {
+            mOverlay.post(mDisappear);
+            mProgressRenderer.setVisibilityListener(null);
+        } else {
+            mProgressRenderer.setVisibilityListener(new VisibilityListener() {
+                @Override
+                public void onHidden() {
+                    mOverlay.post(mDisappear);
+                }
+            });
+        }
+    }
+
     @Override
     public void clear() {
-        if (mState == STATE_PIE) return;
-        cancelFocus();
-        mOverlay.post(mDisappear);
+        clear(false);
     }
 
     private void startAnimation(long duration, boolean timeout,
