@@ -718,7 +718,6 @@ public class VideoUI implements PieRenderer.PieListener,
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         mSurfaceTexture = surface;
-        mPreviewCover.setVisibility(View.GONE);
         mController.onPreviewUIReady();
     }
 
@@ -736,6 +735,10 @@ public class VideoUI implements PieRenderer.PieListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        // Make sure preview cover is hidden if preview data is available.
+        if (mPreviewCover.getVisibility() != View.GONE) {
+            mPreviewCover.setVisibility(View.GONE);
+        }
     }
 
     // SurfaceHolder callbacks
