@@ -68,7 +68,7 @@ public interface FilmstripImageData {
     public static final int SIZE_FULL = -2;
 
     /**
-     * Returns the width in pixel of the image before orientation applied.
+     * Returns the width in pixels of the image before orientation applied.
      * The final layout of the view returned by
      * {@link FilmstripDataAdapter#getView(Context, int)} will
      * preserve the aspect ratio of
@@ -78,7 +78,7 @@ public interface FilmstripImageData {
     public int getWidth();
 
     /**
-     * Returns the height in pixel of the image before orientation applied.
+     * Returns the height in pixels of the image before orientation applied.
      * The final layout of the view returned by
      * {@link FilmstripDataAdapter#getView(Context, int)} will
      * preserve the aspect ratio of
@@ -94,8 +94,7 @@ public interface FilmstripImageData {
     public int getOrientation();
 
     /** Returns the image data type. The current valid values are
-     * {@code VIEW_TYPE_NONE}, {@code VIEW_TYPE_STICKY}, and
-     * {@code VIEW_TYPE_REMOVABLE}.
+     * {@code VIEW_TYPE_*}.
      */
     public int getViewType();
 
