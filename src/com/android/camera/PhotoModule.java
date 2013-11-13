@@ -918,7 +918,8 @@ public class PhotoModule
         setCameraState(SNAPSHOT_IN_PROGRESS);
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_CAPTURE_DONE, "Photo", 0,
-                UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"));
+                UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"),
+                mParameters.flatten());
         return true;
     }
 
