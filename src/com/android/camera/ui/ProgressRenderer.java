@@ -28,6 +28,11 @@ import com.android.camera2.R;
  * Renders a circular progress bar on the screen.
  */
 public class ProgressRenderer {
+
+    public static interface VisibilityListener {
+        public void onHidden();
+    }
+
     private final int mProgressRadius;
     private final Paint mProgressBasePaint;
     private final Paint mProgressPaint;
@@ -35,6 +40,14 @@ public class ProgressRenderer {
     private RectF mArcBounds = new RectF(0, 0, 1, 1);
     private int mProgressAngleDegrees = 270;
     private boolean mVisible = false;
+    private VisibilityListener mVisibilityListener;
+
+    /**
+     * After we reach 100%, keep on painting the progress for nother x frames
+     * before hiding it.
+     */
+    private static final int SHOW_PROGRESS_X_ADDITIONAL_FRAMES = 5;
+    private int showProgressXMoreFrames;
 
     public ProgressRenderer(Context context) {
         mProgressRadius = context.getResources().getDimensionPixelSize(R.dimen.pie_progress_radius);
@@ -44,14 +57,11 @@ public class ProgressRenderer {
         mProgressPaint = createProgressPaint(pieProgressWidth, 1.0f);
     }
 
-    private static Paint createProgressPaint(int width, float alpha) {
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        // 20% alpha.
-        paint.setColor(Color.argb((int) (alpha * 255), 255, 255, 255));
-        paint.setStrokeWidth(width);
-        paint.setStyle(Paint.Style.STROKE);
-        return paint;
+    /**
+     * Sets or replaces a visiblity listener.
+     */
+    public void setVisibilityListener(VisibilityListener listener) {
+        mVisibilityListener = listener;
     }
 
     /**
@@ -65,8 +75,10 @@ public class ProgressRenderer {
         percent = Math.min(100, Math.max(percent, 0));
         mProgressAngleDegrees = (int) ((360f / 100) * percent);
 
-        // Hide when processing reached 100 percent.
-        mVisible = percent < 100;
+        // We hide the progress once we drew the 100% state once.
+        if (percent < 100) {
+            mVisible = true;
+        }
     }
 
     /**
@@ -82,5 +94,37 @@ public class ProgressRenderer {
 
         canvas.drawCircle(centerX, centerY, mProgressRadius, mProgressBasePaint);
         canvas.drawArc(mArcBounds, -90, mProgressAngleDegrees, false, mProgressPaint);
+
+        // After we reached 100%, we paint the progress renderer for another x
+        // frames until we hide it.
+        if (mProgressAngleDegrees == 360) {
+            if (showProgressXMoreFrames <= 0) {
+                showProgressXMoreFrames = SHOW_PROGRESS_X_ADDITIONAL_FRAMES;
+            } else {
+                if (--showProgressXMoreFrames == 0) {
+                    mVisible = false;
+                    if (mVisibilityListener != null) {
+                        mVisibilityListener.onHidden();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @return Whether the progress renderer is visible.
+     */
+    public boolean isVisible() {
+        return mVisible;
+    }
+
+    private static Paint createProgressPaint(int width, float alpha) {
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        // 20% alpha.
+        paint.setColor(Color.argb((int) (alpha * 255), 255, 255, 255));
+        paint.setStrokeWidth(width);
+        paint.setStyle(Paint.Style.STROKE);
+        return paint;
     }
 }
