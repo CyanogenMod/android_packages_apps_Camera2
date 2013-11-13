@@ -50,14 +50,14 @@ public interface FilmstripDataAdapter {
         public void onDataLoaded();
 
         /**
-         * Called some of the data are updated.
+         * Called when some of the data is updated.
          *
          * @param reporter Use this reporter to know what happened.
          */
         public void onDataUpdated(UpdateReporter reporter);
 
         /**
-         * Called when a new data is inserted.
+         * Called when a new data item is inserted.
          *
          * @param dataID The ID of the inserted data.
          * @param data The inserted data.
@@ -65,7 +65,7 @@ public interface FilmstripDataAdapter {
         public void onDataInserted(int dataID, FilmstripImageData data);
 
         /**
-         * Called when a data is removed.
+         * Called when a data item is removed.
          *
          * @param dataID The ID of the removed data.
          * @param data The data.

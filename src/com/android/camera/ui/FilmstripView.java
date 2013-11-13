@@ -741,7 +741,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     }
 
     /**
-     * Returns the ID of the current, or -1.
+     * Returns the ID of the current item, or -1 if there is no data.
      */
     private int getCurrentId() {
         ViewItem current = mViewItem[mCurrentItem];
