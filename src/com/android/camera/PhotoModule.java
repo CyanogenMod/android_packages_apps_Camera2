@@ -1074,6 +1074,9 @@ public class PhotoModule
                     }
                 });
             }
+            if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
+                cancelAutoFocus();
+            }
         }
     }
     private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
