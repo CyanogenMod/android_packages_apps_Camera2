@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -74,7 +73,7 @@ public interface LocalData extends FilmstripImageData {
      */
     public static final int LOCAL_IN_PROGRESS_DATA = 7;
 
-    View getView(Activity a, int width, int height, Drawable placeHolder,
+    View getView(Context ctx, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter);
 
     /**

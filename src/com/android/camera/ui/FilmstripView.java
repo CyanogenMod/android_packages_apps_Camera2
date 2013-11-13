@@ -43,7 +43,6 @@ import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.filmstrip.FilmstripImageData.PanoramaSupportCallback;
 import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
-import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -509,11 +508,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         }
         clampCenterX();
         // Measure zoom view
-        mZoomView.measure(
-                MeasureSpec.makeMeasureSpec(
-                        widthMeasureSpec, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(
-                        heightMeasureSpec, MeasureSpec.EXACTLY));
+        mZoomView.measure(MeasureSpec.makeMeasureSpec(widthMeasureSpec, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(heightMeasureSpec, MeasureSpec.EXACTLY));
     }
 
     @Override
@@ -744,6 +740,9 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         mActivity.launchTinyPlanetEditor((LocalData) data);
     }
 
+    /**
+     * Returns the ID of the current, or -1.
+     */
     private int getCurrentId() {
         ViewItem current = mViewItem[mCurrentItem];
         if (current == null) {
@@ -1659,7 +1658,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         invalidate();
 
         if (mListener != null) {
-            mListener.onReload();
+            mListener.onDataReloaded();
             if (!stayInPreview) {
                 mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
             }
@@ -1920,8 +1919,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             mScroller.fling(mCenterX, 0, (int) -velocityX, 0, minX, maxX, 0, 0);
         }
 
-        @Override
-        public void flingInsideZoomView(float velocityX, float velocityY) {
+        void flingInsideZoomView(float velocityX, float velocityY) {
             if (!isZoomStarted()) {
                 return;
             }
@@ -2492,10 +2490,12 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
 
                     FilmstripImageData data = mDataAdapter.getImageData(mViewItem[hit].getId());
                     float transY = mViewItem[hit].getScaledTranslationY(mScale) - dy / mScale;
-                    if (!data.isUIActionSupported(FilmstripImageData.ACTION_DEMOTE) && transY > 0f) {
+                    if (!data.isUIActionSupported(FilmstripImageData.ACTION_DEMOTE) &&
+                            transY > 0f) {
                         transY = 0f;
                     }
-                    if (!data.isUIActionSupported(FilmstripImageData.ACTION_PROMOTE) && transY < 0f) {
+                    if (!data.isUIActionSupported(FilmstripImageData.ACTION_PROMOTE) &&
+                            transY < 0f) {
                         transY = 0f;
                     }
                     mViewItem[hit].setTranslationY(transY, mScale);

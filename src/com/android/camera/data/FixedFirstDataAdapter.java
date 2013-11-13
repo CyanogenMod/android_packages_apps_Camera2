@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
@@ -107,12 +106,12 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public View getView(Activity activity, int dataID) {
+    public View getView(Context context, int dataID) {
         if (dataID == 0) {
             return mFirstData.getView(
-                    activity, mSuggestedWidth, mSuggestedHeight, null, null);
+                    context, mSuggestedWidth, mSuggestedHeight, null, null);
         }
-        return mAdapter.getView(activity, dataID - 1);
+        return mAdapter.getView(context, dataID - 1);
     }
 
     @Override

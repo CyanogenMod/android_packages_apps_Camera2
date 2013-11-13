@@ -16,16 +16,17 @@
 
 package com.android.camera.filmstrip;
 
-import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 /**
- * An interfaces which defines the interactions between the
- * {@link FilmstripImageData} and the {@link com.android.camera.ui.FilmstripView}.
+ * An interface which defines the interactions between the
+ * {@link FilmstripImageData} and the
+ * {@link com.android.camera.ui.FilmstripView}.
  */
 public interface FilmstripDataAdapter {
     /**
-     * An interface which defines the update report used to return to the
+     * An interface which defines the update reporter used to return to the
      * {@link FilmstripListener}.
      */
     public interface UpdateReporter {
@@ -38,34 +39,52 @@ public interface FilmstripDataAdapter {
 
     /**
      * An interface which defines the listener for data events over
-     * {@link FilmstripImageData}. Usually {@link com.android.camera.ui.FilmstripView} itself.
+     * {@link FilmstripImageData}. Usually
+     * {@link com.android.camera.ui.FilmstripView} itself.
      */
     public interface Listener {
-        // Called when the whole data loading is done. No any assumption
-        // on previous data.
+        /**
+         * Called when the whole data loading is done. There is not any
+         * assumption on the previous data.
+         */
         public void onDataLoaded();
 
-        // Only some of the data is changed. The listener should check
-        // if any thing needs to be updated.
+        /**
+         * Called some of the data are updated.
+         *
+         * @param reporter Use this reporter to know what happened.
+         */
         public void onDataUpdated(UpdateReporter reporter);
 
+        /**
+         * Called when a new data is inserted.
+         *
+         * @param dataID The ID of the inserted data.
+         * @param data The inserted data.
+         */
         public void onDataInserted(int dataID, FilmstripImageData data);
 
+        /**
+         * Called when a data is removed.
+         *
+         * @param dataID The ID of the removed data.
+         * @param data The data.
+         */
         public void onDataRemoved(int dataID, FilmstripImageData data);
     }
 
-    /** Returns the total number of image data */
+    /** Returns the total number of image data. */
     public int getTotalNumber();
 
     /**
      * Returns the view to visually present the image data.
      *
-     * @param activity The {@link android.app.Activity} context to create the view.
+     * @param context The {@link android.content.Context} to create the view.
      * @param dataID The ID of the image data to be presented.
      * @return The view representing the image data. Null if unavailable or
      *         the {@code dataID} is out of range.
      */
-    public View getView(Activity activity, int dataID);
+    public View getView(Context context, int dataID);
 
     /**
      * Returns the {@link FilmstripImageData} specified by the ID.
@@ -80,25 +99,25 @@ public interface FilmstripDataAdapter {
      * the {@link FilmstripDataAdapter} can optimize the view returned for the
      * {@link FilmstripImageData}.
      *
-     * @param w Maximum width.
-     * @param h Maximum height.
+     * @param widthPixels Maximum width in dp.
+     * @param heightPixels Maximum height in dp.
      */
-    public void suggestViewSizeBound(int w, int h);
+    public void suggestViewSizeBound(int widthPixels, int heightPixels);
 
     /**
-     * Sets the listener for data events over the ImageData.
+     * Sets the listener for data events over the ImageData. Replaces the
+     * previous listener if it exists.
      *
      * @param listener The listener to use.
      */
     public void setListener(Listener listener);
 
     /**
-     * Returns {@code true} if the view of the data can be moved by swipe
+     * Returns whether the view of the data can be moved by swipe
      * gesture when in full-screen.
      *
      * @param dataID The ID of the data.
-     * @return {@code true} if the view can be moved, {@code false}
-     *         otherwise.
+     * @return Whether the view can be moved.
      */
     public boolean canSwipeInFullScreen(int dataID);
 }

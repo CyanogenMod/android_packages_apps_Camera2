@@ -361,7 +361,7 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onReload() {
+                public void onDataReloaded() {
                     setPreviewControlsVisibility(true);
                     CameraActivity.this.setSystemBarsVisibility(false);
                 }

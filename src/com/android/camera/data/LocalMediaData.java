@@ -214,11 +214,10 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public View getView(Activity activity,
-            int decodeWidth, int decodeHeight, Drawable placeHolder,
+    public View getView(Context ctx, int decodeWidth, int decodeHeight, Drawable placeHolder,
             LocalDataAdapter adapter) {
-        return fillImageView(activity, new ImageView(activity),
-                decodeWidth, decodeHeight, placeHolder, adapter);
+        return fillImageView(ctx, new ImageView(ctx), decodeWidth, decodeHeight,
+                placeHolder, adapter);
     }
 
     @Override
@@ -740,20 +739,20 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public View getView(final Activity activity,
+        public View getView(final Context ctx,
                 int decodeWidth, int decodeHeight, Drawable placeHolder,
                 LocalDataAdapter adapter) {
 
             // ImageView for the bitmap.
-            ImageView iv = new ImageView(activity);
+            ImageView iv = new ImageView(ctx);
             iv.setLayoutParams(new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-            fillImageView(activity, iv, decodeWidth, decodeHeight, placeHolder,
+            fillImageView(ctx, iv, decodeWidth, decodeHeight, placeHolder,
                     adapter);
 
             // ImageView for the play icon.
-            ImageView icon = new ImageView(activity);
+            ImageView icon = new ImageView(ctx);
             icon.setImageResource(R.drawable.ic_control_play);
             icon.setScaleType(ImageView.ScaleType.CENTER);
             icon.setLayoutParams(new FrameLayout.LayoutParams(
@@ -762,11 +761,12 @@ public abstract class LocalMediaData implements LocalData {
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CameraUtil.playVideo(activity, getContentUri(), mTitle);
+                    // TODO: refactor this into activities to avoid this class conversion.
+                    CameraUtil.playVideo((Activity) ctx, getContentUri(), mTitle);
                 }
             });
 
-            FrameLayout f = new FrameLayout(activity);
+            FrameLayout f = new FrameLayout(ctx);
             f.addView(iv);
             f.addView(icon);
             return f;

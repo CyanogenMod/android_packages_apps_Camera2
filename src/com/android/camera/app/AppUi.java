@@ -30,9 +30,8 @@ public interface AppUi {
      * Initializes the UI.
      *
      * @param root The layout root of app UI.
-     * @param isSecureCamera {@code true} if the app is in secure camera mode.
-     * @param isCaptureIntent {@code true} if the app is in capture intent
-     *                        mode.
+     * @param isSecureCamera Whether the app is in secure camera mode.
+     * @param isCaptureIntent Whether the app is in capture intent mode.
      */
     public void init(View root, boolean isSecureCamera, boolean isCaptureIntent);
 
