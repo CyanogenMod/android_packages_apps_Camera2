@@ -43,11 +43,13 @@ public class ProgressRenderer {
     private VisibilityListener mVisibilityListener;
 
     /**
-     * After we reach 100%, keep on painting the progress for nother x frames
+     * After we reach 100%, keep on painting the progress for another x milliseconds
      * before hiding it.
      */
-    private static final int SHOW_PROGRESS_X_ADDITIONAL_FRAMES = 5;
-    private int showProgressXMoreFrames;
+    private static final int SHOW_PROGRESS_X_ADDITIONAL_MS = 100;
+
+    /** When to hide the progress indicator. */
+    private long mTimeToHide = 0;
 
     public ProgressRenderer(Context context) {
         mProgressRadius = context.getResources().getDimensionPixelSize(R.dimen.pie_progress_radius);
@@ -78,6 +80,7 @@ public class ProgressRenderer {
         // We hide the progress once we drew the 100% state once.
         if (percent < 100) {
             mVisible = true;
+            mTimeToHide = System.currentTimeMillis() + SHOW_PROGRESS_X_ADDITIONAL_MS;
         }
     }
 
@@ -96,17 +99,11 @@ public class ProgressRenderer {
         canvas.drawArc(mArcBounds, -90, mProgressAngleDegrees, false, mProgressPaint);
 
         // After we reached 100%, we paint the progress renderer for another x
-        // frames until we hide it.
-        if (mProgressAngleDegrees == 360) {
-            if (showProgressXMoreFrames <= 0) {
-                showProgressXMoreFrames = SHOW_PROGRESS_X_ADDITIONAL_FRAMES;
-            } else {
-                if (--showProgressXMoreFrames == 0) {
-                    mVisible = false;
-                    if (mVisibilityListener != null) {
-                        mVisibilityListener.onHidden();
-                    }
-                }
+        // milliseconds until we hide it.
+        if (mProgressAngleDegrees == 360 && System.currentTimeMillis() > mTimeToHide) {
+            mVisible = false;
+            if (mVisibilityListener != null) {
+                mVisibilityListener.onHidden();
             }
         }
     }
