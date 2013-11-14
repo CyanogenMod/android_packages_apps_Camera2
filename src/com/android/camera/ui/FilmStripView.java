@@ -1844,7 +1844,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         // Check the current one.
         ViewItem curr = mViewItem[mCurrentItem];
         int dataId = curr.getId();
-        if (reporter.isDataRemoved(dataId)) {
+        if (reporter.isDataRemoved(dataId) || mDataAdapter.getTotalNumber() == 1) {
             reload();
             return;
         }
@@ -1920,7 +1920,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (v != mCameraView) {
                 removeView(v);
             }
-            mDataAdapter.getImageData(mViewItem[i].getId()).recycle();
+            if (mDataAdapter.getImageData(mViewItem[i].getId()) != null) {
+                mDataAdapter.getImageData(mViewItem[i].getId()).recycle();
+            }
         }
 
         // Clear out the mViewItems and rebuild with camera in the center.
