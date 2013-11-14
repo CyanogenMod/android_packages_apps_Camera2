@@ -1026,15 +1026,15 @@ public class PieRenderer extends OverlayRenderer
         cancelFocus();
 
         if (waitUntilProgressIsHidden) {
-            mOverlay.post(mDisappear);
-            mProgressRenderer.setVisibilityListener(null);
-        } else {
             mProgressRenderer.setVisibilityListener(new VisibilityListener() {
                 @Override
                 public void onHidden() {
                     mOverlay.post(mDisappear);
                 }
             });
+        } else {
+            mOverlay.post(mDisappear);
+            mProgressRenderer.setVisibilityListener(null);
         }
     }
 
