@@ -119,9 +119,7 @@ public class WideAnglePanoramaModule
     private float mHorizontalViewAngle;
     private float mVerticalViewAngle;
 
-    // Prefer FOCUS_MODE_INFINITY to FOCUS_MODE_CONTINUOUS_VIDEO because of
-    // getting a better image quality by the former.
-    private String mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
+    private String mTargetFocusMode;
 
     private PanoOrientationEventListener mOrientationEventListener;
     // The value could be 0, 90, 180, 270 for the 4 different orientations measured in clockwise
@@ -409,6 +407,12 @@ public class WideAnglePanoramaModule
         int maxFps = (frameRates.get(last))[Parameters.PREVIEW_FPS_MAX_INDEX];
         parameters.setPreviewFpsRange(minFps, maxFps);
         Log.d(TAG, "preview fps: " + minFps + ", " + maxFps);
+
+        if (mActivity.getResources().getBoolean(R.bool.useInfinityFocus)) {
+            mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
+        } else {
+            mTargetFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
+        }
 
         List<String> supportedFocusModes = parameters.getSupportedFocusModes();
         if (supportedFocusModes.indexOf(mTargetFocusMode) >= 0) {
