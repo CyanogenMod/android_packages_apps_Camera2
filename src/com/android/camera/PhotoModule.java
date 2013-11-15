@@ -349,7 +349,7 @@ public class PhotoModule
                 }
 
                 case SWITCH_TO_GCAM_MODULE: {
-                    mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
+                    mActivity.onModeSelected(ModeListView.MODE_GCAM);
                 }
             }
         }
