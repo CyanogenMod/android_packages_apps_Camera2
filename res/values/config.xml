@@ -36,4 +36,6 @@
     <bool name="enableZSL">false</bool>
     <!-- Always use recording dimensions for preview -->
     <bool name="useVideoSizeForPreview">false</bool>
+    <!-- Panorama focus mode.  Use FOCUS_MODE_INFINITY by default -->
+    <bool name="useInfinityFocus">true</bool>
 </resources>
