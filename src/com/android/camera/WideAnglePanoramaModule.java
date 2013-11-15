@@ -410,6 +410,12 @@ public class WideAnglePanoramaModule
         parameters.setPreviewFpsRange(minFps, maxFps);
         Log.d(TAG, "preview fps: " + minFps + ", " + maxFps);
 
+        if (mActivity.getResources().getBoolean(R.bool.useInfinityFocus)) {
+            mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
+        } else {
+            mTargetFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
+        }
+
         List<String> supportedFocusModes = parameters.getSupportedFocusModes();
         if (supportedFocusModes.indexOf(mTargetFocusMode) >= 0) {
             parameters.setFocusMode(mTargetFocusMode);

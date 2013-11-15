@@ -19,4 +19,6 @@
 <resources>
     <!-- Maximum recording length in milliseconds. 0 means unlimited. -->
     <integer name="max_video_recording_length">0</integer>
+    <!-- Panorama focus mode.  Use FOCUS_MODE_INFINITY by default -->
+    <bool name="useInfinityFocus">true</bool>
 </resources>
