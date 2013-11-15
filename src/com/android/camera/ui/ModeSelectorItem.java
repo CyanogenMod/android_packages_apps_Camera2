@@ -27,10 +27,26 @@ import android.widget.TextView;
 
 import com.android.camera2.R;
 
+/**
+ * This is a package private class, as it is not intended to be visible or used
+ * outside of this package.
+ *
+ * ModeSelectorItem is a FrameLayout that contains an ImageView to display the
+ * icon for the corresponding mode, a TextView that explains what the mode is,
+ * and a GradientDrawable at the end of the TextView.
+ *
+ * The purpose of this class is to encapsulate different drawing logic into
+ * its own class. There are two drawing mode, <code>TRUNCATE_TEXT_END</code>
+ * and <code>TRUNCATE_TEXT_FRONT</code>. They define how we draw the view when
+ * we display the view partially.
+ */
 class ModeSelectorItem extends FrameLayout {
-    private static final int SHADE_WIDTH = 100;
+    // Drawing modes that defines how the TextView should be drawn when there
+    // is not enough space to draw the whole TextView.
     public static final int TRUNCATE_TEXT_END = 1;
     public static final int TRUNCATE_TEXT_FRONT = 2;
+
+    private static final int SHADE_WIDTH_PIX = 100;
 
     private TextView mText;
     private ImageView mIcon;
@@ -63,10 +79,15 @@ class ModeSelectorItem extends FrameLayout {
                 new int[] {startColor, color});
     }
 
+    /**
+     * When swiping in, we truncate the end of the item if the visible width
+     * is not enough to show the whole item. When swiping out, we truncate the
+     * front of the text (i.e. offset the text).
+     *
+     * @param swipeIn whether swiping direction is swiping in (i.e. from left
+     *                to right)
+     */
     public void onSwipeModeChanged(boolean swipeIn) {
-        // When swiping in, we truncate the end of the item if the visible width
-        // is not enough to show the whole item. When swiping out, we truncate the
-        // front of the text (i.e. offset the text).
         mDrawingMode = swipeIn ? TRUNCATE_TEXT_END : TRUNCATE_TEXT_FRONT;
         mText.setTranslationX(0);
     }
@@ -91,6 +112,11 @@ class ModeSelectorItem extends FrameLayout {
         }
     }
 
+    /**
+     * Sets bitmap as the icon for the mode.
+     *
+     * @param bitmap bitmap to be used as icon
+     */
     public void setImageBitmap(Bitmap bitmap) {
         mIcon.setImageBitmap(bitmap);
     }
@@ -100,7 +126,8 @@ class ModeSelectorItem extends FrameLayout {
      * to draw itself based on the visible width and whether it's being swiped in
      * or out. This function will be called on every frame during animation. It should
      * only do minimal work required to get the animation working.
-     * @param newWidth New visible width.
+     *
+     * @param newWidth new visible width
      */
     public void setVisibleWidth(int newWidth) {
         newWidth = Math.max(newWidth, 0);
@@ -119,12 +146,18 @@ class ModeSelectorItem extends FrameLayout {
     /**
      * Getter for visible width. This function will get called during animation as
      * well.
+     *
      * @return The visible width of this item
      */
     public int getVisibleWidth() {
         return mVisibleWidth;
     }
 
+    /**
+     * Draw the view based on the drawing mode. Clip the canvas if necessary.
+     *
+     * @param canvas The Canvas to which the View is rendered.
+     */
     @Override
     public void draw(Canvas canvas) {
         int width = Math.max(mVisibleWidth, mMinVisibleWidth);
@@ -133,7 +166,7 @@ class ModeSelectorItem extends FrameLayout {
 
         if (mDrawingMode == TRUNCATE_TEXT_END) {
             if (mVisibleWidth > mMinVisibleWidth) {
-                shadeStart = Math.max(mMinVisibleWidth, mVisibleWidth - SHADE_WIDTH);
+                shadeStart = Math.max(mMinVisibleWidth, mVisibleWidth - SHADE_WIDTH_PIX);
             }
         } else {
             if (mVisibleWidth <= mWidth) {

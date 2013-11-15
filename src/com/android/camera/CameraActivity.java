@@ -160,6 +160,7 @@ public class CameraActivity extends Activity
 
     private PanoramaStitchingManager mPanoramaManager;
     private PlaceholderManager mPlaceholderManager;
+    private ModeListView mModeListView;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
     private FrameLayout mAboveFilmstripControlLayout;
@@ -1103,9 +1104,9 @@ public class CameraActivity extends Activity
         mActionBar = getActionBar();
         mActionBar.addOnMenuVisibilityListener(this);
 
-        ModeListView modeListView = (ModeListView) findViewById(R.id.mode_list_layout);
-        if (modeListView != null) {
-            modeListView.setModeSwitchListener(this);
+        mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
+        if (mModeListView != null) {
+            mModeListView.setModeSwitchListener(this);
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
@@ -1353,6 +1354,8 @@ public class CameraActivity extends Activity
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
+
+        mModeListView.startAccordionAnimation();
     }
 
     @Override
