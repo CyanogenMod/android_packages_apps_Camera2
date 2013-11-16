@@ -153,9 +153,15 @@ public class CameraRootView extends FrameLayout {
             if (mCurrentInsets.right > 0) {
                 // navigation bar on the right
                 mRightMargin = mRightMargin > 0 ? mRightMargin : mCurrentInsets.right;
+                if (mBottomMargin > 0) {
+                    mBottomMargin -= mOffset;
+                }
             } else {
                 // navigation bar on the bottom
                 mBottomMargin = mBottomMargin > 0 ? mBottomMargin : mCurrentInsets.bottom;
+                if (mRightMargin > 0) {
+                    mRightMargin -= mOffset;
+                }
             }
         }
         // make sure all the children are resized
