@@ -87,6 +87,8 @@ class AndroidCameraManagerImpl implements CameraManager {
     // Presentation
     private static final int ENABLE_SHUTTER_SOUND =    501;
     private static final int SET_DISPLAY_ORIENTATION = 502;
+    // Capture
+    private static final int CAPTURE_PHOTO = 601;
 
     private CameraHandler mCameraHandler;
     private android.hardware.Camera mCamera;
@@ -101,6 +103,21 @@ class AndroidCameraManagerImpl implements CameraManager {
     }
 
     private class CameraHandler extends Handler {
+        private class CaptureCallbacks {
+            public final ShutterCallback mShutter;
+            public final PictureCallback mRaw;
+            public final PictureCallback mPostView;
+            public final PictureCallback mJpeg;
+
+            CaptureCallbacks(ShutterCallback shutter, PictureCallback raw, PictureCallback postView,
+                    PictureCallback jpeg) {
+                mShutter = shutter;
+                mRaw = raw;
+                mPostView = postView;
+                mJpeg = jpeg;
+            }
+        }
+
         CameraHandler(Looper looper) {
             super(looper);
         }
@@ -136,23 +153,23 @@ class AndroidCameraManagerImpl implements CameraManager {
             camera.setAutoFocusMoveCallback((AutoFocusMoveCallback) cb);
         }
 
+        private void capture(final CaptureCallbacks cb) {
+            try {
+                mCamera.takePicture(cb.mShutter, cb.mRaw, cb.mPostView, cb.mJpeg);
+            } catch (RuntimeException e) {
+                // TODO: output camera state and focus state for debugging.
+                Log.e(TAG, "take picture failed.");
+                throw e;
+            }
+        }
+
         public void requestTakePicture(
                 final ShutterCallback shutter,
                 final PictureCallback raw,
                 final PictureCallback postView,
                 final PictureCallback jpeg) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        mCamera.takePicture(shutter, raw, postView, jpeg);
-                    } catch (RuntimeException e) {
-                        // TODO: output camera state and focus state for debugging.
-                        Log.e(TAG, "take picture failed.");
-                        throw e;
-                    }
-                }
-            });
+            final CaptureCallbacks callbacks = new CaptureCallbacks(shutter, raw, postView, jpeg);
+            obtainMessage(CAPTURE_PHOTO, callbacks).sendToTarget();
         }
 
         /**
@@ -385,6 +402,11 @@ class AndroidCameraManagerImpl implements CameraManager {
 
                     case REFRESH_PARAMETERS: {
                         mParametersIsDirty = true;
+                        return;
+                    }
+
+                    case CAPTURE_PHOTO: {
+                        capture((CaptureCallbacks) msg.obj);
                         return;
                     }
 
