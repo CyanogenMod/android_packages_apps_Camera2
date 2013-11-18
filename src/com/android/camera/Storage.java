@@ -144,21 +144,11 @@ public class Storage {
                 getContentValuesForData(title, date, location, orientation, jpegLength, path,
                         width, height, mimeType);
 
-        Uri uri = null;
-        try {
-            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-        } catch (Throwable th)  {
-            // This can happen when the external volume is already mounted, but
-            // MediaScanner has not notify MediaProvider to add that volume.
-            // The picture is still safe and MediaScanner will find it and
-            // insert it into MediaProvider. The only problem is that the user
-            // cannot click the thumbnail to review the picture.
-            Log.e(TAG, "Failed to write MediaStore" + th);
-        }
-        return uri;
+         return insertImage(resolver, values);
     }
 
-    // Overwrites the file and updates the MediaStore
+    // Overwrites the file and updates the MediaStore, or inserts the image if
+    // one does not already exist.
     public static void updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
             int height, String mimeType) {
@@ -168,7 +158,8 @@ public class Storage {
                 width, height, mimeType);
     }
 
-    // Updates the image values in MediaStore
+    // Updates the image values in MediaStore, or inserts the image if one does
+    // not already exist.
     public static void updateImage(Uri imageUri, ContentResolver resolver, String title,
             long date, Location location, int orientation, int jpegLength,
             String path, int width, int height, String mimeType) {
@@ -179,7 +170,12 @@ public class Storage {
 
         // Update the MediaStore
         int rowsModified = resolver.update(imageUri, values, null, null);
-        if (rowsModified != 1) {
+
+        if (rowsModified == 0) {
+            // If no prior row existed, insert a new one.
+            Log.w(TAG, "updateImage called with no prior image at uri: " + imageUri);
+            insertImage(resolver, values);
+        } else if (rowsModified != 1) {
             // This should never happen
             throw new IllegalStateException("Bad number of rows (" + rowsModified
                     + ") updated for uri: " + imageUri);
@@ -232,5 +228,20 @@ public class Storage {
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
+    }
+
+    private static Uri insertImage(ContentResolver resolver, ContentValues values) {
+        Uri uri = null;
+        try {
+            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+        } catch (Throwable th)  {
+            // This can happen when the external volume is already mounted, but
+            // MediaScanner has not notify MediaProvider to add that volume.
+            // The picture is still safe and MediaScanner will find it and
+            // insert it into MediaProvider. The only problem is that the user
+            // cannot click the thumbnail to review the picture.
+            Log.e(TAG, "Failed to write MediaStore" + th);
+        }
+        return uri;
     }
 }
