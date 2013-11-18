@@ -677,13 +677,19 @@ CHAR LIMIT = NONE] -->
     <!--  String shown when setting the homepage wallpaper in the background [CHAR LIMIT=NONE] -->
     <string name="setting_wallpaper">Setting wallpaper</string>
 
-    <!-- Camera modes. [CHAR LIMIT = 25] -->
+    <!-- Camera settings. [CHAR LIMIT = 25] -->
     <string name="mode_settings">Settings</string>
+    <!-- Text shown in the camera mode options list for normal camera mode [CHAR LIMIT = 25] -->
     <string name="mode_camera">Camera</string>
+    <!-- Text shown in the camera mode options list for putting camera in video recording mode [CHAR LIMIT = 25] -->
     <string name="mode_video">Video</string>
-    <string name="mode_photosphere">Photosphere</string>
+    <!-- Text shown in the camera mode options list for putting camera in photo sphere mode. 'Photo sphere' is a product name. [CHAR LIMIT = 25] -->
+    <string name="mode_photosphere">Photo Sphere</string>
+    <!-- Text shown in the camera mode options list for advanced user mode. Craft mode contains more advanced features such as capability to refocus and recognize barcode/QR code. [CHAR LIMIT = 25] -->
     <string name="mode_craft">Craft</string>
-    <string name="mode_timelapse">Timelapse</string>
-    <string name="mode_wideangle">Wideangle</string>
+    <!-- Text shown in the camera mode options list for putting camera in time lapse mode [CHAR LIMIT = 25] -->
+    <string name="mode_timelapse">Time Lapse</string>
+    <!-- Text shown in the camera mode options list for putting camera in wide angle panorama mode [CHAR LIMIT = 25] -->
+    <string name="mode_wideangle">Wide Angle</string>
 
  </resources>
