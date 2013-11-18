@@ -55,7 +55,8 @@ import android.widget.Toast;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.CameraHolder;
-import com.android.camera.CameraManager;
+import com.android.camera.app.CameraManager;
+import com.android.camera.app.CameraManagerFactory;
 import com.android.camera2.R;
 
 import java.io.Closeable;
@@ -608,13 +609,15 @@ public class CameraUtil {
 
         if (isFrontCameraIntent(intentCameraId)) {
             // Check if the front camera exist
-            int frontCameraId = CameraHolder.instance().getFrontCameraId();
+            int frontCameraId = ((CameraActivity) currentActivity).getCameraProvider()
+                    .getFirstFrontCameraId();
             if (frontCameraId != -1) {
                 cameraId = frontCameraId;
             }
         } else if (isBackCameraIntent(intentCameraId)) {
             // Check if the back camera exist
-            int backCameraId = CameraHolder.instance().getBackCameraId();
+            int backCameraId = ((CameraActivity) currentActivity).getCameraProvider()
+                    .getFirstBackCameraId();
             if (backCameraId != -1) {
                 cameraId = backCameraId;
             }
@@ -754,12 +757,12 @@ public class CameraUtil {
         view.setVisibility(View.GONE);
     }
 
-    public static int getJpegRotation(int cameraId, int orientation) {
+    public static int getJpegRotation(CameraActivity activity, int cameraId, int orientation) {
         // See android.hardware.Camera.Parameters.setRotation for
         // documentation.
         int rotation = 0;
         if (orientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            CameraInfo info = CameraHolder.instance().getCameraInfo()[cameraId];
+            CameraInfo info = activity.getCameraProvider().getCameraInfo()[cameraId];
             if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
                 rotation = (info.orientation - orientation + 360) % 360;
             } else {  // back-facing camera
@@ -879,6 +882,15 @@ public class CameraUtil {
             return frameRates.get(frameRates.size() - 1);
         }
         return new int[0];
+    }
+
+    public static void throwIfCameraDisabled(Context context) throws CameraDisabledException {
+        // Check if device policy has disabled the camera.
+        DevicePolicyManager dpm =
+                (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        if (dpm.getCameraDisabled(null)) {
+            throw new CameraDisabledException();
+        }
     }
 
     private static class ImageFileNamer {

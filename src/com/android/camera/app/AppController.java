@@ -22,7 +22,6 @@ import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.widget.FrameLayout;
 
-import com.android.camera.CameraManager;
 import com.android.camera.LocationManager;
 
 /**
@@ -142,11 +141,9 @@ public interface AppController {
     /********************** App-level resources **********************/
 
     /**
-     * Returns the camera device proxy.
-     *
-     * @return {@code null} if not available yet.
+     * Returns the {@link com.android.camera.app.CameraProvider}.
      */
-    public CameraManager.CameraProxy getCameraProxy();
+    public CameraProvider getCameraProvider();
 
     /**
      * Returns the {@link com.android.camera.app.MediaSaver}.

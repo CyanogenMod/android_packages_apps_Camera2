@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera;
+package com.android.camera.app;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
@@ -129,23 +129,28 @@ public interface CameraManager {
          * Callback when {@link java.io.IOException} is caught during
          * {@link android.hardware.Camera#reconnect()}.
          *
-         * @param mgr The {@link com.android.camera.CameraManager}
+         * @param mgr The {@link CameraManager}
          *            with the reconnect failure.
          */
         public void onReconnectionFailure(CameraManager mgr);
     }
 
     /**
-     * Opens the camera of the specified ID synchronously.
+     * Opens the camera of the specified ID asynchronously. The camera device
+     * will be opened in the camera handler thread and will be returned through
+     * the {@link CameraManager.CameraOpenCallback#
+     * onCameraOpened(com.android.camera.app.CameraManager.CameraProxy)}.
      *
      * @param handler The {@link android.os.Handler} in which the callback
      *                was handled.
      * @param callback The callback when any error happens.
      * @param cameraId The camera ID to open.
-     * @return   An instance of {@link CameraProxy} on success. null on failure.
      */
-    public CameraProxy cameraOpen(
-            Handler handler, int cameraId, CameraOpenCallback callback);
+    public void cameraOpen(Handler handler, int cameraId, CameraOpenCallback callback);
+
+    // TODO: remove this after every module supports onCameraAvailable().
+    @Deprecated
+    public CameraProxy cameraOpenOld(Handler handler, int cameraId, CameraOpenCallback callback);
 
     /**
      * An interface that takes camera operation requests and post messages to the
@@ -163,22 +168,38 @@ public interface CameraManager {
         public android.hardware.Camera getCamera();
 
         /**
+         * Returns the camera ID associated to by this
+         * {@link CameraManager.CameraProxy}.
+         * @return
+         */
+        public int getCameraId();
+
+        /**
          * Releases the camera device synchronously.
          * This function must be synchronous so the caller knows exactly when the camera
          * is released and can continue on.
+         * TODO: make this package-private after this interface is refactored under app.
+         *
+         * @param synchronous Whether this call should be synchronous.
          */
-        public void release();
+        public void release(boolean synchronous);
 
         /**
-         * Reconnects to the camera device.
+         * Reconnects to the camera device. On success, the camera device will
+         * be returned through {@link CameraManager
+         * .CameraOpenCallback#onCameraOpened(com.android.camera.app.CameraManager
+         * .CameraProxy)}.
          * @see android.hardware.Camera#reconnect()
          *
          * @param handler The {@link android.os.Handler} in which the callback
          *                was handled.
          * @param cb The callback when any error happens.
-         * @return {@code false} on errors.
          */
-        public boolean reconnect(Handler handler, CameraOpenCallback cb);
+        public void reconnect(Handler handler, CameraOpenCallback cb);
+
+        // TODO: remove this.
+        @Deprecated
+        public boolean reconnectOld(Handler handler, CameraOpenCallback cb);
 
         /**
          * Unlocks the camera device.

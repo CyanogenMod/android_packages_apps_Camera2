@@ -55,7 +55,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -67,12 +66,17 @@ import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.CameraController;
+import com.android.camera.app.CameraManager;
+import com.android.camera.app.CameraManagerFactory;
+import com.android.camera.app.CameraProvider;
 import com.android.camera.app.ImageTaskManager;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
-import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
+import com.android.camera.app.PlaceholderManager;
 import com.android.camera.crop.CropActivity;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.CameraPreviewData;
@@ -87,6 +91,7 @@ import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.filmstrip.FilmstripListener;
+import com.android.camera.module.ModuleController;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmstripView;
@@ -99,13 +104,12 @@ import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.RefocusHelper;
 import com.android.camera.util.UsageStatistics;
-
 import com.android.camera2.R;
 
 import java.io.File;
 
 public class CameraActivity extends Activity
-        implements AppController, ModeListView.ModeSwitchListener,
+        implements AppController, ModeListView.ModeSwitchListener, CameraManager.CameraOpenCallback,
         ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
@@ -126,8 +130,8 @@ public class CameraActivity extends Activity
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
     /**
-     * Request code from an activity we started that indicated that we do not
-     * want to reset the view to the preview in onResume.
+     * Request code from an activity we started that indicated that we do not want
+     * to reset the view to the preview in onResume.
      */
     public static final int REQ_CODE_DONT_SWITCH_TO_PREVIEW = 142;
 
@@ -136,7 +140,9 @@ public class CameraActivity extends Activity
     private static final int HIDE_ACTION_BAR = 1;
     private static final long SHOW_ACTION_BAR_TIMEOUT_MS = 3000;
 
-    /** Whether onResume should reset the view to the preview. */
+    /**
+     * Whether onResume should reset the view to the preview.
+     */
     private boolean mResetToPreviewOnResume = true;
 
     // Supported operations at FilmStripView. Different data has different
@@ -153,9 +159,13 @@ public class CameraActivity extends Activity
     private static final int SUPPORT_SHOW_ON_MAP = 1 << 9;
     private static final int SUPPORT_ALL = 0xffffffff;
 
-    /** This data adapter is used by FilmStripView. */
+    /**
+     * This data adapter is used by FilmStripView.
+     */
     private LocalDataAdapter mDataAdapter;
-    /** This data adapter represents the real local camera data. */
+    /**
+     * This data adapter represents the real local camera data.
+     */
     private LocalDataAdapter mWrappedDataAdapter;
 
     private PanoramaStitchingManager mPanoramaManager;
@@ -163,6 +173,8 @@ public class CameraActivity extends Activity
     private ModeListView mModeListView;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
+    private ModuleController mCurrentModule2;
+    private ModuleManagerImpl mModuleManager;
     private FrameLayout mAboveFilmstripControlLayout;
     private FrameLayout mCameraModuleRootView;
     private FilmstripController mFilmstripController;
@@ -203,6 +215,8 @@ public class CameraActivity extends Activity
     private Intent mVideoShareIntent;
     private Intent mImageShareIntent;
 
+    private CameraController mCameraController;
+
     private MediaSaver mMediaSaver;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -220,40 +234,6 @@ public class CameraActivity extends Activity
         }
     };
 
-    private CameraManager.CameraOpenCallback mCameraOpenCallback =
-            new CameraManager.CameraOpenCallback() {
-                @Override
-                public void onCameraOpened(CameraManager.CameraProxy camera) {
-                    // TODO: implement this.
-                }
-
-                @Override
-                public void onCameraDisabled(int cameraId) {
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_OPEN_FAIL, "security");
-
-                    CameraUtil.showErrorAndFinish(CameraActivity.this,
-                            R.string.camera_disabled);
-                }
-
-                @Override
-                public void onDeviceOpenFailure(int cameraId) {
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_OPEN_FAIL, "open");
-
-                    CameraUtil.showErrorAndFinish(CameraActivity.this,
-                            R.string.cannot_connect_camera);
-                }
-
-                @Override
-                public void onReconnectionFailure(CameraManager mgr) {
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_OPEN_FAIL, "reconnect");
-
-                    CameraUtil.showErrorAndFinish(CameraActivity.this,
-                            R.string.cannot_connect_camera);
-                }
-            };
 
     // close activity when screen turns off
     private BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
@@ -264,6 +244,43 @@ public class CameraActivity extends Activity
     };
 
     private static BroadcastReceiver sScreenOffReceiver;
+
+    @Override
+    public void onCameraOpened(CameraManager.CameraProxy camera) {
+        if (!mModuleManager.getModuleAgent(mCurrentModuleIndex).requestAppForCamera()) {
+            // We shouldn't be here. Just close the camera and leave.
+            camera.release(false);
+            throw new IllegalStateException("Camera opened but the module shouldn't be " +
+                    "requesting");
+        }
+        if (mCurrentModule2 != null) {
+            mCurrentModule2.onCameraAvailable(camera);
+        }
+    }
+
+    @Override
+    public void onCameraDisabled(int cameraId) {
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_OPEN_FAIL,
+                "security");
+
+        CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
+    }
+
+    @Override
+    public void onDeviceOpenFailure(int cameraId) {
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_OPEN_FAIL, "open");
+
+        CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+    }
+
+    @Override
+    public void onReconnectionFailure(CameraManager mgr) {
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_OPEN_FAIL, "reconnect");
+
+        CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+    }
 
     private static class ScreenOffReceiver extends BroadcastReceiver {
         @Override
@@ -374,7 +391,7 @@ public class CameraActivity extends Activity
                         return;
                     }
 
-                    if(!arePreviewControlsVisible()) {
+                    if (!arePreviewControlsVisible()) {
                         setPreviewControlsVisibility(true);
                         CameraActivity.this.setSystemBarsVisibility(false);
                     }
@@ -438,8 +455,7 @@ public class CameraActivity extends Activity
                                     hidePanoStitchingProgress();
                                     return;
                                 }
-                                int panoStitchingProgress = mPanoramaManager.getTaskProgress(
-                                        contentUri);
+                                int panoStitchingProgress = mPanoramaManager.getTaskProgress(contentUri);
                                 if (panoStitchingProgress < 0) {
                                     hidePanoStitchingProgress();
                                     return;
@@ -732,8 +748,9 @@ public class CameraActivity extends Activity
 
     private void setMenuItemVisible(Menu menu, int itemId, boolean visible) {
         MenuItem item = menu.findItem(itemId);
-        if (item != null)
+        if (item != null) {
             item.setVisible(visible);
+        }
     }
 
     private ImageTaskManager.TaskListener mPlaceholderListener =
@@ -769,7 +786,7 @@ public class CameraActivity extends Activity
                 public void onTaskProgress(String filePath, Uri imageUri, int progress) {
                     // Do nothing
                 }
-    };
+            };
 
     private ImageTaskManager.TaskListener mStitchingListener =
             new ImageTaskManager.TaskListener() {
@@ -887,12 +904,6 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public CameraManager.CameraProxy getCameraProxy() {
-        // TODO: implement this
-        return null;
-    }
-
-    @Override
     public MediaSaver getMediaSaver() {
         return mMediaSaver;
     }
@@ -936,6 +947,11 @@ public class CameraActivity extends Activity
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
                     + mimeType + ", uri:" + uri);
         }
+    }
+
+    @Override
+    public CameraProvider getCameraProvider() {
+        return mCameraController;
     }
 
     private void removeData(int dataID) {
@@ -1103,6 +1119,14 @@ public class CameraActivity extends Activity
         setContentView(R.layout.activity_main);
         mActionBar = getActionBar();
         mActionBar.addOnMenuVisibilityListener(this);
+        mMainHandler = new MainHandler(getMainLooper());
+        mCameraController =
+                new CameraController(this, this, mMainHandler,
+                        CameraManagerFactory.getAndroidCameraManager());
+        // TODO: Try to move all the resources allocation to happen as soon as
+        // possible so we can call module.init() at the earliest time.
+        mModuleManager = new ModuleManagerImpl();
+        setupModules();
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
         if (mModeListView != null) {
@@ -1115,7 +1139,6 @@ public class CameraActivity extends Activity
             setRotationAnimation();
         }
 
-        mMainHandler = new MainHandler(getMainLooper());
         // Check if this is in the secure camera mode.
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -1284,7 +1307,7 @@ public class CameraActivity extends Activity
             // users can click the undo button to bring back the image that they
             // chose to delete.
             if (mPendingDeletion && !mIsUndoingDeletion) {
-                 performDeletion();
+                performDeletion();
             }
         }
         return result;
@@ -1294,8 +1317,12 @@ public class CameraActivity extends Activity
     public void onPause() {
         // Delete photos that are pending deletion
         performDeletion();
+        // TODO: call mCurrentModule.pause() instead after all the modules
+        // support pause().
         mCurrentModule.onPauseBeforeSuper();
         mOrientationManager.pause();
+        // Close the camera and wait for the operation done.
+        mCameraController.closeCamera();
         super.onPause();
         mCurrentModule.onPauseAfterSuper();
 
@@ -1329,6 +1356,8 @@ public class CameraActivity extends Activity
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
         mOrientationManager.resume();
+        // TODO: call mCurrentModule.resume() instead after all the modules
+        // support resume().
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();
         mCurrentModule.onResumeAfterSuper();
@@ -1495,7 +1524,6 @@ public class CameraActivity extends Activity
             return;
         }
 
-        CameraHolder.instance().keep();
         closeModule(mCurrentModule);
         setModuleFromIndex(moduleIndex);
 
@@ -1516,37 +1544,16 @@ public class CameraActivity extends Activity
      * index an sets it as mCurrentModule.
      */
     private void setModuleFromIndex(int moduleIndex) {
-        mCurrentModuleIndex = moduleIndex;
-        switch (moduleIndex) {
-            case ModeListView.MODE_VIDEO:
-                mCurrentModule = new VideoModule();
-                break;
-
-            case ModeListView.MODE_PHOTO:
-                mCurrentModule = new PhotoModule();
-                break;
-
-            case ModeListView.MODE_WIDEANGLE:
-                mCurrentModule = new WideAnglePanoramaModule();
-                break;
-
-            case ModeListView.MODE_PHOTOSPHERE:
-                mCurrentModule = PhotoSphereHelper.createPanoramaModule();
-                break;
-            case ModeListView.MODE_GCAM:
-                // Force immediate release of Camera instance
-                CameraHolder.instance().strongRelease();
-                mCurrentModule = GcamHelper.createGcamModule();
-                break;
-            case ModeListView.MODE_CRAFT:
-                mCurrentModule = RefocusHelper.createRefocusModule();
-                break;
-            default:
-                // Fall back to photo mode.
-                mCurrentModule = new PhotoModule();
-                mCurrentModuleIndex = ModeListView.MODE_PHOTO;
-                break;
+        ModuleManagerImpl.ModuleAgent agent = mModuleManager.getModuleAgent(moduleIndex);
+        if (agent == null) {
+            return;
         }
+        if (!agent.requestAppForCamera()) {
+            mCameraController.closeCamera();
+        }
+        mCurrentModuleIndex = agent.getModuleId();
+        mCurrentModule2 = agent.createModule();
+        mCurrentModule = (CameraModule) mCurrentModule2;
     }
 
     /**
@@ -1567,9 +1574,9 @@ public class CameraActivity extends Activity
     /**
      * Launch the tiny planet editor.
      *
-     * @param data the data must be a 360 degree stereographically mapped
-     *            panoramic image. It will not be modified, instead a new item
-     *            with the result will be added to the filmstrip.
+     * @param data The data must be a 360 degree stereographically mapped
+     *             panoramic image. It will not be modified, instead a new item
+     *             with the result will be added to the filmstrip.
      */
     public void launchTinyPlanetEditor(LocalData data) {
         TinyPlanetFragment fragment = new TinyPlanetFragment();
@@ -1582,11 +1589,15 @@ public class CameraActivity extends Activity
 
     private void openModule(CameraModule module) {
         module.init(this, mCameraModuleRootView);
+        // TODO: call mCurrentModule.resume() instead after all the modules
+        // support resume().
         module.onResumeBeforeSuper();
         module.onResumeAfterSuper();
     }
 
     private void closeModule(CameraModule module) {
+        // TODO: call mCurrentModule.pause() instead after all the modules
+        // support pause().
         module.onPauseBeforeSuper();
         module.onPauseAfterSuper();
         ((ViewGroup) mCameraModuleRootView).removeAllViews();
@@ -1611,8 +1622,8 @@ public class CameraActivity extends Activity
         Log.v(TAG, "showing undo bar");
         mPendingDeletion = true;
         if (mUndoDeletionBar == null) {
-            ViewGroup v = (ViewGroup) getLayoutInflater().inflate(
-                    R.layout.undo_bar, mAboveFilmstripControlLayout, true);
+            ViewGroup v = (ViewGroup) getLayoutInflater().inflate(R.layout.undo_bar,
+                    mAboveFilmstripControlLayout, true);
             mUndoDeletionBar = (ViewGroup) v.findViewById(R.id.camera_undo_deletion_bar);
             View button = mUndoDeletionBar.findViewById(R.id.camera_undo_deletion_button);
             button.setOnClickListener(new View.OnClickListener() {
@@ -1633,7 +1644,7 @@ public class CameraActivity extends Activity
                     if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                         mIsUndoingDeletion = true;
                     } else if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                        mIsUndoingDeletion =false;
+                        mIsUndoingDeletion = false;
                     }
                     return false;
                 }
@@ -1649,9 +1660,7 @@ public class CameraActivity extends Activity
         mPendingDeletion = false;
         if (mUndoDeletionBar != null) {
             if (withAnimation) {
-                mUndoDeletionBar.animate()
-                        .setDuration(200)
-                        .alpha(0f)
+                mUndoDeletionBar.animate().setDuration(200).alpha(0f)
                         .setListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
@@ -1672,8 +1681,7 @@ public class CameraActivity extends Activity
                             public void onAnimationRepeat(Animator animation) {
                                 // Do nothing.
                             }
-                        })
-                        .start();
+                        }).start();
             } else {
                 mUndoDeletionBar.setVisibility(View.GONE);
             }
@@ -1765,11 +1773,131 @@ public class CameraActivity extends Activity
     }
 
     public CameraManager.CameraOpenCallback getCameraOpenErrorCallback() {
-        return mCameraOpenCallback;
+        return mCameraController;
     }
 
     // For debugging purposes only.
     public CameraModule getCurrentModule() {
         return mCurrentModule;
+    }
+
+    private void setupModules() {
+        // PhotoModule, the default module.
+        mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
+            @Override
+            public int getModuleId() {
+                return ModeListView.MODE_PHOTO;
+            }
+
+            @Override
+            public boolean requestAppForCamera() {
+                return true;
+            }
+
+            @Override
+            public ModuleController createModule() {
+                return new PhotoModule();
+            }
+        });
+        mModuleManager.setDefaultModuleIndex(ModeListView.MODE_PHOTO);
+
+        // VideoModule.
+        mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
+            @Override
+            public int getModuleId() {
+                return ModeListView.MODE_VIDEO;
+            }
+
+            @Override
+            public boolean requestAppForCamera() {
+                return true;
+            }
+
+            @Override
+            public ModuleController createModule() {
+                return new VideoModule();
+            }
+        });
+
+        // WideAngle.
+        mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
+            @Override
+            public int getModuleId() {
+                return ModeListView.MODE_WIDEANGLE;
+            }
+
+            @Override
+            public boolean requestAppForCamera() {
+                return false;
+            }
+
+            @Override
+            public ModuleController createModule() {
+                // TODO: remove the type casting.
+                return new WideAnglePanoramaModule();
+            }
+        });
+
+        // PhotoSphere.
+        if (PhotoSphereHelper.hasLightCycleCapture(this)) {
+            mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
+                @Override
+                public int getModuleId() {
+                    return ModeListView.MODE_PHOTOSPHERE;
+                }
+
+                @Override
+                public boolean requestAppForCamera() {
+                    return false;
+                }
+
+                @Override
+                public ModuleController createModule() {
+                    // TODO: remove the type casting.
+                    return (ModuleController) PhotoSphereHelper.createPanoramaModule();
+                }
+            });
+        }
+
+        // Refocus.
+        if (RefocusHelper.hasRefocusCapture(this)) {
+            mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
+                @Override
+                public int getModuleId() {
+                    return ModeListView.MODE_CRAFT;
+                }
+
+                @Override
+                public boolean requestAppForCamera() {
+                    return false;
+                }
+
+                @Override
+                public ModuleController createModule() {
+                    // TODO: remove the type casting.
+                    return (ModuleController) RefocusHelper.createRefocusModule();
+                }
+            });
+        }
+
+        // Gcam for HDR+.
+        if (GcamHelper.hasGcamCapture()) {
+            mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
+                @Override
+                public int getModuleId() {
+                    return ModeListView.MODE_GCAM;
+                }
+
+                @Override
+                public boolean requestAppForCamera() {
+                    return false;
+                }
+
+                @Override
+                public ModuleController createModule() {
+                    return (ModuleController) GcamHelper.createGcamModule();
+                }
+            });
+        }
     }
 }

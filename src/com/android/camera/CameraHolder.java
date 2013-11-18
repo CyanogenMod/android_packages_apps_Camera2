@@ -16,8 +16,6 @@
 
 package com.android.camera;
 
-import static com.android.camera.util.CameraUtil.Assert;
-
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.os.Handler;
@@ -26,11 +24,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.android.camera.CameraManager.CameraProxy;
+import com.android.camera.app.CameraManager;
+import com.android.camera.app.CameraManager.CameraProxy;
+import com.android.camera.app.CameraManagerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static com.android.camera.util.CameraUtil.Assert;
 
 /**
  * The class is used to hold an {@code android.hardware.Camera} instance.
@@ -198,7 +200,7 @@ public class CameraHolder {
         }
         Assert(!mCameraOpened);
         if (mCameraDevice != null && mCameraId != cameraId) {
-            mCameraDevice.release();
+            mCameraDevice.release(true);
             mCameraDevice = null;
             mCameraId = -1;
         }
@@ -206,7 +208,7 @@ public class CameraHolder {
             Log.v(TAG, "open camera " + cameraId);
             if (mMockCameraInfo == null) {
                 mCameraDevice = CameraManagerFactory
-                        .getAndroidCameraManager().cameraOpen(handler, cameraId, cb);
+                        .getAndroidCameraManager().cameraOpenOld(handler, cameraId, cb);
             } else {
                 if (mMockCamera != null) {
                     mCameraDevice = mMockCamera[cameraId];
@@ -222,7 +224,7 @@ public class CameraHolder {
             mCameraId = cameraId;
             mParameters = mCameraDevice.getParameters();
         } else {
-            if (!mCameraDevice.reconnect(handler, cb)) {
+            if (!mCameraDevice.reconnectOld(handler, cb)) {
                 Log.e(TAG, "fail to reconnect Camera:" + mCameraId + ", aborting.");
                 return null;
             }
@@ -250,16 +252,6 @@ public class CameraHolder {
 
         if (mCameraDevice == null) return;
 
-        long now = System.currentTimeMillis();
-        if (now < mKeepBeforeTime) {
-            if (mCameraOpened) {
-                mCameraOpened = false;
-                mCameraDevice.stopPreview();
-            }
-            mHandler.sendEmptyMessageDelayed(RELEASE_CAMERA,
-                    mKeepBeforeTime - now);
-            return;
-        }
         strongRelease();
     }
 
@@ -267,7 +259,7 @@ public class CameraHolder {
         if (mCameraDevice == null) return;
 
         mCameraOpened = false;
-        mCameraDevice.release();
+        mCameraDevice.release(true);
         mCameraDevice = null;
         // We must set this to null because it has a reference to Camera.
         // Camera has references to the listeners.
