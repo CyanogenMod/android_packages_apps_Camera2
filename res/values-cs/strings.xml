@@ -228,7 +228,7 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Zrušit"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Hotovo"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Pořídit další"</string>
-    <string name="capital_on" msgid="1118214824959797269">"Zap."</string>
+    <string name="capital_on" msgid="1118214824959797269">"ZAP."</string>
     <string name="capital_off" msgid="3020696135020167263">"VYP"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Vypnuto"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 sekundy"</string>
