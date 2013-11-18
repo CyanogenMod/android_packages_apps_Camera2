@@ -37,4 +37,12 @@ public class CameraManagerFactory {
         }
         return sAndroidCameraManager;
     }
+
+    /**
+     * Recycles the resources. Always call this method when the activity is
+     * stopped.
+     */
+    public static void recycle() {
+        sAndroidCameraManager = null;
+    }
 }

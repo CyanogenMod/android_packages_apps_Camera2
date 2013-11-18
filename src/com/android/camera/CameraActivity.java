@@ -1396,9 +1396,11 @@ public class CameraActivity extends Activity
 
     @Override
     protected void onStop() {
-        super.onStop();
         mPanoramaViewHelper.onStop();
         unbindMediaSaveService();
+
+        CameraManagerFactory.recycle();
+        super.onStop();
     }
 
     @Override
@@ -1408,7 +1410,6 @@ public class CameraActivity extends Activity
         }
         getContentResolver().unregisterContentObserver(mLocalImagesObserver);
         getContentResolver().unregisterContentObserver(mLocalVideosObserver);
-
         super.onDestroy();
     }
 
