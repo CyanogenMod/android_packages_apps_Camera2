@@ -171,24 +171,6 @@ public class PhotoMenu extends PieController
         });
         mRenderer.addItem(item3);
 
-        // camera switcher
-        // Exposure compensation.
-        if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
-            item = makeItem(CameraSettings.KEY_EXPOSURE);
-            item.setLabel(res.getString(R.string.pref_exposure_label));
-            mRenderer.addItem(item);
-        }
-        // More settings.
-        PieItem more = makeItem(R.drawable.ic_settings_holo_light);
-        more.setLabel(res.getString(R.string.camera_menu_more_label));
-        mRenderer.addItem(more);
-
-        // Flash.
-        if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_FLASH_MODE);
-            item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
-            mRenderer.addItem(item);
-        }
         // Camera switcher.
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
@@ -210,56 +192,6 @@ public class PhotoMenu extends PieController
                 }
             });
             mRenderer.addItem(item);
-        }
-        // Location.
-        if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
-            more.addItem(item);
-            if (mActivity.isSecureCamera()) {
-                // Prevent location preference from getting changed in secure camera mode
-                item.setEnabled(false);
-            }
-        }
-        // Countdown timer.
-        final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
-        final ListPreference beeppref = group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
-        item = makeItem(R.drawable.ic_timer);
-        item.setLabel(res.getString(R.string.pref_camera_timer_title).toUpperCase(locale));
-        item.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                CountdownTimerPopup timerPopup = (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.countdown_setting_popup, null, false);
-                timerPopup.initialize(ctpref, beeppref);
-                timerPopup.setSettingChangedListener(PhotoMenu.this);
-                mUI.dismissPopup();
-                mPopup = timerPopup;
-                mUI.showPopup(mPopup);
-            }
-        });
-        more.addItem(item);
-        // Image size.
-        item = makeItem(R.drawable.ic_imagesize);
-        final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
-        item.setLabel(res.getString(R.string.pref_camera_picturesize_title).toUpperCase(locale));
-        item.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                ListPrefSettingPopup popup = (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.list_pref_setting_popup, null, false);
-                popup.initialize(sizePref);
-                popup.setSettingChangedListener(PhotoMenu.this);
-                mUI.dismissPopup();
-                mPopup = popup;
-                mUI.showPopup(mPopup);
-            }
-        });
-        more.addItem(item);
-        // White balance.
-        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
-            item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
-            more.addItem(item);
         }
     }
 
