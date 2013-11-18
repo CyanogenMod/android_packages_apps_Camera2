@@ -293,18 +293,11 @@
     <string name="cannot_load_image" msgid="4100136187076585580">"Зургийг ачаалах боломжгүй!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Зургийн хальсаар харах"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Ханын зургийг тохируулж байна"</string>
-    <!-- no translation found for mode_settings (2021937261522670921) -->
-    <skip />
-    <!-- no translation found for mode_camera (279763925715250603) -->
-    <skip />
-    <!-- no translation found for mode_video (8633929034048169139) -->
-    <skip />
-    <!-- no translation found for mode_photosphere (8734815245011700505) -->
-    <skip />
-    <!-- no translation found for mode_craft (6390039207517142426) -->
-    <skip />
-    <!-- no translation found for mode_timelapse (7533349646177310052) -->
-    <skip />
-    <!-- no translation found for mode_wideangle (8567175808705784477) -->
-    <skip />
+    <string name="mode_settings" msgid="2021937261522670921">"Тохиргоо"</string>
+    <string name="mode_camera" msgid="279763925715250603">"Камер"</string>
+    <string name="mode_video" msgid="8633929034048169139">"Видео"</string>
+    <string name="mode_photosphere" msgid="8734815245011700505">"Фотоспер"</string>
+    <string name="mode_craft" msgid="6390039207517142426">"Гар урлал"</string>
+    <string name="mode_timelapse" msgid="7533349646177310052">"Таймлапс"</string>
+    <string name="mode_wideangle" msgid="8567175808705784477">"Өргөн өнцөг"</string>
 </resources>
