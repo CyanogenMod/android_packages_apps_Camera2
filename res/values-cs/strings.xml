@@ -229,7 +229,7 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Zrušit"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Hotovo"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Pořídit další"</string>
-    <string name="capital_on" msgid="1118214824959797269">"Zap."</string>
+    <string name="capital_on" msgid="1118214824959797269">"ZAP."</string>
     <string name="capital_off" msgid="3020696135020167263">"VYP"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Vypnuto"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 sekundy"</string>
@@ -293,18 +293,11 @@
     <string name="cannot_load_image" msgid="4100136187076585580">"Obrázek nelze načíst!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Zobrazení filmového pásu"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Nastavování tapety"</string>
-    <!-- no translation found for mode_settings (2021937261522670921) -->
-    <skip />
-    <!-- no translation found for mode_camera (279763925715250603) -->
-    <skip />
-    <!-- no translation found for mode_video (8633929034048169139) -->
-    <skip />
-    <!-- no translation found for mode_photosphere (8734815245011700505) -->
-    <skip />
-    <!-- no translation found for mode_craft (6390039207517142426) -->
-    <skip />
-    <!-- no translation found for mode_timelapse (7533349646177310052) -->
-    <skip />
-    <!-- no translation found for mode_wideangle (8567175808705784477) -->
-    <skip />
+    <string name="mode_settings" msgid="2021937261522670921">"Nastavení"</string>
+    <string name="mode_camera" msgid="279763925715250603">"Fotoaparát"</string>
+    <string name="mode_video" msgid="8633929034048169139">"Video"</string>
+    <string name="mode_photosphere" msgid="8734815245011700505">"Photosphere"</string>
+    <string name="mode_craft" msgid="6390039207517142426">"Řemeslo"</string>
+    <string name="mode_timelapse" msgid="7533349646177310052">"Časosběr"</string>
+    <string name="mode_wideangle" msgid="8567175808705784477">"Širokoúhlé"</string>
 </resources>
