@@ -114,7 +114,7 @@ public class PieRenderer extends OverlayRenderer
     private int mPieCenterX;
     private int mPieCenterY;
     private int mSliceRadius;
-    private int mArcRadius;
+    private int mArcRadius, mMaxArcRadius;
     private int mArcOffset;
 
     private int mDialAngle;
@@ -221,6 +221,7 @@ public class PieRenderer extends OverlayRenderer
         mMenuArcPaint.setStyle(Paint.Style.STROKE);
         mSliceRadius = res.getDimensionPixelSize(R.dimen.pie_item_radius);
         mArcRadius = res.getDimensionPixelSize(R.dimen.pie_arc_radius);
+        mMaxArcRadius = mArcRadius;
         mArcOffset = res.getDimensionPixelSize(R.dimen.pie_arc_offset);
         mLabel = new TextDrawable(res);
         mLabel.setDropShadow(true);
@@ -348,6 +349,12 @@ public class PieRenderer extends OverlayRenderer
         mCenterX = (r - l) / 2;
         mCenterY = (b - t) / 2;
 
+        int layoutWidth = r - l;
+        if( (layoutWidth > 0) && ((mMaxArcRadius + mCenterX) > layoutWidth) ){
+            mArcRadius = layoutWidth - mCenterX;
+        } else {
+            mArcRadius = mMaxArcRadius;
+        }
         mFocusX = mCenterX;
         mFocusY = mCenterY;
         resetPieCenter();
