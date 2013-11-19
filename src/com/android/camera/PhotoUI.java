@@ -160,7 +160,7 @@ public class PhotoUI implements PieListener,
         protected Bitmap doInBackground(Void... params) {
             // Decode image in background.
             Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
-            if (mOrientation != 0 || mMirror) {
+            if ((mOrientation != 0 || mMirror) && (bitmap != null)) {
                 Matrix m = new Matrix();
                 m.preRotate(mOrientation);
                 if (mMirror) {
