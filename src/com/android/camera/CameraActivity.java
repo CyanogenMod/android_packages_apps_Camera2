@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -49,6 +50,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,7 +62,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
@@ -97,6 +101,7 @@ import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmstripView;
 import com.android.camera.ui.ModeListView;
+import com.android.camera.ui.SettingsView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -167,10 +172,11 @@ public class CameraActivity extends Activity
      */
     private LocalDataAdapter mWrappedDataAdapter;
 
+    private SettingsManager mSettingsManager;
     private PanoramaStitchingManager mPanoramaManager;
     private PlaceholderManager mPlaceholderManager;
     private ModeListView mModeListView;
-    private int mCurrentModuleIndex;
+    private int mCurrentModeIndex;
     private CameraModule mCurrentModule;
     private ModuleController mCurrentModule2;
     private ModuleManagerImpl mModuleManager;
@@ -216,6 +222,7 @@ public class CameraActivity extends Activity
     private Intent mImageShareIntent;
 
     private CameraController mCameraController;
+    private boolean mPaused;
 
     private MediaSaver mMediaSaver;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -247,7 +254,7 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
-        if (!mModuleManager.getModuleAgent(mCurrentModuleIndex).requestAppForCamera()) {
+        if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {
             // We shouldn't be here. Just close the camera and leave.
             camera.release(false);
             throw new IllegalStateException("Camera opened but the module shouldn't be " +
@@ -1201,30 +1208,30 @@ public class CameraActivity extends Activity
         // Set up the camera preview first so the preview shows up ASAP.
         mFilmstripController.setListener(mFilmStripListener);
 
-        int moduleIndex = -1;
+        int modeIndex = -1;
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            moduleIndex = ModeListView.MODE_VIDEO;
+            modeIndex = ModeListView.MODE_VIDEO;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
-            moduleIndex = ModeListView.MODE_PHOTO;
+            modeIndex = ModeListView.MODE_PHOTO;
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1)
                         == ModeListView.MODE_GCAM && GcamHelper.hasGcamCapture()) {
-                moduleIndex = ModeListView.MODE_GCAM;
+                modeIndex = ModeListView.MODE_GCAM;
             }
         } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            moduleIndex = ModeListView.MODE_PHOTO;
+            modeIndex = ModeListView.MODE_PHOTO;
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            moduleIndex = prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1);
-            if ((moduleIndex == ModeListView.MODE_GCAM &&
-                    !GcamHelper.hasGcamCapture()) || moduleIndex < 0) {
-                moduleIndex = ModeListView.MODE_PHOTO;
+            modeIndex = prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1);
+            if ((modeIndex == ModeListView.MODE_GCAM &&
+                    !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
+                modeIndex = ModeListView.MODE_PHOTO;
             }
         }
 
@@ -1242,7 +1249,9 @@ public class CameraActivity extends Activity
                 }
             });
 
-        setModuleFromIndex(moduleIndex);
+        mSettingsManager = new SettingsManager(this);
+
+        setModuleFromModeIndex(modeIndex);
         mCurrentModule.init(this, mCameraModuleRootView);
 
         if (!mSecureCamera) {
@@ -1326,6 +1335,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onPause() {
+        mPaused = true;
+
         // Delete photos that are pending deletion
         performDeletion();
         // TODO: call mCurrentModule.pause() instead after all the modules
@@ -1352,6 +1363,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
+        mPaused = false;
+
         // TODO: Handle this in OrientationManager.
         // Auto-rotate off
         if (Settings.System.getInt(getContentResolver(),
@@ -1531,41 +1544,67 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onModeSelected(int moduleIndex) {
-        if (mCurrentModuleIndex == moduleIndex) {
+    public boolean isPaused() {
+        return mPaused;
+    }
+
+    @Override
+    public void onModeSelected(int modeIndex) {
+        if (mCurrentModeIndex == modeIndex) {
             return;
         }
 
+        CameraHolder.instance().keep();
         closeModule(mCurrentModule);
-        setModuleFromIndex(moduleIndex);
 
+        setModuleFromModeIndex(modeIndex);
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         if (mMediaSaver != null) {
             mCurrentModule.onMediaSaverAvailable(mMediaSaver);
         }
-
         // Store the module index so we can use it the next time the Camera
         // starts up.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, moduleIndex).apply();
+        prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, modeIndex).apply();
+    }
+
+    @Override
+    public void onSettingsSelected(int modeIndex) {
+        // Temporary until we finalize the touch flow.
+        LayoutInflater inflater = getLayoutInflater();
+        SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
+            null, false);
+        settingsView.setSettingsListener(new SettingsController(this, mSettingsManager));
+
+        PopupWindow popup = new PopupWindow(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popup.setOutsideTouchable(true);
+        popup.setFocusable(true);
+        popup.setContentView(settingsView);
+        popup.showAtLocation(mModeListView.getRootView(), Gravity.CENTER, 0, 0);
     }
 
     /**
      * Sets the mCurrentModuleIndex, creates a new module instance for the given
      * index an sets it as mCurrentModule.
      */
-    private void setModuleFromIndex(int moduleIndex) {
-        ModuleManagerImpl.ModuleAgent agent = mModuleManager.getModuleAgent(moduleIndex);
+    private void setModuleFromModeIndex(int modeIndex) {
+        ModuleManagerImpl.ModuleAgent agent = mModuleManager.getModuleAgent(modeIndex);
         if (agent == null) {
             return;
         }
         if (!agent.requestAppForCamera()) {
             mCameraController.closeCamera();
         }
-        mCurrentModuleIndex = agent.getModuleId();
+        mCurrentModeIndex = agent.getModuleId();
         mCurrentModule2 = agent.createModule();
         mCurrentModule = (CameraModule) mCurrentModule2;
+    }
+
+    @Override
+    public SettingsManager getSettingsManager() {
+        return mSettingsManager;
     }
 
     /**

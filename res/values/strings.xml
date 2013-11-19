@@ -423,6 +423,7 @@
 
     <!-- Dialog "OK" button. Dismisses dialog. -->
     <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
 
     <!-- Low-memory dialog message [CHAR LIMIT=NONE] -->
     <string name="spaceIsLow_content" product="default">Your SD card is running out of space. Change the quality setting or delete some images or other files.</string>
@@ -691,5 +692,10 @@ CHAR LIMIT = NONE] -->
     <string name="mode_timelapse">Time Lapse</string>
     <!-- Text shown in the camera mode options list for putting camera in wide angle panorama mode [CHAR LIMIT = 25] -->
     <string name="mode_wideangle">Wide Angle</string>
+
+    <string name="setting_location">Location</string>
+    <string name="setting_picture_size">Picture Size</string>
+    <string name="setting_video_resolution">Video Resolution</string>
+    <string name="setting_default_camera">Default Camera</string>
 
  </resources>

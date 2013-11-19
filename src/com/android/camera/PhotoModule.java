@@ -200,6 +200,7 @@ public class PhotoModule
     private ContentResolver mContentResolver;
 
     private LocationManager mLocationManager;
+    private SettingsManager mSettingsManager;
 
     private final PostViewPictureCallback mPostViewPictureCallback =
             new PostViewPictureCallback();
@@ -363,6 +364,7 @@ public class PhotoModule
         mCameraId = getPreferredCameraId(mPreferences);
 
         mContentResolver = mActivity.getContentResolver();
+        mSettingsManager = mActivity.getSettingsManager();
 
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
@@ -880,7 +882,7 @@ public class PhotoModule
         }
         mJpegRotation = CameraUtil.getJpegRotation(mActivity, mCameraId, orientation);
         mParameters.setRotation(mJpegRotation);
-        Location loc = mLocationManager.getCurrentLocation();
+        Location loc = mActivity.getLocationManager().getCurrentLocation();
         CameraUtil.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 

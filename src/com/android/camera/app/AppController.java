@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.widget.FrameLayout;
 
 import com.android.camera.LocationManager;
+import com.android.camera.SettingsManager;
 
 /**
  * The controller at app level.
@@ -58,6 +59,11 @@ public interface AppController {
      * Returns the {@link android.content.Context} being used.
      */
     public Context getAndroidContext();
+
+    /**
+     * Returns whether the app is currently paused.
+     */
+    public boolean isPaused();
 
     /********************** UI / Camera preview **********************/
 
@@ -165,4 +171,11 @@ public interface AppController {
      * @return {@code null} if not available yet.
      */
     public LocationManager getLocationManager();
+
+    /**
+     * Returns the {@link com.android.camera.SettingsManager}.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public SettingsManager getSettingsManager();
 }
