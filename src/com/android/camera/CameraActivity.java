@@ -92,6 +92,7 @@ import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.module.ModuleController;
+import com.android.camera.module.ModulesInfo;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmstripView;
@@ -100,9 +101,7 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.IntentHelper;
-import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
-import com.android.camera.util.RefocusHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
@@ -1126,7 +1125,7 @@ public class CameraActivity extends Activity
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
         mModuleManager = new ModuleManagerImpl();
-        setupModules();
+        ModulesInfo.setupModules(this, mModuleManager);
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
         if (mModeListView != null) {
@@ -1780,125 +1779,5 @@ public class CameraActivity extends Activity
     // For debugging purposes only.
     public CameraModule getCurrentModule() {
         return mCurrentModule;
-    }
-
-    private void setupModules() {
-        // PhotoModule, the default module.
-        mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
-            @Override
-            public int getModuleId() {
-                return ModeListView.MODE_PHOTO;
-            }
-
-            @Override
-            public boolean requestAppForCamera() {
-                return true;
-            }
-
-            @Override
-            public ModuleController createModule() {
-                return new PhotoModule();
-            }
-        });
-        mModuleManager.setDefaultModuleIndex(ModeListView.MODE_PHOTO);
-
-        // VideoModule.
-        mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
-            @Override
-            public int getModuleId() {
-                return ModeListView.MODE_VIDEO;
-            }
-
-            @Override
-            public boolean requestAppForCamera() {
-                return true;
-            }
-
-            @Override
-            public ModuleController createModule() {
-                return new VideoModule();
-            }
-        });
-
-        // WideAngle.
-        mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
-            @Override
-            public int getModuleId() {
-                return ModeListView.MODE_WIDEANGLE;
-            }
-
-            @Override
-            public boolean requestAppForCamera() {
-                return false;
-            }
-
-            @Override
-            public ModuleController createModule() {
-                // TODO: remove the type casting.
-                return new WideAnglePanoramaModule();
-            }
-        });
-
-        // PhotoSphere.
-        if (PhotoSphereHelper.hasLightCycleCapture(this)) {
-            mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
-                @Override
-                public int getModuleId() {
-                    return ModeListView.MODE_PHOTOSPHERE;
-                }
-
-                @Override
-                public boolean requestAppForCamera() {
-                    return false;
-                }
-
-                @Override
-                public ModuleController createModule() {
-                    // TODO: remove the type casting.
-                    return (ModuleController) PhotoSphereHelper.createPanoramaModule();
-                }
-            });
-        }
-
-        // Refocus.
-        if (RefocusHelper.hasRefocusCapture(this)) {
-            mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
-                @Override
-                public int getModuleId() {
-                    return ModeListView.MODE_CRAFT;
-                }
-
-                @Override
-                public boolean requestAppForCamera() {
-                    return false;
-                }
-
-                @Override
-                public ModuleController createModule() {
-                    // TODO: remove the type casting.
-                    return (ModuleController) RefocusHelper.createRefocusModule();
-                }
-            });
-        }
-
-        // Gcam for HDR+.
-        if (GcamHelper.hasGcamCapture()) {
-            mModuleManager.registerModule(new ModuleManagerImpl.ModuleAgent() {
-                @Override
-                public int getModuleId() {
-                    return ModeListView.MODE_GCAM;
-                }
-
-                @Override
-                public boolean requestAppForCamera() {
-                    return false;
-                }
-
-                @Override
-                public ModuleController createModule() {
-                    return (ModuleController) GcamHelper.createGcamModule();
-                }
-            });
-        }
     }
 }

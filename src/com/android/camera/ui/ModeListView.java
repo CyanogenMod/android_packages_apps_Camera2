@@ -55,7 +55,7 @@ public class ModeListView extends ScrollView {
     private static final int TOTAL_DURATION_MS = FLY_IN_DURATION_MS + HOLD_DURATION_MS
             + FLY_OUT_DURATION_MS;
 
-    // Different mdoes in the mode list
+    // Different modes in the mode list
     public static final int MODE_PHOTO = 0;
     public static final int MODE_VIDEO = 1;
     public static final int MODE_PHOTOSPHERE = 2;
@@ -390,7 +390,7 @@ public class ModeListView extends ScrollView {
 
     /**
      * Calculate the mode selector item in the list that is at position (x, y).
-     * 
+     *
      * @param x horizontal position
      * @param y vertical position
      * @return index of the item that is at position (x, y)

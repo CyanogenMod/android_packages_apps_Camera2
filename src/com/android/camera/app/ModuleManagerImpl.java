@@ -18,6 +18,11 @@ package com.android.camera.app;
 
 import android.util.SparseArray;
 
+import com.android.camera.module.ModulesInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A class which implements {@link com.android.camera.app.ModuleManager}.
  */
@@ -60,6 +65,15 @@ public class ModuleManagerImpl implements ModuleManager {
     }
 
     @Override
+    public List<ModuleAgent> getRegisteredModuleAgents() {
+        List<ModuleAgent> agents = new ArrayList<ModuleAgent>();
+        for (int i = 0; i < mRegisteredModuleAgents.size(); i++) {
+            agents.add(mRegisteredModuleAgents.valueAt(i));
+        }
+        return agents;
+    }
+
+    @Override
     public boolean setDefaultModuleIndex(int moduleId) {
         if (mRegisteredModuleAgents.get(moduleId) != null) {
             mDefaultModuleId = moduleId;
@@ -79,6 +93,6 @@ public class ModuleManagerImpl implements ModuleManager {
         if (agent == null) {
             return mRegisteredModuleAgents.get(mDefaultModuleId);
         }
-        return mRegisteredModuleAgents.get(moduleId);
+        return agent;
     }
 }

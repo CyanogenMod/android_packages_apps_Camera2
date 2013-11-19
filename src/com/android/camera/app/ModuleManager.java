@@ -18,6 +18,8 @@ package com.android.camera.app;
 
 import com.android.camera.module.ModuleController;
 
+import java.util.List;
+
 /**
  * The module manager which maintains the
  * {@link ModuleManagerImpl.ModuleAgent}.
@@ -68,6 +70,13 @@ public interface ModuleManager {
      * @return Whether the un-registration succeeds.
      */
     boolean unregisterModule(int moduleId);
+
+    /**
+     * @return A {@link java.util.List} of the
+     * {@link com.android.camera.app.ModuleManager.ModuleAgent} of all the
+     * registered modules.
+     */
+    List<ModuleAgent> getRegisteredModuleAgents();
 
     /**
      * Sets the default module index. No-op if the module index does not exist.
