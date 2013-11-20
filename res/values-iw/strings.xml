@@ -75,7 +75,7 @@
     <string name="focal_length" msgid="8351221512187346229">"רוחק מוקד"</string>
     <string name="white_balance" msgid="1600142743496129085">"איזון לבן"</string>
     <string name="exposure_time" msgid="949787291620767754">"זמן חשיפה"</string>
-    <string name="iso" msgid="8578773821062054902">"‏ISO‏"</string>
+    <string name="iso" msgid="8578773821062054902">"‏ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"מ\"מ"</string>
     <string name="manual" msgid="2444400953521760140">"ידני"</string>
     <string name="auto" msgid="2552649885114400474">"אוטומטי"</string>
@@ -296,8 +296,8 @@
     <string name="mode_settings" msgid="2021937261522670921">"הגדרות"</string>
     <string name="mode_camera" msgid="279763925715250603">"מצלמה"</string>
     <string name="mode_video" msgid="8633929034048169139">"וידאו"</string>
-    <string name="mode_photosphere" msgid="8734815245011700505">"פוטוספירה"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"אומנות"</string>
-    <string name="mode_timelapse" msgid="7533349646177310052">"צילום בהילוך מהיר"</string>
-    <string name="mode_wideangle" msgid="8567175808705784477">"זווית רחבה"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"הילוך מהיר"</string>
+    <string name="mode_wideangle" msgid="1099640345041696830">"זווית רחבה"</string>
 </resources>

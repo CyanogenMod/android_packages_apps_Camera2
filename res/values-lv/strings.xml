@@ -296,8 +296,8 @@
     <string name="mode_settings" msgid="2021937261522670921">"Iestatījumi"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
-    <string name="mode_photosphere" msgid="8734815245011700505">"Fotosfēra"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Amatniecība"</string>
-    <string name="mode_timelapse" msgid="7533349646177310052">"Intervāla fotografēšana"</string>
-    <string name="mode_wideangle" msgid="8567175808705784477">"Platleņķa"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"Intervāla fotografēšana"</string>
+    <string name="mode_wideangle" msgid="1099640345041696830">"Platleņķa režīms"</string>
 </resources>

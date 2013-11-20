@@ -296,8 +296,8 @@
     <string name="mode_settings" msgid="2021937261522670921">"Postavke"</string>
     <string name="mode_camera" msgid="279763925715250603">"Fotoaparat"</string>
     <string name="mode_video" msgid="8633929034048169139">"Videozapis"</string>
-    <string name="mode_photosphere" msgid="8734815245011700505">"Fotosfera"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Primijenjena umjetnost"</string>
-    <string name="mode_timelapse" msgid="7533349646177310052">"Protok vremena"</string>
-    <string name="mode_wideangle" msgid="8567175808705784477">"Širokokutno"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"Protek vremena"</string>
+    <string name="mode_wideangle" msgid="1099640345041696830">"Širokokutno"</string>
 </resources>

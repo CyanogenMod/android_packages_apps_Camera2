@@ -296,8 +296,8 @@
     <string name="mode_settings" msgid="2021937261522670921">"设置"</string>
     <string name="mode_camera" msgid="279763925715250603">"相机"</string>
     <string name="mode_video" msgid="8633929034048169139">"视频"</string>
-    <string name="mode_photosphere" msgid="8734815245011700505">"Photosphere"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"工艺"</string>
-    <string name="mode_timelapse" msgid="7533349646177310052">"缩时拍摄"</string>
-    <string name="mode_wideangle" msgid="8567175808705784477">"广角"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_craft" msgid="6390039207517142426">"Craft"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"缩时拍摄"</string>
+    <string name="mode_wideangle" msgid="1099640345041696830">"广角"</string>
 </resources>
