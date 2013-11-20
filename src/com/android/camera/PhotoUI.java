@@ -63,7 +63,7 @@ import java.util.List;
 public class PhotoUI implements PieListener,
     PreviewGestures.SingleTapListener,
     FocusUI, TextureView.SurfaceTextureListener,
-    LocationManager.Listener, CameraRootView.MyDisplayListener,
+    CameraRootView.MyDisplayListener,
     CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "CAM_UI";
@@ -494,12 +494,6 @@ public class PhotoUI implements PieListener,
             mZoomRenderer.setOnZoomChangeListener(new ZoomChangeListener());
         }
     }
-
-    @Override
-    public void showGpsOnScreenIndicator(boolean hasSignal) { }
-
-    @Override
-    public void hideGpsOnScreenIndicator() { }
 
     public void overrideSettings(final String ... keyvalues) {
         mMenu.overrideSettings(keyvalues);

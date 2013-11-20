@@ -189,6 +189,7 @@ public class CameraActivity extends Activity
     private static boolean sFirstStartAfterScreenOn = true;
     private int mLastRawOrientation;
     private OrientationManagerImpl mOrientationManager;
+    private LocationManager mLocationManager;
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
     private CameraPreviewData mCameraPreviewData;
@@ -914,8 +915,7 @@ public class CameraActivity extends Activity
 
     @Override
     public LocationManager getLocationManager() {
-        // TODO: implement this
-        return null;
+        return mLocationManager;
     }
 
     @Override
@@ -1230,6 +1230,18 @@ public class CameraActivity extends Activity
 
         mOrientationManager = new OrientationManagerImpl(this);
         mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
+
+        mLocationManager = new LocationManager(this,
+            new LocationManager.Listener() {
+                @Override
+                public void showGpsOnScreenIndicator(boolean hasSignal) {
+                }
+
+                @Override
+                public void hideGpsOnScreenIndicator() {
+                }
+            });
+
         setModuleFromIndex(moduleIndex);
         mCurrentModule.init(this, mCameraModuleRootView);
 
