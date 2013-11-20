@@ -264,7 +264,7 @@ public class WideAnglePanoramaModule
 
         mPreferences = new ComboPreferences(mActivity);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
-        mLocationManager = new LocationManager(mActivity, null);
+        mLocationManager = mActivity.getLocationManager();
 
         mMainHandler = new Handler() {
             @Override

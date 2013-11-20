@@ -378,7 +378,7 @@ public class PhotoModule
 
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mLocationManager = new LocationManager(mActivity, mUI);
+        mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager)(mActivity.getSystemService(Context.SENSOR_SERVICE));
     }
 

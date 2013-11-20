@@ -337,7 +337,7 @@ public class VideoModule implements CameraModule, ModuleController, VideoControl
         mUI.setPrefChangedListener(this);
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mLocationManager = new LocationManager(mActivity, null);
+        mLocationManager = mActivity.getLocationManager();
 
         mUI.setOrientationIndicator(0, false);
         setDisplayOrientation();
