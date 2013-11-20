@@ -79,7 +79,6 @@ public class VideoUI implements PieRenderer.PieListener,
     private CameraControls mCameraControls;
     private SettingsPopup mPopup;
     private ZoomRenderer mZoomRenderer;
-    private PreviewGestures mGestures;
     private View mMenuButton;
     private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
@@ -170,11 +169,21 @@ public class VideoUI implements PieRenderer.PieListener,
         mActivity = activity;
         mController = controller;
         mRootView = parent;
-        mActivity.getLayoutInflater().inflate(R.layout.video_module, (ViewGroup) mRootView, true);
+        ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
+        mActivity.getLayoutInflater().inflate(R.layout.video_module,
+                (ViewGroup) moduleRoot, true);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
+
+        mSurfaceTexture = mTextureView.getSurfaceTexture();
+        if (mSurfaceTexture != null) {
+            mPreviewWidth = mTextureView.getWidth();
+            mPreviewHeight = mTextureView.getHeight();
+            setTransformMatrix(mPreviewWidth, mPreviewHeight);
+            mPreviewCover.setVisibility(View.GONE);
+        }
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         initializeMiscControls();
@@ -366,9 +375,6 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void enableCameraControls(boolean enable) {
-        if (mGestures != null) {
-            mGestures.setZoomOnly(!enable);
-        }
         if (mPieRenderer != null && mPieRenderer.showsItems()) {
             mPieRenderer.hide();
         }
@@ -427,11 +433,7 @@ public class VideoUI implements PieRenderer.PieListener,
             mZoomRenderer = new ZoomRenderer(mActivity);
         }
         mRenderOverlay.addRenderer(mZoomRenderer);
-        if (mGestures == null) {
-            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
-            mRenderOverlay.setGestures(mGestures);
-        }
-        mGestures.setRenderOverlay(mRenderOverlay);
+        mRenderOverlay.setGestures(null);
 
         mPreviewThumb = mRootView.findViewById(R.id.preview_thumb);
         mPreviewThumb.setOnClickListener(new OnClickListener() {
@@ -521,12 +523,6 @@ public class VideoUI implements PieRenderer.PieListener,
         return false;
     }
 
-    // disable preview gestures after shutter is pressed
-    public void setShutterPressed(boolean pressed) {
-        if (mGestures == null) return;
-        mGestures.setEnabled(!pressed);
-    }
-
     public void enableShutter(boolean enable) {
         if (mShutterButton != null) {
             mShutterButton.setEnabled(enable);
@@ -612,9 +608,7 @@ public class VideoUI implements PieRenderer.PieListener,
         } else {
             hideUI();
         }
-        if (mGestures != null) {
-            mGestures.setEnabled(previewFocused);
-        }
+
         if (mRenderOverlay != null) {
             // this can not happen in capture mode
             mRenderOverlay.setVisibility(previewFocused ? View.VISIBLE : View.GONE);
@@ -627,11 +621,6 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void initializeZoom(Parameters param) {
-        if (param == null || !param.isZoomSupported()) {
-            mGestures.setZoomEnabled(false);
-            return;
-        }
-        mGestures.setZoomEnabled(true);
         mZoomMax = param.getMaxZoom();
         mZoomRatios = param.getZoomRatios();
         // Currently we use immediate zoom for fast zooming to get better UX and

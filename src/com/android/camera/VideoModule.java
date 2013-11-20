@@ -540,7 +540,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onShutterButtonFocus(boolean pressed) {
-        mUI.setShutterPressed(pressed);
+        // TODO: Remove this when old camera controls are removed from the UI.
     }
 
     private void readVideoPreferences() {

@@ -846,10 +846,10 @@ public class PhotoModule
             case PhotoController.PREVIEW_STOPPED:
             case PhotoController.SNAPSHOT_IN_PROGRESS:
             case PhotoController.SWITCHING_CAMERA:
-                mUI.enableGestures(false);
+                // TODO: Tell app UI to disable swipe
                 break;
             case PhotoController.IDLE:
-                mUI.enableGestures(true);
+                // TODO: Tell app UI to enable swipe
                 break;
         }
     }

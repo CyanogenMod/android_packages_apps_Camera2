@@ -158,4 +158,5 @@
     <dimen name="mode_selector_icon_block_width">84dp</dimen>
     <dimen name="mode_selector_icon_drawable_size">32dp</dimen>
 
+    <dimen name="mode_transition_view_icon_size">48dp</dimen>
 </resources>

@@ -23,8 +23,6 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -75,15 +73,16 @@ public class ModeListView extends ScrollView {
     private static final int ACCORDION_ANIMATION = 2;
     private static final int SCROLLING = 3;
 
-    private final int[] mIconResId = {R.drawable.photo, R.drawable.video,
-            R.drawable.photosphere, R.drawable.craft, R.drawable.timelapse,
-            R.drawable.wideangle, R.drawable.settings,};
+    private static final int[] mIconResId = {R.drawable.ic_camera_normal,
+            R.drawable.ic_video_normal, R.drawable.ic_photo_sphere_normal,
+            R.drawable.ic_craft_normal, R.drawable.ic_timelapse_normal,
+            R.drawable.ic_wide_angle_normal, R.drawable.ic_settings_normal,};
 
-    private final int[] mTextResId = {R.string.mode_camera, R.string.mode_video,
+    private static final int[] mTextResId = {R.string.mode_camera, R.string.mode_video,
             R.string.mode_photosphere, R.string.mode_craft, R.string.mode_timelapse,
             R.string.mode_wideangle, R.string.mode_settings};
 
-    private final int[] mIconBlockColor = {R.color.camera_mode_color,
+    private static final int[] mIconBlockColor = {R.color.camera_mode_color,
             R.color.video_mode_color, R.color.photosphere_mode_color, R.color.craft_mode_color,
             R.color.timelapse_mode_color, R.color.wideangle_mode_color,
             R.color.settings_mode_color};
@@ -109,7 +108,6 @@ public class ModeListView extends ScrollView {
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
-        public void onSettingsSelected(int modeIndex);
     }
 
     /**
@@ -194,11 +192,7 @@ public class ModeListView extends ScrollView {
             int index = getFocusItem(ev.getX(), ev.getY());
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
-                if (index == MODE_SETTING) {
-                    onSettingsSelected(index);
-                } else {
-                    onModeSelected(index);
-                }
+                onModeSelected(index);
             }
             return true;
         }
@@ -243,7 +237,6 @@ public class ModeListView extends ScrollView {
             ModeSelectorItem selectorItem =
                     (ModeSelectorItem) inflater.inflate(R.layout.mode_selector, null);
             mListView.addView(selectorItem);
-
             // Set alternating background color for each mode selector in the list
             if (i % 2 == 0) {
                 selectorItem.setBackgroundColor(getResources()
@@ -255,12 +248,7 @@ public class ModeListView extends ScrollView {
             selectorItem.setIconBackgroundColor(getResources().getColor(mIconBlockColor[i]));
 
             // Set image
-            // TODO: Down-sampling here is temporary, will be removed when we get assets
-            // from UX. The goal will be to fit the icon into 32dp x 32dp rect.
-            BitmapFactory.Options opt = new BitmapFactory.Options();
-            opt.inSampleSize = 4;
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), mIconResId[i], opt);
-            selectorItem.setImageBitmap(bitmap);
+            selectorItem.setImageResource(mIconResId[i]);
 
             // Set text
             CharSequence text = getResources().getText(mTextResId[i]);
@@ -269,13 +257,6 @@ public class ModeListView extends ScrollView {
         }
 
         resetModeSelectors();
-    }
-
-    private void onSettingsSelected(int modeIndex) {
-        if (mListener != null) {
-            mListener.onSettingsSelected(modeIndex);
-        }
-        snapBack();
     }
 
     /** Notify ModeSwitchListener, if any, of the mode change. */
@@ -575,5 +556,33 @@ public class ModeListView extends ScrollView {
             }
         });
         mAnimatorSet.start();
+    }
+
+    /**
+     * Get the theme color of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @return theme color of the mode if input index is valid, otherwise 0
+     */
+    public static int getModeThemeColor(int modeIndex) {
+        if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
+            return 0;
+        } else {
+            return mIconBlockColor[modeIndex];
+        }
+    }
+
+    /**
+     * Get the mode icon resource id of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @return icon resource id if the index is valid, otherwise 0
+     */
+    public static int getModeIconResourceId(int modeIndex) {
+        if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
+            return 0;
+        } else {
+            return mIconResId[modeIndex];
+        }
     }
 }

@@ -87,8 +87,36 @@ public class RenderOverlay extends FrameLayout {
         return mClients.size();
     }
 
+    // TODO: Remove this when refactor is done. This is only here temporarily
+    // to keep pie working before it's replaced with bottom bar.
+    public void directTouchEventsToPie(MotionEvent ev) {
+        PieRenderer pie = null;
+        for (int i = 0; i < mClients.size(); i++) {
+            if (mClients.get(i) instanceof PieRenderer) {
+                pie = (PieRenderer) mClients.get(i);
+                break;
+            }
+        }
+        if (pie == null) {
+            return;
+        }
+        if (pie.isOpen()) {
+            pie.onTouchEvent(ev);
+        }
+    }
+
+    // TODO: Remove this when refactor is done. This is only here temporarily
+    // to keep pie working before it's replaced with bottom bar.
+    public void clear() {
+        mGestures = null;
+        while (mClients.size() > 0) {
+            remove(mClients.get(0));
+        }
+        mTouchClients.clear();
+    }
+
     @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
+    public boolean onTouchEvent(MotionEvent m) {
         if (mGestures != null) {
             if (!mGestures.isEnabled()) return false;
             mGestures.dispatchTouch(m);
@@ -134,6 +162,9 @@ public class RenderOverlay extends FrameLayout {
 
         @Override
         public boolean dispatchTouchEvent(MotionEvent evt) {
+            if (mGestures == null) {
+                return false;
+            }
 
             if (mTouchTarget != null) {
                 return mTouchTarget.onTouchEvent(evt);

@@ -68,6 +68,7 @@ import android.widget.ShareActionProvider;
 import com.android.camera.app.AppController;
 import com.android.camera.app.AppManagerFactory;
 import com.android.camera.app.CameraApp;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraManager;
 import com.android.camera.app.CameraManagerFactory;
@@ -100,6 +101,7 @@ import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmstripView;
+import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.SettingsView;
 import com.android.camera.util.ApiHelper;
@@ -113,7 +115,7 @@ import com.android.camera2.R;
 import java.io.File;
 
 public class CameraActivity extends Activity
-        implements AppController, ModeListView.ModeSwitchListener, CameraManager.CameraOpenCallback,
+        implements AppController, CameraManager.CameraOpenCallback,
         ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
@@ -221,6 +223,7 @@ public class CameraActivity extends Activity
 
     private CameraController mCameraController;
     private boolean mPaused;
+    private CameraAppUI mCameraAppUI;
 
     private MediaSaver mMediaSaver;
 
@@ -827,6 +830,11 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public int getCurrentModuleIndex() {
+        return mCurrentModeIndex;
+    }
+
+    @Override
     public SurfaceTexture getPreviewBuffer() {
         // TODO: implement this
         return null;
@@ -1088,12 +1096,6 @@ public class CameraActivity extends Activity
         ModulesInfo.setupModules(this, mModuleManager);
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
-        if (mModeListView != null) {
-            mModeListView.setModeSwitchListener(this);
-        } else {
-            Log.e(TAG, "Cannot find mode list in the view hierarchy");
-        }
-
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
         }
@@ -1154,6 +1156,12 @@ public class CameraActivity extends Activity
         // Set up the camera preview first so the preview shows up ASAP.
         mFilmstripController.setListener(mFilmStripListener);
 
+        // TODO: Remove the 3rd parameter once mCameraModuleRoot is moved out of filmstrip
+        mCameraAppUI = new CameraAppUI(this,
+                (MainActivityLayout) findViewById(R.id.activity_root_view),
+                mCameraModuleRootView,
+                isSecureCamera(), isCaptureIntent());
+
         int modeIndex = -1;
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
@@ -1198,6 +1206,12 @@ public class CameraActivity extends Activity
         mSettingsManager = new SettingsManager(this);
 
         setModuleFromModeIndex(modeIndex);
+
+        // TODO: Remove this when refactor is done.
+        if (modeIndex == ModulesInfo.MODULE_PHOTO ||
+                modeIndex == ModulesInfo.MODULE_VIDEO) {
+            mCameraAppUI.prepareModuleUI();
+        }
         mCurrentModule.init(this, mCameraModuleRootView);
 
         if (!mSecureCamera) {
@@ -1494,10 +1508,33 @@ public class CameraActivity extends Activity
             return;
         }
 
+        if (modeIndex == ModeListView.MODE_SETTING) {
+            onSettingsSelected();
+            return;
+        }
+
         CameraHolder.instance().keep();
         closeModule(mCurrentModule);
-
+        int oldModuleIndex = mCurrentModeIndex;
         setModuleFromModeIndex(modeIndex);
+
+        // TODO: The following check is temporary for quick switch between video and photo.
+        // When the refactor is done, similar logic will be applied to all modules.
+        if (mCurrentModeIndex == ModulesInfo.MODULE_PHOTO
+                || mCurrentModeIndex == ModulesInfo.MODULE_VIDEO) {
+            if (oldModuleIndex != ModulesInfo.MODULE_PHOTO
+                    && oldModuleIndex != ModulesInfo.MODULE_VIDEO) {
+                mCameraAppUI.prepareModuleUI();
+            } else {
+                mCameraAppUI.clearModuleUI();
+            }
+        } else {
+            // This is the old way of removing all views in CameraRootView. Will
+            // be deprecated soon. It is here to make sure modules that haven't
+            // been refactored can still function.
+            mCameraAppUI.clearCameraUI();
+        }
+
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         if (mMediaSaver != null) {
@@ -1509,8 +1546,7 @@ public class CameraActivity extends Activity
         prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, modeIndex).apply();
     }
 
-    @Override
-    public void onSettingsSelected(int modeIndex) {
+    public void onSettingsSelected() {
         // Temporary until we finalize the touch flow.
         LayoutInflater inflater = getLayoutInflater();
         SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
@@ -1590,7 +1626,6 @@ public class CameraActivity extends Activity
 
     private void closeModule(CameraModule module) {
         module.pause();
-        ((ViewGroup) mCameraModuleRootView).removeAllViews();
     }
 
     private void performDeletion() {

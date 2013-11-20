@@ -113,12 +113,12 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     /**
-     * Sets bitmap as the icon for the mode.
+     * Sets image resource as the icon for the mode.
      *
-     * @param bitmap bitmap to be used as icon
+     * @param resource resource id of the asset to be used as icon
      */
-    public void setImageBitmap(Bitmap bitmap) {
-        mIcon.setImageBitmap(bitmap);
+    public void setImageResource(int resource) {
+        mIcon.setImageResource(resource);
     }
 
     /**

@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 
 import com.android.camera.LocationManager;
 import com.android.camera.SettingsManager;
+import com.android.camera.ui.ModeListView;
 
 /**
  * The controller at app level.
@@ -64,6 +65,18 @@ public interface AppController {
      * Returns whether the app is currently paused.
      */
     public boolean isPaused();
+
+    /**
+     * Returns current running module index.
+     */
+    public int getCurrentModuleIndex();
+
+    /**
+     * This gets called when mode is changed.
+     *
+     * @param moduleIndex index of the new module to switch to
+     */
+    public void onModeSelected(int moduleIndex);
 
     /********************** UI / Camera preview **********************/
 

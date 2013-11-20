@@ -24,22 +24,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center">
-    <!-- Wrap a frame layout around texture view so that when scaled, texture
-         view will not draw outside its unscaled bounds -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextureView
-            android:id="@+id/preview_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <View
-            android:id="@+id/preview_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/black"
-            android:visibility="gone" />
-    </FrameLayout>
     <ImageView
         android:id="@+id/review_image"
         android:layout_width="match_parent"
@@ -48,24 +32,11 @@
         android:clickable="true"
         android:background="@android:color/black"
         android:scaleType="fitCenter"/>
-    <View
-        android:id="@+id/flash_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        android:alpha="0" />
+
     <ViewStub android:id="@+id/face_view_stub"
         android:inflatedId="@+id/face_view"
         android:layout="@layout/face_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
-    <com.android.camera.ui.RenderOverlay
-        android:id="@+id/render_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <include layout="@layout/camera_controls"
-        android:layout_gravity="center"
-        style="@style/CameraControls"/>
 </merge>

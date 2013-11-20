@@ -1064,7 +1064,7 @@ public class PieRenderer extends OverlayRenderer
         @Override
         public void onAnimationEnd(Animation animation) {
             // Keep the focus indicator for some time.
-            if (!mFocusCancelled) {
+            if (!mFocusCancelled && mOverlay != null) {
                 mOverlay.postDelayed(mDisappear, DISAPPEAR_TIMEOUT);
             }
         }

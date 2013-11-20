@@ -71,7 +71,6 @@ public class PhotoUI implements PieListener,
     private final AnimationManager mAnimationManager;
     private CameraActivity mActivity;
     private PhotoController mController;
-    private PreviewGestures mGestures;
 
     private View mRootView;
     private SurfaceTexture mSurfaceTexture;
@@ -192,8 +191,9 @@ public class PhotoUI implements PieListener,
         mController = controller;
         mRootView = parent;
 
+        ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
-                (ViewGroup) mRootView, true);
+                 (ViewGroup) moduleRoot, true);
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
@@ -203,6 +203,11 @@ public class PhotoUI implements PieListener,
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
         initIndicators();
 
+        mSurfaceTexture = mTextureView.getSurfaceTexture();
+        if (mSurfaceTexture != null) {
+            setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
+            mPreviewCover.setVisibility(View.GONE);
+        }
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mMenuButton = mRootView.findViewById(R.id.menu);
         ViewStub faceViewStub = (ViewStub) mRootView
@@ -342,15 +347,7 @@ public class PhotoUI implements PieListener,
             mZoomRenderer = new ZoomRenderer(mActivity);
             mRenderOverlay.addRenderer(mZoomRenderer);
         }
-
-        if (mGestures == null) {
-            // this will handle gesture disambiguation and dispatching
-            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
-            mRenderOverlay.setGestures(mGestures);
-        }
-        mGestures.setZoomEnabled(params.isZoomSupported());
-        mGestures.setRenderOverlay(mRenderOverlay);
-        mRenderOverlay.requestLayout();
+        mRenderOverlay.setGestures(null);
 
         initializeZoom(params);
         updateOnScreenIndicators(params, prefGroup, prefs);
@@ -524,12 +521,6 @@ public class PhotoUI implements PieListener,
         mAnimationManager.startFlashAnimation(mFlashOverlay);
     }
 
-    public void enableGestures(boolean enable) {
-        if (mGestures != null) {
-            mGestures.setEnabled(enable);
-        }
-    }
-
     // forward from preview gestures to controller
     @Override
     public void onSingleTapUp(View view, int x, int y) {
@@ -563,9 +554,6 @@ public class PhotoUI implements PieListener,
         }
         if (mFaceView != null) {
             mFaceView.setBlockDraw(!previewFocused);
-        }
-        if (mGestures != null) {
-            mGestures.setEnabled(previewFocused);
         }
         if (mRenderOverlay != null) {
             // this can not happen in capture mode

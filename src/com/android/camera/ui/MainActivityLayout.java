@@ -19,13 +19,15 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import com.android.camera2.R;
 
-class MainActivityLayout extends FrameLayout {
+public class MainActivityLayout extends FrameLayout {
 
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
@@ -34,6 +36,9 @@ class MainActivityLayout extends FrameLayout {
     private boolean mCheckToIntercept;
     private MotionEvent mDown;
     private final int mSlop;
+    private final String TAG = "MainActivityLayout";
+    private boolean mRequestToInterceptTouchEvents = false;
+    private View mTouchReceiver = null;
 
     public MainActivityLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,7 +50,13 @@ class MainActivityLayout extends FrameLayout {
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mCheckToIntercept = true;
             mDown = MotionEvent.obtain(ev);
+            mTouchReceiver = null;
+            mRequestToInterceptTouchEvents = false;
             return false;
+        } else if (mRequestToInterceptTouchEvents) {
+            mRequestToInterceptTouchEvents = false;
+            onTouchEvent(mDown);
+            return true;
         } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
             // Do not intercept touch once child is in zoom mode
             mCheckToIntercept = false;
@@ -63,6 +74,7 @@ class MainActivityLayout extends FrameLayout {
                     && deltaX > mSlop) {
                 // Intercept right swipe
                 if (Math.abs(deltaX) >= Math.abs(deltaY) * 2) {
+                    mTouchReceiver = mModeList;
                     onTouchEvent(mDown);
                     return true;
                 }
@@ -73,9 +85,11 @@ class MainActivityLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        // TODO: This also needs to be modified with a better touch flow.
-        // Pass the right swipe to mode switcher.
-        return mModeList.onTouchEvent(ev);
+        if (mTouchReceiver != null) {
+            mTouchReceiver.setVisibility(VISIBLE);
+            return mTouchReceiver.onTouchEvent(ev);
+        }
+        return false;
     }
 
     @Override
@@ -87,5 +101,14 @@ class MainActivityLayout extends FrameLayout {
     @Override
     public void onFinishInflate() {
         mModeList = (ModeListView) findViewById(R.id.mode_list_layout);
+    }
+
+    public void redirectTouchEventsTo(View touchReceiver) {
+        if (touchReceiver == null) {
+            Log.e(TAG, "Cannot redirect touch to a null receiver.");
+            return;
+        }
+        mTouchReceiver = touchReceiver;
+        mRequestToInterceptTouchEvents = true;
     }
 }

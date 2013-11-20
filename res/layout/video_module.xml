@@ -17,38 +17,6 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
-    <!-- Wrap a frame layout around texture view so that when scaled, texture
-         view will not draw outside its unscaled bounds -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextureView
-            android:id="@+id/preview_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <View
-            android:id="@+id/preview_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/black"
-            android:visibility="gone" />
-    </FrameLayout>
-    <View
-        android:id="@+id/flash_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        android:alpha="0" />
-    <FrameLayout android:id="@+id/preview_border"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@drawable/ic_snapshot_border" />
-    <com.android.camera.ui.RenderOverlay
-        android:id="@+id/render_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     <com.android.camera.ui.RotateLayout android:id="@+id/recording_time_rect"
             style="@style/ViewfinderLabelLayout">
         <include layout="@layout/viewfinder_labels_video" android:id="@+id/labels" />
@@ -67,7 +35,4 @@
             android:visibility="gone"
             android:onClick="onReviewPlayClicked"/>
 
-    <include layout="@layout/camera_controls"
-        android:layout_gravity="center"
-        style="@style/CameraControls"/>
 </merge>
