@@ -110,9 +110,9 @@ public class PhotoModule
     private static final int UPDATE_PARAM_PREFERENCE = 4;
     private static final int UPDATE_PARAM_ALL = -1;
 
-    // This is the timeout to keep the camera in onPause for the first time
-    // after screen on if the activity is started from secure lock screen.
-    private static final int KEEP_CAMERA_TIMEOUT = 1000; // ms
+    // This is the delay before we execute onResume tasks when coming
+    // from the lock screen, to allow time for onPause to execute.
+    private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
 
@@ -1172,6 +1172,7 @@ public class PhotoModule
     private boolean prepareCamera() {
         // We need to check whether the activity is paused before long
         // operations to ensure that onPause() can be done ASAP.
+        Log.v(TAG, "Open camera device.");
         mCameraDevice = CameraUtil.openCamera(
                 mActivity, mCameraId, mHandler,
                 mActivity.getCameraOpenErrorCallback());
@@ -1194,7 +1195,28 @@ public class PhotoModule
 
     @Override
     public void onResumeAfterSuper() {
-        Log.v(TAG, "On resume.");
+        // Add delay on resume from lock screen only, in order to to speed up
+        // the onResume --> onPause --> onResume cycle from lock screen.
+        // Don't do always because letting go of thread can cause delay.
+        String action = mActivity.getIntent().getAction();
+        if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
+                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
+            Log.v(TAG, "On resume, from lock screen.");
+            // Note: onPauseAfterSuper() will delete this runnable, so we will
+            // at most have 1 copy queued up.
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    onResumeTasks();
+                }
+            }, ON_RESUME_TASKS_DELAY_MSEC);
+        } else {
+            Log.v(TAG, "On resume.");
+            onResumeTasks();
+        }
+    }
+
+    private void onResumeTasks() {
+        Log.v(TAG, "Executing onResumeTasks.");
         if (mOpenCameraFail || mCameraDisabled) return;
 
         mJpegPictureCallbackTime = 0;
@@ -1247,15 +1269,7 @@ public class PhotoModule
     public void onPauseAfterSuper() {
         Log.v(TAG, "On pause.");
         mUI.showPreviewCover();
-        // When camera is started from secure lock screen for the first time
-        // after screen on, the activity gets onCreate->onResume->onPause->onResume.
-        // To reduce the latency, keep the camera for a short time so it does
-        // not need to be opened again.
-        if (mCameraDevice != null && mActivity.isSecureCamera()
-                && CameraActivity.isFirstStartAfterScreenOn()) {
-            CameraActivity.resetFirstStartAfterScreenOn();
-            CameraHolder.instance().keep(KEEP_CAMERA_TIMEOUT);
-        }
+
         // Reset the focus first. Camera CTS does not guarantee that
         // cancelAutoFocus is allowed after preview stops.
         if (mCameraDevice != null && mCameraState != PREVIEW_STOPPED) {
@@ -1277,9 +1291,6 @@ public class PhotoModule
         // Remove the messages and runnables in the queue.
         mHandler.removeCallbacksAndMessages(null);
 
-        // Postpones actually releasing for KEEP_CAMERA_TIMEOUT,
-        // so if onResume is directly called after this, the camera
-        // simply needs to reconnect (takes about 2-5ms).
         closeCamera();
 
         resetScreenOn();
@@ -1442,6 +1453,7 @@ public class PhotoModule
     }
 
     private void closeCamera() {
+        Log.v(TAG, "Close camera device.");
         if (mCameraDevice != null) {
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
