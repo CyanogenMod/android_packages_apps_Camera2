@@ -39,8 +39,8 @@ import java.io.File;
 public class MediaSaveService extends Service {
     public static final String VIDEO_BASE_URI = "content://media/external/video/media";
 
-    // The memory limit for unsaved image is 20MB.
-    private static final int SAVE_TASK_MEMORY_LIMIT = 20 * 1024 * 1024;
+    // The memory limit for unsaved image is 50MB.
+    private static final int SAVE_TASK_MEMORY_LIMIT = 50 * 1024 * 1024;
     private static final String TAG = "CAM_" + MediaSaveService.class.getSimpleName();
 
     private final IBinder mBinder = new LocalBinder();
