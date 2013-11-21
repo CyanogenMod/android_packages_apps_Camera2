@@ -46,6 +46,7 @@ import android.view.WindowManager;
 
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.AppController;
+import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
@@ -64,7 +65,9 @@ import java.util.TimeZone;
  * Activity to handle panorama capturing.
  */
 public class WideAnglePanoramaModule
-        implements CameraModule, ModuleController, WideAnglePanoramaController,
+        extends CameraModule
+        implements ModuleController,
+        WideAnglePanoramaController,
         SurfaceTexture.OnFrameAvailableListener {
 
     public static final int DEFAULT_SWEEP_ANGLE = 160;
@@ -94,8 +97,8 @@ public class WideAnglePanoramaModule
     private WideAnglePanoramaUI mUI;
 
     private MosaicPreviewRenderer mMosaicPreviewRenderer;
-    private Object mRendererLock = new Object();
-    private Object mWaitObject = new Object();
+    private final Object mRendererLock = new Object();
+    private final Object mWaitObject = new Object();
 
     private String mPreparePreviewString;
     private String mDialogTitle;
@@ -124,7 +127,7 @@ public class WideAnglePanoramaModule
 
     // Prefer FOCUS_MODE_INFINITY to FOCUS_MODE_CONTINUOUS_VIDEO because of
     // getting a better image quality by the former.
-    private String mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
+    private final String mTargetFocusMode = Parameters.FOCUS_MODE_INFINITY;
 
     private PanoOrientationEventListener mOrientationEventListener;
     // The value could be 0, 90, 180, 270 for the 4 different orientations measured in clockwise
@@ -147,6 +150,13 @@ public class WideAnglePanoramaModule
     private ComboPreferences mPreferences;
     private boolean mMosaicPreviewConfigured;
     private boolean mPreviewFocused = true;
+
+    /**
+     * Constructs a new Wide-Angle panorama module.
+     */
+    public WideAnglePanoramaModule(CameraServices services) {
+        super(services);
+    }
 
     @Override
     public void onPreviewUIReady() {
@@ -651,6 +661,7 @@ public class WideAnglePanoramaModule
     /** The orientation of the camera image. The value is the angle that the camera
      *  image needs to be rotated clockwise so it shows correctly on the display
      *  in its natural orientation. It should be 0, 90, 180, or 270.*/
+    @Override
     public int getCameraOrientation() {
         return mCameraOrientation;
     }

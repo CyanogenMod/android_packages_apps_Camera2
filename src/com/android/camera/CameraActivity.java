@@ -22,12 +22,10 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -43,7 +41,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -70,6 +67,7 @@ import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraManager;
 import com.android.camera.app.CameraManagerFactory;
@@ -98,6 +96,7 @@ import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
+import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmstripView;
 import com.android.camera.ui.ModeListView;
@@ -205,7 +204,7 @@ public class CameraActivity extends Activity
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
 
-    private Uri[] mNfcPushUris = new Uri[1];
+    private final Uri[] mNfcPushUris = new Uri[1];
 
     private ShareActionProvider mStandardShareActionProvider;
     private Intent mStandardShareIntent;
@@ -225,25 +224,10 @@ public class CameraActivity extends Activity
     private boolean mPaused;
 
     private MediaSaver mMediaSaver;
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder b) {
-            mMediaSaver = ((MediaSaveService.LocalBinder) b).getService();
-            mCurrentModule.onMediaSaverAvailable(mMediaSaver);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            if (mMediaSaver != null) {
-                mMediaSaver.setQueueListener(null);
-                mMediaSaver = null;
-            }
-        }
-    };
 
 
     // close activity when screen turns off
-    private BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             finish();
@@ -333,7 +317,7 @@ public class CameraActivity extends Activity
         return localFile.getName();
     }
 
-    private FilmstripListener mFilmStripListener =
+    private final FilmstripListener mFilmStripListener =
             new FilmstripListener() {
                 @Override
                 public void onDataPromoted(int dataID) {
@@ -760,7 +744,7 @@ public class CameraActivity extends Activity
         }
     }
 
-    private ImageTaskManager.TaskListener mPlaceholderListener =
+    private final ImageTaskManager.TaskListener mPlaceholderListener =
             new ImageTaskManager.TaskListener() {
 
                 @Override
@@ -795,7 +779,7 @@ public class CameraActivity extends Activity
                 }
             };
 
-    private ImageTaskManager.TaskListener mStitchingListener =
+    private final ImageTaskManager.TaskListener mStitchingListener =
             new ImageTaskManager.TaskListener() {
                 @Override
                 public void onTaskQueued(String filePath, final Uri imageUri) {
@@ -911,11 +895,6 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public MediaSaver getMediaSaver() {
-        return mMediaSaver;
-    }
-
-    @Override
     public OrientationManager getOrientationManager() {
         return mOrientationManager;
     }
@@ -972,16 +951,6 @@ public class CameraActivity extends Activity
         }
     }
 
-    private void bindMediaSaveService() {
-        Intent intent = new Intent(this, MediaSaveService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    private void unbindMediaSaveService() {
-        if (mConnection != null) {
-            unbindService(mConnection);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1414,14 +1383,12 @@ public class CameraActivity extends Activity
     @Override
     public void onStart() {
         super.onStart();
-        bindMediaSaveService();
         mPanoramaViewHelper.onStart();
     }
 
     @Override
     protected void onStop() {
         mPanoramaViewHelper.onStop();
-        unbindMediaSaveService();
 
         CameraManagerFactory.recycle();
         super.onStop();
@@ -1598,7 +1565,7 @@ public class CameraActivity extends Activity
             mCameraController.closeCamera();
         }
         mCurrentModeIndex = agent.getModuleId();
-        mCurrentModule2 = agent.createModule();
+        mCurrentModule2 = agent.createModule((CameraApp) getApplication());
         mCurrentModule = (CameraModule) mCurrentModule2;
     }
 

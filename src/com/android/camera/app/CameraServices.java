@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.camera.util;
+package com.android.camera.app;
 
-import android.content.Context;
-
-import com.android.camera.CameraModule;
-import com.android.camera.app.CameraServices;
-
-public class RefocusHelper {
-    public static CameraModule createRefocusModule(CameraServices services) {
-        return null;
-    }
-
-    public static boolean hasRefocusCapture(Context context) {
-        return false;
-    }
+public interface CameraServices {
+    /**
+     * Returns the media saver instance.
+     * <p>
+     * Deprecated. Use {@link #getSessionManager()} whenever possible. This
+     * direct access to media saver will go away.
+     */
+    @Deprecated
+    public MediaSaver getMediaSaver();
 }

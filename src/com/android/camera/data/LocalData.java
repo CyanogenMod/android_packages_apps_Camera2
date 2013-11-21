@@ -73,6 +73,11 @@ public interface LocalData extends FilmstripImageData {
      */
     public static final int LOCAL_IN_PROGRESS_DATA = 7;
 
+    /**
+     * Constant for denoting an RGBZ image.
+     */
+    public static final int LOCAL_RGBZ = 8;
+
     View getView(Context ctx, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter);
 
@@ -149,7 +154,8 @@ public interface LocalData extends FilmstripImageData {
      *
      * @return The local data type. Could be one of the following:
      * {@code LOCAL_CAMERA_PREVIEW}, {@code LOCAL_VIEW}, {@code LOCAL_IMAGE},
-     * {@code LOCAL_VIDEO}, {@code LOCAL_PHOTO_SPHERE}, and {@code LOCAL_360_PHOTO_SPHERE}
+     * {@code LOCAL_VIDEO}, {@code LOCAL_PHOTO_SPHERE},
+     * {@code LOCAL_360_PHOTO_SPHERE}, and {@code LOCAL_RGBZ}
      */
     int getLocalDataType();
 

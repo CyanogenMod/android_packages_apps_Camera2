@@ -21,52 +21,88 @@ import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
 
-@Deprecated
-public interface CameraModule {
+public abstract class CameraModule {
 
-    public void init(CameraActivity activity, View frame);
+    /** Provides common services and functionality to the module. */
+    private final CameraServices mServices;
 
-    public void onPreviewFocusChanged(boolean previewFocused);
+    public CameraModule(CameraServices services) {
+        mServices = services;
+    }
 
-    public void onPauseBeforeSuper();
+    @Deprecated
+    public abstract void init(CameraActivity activity, View frame);
 
-    public void onPauseAfterSuper();
+    @Deprecated
+    public abstract void onPreviewFocusChanged(boolean previewFocused);
 
-    public void onResumeBeforeSuper();
+    @Deprecated
+    public abstract void onPauseBeforeSuper();
 
-    public void onResumeAfterSuper();
+    @Deprecated
+    public abstract void onPauseAfterSuper();
 
-    public void onConfigurationChanged(Configuration config);
+    @Deprecated
+    public abstract void onResumeBeforeSuper();
 
-    public void onStop();
+    @Deprecated
+    public abstract void onResumeAfterSuper();
 
-    public void installIntentFilter();
+    @Deprecated
+    public abstract void onConfigurationChanged(Configuration config);
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data);
+    @Deprecated
+    public abstract void onStop();
 
-    public boolean onBackPressed();
+    @Deprecated
+    public abstract void installIntentFilter();
 
-    public boolean onKeyDown(int keyCode, KeyEvent event);
+    @Deprecated
+    public abstract void onActivityResult(int requestCode, int resultCode, Intent data);
 
-    public boolean onKeyUp(int keyCode, KeyEvent event);
+    @Deprecated
+    public abstract boolean onBackPressed();
 
-    public void onSingleTapUp(View view, int x, int y);
+    @Deprecated
+    public abstract boolean onKeyDown(int keyCode, KeyEvent event);
 
-    public void onPreviewTextureCopied();
+    @Deprecated
+    public abstract boolean onKeyUp(int keyCode, KeyEvent event);
 
-    public void onCaptureTextureCopied();
+    @Deprecated
+    public abstract void onSingleTapUp(View view, int x, int y);
 
-    public void onUserInteraction();
+    @Deprecated
+    public abstract void onPreviewTextureCopied();
 
-    public boolean updateStorageHintOnResume();
+    @Deprecated
+    public abstract void onCaptureTextureCopied();
 
-    public void onOrientationChanged(int orientation);
+    @Deprecated
+    public abstract void onUserInteraction();
 
-    public void onShowSwitcherPopup();
+    @Deprecated
+    public abstract boolean updateStorageHintOnResume();
 
-    public void onMediaSaverAvailable(MediaSaver s);
+    @Deprecated
+    public abstract void onOrientationChanged(int orientation);
 
-    public boolean arePreviewControlsVisible();
+    @Deprecated
+    public abstract void onShowSwitcherPopup();
+
+    @Deprecated
+    public abstract void onMediaSaverAvailable(MediaSaver s);
+
+    @Deprecated
+    public abstract boolean arePreviewControlsVisible();
+
+    /**
+     * @return An instance containing common services to be used by the module.
+     */
+    protected CameraServices getServices() {
+        return mServices;
+    }
 }

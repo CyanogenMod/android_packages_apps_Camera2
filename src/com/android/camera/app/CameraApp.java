@@ -18,16 +18,28 @@ package com.android.camera.app;
 
 import android.app.Application;
 
+import com.android.camera.MediaSaverImpl;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 
-public class CameraApp extends Application {
+/**
+ * The Camera application class containing important services and functionality
+ * to be used across modules.
+ */
+public class CameraApp extends Application implements CameraServices {
+    private MediaSaver mMediaSaver;
 
     @Override
     public void onCreate() {
         super.onCreate();
         UsageStatistics.initialize(this);
         CameraUtil.initialize(this);
+
+        mMediaSaver = new MediaSaverImpl();
+    }
+
+    @Override
+    public MediaSaver getMediaSaver() {
+        return mMediaSaver;
     }
 }
-

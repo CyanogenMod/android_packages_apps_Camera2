@@ -58,6 +58,7 @@ import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.CameraManager.CameraShutterCallback;
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
+import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -81,9 +82,14 @@ import java.util.List;
 import java.util.Vector;
 
 public class PhotoModule
-        implements CameraModule, ModuleController, PhotoController, FocusOverlayManager.Listener,
-        CameraPreference.OnPreferenceChangedListener, ShutterButton.OnShutterButtonListener,
-        MediaSaver.QueueListener, OnCountDownFinishedListener, SensorEventListener {
+        extends CameraModule
+        implements PhotoController,
+        ModuleController,
+        FocusOverlayManager.Listener,
+        CameraPreference.OnPreferenceChangedListener,
+        ShutterButton.OnShutterButtonListener, MediaSaver.QueueListener,
+        OnCountDownFinishedListener,
+        SensorEventListener {
 
     private static final String TAG = "CAM_PhotoModule";
 
@@ -164,7 +170,7 @@ public class PhotoModule
     // when the image is ready to be saved.
     private NamedImages mNamedImages;
 
-    private Runnable mDoSnapRunnable = new Runnable() {
+    private final Runnable mDoSnapRunnable = new Runnable() {
         @Override
         public void run() {
             onShutterButtonClick();
@@ -242,15 +248,15 @@ public class PhotoModule
 
     private boolean mQuickCapture;
     private SensorManager mSensorManager;
-    private float[] mGData = new float[3];
-    private float[] mMData = new float[3];
-    private float[] mR = new float[16];
+    private final float[] mGData = new float[3];
+    private final float[] mMData = new float[3];
+    private final float[] mR = new float[16];
     private int mHeading = -1;
 
     // True if all the parameters needed to start preview is ready.
     private boolean mCameraPreviewParamsReady = false;
 
-    private MediaSaver.OnMediaSavedListener mOnMediaSavedListener =
+    private final MediaSaver.OnMediaSavedListener mOnMediaSavedListener =
             new MediaSaver.OnMediaSavedListener() {
                 @Override
                 public void onMediaSaved(Uri uri) {
@@ -354,6 +360,12 @@ public class PhotoModule
         }
     }
 
+    /**
+     * Constructs a new photo module.
+     */
+    public PhotoModule(CameraServices services) {
+        super(services);
+    }
 
     @Override
     public void init(CameraActivity activity, View parent) {
@@ -535,7 +547,7 @@ public class PhotoModule
         keepMediaProviderInstance();
 
         mUI.initializeFirstTime();
-        MediaSaver s = mActivity.getMediaSaver();
+        MediaSaver s = getServices().getMediaSaver();
         // We set the listener only when both service and shutterbutton
         // are initialized.
         if (s != null) {
@@ -557,7 +569,7 @@ public class PhotoModule
         boolean recordLocation = RecordLocationPreference.get(
                 mPreferences, mContentResolver);
         mLocationManager.recordLocation(recordLocation);
-        MediaSaver s = mActivity.getMediaSaver();
+        MediaSaver s = getServices().getMediaSaver();
         if (s != null) {
             s.setQueueListener(this);
         }
@@ -613,7 +625,7 @@ public class PhotoModule
     private final class ShutterCallback
             implements CameraShutterCallback {
 
-        private boolean mNeedsAnimation;
+        private final boolean mNeedsAnimation;
 
         public ShutterCallback(boolean needsAnimation) {
             mNeedsAnimation = needsAnimation;
@@ -744,7 +756,7 @@ public class PhotoModule
                         exif.setTag(directionRefTag);
                         exif.setTag(directionTag);
                     }
-                    mActivity.getMediaSaver().addImage(
+                    getServices().getMediaSaver().addImage(
                             jpegData, title, date, mLocation, width, height,
                             orientation, exif, mOnMediaSavedListener, mContentResolver);
                 }
@@ -800,7 +812,7 @@ public class PhotoModule
      * This class is just a thread-safe queue for name,date holder objects.
      */
     public static class NamedImages {
-        private Vector<NamedEntity> mQueue;
+        private final Vector<NamedEntity> mQueue;
 
         public NamedImages() {
             mQueue = new Vector<NamedEntity>();
@@ -857,8 +869,8 @@ public class PhotoModule
         // is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
                 || mCameraState == SWITCHING_CAMERA
-                || mActivity.getMediaSaver() == null
-                || mActivity.getMediaSaver().isQueueFull()) {
+                || getServices().getMediaSaver() == null
+                || getServices().getMediaSaver().isQueueFull()) {
             return false;
         }
         mCaptureStartTime = System.currentTimeMillis();
@@ -1270,7 +1282,7 @@ public class PhotoModule
 
         mPendingSwitchCameraId = -1;
         if (mFocusManager != null) mFocusManager.removeMessages();
-        MediaSaver s = mActivity.getMediaSaver();
+        MediaSaver s = getServices().getMediaSaver();
         if (s != null) {
             s.setQueueListener(null);
         }

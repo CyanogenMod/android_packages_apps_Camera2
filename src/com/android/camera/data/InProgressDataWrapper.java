@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -188,13 +187,14 @@ public class InProgressDataWrapper implements LocalData {
     }
 
     @Override
-    public void isPhotoSphere(Context context, PanoramaSupportCallback callback) {
-        mLocalData.isPhotoSphere(context, callback);
+    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback) {
+        mLocalData.requestAuxInfo(context, callback);
     }
 
+
     @Override
-    public void viewPhotoSphere(PhotoSphereHelper.PanoramaViewHelper helper) {
-        mLocalData.viewPhotoSphere(helper);
+    public void view(PhotoSphereHelper.PanoramaViewHelper helper) {
+        mLocalData.view(helper);
     }
 
     @Override

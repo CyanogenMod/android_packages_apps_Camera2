@@ -45,9 +45,12 @@ public interface ModuleManager {
 
         /**
          * Creates the module.
+         *
+         * @param services Common services and functionality to be shared
+         *            between modules.
          * @return The module.
          */
-        public ModuleController createModule();
+        public ModuleController createModule(CameraServices services);
     }
 
     /**

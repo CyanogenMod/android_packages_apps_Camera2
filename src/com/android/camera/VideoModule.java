@@ -53,9 +53,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.android.camera.app.AppController;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
-import com.android.camera.app.AppController;
+import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.module.ModuleController;
@@ -73,9 +74,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class VideoModule implements CameraModule, ModuleController, VideoController,
-        CameraPreference.OnPreferenceChangedListener, ShutterButton.OnShutterButtonListener,
-        MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener {
+public class VideoModule extends CameraModule
+    implements ModuleController,
+    VideoController,
+    CameraPreference.OnPreferenceChangedListener,
+    ShutterButton.OnShutterButtonListener,
+    MediaRecorder.OnErrorListener,
+    MediaRecorder.OnInfoListener {
 
     private static final String TAG = "CAM_VideoModule";
 
@@ -285,6 +290,13 @@ public class VideoModule implements CameraModule, ModuleController, VideoControl
         }
     }
 
+    /**
+     * Construct a new video module.
+     */
+    public VideoModule(CameraServices services) {
+        super(services);
+    }
+
     private String createName(long dateTaken) {
         Date date = new Date(dateTaken);
         SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -359,7 +371,7 @@ public class VideoModule implements CameraModule, ModuleController, VideoControl
             if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress) {
                 return;
             }
-            MediaSaver s = mActivity.getMediaSaver();
+            MediaSaver s = getServices().getMediaSaver();
             if (s == null || s.isQueueFull()) {
                 return;
             }
@@ -1069,7 +1081,7 @@ public class VideoModule implements CameraModule, ModuleController, VideoControl
             } else {
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
-            mActivity.getMediaSaver().addVideo(mCurrentVideoFilename,
+            getServices().getMediaSaver().addVideo(mCurrentVideoFilename,
                     duration, mCurrentVideoValues,
                     mOnVideoSavedListener, mContentResolver);
         }
@@ -1722,7 +1734,7 @@ public class VideoModule implements CameraModule, ModuleController, VideoControl
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
 
-        mActivity.getMediaSaver().addImage(
+        getServices().getMediaSaver().addImage(
                 data, title, dateTaken, loc, orientation,
                 exif, mOnPhotoSavedListener, mContentResolver);
     }

@@ -38,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.android.camera.data.RgbzMetadataLoader.RgbzMetadataCallback;
 import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
@@ -47,6 +48,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
 
 /**
  * A base class for all the local media files. The bitmap is loaded in
@@ -72,7 +74,10 @@ public abstract class LocalMediaData implements LocalData {
     protected PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
 
     /** Used to load photo sphere metadata from image files. */
-    protected PanoramaMetadataLoader mPanoramaMetadataLoader = null;
+    protected PanoramaMetadataLoader mPanoramaMetadataLoader;
+
+    protected RgbzMetadataLoader mRgbzMetadataLoader;
+    protected Boolean mIsRgbz = null;
 
     /**
      * Used for thumbnail loading optimization. True if this data has a
@@ -80,7 +85,7 @@ public abstract class LocalMediaData implements LocalData {
      */
     protected Boolean mUsing = false;
 
-    public LocalMediaData (long contentId, String title, String mimeType,
+    public LocalMediaData(long contentId, String title, String mimeType,
             long dateTakenInSeconds, long dateModifiedInSeconds, String path,
             int width, int height, long sizeInBytes, double latitude,
             double longitude) {
@@ -159,36 +164,75 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public void viewPhotoSphere(PhotoSphereHelper.PanoramaViewHelper helper) {
-        helper.showPanorama(getContentUri());
+    public void view(PhotoSphereHelper.PanoramaViewHelper helper) {
+        if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
+            helper.showPanorama(getContentUri());
+        } else if (mIsRgbz != null && mIsRgbz.booleanValue()) {
+            helper.showRgbz(getContentUri());
+        }
     }
 
     @Override
-    public void isPhotoSphere(Context context, final PanoramaSupportCallback callback) {
+    public void requestAuxInfo(Context context, final AuxInfoSupportCallback callback) {
         // If we already have metadata, use it.
-        if (mPanoramaMetadata != null) {
-            callback.panoramaInfoAvailable(mPanoramaMetadata.mUsePanoramaViewer,
-                    mPanoramaMetadata.mIsPanorama360);
+        if (mPanoramaMetadata != null && mIsRgbz != null) {
+            callback.auxInfoAvailable(mPanoramaMetadata.mUsePanoramaViewer,
+                    mPanoramaMetadata.mIsPanorama360, mIsRgbz.booleanValue());
+            return;
         }
 
-        // Otherwise prepare a loader, if we don't have one already.
-        if (mPanoramaMetadataLoader == null) {
-            mPanoramaMetadataLoader = new PanoramaMetadataLoader(getContentUri());
+        final Semaphore sem = new Semaphore(1);
+        if (mPanoramaMetadata == null) {
+            // Drain all permits so the rgbz return callback waits for the
+            // panorama data result.
+            sem.drainPermits();
+            // Otherwise prepare a loader, if we don't have one already.
+            if (mPanoramaMetadataLoader == null) {
+                mPanoramaMetadataLoader = new PanoramaMetadataLoader(getContentUri());
+            }
+            // Load the metadata asynchronously.
+            mPanoramaMetadataLoader.getPanoramaMetadata(context,
+                    new PanoramaMetadataLoader.PanoramaMetadataCallback() {
+                        @Override
+                        public void onPanoramaMetadataLoaded(
+                                PhotoSphereHelper.PanoramaMetadata metadata) {
+                            // Store the metadata and remove the loader to free
+                            // up
+                            // space.
+                            mPanoramaMetadata = metadata;
+                            mPanoramaMetadataLoader = null;
+                            sem.release();
+                        }
+                    });
         }
 
-        // Load the metadata asynchronously.
-        mPanoramaMetadataLoader.getPanoramaMetadata(context,
-                new PanoramaMetadataLoader.PanoramaMetadataCallback() {
-                    @Override
-                    public void onPanoramaMetadataLoaded(PhotoSphereHelper.PanoramaMetadata metadata) {
-                        // Store the metadata and remove the loader to free up
-                        // space.
-                        mPanoramaMetadata = metadata;
-                        mPanoramaMetadataLoader = null;
-                        callback.panoramaInfoAvailable(metadata.mUsePanoramaViewer,
-                                metadata.mIsPanorama360);
+        if (mIsRgbz == null) {
+            if (mRgbzMetadataLoader == null) {
+                mRgbzMetadataLoader = new RgbzMetadataLoader(getContentUri());
+            }
+            mRgbzMetadataLoader.getRgbzMetadata(context, new RgbzMetadataCallback() {
+                @Override
+                public void onRgbzMetadataLoaded(Boolean isRgbz) {
+                    mIsRgbz = isRgbz;
+                    mRgbzMetadataLoader = null;
+                    try {
+                        // Wait, if needed, for the result of the panorama data
+                        // update.
+                        sem.acquire();
+                    } catch (InterruptedException e) {
+                        // Do nothing
                     }
-                });
+
+                    boolean usePanoramaViewer = mPanoramaMetadata != null
+                            && mPanoramaMetadata.mUsePanoramaViewer;
+                    boolean isPanorama360 = mPanoramaMetadata != null
+                            && mPanoramaMetadata.mIsPanorama360;
+                    boolean isItRgbz = mIsRgbz != null & mIsRgbz.booleanValue();
+                    callback.auxInfoAvailable(usePanoramaViewer,
+                            isPanorama360, isItRgbz);
+                }
+            });
+        }
     }
 
     @Override
@@ -613,7 +657,7 @@ public abstract class LocalMediaData implements LocalData {
         };
 
         /** The duration in milliseconds. */
-        private long mDurationInSeconds;
+        private final long mDurationInSeconds;
 
         public VideoData(long id, String title, String mimeType,
                 long dateTakenInSeconds, long dateModifiedInSeconds,
@@ -648,7 +692,8 @@ public abstract class LocalMediaData implements LocalData {
             rotation = retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
 
-            // Extracts video height/width if available. If unavailable, set to 0.
+            // Extracts video height/width if available. If unavailable, set to
+            // 0.
             if (width == 0 || height == 0) {
                 String val = retriever.extractMetadata(
                         MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
@@ -761,7 +806,8 @@ public abstract class LocalMediaData implements LocalData {
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: refactor this into activities to avoid this class conversion.
+                    // TODO: refactor this into activities to avoid this class
+                    // conversion.
                     CameraUtil.playVideo((Activity) ctx, getContentUri(), mTitle);
                 }
             });

@@ -40,7 +40,7 @@
         android:visibility="gone" />
 
     <ImageButton
-        android:id="@+id/filmstrip_bottom_control_panorama"
+        android:id="@+id/filmstrip_bottom_control_view"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"

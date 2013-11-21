@@ -40,7 +40,7 @@ import com.android.camera.data.LocalData;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.FilmstripDataAdapter;
 import com.android.camera.filmstrip.FilmstripImageData;
-import com.android.camera.filmstrip.FilmstripImageData.PanoramaSupportCallback;
+import com.android.camera.filmstrip.FilmstripImageData.AuxInfoSupportCallback;
 import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
@@ -50,7 +50,7 @@ import com.android.camera2.R;
 import java.util.Arrays;
 
 public class FilmstripView extends ViewGroup implements BottomControlsListener {
-    private static final String TAG = "CAM_FilmStripView";
+    private static final String TAG = "FilmStripView";
 
     private static final int BUFFER_SIZE = 5;
     private static final int GEOMETRY_ADJUST_TIME_MS = 400;
@@ -76,7 +76,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     private float mScale;
     private MyController mController;
     private int mCenterX = -1;
-    private ViewItem[] mViewItem = new ViewItem[BUFFER_SIZE];
+    private final ViewItem[] mViewItem = new ViewItem[BUFFER_SIZE];
 
     private FilmstripListener mListener;
     private ZoomView mZoomView = null;
@@ -106,15 +106,16 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         private int mDataId;
         /** The position of the left of the view in the whole filmstrip. */
         private int mLeftPosition;
-        private View mView;
-        private RectF mViewArea;
+        private final View mView;
+        private final RectF mViewArea;
 
-        private ValueAnimator mTranslationXAnimator;
+        private final ValueAnimator mTranslationXAnimator;
 
         /**
          * Constructor.
          *
-         * @param id The id of the data from {@link com.android.camera.filmstrip.FilmstripDataAdapter}.
+         * @param id The id of the data from
+         *            {@link com.android.camera.filmstrip.FilmstripDataAdapter}.
          * @param v The {@code View} representing the data.
          */
         public ViewItem(
@@ -129,12 +130,18 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             mTranslationXAnimator.addUpdateListener(listener);
         }
 
-        /** Returns the data id from {@link com.android.camera.filmstrip.FilmstripDataAdapter}. */
+        /**
+         * Returns the data id from
+         * {@link com.android.camera.filmstrip.FilmstripDataAdapter}.
+         */
         public int getId() {
             return mDataId;
         }
 
-        /** Sets the data id from {@link com.android.camera.filmstrip.FilmstripDataAdapter}. */
+        /**
+         * Sets the data id from
+         * {@link com.android.camera.filmstrip.FilmstripDataAdapter}.
+         */
         public void setId(int id) {
             mDataId = id;
         }
@@ -164,19 +171,20 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
          * This position is post-layout, in addition to wherever the object's
          * layout placed it.
          *
-         * @return The horizontal position of this view relative to its left position, in pixels.
+         * @return The horizontal position of this view relative to its left
+         *         position, in pixels.
          */
         public float getTranslationX() {
             return mView.getTranslationX();
         }
 
         /**
-         * The vertical location of this view relative to its top position.
-         * This position is post-layout, in addition to wherever the object's
-         * layout placed it.
+         * The vertical location of this view relative to its top position. This
+         * position is post-layout, in addition to wherever the object's layout
+         * placed it.
          *
-         * @return The vertical position of this view relative to its top position,
-         * in pixels.
+         * @return The vertical position of this view relative to its top
+         *         position, in pixels.
          */
         public float getTranslationY() {
             return mView.getTranslationY();
@@ -257,7 +265,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         public void layoutIn(Rect drawArea, int refCenter, float scale) {
             final float translationX = (mTranslationXAnimator.isRunning() ?
                     (Float) mTranslationXAnimator.getAnimatedValue() : 0f);
-            int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter + translationX) * scale);
+            int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter + translationX)
+                    * scale);
             int top = (int) (drawArea.centerY() - (mView.getMeasuredHeight() / 2) * scale);
             layoutAt(left, top);
             mView.setScaleX(scale);
@@ -289,13 +298,14 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             mView.setTranslationY(v.getTranslationY());
             mView.setTranslationX(v.getTranslationX());
         }
+
         /**
-         * Apply a scale factor (i.e. {@param postScale}) on top of current scale at
-         * pivot point ({@param focusX}, {@param focusY}). Visually it should be the
+         * Apply a scale factor (i.e. {@code postScale}) on top of current scale at
+         * pivot point ({@code focusX}, {@code focusY}). Visually it should be the
          * same as post concatenating current view's matrix with specified scale.
          */
         void postScale(float focusX, float focusY, float postScale, int viewportWidth,
-                       int viewportHeight) {
+                int viewportHeight) {
             float transX = getTranslationX();
             float transY = getTranslationY();
             // Pivot point is top left of the view, so we need to translate
@@ -309,7 +319,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         }
 
         void updateTransform(float transX, float transY, float scaleX, float scaleY,
-                                    int viewportWidth, int viewportHeight) {
+                int viewportWidth, int viewportHeight) {
             float left = transX + mView.getLeft();
             float top = transY + mView.getTop();
             RectF r = ZoomView.adjustToFitInBounds(new RectF(left, top,
@@ -476,7 +486,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             return;
         }
 
-        int[] dim = calculateChildDimension(filmstripImageData.getWidth(), filmstripImageData.getHeight(),
+        int[] dim = calculateChildDimension(filmstripImageData.getWidth(),
+                filmstripImageData.getHeight(),
                 filmstripImageData.getOrientation(), boundWidth, boundHeight);
 
         item.getView().measure(
@@ -646,9 +657,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     }
 
     /**
-     * Check the bounds of {@code mCenterX}. Always call this function after:
-     * 1. Any changes to {@code mCenterX}. 2. Any size change of the view
-     * items.
+     * Check the bounds of {@code mCenterX}. Always call this function after: 1.
+     * Any changes to {@code mCenterX}. 2. Any size change of the view items.
      *
      * @return Whether clamp happened.
      */
@@ -663,10 +673,11 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 && mDataIdOnUserScrolling <= 1) {
             // Stop at the first ViewItem.
             stopScroll = true;
-        } else if(curr.getId() == 1 && mCenterX < curr.getCenterX()
+        } else if (curr.getId() == 1 && mCenterX < curr.getCenterX()
                 && mDataIdOnUserScrolling > 1 && mController.isScrolling()) {
             stopScroll = true;
-        } if (curr.getId() == mDataAdapter.getTotalNumber() - 1
+        }
+        if (curr.getId() == mDataAdapter.getTotalNumber() - 1
                 && mCenterX > curr.getCenterX()) {
             // Stop at the end.
             stopScroll = true;
@@ -697,8 +708,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     }
 
     /**
-     * Reorders the child views to be consistent with their data ID. This
-     * method should be called after adding/removing views.
+     * Reorders the child views to be consistent with their data ID. This method
+     * should be called after adding/removing views.
      */
     private void adjustChildZOrder() {
         for (int i = BUFFER_SIZE - 1; i >= 0; i--) {
@@ -715,10 +726,10 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
      * panorama viewer.
      */
     @Override
-    public void onViewPhotoSphere() {
+    public void onView() {
         ViewItem curr = mViewItem[mCurrentItem];
         if (curr != null) {
-            mDataAdapter.getImageData(curr.getId()).viewPhotoSphere(mPanoramaViewHelper);
+            mDataAdapter.getImageData(curr.getId()).view(mPanoramaViewHelper);
         }
     }
 
@@ -754,14 +765,14 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     /**
      * Updates the visibility of the bottom controls.
      *
-     * @param force update the bottom controls even if the current id
-     *              has been checked for button visibilities
+     * @param force update the bottom controls even if the current id has been
+     *            checked for button visibilities
      */
     private void updateBottomControls(boolean force) {
         if (mActivity.isSecureCamera()) {
-            // We cannot show buttons in secure camera that send out of app intents,
-            // because another app with the same name can parade as the intented
-            // Activity.
+            // We cannot show buttons in secure camera that send out of app
+            // intents, because another app with the same name can parade as
+            // the intented Activity.
             return;
         }
 
@@ -800,11 +811,12 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             // at a weird timing.
             return;
         }
-        // TODO: Remove this from FilmstripView as it breaks the design.
-        data.isPhotoSphere(mActivity, new PanoramaSupportCallback() {
+        // TODO: Remove this from FilmstripView as it breaks the design. We need
+        // to add this to a separate DB.
+        data.requestAuxInfo(mActivity, new AuxInfoSupportCallback() {
             @Override
-            public void panoramaInfoAvailable(final boolean isPanorama,
-                    boolean isPanorama360) {
+            public void auxInfoAvailable(final boolean isPanorama,
+                    boolean isPanorama360, boolean isRgbz) {
                 // Make sure the returned data is for the current image.
                 if (requestId == getCurrentId()) {
                     if (mListener != null) {
@@ -812,16 +824,32 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                         // change actually.
                         mListener.onDataFocusChanged(requestId, true);
                     }
-                    mBottomControls.setViewPhotoSphereButtonVisibility(isPanorama);
                     mBottomControls.setTinyPlanetButtonVisibility(isPanorama360);
+
+                    final int viewButtonVisibility;
+                    if (isPanorama) {
+                        viewButtonVisibility = FilmstripBottomControls.VIEW_PHOTO_SPHERE;
+                    } else if (isRgbz) {
+                        viewButtonVisibility = FilmstripBottomControls.VIEW_RGBZ;
+                    } else {
+                        viewButtonVisibility = FilmstripBottomControls.VIEW_NONE;
+                    }
+
+                    mBottomControls.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            mBottomControls.setViewButtonVisibility(viewButtonVisibility);
+                        }
+                    });
                 }
             }
         });
     }
 
     /**
-     * Keep the current item in the center. This functions does not check if
-     * the current item is null.
+     * Keep the current item in the center. This functions does not check if the
+     * current item is null.
      */
     private void snapInCenter() {
         final ViewItem currentItem = mViewItem[mCurrentItem];
@@ -833,7 +861,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
 
         int snapInTime = (int) (SNAP_IN_CENTER_TIME_MS
                 * ((float) Math.abs(mCenterX - currentViewCenter))
-                /  mDrawArea.width());
+                / mDrawArea.width());
         mController.scrollToPosition(currentViewCenter,
                 snapInTime, false);
         if (getCurrentViewType() == FilmstripImageData.VIEW_TYPE_STICKY
@@ -853,8 +881,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
      * @param currItem The item ID of the current one to be translated.
      * @param drawAreaWidth The width of the current draw area.
      * @param scaleFraction A {@code float} between 0 and 1. 0 if the current
-     *                      scale is {@link FILM_STRIP_SCALE}. 1 if the
-     *                      current scale is {@link FULL_SCREEN_SCALE}.
+     *            scale is {@link FILM_STRIP_SCALE}. 1 if the current scale is
+     *            {@link FULL_SCREEN_SCALE}.
      */
     private void translateLeftViewItem(
             int currItem, int drawAreaWidth, float scaleFraction) {
@@ -874,7 +902,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         final int currCenterX = curr.getCenterX();
         final int nextCenterX = next.getCenterX();
         final int translate = (int) ((nextCenterX - drawAreaWidth
-                    - currCenterX) * scaleFraction);
+                - currCenterX) * scaleFraction);
 
         curr.layoutIn(mDrawArea, mCenterX, mScale);
         curr.getView().setAlpha(1f);
@@ -956,7 +984,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 (mScale - FILM_STRIP_SCALE) / (FULL_SCREEN_SCALE - FILM_STRIP_SCALE));
         final int fullScreenWidth = mDrawArea.width() + mViewGap;
 
-        // Decide the position for all view items on the left and the right first.
+        // Decide the position for all view items on the left and the right
+        // first.
 
         // Left items.
         for (int itemID = mCurrentItem - 1; itemID >= 0; itemID--) {
@@ -994,7 +1023,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         // Layout the current ViewItem first.
         if (immediateRight) {
             // Just do a simple layout without any special translation or
-            // fading.  The implementation in Gallery does not push the first
+            // fading. The implementation in Gallery does not push the first
             // photo to the bottom of the camera preview. Simply place the
             // photo on the right of the preview.
             final ViewItem currItem = mViewItem[mCurrentItem];
@@ -1008,7 +1037,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 // In full-screen and mCenterX is on the left of the center,
                 // we draw the current one to "fade down".
                 fadeAndScaleRightViewItem(mCurrentItem);
-            } else if(mCenterX > currCenterX) {
+            } else if (mCenterX > currCenterX) {
                 // In full-screen and mCenterX is on the right of the center,
                 // we draw the current one translated.
                 translateLeftViewItem(mCurrentItem, fullScreenWidth, scaleFraction);
@@ -1019,8 +1048,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             }
         } else {
             final ViewItem currItem = mViewItem[mCurrentItem];
-            // The normal filmstrip has no translation for the current item. If it has
-            // translation before, gradually set it to zero.
+            // The normal filmstrip has no translation for the current item. If
+            // it has translation before, gradually set it to zero.
             currItem.setTranslationX(
                     currItem.getScaledTranslationX(mScale) * scaleFraction,
                     mScale);
@@ -1081,7 +1110,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 }
                 curr.setTranslationX(
                         (mViewItem[mCurrentItem].getLeftPosition() - curr.getLeftPosition())
-                        * scaleFraction, mScale);
+                                * scaleFraction, mScale);
             }
         }
 
@@ -1105,7 +1134,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
         mDrawArea.bottom = b;
         mZoomView.layout(mDrawArea.left, mDrawArea.top, mDrawArea.right, mDrawArea.bottom);
         // TODO: Need a more robust solution to decide when to re-layout
-        // If in the middle of zooming, only re-layout when the layout has changed.
+        // If in the middle of zooming, only re-layout when the layout has
+        // changed.
         if (!mController.isZoomStarted() || changed) {
             resetZoomView();
             layoutViewItems(changed);
@@ -1113,10 +1143,10 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     }
 
     /**
-     * Clears the translation and scale that has been set on the view, cancels any loading
-     * request for image partial decoding, and hides zoom view.
-     * This is needed for when there is a layout change (e.g. when users re-enter the app,
-     * or rotate the device, etc).
+     * Clears the translation and scale that has been set on the view, cancels
+     * any loading request for image partial decoding, and hides zoom view. This
+     * is needed for when there is a layout change (e.g. when users re-enter the
+     * app, or rotate the device, etc).
      */
     private void resetZoomView() {
         if (!mController.isZoomStarted()) {
@@ -1713,13 +1743,14 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                         snapInCenter();
                         if (mCenterX == mViewItem[mCurrentItem].getCenterX()
                                 && getCurrentViewType() == FilmstripImageData.VIEW_TYPE_STICKY) {
-                            // Special case for the scrolling end on the camera preview.
+                            // Special case for the scrolling end on the camera
+                            // preview.
                             goToFullScreen();
                         }
                     }
                 };
 
-        private ValueAnimator.AnimatorUpdateListener mScaleAnimatorUpdateListener =
+        private final ValueAnimator.AnimatorUpdateListener mScaleAnimatorUpdateListener =
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -1837,7 +1868,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                     // Make sure animation ends up having the correct scale even
                     // if it is cancelled before it finishes
                     if (mScale != endScale) {
-                        current.postScale(focusX, focusY, endScale/mScale, mDrawArea.width(),
+                        current.postScale(focusX, focusY, endScale / mScale, mDrawArea.width(),
                                 mDrawArea.height());
                         mScale = endScale;
                     }
@@ -1932,8 +1963,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             final int factor = DECELERATION_FACTOR;
             // Deceleration curve for distance:
             // S(t) = s + (e - s) * (1 - (1 - t/T) ^ factor)
-            // Need to find the ending distance (e), so that the starting velocity
-            // is the velocity of fling.
+            // Need to find the ending distance (e), so that the starting
+            // velocity is the velocity of fling.
             // Velocity is the derivative of distance
             // V(t) = (e - s) * factor * (-1) * (1 - t/T) ^ (factor - 1) * (-1/T)
             //      = (e - s) * factor * (1 - t/T) ^ (factor - 1) / T
@@ -1948,7 +1979,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             final float velocity = Math.max(Math.abs(velocityX), Math.abs(velocityY));
             // Dynamically calculate duration
             final float duration = (float) (FLING_COASTING_DURATION_S
-                    * Math.pow(velocity, (1f/ (factor - 1f))));
+                    * Math.pow(velocity, (1f / (factor - 1f))));
 
             final float translationX = current.getTranslationX();
             final float translationY = current.getTranslationY();
@@ -1975,11 +2006,12 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             mFlingAnimator.setInterpolator(new TimeInterpolator() {
                 @Override
                 public float getInterpolation(float input) {
-                    return (float)(1.0f - Math.pow((1.0f - input), factor));
+                    return (float) (1.0f - Math.pow((1.0f - input), factor));
                 }
             });
             mFlingAnimator.addListener(new Animator.AnimatorListener() {
                 private boolean mCancelled = false;
+
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -2106,8 +2138,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
 
         private void setSurroundingViewsVisible(boolean visible) {
             // Hide everything on the left
-            // TODO: Need to find a better way to toggle the visibility of views around
-            //       the current view.
+            // TODO: Need to find a better way to toggle the visibility of views
+            // around the current view.
             for (int i = 0; i < mCurrentItem; i++) {
                 if (i == mCurrentItem || mViewItem[i] == null) {
                     continue;
@@ -2143,7 +2175,8 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 return FULL_SCREEN_SCALE;
             }
             float imageWidth = filmstripImageData.getWidth();
-            if (filmstripImageData.getOrientation() == 90 || filmstripImageData.getOrientation() == 270) {
+            if (filmstripImageData.getOrientation() == 90
+                    || filmstripImageData.getOrientation() == 270) {
                 imageWidth = filmstripImageData.getHeight();
             }
             float scale = imageWidth / curr.getWidth();
@@ -2165,7 +2198,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             FilmstripImageData filmstripImageData = mDataAdapter.getImageData(curr.getId());
-            if(!filmstripImageData.isUIActionSupported(FilmstripImageData.ACTION_ZOOM)) {
+            if (!filmstripImageData.isUIActionSupported(FilmstripImageData.ACTION_ZOOM)) {
                 return;
             }
             Uri uri = getCurrentContentUri();
@@ -2205,16 +2238,17 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
     private static class MyScroller {
         public interface Listener {
             public void onScrollUpdate(int currX, int currY);
+
             public void onScrollEnd();
         }
 
-        private Handler mHandler;
-        private Listener mListener;
+        private final Handler mHandler;
+        private final Listener mListener;
 
         private final Scroller mScroller;
 
         private final ValueAnimator mXScrollAnimator;
-        private Runnable mScrollChecker = new Runnable() {
+        private final Runnable mScrollChecker = new Runnable() {
             @Override
             public void run() {
                 boolean newPosition = mScroller.computeScrollOffset();
@@ -2228,7 +2262,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             }
         };
 
-        private ValueAnimator.AnimatorUpdateListener mXScrollAnimatorUpdateListener =
+        private final ValueAnimator.AnimatorUpdateListener mXScrollAnimatorUpdateListener =
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -2236,7 +2270,7 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                     }
                 };
 
-        private Animator.AnimatorListener mXScrollAnimatorListener =
+        private final Animator.AnimatorListener mXScrollAnimatorListener =
                 new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationCancel(Animator animation) {
@@ -2258,7 +2292,6 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                         // Do nothing.
                     }
                 };
-
 
         public MyScroller(Context ctx, Handler handler, Listener listener,
                 TimeInterpolator interpolator) {
@@ -2426,11 +2459,12 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                     // No next photo.
                     snapInCenter();
                 }
-            } if (mCenterX == currItem.getCenterX() && currId == 0
+            }
+            if (mCenterX == currItem.getCenterX() && currId == 0
                     && getCurrentViewType() == FilmstripImageData.VIEW_TYPE_STICKY) {
                 mController.goToFullScreen();
             } else {
-                if (mDataIdOnUserScrolling  == 0 && currId != 0) {
+                if (mDataIdOnUserScrolling == 0 && currId != 0) {
                     // Special case to go to filmstrip when the user scroll away
                     // from the camera preview and the current one is not the
                     // preview anymore.
@@ -2528,14 +2562,15 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 return true;
             }
 
-            // In full-screen, fling of a velocity above a threshold should go to
-            // the next/prev photos
+            // In full-screen, fling of a velocity above a threshold should go
+            // to the next/prev photos
             if (mScale == FULL_SCREEN_SCALE) {
                 int currItemCenterX = currItem.getCenterX();
 
-                if (velocityX > 0) {  // left
+                if (velocityX > 0) { // left
                     if (mCenterX > currItemCenterX) {
-                        // The visually previous item is actually the current item.
+                        // The visually previous item is actually the current
+                        // item.
                         mController.scrollToPosition(
                                 currItemCenterX, GEOMETRY_ADJUST_TIME_MS, true);
                         return true;
@@ -2546,10 +2581,11 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                     }
                     mController.scrollToPosition(
                             prevItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, true);
-                } else {  // right
+                } else { // right
                     if (mController.stopScrolling(false)) {
                         if (mCenterX < currItemCenterX) {
-                            // The visually next item is actually the current item.
+                            // The visually next item is actually the current
+                            // item.
                             mController.scrollToPosition(
                                     currItemCenterX, GEOMETRY_ADJUST_TIME_MS, true);
                             return true;
@@ -2596,21 +2632,23 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
             mScaleTrend = mScaleTrend * 0.3f + scale * 0.7f;
             float newScale = mScale * scale;
             if (mScale < FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
-                // Scaled view is smaller than or equal to screen size both before
-                // and after scaling
+                // Scaled view is smaller than or equal to screen size both
+                // before and after scaling
                 mScale = newScale;
                 if (mScale <= FILM_STRIP_SCALE) {
                     mScale = FILM_STRIP_SCALE;
                 }
                 invalidate();
             } else if (mScale < FULL_SCREEN_SCALE && newScale >= FULL_SCREEN_SCALE) {
-                // Going from smaller than screen size to bigger than or equal to screen size
+                // Going from smaller than screen size to bigger than or equal
+                // to screen size
                 mScale = FULL_SCREEN_SCALE;
                 mController.enterFullScreen();
                 invalidate();
                 mController.setSurroundingViewsVisible(false);
             } else if (mScale >= FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
-                // Going from bigger than or equal to screen size to smaller than screen size
+                // Going from bigger than or equal to screen size to smaller
+                // than screen size
                 mScale = newScale;
                 mController.leaveFullScreen();
                 invalidate();

@@ -21,6 +21,7 @@ import android.content.Context;
 import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
 import com.android.camera.WideAnglePanoramaModule;
+import com.android.camera.app.CameraServices;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.util.GcamHelper;
@@ -72,8 +73,8 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule() {
-                return new PhotoModule();
+            public ModuleController createModule(CameraServices services) {
+                return new PhotoModule(services);
             }
         });
     }
@@ -91,8 +92,8 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule() {
-                return new VideoModule();
+            public ModuleController createModule(CameraServices services) {
+                return new VideoModule(services);
             }
         });
     }
@@ -110,8 +111,8 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule() {
-                return new WideAnglePanoramaModule();
+            public ModuleController createModule(CameraServices services) {
+                return new WideAnglePanoramaModule(services);
             }
         });
     }
@@ -129,9 +130,9 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule() {
+            public ModuleController createModule(CameraServices services) {
                 // TODO: remove the type casting.
-                return (ModuleController) PhotoSphereHelper.createPanoramaModule();
+                return (ModuleController) PhotoSphereHelper.createPanoramaModule(services);
             }
         });
     }
@@ -149,9 +150,9 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule() {
+            public ModuleController createModule(CameraServices services) {
                 // TODO: remove the type casting.
-                return (ModuleController) RefocusHelper.createRefocusModule();
+                return (ModuleController) RefocusHelper.createRefocusModule(services);
             }
         });
     }
@@ -169,8 +170,8 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule() {
-                return (ModuleController) GcamHelper.createGcamModule();
+            public ModuleController createModule(CameraServices services) {
+                return (ModuleController) GcamHelper.createGcamModule(services);
             }
         });
     }

@@ -29,8 +29,11 @@ public interface FilmstripImageData {
     /**
      * Interface that is used to tell the caller whether an image is a photo
      * sphere.
+     *
+     * We need to deprecate this and store this data in a separate DB for additional aux data.
      */
-    public static interface PanoramaSupportCallback {
+    @Deprecated
+    public static interface AuxInfoSupportCallback {
         /**
          * Called when photo sphere info has been loaded.
          *
@@ -38,7 +41,7 @@ public interface FilmstripImageData {
          * @param isPanorama360 whether the photo sphere is a full 360
          *            degree horizontal panorama
          */
-        void panoramaInfoAvailable(boolean isPanorama, boolean isPanorama360);
+        void auxInfoAvailable(boolean isPanorama, boolean isPanorama360, boolean isRgbz);
     }
 
     // View types.
@@ -131,16 +134,15 @@ public interface FilmstripImageData {
     public void recycle();
 
     /**
-     * Asynchronously checks if the image is a photo sphere. Notifies the
-     * callback when the results are available.
      */
-    public void isPhotoSphere(Context context, PanoramaSupportCallback callback);
+    @Deprecated
+    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback);
 
     /**
      * If the item is a valid photo sphere panorama, this method will launch
      * the viewer.
      */
-    public void viewPhotoSphere(PhotoSphereHelper.PanoramaViewHelper helper);
+    public void view(PhotoSphereHelper.PanoramaViewHelper helper);
 
     /** Whether this item is a photo. */
     public boolean isPhoto();

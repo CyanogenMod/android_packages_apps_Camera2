@@ -16,16 +16,12 @@
 
 package com.android.camera;
 
-import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.provider.MediaStore.Video;
 import android.util.Log;
 
@@ -37,40 +33,19 @@ import java.io.File;
 /**
  * A class implementing {@link com.android.camera.app.MediaSaver}.
  */
-public class MediaSaveService extends Service implements MediaSaver {
-    public static final String VIDEO_BASE_URI = "content://media/external/video/media";
+public class MediaSaverImpl implements MediaSaver {
+    private static final String TAG = "MediaSaverImpl";
+    private static final String VIDEO_BASE_URI = "content://media/external/video/media";
 
-    // The memory limit for unsaved image is 20MB.
+    /** The memory limit for unsaved image is 20MB. */
     private static final int SAVE_TASK_MEMORY_LIMIT = 20 * 1024 * 1024;
-    private static final String TAG = "CAM_" + MediaSaveService.class.getSimpleName();
 
-    private final IBinder mBinder = new LocalBinder();
     private QueueListener mQueueListener;
-    // Memory used by the total queued save request, in bytes.
+
+    /** Memory used by the total queued save request, in bytes. */
     private long mMemoryUse;
 
-    class LocalBinder extends Binder {
-        public MediaSaver getService() {
-            return MediaSaveService.this;
-        }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flag, int startId) {
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
-    @Override
-    public void onCreate() {
+    public MediaSaverImpl() {
         mMemoryUse = 0;
     }
 
@@ -123,28 +98,34 @@ public class MediaSaveService extends Service implements MediaSaver {
     @Override
     public void setQueueListener(QueueListener l) {
         mQueueListener = l;
-        if (l == null) return;
+        if (l == null) {
+            return;
+        }
         l.onQueueStatus(isQueueFull());
     }
 
     private void onQueueFull() {
-        if (mQueueListener != null) mQueueListener.onQueueStatus(true);
+        if (mQueueListener != null) {
+            mQueueListener.onQueueStatus(true);
+        }
     }
 
     private void onQueueAvailable() {
-        if (mQueueListener != null) mQueueListener.onQueueStatus(false);
+        if (mQueueListener != null) {
+            mQueueListener.onQueueStatus(false);
+        }
     }
 
     private class ImageSaveTask extends AsyncTask <Void, Void, Uri> {
-        private byte[] data;
-        private String title;
-        private long date;
-        private Location loc;
+        private final byte[] data;
+        private final String title;
+        private final long date;
+        private final Location loc;
         private int width, height;
-        private int orientation;
-        private ExifInterface exif;
-        private ContentResolver resolver;
-        private OnMediaSavedListener listener;
+        private final int orientation;
+        private final ExifInterface exif;
+        private final ContentResolver resolver;
+        private final OnMediaSavedListener listener;
 
         public ImageSaveTask(byte[] data, String title, long date, Location loc,
                              int width, int height, int orientation, ExifInterface exif,
@@ -191,10 +172,10 @@ public class MediaSaveService extends Service implements MediaSaver {
 
     private class VideoSaveTask extends AsyncTask <Void, Void, Uri> {
         private String path;
-        private long duration;
-        private ContentValues values;
-        private OnMediaSavedListener listener;
-        private ContentResolver resolver;
+        private final long duration;
+        private final ContentValues values;
+        private final OnMediaSavedListener listener;
+        private final ContentResolver resolver;
 
         public VideoSaveTask(String path, long duration, ContentValues values,
                 OnMediaSavedListener l, ContentResolver r) {

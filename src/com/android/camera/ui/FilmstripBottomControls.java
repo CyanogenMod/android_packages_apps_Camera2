@@ -30,7 +30,7 @@ import com.android.camera2.R;
  * sphere image and creating a tiny planet from a photo sphere image.
  */
 public class FilmstripBottomControls extends RelativeLayout
-    implements CameraActivity.OnActionBarVisibilityListener {
+        implements CameraActivity.OnActionBarVisibilityListener {
 
     /**
      * Classes implementing this interface can listen for events on the bottom
@@ -38,9 +38,10 @@ public class FilmstripBottomControls extends RelativeLayout
      */
     public static interface BottomControlsListener {
         /**
-         * Called when the user pressed the "view photosphere" button.
+         * Called when the user pressed the "view" button to e.g. view a photo
+         * sphere or RGBZ image.
          */
-        public void onViewPhotoSphere();
+        public void onView();
 
         /**
          * Called when the user pressed the "edit" button.
@@ -53,9 +54,14 @@ public class FilmstripBottomControls extends RelativeLayout
         public void onTinyPlanet();
     }
 
+    /** Values for the view state of the button. */
+    public static final int VIEW_NONE = 0;
+    public static final int VIEW_PHOTO_SPHERE = 1;
+    public static final int VIEW_RGBZ = 2;
+
     private BottomControlsListener mListener;
     private ImageButton mEditButton;
-    private ImageButton mViewPhotoSphereButton;
+    private ImageButton mViewButton;
     private ImageButton mTinyPlanetButton;
 
     public FilmstripBottomControls(Context context, AttributeSet attrs) {
@@ -76,13 +82,13 @@ public class FilmstripBottomControls extends RelativeLayout
             }
         });
 
-        mViewPhotoSphereButton = (ImageButton)
-                findViewById(R.id.filmstrip_bottom_control_panorama);
-        mViewPhotoSphereButton.setOnClickListener(new OnClickListener() {
+        mViewButton = (ImageButton)
+                findViewById(R.id.filmstrip_bottom_control_view);
+        mViewButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onViewPhotoSphere();
+                    mListener.onView();
                 }
             }
         });
@@ -115,9 +121,18 @@ public class FilmstripBottomControls extends RelativeLayout
 
     /**
      * Sets the visibility of the view-photosphere button.
+     *
+     * @param one of {@link #VIEW_NONE}, {@link #VIEW_PHOTO_SPHERE},
+     *            {@link #VIEW_RGBZ}.
      */
-    public void setViewPhotoSphereButtonVisibility(boolean visible) {
-        setVisibility(mViewPhotoSphereButton, visible);
+    public void setViewButtonVisibility(int state) {
+        if (state == VIEW_NONE) {
+            setVisibility(mViewButton, false);
+            return;
+        }
+        mViewButton.setImageResource(getViewButtonResource(state));
+        setVisibility(mViewButton, true);
+
     }
 
     /**
@@ -138,6 +153,16 @@ public class FilmstripBottomControls extends RelativeLayout
                         : View.INVISIBLE);
             }
         });
+    }
+
+    private int getViewButtonResource(int state) {
+        switch (state) {
+            case VIEW_RGBZ:
+                return R.drawable.ic_view_rgbz;
+            case VIEW_PHOTO_SPHERE:
+            default:
+                return R.drawable.ic_view_photosphere;
+        }
     }
 
     @Override

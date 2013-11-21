@@ -42,6 +42,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.camera.CameraActivity;
+import com.android.camera.app.CameraApp;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
@@ -304,7 +305,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
             protected void onPostExecute(TinyPlanetImage image) {
                 // Once created, store the new file and add it to the filmstrip.
                 final CameraActivity activity = (CameraActivity) getActivity();
-                MediaSaver mediaSaver = activity.getMediaSaver();
+                MediaSaver mediaSaver = ((CameraApp) activity.getApplication()).getMediaSaver();
                 OnMediaSavedListener doneListener =
                         new OnMediaSavedListener() {
                             @Override

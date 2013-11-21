@@ -18,8 +18,6 @@ package com.android.camera.app;
 
 import android.util.SparseArray;
 
-import com.android.camera.module.ModulesInfo;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +27,7 @@ import java.util.List;
 public class ModuleManagerImpl implements ModuleManager {
     private static final String TAG = "ModuleManagerImpl";
 
-    private SparseArray<ModuleAgent> mRegisteredModuleAgents = new
+    private final SparseArray<ModuleAgent> mRegisteredModuleAgents = new
             SparseArray<ModuleAgent>(2);
     private int mDefaultModuleId = MODULE_INDEX_NONE;
 

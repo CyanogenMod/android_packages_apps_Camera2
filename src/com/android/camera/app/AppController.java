@@ -152,13 +152,6 @@ public interface AppController {
     public CameraProvider getCameraProvider();
 
     /**
-     * Returns the {@link com.android.camera.app.MediaSaver}.
-     *
-     * @return {@code null} if not available yet.
-     */
-    public MediaSaver getMediaSaver();
-
-    /**
      * Returns the {@link OrientationManagerImpl}.
      *
      * @return {@code null} if not available yet.

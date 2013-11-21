@@ -30,7 +30,7 @@ import com.android.camera.util.PhotoSphereHelper;
  * A LocalData that does nothing but only shows a view.
  */
 public class SimpleViewData implements LocalData {
-    private static final String TAG = "CAM_SimpleViewData";
+    private static final String TAG = "SimpleViewData";
 
     private final int mWidth;
     private final int mHeight;
@@ -135,13 +135,13 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public void isPhotoSphere(Context context, PanoramaSupportCallback callback) {
-        // Not a photo sphere panorama.
-        callback.panoramaInfoAvailable(false, false);
+    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback) {
+        // Not a photo sphere panorama or rgbz image.
+        callback.auxInfoAvailable(false, false, false);
     }
 
     @Override
-    public void viewPhotoSphere(PhotoSphereHelper.PanoramaViewHelper helper) {
+    public void view(PhotoSphereHelper.PanoramaViewHelper helper) {
         // do nothing.
     }
 

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.android.camera.CameraModule;
+import com.android.camera.app.CameraServices;
 
 public class PhotoSphereHelper {
     public static class PanoramaMetadata {
@@ -57,6 +58,10 @@ public class PhotoSphereHelper {
         public void showPanorama(Uri uri) {
             /* Do nothing */
         }
+
+        public void showRgbz(Uri uri) {
+            /* Do nothing */
+        }
     }
 
     public static final PanoramaMetadata NOT_PANORAMA = new PanoramaMetadata(false, false);
@@ -69,7 +74,7 @@ public class PhotoSphereHelper {
         return NOT_PANORAMA;
     }
 
-    public static CameraModule createPanoramaModule() {
+    public static CameraModule createPanoramaModule(CameraServices services) {
         return null;
     }
 
