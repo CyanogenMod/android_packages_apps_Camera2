@@ -28,6 +28,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsManager.FocusModeSetting;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 
@@ -85,7 +87,7 @@ public class FocusOverlayManager {
     private String[] mDefaultFocusModes;
     private String mOverrideFocusMode;
     private Parameters mParameters;
-    private ComboPreferences mPreferences;
+    private SettingsManager mSettingsManager;
     private Handler mHandler;
     Listener mListener;
     private boolean mPreviousMoving;
@@ -131,12 +133,13 @@ public class FocusOverlayManager {
         }
     }
 
-    public FocusOverlayManager(ComboPreferences preferences, String[] defaultFocusModes,
+    public FocusOverlayManager(SettingsManager settingsManager,
+            String[] defaultFocusModes,
             Parameters parameters, Listener listener,
             boolean mirror, Looper looper, FocusUI ui) {
+        mSettingsManager = settingsManager;
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
-        mPreferences = preferences;
         mDefaultFocusModes = defaultFocusModes;
         setParameters(parameters);
         mListener = listener;
@@ -452,8 +455,7 @@ public class FocusOverlayManager {
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
         } else {
             // The default is continuous autofocus.
-            mFocusMode = mPreferences.getString(
-                    CameraSettings.KEY_FOCUS_MODE, null);
+            mFocusMode = mSettingsManager.get(new FocusModeSetting());
 
             // Try to find a supported focus mode from the default list.
             if (mFocusMode == null) {

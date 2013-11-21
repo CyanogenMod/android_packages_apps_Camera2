@@ -44,6 +44,10 @@ import android.widget.Toast;
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
+import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsManager.ExposureSetting;
+import com.android.camera.settings.SettingsManager.LocationSetting;
+import com.android.camera.settings.SettingsManager.WhiteBalanceSetting;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
@@ -329,7 +333,7 @@ public class PhotoUI implements PieListener,
                 mRootView.findViewById(R.id.on_screen_indicators));
     }
 
-    public void onCameraOpened(PreferenceGroup prefGroup, ComboPreferences prefs,
+    public void onCameraOpened(PreferenceGroup prefGroup,
             Camera.Parameters params, OnPreferenceChangedListener listener) {
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
@@ -341,6 +345,7 @@ public class PhotoUI implements PieListener,
             mMenu = new PhotoMenu(mActivity, this, mPieRenderer);
             mMenu.setListener(listener);
         }
+        // TODO: Refactor the prefGroup out of this.
         mMenu.initialize(prefGroup);
 
         if (mZoomRenderer == null) {
@@ -350,7 +355,7 @@ public class PhotoUI implements PieListener,
         mRenderOverlay.setGestures(null);
 
         initializeZoom(params);
-        updateOnScreenIndicators(params, prefGroup, prefs);
+        updateOnScreenIndicators(params);
     }
 
     public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
@@ -443,12 +448,13 @@ public class PhotoUI implements PieListener,
         if (mController.isImageCaptureIntent()) {
             hidePostCaptureAlert();
         }
-        if (mMenu != null) {
-            mMenu.reloadPreferences();
-        }
+        // Removes pie menu.
     }
 
     public void showLocationDialog() {
+        final SettingsController settingsController =
+            mActivity.getSettingsController();
+
         mLocationDialog = new AlertDialog.Builder(mActivity)
                 .setTitle(R.string.remember_location_title)
                 .setMessage(R.string.remember_location_prompt)
@@ -456,7 +462,7 @@ public class PhotoUI implements PieListener,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int arg1) {
-                                mController.enableRecordingLocation(true);
+                                settingsController.setLocation(true);
                                 mLocationDialog = null;
                             }
                         })
@@ -470,7 +476,7 @@ public class PhotoUI implements PieListener,
                 .setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        mController.enableRecordingLocation(false);
+                        settingsController.setLocation(false);
                         mLocationDialog = null;
                     }
                 })
@@ -496,22 +502,25 @@ public class PhotoUI implements PieListener,
         mMenu.overrideSettings(keyvalues);
     }
 
-    public void updateOnScreenIndicators(Camera.Parameters params,
-            PreferenceGroup group, ComboPreferences prefs) {
+    public void updateOnScreenIndicators(Camera.Parameters params) {
         if (params == null) return;
+
+        SettingsManager settingsManager = mActivity.getSettingsManager();
         mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
+
+        String exposure = settingsManager.get(new ExposureSetting());
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
-                CameraSettings.readExposure(prefs));
+            Integer.parseInt(exposure));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
+
         int wbIndex = 2;
-        ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
-        if (pref != null) {
-            wbIndex = pref.getCurrentIndex();
-        }
-        mOnScreenIndicators.updateWBIndicator(wbIndex);
-        boolean location = RecordLocationPreference.get(
-                prefs, mActivity.getContentResolver());
-        mOnScreenIndicators.updateLocationIndicator(location);
+        String whiteBalance = settingsManager.get(new WhiteBalanceSetting());
+        mOnScreenIndicators.updateWBIndicator(
+            SettingsManager.getWhiteBalanceIndex(mActivity, whiteBalance));
+
+        String location = settingsManager.get(new LocationSetting());
+        mOnScreenIndicators.updateLocationIndicator(
+            location.equals(SettingsManager.VALUE_ON));
     }
 
     public void setCameraState(int state) {
@@ -578,7 +587,9 @@ public class PhotoUI implements PieListener,
                 @Override
                 public void onDismiss() {
                     mPopup = null;
-                    mMenu.popupDismissed();
+                    if (mMenu != null) {
+                        mMenu.popupDismissed();
+                    }
                     showUI();
 
                     // Switch back into fullscreen/lights-out mode after popup
@@ -805,22 +816,33 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void setFocusPosition(int x, int y) {
-        mPieRenderer.setFocus(x, y);
+        if (mPieRenderer != null) {
+            mPieRenderer.setFocus(x, y);
+        }
     }
 
     @Override
     public void onFocusStarted() {
-        getFocusIndicator().showStart();
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) {
+            indicator.showStart();
+        }
     }
 
     @Override
     public void onFocusSucceeded(boolean timeout) {
-        getFocusIndicator().showSuccess(timeout);
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) {
+            indicator.showSuccess(timeout);
+        }
     }
 
     @Override
     public void onFocusFailed(boolean timeout) {
-        getFocusIndicator().showFail(timeout);
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) {
+            indicator.showFail(timeout);
+        }
     }
 
     @Override

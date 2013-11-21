@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -80,6 +81,10 @@ public class ListPreference extends CameraPreference {
         return mKey;
     }
 
+    public String getDefault() {
+        return findSupportedDefaultValue();
+    }
+
     public CharSequence[] getEntries() {
         return mEntries;
     }
@@ -106,8 +111,17 @@ public class ListPreference extends CameraPreference {
 
     public String getValue() {
         if (!mLoaded) {
-            mValue = getSharedPreferences().getString(mKey,
+            SharedPreferences preferences = getSharedPreferences();
+            if (preferences == null) {
+                // TEMP
+                // This module doesn't use ComboPreferences.
+                // Check this value and use the global settings
+                // manager instead.
+                return mValue;
+            } else {
+                mValue = preferences.getString(mKey,
                     findSupportedDefaultValue());
+            }
             mLoaded = true;
         }
         return mValue;
@@ -127,14 +141,18 @@ public class ListPreference extends CameraPreference {
         return null;
     }
 
-    public void setValue(String value) {
+    public boolean setValue(String value) {
         if (findIndexOfValue(value) < 0) throw new IllegalArgumentException();
         mValue = value;
-        persistStringValue(value);
+        return persistStringValue(value);
     }
 
-    public void setValueIndex(int index) {
-        setValue(mEntryValues[index].toString());
+    public boolean setValueIndex(int index) {
+        return setValue(mEntryValues[index].toString());
+    }
+
+    public String getValueAtIndex(int index) {
+        return mEntryValues[index].toString();
     }
 
     public int findIndexOfValue(String value) {
@@ -156,11 +174,16 @@ public class ListPreference extends CameraPreference {
         return mLabels[findIndexOfValue(getValue())].toString();
     }
 
-    protected void persistStringValue(String value) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
+    protected boolean persistStringValue(String value) {
+        SharedPreferences preferences = getSharedPreferences();
+        if (preferences == null) {
+            return false;
+        }
+        SharedPreferences.Editor editor = preferences.edit();
         editor.putString(mKey, value);
         editor.apply();
         UsageStatistics.onEvent("CameraSettingsChange", value, mKey);
+        return true;
     }
 
     @Override

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera.Size;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ import android.widget.AdapterView;
 
 import com.android.camera.CameraActivity;
 import com.android.camera2.R;
+
+import java.util.List;
 
 /**
  * SettingsView class displays all global settings in the form
@@ -58,7 +61,7 @@ public class SettingsView extends ListView {
         R.string.setting_video_resolution, R.string.setting_default_camera,};
 
     private Context mContext;
-    private SettingsListener mListener;
+    private SettingsViewListener mListener;
     private AlertDialog.Builder mDialogBuilder;
 
     private ArrayAdapter mAdapter;
@@ -80,14 +83,19 @@ public class SettingsView extends ListView {
             });
     }
 
-    public interface SettingsListener {
+    public interface SettingsViewListener {
         public void setLocation(boolean on);
-        public void setPictureSize(int size);
-        public void setVideoResolution(int resolution);
-        public void setDefaultCamera(int id);
+
+        public String[] getSupportedPictureSizeEntries();
+        public void setPictureSize(String size);
+
+        public String[] getSupportedVideoQualityEntries();
+        public void setVideoQuality(String resolution);
+
+        public void setDefaultCamera(int index);
     }
 
-    public void setSettingsListener(SettingsListener listener) {
+    public void setSettingsListener(SettingsViewListener listener) {
         mListener = listener;
     }
 
@@ -134,7 +142,6 @@ public class SettingsView extends ListView {
         LocationAlertBuilder() {
             super(mContext);
             setTitle(R.string.remember_location_title);
-            setMessage(R.string.remember_location_prompt);
             setPositiveButton(R.string.remember_location_yes,
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -149,37 +156,92 @@ public class SettingsView extends ListView {
                         dialog.cancel();
                     }
                 });
-            setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        mListener.setLocation(false);
-                    }
-                });
         }
     }
 
     private class PictureSizeAlertBuilder extends AlertDialog.Builder {
         PictureSizeAlertBuilder() {
             super(mContext);
+
+            final String[] supported = mListener.getSupportedPictureSizeEntries();
+            final String[] values = mContext.getResources().getStringArray(
+                R.array.pref_camera_picturesize_entryvalues);
+
             setTitle(R.string.setting_picture_size);
+            setItems(supported, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int index = getIndex(supported[which]);
+                        if (index > 0) {
+                            mListener.setPictureSize(values[index]);
+                        }
+                    }
+                });
         }
-        //mListener.setPictureSize();
+
+        private int getIndex(String val) {
+            String[] entries = mContext.getResources().getStringArray(
+                R.array.pref_camera_picturesize_entries);
+            for (int i = 0; i < entries.length; i++) {
+                if (entries[i].equals(val)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 
     private class VideoResAlertBuilder extends AlertDialog.Builder {
         VideoResAlertBuilder() {
             super(mContext);
+
+            final String[] supported = mListener.getSupportedVideoQualityEntries();
+            final String[] values = mContext.getResources().getStringArray(
+                R.array.pref_video_quality_entryvalues);
+
             setTitle(R.string.setting_video_resolution);
+            setItems(supported, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int index = getIndex(supported[which]);
+                        if (index > 0) {
+                            mListener.setVideoQuality(values[index]);
+                        }
+                    }
+                });
         }
-        //mListener.setVideoResolution();
+
+        private int getIndex(String val) {
+            String[] entries = mContext.getResources().getStringArray(
+                R.array.pref_video_quality_entries);
+            for (int i = 0; i < entries.length; i++) {
+                if (entries[i].equals(val)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 
     private class DefaultCameraAlertBuilder extends AlertDialog.Builder {
         DefaultCameraAlertBuilder() {
             super(mContext);
             setTitle(R.string.setting_default_camera);
+
+            String[] modes = {mContext.getString(R.string.mode_camera),
+                              mContext.getString(R.string.mode_video),
+                              mContext.getString(R.string.mode_photosphere),
+                              mContext.getString(R.string.mode_craft),
+                              mContext.getString(R.string.mode_timelapse),
+                              mContext.getString(R.string.mode_wideangle)};
+
+            setItems(modes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mListener.setDefaultCamera(which);
+                    }
+                });
         }
-        //mListener.setDefaultCamera();
     }
 
 

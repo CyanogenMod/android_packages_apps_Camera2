@@ -40,7 +40,11 @@ public class RecordLocationPreference extends IconListPreference {
 
     @Override
     public String getValue() {
-        return get(getSharedPreferences(), mResolver) ? VALUE_ON : VALUE_OFF;
+        SharedPreferences preferences = getSharedPreferences();
+        if (preferences == null) {
+            return null;
+        }
+        return get(preferences, mResolver) ? VALUE_ON : VALUE_OFF;
     }
 
     public static boolean get(

@@ -21,6 +21,7 @@ import java.util.Locale;
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
 
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CountdownTimerPopup;
 import com.android.camera.ui.ListPrefSettingPopup;
@@ -94,25 +95,19 @@ public class PhotoMenu extends PieController
                     ListPreference pref = mPreferenceGroup
                             .findPreference(CameraSettings.KEY_CAMERA_ID);
                     if (pref != null) {
-                        int index = pref.findIndexOfValue(pref.getValue());
+                        SettingsManager settingsManager = mActivity.getSettingsManager();
+                        String value = settingsManager.getValueFromPreference(pref);
+                        int index = pref.findIndexOfValue(value);
+
                         CharSequence[] values = pref.getEntryValues();
                         index = (index + 1) % values.length;
-                        pref.setValueIndex(index);
+                        settingsManager.setValueIndexFromPreference(pref, index);
                         mListener.onCameraPickerClicked(index);
                     }
                     updateItem(fitem, CameraSettings.KEY_CAMERA_ID);
                 }
             });
             mRenderer.addItem(item);
-        }
-        // Location.
-        if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
-            more.addItem(item);
-            if (mActivity.isSecureCamera()) {
-                // Prevent location preference from getting changed in secure camera mode
-                item.setEnabled(false);
-            }
         }
         // Countdown timer.
         final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
@@ -128,23 +123,6 @@ public class PhotoMenu extends PieController
                 timerPopup.setSettingChangedListener(PhotoMenu.this);
                 mUI.dismissPopup();
                 mPopup = timerPopup;
-                mUI.showPopup(mPopup);
-            }
-        });
-        more.addItem(item);
-        // Image size.
-        item = makeItem(R.drawable.ic_imagesize);
-        final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
-        item.setLabel(res.getString(R.string.pref_camera_picturesize_title).toUpperCase(locale));
-        item.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                ListPrefSettingPopup popup = (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.list_pref_setting_popup, null, false);
-                popup.initialize(sizePref);
-                popup.setSettingChangedListener(PhotoMenu.this);
-                mUI.dismissPopup();
-                mPopup = popup;
                 mUI.showPopup(mPopup);
             }
         });
@@ -181,14 +159,18 @@ public class PhotoMenu extends PieController
     }
 
     // Return true if the preference has the specified key but not the value.
-    private static boolean notSame(ListPreference pref, String key, String value) {
-        return (key.equals(pref.getKey()) && !value.equals(pref.getValue()));
+    private boolean notSame(ListPreference pref, String key, String value) {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        String prefValue = settingsManager.getValueFromPreference(pref);
+        return (key.equals(pref.getKey()) && !value.equals(prefValue));
     }
 
     private void setPreference(String key, String value) {
         ListPreference pref = mPreferenceGroup.findPreference(key);
-        if (pref != null && !value.equals(pref.getValue())) {
-            pref.setValue(value);
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        String prefValue = settingsManager.getValueFromPreference(pref);
+        if (pref != null && !value.equals(prefValue)) {
+            settingsManager.setValueFromPreference(pref, value);
             reloadPreferences();
         }
     }

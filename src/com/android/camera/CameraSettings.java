@@ -28,6 +28,8 @@ import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.util.Log;
 
+import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsManager.PictureSizeSetting;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -78,13 +80,15 @@ public class CameraSettings {
     private final Parameters mParameters;
     private final CameraInfo[] mCameraInfo;
     private final int mCameraId;
+    private final SettingsManager mSettingsManager;
 
-    public CameraSettings(Activity activity, Parameters parameters,
+    public CameraSettings(CameraActivity activity, Parameters parameters,
                           int cameraId, CameraInfo[] cameraInfo) {
-        mContext = activity;
+        mContext = (Context) activity;
         mParameters = parameters;
         mCameraId = cameraId;
         mCameraInfo = cameraInfo;
+        mSettingsManager = activity.getSettingsManager();
     }
 
     public PreferenceGroup getPreferenceGroup(int preferenceRes) {
@@ -107,8 +111,9 @@ public class CameraSettings {
         return supported.get(0);
     }
 
+    // TODO: move this logic into the settings manager utilities.
     public static void initialCameraPictureSize(
-            Context context, Parameters parameters) {
+            Context context, Parameters parameters, SettingsManager settingsManager) {
         // When launching the camera app first time, we will set the picture
         // size to the first one in the list defined in "arrays.xml" and is also
         // supported by the driver.
@@ -117,10 +122,7 @@ public class CameraSettings {
         for (String candidate : context.getResources().getStringArray(
                 R.array.pref_camera_picturesize_entryvalues)) {
             if (setCameraPictureSize(candidate, supported, parameters)) {
-                SharedPreferences.Editor editor = ComboPreferences
-                        .get(context).edit();
-                editor.putString(KEY_PICTURE_SIZE, candidate);
-                editor.apply();
+                settingsManager.set(new PictureSizeSetting(), candidate);
                 return;
             }
         }
@@ -301,6 +303,9 @@ public class CameraSettings {
 
     private void filterUnsupportedOptions(PreferenceGroup group,
             ListPreference pref, List<String> supported) {
+        if (pref == null) {
+            return;
+        }
 
         // Remove the preference if the parameter is not supported or there is
         // only one options for the settings.
@@ -330,9 +335,9 @@ public class CameraSettings {
 
     private void resetIfInvalid(ListPreference pref) {
         // Set the value to the first entry if it is invalid.
-        String value = pref.getValue();
+        String value = mSettingsManager.getValueFromPreference(pref);
         if (pref.findIndexOfValue(value) == NOT_FOUND) {
-            pref.setValueIndex(0);
+            mSettingsManager.setValueIndexFromPreference(pref, 0);
         }
     }
 
@@ -449,40 +454,6 @@ public class CameraSettings {
             Log.e(TAG, "Invalid exposure: " + exposure);
         }
         return 0;
-    }
-
-    public static void restorePreferences(Context context,
-            ComboPreferences preferences, Parameters parameters) {
-        int currentCameraId = readPreferredCameraId(preferences);
-
-        // Clear the preferences of both cameras.
-        int backCameraId = CameraHolder.instance().getBackCameraId();
-        if (backCameraId != -1) {
-            preferences.setLocalId(context, backCameraId);
-            Editor editor = preferences.edit();
-            editor.clear();
-            editor.apply();
-        }
-        int frontCameraId = CameraHolder.instance().getFrontCameraId();
-        if (frontCameraId != -1) {
-            preferences.setLocalId(context, frontCameraId);
-            Editor editor = preferences.edit();
-            editor.clear();
-            editor.apply();
-        }
-
-        // Switch back to the preferences of the current camera. Otherwise,
-        // we may write the preference to wrong camera later.
-        preferences.setLocalId(context, currentCameraId);
-
-        upgradeGlobalPreferences(preferences.getGlobal());
-        upgradeLocalPreferences(preferences.getLocal());
-
-        // Write back the current camera id because parameters are related to
-        // the camera. Otherwise, we may switch to the front camera but the
-        // initial picture size is that of the back camera.
-        initialCameraPictureSize(context, parameters);
-        writePreferredCameraId(preferences, currentCameraId);
     }
 
     private static ArrayList<String> getSupportedVideoQuality(int cameraId) {

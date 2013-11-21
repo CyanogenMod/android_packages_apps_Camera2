@@ -16,12 +16,13 @@
 
 package com.android.camera;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.drawable.TextDrawable;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
@@ -41,7 +42,7 @@ public class PieController {
     protected static float CENTER = (float) Math.PI / 2;
     protected static final float SWEEP = 0.06f;
 
-    protected Activity mActivity;
+    protected CameraActivity mActivity;
     protected PreferenceGroup mPreferenceGroup;
     protected OnPreferenceChangedListener mListener;
     protected PieRenderer mRenderer;
@@ -53,7 +54,7 @@ public class PieController {
         mListener = listener;
     }
 
-    public PieController(Activity activity, PieRenderer pie) {
+    public PieController(CameraActivity activity, PieRenderer pie) {
         mActivity = activity;
         mRenderer = pie;
         mPreferences = new ArrayList<IconListPreference>();
@@ -75,7 +76,8 @@ public class PieController {
 
     protected void setCameraId(int cameraId) {
         ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-        pref.setValue("" + cameraId);
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.setValueFromPreference(pref, "" + cameraId);
     }
 
     protected PieItem makeItem(int resId) {
@@ -90,6 +92,8 @@ public class PieController {
     }
 
     public PieItem makeItem(String prefKey) {
+        final SettingsManager settingsManager = mActivity.getSettingsManager();
+
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
         if (pref == null) return null;
@@ -97,7 +101,8 @@ public class PieController {
         int resid = -1;
         if (!pref.getUseSingleIcon() && iconIds != null) {
             // Each entry has a corresponding icon.
-            int index = pref.findIndexOfValue(pref.getValue());
+            String value = settingsManager.getValueFromPreference(pref);
+            int index = pref.findIndexOfValue(value);
             resid = iconIds[index];
         } else {
             // The preference only has a single icon to represent it.
@@ -122,7 +127,7 @@ public class PieController {
                 inner.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(PieItem item) {
-                        pref.setValueIndex(index);
+                        settingsManager.setValueIndexFromPreference(pref, index);
                         reloadPreference(pref);
                         onSettingChanged(pref);
                     }
@@ -138,7 +143,10 @@ public class PieController {
         if (pref == null) return null;
         int[] iconIds = pref.getLargeIconIds();
         int resid = -1;
-        int index = pref.findIndexOfValue(pref.getValue());
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        String value = settingsManager.getValueFromPreference(pref);
+        int index = pref.findIndexOfValue(value);
+
         if (!pref.getUseSingleIcon() && iconIds != null) {
             // Each entry has a corresponding icon.
             resid = iconIds[index];
@@ -161,10 +169,14 @@ public class PieController {
                     }
                     IconListPreference pref = (IconListPreference) mPreferenceGroup
                             .findPreference(prefKey);
-                    int index = pref.findIndexOfValue(pref.getValue());
+
+                    SettingsManager settingsManager = mActivity.getSettingsManager();
+                    String value = settingsManager.getValueFromPreference(pref);
+                    int index = pref.findIndexOfValue(value);
+
                     CharSequence[] values = pref.getEntryValues();
                     index = (index + 1) % values.length;
-                    pref.setValueIndex(index);
+                    settingsManager.setValueIndexFromPreference(pref, index);
                     fitem.setLabel(pref.getLabels()[index]);
                     fitem.setImageResource(mActivity,
                             ((IconListPreference) pref).getLargeIconIds()[index]);
@@ -191,7 +203,10 @@ public class PieController {
         IconListPreference pref = (IconListPreference) mPreferenceGroup
                 .findPreference(prefKey);
         if (pref != null) {
-            int index = pref.findIndexOfValue(pref.getValue());
+            SettingsManager settingsManager = mActivity.getSettingsManager();
+            String value = settingsManager.getValueFromPreference(pref);
+            int index = pref.findIndexOfValue(value);
+
             item.setLabel(pref.getLabels()[index]);
             item.setImageResource(mActivity,
                     ((IconListPreference) pref).getLargeIconIds()[index]);
@@ -218,7 +233,9 @@ public class PieController {
             // Each entry has a corresponding icon.
             int index;
             if (overrideValue == null) {
-                index = pref.findIndexOfValue(pref.getValue());
+                SettingsManager settingsManager = mActivity.getSettingsManager();
+                String value = settingsManager.getValueFromPreference(pref);
+                index = pref.findIndexOfValue(value);
             } else {
                 index = pref.findIndexOfValue(overrideValue);
                 if (index == -1) {

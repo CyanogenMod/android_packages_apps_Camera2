@@ -22,7 +22,9 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -64,6 +66,21 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.module.ModuleController;
+import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsManager.DefaultCameraIdSetting;
+import com.android.camera.settings.SettingsManager.ExposureSetting;
+import com.android.camera.settings.SettingsManager.FlashSetting;
+import com.android.camera.settings.SettingsManager.FocusModeSetting;
+import com.android.camera.settings.SettingsManager.HintSetting;
+import com.android.camera.settings.SettingsManager.HdrSetting;
+import com.android.camera.settings.SettingsManager.HdrPlusSetting;
+import com.android.camera.settings.SettingsManager.LocationSetting;
+import com.android.camera.settings.SettingsManager.PictureSizeSetting;
+import com.android.camera.settings.SettingsManager.SettingsListener;
+import com.android.camera.settings.SettingsManager.TimerSetting;
+import com.android.camera.settings.SettingsManager.TimerSoundSetting;
+import com.android.camera.settings.SettingsManager.SceneModeSetting;
+import com.android.camera.settings.SettingsManager.WhiteBalanceSetting;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
@@ -153,7 +170,6 @@ public class PhotoModule
 
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
-    private ComboPreferences mPreferences;
 
     private static final String sTempCropFilename = "crop-temp";
 
@@ -206,7 +222,6 @@ public class PhotoModule
     private ContentResolver mContentResolver;
 
     private LocationManager mLocationManager;
-    private SettingsManager mSettingsManager;
 
     private final PostViewPictureCallback mPostViewPictureCallback =
             new PostViewPictureCallback();
@@ -371,24 +386,18 @@ public class PhotoModule
     public void init(CameraActivity activity, View parent) {
         mActivity = activity;
         mUI = new PhotoUI(activity, this, parent);
-        mPreferences = new ComboPreferences(mActivity);
-        CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
-        mCameraId = getPreferredCameraId(mPreferences);
+
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        mCameraId = Integer.parseInt(settingsManager.get(
+            new DefaultCameraIdSetting()));
 
         mContentResolver = mActivity.getContentResolver();
-        mSettingsManager = mActivity.getSettingsManager();
 
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
         mIsImageCaptureIntent = isImageCaptureIntent();
 
-        mPreferences.setLocalId(mActivity, mCameraId);
-        CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
-
         mActivity.getCameraProvider().requestCamera(mCameraId);
-
-        // we need to reset exposure for the preview
-        resetExposureCompensation();
 
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
@@ -412,7 +421,8 @@ public class PhotoModule
     // Prompt the user to pick to record location for the very first run of
     // camera only
     private void locationFirstRun() {
-        if (RecordLocationPreference.isSet(mPreferences)) {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        if (settingsManager.isSet(new LocationSetting())) {
             return;
         }
         if (mActivity.isSecureCamera()) return;
@@ -423,12 +433,6 @@ public class PhotoModule
             return;
         }
         mUI.showLocationDialog();
-    }
-
-    @Override
-    public void enableRecordingLocation(boolean enable) {
-        setLocationPreference(enable ? RecordLocationPreference.VALUE_ON
-                : RecordLocationPreference.VALUE_OFF);
     }
 
     @Override
@@ -445,15 +449,6 @@ public class PhotoModule
         stopPreview();
     }
 
-    private void setLocationPreference(String value) {
-        mPreferences.edit()
-                .putString(CameraSettings.KEY_RECORD_LOCATION, value)
-                .apply();
-        // TODO: Fix this to use the actual onSharedPreferencesChanged listener
-        // instead of invoking manually
-        onSharedPreferenceChanged();
-    }
-
     private void onCameraOpened() {
         View root = mUI.getRootView();
         // These depend on camera parameters.
@@ -466,20 +461,20 @@ public class PhotoModule
 
     private void switchCamera() {
         if (mPaused) return;
+        SettingsManager settingsManager = mActivity.getSettingsManager();
 
         Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
         mCameraId = mPendingSwitchCameraId;
         mPendingSwitchCameraId = -1;
-        setCameraId(mCameraId);
+        settingsManager.set(new DefaultCameraIdSetting(),
+            "" + mCameraId);
         mActivity.getCameraProvider().requestCamera(mCameraId);
 
         mUI.collapseCameraControls();
         mUI.clearFaces();
         if (mFocusManager != null) mFocusManager.removeMessages();
 
-        // Restart the camera and initialize the UI. From onCreate.
-        mPreferences.setLocalId(mActivity, mCameraId);
-        CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
+        // TODO: this needs to be brought into onCameraAvailable();
         CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
         mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
         mFocusManager.setMirror(mMirror);
@@ -488,16 +483,12 @@ public class PhotoModule
         mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
     }
 
-    protected void setCameraId(int cameraId) {
-        ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-        pref.setValue("" + cameraId);
-    }
-
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        loadCameraPreferences();
+        mPreferenceGroup = loadPreferenceGroup();
 
-        mUI.onCameraOpened(mPreferenceGroup, mPreferences, mParameters, this);
+        // TODO: remove dependency on PreferenceGroup
+        mUI.onCameraOpened(mPreferenceGroup, mParameters, this);
         if (mIsImageCaptureIntent) {
             mUI.overrideSettings(CameraSettings.KEY_CAMERA_HDR_PLUS,
                     mActivity.getString(R.string.setting_off_value));
@@ -512,13 +503,12 @@ public class PhotoModule
     }
 
     private void resetExposureCompensation() {
-        String value = mPreferences.getString(CameraSettings.KEY_EXPOSURE,
-                CameraSettings.EXPOSURE_DEFAULT_VALUE);
-        if (!CameraSettings.EXPOSURE_DEFAULT_VALUE.equals(value)) {
-            Editor editor = mPreferences.edit();
-            editor.putString(CameraSettings.KEY_EXPOSURE, "0");
-            editor.apply();
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        if (settingsManager == null) {
+            Log.e(TAG, "Settings manager is null!");
+            return;
         }
+        settingsManager.setDefault(new ExposureSetting());
     }
 
     private void keepMediaProviderInstance() {
@@ -540,9 +530,8 @@ public class PhotoModule
         }
 
         // Initialize location service.
-        boolean recordLocation = RecordLocationPreference.get(
-                mPreferences, mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
+        SettingsController settingsController = mActivity.getSettingsController();
+        settingsController.syncLocationManager();
 
         keepMediaProviderInstance();
 
@@ -566,9 +555,9 @@ public class PhotoModule
     // onResume.
     private void initializeSecondTime() {
         // Start location update if needed.
-        boolean recordLocation = RecordLocationPreference.get(
-                mPreferences, mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
+        SettingsController settingsController = mActivity.getSettingsController();
+        settingsController.syncLocationManager();
+
         MediaSaver s = getServices().getMediaSaver();
         if (s != null) {
             s.setQueueListener(this);
@@ -580,8 +569,10 @@ public class PhotoModule
 
     private void showTapToFocusToastIfNeeded() {
         // Show the tap to focus toast if this is the first start.
-        if (mFocusAreaSupported &&
-                mPreferences.getBoolean(CameraSettings.KEY_CAMERA_FIRST_USE_HINT_SHOWN, true)) {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        boolean showHint = settingsManager.getBoolean(new HintSetting());
+        // CONVERT THIS SETTING TO A STRING
+        if (mFocusAreaSupported && showHint) {
             // Delay the toast for one second to wait for orientation.
             mHandler.sendEmptyMessageDelayed(SHOW_TAP_TO_FOCUS_TOAST, 1000);
         }
@@ -922,17 +913,6 @@ public class PhotoModule
         setCameraParameters(UPDATE_PARAM_PREFERENCE);
     }
 
-    private int getPreferredCameraId(ComboPreferences preferences) {
-        int intentCameraId = CameraUtil.getCameraFacingIntentExtras(mActivity);
-        if (intentCameraId != -1) {
-            // Testing purpose. Launch a specific camera through the intent
-            // extras.
-            return intentCameraId;
-        } else {
-            return CameraSettings.readPreferredCameraId(preferences);
-        }
-    }
-
     private void updateSceneMode() {
         // If scene mode is set, we cannot set flash mode, white balance, and
         // focus mode, instead, we read it from driver
@@ -952,10 +932,10 @@ public class PhotoModule
                 CameraSettings.KEY_FOCUS_MODE, focusMode);
     }
 
-    private void loadCameraPreferences() {
+    private PreferenceGroup loadPreferenceGroup() {
         CameraSettings settings = new CameraSettings(mActivity, mInitialParams,
-                mCameraId, CameraHolder.instance().getCameraInfo());
-        mPreferenceGroup = settings.getPreferenceGroup(R.xml.camera_preferences);
+            mCameraId, CameraHolder.instance().getCameraInfo());
+        return settings.getPreferenceGroup(R.xml.camera_preferences);
     }
 
     @Override
@@ -980,6 +960,7 @@ public class PhotoModule
         }
         mCameraDevice = cameraProxy;
 
+        resetExposureCompensation();
         initializeCapabilities();
 
         // Reset zoom value index.
@@ -1150,13 +1131,9 @@ public class PhotoModule
             return;
         }
 
-        String timer = mPreferences.getString(
-                CameraSettings.KEY_TIMER,
-                mActivity.getString(R.string.pref_camera_timer_default));
-        boolean playSound = mPreferences.getString(CameraSettings.KEY_TIMER_SOUND_EFFECTS,
-                mActivity.getString(R.string.pref_camera_timer_sound_default))
-                .equals(mActivity.getString(R.string.setting_on_value));
-
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        String timer = settingsManager.get(new TimerSetting());
+        String playSound = settingsManager.get(new TimerSoundSetting());
         int seconds = Integer.parseInt(timer);
         // When shutter button is pressed, check whether the previous countdown is
         // finished. If not, cancel the previous countdown and start a new one.
@@ -1164,7 +1141,7 @@ public class PhotoModule
             mUI.cancelCountDown();
         }
         if (seconds > 0) {
-            mUI.startCountDown(seconds, playSound);
+            mUI.startCountDown(seconds, playSound.equals(SettingsManager.VALUE_ON));
         } else {
             mSnapshotOnIdle = false;
             mFocusManager.doSnap();
@@ -1189,7 +1166,6 @@ public class PhotoModule
 
         mJpegPictureCallbackTime = 0;
         mZoomValue = 0;
-        resetExposureCompensation();
 
         mOnResumeTime = SystemClock.uptimeMillis();
         checkDisplayRotation();
@@ -1233,7 +1209,8 @@ public class PhotoModule
             mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
-            mFocusManager = new FocusOverlayManager(mPreferences, defaultFocusModes,
+            mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
+                    defaultFocusModes,
                     mInitialParams, this, mMirror,
                     mActivity.getMainLooper(), mUI);
         }
@@ -1533,7 +1510,8 @@ public class PhotoModule
         if (!mSnapshotOnIdle) {
             // If the focus mode is continuous autofocus, call cancelAutoFocus to
             // resume it because it may have been paused by autoFocus call.
-            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusManager.getFocusMode())) {
+            String focusMode = mFocusManager.getFocusMode();
+            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(focusMode)) {
                 mCameraDevice.cancelAutoFocus();
             }
             mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
@@ -1619,16 +1597,20 @@ public class PhotoModule
     }
 
     private boolean updateCameraParametersPreference() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
         setAutoExposureLockIfSupported();
         setAutoWhiteBalanceLockIfSupported();
         setFocusAreasIfSupported();
         setMeteringAreasIfSupported();
 
         // Set picture size.
-        String pictureSize = mPreferences.getString(
-                CameraSettings.KEY_PICTURE_SIZE, null);
+        String pictureSize = settingsManager.get(
+            new PictureSizeSetting());
         if (pictureSize == null) {
-            CameraSettings.initialCameraPictureSize(mActivity, mParameters);
+            //TODO: deprecate CameraSettings.
+            CameraSettings.initialCameraPictureSize(
+                    mActivity, mParameters, settingsManager);
         } else {
             List<Size> supported = mParameters.getSupportedPictureSizes();
             CameraSettings.setCameraPictureSize(
@@ -1666,10 +1648,8 @@ public class PhotoModule
         // first. HDR is a scene mode. To promote it in UI, it is stored in a
         // separate preference.
         String onValue = mActivity.getString(R.string.setting_on_value);
-        String hdr = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR,
-                mActivity.getString(R.string.pref_camera_hdr_default));
-        String hdrPlus = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR_PLUS,
-                mActivity.getString(R.string.pref_camera_hdr_plus_default));
+        String hdr = settingsManager.get(new HdrSetting());
+        String hdrPlus = settingsManager.get(new HdrPlusSetting());
         boolean hdrOn = onValue.equals(hdr);
         boolean hdrPlusOn = onValue.equals(hdrPlus);
 
@@ -1681,9 +1661,7 @@ public class PhotoModule
             if (hdrOn) {
                 mSceneMode = CameraUtil.SCENE_MODE_HDR;
             } else {
-                mSceneMode = mPreferences.getString(
-                        CameraSettings.KEY_SCENE_MODE,
-                        mActivity.getString(R.string.pref_camera_scenemode_default));
+                mSceneMode = settingsManager.get(new SceneModeSetting());
             }
         }
         if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
@@ -1712,7 +1690,8 @@ public class PhotoModule
         // still supported by latest driver, if not, ignore the settings.
 
         // Set exposure compensation
-        int value = CameraSettings.readExposure(mPreferences);
+        int value = Integer.parseInt(
+            settingsManager.get(new ExposureSetting()));
         int max = mParameters.getMaxExposureCompensation();
         int min = mParameters.getMinExposureCompensation();
         if (value >= min && value <= max) {
@@ -1723,9 +1702,7 @@ public class PhotoModule
 
         if (Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
             // Set flash mode.
-            String flashMode = mPreferences.getString(
-                    CameraSettings.KEY_FLASH_MODE,
-                    mActivity.getString(R.string.pref_camera_flashmode_default));
+            String flashMode = settingsManager.get(new FlashSetting());
             List<String> supportedFlash = mParameters.getSupportedFlashModes();
             if (CameraUtil.isSupported(flashMode, supportedFlash)) {
                 mParameters.setFlashMode(flashMode);
@@ -1738,9 +1715,8 @@ public class PhotoModule
             }
 
             // Set white balance parameter.
-            String whiteBalance = mPreferences.getString(
-                    CameraSettings.KEY_WHITE_BALANCE,
-                    mActivity.getString(R.string.pref_camera_whitebalance_default));
+            String whiteBalance = settingsManager.get(
+                new WhiteBalanceSetting());
             if (CameraUtil.isSupported(whiteBalance,
                     mParameters.getSupportedWhiteBalance())) {
                 mParameters.setWhiteBalance(whiteBalance);
@@ -1850,12 +1826,11 @@ public class PhotoModule
         // ignore the events after "onPause()"
         if (mPaused) return;
 
-        boolean recordLocation = RecordLocationPreference.get(
-                mPreferences, mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
+        SettingsController settingsController = mActivity.getSettingsController();
+        settingsController.syncLocationManager();
 
         setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-        mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup, mPreferences);
+        mUI.updateOnScreenIndicators(mParameters);
     }
 
     @Override
@@ -1908,9 +1883,8 @@ public class PhotoModule
         // TODO: Use a toast?
         new RotateTextToast(mActivity, R.string.tap_to_focus, 0).show();
         // Clear the preference.
-        Editor editor = mPreferences.edit();
-        editor.putBoolean(CameraSettings.KEY_CAMERA_FIRST_USE_HINT_SHOWN, false);
-        editor.apply();
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.setBoolean(new HintSetting(), false);
     }
 
     private void initializeCapabilities() {

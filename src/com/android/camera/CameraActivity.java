@@ -97,6 +97,9 @@ import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
+import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsManager.SettingsCapabilities;
+import com.android.camera.settings.SettingsManager.StartupModuleSetting;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.DetailsDialog;
@@ -113,6 +116,7 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 import java.io.File;
+import java.util.List;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -175,6 +179,7 @@ public class CameraActivity extends Activity
     private LocalDataAdapter mWrappedDataAdapter;
 
     private SettingsManager mSettingsManager;
+    private SettingsController mSettingsController;
     private PanoramaStitchingManager mPanoramaManager;
     private PlaceholderManager mPlaceholderManager;
     private ModeListView mModeListView;
@@ -247,6 +252,9 @@ public class CameraActivity extends Activity
                     "requesting");
         }
         if (mCurrentModule2 != null) {
+            SettingsCapabilities capabilities =
+                SettingsController.getSettingsCapabilities(camera);
+            mSettingsManager.changeCamera(camera.getCameraId(), capabilities);
             mCurrentModule2.onCameraAvailable(camera);
         }
     }
@@ -1162,35 +1170,7 @@ public class CameraActivity extends Activity
                 mCameraModuleRootView,
                 isSecureCamera(), isCaptureIntent());
 
-        int modeIndex = -1;
-        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
-                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            modeIndex = ModeListView.MODE_VIDEO;
-        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
-                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
-                        .getAction())) {
-            modeIndex = ModeListView.MODE_PHOTO;
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1)
-                        == ModeListView.MODE_GCAM && GcamHelper.hasGcamCapture()) {
-                modeIndex = ModeListView.MODE_GCAM;
-            }
-        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            modeIndex = ModeListView.MODE_PHOTO;
-        } else {
-            // If the activity has not been started using an explicit intent,
-            // read the module index from the last time the user changed modes
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            modeIndex = prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1);
-            if ((modeIndex == ModeListView.MODE_GCAM &&
-                    !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
-                modeIndex = ModeListView.MODE_PHOTO;
-            }
-        }
-
-        mOrientationManager = new OrientationManagerImpl(this);
-        mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
+        mSettingsManager = new SettingsManager(this, null, mCameraController.getNumberOfCameras());
 
         mLocationManager = new LocationManager(this,
             new LocationManager.Listener() {
@@ -1203,7 +1183,35 @@ public class CameraActivity extends Activity
                 }
             });
 
-        mSettingsManager = new SettingsManager(this);
+        mSettingsController = new SettingsController(this, mSettingsManager, mLocationManager);
+
+        int modeIndex = -1;
+        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
+                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
+            modeIndex = ModeListView.MODE_VIDEO;
+        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
+                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
+                        .getAction())) {
+            modeIndex = ModeListView.MODE_PHOTO;
+            if (mSettingsManager.getInt(new StartupModuleSetting())
+                        == ModeListView.MODE_GCAM && GcamHelper.hasGcamCapture()) {
+                modeIndex = ModeListView.MODE_GCAM;
+            }
+        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
+            modeIndex = ModeListView.MODE_PHOTO;
+        } else {
+            // If the activity has not been started using an explicit intent,
+            // read the module index from the last time the user changed modes
+            modeIndex = mSettingsManager.getInt(new StartupModuleSetting());
+            if ((modeIndex == ModeListView.MODE_GCAM &&
+                    !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
+                modeIndex = ModeListView.MODE_PHOTO;
+            }
+        }
+
+        mOrientationManager = new OrientationManagerImpl(this);
+        mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
 
         setModuleFromModeIndex(modeIndex);
 
@@ -1551,8 +1559,7 @@ public class CameraActivity extends Activity
         LayoutInflater inflater = getLayoutInflater();
         SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
             null, false);
-        settingsView.setSettingsListener(new SettingsController(this, mSettingsManager));
-
+        settingsView.setSettingsListener(mSettingsController);
         PopupWindow popup = new PopupWindow(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popup.setOutsideTouchable(true);
@@ -1586,6 +1593,11 @@ public class CameraActivity extends Activity
     @Override
     public CameraServices getServices() {
         return (CameraServices) getApplication();
+    }
+
+    @Override
+    public SettingsController getSettingsController() {
+        return mSettingsController;
     }
 
     /**

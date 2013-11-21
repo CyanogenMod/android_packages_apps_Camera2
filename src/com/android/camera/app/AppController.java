@@ -23,8 +23,9 @@ import android.net.Uri;
 import android.widget.FrameLayout;
 
 import com.android.camera.LocationManager;
-import com.android.camera.SettingsManager;
 import com.android.camera.ui.ModeListView;
+import com.android.camera.SettingsController;
+import com.android.camera.settings.SettingsManager;
 
 /**
  * The controller at app level.
@@ -189,4 +190,12 @@ public interface AppController {
      * @return Common services and functionality to be shared.
      */
     public CameraServices getServices();
+
+    /**
+     * Returns the {@link com.android.camera.SettingsController}.
+     * TODO: remove this once all settings dialogs are consolidated.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public SettingsController getSettingsController();
 }
