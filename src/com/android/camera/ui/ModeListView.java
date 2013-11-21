@@ -109,6 +109,7 @@ public class ModeListView extends ScrollView {
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
+        public void onSettingsSelected(int modeIndex);
     }
 
     /**
@@ -193,7 +194,11 @@ public class ModeListView extends ScrollView {
             int index = getFocusItem(ev.getX(), ev.getY());
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
-                onModeSelected(index);
+                if (index == MODE_SETTING) {
+                    onSettingsSelected(index);
+                } else {
+                    onModeSelected(index);
+                }
             }
             return true;
         }
@@ -264,6 +269,13 @@ public class ModeListView extends ScrollView {
         }
 
         resetModeSelectors();
+    }
+
+    private void onSettingsSelected(int modeIndex) {
+        if (mListener != null) {
+            mListener.onSettingsSelected(modeIndex);
+        }
+        snapBack();
     }
 
     /** Notify ModeSwitchListener, if any, of the mode change. */

@@ -157,4 +157,5 @@
     <!-- Mode selector icon width -->
     <dimen name="mode_selector_icon_block_width">84dp</dimen>
     <dimen name="mode_selector_icon_drawable_size">32dp</dimen>
+
 </resources>
