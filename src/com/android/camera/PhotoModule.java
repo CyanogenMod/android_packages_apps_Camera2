@@ -55,6 +55,7 @@ import com.android.camera.app.CameraManager.CameraAFMoveCallback;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.CameraManager.CameraShutterCallback;
+import com.android.camera.app.AppController;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -1205,7 +1206,6 @@ public class PhotoModule
         if (msensor != null) {
             mSensorManager.unregisterListener(this, msensor);
         }
-        mUI.showPreviewCover();
 
         // Reset the focus first. Camera CTS does not guarantee that
         // cancelAutoFocus is allowed after preview stops.
@@ -1283,19 +1283,16 @@ public class PhotoModule
         setCameraParameters(UPDATE_PARAM_PREFERENCE);
     }
 
-    // Preview area is touched. Handle touch focus.
+    // Preview area is touched.
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        if (mPaused || mCameraDevice == null || !mFirstTimeInitialized
-                || mCameraState == SNAPSHOT_IN_PROGRESS
-                || mCameraState == SWITCHING_CAMERA
-                || mCameraState == PREVIEW_STOPPED) {
-            return;
+        if (mUI.isImmediateCapture()) {
+            cancelAutoFocus();
+            onShutterButtonClick();
+       } else {
+            onShutterButtonFocus(true);
+            onShutterButtonClick();
         }
-
-        // Check if metering area or focus area is supported.
-        if (!mFocusAreaSupported && !mMeteringAreaSupported) return;
-        mFocusManager.onSingleTapUp(x, y);
     }
 
     @Override
@@ -1753,7 +1750,6 @@ public class PhotoModule
         settingsController.syncLocationManager();
 
         setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-        mUI.updateOnScreenIndicators(mParameters);
     }
 
     @Override
@@ -1801,6 +1797,7 @@ public class PhotoModule
         mFocusManager.onShutterUp();
     }
 
+    // TODO: Remove this
     @Override
     public int onZoomChanged(int index) {
         // Not useful to change zoom value when the activity is paused.
@@ -1869,7 +1866,7 @@ public class PhotoModule
 
     @Override
     public boolean arePreviewControlsVisible() {
-        return mUI.arePreviewControlsVisible();
+        return false;
     }
 
     // For debugging only.

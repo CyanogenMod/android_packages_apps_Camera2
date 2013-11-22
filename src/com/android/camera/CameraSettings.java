@@ -374,7 +374,6 @@ public class CameraSettings {
         if (version == CURRENT_VERSION) return;
 
         SharedPreferences.Editor editor = pref.edit();
-
         editor.putInt(KEY_VERSION, CURRENT_VERSION);
         editor.apply();
     }

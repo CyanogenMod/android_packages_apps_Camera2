@@ -277,6 +277,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
             mModuleUI.removeAllViews();
         }
         mRenderOverlay.clear();
+
+        // TODO: Bring TextureView up to the app level
+        mTextureView.setSurfaceTextureListener(null);
+        mTextureView.removeOnLayoutChangeListener(null);
     }
 
     @Override

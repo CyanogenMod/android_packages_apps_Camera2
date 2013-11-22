@@ -698,4 +698,7 @@ CHAR LIMIT = NONE] -->
     <string name="setting_video_resolution">Video Resolution</string>
     <string name="setting_default_camera">Default Camera</string>
 
+    <!-- TODO: don't ship with these -->
+    <string name="focus_ring_toggle" translatable="false">FR</string>
+    <string name="immediate_capture_toggle" translatable="false">IMM</string>
  </resources>

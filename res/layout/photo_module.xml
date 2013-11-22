@@ -20,7 +20,7 @@
  need to be recreated in onConfigurationChanged from old photo_module to this
  layout. -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center">
@@ -39,4 +39,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
-</merge>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ToggleButton
+            android:id="@+id/toggle_focus_ring_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="@string/focus_ring_toggle"
+            android:textOff="@string/focus_ring_toggle"
+            android:checked="false" />
+        <ToggleButton
+            android:id="@+id/toggle_immediate_capture_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="@string/immediate_capture_toggle"
+            android:textOff="@string/immediate_capture_toggle"
+            android:checked="true" />
+    </LinearLayout>
+    <include layout="@layout/bottom_bar" />
+</FrameLayout>

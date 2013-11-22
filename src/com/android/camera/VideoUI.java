@@ -42,7 +42,6 @@ import android.widget.TextView;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
@@ -69,27 +68,23 @@ public class VideoUI implements PieRenderer.PieListener,
     private View mReviewCancelButton;
     private View mReviewDoneButton;
     private View mReviewPlayButton;
-    private ShutterButton mShutterButton;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
     private View mTimeLapseLabel;
     private RenderOverlay mRenderOverlay;
     private PieRenderer mPieRenderer;
     private VideoMenu mVideoMenu;
-    private CameraControls mCameraControls;
     private SettingsPopup mPopup;
     private ZoomRenderer mZoomRenderer;
-    private View mMenuButton;
-    private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
     private SurfaceTexture mSurfaceTexture;
     private VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
-    private View mPreviewThumb;
     private View mFlashOverlay;
 
+    private View mBottomBar;
     private View mPreviewCover;
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
@@ -172,10 +167,19 @@ public class VideoUI implements PieRenderer.PieListener,
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.video_module,
                 (ViewGroup) moduleRoot, true);
+
+        mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
+        mRenderOverlay.setTapListener(this);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
+
+        mSurfaceTexture = mTextureView.getSurfaceTexture();
+        if (mSurfaceTexture != null) {
+            setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
+            mPreviewCover.setVisibility(View.GONE);
+        }
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
         if (mSurfaceTexture != null) {
@@ -185,11 +189,13 @@ public class VideoUI implements PieRenderer.PieListener,
             mPreviewCover.setVisibility(View.GONE);
         }
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
-        mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         initializeMiscControls();
         initializeControlByIntent();
         initializeOverlay();
         mAnimationManager = new AnimationManager();
+
+        mBottomBar = mRootView.findViewById(R.id.bottom_bar);
+        mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.video_mode_color));
     }
 
 
@@ -200,23 +206,7 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     private void initializeControlByIntent() {
-        mMenuButton = mRootView.findViewById(R.id.menu);
-        mMenuButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPieRenderer != null) {
-                    mPieRenderer.showInCenter();
-                }
-            }
-        });
-
-        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
-        mOnScreenIndicators = new OnScreenIndicators(mActivity,
-                mRootView.findViewById(R.id.on_screen_indicators));
-        mOnScreenIndicators.resetToDefault();
         if (mController.isVideoCaptureIntent()) {
-            mActivity.getLayoutInflater().inflate(R.layout.review_module_control,
-                    (ViewGroup) mCameraControls);
             // Cannot use RotateImageView for "done" and "cancel" button because
             // the tablet layout uses RotateLayout, which cannot be cast to
             // RotateImageView.
@@ -334,8 +324,6 @@ public class VideoUI implements PieRenderer.PieListener,
             Log.e(TAG, "No valid bitmap for capture animation.");
             return;
         }
-        ((ImageView) mPreviewThumb).setImageBitmap(bitmap);
-        mAnimationManager.startCaptureAnimation(mPreviewThumb);
     }
 
     /**
@@ -346,15 +334,15 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void hideUI() {
-        mCameraControls.setVisibility(View.INVISIBLE);
+
     }
 
     public void showUI() {
-        mCameraControls.setVisibility(View.VISIBLE);
+
     }
 
     public boolean arePreviewControlsVisible() {
-        return (mCameraControls.getVisibility() == View.VISIBLE);
+        return false;
     }
 
     public boolean collapseCameraControls() {
@@ -434,17 +422,6 @@ public class VideoUI implements PieRenderer.PieListener,
         }
         mRenderOverlay.addRenderer(mZoomRenderer);
         mRenderOverlay.setGestures(null);
-
-        mPreviewThumb = mRootView.findViewById(R.id.preview_thumb);
-        mPreviewThumb.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Do not allow navigation to filmstrip during video recording
-                if (!mRecordingStarted) {
-                    mActivity.gotoGallery();
-                }
-            }
-        });
     }
 
     public void setPrefChangedListener(OnPreferenceChangedListener listener) {
@@ -453,11 +430,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     private void initializeMiscControls() {
         mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
-        mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
-        mShutterButton.setOnShutterButtonListener(mController);
-        mShutterButton.setVisibility(View.VISIBLE);
-        mShutterButton.requestFocus();
-        mShutterButton.enableTouch(true);
         mRecordingTimeView = (TextView) mRootView.findViewById(R.id.recording_time);
         mRecordingTimeRect = (RotateLayout) mRootView.findViewById(R.id.recording_time_rect);
         mTimeLapseLabel = mRootView.findViewById(R.id.time_lapse_label);
@@ -467,10 +439,6 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void updateOnScreenIndicators(Parameters param, ComboPreferences prefs) {
-      mOnScreenIndicators.updateFlashOnScreenIndicator(param.getFlashMode());
-      boolean location = RecordLocationPreference.get(
-              prefs, mActivity.getContentResolver());
-      mOnScreenIndicators.updateLocationIndicator(location);
 
     }
 
@@ -524,9 +492,7 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void enableShutter(boolean enable) {
-        if (mShutterButton != null) {
-            mShutterButton.setEnabled(enable);
-        }
+
     }
 
     // PieListener
@@ -557,14 +523,10 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void showRecordingUI(boolean recording) {
         mRecordingStarted = recording;
-        mMenuButton.setVisibility(recording ? View.GONE : View.VISIBLE);
-        mOnScreenIndicators.setVisibility(recording ? View.GONE : View.VISIBLE);
         if (recording) {
-            mShutterButton.setImageResource(R.drawable.btn_shutter_video_recording);
             mRecordingTimeView.setText("");
             mRecordingTimeView.setVisibility(View.VISIBLE);
         } else {
-            mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
             mRecordingTimeView.setVisibility(View.GONE);
         }
     }
@@ -575,31 +537,19 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void showReviewControls() {
-        CameraUtil.fadeOut(mShutterButton);
         CameraUtil.fadeIn(mReviewDoneButton);
         CameraUtil.fadeIn(mReviewPlayButton);
         mReviewImage.setVisibility(View.VISIBLE);
-        mMenuButton.setVisibility(View.GONE);
-        mOnScreenIndicators.setVisibility(View.GONE);
     }
 
     public void hideReviewUI() {
         mReviewImage.setVisibility(View.GONE);
-        mShutterButton.setEnabled(true);
-        mMenuButton.setVisibility(View.VISIBLE);
-        mOnScreenIndicators.setVisibility(View.VISIBLE);
         CameraUtil.fadeOut(mReviewDoneButton);
         CameraUtil.fadeOut(mReviewPlayButton);
-        CameraUtil.fadeIn(mShutterButton);
     }
 
     private void setShowMenu(boolean show) {
-        if (mOnScreenIndicators != null) {
-            mOnScreenIndicators.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
-        if (mMenuButton != null) {
-            mMenuButton.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
+
     }
 
     public void onPreviewFocusChanged(boolean previewFocused) {
@@ -632,15 +582,15 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void clickShutter() {
-        mShutterButton.performClick();
+
     }
 
     public void pressShutter(boolean pressed) {
-        mShutterButton.setPressed(pressed);
+
     }
 
     public View getShutterButton() {
-        return mShutterButton;
+        return null;
     }
 
     public void setRecordingTime(String text) {
@@ -652,12 +602,11 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public boolean isVisible() {
-        return mCameraControls.getVisibility() == View.VISIBLE;
+        return false;
     }
 
     @Override
     public void onDisplayChanged() {
-        mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
     }
 

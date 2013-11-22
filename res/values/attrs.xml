@@ -42,5 +42,7 @@
         <attr name="largeIcons" format="reference" />
         <attr name="images" format="reference" />
     </declare-styleable>
-
+    <declare-styleable name="MultiToggleImageButton">
+        <attr name="imageIds" format="reference" />
+    </declare-styleable>
 </resources>

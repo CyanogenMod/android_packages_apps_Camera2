@@ -34,5 +34,5 @@
             android:scaleType="center"
             android:visibility="gone"
             android:onClick="onReviewPlayClicked"/>
-
+    <include layout="@layout/bottom_bar" />
 </merge>

@@ -31,6 +31,7 @@ import java.util.List;
 public class RenderOverlay extends FrameLayout {
 
     private static final String TAG = "CAM_Overlay";
+    private PreviewGestures.SingleTapListener mTapListener;
 
     interface Renderer {
 
@@ -97,11 +98,12 @@ public class RenderOverlay extends FrameLayout {
                 break;
             }
         }
-        if (pie == null) {
-            return;
-        }
-        if (pie.isOpen()) {
+        if (pie!= null && pie.isOpen()) {
             pie.onTouchEvent(ev);
+        } else {
+            if (mTapListener != null && ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                mTapListener.onSingleTapUp(null, ((int) ev.getX()), ((int) ev.getY()));
+            }
         }
     }
 
@@ -113,6 +115,13 @@ public class RenderOverlay extends FrameLayout {
             remove(mClients.get(0));
         }
         mTouchClients.clear();
+        mTapListener = null;
+    }
+
+    // TODO: Design a touch flow for each module to handle the leftover touch
+    // events from the app
+    public void setTapListener(PreviewGestures.SingleTapListener listener) {
+        mTapListener = listener;
     }
 
     @Override

@@ -426,7 +426,6 @@ public class FocusOverlayManager {
 
     private void cancelAutoFocus() {
         Log.v(TAG, "Cancel autofocus.");
-
         // Reset the tap area before calling mListener.cancelAutofocus.
         // Otherwise, focus mode stays at auto and the tap area passed to the
         // driver is not reset.

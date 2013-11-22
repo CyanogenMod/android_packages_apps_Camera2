@@ -352,7 +352,7 @@ public class VideoModule extends CameraModule
     // Preview area is touched. Take a picture.
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        takeASnapshot();
+        onShutterButtonClick();
     }
 
     private void takeASnapshot() {

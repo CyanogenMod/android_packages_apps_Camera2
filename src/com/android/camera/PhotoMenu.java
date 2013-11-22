@@ -16,10 +16,10 @@
 
 package com.android.camera;
 
-import java.util.Locale;
-
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
+import android.util.Log;
+import android.view.View;
 
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractSettingPopup;
@@ -29,6 +29,8 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera2.R;
+
+import java.util.Locale;
 
 public class PhotoMenu extends PieController
         implements CountdownTimerPopup.Listener,
@@ -48,6 +50,12 @@ public class PhotoMenu extends PieController
         mActivity = activity;
     }
 
+    private int getPrefIndex(ListPreference pref) {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        String value = settingsManager.getValueFromPreference(pref);
+        return pref.findIndexOfValue(value);
+    }
+
     public void initialize(PreferenceGroup group) {
         super.initialize(group);
         mPopup = null;
@@ -55,12 +63,6 @@ public class PhotoMenu extends PieController
         final Resources res = mActivity.getResources();
         Locale locale = res.getConfiguration().locale;
         // The order is from left to right in the menu.
-
-        // HDR+ (GCam).
-        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR_PLUS) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR_PLUS, true);
-            mRenderer.addItem(item);
-        }
 
         // HDR.
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
@@ -78,47 +80,19 @@ public class PhotoMenu extends PieController
         more.setLabel(res.getString(R.string.camera_menu_more_label));
         mRenderer.addItem(more);
 
-        // Flash.
-        if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_FLASH_MODE);
-            item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
-            mRenderer.addItem(item);
-        }
-        // Camera switcher.
-        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
-            final PieItem fitem = item;
-            item.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(PieItem item) {
-                    // Find the index of next camera.
-                    ListPreference pref = mPreferenceGroup
-                            .findPreference(CameraSettings.KEY_CAMERA_ID);
-                    if (pref != null) {
-                        SettingsManager settingsManager = mActivity.getSettingsManager();
-                        String value = settingsManager.getValueFromPreference(pref);
-                        int index = pref.findIndexOfValue(value);
-
-                        CharSequence[] values = pref.getEntryValues();
-                        index = (index + 1) % values.length;
-                        settingsManager.setValueIndexFromPreference(pref, index);
-                        mListener.onCameraPickerClicked(index);
-                    }
-                    updateItem(fitem, CameraSettings.KEY_CAMERA_ID);
-                }
-            });
-            mRenderer.addItem(item);
-        }
         // Countdown timer.
-        final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
-        final ListPreference beeppref = group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
+        final ListPreference ctpref =
+                group.findPreference(CameraSettings.KEY_TIMER);
+        final ListPreference beeppref =
+                group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
         item = makeItem(R.drawable.ic_timer);
         item.setLabel(res.getString(R.string.pref_camera_timer_title).toUpperCase(locale));
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
-                CountdownTimerPopup timerPopup = (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.countdown_setting_popup, null, false);
+                CountdownTimerPopup timerPopup =
+                        (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
+                                R.layout.countdown_setting_popup, null, false);
                 timerPopup.initialize(ctpref, beeppref);
                 timerPopup.setSettingChangedListener(PhotoMenu.this);
                 mUI.dismissPopup();
@@ -140,6 +114,71 @@ public class PhotoMenu extends PieController
             pref.setUseSingleIcon(true);
             item = makeItem(CameraSettings.KEY_SCENE_MODE);
             more.addItem(item);
+        }
+
+        final ToggleImageButton cameraToggle
+                = (ToggleImageButton) mActivity.findViewById(R.id.camera_toggle_button);
+        final MultiToggleImageButton flashToggle
+                = (MultiToggleImageButton) mActivity.findViewById(R.id.flash_toggle_button);
+        final ToggleImageButton hdrPlusToggle
+                = (ToggleImageButton) mActivity.findViewById(R.id.hdr_plus_toggle_button);
+
+        final ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
+        if (pref != null) {
+            int selectedPref = Integer.parseInt(mActivity.getSettingsManager()
+                    .getValueFromPreference(pref));
+            cameraToggle.setState(selectedPref, false);
+            flashToggle.setVisibility(selectedPref == 0 ? View.VISIBLE : View.INVISIBLE);
+            cameraToggle.setOnStateChangeListener(new ToggleImageButton.OnStateChangeListener() {
+                    @Override
+                    public void stateChanged(View view, boolean state) {
+                        // Find next camera
+                        int index = getPrefIndex(pref);
+                        CharSequence[] values = pref.getEntryValues();
+                        index = (index + 1) % values.length;
+                        mActivity.getSettingsManager()
+                                .setValueIndexFromPreference(pref, index);
+                        mListener.onCameraPickerClicked(index);
+                        flashToggle.setVisibility(index == 0 ? View.VISIBLE : View.INVISIBLE);
+                    }
+            });
+        }
+
+        final ListPreference flashPref
+                = mPreferenceGroup.findPreference(CameraSettings.KEY_FLASH_MODE);
+        if (flashPref != null) {
+            // Set initial state
+            int index = getPrefIndex(flashPref);
+            flashToggle.setState(index, false);
+            flashToggle.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+                    @Override
+                    public void stateChanged(View view, int state) {
+                        mActivity.getSettingsManager()
+                                .setValueIndexFromPreference(flashPref, state);
+                        onSettingChanged(flashPref);
+                    }
+            });
+        }
+
+        // HDR+ (GCam).
+        final ListPreference hdrPlusPref
+                = group.findPreference(CameraSettings.KEY_CAMERA_HDR_PLUS);
+        if (hdrPlusPref != null) {
+            String prefValue = mActivity.getSettingsManager().getValueFromPreference(hdrPlusPref);
+            int index = hdrPlusPref.findIndexOfValue(prefValue);
+            hdrPlusToggle.setState(index, false);
+            hdrPlusToggle.setOnStateChangeListener(new ToggleImageButton.OnStateChangeListener() {
+                @Override
+                public void stateChanged(View view, boolean state) {
+                    // Find next camera
+                    int index = getPrefIndex(hdrPlusPref);
+                    CharSequence[] values = hdrPlusPref.getEntryValues();
+                    index = (index + 1) % values.length;
+                    mActivity.getSettingsManager()
+                            .setValueIndexFromPreference(hdrPlusPref, index);
+                    onSettingChanged(hdrPlusPref);
+                }
+            });
         }
     }
 
