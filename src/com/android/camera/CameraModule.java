@@ -66,4 +66,6 @@ public interface CameraModule {
     public void onMediaSaveServiceConnected(MediaSaveService s);
 
     public boolean arePreviewControlsVisible();
+
+    public void resizeForPreviewAspectRatio();
 }

@@ -644,7 +644,8 @@ public class PhotoModule
         }
     }
 
-    private void resizeForPreviewAspectRatio() {
+    @Override
+    public void resizeForPreviewAspectRatio() {
         setPreviewFrameLayoutCameraOrientation();
         Size size = mParameters.getPictureSize();
         Log.e(TAG,"Width = "+ size.width+ "Height = "+size.height);

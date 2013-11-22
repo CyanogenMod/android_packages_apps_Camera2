@@ -874,6 +874,10 @@ public class WideAnglePanoramaModule
     }
 
     @Override
+    public void resizeForPreviewAspectRatio() {
+    }
+
+    @Override
     public void onResumeBeforeSuper() {
         mPaused = false;
     }
