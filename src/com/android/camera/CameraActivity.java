@@ -305,6 +305,9 @@ public class CameraActivity extends Activity
                 @Override
                 public void onDataFullScreenChange(int dataID, boolean full) {
                     boolean isCameraID = isCameraPreview(dataID);
+                    if (full && isCameraID){
+                        updateStorageSpaceAndHint();
+                    }
                     if (!isCameraID) {
                         if (!full) {
                             // Always show action bar in filmstrip mode
@@ -365,6 +368,16 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onDataFocusChanged(final int dataID, final boolean focused) {
+                    boolean isPreview = isCameraPreview(dataID);
+                    boolean isFullScreen = mFilmStripView.inFullScreen();
+                    if (isFullScreen && isPreview){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateStorageSpaceAndHint();
+                            }
+                        });
+                    }
                     // Delay hiding action bar if there is any user interaction
                     if (mMainHandler.hasMessages(HIDE_ACTION_BAR)) {
                         mMainHandler.removeMessages(HIDE_ACTION_BAR);
@@ -1151,6 +1164,7 @@ public class CameraActivity extends Activity
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
+        updateStorageSpaceAndHint();
     }
 
     @Override
