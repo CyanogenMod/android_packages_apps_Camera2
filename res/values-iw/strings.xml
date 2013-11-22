@@ -34,19 +34,19 @@
     <string name="details" msgid="4404020741542549488">"פרטים"</string>
     <string name="close" msgid="4826166926297479820">"סגור"</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"%1$d נבחרו"</item>
-    <item quantity="one" msgid="5806616411905812727">"%1$d נבחרו"</item>
-    <item quantity="other" msgid="3767743589502328221">"%1$d נבחרו"</item>
+    <item quantity="zero" msgid="9217673864242686656">"‏%1$d נבחרו"</item>
+    <item quantity="one" msgid="5806616411905812727">"‏%1$d נבחרו"</item>
+    <item quantity="other" msgid="3767743589502328221">"‏%1$d נבחרו"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"%1$d נבחרו"</item>
-    <item quantity="one" msgid="9063509704521984072">"%1$d נבחרו"</item>
-    <item quantity="other" msgid="135044054552480485">"%1$d נבחרו"</item>
+    <item quantity="zero" msgid="8095100906728830821">"‏%1$d נבחרו"</item>
+    <item quantity="one" msgid="9063509704521984072">"‏%1$d נבחרו"</item>
+    <item quantity="other" msgid="135044054552480485">"‏%1$d נבחרו"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"%1$d נבחרו"</item>
-    <item quantity="one" msgid="1456436514367094505">"%1$d נבחרו"</item>
-    <item quantity="other" msgid="1511467088339194694">"%1$d נבחרו"</item>
+    <item quantity="zero" msgid="1942343672734097509">"‏%1$d נבחרו"</item>
+    <item quantity="one" msgid="1456436514367094505">"‏%1$d נבחרו"</item>
+    <item quantity="other" msgid="1511467088339194694">"‏%1$d נבחרו"</item>
   </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"הצג במפה"</string>
     <string name="rotate_left" msgid="2618440058490662604">"סובב שמאלה"</string>
@@ -66,7 +66,7 @@
     <string name="height" msgid="5186001199353423689">"גובה"</string>
     <string name="orientation" msgid="3883761294106680270">"כיוון"</string>
     <string name="duration" msgid="5316211067383665008">"משך זמן"</string>
-    <string name="mimetype" msgid="6415940055077963944">"סוג MIME"</string>
+    <string name="mimetype" msgid="6415940055077963944">"‏סוג MIME"</string>
     <string name="file_size" msgid="6841070748357980676">"גודל קובץ"</string>
     <string name="maker" msgid="698691509121545856">"יוצר"</string>
     <string name="model" msgid="8547493604023069452">"דגם"</string>
@@ -75,7 +75,7 @@
     <string name="focal_length" msgid="8351221512187346229">"רוחק מוקד"</string>
     <string name="white_balance" msgid="1600142743496129085">"איזון לבן"</string>
     <string name="exposure_time" msgid="949787291620767754">"זמן חשיפה"</string>
-    <string name="iso" msgid="8578773821062054902">"ISO‏"</string>
+    <string name="iso" msgid="8578773821062054902">"‏ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"מ\"מ"</string>
     <string name="manual" msgid="2444400953521760140">"ידני"</string>
     <string name="auto" msgid="2552649885114400474">"אוטומטי"</string>
@@ -84,15 +84,16 @@
     <string name="unknown" msgid="564184550182858146">"לא ידוע"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"הפריט מאוחסן באופן מקומי וזמין במצב לא מקוון."</string>
     <string name="please_wait" msgid="1416313324505140068">"המתן"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"מעבד את צילום ה-Photo Sphere"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"‏מעבד את צילום ה-Photo Sphere"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"שגיאת מצלמה"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"לא ניתן להתחבר למצלמה."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"המצלמה הושבתה בשל מדיניות אבטחה."</string>
     <string name="wait" msgid="765601745709933047">"המתן…"</string>
-    <string name="no_storage" product="default" msgid="5922012950780548098">"הכנס כרטיס SD לפני השימוש במצלמה."</string>
-    <string name="preparing_sd" product="default" msgid="7435693655017362767">"מכין כרטיס SD…"</string>
-    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"לא ניתן היה לגשת לכרטיס ה-SD."</string>
+    <string name="no_storage" product="default" msgid="5922012950780548098">"‏הכנס כרטיס SD לפני השימוש במצלמה."</string>
+    <string name="preparing_sd" product="default" msgid="7435693655017362767">"‏מכין כרטיס SD…"</string>
+    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"‏לא ניתן היה לגשת לכרטיס ה-SD."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"הקלטה של צילום בהילוך מהיר"</string>
+    <string name="capturing" msgid="5255164204641920893">"מצלם"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"בחר מצלמה"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"הקודם"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"חזיתית"</string>
@@ -101,7 +102,7 @@
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"טיימר לספירה לאחור"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="8919878087230098328">"שנייה אחת"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d שניות"</item>
+    <item quantity="other" msgid="5782794798884172289">"‏%d שניות"</item>
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
@@ -122,6 +123,7 @@
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 מגה פיקסל (16:9)"</string>
+    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1.5 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1.3 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"מגה פיקסל אחד"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
@@ -157,10 +159,10 @@
     <string name="pref_camera_scenemode_entry_auto" msgid="9205644316260850379">"אוטומטי"</string>
     <string name="pref_camera_scenemode_entry_hdr_plus" msgid="6759085555519758794">"HDR+‎"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="3098836808080630955">"HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on" msgid="4762986338359862238">"הפעל HDR+‎"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off" msgid="8027383906480914303">"כבה HDR+‎"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_on" msgid="8567522693524539332">"הפעל HDR"</string>
-    <string name="pref_camera_scenemode_entry_turn_hdr_off" msgid="1121637502250585531">"כבה HDR"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on" msgid="1096746750342289067">"‏HDR+‎ פועל"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off" msgid="2668770361856397834">"‏HDR+‎ כבוי"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_on" msgid="5232394324298489502">"‏HDR פועל"</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_off" msgid="7694606461440250206">"‏HDR כבוי"</string>
     <string name="pref_camera_scenemode_entry_action" msgid="5753183620959062015">"פעולה"</string>
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"לילה"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"שקיעה"</string>
@@ -186,7 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"מצלמה חזיתית"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"מצלמה אחורית"</string>
     <string name="dialog_ok" msgid="774141340500181131">"אישור"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"השטח בכרטיס ה-SD אוזל. שנה את הגדרת האיכות או מחק חלק מהתמונות או קבצים אחרים."</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"‏השטח בכרטיס ה-SD אוזל. שנה את הגדרת האיכות או מחק חלק מהתמונות או קבצים אחרים."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"הגעת למגבלת הגודל."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"מהר מדי"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"מכין פנורמה"</string>
@@ -217,11 +219,11 @@
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"לחצן הצילום"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"לחצן תפריט"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"בורר מצב מצלמה, וידאו או פנורמה"</string>
-    <string name="accessibility_check_box" msgid="1084094675439953723">"תיבת סימון %1$s"</string>
+    <string name="accessibility_check_box" msgid="1084094675439953723">"‏תיבת סימון %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"עבור לצילום תמונות"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"עבור לצילום וידאו"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"עבור לצילום פנורמה"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"עבור לצילום Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"‏עבור לצילום Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"עבור לאיכות גבוהה"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"ביטול בדיקה"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"בדיקה בוצעה"</string>
