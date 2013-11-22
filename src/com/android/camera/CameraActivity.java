@@ -190,8 +190,6 @@ public class CameraActivity extends Activity
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
-    // This is a hack to speed up the start of SecureCamera.
-    private static boolean sFirstStartAfterScreenOn = true;
     private int mLastRawOrientation;
     private OrientationManagerImpl mOrientationManager;
     private LocationManager mLocationManager;
@@ -273,13 +271,6 @@ public class CameraActivity extends Activity
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
-    private static class ScreenOffReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            sFirstStartAfterScreenOn = true;
-        }
-    }
-
     private class MainHandler extends Handler {
         public MainHandler(Looper looper) {
             super(looper);
@@ -300,14 +291,6 @@ public class CameraActivity extends Activity
 
     public void setOnActionBarVisibilityListener(OnActionBarVisibilityListener listener) {
         mOnActionBarVisibilityListener = listener;
-    }
-
-    public static boolean isFirstStartAfterScreenOn() {
-        return sFirstStartAfterScreenOn;
-    }
-
-    public static void resetFirstStartAfterScreenOn() {
-        sFirstStartAfterScreenOn = false;
     }
 
     private String fileNameFromDataID(int dataID) {
@@ -1135,13 +1118,6 @@ public class CameraActivity extends Activity
             // when screen is off.
             IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
             registerReceiver(mScreenOffReceiver, filter);
-            // TODO: This static screen off event receiver is a workaround to the
-            // double onResume() invocation (onResume->onPause->onResume). We should
-            // find a better solution to this.
-            if (sScreenOffReceiver == null) {
-                sScreenOffReceiver = new ScreenOffReceiver();
-                registerReceiver(sScreenOffReceiver, filter);
-            }
         }
         mAboveFilmstripControlLayout =
                 (FrameLayout) findViewById(R.id.camera_above_filmstrip_layout);
