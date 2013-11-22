@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package com.android.camera.app;
+package com.android.camera.session;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.android.camera.Storage;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-public class PlaceholderManager implements ImageTaskManager {
+/**
+ * Handles placeholders in filmstrip that show up temporarily while a final
+ * output media item is being produced.
+ */
+public class PlaceholderManager {
     private static final String TAG = "PlaceholderManager";
 
     public static final String PLACEHOLDER_MIME_TYPE = "application/placeholder-image";
     private final Context mContext;
 
-    final private ArrayList<WeakReference<TaskListener>> mListenerRefs;
-
     public static class Session {
-        String outputTitle;
-        Uri outputUri;
-        long time;
+        final String outputTitle;
+        final Uri outputUri;
+        final long time;
 
         Session(String title, Uri uri, long timestamp) {
             outputTitle = title;
@@ -51,82 +52,6 @@ public class PlaceholderManager implements ImageTaskManager {
 
     public PlaceholderManager(Context context) {
         mContext = context;
-        mListenerRefs = new ArrayList<WeakReference<TaskListener>>();
-    }
-
-    @Override
-    public void addTaskListener(TaskListener l) {
-        synchronized (mListenerRefs) {
-            if (findTaskListener(l) == -1) {
-                mListenerRefs.add(new WeakReference<TaskListener>(l));
-            }
-        }
-    }
-
-    @Override
-    public void removeTaskListener(TaskListener l) {
-        synchronized (mListenerRefs) {
-            int i = findTaskListener(l);
-            if (i != -1) {
-                mListenerRefs.remove(i);
-            }
-        }
-    }
-
-    @Override
-    public int getTaskProgress(Uri uri) {
-        return 0;
-    }
-
-    private int findTaskListener(TaskListener listener) {
-        int index = -1;
-        for (int i = 0; i < mListenerRefs.size(); i++) {
-            TaskListener l = mListenerRefs.get(i).get();
-            if (l != null && l == listener) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
-    private Iterable<TaskListener> getListeners() {
-        return new Iterable<TaskListener>() {
-            @Override
-            public Iterator<TaskListener> iterator() {
-                return new ListenerIterator();
-            }
-        };
-    }
-
-    private class ListenerIterator implements Iterator<TaskListener> {
-        private int mIndex = 0;
-        private TaskListener mNext = null;
-
-        @Override
-        public boolean hasNext() {
-            while (mNext == null && mIndex < mListenerRefs.size()) {
-                mNext = mListenerRefs.get(mIndex).get();
-                if (mNext == null) {
-                    mListenerRefs.remove(mIndex);
-                }
-            }
-            return mNext != null;
-        }
-
-        @Override
-        public TaskListener next() {
-            hasNext(); // Populates mNext
-            mIndex++;
-            TaskListener next = mNext;
-            mNext = null;
-            return next;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
     }
 
     public Session insertPlaceholder(String title, byte[] placeholder, long timestamp) {
@@ -152,15 +77,19 @@ public class PlaceholderManager implements ImageTaskManager {
         if (uri == null) {
             return null;
         }
-
-        String filePath = uri.getPath();
-        synchronized (mListenerRefs) {
-            for (TaskListener l : getListeners()) {
-                l.onTaskQueued(filePath, uri);
-            }
-        }
-
         return new Session(title, uri, timestamp);
+    }
+
+    /**
+     * Converts an existing item into a placeholder for re-processing.
+     *
+     * @param uri the URI of an existing media item.
+     * @return A session that can be used to update the progress of the new
+     *         session.
+     */
+    public Session convertToPlaceholder(Uri uri) {
+        Storage.updateItemMimeType(uri, PLACEHOLDER_MIME_TYPE, mContext.getContentResolver());
+        return createSessionFromUri(uri);
     }
 
     public void replacePlaceholder(Session session, Location location, int orientation,
@@ -168,17 +97,52 @@ public class PlaceholderManager implements ImageTaskManager {
 
         Storage.updateImage(session.outputUri, mContext.getContentResolver(), session.outputTitle,
                 session.time, location, orientation, exif, jpeg, width, height, mimeType);
-
-        synchronized (mListenerRefs) {
-            for (TaskListener l : getListeners()) {
-                l.onTaskDone(session.outputUri.getPath(), session.outputUri);
-            }
-        }
         CameraUtil.broadcastNewPicture(mContext, session.outputUri);
     }
 
+    /**
+     * Replace the placeholder with the final image which has been stored on
+     * disk.
+     */
+    public void replacePlaceHolder(Session session) {
+        Storage.updateImageFromChangedFile(session.outputUri, mContext.getContentResolver());
+        CameraUtil.broadcastNewPicture(mContext, session.outputUri);
+    }
+
+    /**
+     * Removes the placeholder for the given session.
+     */
     public void removePlaceholder(Session session) {
         Storage.deleteImage(mContext.getContentResolver(), session.outputUri);
     }
 
+    /**
+     * Create a new session instance from the given URI by querying the media
+     * store.
+     * <p>
+     * TODO: Make sure this works with types other than images when needed.
+     */
+    private Session createSessionFromUri(Uri uri) {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        Cursor cursor = resolver.query(uri,
+                new String[] {
+                        MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.DISPLAY_NAME,
+                }, null, null, null);
+        if (cursor == null) {
+            return null;
+        }
+        int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN);
+        int nameIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+
+        cursor.moveToFirst();
+        long date = cursor.getLong(dateIndex);
+        String name = cursor.getString(nameIndex);
+
+        if (name.toLowerCase().endsWith(Storage.JPEG_POSTFIX)) {
+            name = name.substring(0, name.length() - Storage.JPEG_POSTFIX.length());
+        }
+
+        return new Session(name, uri, date);
+    }
 }

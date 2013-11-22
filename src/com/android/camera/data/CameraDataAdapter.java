@@ -27,8 +27,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.camera.Storage;
-import com.android.camera.app.PlaceholderManager;
 import com.android.camera.filmstrip.ImageData;
+import com.android.camera.session.PlaceholderManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;

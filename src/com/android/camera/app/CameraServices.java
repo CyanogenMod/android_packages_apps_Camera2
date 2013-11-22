@@ -16,12 +16,30 @@
 
 package com.android.camera.app;
 
+import com.android.camera.session.CaptureSessionManager;
+
+/**
+ * Functionality available to all modules and services.
+ */
 public interface CameraServices {
+
+    /**
+     * Returns the capture session manager instance that modules use to store
+     * temporary or final capture results.
+     */
+    public CaptureSessionManager getCaptureSessionManager();
+
+    /**
+     * Returns the memory manager which can be used to get informed about memory
+     * status updates.
+     */
+    public MemoryManager getMemoryManager();
+
     /**
      * Returns the media saver instance.
      * <p>
-     * Deprecated. Use {@link #getSessionManager()} whenever possible. This
-     * direct access to media saver will go away.
+     * Deprecated. Use {@link #getCaptureSessionManager()} whenever possible.
+     * This direct access to media saver will go away.
      */
     @Deprecated
     public MediaSaver getMediaSaver();

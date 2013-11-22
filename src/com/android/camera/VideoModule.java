@@ -55,6 +55,8 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.MemoryManager;
+import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
@@ -74,11 +76,12 @@ import java.util.List;
 public class VideoModule extends CameraModule
     implements ModuleController,
     VideoController,
+    MemoryListener,
     ShutterButton.OnShutterButtonListener,
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener {
 
-    private static final String TAG = "CAM_VideoModule";
+    private static final String TAG = "VideoModule";
 
     // Messages defined for the UI thread handler.
     private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
@@ -123,7 +126,7 @@ public class VideoModule extends CameraModule
     private boolean mRecordingTimeCountsDown = false;
     private long mOnResumeTime;
     // The video file that the hardware camera is about to record into
-    // (or is recording into.)
+    // (or is recording into.
     private String mVideoFilename;
     private ParcelFileDescriptor mVideoFileDescriptor;
 
@@ -136,7 +139,7 @@ public class VideoModule extends CameraModule
 
     private CamcorderProfile mProfile;
 
-    // The video duration limit. 0 menas no limit.
+    // The video duration limit. 0 means no limit.
     private int mMaxVideoDurationInMs;
 
     // Time Lapse parameters.
@@ -190,21 +193,10 @@ public class VideoModule extends CameraModule
                 }
             };
 
-    private void openCamera() {
-        if (mCameraDevice == null) {
-            mCameraDevice = CameraUtil.openCamera(
-                    mActivity, mCameraId, mHandler,
-                    mActivity.getCameraOpenErrorCallback());
-        }
-        if (mCameraDevice == null) {
-            // Error.
-            return;
-        }
-        mParameters = mCameraDevice.getParameters();
-    }
-
-    // This Handler is used to post message back onto the main thread of the
-    // application
+    /**
+     * This Handler is used to post message back onto the main thread of the
+     * application.
+     */
     private class MainHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -257,6 +249,9 @@ public class VideoModule extends CameraModule
     }
 
     private BroadcastReceiver mReceiver = null;
+
+    /** Whether shutter is enabled. */
+    private boolean mShutterEnabled;
 
     private class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -336,11 +331,7 @@ public class VideoModule extends CameraModule
     private void takeASnapshot() {
         // Only take snapshots if video snapshot is supported by device
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
-            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress) {
-                return;
-            }
-            MediaSaver s = getServices().getMediaSaver();
-            if (s == null || s.isQueueFull()) {
+            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress || mShutterEnabled) {
                 return;
             }
 
@@ -375,7 +366,7 @@ public class VideoModule extends CameraModule
 
     }
 
-    private ButtonManager.ButtonCallback mCameraButtonCallback =
+    private final ButtonManager.ButtonCallback mCameraButtonCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -1396,6 +1387,7 @@ public class VideoModule extends CameraModule
 
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "VideoModule");
+        getServices().getMemoryManager().addListener(this);
     }
 
     @Override
@@ -1428,6 +1420,7 @@ public class VideoModule extends CameraModule
         mPendingSwitchCameraId = -1;
         mSwitchingCamera = false;
         mPreferenceRead = false;
+        getServices().getMemoryManager().removeListener(this);
     }
 
     @Override
@@ -1610,11 +1603,6 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    public void onMediaSaverAvailable(MediaSaver s) {
-        // do nothing.
-    }
-
-    @Override
     public void onPreviewUIReady() {
         startPreview();
     }
@@ -1626,5 +1614,20 @@ public class VideoModule extends CameraModule
 
     private void requestCamera(int id) {
         mActivity.getCameraProvider().requestCamera(id);
+    }
+
+    @Override
+    public void onMemoryStateChanged(int state) {
+        setShutterEnabled(state == MemoryManager.STATE_OK);
+    }
+
+    @Override
+    public void onLowMemory() {
+        // Not much we can do in the video module.
+    }
+
+    private void setShutterEnabled(boolean enabled) {
+        mShutterEnabled = enabled;
+        mUI.enableShutter(enabled);
     }
 }

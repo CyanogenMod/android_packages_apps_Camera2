@@ -16,17 +16,12 @@
 
 package com.android.camera.settings;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera.Size;
-import android.location.Location;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
-import com.android.camera.CameraActivity;
 import com.android.camera.ListPreference;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
@@ -38,15 +33,15 @@ import java.util.List;
  * global and local SharedPreferences.
  */
 public class SettingsManager {
-    private static final String TAG = "CAM_SettingsManager";
+    private static final String TAG = "SettingsManager";
 
-    private Context mContext;
-    private SharedPreferences mDefaultSettings;
+    private final Context mContext;
+    private final SharedPreferences mDefaultSettings;
+    private final SettingsCache mSettingsCache;
     private SharedPreferences mGlobalSettings;
     private SharedPreferences mCameraSettings;
     private OnSharedPreferenceChangeListener mListener;
     private SettingsCapabilities mCapabilities;
-    private SettingsCache mSettingsCache;
 
     private int mCameraId = -1;
 

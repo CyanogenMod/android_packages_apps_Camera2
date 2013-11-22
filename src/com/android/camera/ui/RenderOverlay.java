@@ -43,12 +43,12 @@ public class RenderOverlay extends FrameLayout {
 
     }
 
-    private RenderView mRenderView;
-    private List<Renderer> mClients;
+    private final RenderView mRenderView;
+    private final List<Renderer> mClients;
     private PreviewGestures mGestures;
     // reverse list of touch clients
-    private List<Renderer> mTouchClients;
-    private int[] mPosition = new int[2];
+    private final List<Renderer> mTouchClients;
+    private final int[] mPosition = new int[2];
 
     public RenderOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -130,7 +130,7 @@ public class RenderOverlay extends FrameLayout {
     // TODO: migrate all modes to PreviewOverlay.
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (mTapListener != null && ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+        if (mTapListener != null && ev.getActionMasked() == MotionEvent.ACTION_UP) {
             mTapListener.onSingleTapUp(null, ((int) ev.getX()), ((int) ev.getY()));
         }
         return true;

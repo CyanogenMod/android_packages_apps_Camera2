@@ -76,22 +76,22 @@ public class FocusOverlayManager {
     private boolean mMeteringAreaSupported;
     private boolean mLockAeAwbNeeded;
     private boolean mAeAwbLock;
-    private Matrix mMatrix;
+    private final Matrix mMatrix;
 
     private boolean mMirror; // true if the camera is front-facing.
     private int mDisplayOrientation;
-    private List<Object> mFocusArea; // focus area in driver format
-    private List<Object> mMeteringArea; // metering area in driver format
+    private List<Area> mFocusArea; // focus area in driver format
+    private List<Area> mMeteringArea; // metering area in driver format
     private String mFocusMode;
-    private String[] mDefaultFocusModes;
+    private final String[] mDefaultFocusModes;
     private String mOverrideFocusMode;
     private Parameters mParameters;
-    private SettingsManager mSettingsManager;
-    private Handler mHandler;
+    private final SettingsManager mSettingsManager;
+    private final Handler mHandler;
     Listener mListener;
     private boolean mPreviousMoving;
 
-    private FocusUI mUI;
+    private final FocusUI mUI;
     private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
 
     public  interface FocusUI {
@@ -330,25 +330,25 @@ public class FocusOverlayManager {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void initializeFocusAreas(int x, int y) {
         if (mFocusArea == null) {
-            mFocusArea = new ArrayList<Object>();
+            mFocusArea = new ArrayList<Area>();
             mFocusArea.add(new Area(new Rect(), 1));
         }
 
         // Convert the coordinates to driver format.
-        calculateTapArea(x, y, 1f, ((Area) mFocusArea.get(0)).rect);
+        calculateTapArea(x, y, 1f, mFocusArea.get(0).rect);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void initializeMeteringAreas(int x, int y) {
         if (mMeteringArea == null) {
-            mMeteringArea = new ArrayList<Object>();
+            mMeteringArea = new ArrayList<Area>();
             mMeteringArea.add(new Area(new Rect(), 1));
         }
 
         // Convert the coordinates to driver format.
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
-        calculateTapArea(x, y, 1.5f, ((Area) mMeteringArea.get(0)).rect);
+        calculateTapArea(x, y, 1.5f, mMeteringArea.get(0).rect);
     }
 
     private void resetMeteringAreas() {
@@ -477,11 +477,11 @@ public class FocusOverlayManager {
         return mFocusMode;
     }
 
-    public List getFocusAreas() {
+    public List<Area> getFocusAreas() {
         return mFocusArea;
     }
 
-    public List getMeteringAreas() {
+    public List<Area> getMeteringAreas() {
         return mMeteringArea;
     }
 

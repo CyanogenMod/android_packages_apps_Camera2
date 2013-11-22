@@ -16,9 +16,6 @@
 
 package com.android.camera;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -32,9 +29,13 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
+import com.android.camera.crop.ImageLoader;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class Storage {
     private static final String TAG = "CameraStorage";
@@ -183,6 +184,50 @@ public class Storage {
             // This should never happen
             throw new IllegalStateException("Bad number of rows (" + rowsModified
                     + ") updated for uri: " + imageUri);
+        }
+    }
+
+    /**
+     * Update the image from the file that has changed.
+     * <p>
+     * Note: This will update the DATE_TAKEN to right now. We could consider not
+     * changing it to preserve the original timestamp.
+     * <p>
+     * TODO: MIME type for videos, location
+     */
+    public static void updateImageFromChangedFile(Uri mediaUri, ContentResolver resolver) {
+        File mediaFile = new File(ImageLoader.getLocalPathFromUri(resolver, mediaUri));
+        if (!mediaFile.exists()) {
+            throw new IllegalArgumentException("Provided URI is not an existent file: "
+                    + mediaUri.getPath());
+        }
+
+        ContentValues values = new ContentValues();
+        // TODO: Read the date from file.
+        values.put(Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(Images.Media.MIME_TYPE, LocalData.MIME_TYPE_JPEG);
+        values.put(Images.Media.SIZE, mediaFile.length());
+
+        resolver.update(mediaUri, values, null, null);
+    }
+
+    /**
+     * Updates the item's mime type to the given one. This is useful e.g. when
+     * switching an image to an in-progress type for re-processing.
+     *
+     * @param uri the URI of the item to change
+     * @param mimeeType the new mime type of the item
+     */
+    public static void updateItemMimeType(Uri uri, String mimeType, ContentResolver resolver) {
+        ContentValues values = new ContentValues(1);
+        values.put(ImageColumns.MIME_TYPE, mimeType);
+
+        // Update the MediaStore
+        int rowsModified = resolver.update(uri, values, null, null);
+        if (rowsModified != 1) {
+            // This should never happen
+            throw new IllegalStateException("Bad number of rows (" + rowsModified
+                    + ") updated for uri: " + uri);
         }
     }
 

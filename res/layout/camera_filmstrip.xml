@@ -34,7 +34,7 @@
         <include layout="@layout/filmstrip_bottom_controls" />
 
         <LinearLayout
-            android:id="@+id/pano_stitching_progress_panel"
+            android:id="@+id/pano_session_progress_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
@@ -46,7 +46,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/pano_stitching_progress_text"
+                android:id="@+id/pano_session_progress_text"
                 android:text="@string/rendering_photo_sphere"
                 android:textColor="#ffffffff"
                 android:textSize="14sp"
@@ -60,7 +60,7 @@
                 android:layout_gravity="right"/>
 
             <ProgressBar
-                android:id="@+id/pano_stitching_progress_bar"
+                android:id="@+id/pano_session_progress_bar"
                 style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -720,4 +720,7 @@ CHAR LIMIT=NONE] -->
 
     <!-- Default for camera startup module index -->
     <string name="pref_camera_startup_index_default" translatable="false">0</string>
+    
+    <!-- A message shown to the user, indicating that a media item is being processed. [CHAR LIMIT=25] -->
+    <string name="processing">Processing &#8230;</string>
  </resources>

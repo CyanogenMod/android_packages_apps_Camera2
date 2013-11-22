@@ -71,8 +71,8 @@ public final class ImageLoader {
         return ret;
     }
 
-    public static String getLocalPathFromUri(Context context, Uri uri) {
-        Cursor cursor = context.getContentResolver().query(uri,
+    public static String getLocalPathFromUri(ContentResolver resolver, Uri uri) {
+        Cursor cursor = resolver.query(uri,
                 new String[]{MediaStore.Images.Media.DATA}, null, null, null);
         if (cursor == null) {
             return null;
@@ -304,7 +304,7 @@ public final class ImageLoader {
 
         // Make sure sample size is reasonable
         if (sampleSize <= 0 ||
-                0 >= (int) (Math.min(w, h) / sampleSize)) {
+                0 >= (Math.min(w, h) / sampleSize)) {
             return null;
         }
         return loadDownsampledBitmap(context, uri, sampleSize);
@@ -410,8 +410,8 @@ public final class ImageLoader {
         return bmap;
     }
 
-    public static List<ExifTag> getExif(Context context, Uri uri) {
-        String path = getLocalPathFromUri(context, uri);
+    public static List<ExifTag> getExif(ContentResolver resolver, Uri uri) {
+        String path = getLocalPathFromUri(resolver, uri);
         if (path != null) {
             Uri localUri = Uri.parse(path);
             String mimeType = getMimeType(localUri);

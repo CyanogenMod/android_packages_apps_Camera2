@@ -16,15 +16,12 @@
 
 package com.android.camera;
 
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.View;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
-import com.android.camera.app.MediaSaver;
 import com.android.camera.module.ModuleController;
 
 public abstract class CameraModule implements ModuleController {
@@ -56,9 +53,6 @@ public abstract class CameraModule implements ModuleController {
 
     @Deprecated
     public abstract void onSingleTapUp(View view, int x, int y);
-
-    @Deprecated
-    public abstract void onMediaSaverAvailable(MediaSaver s);
 
     /**
      * @return An instance containing common services to be used by the module.
