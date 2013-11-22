@@ -68,7 +68,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         int firstFront = -1;
         int firstBack = -1;
         // Get the first (smallest) back and first front camera id.
-        for (int i = 0; i < mNumberOfCameras; i++) {
+        for (int i = mNumberOfCameras - 1; i >= 0; i--) {
             if (mCameraInfos[i].facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 firstBack = i;
             } else {

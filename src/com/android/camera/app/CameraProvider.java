@@ -51,12 +51,12 @@ public interface CameraProvider {
     public int getNumberOfCameras();
 
     /**
-     * Returns the lowest ID of the back camera.
+     * @returns The lowest ID of the back camera or -1 if not available.
      */
     public int getFirstBackCameraId();
 
     /**
-     * Returns the lowest ID of the front camera.
+     * @return The lowest ID of the front camera or -1 if not available.
      */
     public int getFirstFrontCameraId();
 }

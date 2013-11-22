@@ -126,7 +126,7 @@ public class ModulesInfo {
 
             @Override
             public boolean requestAppForCamera() {
-                return false;
+                return true;
             }
 
             @Override
@@ -146,7 +146,7 @@ public class ModulesInfo {
 
             @Override
             public boolean requestAppForCamera() {
-                return false;
+                return true;
             }
 
             @Override
