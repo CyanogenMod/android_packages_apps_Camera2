@@ -21,16 +21,21 @@ import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.android.camera.app.AppController;
+import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.module.ModuleController;
 
-public abstract class CameraModule {
+public abstract class CameraModule implements ModuleController {
 
     /** Provides common services and functionality to the module. */
     private final CameraServices mServices;
+    private final CameraProvider mCameraProvider;
 
-    public CameraModule(CameraServices services) {
-        mServices = services;
+    public CameraModule(AppController app) {
+        mServices = app.getServices();
+        mCameraProvider = app.getCameraProvider();
     }
 
     @Deprecated
@@ -38,18 +43,6 @@ public abstract class CameraModule {
 
     @Deprecated
     public abstract void onPreviewFocusChanged(boolean previewFocused);
-
-    @Deprecated
-    public abstract void onPauseBeforeSuper();
-
-    @Deprecated
-    public abstract void onPauseAfterSuper();
-
-    @Deprecated
-    public abstract void onResumeBeforeSuper();
-
-    @Deprecated
-    public abstract void onResumeAfterSuper();
 
     @Deprecated
     public abstract void onConfigurationChanged(Configuration config);
@@ -104,5 +97,24 @@ public abstract class CameraModule {
      */
     protected CameraServices getServices() {
         return mServices;
+    }
+
+    /**
+     * @return An instance used by the module to get the camera.
+     */
+    protected CameraProvider getCameraProvider() {
+        return mCameraProvider;
+    }
+
+    /**
+     * Requests the back camera through {@link CameraProvider}.
+     * This calls {@link
+     * com.android.camera.app.CameraProvider#requestCamera(int)}. The camera
+     * will be returned through {@link
+     * #onCameraAvailable(com.android.camera.app.CameraManager.CameraProxy)}
+     * when it's available.
+     */
+    protected void requestBackCamera() {
+        mCameraProvider.requestCamera(mCameraProvider.getFirstBackCameraId());
     }
 }

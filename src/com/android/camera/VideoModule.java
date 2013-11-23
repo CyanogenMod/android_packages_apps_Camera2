@@ -294,8 +294,8 @@ public class VideoModule extends CameraModule
     /**
      * Construct a new video module.
      */
-    public VideoModule(CameraServices services) {
-        super(services);
+    public VideoModule(AppController app) {
+        super(app);
     }
 
     private String createName(long dateTaken) {
@@ -638,43 +638,6 @@ public class VideoModule extends CameraModule
         mActivity.registerReceiver(mReceiver, intentFilter);
     }
 
-    @Override
-    public void onResumeBeforeSuper() {
-        mPaused = false;
-    }
-
-    @Override
-    public void onResumeAfterSuper() {
-        mUI.enableShutter(false);
-        mZoomValue = 0;
-
-        showVideoSnapshotUI(false);
-
-        if (!mPreviewing) {
-            requestCamera(mCameraId);
-        } else {
-            // preview already started
-            mUI.enableShutter(true);
-        }
-
-        mUI.initDisplayChangeListener();
-
-        keepScreenOnAwhile();
-
-        // Initialize location service.
-        boolean recordLocation = RecordLocationPreference.get(mPreferences,
-                mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
-
-        if (mPreviewing) {
-            mOnResumeTime = SystemClock.uptimeMillis();
-            mHandler.sendEmptyMessageDelayed(CHECK_DISPLAY_ROTATION, 100);
-        }
-
-        UsageStatistics.onContentViewChanged(
-                UsageStatistics.COMPONENT_CAMERA, "VideoModule");
-    }
-
     private void setDisplayOrientation() {
         mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
         mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, mCameraId);
@@ -764,48 +727,6 @@ public class VideoModule extends CameraModule
         if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
             mUI.hideSurfaceView();
         }
-    }
-
-    @Override
-    public void onPauseBeforeSuper() {
-        mPaused = true;
-
-        mUI.showPreviewCover();
-        if (mMediaRecorderRecording) {
-            // Camera will be released in onStopVideoRecording.
-            onStopVideoRecording();
-        } else {
-            stopPreview();
-            closeCamera();
-            releaseMediaRecorder();
-        }
-
-        closeVideoFileDescriptor();
-
-
-        releasePreviewResources();
-
-        if (mReceiver != null) {
-            mActivity.unregisterReceiver(mReceiver);
-            mReceiver = null;
-        }
-        resetScreenOn();
-
-        if (mLocationManager != null) mLocationManager.recordLocation(false);
-
-        mHandler.removeMessages(CHECK_DISPLAY_ROTATION);
-        mHandler.removeMessages(SWITCH_CAMERA);
-        mHandler.removeMessages(SWITCH_CAMERA_START_ANIMATION);
-        mPendingSwitchCameraId = -1;
-        mSwitchingCamera = false;
-        mPreferenceRead = false;
-
-        mUI.collapseCameraControls();
-        mUI.removeDisplayChangeListener();
-    }
-
-    @Override
-    public void onPauseAfterSuper() {
     }
 
     @Override
@@ -1526,14 +1447,73 @@ public class VideoModule extends CameraModule
 
     @Override
     public void resume() {
-        onResumeBeforeSuper();
-        onResumeAfterSuper();
+        mPaused = false;
+        mUI.enableShutter(false);
+        mZoomValue = 0;
+
+        showVideoSnapshotUI(false);
+
+        if (!mPreviewing) {
+            requestCamera(mCameraId);
+        } else {
+            // preview already started
+            mUI.enableShutter(true);
+        }
+
+        mUI.initDisplayChangeListener();
+
+        keepScreenOnAwhile();
+
+        // Initialize location service.
+        boolean recordLocation = RecordLocationPreference.get(mPreferences,
+                mContentResolver);
+        mLocationManager.recordLocation(recordLocation);
+
+        if (mPreviewing) {
+            mOnResumeTime = SystemClock.uptimeMillis();
+            mHandler.sendEmptyMessageDelayed(CHECK_DISPLAY_ROTATION, 100);
+        }
+
+        UsageStatistics.onContentViewChanged(
+                UsageStatistics.COMPONENT_CAMERA, "VideoModule");
     }
 
     @Override
     public void pause() {
-        onPauseBeforeSuper();
-        onPauseAfterSuper();
+        mPaused = true;
+
+        mUI.showPreviewCover();
+        if (mMediaRecorderRecording) {
+            // Camera will be released in onStopVideoRecording.
+            onStopVideoRecording();
+        } else {
+            stopPreview();
+            closeCamera();
+            releaseMediaRecorder();
+        }
+
+        closeVideoFileDescriptor();
+
+
+        releasePreviewResources();
+
+        if (mReceiver != null) {
+            mActivity.unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
+        resetScreenOn();
+
+        if (mLocationManager != null) mLocationManager.recordLocation(false);
+
+        mHandler.removeMessages(CHECK_DISPLAY_ROTATION);
+        mHandler.removeMessages(SWITCH_CAMERA);
+        mHandler.removeMessages(SWITCH_CAMERA_START_ANIMATION);
+        mPendingSwitchCameraId = -1;
+        mSwitchingCamera = false;
+        mPreferenceRead = false;
+
+        mUI.collapseCameraControls();
+        mUI.removeDisplayChangeListener();
     }
 
     @Override

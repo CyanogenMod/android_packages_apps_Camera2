@@ -46,11 +46,11 @@ public interface ModuleManager {
         /**
          * Creates the module.
          *
-         * @param services Common services and functionality to be shared
-         *            between modules.
+         * @param app The {@link com.android.camera.app.AppController} which
+         *            creates this module.
          * @return The module.
          */
-        public ModuleController createModule(CameraServices services);
+        public ModuleController createModule(AppController app);
     }
 
     /**

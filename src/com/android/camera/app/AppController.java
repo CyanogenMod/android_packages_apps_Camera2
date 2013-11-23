@@ -171,4 +171,9 @@ public interface AppController {
      * @return {@code null} if not available yet.
      */
     public SettingsManager getSettingsManager();
+
+    /**
+     * @return Common services and functionality to be shared.
+     */
+    public CameraServices getServices();
 }

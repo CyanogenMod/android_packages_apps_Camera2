@@ -154,8 +154,8 @@ public class WideAnglePanoramaModule
     /**
      * Constructs a new Wide-Angle panorama module.
      */
-    public WideAnglePanoramaModule(CameraServices services) {
-        super(services);
+    public WideAnglePanoramaModule(AppController app) {
+        super(app);
     }
 
     @Override
@@ -810,51 +810,6 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void onPauseBeforeSuper() {
-        mPaused = true;
-        if (mLocationManager != null) mLocationManager.recordLocation(false);
-    }
-
-    @Override
-    public void onPauseAfterSuper() {
-        mOrientationEventListener.disable();
-        if (mCameraDevice == null) {
-            // Camera open failed. Nothing should be done here.
-            return;
-        }
-        // Stop the capturing first.
-        if (mCaptureState == CAPTURE_STATE_MOSAIC) {
-            stopCapture(true);
-            reset();
-        }
-        mUI.showPreviewCover();
-        releaseCamera();
-        synchronized (mRendererLock) {
-            mCameraTexture = null;
-
-            // The preview renderer might not have a chance to be initialized
-            // before onPause().
-            if (mMosaicPreviewRenderer != null) {
-                mMosaicPreviewRenderer.release();
-                mMosaicPreviewRenderer = null;
-            }
-        }
-
-        clearMosaicFrameProcessorIfNeeded();
-        if (mWaitProcessorTask != null) {
-            mWaitProcessorTask.cancel(true);
-            mWaitProcessorTask = null;
-        }
-        resetScreenOn();
-        mUI.removeDisplayChangeListener();
-        if (mSoundPlayer != null) {
-            mSoundPlayer.release();
-            mSoundPlayer = null;
-        }
-        System.gc();
-    }
-
-    @Override
     public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
         // TODO: implement this.
         init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
@@ -862,49 +817,7 @@ public class WideAnglePanoramaModule
 
     @Override
     public void resume() {
-        // TODO: implement this.
-        onResumeBeforeSuper();
-        onResumeAfterSuper();
-    }
-
-    @Override
-    public void pause() {
-        // TODO: implement this.
-        onPauseBeforeSuper();
-        onPauseAfterSuper();
-    }
-
-    @Override
-    public void destroy() {
-        // TODO: implement this.
-    }
-
-    @Override
-    public void onPreviewSizeChanged(int width, int height) {
-        // TODO: implement this.
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        mUI.onConfigurationChanged(newConfig, mThreadRunning);
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation) {
-    }
-
-    @Override
-    public void onCameraAvailable(CameraProxy cameraProxy) {
-        // TODO: implement this.
-    }
-
-    @Override
-    public void onResumeBeforeSuper() {
         mPaused = false;
-    }
-
-    @Override
-    public void onResumeAfterSuper() {
         mOrientationEventListener.enable();
 
         mCaptureState = CAPTURE_STATE_VIEWFINDER;
@@ -944,6 +857,71 @@ public class WideAnglePanoramaModule
         mUI.initDisplayChangeListener();
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PanoramaModule");
+    }
+
+    @Override
+    public void pause() {
+        mPaused = true;
+        if (mLocationManager != null) mLocationManager.recordLocation(false);
+        mOrientationEventListener.disable();
+        if (mCameraDevice == null) {
+            // Camera open failed. Nothing should be done here.
+            return;
+        }
+        // Stop the capturing first.
+        if (mCaptureState == CAPTURE_STATE_MOSAIC) {
+            stopCapture(true);
+            reset();
+        }
+        mUI.showPreviewCover();
+        releaseCamera();
+        synchronized (mRendererLock) {
+            mCameraTexture = null;
+
+            // The preview renderer might not have a chance to be initialized
+            // before onPause().
+            if (mMosaicPreviewRenderer != null) {
+                mMosaicPreviewRenderer.release();
+                mMosaicPreviewRenderer = null;
+            }
+        }
+
+        clearMosaicFrameProcessorIfNeeded();
+        if (mWaitProcessorTask != null) {
+            mWaitProcessorTask.cancel(true);
+            mWaitProcessorTask = null;
+        }
+        resetScreenOn();
+        mUI.removeDisplayChangeListener();
+        if (mSoundPlayer != null) {
+            mSoundPlayer.release();
+            mSoundPlayer = null;
+        }
+        System.gc();
+    }
+
+    @Override
+    public void destroy() {
+        // TODO: implement this.
+    }
+
+    @Override
+    public void onPreviewSizeChanged(int width, int height) {
+        // TODO: implement this.
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        mUI.onConfigurationChanged(newConfig, mThreadRunning);
+    }
+
+    @Override
+    public void onOrientationChanged(int orientation) {
+    }
+
+    @Override
+    public void onCameraAvailable(CameraProxy cameraProxy) {
+        // TODO: implement this.
     }
 
     /**

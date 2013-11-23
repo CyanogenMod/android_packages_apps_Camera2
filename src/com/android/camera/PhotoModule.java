@@ -363,8 +363,8 @@ public class PhotoModule
     /**
      * Constructs a new photo module.
      */
-    public PhotoModule(CameraServices services) {
-        super(services);
+    public PhotoModule(AppController app) {
+        super(app);
     }
 
     @Override
@@ -1181,33 +1181,6 @@ public class PhotoModule
         return mFirstTimeInitialized;
     }
 
-    @Override
-    public void onResumeBeforeSuper() {
-        mPaused = false;
-    }
-
-    @Override
-    public void onResumeAfterSuper() {
-        // Add delay on resume from lock screen only, in order to to speed up
-        // the onResume --> onPause --> onResume cycle from lock screen.
-        // Don't do always because letting go of thread can cause delay.
-        String action = mActivity.getIntent().getAction();
-        if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
-                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
-            Log.v(TAG, "On resume, from lock screen.");
-            // Note: onPauseAfterSuper() will delete this runnable, so we will
-            // at most have 1 copy queued up.
-            mHandler.postDelayed(new Runnable() {
-                public void run() {
-                    onResumeTasks();
-                }
-            }, ON_RESUME_TASKS_DELAY_MSEC);
-        } else {
-            Log.v(TAG, "On resume.");
-            onResumeTasks();
-        }
-    }
-
     private void onResumeTasks() {
         Log.v(TAG, "Executing onResumeTasks.");
         if (mOpenCameraFail || mCameraDisabled) return;
@@ -1245,13 +1218,57 @@ public class PhotoModule
         }
     }
 
-    @Override
-    public void onPauseAfterSuper() {
+    /**
+     * The focus manager is the first UI related element to get initialized,
+     * and it requires the RenderOverlay, so initialize it here
+     */
+    private void initializeFocusManager() {
+        // Create FocusManager object. startPreview needs it.
+        // if mFocusManager not null, reuse it
+        // otherwise create a new instance
+        if (mFocusManager != null) {
+            mFocusManager.removeMessages();
+        } else {
+            CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+            mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+            String[] defaultFocusModes = mActivity.getResources().getStringArray(
+                    R.array.pref_camera_focusmode_default_array);
+            mFocusManager = new FocusOverlayManager(mPreferences, defaultFocusModes,
+                    mInitialParams, this, mMirror,
+                    mActivity.getMainLooper(), mUI);
+        }
     }
 
     @Override
-    public void onPauseBeforeSuper() {
-        Log.v(TAG, "On pause.");
+    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
+        init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
+    }
+
+    @Override
+    public void resume() {
+        mPaused = false;
+        // Add delay on resume from lock screen only, in order to to speed up
+        // the onResume --> onPause --> onResume cycle from lock screen.
+        // Don't do always because letting go of thread can cause delay.
+        String action = mActivity.getIntent().getAction();
+        if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
+                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
+            Log.v(TAG, "On resume, from lock screen.");
+            // Note: onPauseAfterSuper() will delete this runnable, so we will
+            // at most have 1 copy queued up.
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    onResumeTasks();
+                }
+            }, ON_RESUME_TASKS_DELAY_MSEC);
+        } else {
+            Log.v(TAG, "On resume.");
+            onResumeTasks();
+        }
+    }
+
+    @Override
+    public void pause() {
         mPaused = true;
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
@@ -1297,44 +1314,6 @@ public class PhotoModule
             s.setQueueListener(null);
         }
         mUI.removeDisplayChangeListener();
-    }
-
-    /**
-     * The focus manager is the first UI related element to get initialized,
-     * and it requires the RenderOverlay, so initialize it here
-     */
-    private void initializeFocusManager() {
-        // Create FocusManager object. startPreview needs it.
-        // if mFocusManager not null, reuse it
-        // otherwise create a new instance
-        if (mFocusManager != null) {
-            mFocusManager.removeMessages();
-        } else {
-            CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-            mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
-            String[] defaultFocusModes = mActivity.getResources().getStringArray(
-                    R.array.pref_camera_focusmode_default_array);
-            mFocusManager = new FocusOverlayManager(mPreferences, defaultFocusModes,
-                    mInitialParams, this, mMirror,
-                    mActivity.getMainLooper(), mUI);
-        }
-    }
-
-    @Override
-    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
-        init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
-    }
-
-    @Override
-    public void resume() {
-        onResumeBeforeSuper();
-        onResumeAfterSuper();
-    }
-
-    @Override
-    public void pause() {
-        onPauseBeforeSuper();
-        onPauseAfterSuper();
     }
 
     @Override

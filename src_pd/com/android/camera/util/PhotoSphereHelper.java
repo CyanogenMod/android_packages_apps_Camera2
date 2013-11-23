@@ -22,6 +22,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.android.camera.CameraModule;
+import com.android.camera.app.AppController;
 import com.android.camera.app.CameraServices;
 
 public class PhotoSphereHelper {
@@ -74,7 +75,7 @@ public class PhotoSphereHelper {
         return NOT_PANORAMA;
     }
 
-    public static CameraModule createPanoramaModule(CameraServices services) {
+    public static CameraModule createPanoramaModule(AppController app) {
         return null;
     }
 

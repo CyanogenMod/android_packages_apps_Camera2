@@ -19,10 +19,11 @@ package com.android.camera.util;
 import android.content.Context;
 
 import com.android.camera.CameraModule;
+import com.android.camera.app.AppController;
 import com.android.camera.app.CameraServices;
 
 public class RefocusHelper {
-    public static CameraModule createRefocusModule(CameraServices services) {
+    public static CameraModule createRefocusModule(AppController app) {
         return null;
     }
 

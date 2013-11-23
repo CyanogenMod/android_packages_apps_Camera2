@@ -72,6 +72,7 @@ import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraManager;
 import com.android.camera.app.CameraManagerFactory;
 import com.android.camera.app.CameraProvider;
+import com.android.camera.app.CameraServices;
 import com.android.camera.app.ImageTaskManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.ModuleManagerImpl;
@@ -1286,15 +1287,14 @@ public class CameraActivity extends Activity
         performDeletion();
         // TODO: call mCurrentModule.pause() instead after all the modules
         // support pause().
-        mCurrentModule.onPauseBeforeSuper();
+        mCurrentModule.pause();
         mOrientationManager.pause();
         // Close the camera and wait for the operation done.
         mCameraController.closeCamera();
-        super.onPause();
-        mCurrentModule.onPauseAfterSuper();
 
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
+        super.onPause();
     }
 
     @Override
@@ -1325,11 +1325,8 @@ public class CameraActivity extends Activity
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
         mOrientationManager.resume();
-        // TODO: call mCurrentModule.resume() instead after all the modules
-        // support resume().
-        mCurrentModule.onResumeBeforeSuper();
         super.onResume();
-        mCurrentModule.onResumeAfterSuper();
+        mCurrentModule.resume();
 
         setSwipingEnabled(true);
 
@@ -1541,13 +1538,18 @@ public class CameraActivity extends Activity
             mCameraController.closeCamera();
         }
         mCurrentModeIndex = agent.getModuleId();
-        mCurrentModule2 = agent.createModule((CameraApp) getApplication());
+        mCurrentModule2 = agent.createModule(this);
         mCurrentModule = (CameraModule) mCurrentModule2;
     }
 
     @Override
     public SettingsManager getSettingsManager() {
         return mSettingsManager;
+    }
+
+    @Override
+    public CameraServices getServices() {
+        return (CameraServices) getApplication();
     }
 
     /**
@@ -1583,17 +1585,11 @@ public class CameraActivity extends Activity
 
     private void openModule(CameraModule module) {
         module.init(this, mCameraModuleRootView);
-        // TODO: call mCurrentModule.resume() instead after all the modules
-        // support resume().
-        module.onResumeBeforeSuper();
-        module.onResumeAfterSuper();
+        module.resume();
     }
 
     private void closeModule(CameraModule module) {
-        // TODO: call mCurrentModule.pause() instead after all the modules
-        // support pause().
-        module.onPauseBeforeSuper();
-        module.onPauseAfterSuper();
+        module.pause();
         ((ViewGroup) mCameraModuleRootView).removeAllViews();
     }
 
