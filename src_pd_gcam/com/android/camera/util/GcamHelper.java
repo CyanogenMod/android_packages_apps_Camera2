@@ -18,11 +18,12 @@ package com.android.camera.util;
 import android.content.ContentResolver;
 
 import com.android.camera.CameraModule;
+import com.android.camera.app.AppController;
 import com.android.camera.app.CameraServices;
 
 public class GcamHelper {
 
-    public static CameraModule createGcamModule(CameraServices services) {
+    public static CameraModule createGcamModule(AppController app) {
         return null;
     }
 
