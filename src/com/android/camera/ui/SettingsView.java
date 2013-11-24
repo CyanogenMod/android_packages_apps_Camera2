@@ -49,7 +49,7 @@ public class SettingsView extends ListView {
     private static final int MODE_TOTAL = 4;
     private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
 
-    private final int mHeadingIconResId = R.drawable.settings;
+    private final int mHeadingIconResId = R.drawable.ic_settings_normal;
     private final int mHeadingTextResId = R.string.mode_settings;
     private final int mHeadingIconBlockColor = R.color.settings_mode_color;
 
