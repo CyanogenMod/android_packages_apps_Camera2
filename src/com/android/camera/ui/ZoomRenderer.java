@@ -21,73 +21,66 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.view.ScaleGestureDetector;
 
 import com.android.camera2.R;
 
+// TODO: remove this; functionality has been moved to PreviewOverlay.
+@Deprecated
 public class ZoomRenderer extends OverlayRenderer
         implements ScaleGestureDetector.OnScaleGestureListener {
 
     private static final String TAG = "CAM_Zoom";
 
-    private int mMaxZoom;
-    private int mMinZoom;
+    final private int mMinIndex = 0;
+    private int mMaxIndex;
+    // Discrete Zoom level [mMinIndex,mMaxIndex].
+    private int mCurrentIndex;
+    // Continuous Zoom level [0,1].
+    private float mCurrentFraction;
+    private double mFingerRadians;
     private OnZoomChangedListener mListener;
-
     private ScaleGestureDetector mDetector;
     private Paint mPaint;
-    private Paint mTextPaint;
-    private int mCircleSize;
     private int mCenterX;
     private int mCenterY;
-    private float mMaxCircle;
-    private float mMinCircle;
-    private int mInnerStroke;
-    private int mOuterStroke;
-    private int mZoomSig;
-    private int mZoomFraction;
-    private Rect mTextBounds;
+    private float mOuterRadius;
+    private float mInnerRadius;
+    private int mZoomStroke;
 
     public interface OnZoomChangedListener {
         void onZoomStart();
         void onZoomEnd();
-        void onZoomValueChanged(int index);  // only for immediate zoom
+        void onZoomValueChanged(int index);
     }
 
     public ZoomRenderer(Context ctx) {
         Resources res = ctx.getResources();
+        mZoomStroke = res.getDimensionPixelSize(R.dimen.zoom_stroke);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.STROKE);
-        mTextPaint = new Paint(mPaint);
-        mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setTextSize(res.getDimensionPixelSize(R.dimen.zoom_font_size));
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-        mTextPaint.setAlpha(192);
-        mInnerStroke = res.getDimensionPixelSize(R.dimen.focus_inner_stroke);
-        mOuterStroke = res.getDimensionPixelSize(R.dimen.focus_outer_stroke);
+        mPaint.setStrokeWidth(mZoomStroke);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
         mDetector = new ScaleGestureDetector(ctx, this);
-        mMinCircle = res.getDimensionPixelSize(R.dimen.zoom_ring_min);
-        mTextBounds = new Rect();
         setVisible(false);
     }
 
-    // set from module
+    // Set maximum Zoom Index from Module.
     public void setZoomMax(int zoomMaxIndex) {
-        mMaxZoom = zoomMaxIndex;
-        mMinZoom = 0;
+        mMaxIndex = zoomMaxIndex;
     }
 
+    // Set current Zoom Index from Module.
     public void setZoom(int index) {
-        mCircleSize = (int) (mMinCircle + index * (mMaxCircle - mMinCircle) / (mMaxZoom - mMinZoom));
+        mCurrentIndex = index;
+        mCurrentFraction = (float) index / (mMaxIndex - mMinIndex);
     }
 
-    public void setZoomValue(int value) {
-        value = value / 10;
-        mZoomSig = value / 10;
-        mZoomFraction = value % 10;
+    // Set Zoom Value to display from Module.
+    public void setZoomValue(int centiValue) {
+        // Do nothing.
     }
 
     public void setOnZoomChangeListener(OnZoomChangedListener listener) {
@@ -99,8 +92,10 @@ public class ZoomRenderer extends OverlayRenderer
         super.layout(l, t, r, b);
         mCenterX = (r - l) / 2;
         mCenterY = (b - t) / 2;
-        mMaxCircle = Math.min(getWidth(), getHeight());
-        mMaxCircle = (mMaxCircle - mMinCircle) / 2;
+        // UI will extend from 20% to 80% of maximum inset circle.
+        float insetCircleRadius = Math.min(getWidth(), getHeight());
+        mInnerRadius = insetCircleRadius * 0.12f;
+        mOuterRadius = insetCircleRadius * 0.38f;
     }
 
     public boolean isScaling() {
@@ -109,31 +104,43 @@ public class ZoomRenderer extends OverlayRenderer
 
     @Override
     public void onDraw(Canvas canvas) {
-        mPaint.setStrokeWidth(mInnerStroke);
-        canvas.drawCircle(mCenterX, mCenterY, mMinCircle, mPaint);
-        canvas.drawCircle(mCenterX, mCenterY, mMaxCircle, mPaint);
-        canvas.drawLine(mCenterX - mMinCircle, mCenterY,
-                mCenterX - mMaxCircle - 4, mCenterY, mPaint);
-        mPaint.setStrokeWidth(mOuterStroke);
-        canvas.drawCircle((float) mCenterX, (float) mCenterY,
-                (float) mCircleSize, mPaint);
-        String txt = mZoomSig+"."+mZoomFraction+"x";
-        mTextPaint.getTextBounds(txt, 0, txt.length(), mTextBounds);
-        canvas.drawText(txt, mCenterX - mTextBounds.centerX(), mCenterY - mTextBounds.centerY(),
-                mTextPaint);
+        // Draw background.
+        mPaint.setAlpha(70);
+        canvas.drawLine(mCenterX + mInnerRadius * (float) Math.cos(mFingerRadians),
+                mCenterY - mInnerRadius * (float) Math.sin(mFingerRadians),
+                mCenterX + mOuterRadius * (float) Math.cos(mFingerRadians),
+                mCenterY - mOuterRadius * (float) Math.sin(mFingerRadians), mPaint);
+        canvas.drawLine(mCenterX - mInnerRadius * (float) Math.cos(mFingerRadians),
+                mCenterY + mInnerRadius * (float) Math.sin(mFingerRadians),
+                mCenterX - mOuterRadius * (float) Math.cos(mFingerRadians),
+                mCenterY + mOuterRadius * (float) Math.sin(mFingerRadians), mPaint);
+        // Draw Zoom progress.
+        mPaint.setAlpha(255);
+        float zoomRadius = mInnerRadius + mCurrentFraction * (mOuterRadius - mInnerRadius);
+        canvas.drawLine(mCenterX + mInnerRadius * (float) Math.cos(mFingerRadians),
+                mCenterY - mInnerRadius * (float) Math.sin(mFingerRadians),
+                mCenterX + zoomRadius * (float) Math.cos(mFingerRadians),
+                mCenterY - zoomRadius * (float) Math.sin(mFingerRadians), mPaint);
+        canvas.drawLine(mCenterX - mInnerRadius * (float) Math.cos(mFingerRadians),
+                mCenterY + mInnerRadius * (float) Math.sin(mFingerRadians),
+                mCenterX - zoomRadius * (float) Math.cos(mFingerRadians),
+                mCenterY + zoomRadius * (float) Math.sin(mFingerRadians), mPaint);
     }
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         final float sf = detector.getScaleFactor();
-        float circle = (int) (mCircleSize * sf * sf);
-        circle = Math.max(mMinCircle, circle);
-        circle = Math.min(mMaxCircle, circle);
-        if (mListener != null && (int) circle != mCircleSize) {
-            mCircleSize = (int) circle;
-            int zoom = mMinZoom + (int) ((mCircleSize - mMinCircle) * (mMaxZoom - mMinZoom) / (mMaxCircle - mMinCircle));
-            mListener.onZoomValueChanged(zoom);
+        mCurrentFraction = (0.33f + mCurrentFraction) * sf * sf - 0.33f;
+        if (mCurrentFraction < 0.0f) mCurrentFraction = 0.0f;
+        if (mCurrentFraction > 1.0f) mCurrentFraction = 1.0f;
+        int newIndex = mMinIndex + (int) (mCurrentFraction * (float) (mMaxIndex - mMinIndex));
+        if (mListener != null && (int) newIndex != mCurrentIndex) {
+            mListener.onZoomValueChanged(newIndex);
+            mCurrentIndex = newIndex;
         }
+        // mFingerRadians is currently constrained to [0,Pi/2].
+        // TODO: Get actual touch coordinates to enable full [0,Pi] range.
+        mFingerRadians = Math.atan2((double) detector.getCurrentSpanY(),(double) detector.getCurrentSpanX());
         return true;
     }
 
