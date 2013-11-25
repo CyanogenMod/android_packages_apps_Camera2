@@ -216,7 +216,7 @@
         <item quantity="other">%d seconds</item>
     </plurals>
     <string name="pref_camera_timer_sound_default">@string/setting_on_value</string>
-    <!-- Text followed by a checkbox to turn on/off sound effects during the countdown. [CHAR LIMIT = 24]-->
+    <!-- Text followed by a checkbox to turn on/off sound effects during the countdown. [CHAR LIMIT=24]-->
     <string name="pref_camera_timer_sound_title">Beep during countdown</string>
 
     <!-- Entry of a on/off setting. The setting is turned off. [CHAR LIMIT=15] -->
@@ -489,9 +489,9 @@
     <string name="effect_goofy_face_small_eyes">Small eyes</string>
     <!-- Effect setting item that replaces background with Android in Space. [CHAR LIMIT=14] -->
     <string name="effect_backdropper_space">In space</string>
-    <!-- Effect setting item that replaces background with a sunset. [CHAR LIMIT=14] -->
+    <!-- Effect setting item that replaces background with a sunset. [CHAR LIMIT=16] -->
     <string name="effect_backdropper_sunset">Sunset</string>
-    <!-- Effect setting item that replaces background with video from gallery. [CHAR LIMIT=14] -->
+    <!-- Effect setting item that replaces background with video from gallery. [CHAR LIMIT=16] -->
     <string name="effect_backdropper_gallery">Your video</string>
 
     <!-- Toast telling users tapping on the viewfinder will take a picture [CHAR LIMIT=54] -->
