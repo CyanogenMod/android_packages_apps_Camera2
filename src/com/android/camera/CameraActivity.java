@@ -67,7 +67,6 @@ import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.AppManagerFactory;
-import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraManager;
@@ -95,7 +94,6 @@ import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.filmstrip.FilmstripListener;
-import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
@@ -147,8 +145,10 @@ public class CameraActivity extends Activity
 
     public static final int REQ_CODE_GCAM_DEBUG_POSTCAPTURE = 999;
 
-    private static final int HIDE_ACTION_BAR = 1;
+    private static final int MSG_HIDE_ACTION_BAR = 1;
+    private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SHOW_ACTION_BAR_TIMEOUT_MS = 3000;
+    private static final long SCREEN_DELAY_MS = 2 * 60 * 1000;  // 2 mins.
 
     /**
      * Whether onResume should reset the view to the preview.
@@ -185,7 +185,6 @@ public class CameraActivity extends Activity
     private ModeListView mModeListView;
     private int mCurrentModeIndex;
     private CameraModule mCurrentModule;
-    private ModuleController mCurrentModule2;
     private ModuleManagerImpl mModuleManager;
     private FrameLayout mAboveFilmstripControlLayout;
     private FrameLayout mCameraModuleRootView;
@@ -232,7 +231,6 @@ public class CameraActivity extends Activity
 
     private MediaSaver mMediaSaver;
 
-
     // close activity when screen turns off
     private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
         @Override
@@ -243,6 +241,11 @@ public class CameraActivity extends Activity
 
     private static BroadcastReceiver sScreenOffReceiver;
 
+    /**
+     * Whether the screen is kept turned on.
+     */
+    private boolean mKeepScreenOn;
+
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
         if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {
@@ -251,11 +254,11 @@ public class CameraActivity extends Activity
             throw new IllegalStateException("Camera opened but the module shouldn't be " +
                     "requesting");
         }
-        if (mCurrentModule2 != null) {
+        if (mCurrentModule != null) {
             SettingsCapabilities capabilities =
                 SettingsController.getSettingsCapabilities(camera);
             mSettingsManager.changeCamera(camera.getCameraId(), capabilities);
-            mCurrentModule2.onCameraAvailable(camera);
+            mCurrentModule.onCameraAvailable(camera);
         }
     }
 
@@ -290,9 +293,21 @@ public class CameraActivity extends Activity
 
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == HIDE_ACTION_BAR) {
-                removeMessages(HIDE_ACTION_BAR);
-                CameraActivity.this.setSystemBarsVisibility(false);
+            switch (msg.what) {
+                case MSG_HIDE_ACTION_BAR: {
+                    removeMessages(MSG_HIDE_ACTION_BAR);
+                    CameraActivity.this.setSystemBarsVisibility(false);
+                    break;
+                }
+
+                case MSG_CLEAR_SCREEN_ON_FLAG:  {
+                    if (!mPaused) {
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    }
+                    break;
+                }
+
+                default:
             }
         }
     }
@@ -341,7 +356,7 @@ public class CameraActivity extends Activity
                             CameraActivity.this.setSystemBarsVisibility(true, false);
                         } else if (mActionBar.isShowing()) {
                             // Hide action bar after time out in full screen mode
-                            mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR,
+                            mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR,
                                     SHOW_ACTION_BAR_TIMEOUT_MS);
                         }
                     }
@@ -398,9 +413,9 @@ public class CameraActivity extends Activity
                 @Override
                 public void onDataFocusChanged(final int dataID, final boolean focused) {
                     // Delay hiding action bar if there is any user interaction
-                    if (mMainHandler.hasMessages(HIDE_ACTION_BAR)) {
-                        mMainHandler.removeMessages(HIDE_ACTION_BAR);
-                        mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR,
+                    if (mMainHandler.hasMessages(MSG_HIDE_ACTION_BAR)) {
+                        mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
+                        mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR,
                                 SHOW_ACTION_BAR_TIMEOUT_MS);
                     }
                     // TODO: This callback is UI event callback, should always
@@ -496,7 +511,7 @@ public class CameraActivity extends Activity
      * will be sent after a timeout to hide the action bar.
      */
     private void setSystemBarsVisibility(boolean visible, boolean hideLater) {
-        mMainHandler.removeMessages(HIDE_ACTION_BAR);
+        mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
 
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
         int newSystemUIVisibility = DEFAULT_SYSTEM_UI_VISIBILITY |
@@ -520,7 +535,7 @@ public class CameraActivity extends Activity
 
         // Now delay hiding the bars
         if (visible && hideLater) {
-            mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
+            mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
         }
     }
 
@@ -612,9 +627,9 @@ public class CameraActivity extends Activity
     @Override
     public void onMenuVisibilityChanged(boolean isVisible) {
         // If menu is showing, we need to make sure action bar does not go away.
-        mMainHandler.removeMessages(HIDE_ACTION_BAR);
+        mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
         if (!isVisible) {
-            mMainHandler.sendEmptyMessageDelayed(HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
+            mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
         }
     }
 
@@ -935,6 +950,21 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public void enableKeepScreenOn(boolean enabled) {
+        if (mPaused) {
+            return;
+        }
+
+        mKeepScreenOn = enabled;
+        if (mKeepScreenOn) {
+            mMainHandler.removeMessages(MSG_CLEAR_SCREEN_ON_FLAG);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            keepScreenOnForAWhile();
+        }
+    }
+
+    @Override
     public CameraProvider getCameraProvider() {
         return mCameraController;
     }
@@ -1220,7 +1250,7 @@ public class CameraActivity extends Activity
                 modeIndex == ModulesInfo.MODULE_VIDEO) {
             mCameraAppUI.prepareModuleUI();
         }
-        mCurrentModule.init(this, mCameraModuleRootView);
+        mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
@@ -1283,7 +1313,9 @@ public class CameraActivity extends Activity
     @Override
     public void onUserInteraction() {
         super.onUserInteraction();
-        mCurrentModule.onUserInteraction();
+        if (!isFinishing()) {
+            keepScreenOnForAWhile();
+        }
     }
 
     @Override
@@ -1316,6 +1348,7 @@ public class CameraActivity extends Activity
 
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
+        resetScreenOn();
         super.onPause();
     }
 
@@ -1371,6 +1404,8 @@ public class CameraActivity extends Activity
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
+
+        keepScreenOnForAWhile();
 
         mModeListView.startAccordionAnimation();
     }
@@ -1581,8 +1616,7 @@ public class CameraActivity extends Activity
             mCameraController.closeCamera();
         }
         mCurrentModeIndex = agent.getModuleId();
-        mCurrentModule2 = agent.createModule(this);
-        mCurrentModule = (CameraModule) mCurrentModule2;
+        mCurrentModule = (CameraModule)  agent.createModule(this);
     }
 
     @Override
@@ -1632,7 +1666,7 @@ public class CameraActivity extends Activity
     }
 
     private void openModule(CameraModule module) {
-        module.init(this, mCameraModuleRootView);
+        module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
     }
 
@@ -1816,5 +1850,20 @@ public class CameraActivity extends Activity
     // For debugging purposes only.
     public CameraModule getCurrentModule() {
         return mCurrentModule;
+    }
+
+    private void keepScreenOnForAWhile() {
+        if (mKeepScreenOn) {
+            return;
+        }
+        mMainHandler.removeMessages(MSG_CLEAR_SCREEN_ON_FLAG);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mMainHandler.sendEmptyMessageDelayed(MSG_CLEAR_SCREEN_ON_FLAG, SCREEN_DELAY_MS);
+    }
+
+    private void resetScreenOn() {
+        mKeepScreenOn = false;
+        mMainHandler.removeMessages(MSG_CLEAR_SCREEN_ON_FLAG);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 }

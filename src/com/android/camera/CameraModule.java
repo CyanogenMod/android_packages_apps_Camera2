@@ -39,25 +39,12 @@ public abstract class CameraModule implements ModuleController {
     }
 
     @Deprecated
-    public abstract void init(CameraActivity activity, View frame);
-
-    @Deprecated
     public abstract void onPreviewFocusChanged(boolean previewFocused);
 
-    @Deprecated
-    public abstract void onConfigurationChanged(Configuration config);
-
-    @Deprecated
-    public abstract void onStop();
-
-    @Deprecated
-    public abstract void installIntentFilter();
-
-    @Deprecated
-    public abstract void onActivityResult(int requestCode, int resultCode, Intent data);
-
-    @Deprecated
-    public abstract boolean onBackPressed();
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 
     @Deprecated
     public abstract boolean onKeyDown(int keyCode, KeyEvent event);
@@ -67,24 +54,6 @@ public abstract class CameraModule implements ModuleController {
 
     @Deprecated
     public abstract void onSingleTapUp(View view, int x, int y);
-
-    @Deprecated
-    public abstract void onPreviewTextureCopied();
-
-    @Deprecated
-    public abstract void onCaptureTextureCopied();
-
-    @Deprecated
-    public abstract void onUserInteraction();
-
-    @Deprecated
-    public abstract boolean updateStorageHintOnResume();
-
-    @Deprecated
-    public abstract void onOrientationChanged(int orientation);
-
-    @Deprecated
-    public abstract void onShowSwitcherPopup();
 
     @Deprecated
     public abstract void onMediaSaverAvailable(MediaSaver s);

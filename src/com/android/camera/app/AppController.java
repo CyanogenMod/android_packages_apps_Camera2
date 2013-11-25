@@ -161,6 +161,13 @@ public interface AppController {
     /********************** App-level resources **********************/
 
     /**
+     * Keeps the screen turned on.
+     *
+     * @param enabled Whether to keep the screen on.
+     */
+    public void enableKeepScreenOn(boolean enabled);
+
+    /**
      * Returns the {@link com.android.camera.app.CameraProvider}.
      */
     public CameraProvider getCameraProvider();

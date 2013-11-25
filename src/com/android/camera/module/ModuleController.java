@@ -80,6 +80,13 @@ public interface ModuleController {
      */
     public void onOrientationChanged(int orientation);
 
+    /**
+     * Called when back key is pressed.
+     *
+     * @return Whether the back key event is processed.
+     */
+    public abstract boolean onBackPressed();
+
     /********************** App-level resources **********************/
 
     /**

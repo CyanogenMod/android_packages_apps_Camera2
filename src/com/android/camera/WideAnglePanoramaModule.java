@@ -18,7 +18,6 @@ package com.android.camera;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -42,11 +41,9 @@ import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.AppController;
-import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
@@ -77,8 +74,7 @@ public class WideAnglePanoramaModule
     private static final int MSG_LOW_RES_FINAL_MOSAIC_READY = 1;
     private static final int MSG_GENERATE_FINAL_MOSAIC_ERROR = 2;
     private static final int MSG_END_DIALOG_RESET_TO_PREVIEW = 3;
-    private static final int MSG_CLEAR_SCREEN_DELAY = 4;
-    private static final int MSG_RESET_TO_PREVIEW = 5;
+    private static final int MSG_RESET_TO_PREVIEW = 4;
 
     private static final int SCREEN_DELAY = 2 * 60 * 1000;
 
@@ -212,9 +208,9 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void init(CameraActivity activity, View parent) {
-        mActivity = activity;
-        mRootView = parent;
+    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
+        mActivity = (CameraActivity) app.getAndroidContext();
+        mRootView = app.getModuleLayoutRoot();
 
         mCaptureState = CAPTURE_STATE_VIEWFINDER;
         mUI = new WideAnglePanoramaUI(mActivity, this, (ViewGroup) mRootView);
@@ -305,10 +301,6 @@ public class WideAnglePanoramaModule
                         onBackgroundThreadFinished();
                         resetToPreviewIfPossible();
                         clearMosaicFrameProcessorIfNeeded();
-                        break;
-                    case MSG_CLEAR_SCREEN_DELAY:
-                        mActivity.getWindow().clearFlags(WindowManager.LayoutParams.
-                                FLAG_KEEP_SCREEN_ON);
                         break;
                     case MSG_RESET_TO_PREVIEW:
                         resetToPreviewIfPossible();
@@ -539,7 +531,7 @@ public class WideAnglePanoramaModule
         mUI.setMaxCaptureProgress(DEFAULT_SWEEP_ANGLE);
         mUI.showCaptureProgress();
         mDeviceOrientationAtCapture = mDeviceOrientation;
-        keepScreenOn();
+        mActivity.enableKeepScreenOn(true);
         // TODO: mActivity.getOrientationManager().lockOrientation();
         mActivity.lockOrientation();
         int degrees = CameraUtil.getDisplayRotation(mActivity);
@@ -579,7 +571,7 @@ public class WideAnglePanoramaModule
                 }
             });
         }
-        keepScreenOnAwhile();
+        mActivity.enableKeepScreenOn(false);
     }
 
     @Override
@@ -810,12 +802,6 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
-        // TODO: implement this.
-        init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
-    }
-
-    @Override
     public void resume() {
         mPaused = false;
         mOrientationEventListener.enable();
@@ -848,7 +834,6 @@ public class WideAnglePanoramaModule
             configMosaicPreview();
             mActivity.updateStorageSpaceAndHint();
         }
-        keepScreenOnAwhile();
 
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
@@ -891,7 +876,7 @@ public class WideAnglePanoramaModule
             mWaitProcessorTask.cancel(true);
             mWaitProcessorTask = null;
         }
-        resetScreenOn();
+        mActivity.enableKeepScreenOn(false);
         mUI.removeDisplayChangeListener();
         if (mSoundPlayer != null) {
             mSoundPlayer.release();
@@ -1015,32 +1000,11 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void onUserInteraction() {
-        if (mCaptureState != CAPTURE_STATE_MOSAIC) keepScreenOnAwhile();
-    }
-
-    @Override
     public boolean onBackPressed() {
         // If panorama is generating low res or high res mosaic, ignore back
         // key. So the activity will not be destroyed.
         if (mThreadRunning) return true;
         return false;
-    }
-
-    private void resetScreenOn() {
-        mMainHandler.removeMessages(MSG_CLEAR_SCREEN_DELAY);
-        mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    private void keepScreenOnAwhile() {
-        mMainHandler.removeMessages(MSG_CLEAR_SCREEN_DELAY);
-        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mMainHandler.sendEmptyMessageDelayed(MSG_CLEAR_SCREEN_DELAY, SCREEN_DELAY);
-    }
-
-    private void keepScreenOn() {
-        mMainHandler.removeMessages(MSG_CLEAR_SCREEN_DELAY);
-        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private class WaitProcessorTask extends AsyncTask<Void, Void, Void> {
@@ -1081,19 +1045,6 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void onStop() {
-    }
-
-    @Override
-    public void installIntentFilter() {
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    }
-
-
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return false;
     }
@@ -1105,23 +1056,6 @@ public class WideAnglePanoramaModule
 
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-    }
-
-    @Override
-    public void onPreviewTextureCopied() {
-    }
-
-    @Override
-    public void onCaptureTextureCopied() {
-    }
-
-    @Override
-    public boolean updateStorageHintOnResume() {
-        return false;
-    }
-
-    @Override
-    public void onShowSwitcherPopup() {
     }
 
     @Override
