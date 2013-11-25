@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"前面カメラ"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"背面カメラ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"キャンセル"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SDカードの空き領域が少なくなっています。画質設定を変更するか、画像などのファイルを一部削除してください。"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"サイズ制限に達しました。"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"速すぎます"</string>
@@ -298,6 +299,10 @@
     <string name="mode_video" msgid="8633929034048169139">"動画"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"クラフト"</string>
-    <string name="mode_timelapse" msgid="1517168724627815453">"低速度"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"低速度撮影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"広角"</string>
+    <string name="setting_location" msgid="4459859689227893838">"場所"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"画像サイズ"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"動画の解像度"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"デフォルトのカメラ"</string>
 </resources>

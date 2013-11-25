@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ELÜLSŐ KAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"HÁTSÓ KAMERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"Mégse"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Az SD-kártyán kezd elfogyni a hely. Módosítsa a minőségi beállításokat, vagy töröljön néhány képet vagy egyéb fájlt."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"A videó elérte a méretkorlátot."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Túl gyors"</string>
@@ -300,4 +301,8 @@
     <string name="mode_craft" msgid="6390039207517142426">"Megmunkálás"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Gyorsított felvétel"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Nagy látószög"</string>
+    <string name="setting_location" msgid="4459859689227893838">"Hely"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"Képméret"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"Videofelbontás"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"Alapértelmezett kamera"</string>
 </resources>

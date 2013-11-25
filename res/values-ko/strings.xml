@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"전면 카메라"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"후면 카메라"</string>
     <string name="dialog_ok" msgid="774141340500181131">"확인"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"취소"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD 카드의 공간이 부족합니다. 화질 설정을 변경하거나 일부 이미지 또는 기타 파일을 삭제하세요."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"크기 한도에 도달했습니다."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"너무 빠름"</string>
@@ -300,4 +301,8 @@
     <string name="mode_craft" msgid="6390039207517142426">"공예"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"시간 경과"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"광각"</string>
+    <string name="setting_location" msgid="4459859689227893838">"위치"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"사진 크기"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"동영상 해상도"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"기본 카메라"</string>
 </resources>

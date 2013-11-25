@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"KAMERA YA MBELE"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"KAMERA YA NYUMA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"SAWA"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"Ghairi"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Nafasi ya kadi yako ya SD inaelekea kuisha. Badilisha mpangilio wa ubora au futa baadhi ya picha au faili zingine."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Upeo wa ukubwa umefikiwa."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Haraka mno"</string>
@@ -300,6 +301,10 @@
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Ufundi"</string>
-    <string name="mode_timelapse" msgid="1517168724627815453">"Muda Uliopita"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"Hali ya Mpito wa Muda"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Pembe Pana"</string>
+    <string name="setting_location" msgid="4459859689227893838">"Mahali"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"Ukubwa wa Picha"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"Ubora wa Video"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"Kamera ya chaguo-msingi"</string>
 </resources>
