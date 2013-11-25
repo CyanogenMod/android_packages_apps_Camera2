@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"PREDNÝ FOTOAPARÁT"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ZADNÝ FOTOAPARÁT"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"Zrušiť"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Na karte SD je málo miesta. Zmeňte nastavenie kvality alebo odstráňte niektoré obrázky či iné súbory."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Bolo dosiahnuté obmedzenie veľkosti."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Veľmi rýchlo"</string>
@@ -300,4 +301,8 @@
     <string name="mode_craft" msgid="6390039207517142426">"Remeslo"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Časozberné video"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
+    <string name="setting_location" msgid="4459859689227893838">"Poloha"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"Veľkosť fotografie"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"Rozlíšenie videa"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"Predvolený fotoaparát"</string>
 </resources>

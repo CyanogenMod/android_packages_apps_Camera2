@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"前置鏡頭"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"後置鏡頭"</string>
     <string name="dialog_ok" msgid="774141340500181131">"確定"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"取消"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"您 SD 卡的空間即將用盡，請變更圖片的品質設定，或是刪除部分圖片或其他檔案。"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"已達大小上限。"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"速度過快"</string>
@@ -300,4 +301,8 @@
     <string name="mode_craft" msgid="6390039207517142426">"手工藝"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"縮時攝影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"廣角"</string>
+    <string name="setting_location" msgid="4459859689227893838">"地點"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"圖片大小"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"影片解析度"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"預設相機"</string>
 </resources>

@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ÖN KAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ARKA KAMERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"Tamam"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"İptal"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD kartınızda boş alan azaldı. Kalite ayarını değiştirin veya bazı resimleri ya da diğer dosyaları silin."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Boyut sınırına ulaşıldı."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Çok hızlı"</string>
@@ -300,4 +301,8 @@
     <string name="mode_craft" msgid="6390039207517142426">"El sanatı"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Zaman Atlama"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Geniş Açı"</string>
+    <string name="setting_location" msgid="4459859689227893838">"Konum"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"Resim Boyutu"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"Video Çözünürlüğü"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"Varsayılan Kamera"</string>
 </resources>

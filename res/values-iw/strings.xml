@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"מצלמה חזיתית"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"מצלמה אחורית"</string>
     <string name="dialog_ok" msgid="774141340500181131">"אישור"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"בטל"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"‏השטח בכרטיס ה-SD אוזל. שנה את הגדרת האיכות או מחק חלק מהתמונות או קבצים אחרים."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"הגעת למגבלת הגודל."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"מהר מדי"</string>
@@ -300,4 +301,8 @@
     <string name="mode_craft" msgid="6390039207517142426">"אומנות"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"הילוך מהיר"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"זווית רחבה"</string>
+    <string name="setting_location" msgid="4459859689227893838">"מיקום"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"גודל תמונה"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"רזולוציית וידאו"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"מצלמה המוגדרת כברירת מחדל"</string>
 </resources>

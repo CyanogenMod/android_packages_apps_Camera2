@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ΜΠΡΟΣΤΑ"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ΠΙΣΩ ΚΑΜΕΡΑ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"Ακύρωση"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Ο διαθέσιμος χώρος στην κάρτα SD είναι ελάχιστος. Αλλάξτε τη ρύθμιση ποιότητας ή διαγράψτε κάποιες εικόνες ή άλλα αρχεία."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Συμπληρώθηκε το όριο μεγέθους."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Πολύ γρήγορα"</string>
@@ -298,6 +299,10 @@
     <string name="mode_video" msgid="8633929034048169139">"Βίντεο"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Κατασκευές"</string>
-    <string name="mode_timelapse" msgid="1517168724627815453">"Παρέλευση χρόνου"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"Time Lapse"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Ευρυγώνιος"</string>
+    <string name="setting_location" msgid="4459859689227893838">"Τοποθεσία"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"Μέγεθος εικόνας"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"Ανάλυση βίντεο"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"Προεπιλεγμένη κάμερα"</string>
 </resources>

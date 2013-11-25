@@ -188,6 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"FRONTKAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"BAGSIDEKAMERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"Annuller"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Der er snart ikke mere plads på dit SD-kort. Rediger indstillingerne for kvalitet, eller slet nogle billeder eller andre filer."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Størrelsesgrænsen er nået."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"For hurtig"</string>
@@ -298,6 +299,10 @@
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Færdighed"</string>
-    <string name="mode_timelapse" msgid="1517168724627815453">"Tidsforløb"</string>
+    <string name="mode_timelapse" msgid="1517168724627815453">"Time-lapse"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Vidvikel"</string>
+    <string name="setting_location" msgid="4459859689227893838">"Placering"</string>
+    <string name="setting_picture_size" msgid="3635524767133302049">"Billedstørrelse"</string>
+    <string name="setting_video_resolution" msgid="5403372871611171250">"Videoopløsning"</string>
+    <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
 </resources>
