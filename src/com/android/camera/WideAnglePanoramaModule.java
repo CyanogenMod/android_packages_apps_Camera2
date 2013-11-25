@@ -144,7 +144,7 @@ public class WideAnglePanoramaModule
     private OrientationManager mOrientationManager;
     private ComboPreferences mPreferences;
     private boolean mMosaicPreviewConfigured;
-    private boolean mPreviewFocused;
+    private boolean mPreviewFocused = true;
 
     @Override
     public void onPreviewUIReady() {
@@ -645,6 +645,13 @@ public class WideAnglePanoramaModule
             orientation = (mDeviceOrientationAtCapture + mCameraOrientation) % 360;
         }
         return orientation;
+    }
+
+    /** The orientation of the camera image. The value is the angle that the camera
+     *  image needs to be rotated clockwise so it shows correctly on the display
+     *  in its natural orientation. It should be 0, 90, 180, or 270.*/
+    public int getCameraOrientation() {
+        return mCameraOrientation;
     }
 
     public void saveHighResMosaic() {
