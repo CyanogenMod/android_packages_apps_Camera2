@@ -455,7 +455,7 @@ public class FocusOverlayManager {
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
         } else {
             // The default is continuous autofocus.
-            mFocusMode = mSettingsManager.get(new FocusModeSetting());
+            mFocusMode = mSettingsManager.get(SettingsManager.SETTING_FOCUS_MODE);
 
             // Try to find a supported focus mode from the default list.
             if (mFocusMode == null) {

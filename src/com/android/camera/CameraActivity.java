@@ -97,7 +97,6 @@ import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
-import com.android.camera.settings.SettingsManager.StartupModuleSetting;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.DetailsDialog;
@@ -1223,7 +1222,7 @@ public class CameraActivity extends Activity
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
             modeIndex = ModeListView.MODE_PHOTO;
-            if (mSettingsManager.getInt(new StartupModuleSetting())
+            if (mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX)
                         == ModeListView.MODE_GCAM && GcamHelper.hasGcamCapture()) {
                 modeIndex = ModeListView.MODE_GCAM;
             }
@@ -1233,7 +1232,7 @@ public class CameraActivity extends Activity
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
-            modeIndex = mSettingsManager.getInt(new StartupModuleSetting());
+            modeIndex = mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
             if ((modeIndex == ModeListView.MODE_GCAM &&
                     !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
                 modeIndex = ModeListView.MODE_PHOTO;

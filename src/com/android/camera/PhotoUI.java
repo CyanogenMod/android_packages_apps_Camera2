@@ -45,9 +45,6 @@ import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsManager.ExposureSetting;
-import com.android.camera.settings.SettingsManager.LocationSetting;
-import com.android.camera.settings.SettingsManager.WhiteBalanceSetting;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
@@ -508,17 +505,17 @@ public class PhotoUI implements PieListener,
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
 
-        String exposure = settingsManager.get(new ExposureSetting());
+        String exposure = settingsManager.get(SettingsManager.SETTING_EXPOSURE);
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
             Integer.parseInt(exposure));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
 
         int wbIndex = 2;
-        String whiteBalance = settingsManager.get(new WhiteBalanceSetting());
+        String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
         mOnScreenIndicators.updateWBIndicator(
             SettingsManager.getWhiteBalanceIndex(mActivity, whiteBalance));
 
-        String location = settingsManager.get(new LocationSetting());
+        String location = settingsManager.get(SettingsManager.SETTING_RECORD_LOCATION);
         mOnScreenIndicators.updateLocationIndicator(
             location.equals(SettingsManager.VALUE_ON));
     }

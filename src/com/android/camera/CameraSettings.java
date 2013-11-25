@@ -41,6 +41,7 @@ import java.util.Locale;
 
 /**
  *  Provides utilities and keys for Camera settings.
+ *  TODO: deprecate once all modules are using SettingsManager.
  */
 public class CameraSettings {
     private static final int NOT_FOUND = -1;
@@ -122,7 +123,7 @@ public class CameraSettings {
         for (String candidate : context.getResources().getStringArray(
                 R.array.pref_camera_picturesize_entryvalues)) {
             if (setCameraPictureSize(candidate, supported, parameters)) {
-                settingsManager.set(new PictureSizeSetting(), candidate);
+                settingsManager.set(SettingsManager.SETTING_PICTURE_SIZE, candidate);
                 return;
             }
         }

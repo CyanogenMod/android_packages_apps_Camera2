@@ -24,11 +24,7 @@ import android.util.Log;
 import com.android.camera.app.CameraManager;
 import com.android.camera.ui.SettingsView;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsManager.LocationSetting;
-import com.android.camera.settings.SettingsManager.PictureSizeSetting;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
-import com.android.camera.settings.SettingsManager.StartupModuleSetting;
-import com.android.camera.settings.SettingsManager.VideoQualitySetting;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
@@ -49,14 +45,14 @@ public class SettingsController implements SettingsView.SettingsViewListener {
     }
 
     public void syncLocationManager() {
-        String value = mSettingsManager.get(new LocationSetting());
+        String value = mSettingsManager.get(SettingsManager.SETTING_RECORD_LOCATION);
         mLocationManager.recordLocation(value.equals(SettingsManager.VALUE_ON));
     }
 
     @Override
     public void setLocation(boolean on) {
         if (!mActivity.isPaused()) {
-            mSettingsManager.set(new LocationSetting(),
+            mSettingsManager.set(SettingsManager.SETTING_RECORD_LOCATION,
                 (on ? SettingsManager.VALUE_ON : SettingsManager.VALUE_OFF));
 
             LocationManager locationManager = mActivity.getLocationManager();
@@ -97,7 +93,7 @@ public class SettingsController implements SettingsView.SettingsViewListener {
     @Override
     public void setPictureSize(String size) {
         if (!mActivity.isPaused()) {
-            mSettingsManager.set(new PictureSizeSetting(), size);
+            mSettingsManager.set(SettingsManager.SETTING_PICTURE_SIZE, size);
         }
     }
 
@@ -124,13 +120,13 @@ public class SettingsController implements SettingsView.SettingsViewListener {
     @Override
     public void setVideoQuality(String quality) {
         if (!mActivity.isPaused()) {
-            mSettingsManager.set(new VideoQualitySetting(), quality);
+            mSettingsManager.set(SettingsManager.SETTING_VIDEO_QUALITY, quality);
         }
     }
 
     @Override
     public void setDefaultCamera(int id) {
-        mSettingsManager.setInt(new StartupModuleSetting(), id);
+        mSettingsManager.setInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX, id);
     }
 
     public static SettingsCapabilities

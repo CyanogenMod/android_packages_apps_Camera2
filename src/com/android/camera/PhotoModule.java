@@ -61,18 +61,6 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsManager.DefaultCameraIdSetting;
-import com.android.camera.settings.SettingsManager.ExposureSetting;
-import com.android.camera.settings.SettingsManager.FlashSetting;
-import com.android.camera.settings.SettingsManager.HintSetting;
-import com.android.camera.settings.SettingsManager.HdrSetting;
-import com.android.camera.settings.SettingsManager.HdrPlusSetting;
-import com.android.camera.settings.SettingsManager.LocationSetting;
-import com.android.camera.settings.SettingsManager.PictureSizeSetting;
-import com.android.camera.settings.SettingsManager.TimerSetting;
-import com.android.camera.settings.SettingsManager.TimerSoundSetting;
-import com.android.camera.settings.SettingsManager.SceneModeSetting;
-import com.android.camera.settings.SettingsManager.WhiteBalanceSetting;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
@@ -374,8 +362,7 @@ public class PhotoModule
         mUI = new PhotoUI(mActivity, this, app.getModuleLayoutRoot());
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        mCameraId = Integer.parseInt(settingsManager.get(
-            new DefaultCameraIdSetting()));
+        mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
 
         mContentResolver = mActivity.getContentResolver();
 
@@ -408,7 +395,7 @@ public class PhotoModule
     // camera only
     private void locationFirstRun() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (settingsManager.isSet(new LocationSetting())) {
+        if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
             return;
         }
         if (mActivity.isSecureCamera()) return;
@@ -452,8 +439,7 @@ public class PhotoModule
         Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
         mCameraId = mPendingSwitchCameraId;
         mPendingSwitchCameraId = -1;
-        settingsManager.set(new DefaultCameraIdSetting(),
-            "" + mCameraId);
+        settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
         mActivity.getCameraProvider().requestCamera(mCameraId);
 
         mUI.collapseCameraControls();
@@ -494,7 +480,7 @@ public class PhotoModule
             Log.e(TAG, "Settings manager is null!");
             return;
         }
-        settingsManager.setDefault(new ExposureSetting());
+        settingsManager.setDefault(SettingsManager.SETTING_EXPOSURE);
     }
 
     // Snapshots can only be taken after this is called. It should be called
@@ -543,7 +529,8 @@ public class PhotoModule
     private void showTapToFocusToastIfNeeded() {
         // Show the tap to focus toast if this is the first start.
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        boolean showHint = settingsManager.getBoolean(new HintSetting());
+        boolean showHint = settingsManager.getBoolean(
+            SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN);
         // CONVERT THIS SETTING TO A STRING
         if (mFocusAreaSupported && showHint) {
             // Delay the toast for one second to wait for orientation.
@@ -1097,8 +1084,8 @@ public class PhotoModule
         }
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        String timer = settingsManager.get(new TimerSetting());
-        String playSound = settingsManager.get(new TimerSoundSetting());
+        String timer = settingsManager.get(SettingsManager.SETTING_TIMER);
+        String playSound = settingsManager.get(SettingsManager.SETTING_TIMER_SOUND_EFFECTS);
         int seconds = Integer.parseInt(timer);
         // When shutter button is pressed, check whether the previous countdown is
         // finished. If not, cancel the previous countdown and start a new one.
@@ -1531,7 +1518,7 @@ public class PhotoModule
         setMeteringAreasIfSupported();
 
         // Set picture size.
-        String pictureSize = settingsManager.get(new PictureSizeSetting());
+        String pictureSize = settingsManager.get(SettingsManager.SETTING_PICTURE_SIZE);
         if (pictureSize == null) {
             //TODO: deprecate CameraSettings.
             CameraSettings.initialCameraPictureSize(
@@ -1573,8 +1560,8 @@ public class PhotoModule
         // first. HDR is a scene mode. To promote it in UI, it is stored in a
         // separate preference.
         String onValue = mActivity.getString(R.string.setting_on_value);
-        String hdr = settingsManager.get(new HdrSetting());
-        String hdrPlus = settingsManager.get(new HdrPlusSetting());
+        String hdr = settingsManager.get(SettingsManager.SETTING_CAMERA_HDR);
+        String hdrPlus = settingsManager.get(SettingsManager.SETTING_CAMERA_HDR_PLUS);
         boolean hdrOn = onValue.equals(hdr);
         boolean hdrPlusOn = onValue.equals(hdrPlus);
 
@@ -1586,7 +1573,7 @@ public class PhotoModule
             if (hdrOn) {
                 mSceneMode = CameraUtil.SCENE_MODE_HDR;
             } else {
-                mSceneMode = settingsManager.get(new SceneModeSetting());
+                mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
             }
         }
         if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
@@ -1615,7 +1602,7 @@ public class PhotoModule
         // still supported by latest driver, if not, ignore the settings.
 
         // Set exposure compensation
-        int value = Integer.parseInt(settingsManager.get(new ExposureSetting()));
+        int value = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_EXPOSURE));
         int max = mParameters.getMaxExposureCompensation();
         int min = mParameters.getMinExposureCompensation();
         if (value >= min && value <= max) {
@@ -1626,7 +1613,7 @@ public class PhotoModule
 
         if (Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
             // Set flash mode.
-            String flashMode = settingsManager.get(new FlashSetting());
+            String flashMode = settingsManager.get(SettingsManager.SETTING_FLASH_MODE);
             List<String> supportedFlash = mParameters.getSupportedFlashModes();
             if (CameraUtil.isSupported(flashMode, supportedFlash)) {
                 mParameters.setFlashMode(flashMode);
@@ -1639,7 +1626,7 @@ public class PhotoModule
             }
 
             // Set white balance parameter.
-            String whiteBalance = settingsManager.get(new WhiteBalanceSetting());
+            String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
             if (CameraUtil.isSupported(whiteBalance,
                     mParameters.getSupportedWhiteBalance())) {
                 mParameters.setWhiteBalance(whiteBalance);
@@ -1779,7 +1766,8 @@ public class PhotoModule
         new RotateTextToast(mActivity, R.string.tap_to_focus, 0).show();
         // Clear the preference.
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.setBoolean(new HintSetting(), false);
+        settingsManager.setBoolean(
+            SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
     }
 
     private void initializeCapabilities() {
