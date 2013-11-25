@@ -18,6 +18,7 @@
 package com.android.camera;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -91,7 +92,6 @@ public class PhotoUI implements PieListener,
     private View mMenuButton;
     private PhotoMenu mMenu;
     private CameraControls mCameraControls;
-    private AlertDialog mLocationDialog;
 
     // Small indicators which show the camera settings in the viewfinder.
     private OnScreenIndicators mOnScreenIndicators;
@@ -449,35 +449,8 @@ public class PhotoUI implements PieListener,
     }
 
     public void showLocationDialog() {
-        final SettingsController settingsController =
-            mActivity.getSettingsController();
-
-        mLocationDialog = new AlertDialog.Builder(mActivity)
-                .setTitle(R.string.remember_location_title)
-                .setMessage(R.string.remember_location_prompt)
-                .setPositiveButton(R.string.remember_location_yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int arg1) {
-                                settingsController.setLocation(true);
-                                mLocationDialog = null;
-                            }
-                        })
-                .setNegativeButton(R.string.remember_location_no,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int arg1) {
-                                dialog.cancel();
-                            }
-                        })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        settingsController.setLocation(false);
-                        mLocationDialog = null;
-                    }
-                })
-                .show();
+        AlertDialog alert = mActivity.getFirstTimeLocationAlert();
+        alert.show();
     }
 
     public void initializeZoom(Camera.Parameters params) {
@@ -775,11 +748,6 @@ public class PhotoUI implements PieListener,
         // Clear UI.
         collapseCameraControls();
         if (mFaceView != null) mFaceView.clear();
-
-        if (mLocationDialog != null && mLocationDialog.isShowing()) {
-            mLocationDialog.dismiss();
-        }
-        mLocationDialog = null;
     }
 
     public void initDisplayChangeListener() {

@@ -111,18 +111,20 @@ public class SettingsView extends ListView {
     }
 
     private void onSettingSelected(int settingIndex) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
         switch (settingIndex) {
             case LOCATION_SETTING:
-                mDialogBuilder = new LocationAlertBuilder();
+                mDialogBuilder = getLocationAlertBuilder(builder, mListener);
                 break;
             case PICTURE_SIZE_SETTING:
-                mDialogBuilder = new PictureSizeAlertBuilder();
+                mDialogBuilder = getPictureSizeAlertBuilder(builder, mContext, mListener);
                 break;
             case VIDEO_RES_SETTING:
-                mDialogBuilder = new VideoResAlertBuilder();
+                mDialogBuilder = getVideoQualityAlertBuilder(builder, mContext, mListener);
                 break;
             case DEFAULT_CAMERA_SETTING:
-                mDialogBuilder = new DefaultCameraAlertBuilder();
+                mDialogBuilder = getDefaultCameraAlertBuilder(builder, mContext, mListener);
                 break;
             default:
                 mDialogBuilder = null;
@@ -138,111 +140,131 @@ public class SettingsView extends ListView {
         super.onLayout(changed, left, top, right, bottom);
     }
 
-    private class LocationAlertBuilder extends AlertDialog.Builder {
-        LocationAlertBuilder() {
-            super(mContext);
-            setTitle(R.string.remember_location_title);
-            setPositiveButton(R.string.remember_location_yes,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int arg1) {
-                        mListener.setLocation(true);
-                    }
-                });
-            setNegativeButton(R.string.remember_location_no,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int arg1) {
-                        dialog.cancel();
-                    }
-                });
-        }
-    }
+    /**
+     * Updates an AlertDialog.Builder for choosing whether to include
+     * location on captures.
+     */
+    public static AlertDialog.Builder getLocationAlertBuilder(AlertDialog.Builder builder,
+            final SettingsViewListener listener) {
 
-    private class PictureSizeAlertBuilder extends AlertDialog.Builder {
-        PictureSizeAlertBuilder() {
-            super(mContext);
-
-            final String[] supported = mListener.getSupportedPictureSizeEntries();
-            final String[] values = mContext.getResources().getStringArray(
-                R.array.pref_camera_picturesize_entryvalues);
-
-            setTitle(R.string.setting_picture_size);
-            setItems(supported, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int index = getIndex(supported[which]);
-                        if (index > 0) {
-                            mListener.setPictureSize(values[index]);
-                        }
-                    }
-                });
-        }
-
-        private int getIndex(String val) {
-            String[] entries = mContext.getResources().getStringArray(
-                R.array.pref_camera_picturesize_entries);
-            for (int i = 0; i < entries.length; i++) {
-                if (entries[i].equals(val)) {
-                    return i;
+        builder.setTitle(R.string.remember_location_title)
+        .setPositiveButton(R.string.remember_location_yes,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int arg1) {
+                    listener.setLocation(true);
                 }
-            }
-            return -1;
-        }
-    }
-
-    private class VideoResAlertBuilder extends AlertDialog.Builder {
-        VideoResAlertBuilder() {
-            super(mContext);
-
-            final String[] supported = mListener.getSupportedVideoQualityEntries();
-            final String[] values = mContext.getResources().getStringArray(
-                R.array.pref_video_quality_entryvalues);
-
-            setTitle(R.string.setting_video_resolution);
-            setItems(supported, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int index = getIndex(supported[which]);
-                        if (index > 0) {
-                            mListener.setVideoQuality(values[index]);
-                        }
-                    }
-                });
-        }
-
-        private int getIndex(String val) {
-            String[] entries = mContext.getResources().getStringArray(
-                R.array.pref_video_quality_entries);
-            for (int i = 0; i < entries.length; i++) {
-                if (entries[i].equals(val)) {
-                    return i;
+            })
+        .setNegativeButton(R.string.remember_location_no,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int arg1) {
+                    listener.setLocation(false);
                 }
-            }
-            return -1;
-        }
+            });
+
+        return builder;
     }
 
-    private class DefaultCameraAlertBuilder extends AlertDialog.Builder {
-        DefaultCameraAlertBuilder() {
-            super(mContext);
-            setTitle(R.string.setting_default_camera);
+    /**
+     * Updates an AlertDialog.Builder to explain what it means to enable
+     * location on captures.
+     */
+    public static AlertDialog.Builder getFirstTimeLocationAlertBuilder(
+            AlertDialog.Builder builder, final SettingsViewListener listener) {
 
-            String[] modes = {mContext.getString(R.string.mode_camera),
-                              mContext.getString(R.string.mode_video),
-                              mContext.getString(R.string.mode_photosphere),
-                              mContext.getString(R.string.mode_craft),
-                              mContext.getString(R.string.mode_timelapse),
-                              mContext.getString(R.string.mode_wideangle)};
+        getLocationAlertBuilder(builder, listener)
+        .setMessage(R.string.remember_location_prompt);
 
-            setItems(modes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.setDefaultCamera(which);
+        return builder;
+    }
+
+    /**
+     * Updates an AlertDialog.Builder to allow selection of a supported
+     * picture size.
+     */
+    public static AlertDialog.Builder getPictureSizeAlertBuilder(AlertDialog.Builder builder,
+            final Context context, final SettingsViewListener listener) {
+
+        final String[] supported = listener.getSupportedPictureSizeEntries();
+        final String[] entries = context.getResources().getStringArray(
+            R.array.pref_camera_picturesize_entries);
+        final String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_picturesize_entryvalues);
+
+        builder.setTitle(R.string.setting_picture_size)
+       .setItems(supported, new DialogInterface.OnClickListener() {
+               @Override
+               public void onClick(DialogInterface dialog, int which) {
+                   int index = getIndex(entries, supported[which]);
+                   if (index > 0) {
+                       listener.setPictureSize(values[index]);
+                   }
+               }
+           });
+
+        return builder;
+    }
+
+    /**
+     * Updates an AlertDialog.Builder to allow the user to choose a supported
+     * video quality.
+     */
+    public static AlertDialog.Builder getVideoQualityAlertBuilder(AlertDialog.Builder builder,
+            final Context context, final SettingsViewListener listener) {
+
+        final String[] supported = listener.getSupportedVideoQualityEntries();
+        final String[] entries = context.getResources().getStringArray(
+            R.array.pref_video_quality_entries);
+        final String[] values = context.getResources().getStringArray(
+            R.array.pref_video_quality_entryvalues);
+
+        builder.setTitle(R.string.setting_video_resolution)
+        .setItems(supported, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int index = getIndex(entries, supported[which]);
+                    if (index > 0) {
+                        listener.setVideoQuality(values[index]);
                     }
-                });
-        }
+                }
+            });
+
+        return builder;
     }
 
+    /**
+     * Updates an AlertDialog.Builder to allow the user to choose one of the
+     * camera modes as a preferred app at startup.
+     */
+    public static AlertDialog.Builder getDefaultCameraAlertBuilder(AlertDialog.Builder builder,
+            final Context context, final SettingsViewListener listener) {
+
+        String[] modes = {context.getString(R.string.mode_camera),
+                          context.getString(R.string.mode_video),
+                          context.getString(R.string.mode_photosphere),
+                          context.getString(R.string.mode_craft),
+                          context.getString(R.string.mode_timelapse),
+                          context.getString(R.string.mode_wideangle)};
+
+        builder.setTitle(R.string.setting_default_camera)
+        .setItems(modes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    listener.setDefaultCamera(which);
+                }
+            });
+
+        return builder;
+    }
+
+    private static int getIndex(String[] entries, String val) {
+        for (int i = 0; i < entries.length; i++) {
+            if (entries[i].equals(val)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
 }

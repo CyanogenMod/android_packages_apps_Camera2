@@ -16,6 +16,8 @@
 
 package com.android.camera;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -1631,6 +1633,20 @@ public class CameraActivity extends Activity
     @Override
     public SettingsController getSettingsController() {
         return mSettingsController;
+    }
+
+    /**
+     * Creates an AlertDialog appropriate for choosing whether to enable location
+     * on the first run of the app.
+     */
+    public AlertDialog getFirstTimeLocationAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder = SettingsView.getFirstTimeLocationAlertBuilder(builder, mSettingsController);
+        if (builder != null) {
+            return builder.create();
+        } else {
+            return null;
+        }
     }
 
     /**
