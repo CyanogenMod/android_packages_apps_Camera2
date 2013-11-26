@@ -51,13 +51,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
-import com.android.camera.app.CameraServices;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.module.ModuleController;
@@ -85,15 +83,13 @@ public class VideoModule extends CameraModule
 
     private static final String TAG = "CAM_VideoModule";
 
-    private static final int CHECK_DISPLAY_ROTATION = 3;
-    private static final int CLEAR_SCREEN_DELAY = 4;
-    private static final int UPDATE_RECORD_TIME = 5;
-    private static final int ENABLE_SHUTTER_BUTTON = 6;
-    private static final int SHOW_TAP_TO_SNAPSHOT_TOAST = 7;
-    private static final int SWITCH_CAMERA = 8;
-    private static final int SWITCH_CAMERA_START_ANIMATION = 9;
-
-    private static final int SCREEN_DELAY = 2 * 60 * 1000;
+    // Messages defined for the UI thread handler.
+    private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
+    private static final int MSG_UPDATE_RECORD_TIME = 5;
+    private static final int MSG_ENABLE_SHUTTER_BUTTON = 6;
+    private static final int MSG_SHOW_TAP_TO_SNAPSHOT_TOAST = 7;
+    private static final int MSG_SWITCH_CAMERA = 8;
+    private static final int MSG_SWITCH_CAMERA_START_ANIMATION = 9;
 
     private static final long SHUTTER_BUTTON_TIMEOUT = 500L; // 500ms
 
@@ -219,22 +215,16 @@ public class VideoModule extends CameraModule
         public void handleMessage(Message msg) {
             switch (msg.what) {
 
-                case ENABLE_SHUTTER_BUTTON:
+                case MSG_ENABLE_SHUTTER_BUTTON:
                     mUI.enableShutter(true);
                     break;
 
-                case CLEAR_SCREEN_DELAY: {
-                    mActivity.getWindow().clearFlags(
-                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    break;
-                }
-
-                case UPDATE_RECORD_TIME: {
+                case MSG_UPDATE_RECORD_TIME: {
                     updateRecordingTime();
                     break;
                 }
 
-                case CHECK_DISPLAY_ROTATION: {
+                case MSG_CHECK_DISPLAY_ROTATION: {
                     // Restart the preview if display rotation has changed.
                     // Sometimes this happens when the device is held upside
                     // down and camera app is opened. Rotation animation will
@@ -245,22 +235,22 @@ public class VideoModule extends CameraModule
                         startPreview();
                     }
                     if (SystemClock.uptimeMillis() - mOnResumeTime < 5000) {
-                        mHandler.sendEmptyMessageDelayed(CHECK_DISPLAY_ROTATION, 100);
+                        mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
                     }
                     break;
                 }
 
-                case SHOW_TAP_TO_SNAPSHOT_TOAST: {
+                case MSG_SHOW_TAP_TO_SNAPSHOT_TOAST: {
                     showTapToSnapshotToast();
                     break;
                 }
 
-                case SWITCH_CAMERA: {
+                case MSG_SWITCH_CAMERA: {
                     switchCamera();
                     break;
                 }
 
-                case SWITCH_CAMERA_START_ANIMATION: {
+                case MSG_SWITCH_CAMERA_START_ANIMATION: {
                     //TODO:
                     //((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
 
@@ -323,10 +313,11 @@ public class VideoModule extends CameraModule
         }
     }
 
+
     @Override
-    public void init(CameraActivity activity, View root) {
-        mActivity = activity;
-        mUI = new VideoUI(activity, this, root);
+    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
+        mActivity = (CameraActivity) app.getAndroidContext();
+        mUI = new VideoUI(mActivity, this,  app.getModuleLayoutRoot());
         mPreferences = new ComboPreferences(mActivity);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = getPreferredCameraId(mPreferences);
@@ -394,9 +385,6 @@ public class VideoModule extends CameraModule
         }
     }
 
-    @Override
-    public void onStop() {}
-
     private void loadCameraPreferences() {
         CameraSettings settings = new CameraSettings(mActivity, mParameters,
                 mCameraId, mActivity.getCameraProvider().getCameraInfo());
@@ -423,8 +411,8 @@ public class VideoModule extends CameraModule
         }
 
         // Show the toast after getting the first orientation changed.
-        if (mHandler.hasMessages(SHOW_TAP_TO_SNAPSHOT_TOAST)) {
-            mHandler.removeMessages(SHOW_TAP_TO_SNAPSHOT_TOAST);
+        if (mHandler.hasMessages(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST)) {
+            mHandler.removeMessages(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST);
             showTapToSnapshotToast();
         }
     }
@@ -533,8 +521,7 @@ public class VideoModule extends CameraModule
         // mode and recording is stopped. It'll be re-enabled when
         // re-take button is clicked.
         if (!(mIsVideoCaptureIntent && stop)) {
-            mHandler.sendEmptyMessageDelayed(
-                    ENABLE_SHUTTER_BUTTON, SHUTTER_BUTTON_TIMEOUT);
+            mHandler.sendEmptyMessageDelayed(MSG_ENABLE_SHUTTER_BUTTON, SHUTTER_BUTTON_TIMEOUT);
         }
     }
 
@@ -623,12 +610,10 @@ public class VideoModule extends CameraModule
     }
 
     private void resizeForPreviewAspectRatio() {
-        mUI.setAspectRatio(
-                (double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
+        mUI.setAspectRatio((double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
     }
 
-    @Override
-    public void installIntentFilter() {
+    private void installIntentFilter() {
         // install an intent filter to receive SD card related events.
         IntentFilter intentFilter =
                 new IntentFilter(Intent.ACTION_MEDIA_EJECT);
@@ -726,13 +711,6 @@ public class VideoModule extends CameraModule
     private void releasePreviewResources() {
         if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
             mUI.hideSurfaceView();
-        }
-    }
-
-    @Override
-    public void onUserInteraction() {
-        if (!mMediaRecorderRecording && !mActivity.isFinishing()) {
-            keepScreenOnAwhile();
         }
     }
 
@@ -1126,7 +1104,7 @@ public class VideoModule extends CameraModule
         mUI.showRecordingUI(true);
 
         updateRecordingTime();
-        keepScreenOn();
+        mActivity.enableKeepScreenOn(true);
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_CAPTURE_START, "Video");
     }
@@ -1185,7 +1163,8 @@ public class VideoModule extends CameraModule
                 Log.v(TAG, "stopVideoRecording: Setting current video filename: "
                         + mCurrentVideoFilename);
                 AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
-                        mActivity.getString(R.string.video_recording_stopped));
+                        mActivity.getAndroidContext().getString(R.string
+                        .video_recording_stopped));
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
                 if (mVideoFilename != null) deleteVideoFile(mVideoFilename);
@@ -1208,7 +1187,7 @@ public class VideoModule extends CameraModule
             // The orientation was fixed during video recording. Now make it
             // reflect the device orientation as video recording is stopped.
             mUI.setOrientationIndicator(0, true);
-            keepScreenOnAwhile();
+            mActivity.enableKeepScreenOn(false);
             if (shouldAddToMediaStoreNow && !fail) {
                 if (mVideoFileDescriptor == null) {
                     saveVideo();
@@ -1233,26 +1212,9 @@ public class VideoModule extends CameraModule
         // by MediaRecorder.
         if (!mPaused) mParameters = mCameraDevice.getParameters();
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                fail ? UsageStatistics.ACTION_CAPTURE_FAIL :
-                    UsageStatistics.ACTION_CAPTURE_DONE, "Video",
-                    SystemClock.uptimeMillis() - mRecordingStartTime);
+                fail ? UsageStatistics.ACTION_CAPTURE_FAIL : UsageStatistics.ACTION_CAPTURE_DONE,
+                "Video", SystemClock.uptimeMillis() - mRecordingStartTime);
         return fail;
-    }
-
-    private void resetScreenOn() {
-        mHandler.removeMessages(CLEAR_SCREEN_DELAY);
-        mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    private void keepScreenOnAwhile() {
-        mHandler.removeMessages(CLEAR_SCREEN_DELAY);
-        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mHandler.sendEmptyMessageDelayed(CLEAR_SCREEN_DELAY, SCREEN_DELAY);
-    }
-
-    private void keepScreenOn() {
-        mHandler.removeMessages(CLEAR_SCREEN_DELAY);
-        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private static String millisecondToTimeString(long milliSeconds, boolean displayCentiSeconds) {
@@ -1352,8 +1314,7 @@ public class VideoModule extends CameraModule
         }
 
         long actualNextUpdateDelay = targetNextUpdateDelay - (delta % targetNextUpdateDelay);
-        mHandler.sendEmptyMessageDelayed(
-                UPDATE_RECORD_TIME, actualNextUpdateDelay);
+        mHandler.sendEmptyMessageDelayed(MSG_UPDATE_RECORD_TIME, actualNextUpdateDelay);
     }
 
     private static boolean isSupported(String value, List<String> supported) {
@@ -1436,18 +1397,9 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Do nothing.
-    }
-
-    @Override
-    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
-        init((CameraActivity) app.getAndroidContext(), app.getModuleLayoutRoot());
-    }
-
-    @Override
     public void resume() {
         mPaused = false;
+        installIntentFilter();
         mUI.enableShutter(false);
         mZoomValue = 0;
 
@@ -1462,8 +1414,6 @@ public class VideoModule extends CameraModule
 
         mUI.initDisplayChangeListener();
 
-        keepScreenOnAwhile();
-
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
@@ -1471,7 +1421,7 @@ public class VideoModule extends CameraModule
 
         if (mPreviewing) {
             mOnResumeTime = SystemClock.uptimeMillis();
-            mHandler.sendEmptyMessageDelayed(CHECK_DISPLAY_ROTATION, 100);
+            mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
         }
 
         UsageStatistics.onContentViewChanged(
@@ -1501,13 +1451,12 @@ public class VideoModule extends CameraModule
             mActivity.unregisterReceiver(mReceiver);
             mReceiver = null;
         }
-        resetScreenOn();
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
 
-        mHandler.removeMessages(CHECK_DISPLAY_ROTATION);
-        mHandler.removeMessages(SWITCH_CAMERA);
-        mHandler.removeMessages(SWITCH_CAMERA_START_ANIMATION);
+        mHandler.removeMessages(MSG_CHECK_DISPLAY_ROTATION);
+        mHandler.removeMessages(MSG_SWITCH_CAMERA);
+        mHandler.removeMessages(MSG_SWITCH_CAMERA_START_ANIMATION);
         mPendingSwitchCameraId = -1;
         mSwitchingCamera = false;
         mPreferenceRead = false;
@@ -1601,19 +1550,8 @@ public class VideoModule extends CameraModule
 
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
-        mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
+        mHandler.sendEmptyMessage(MSG_SWITCH_CAMERA_START_ANIMATION);
         mUI.updateOnScreenIndicators(mParameters, mPreferences);
-    }
-
-    // Preview texture has been copied. Now camera can be released and the
-    // animation can be started.
-    @Override
-    public void onPreviewTextureCopied() {
-        mHandler.sendEmptyMessage(SWITCH_CAMERA);
-    }
-
-    @Override
-    public void onCaptureTextureCopied() {
     }
 
     private void initializeVideoSnapshot() {
@@ -1623,7 +1561,7 @@ public class VideoModule extends CameraModule
             if (mPreferences.getBoolean(
                         CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN, true)) {
                 // Delay the toast for one second to wait for orientation.
-                mHandler.sendEmptyMessageDelayed(SHOW_TAP_TO_SNAPSHOT_TOAST, 1000);
+                mHandler.sendEmptyMessageDelayed(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST, 1000);
             }
         }
     }
@@ -1750,11 +1688,6 @@ public class VideoModule extends CameraModule
         editor.apply();
     }
 
-    @Override
-    public boolean updateStorageHintOnResume() {
-        return true;
-    }
-
     // required by OnPreferenceChangedListener
     @Override
     public void onCameraPickerClicked(int cameraId) {
@@ -1767,11 +1700,6 @@ public class VideoModule extends CameraModule
         mSwitchingCamera = true;
         switchCamera();
 
-    }
-
-    @Override
-    public void onShowSwitcherPopup() {
-        mUI.onShowSwitcherPopup();
     }
 
     @Override
