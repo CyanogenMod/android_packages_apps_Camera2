@@ -154,18 +154,43 @@
 
     <!-- Camera Preferences Picture size dialog box entries -->
     <string-array name="pref_camera_picturesize_entries" translatable="false">
+        <item>@string/pref_camera_picturesize_entry_20_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_18_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_13_1mp</item>
         <item>@string/pref_camera_picturesize_entry_13mp</item>
+        <item>@string/pref_camera_picturesize_entry_12_8mp</item>
+        <item>@string/pref_camera_picturesize_entry_12_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_12mp</item>
+        <item>@string/pref_camera_picturesize_entry_11_5mp</item>
+        <item>@string/pref_camera_picturesize_entry_10_4mp</item>
+        <item>@string/pref_camera_picturesize_entry_8_6mp_wide</item>
+        <item>@string/pref_camera_picturesize_entry_8_3mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_8mp</item>
+        <item>@string/pref_camera_picturesize_entry_7_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_6_4mp_wide</item>
+        <item>@string/pref_camera_picturesize_entry_6mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
+        <item>@string/pref_camera_picturesize_entry_4_5mp</item>
+        <item>@string/pref_camera_picturesize_entry_4_1mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_4mp</item>
+        <item>@string/pref_camera_picturesize_entry_3_7mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_3mp</item>
+        <item>@string/pref_camera_picturesize_entry_2_5mp_wide</item>
+        <item>@string/pref_camera_picturesize_entry_2_1mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_2mp</item>
         <item>@string/pref_camera_picturesize_entry_2mp_wide</item>
+        <item>@string/pref_camera_picturesize_entry_1_9mp</item>
+        <item>@string/pref_camera_picturesize_entry_1_5mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_1_3mp</item>
         <item>@string/pref_camera_picturesize_entry_1mp</item>
+        <item>@string/pref_camera_picturesize_entry_wxga</item>
+        <item>@string/pref_camera_picturesize_entry_xga</item>
+        <item>@string/pref_camera_picturesize_entry_svga</item>
+        <item>@string/pref_camera_picturesize_entry_wvga</item>
         <item>@string/pref_camera_picturesize_entry_vga</item>
+        <item>@string/pref_camera_picturesize_entry_wqvga</item>
         <item>@string/pref_camera_picturesize_entry_qvga</item>
     </string-array>
 
@@ -173,18 +198,43 @@
          size to the first one in the list that is also supported by the
          driver -->
     <string-array name="pref_camera_picturesize_entryvalues" translatable="false">
+        <item>5248x3936</item>
+        <item>4992x3744</item>
+        <item>4208x3120</item>
+        <item>4160x3120</item>
         <item>4128x3096</item>
+        <item>4128x3088</item>
+        <item>4000x3000</item>
+        <item>3920x2940</item>
+        <item>4128x2528</item>
+        <item>3920x2204</item>
+        <item>3840x2160</item>
         <item>3264x2448</item>
+        <item>3200x2400</item>
+        <item>3264x1968</item>
+        <item>3264x1836</item>
         <item>2592x1944</item>
         <item>2592x1936</item>
         <item>2560x1920</item>
+        <item>2592x1728</item>
         <item>2688x1520</item>
+        <item>2560x1536</item>
+        <item>2560x1440</item>
         <item>2048x1536</item>
+        <item>2048x1232</item>
+        <item>1920x1080</item>
         <item>1600x1200</item>
         <item>1920x1088</item>
+        <item>1392x1392</item>
+        <item>1600x960</item>
         <item>1280x960</item>
         <item>1024x768</item>
+        <item>1280x720</item>
+        <item>1024x600</item>
+        <item>800x600</item>
+        <item>800x480</item>
         <item>640x480</item>
+        <item>480x320</item>
         <item>320x240</item>
     </string-array>
 
