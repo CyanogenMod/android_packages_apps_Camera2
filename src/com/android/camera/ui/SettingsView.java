@@ -28,14 +28,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
-import com.android.camera.CameraActivity;
 import com.android.camera2.R;
+import com.android.camera.util.FeedbackHelper;
 
-import java.util.List;
+import java.lang.Integer;
+import java.util.ArrayList;
+
 
 /**
  * SettingsView class displays all global settings in the form
@@ -44,43 +48,61 @@ import java.util.List;
 public class SettingsView extends ListView {
     private static final String TAG = "SettingsView";
 
-    private static final int LOCATION_SETTING = 0;
-    private static final int PICTURE_SIZE_SETTING = 1;
-    private static final int VIDEO_RES_SETTING = 2;
-    private static final int DEFAULT_CAMERA_SETTING = 3;
-
-    private static final int MODE_TOTAL = 4;
-    private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
-
     private final int mHeadingIconResId = R.drawable.ic_settings_normal;
     private final int mHeadingTextResId = R.string.mode_settings;
     private final int mHeadingIconBlockColor = R.color.settings_mode_color;
-
-    private final int[] mSettingsTextResId = {
-        R.string.setting_location, R.string.setting_picture_size,
-        R.string.setting_video_resolution, R.string.setting_default_camera,};
 
     private Context mContext;
     private SettingsViewListener mListener;
     private AlertDialog.Builder mDialogBuilder;
 
-    private ArrayAdapter mAdapter;
-    private CharSequence[] mSettingsItems;
+    private SettingsAdapter mAdapter;
+
+    private FeedbackHelper mFeedbackHelper;
+
+    private static final int LOCATION_SETTING = 1;
+    private static final int PICTURE_SIZE_SETTING = 2;
+    private static final int VIDEO_RES_SETTING = 3;
+    private static final int DEFAULT_CAMERA_SETTING = 4;
+    private static final int SEND_FEEDBACK_SETTING = 5;
+
+    private static final int[] mAllSettings = {LOCATION_SETTING, PICTURE_SIZE_SETTING,
+            VIDEO_RES_SETTING, DEFAULT_CAMERA_SETTING, SEND_FEEDBACK_SETTING,};
+
+    public class SettingsAdapter extends ArrayAdapter<Integer> {
+        private SettingsAdapter(Context context, int viewId, ArrayList<Integer> settings) {
+            super(context, viewId, settings);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            int settingId = getItem(position);
+            ((TextView) view).setText(getResId(settingId));
+            return view;
+        }
+    }
 
     public SettingsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        mSettingsItems = buildItems();
-        mAdapter = new ArrayAdapter(mContext, R.layout.settings_selector, mSettingsItems);
+        ArrayList<Integer> listContent = new ArrayList();
+        for (int settingId: mAllSettings) {
+            if (settingId != SEND_FEEDBACK_SETTING || FeedbackHelper.feedbackAvailable()) {
+                listContent.add(settingId);
+            }
+        }
+        mAdapter = new SettingsAdapter(mContext, R.layout.settings_selector, listContent);
         setAdapter(mAdapter);
 
         setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int pos, long id) {
-                onSettingSelected(pos);
+                onSettingSelected((Integer) getItemAtPosition(pos));
             }
-            });
+        });
+
     }
 
     public interface SettingsViewListener {
@@ -99,21 +121,14 @@ public class SettingsView extends ListView {
         mListener = listener;
     }
 
-    private CharSequence[] buildItems() {
-        int total = mSettingsTextResId.length;
-        CharSequence[] items = new String[total];
-
-        for (int i = 0; i < total; i++) {
-            CharSequence text = getResources().getText(mSettingsTextResId[i]);
-            items[i] = text;
-        }
-        return items;
+    public void setFeedbackHelper(FeedbackHelper feedback) {
+        mFeedbackHelper = feedback;
     }
 
-    private void onSettingSelected(int settingIndex) {
+    private void onSettingSelected(int settingId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-        switch (settingIndex) {
+        switch (settingId) {
             case LOCATION_SETTING:
                 mDialogBuilder = getLocationAlertBuilder(builder, mListener);
                 break;
@@ -126,12 +141,33 @@ public class SettingsView extends ListView {
             case DEFAULT_CAMERA_SETTING:
                 mDialogBuilder = getDefaultCameraAlertBuilder(builder, mContext, mListener);
                 break;
-            default:
+            case SEND_FEEDBACK_SETTING:
+                mFeedbackHelper.startFeedback();
                 mDialogBuilder = null;
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
         if (mDialogBuilder != null) {
             AlertDialog alert = mDialogBuilder.create();
             alert.show();
+        }
+    }
+
+    private int getResId(int settingId) {
+        switch (settingId) {
+            case LOCATION_SETTING:
+                return R.string.setting_location;
+            case PICTURE_SIZE_SETTING:
+                return R.string.setting_picture_size;
+            case VIDEO_RES_SETTING:
+                return R.string.setting_video_resolution;
+            case DEFAULT_CAMERA_SETTING:
+                return R.string.setting_default_camera;
+            case SEND_FEEDBACK_SETTING:
+                return R.string.setting_send_feedback;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 

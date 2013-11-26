@@ -108,6 +108,7 @@ import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.SettingsView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
@@ -231,6 +232,8 @@ public class CameraActivity extends Activity
     private CameraAppUI mCameraAppUI;
 
     private MediaSaver mMediaSaver;
+
+    private FeedbackHelper mFeedbackHelper;
 
     // close activity when screen turns off
     private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
@@ -1305,6 +1308,9 @@ public class CameraActivity extends Activity
         getContentResolver().registerContentObserver(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
                 mLocalVideosObserver);
+        if (FeedbackHelper.feedbackAvailable()) {
+            mFeedbackHelper = new FeedbackHelper(this);
+        }
     }
 
     private void setRotationAnimation() {
@@ -1425,6 +1431,9 @@ public class CameraActivity extends Activity
     @Override
     protected void onStop() {
         mPanoramaViewHelper.onStop();
+        if (mFeedbackHelper != null) {
+            mFeedbackHelper.stopFeedback();
+        }
 
         CameraManagerFactory.recycle();
         super.onStop();
@@ -1601,6 +1610,9 @@ public class CameraActivity extends Activity
         SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
             null, false);
         settingsView.setSettingsListener(mSettingsController);
+        if (mFeedbackHelper != null) {
+            settingsView.setFeedbackHelper(mFeedbackHelper);
+        }
         PopupWindow popup = new PopupWindow(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popup.setOutsideTouchable(true);
