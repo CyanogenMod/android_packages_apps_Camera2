@@ -20,5 +20,7 @@
     android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:divider="@color/mode_selector_text_color"
+    android:dividerHeight="2dp"
     android:background="@color/mode_selector_background_light" >
 </com.android.camera.ui.SettingsView>
