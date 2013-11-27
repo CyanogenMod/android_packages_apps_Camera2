@@ -1129,6 +1129,13 @@ public class CameraActivity extends Activity
         mCameraController =
                 new CameraController(this, this, mMainHandler,
                         CameraManagerFactory.getAndroidCameraManager());
+        ComboPreferences prefs = new ComboPreferences(getAndroidContext());
+
+        mSettingsManager = new SettingsManager(this, null, mCameraController.getNumberOfCameras());
+        // Remove this after we get rid of ComboPreferences.
+        int cameraId = Integer.parseInt(mSettingsManager.get(SettingsManager.SETTING_CAMERA_ID));
+        prefs.setLocalId(this, cameraId);
+        CameraSettings.upgradeGlobalPreferences(prefs, mCameraController.getNumberOfCameras());
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
         mModuleManager = new ModuleManagerImpl();
@@ -1200,8 +1207,6 @@ public class CameraActivity extends Activity
                 (MainActivityLayout) findViewById(R.id.activity_root_view),
                 mCameraModuleRootView,
                 isSecureCamera(), isCaptureIntent());
-
-        mSettingsManager = new SettingsManager(this, null, mCameraController.getNumberOfCameras());
 
         mLocationManager = new LocationManager(this,
             new LocationManager.Listener() {

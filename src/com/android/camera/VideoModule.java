@@ -319,11 +319,9 @@ public class VideoModule extends CameraModule
         mActivity = (CameraActivity) app.getAndroidContext();
         mUI = new VideoUI(mActivity, this,  app.getModuleLayoutRoot());
         mPreferences = new ComboPreferences(mActivity);
-        CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = getPreferredCameraId(mPreferences);
 
         mPreferences.setLocalId(mActivity, mCameraId);
-        CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -1542,7 +1540,6 @@ public class VideoModule extends CameraModule
         mUI.collapseCameraControls();
         // Restart the camera and initialize the UI. From onCreate.
         mPreferences.setLocalId(mActivity, mCameraId);
-        CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
 
         // From onResume
         mZoomValue = 0;

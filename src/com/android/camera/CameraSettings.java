@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -29,7 +28,6 @@ import android.media.CamcorderProfile;
 import android.util.Log;
 
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsManager.PictureSizeSetting;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -72,8 +70,12 @@ public class CameraSettings {
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
-    public static final int CURRENT_VERSION = 5;
-    public static final int CURRENT_LOCAL_VERSION = 2;
+    /**
+     * This is used to indicate the current version of the preferences file.
+     * We should track this number to decide if we should change the file
+     * content once we move on to a new preferences file format.
+     */
+    public static final int CURRENT_VERSION = 1;
 
     private static final String TAG = "CameraSettings";
 
@@ -350,28 +352,16 @@ public class CameraSettings {
         return list;
     }
 
-    public static void upgradeLocalPreferences(SharedPreferences pref) {
-        int version;
-        try {
-            version = pref.getInt(KEY_LOCAL_VERSION, 0);
-        } catch (Exception ex) {
-            version = 0;
-        }
-        if (version == CURRENT_LOCAL_VERSION) return;
-
-        SharedPreferences.Editor editor = pref.edit();
-        if (version == 1) {
-            // We use numbers to represent the quality now. The quality definition is identical to
-            // that of CamcorderProfile.java.
-            editor.remove("pref_video_quality_key");
-        }
-        editor.putInt(KEY_LOCAL_VERSION, CURRENT_LOCAL_VERSION);
-        editor.apply();
-    }
-
-    public static void upgradeGlobalPreferences(SharedPreferences pref) {
+    /**
+     * Upgrade the preferences file from previous older versions to the one we
+     * are using. No-op if the versions match.
+     *
+     * @param pref The preferences file.
+     * @param numberOfCameras The number of cameras available on this device.
+     */
+    public static void upgradeGlobalPreferences(SharedPreferences pref, int numberOfCameras) {
         upgradeOldVersion(pref);
-        upgradeCameraId(pref);
+        upgradeCameraId(pref, numberOfCameras);
     }
 
     private static void upgradeOldVersion(SharedPreferences pref) {
@@ -384,43 +374,20 @@ public class CameraSettings {
         if (version == CURRENT_VERSION) return;
 
         SharedPreferences.Editor editor = pref.edit();
-        if (version == 0) {
-            // We won't use the preference which change in version 1.
-            // So, just upgrade to version 1 directly
-            version = 1;
-        }
-        if (version == 1) {
-            // Change jpeg quality {65,75,85} to {normal,fine,superfine}
-            String quality = pref.getString(KEY_JPEG_QUALITY, "85");
-            if (quality.equals("65")) {
-                quality = "normal";
-            } else if (quality.equals("75")) {
-                quality = "fine";
-            } else {
-                quality = "superfine";
-            }
-            editor.putString(KEY_JPEG_QUALITY, quality);
-            version = 2;
-        }
-        if (version == 2) {
-            editor.putString(KEY_RECORD_LOCATION,
-                    pref.getBoolean(KEY_RECORD_LOCATION, false)
-                    ? RecordLocationPreference.VALUE_ON
-                    : RecordLocationPreference.VALUE_NONE);
-            version = 3;
-        }
-        if (version == 3) {
-            // Just use video quality to replace it and
-            // ignore the current settings.
-            editor.remove("pref_camera_videoquality_key");
-            editor.remove("pref_camera_video_duration_key");
-        }
 
         editor.putInt(KEY_VERSION, CURRENT_VERSION);
         editor.apply();
     }
 
-    private static void upgradeCameraId(SharedPreferences pref) {
+    /**
+     * Updates the preferred camera ID to make sure it's a valid one on the
+     * current device. This solves the situation when the user backup all the
+     * data and moved to a new device.
+     *
+     * @param pref The preferences file.
+     * @param numberOfCameras The number of cameras available on this device.
+     */
+    private static void upgradeCameraId(SharedPreferences pref, int numberOfCameras) {
         // The id stored in the preference may be out of range if we are running
         // inside the emulator and a webcam is removed.
         // Note: This method accesses the global preferences directly, not the
@@ -428,8 +395,7 @@ public class CameraSettings {
         int cameraId = readPreferredCameraId(pref);
         if (cameraId == 0) return;  // fast path
 
-        int n = CameraHolder.instance().getNumberOfCameras();
-        if (cameraId < 0 || cameraId >= n) {
+        if (cameraId < 0 || cameraId >= numberOfCameras) {
             writePreferredCameraId(pref, 0);
         }
     }
