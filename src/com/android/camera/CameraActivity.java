@@ -1594,7 +1594,7 @@ public class CameraActivity extends Activity
         SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
             null, false);
         settingsView.setSettingsListener(mSettingsController);
-        PopupWindow popup = new PopupWindow(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        PopupWindow popup = new PopupWindow(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popup.setOutsideTouchable(true);
         popup.setFocusable(true);
