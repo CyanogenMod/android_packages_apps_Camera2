@@ -301,7 +301,7 @@
     <string name="mode_craft" msgid="6390039207517142426">"Craft"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"缩时拍摄"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"广角"</string>
-    <string name="setting_location" msgid="4459859689227893838">"地点"</string>
+    <string name="setting_location" msgid="4459859689227893838">"位置信息"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"照片尺寸"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"视频分辨率"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"默认相机"</string>
