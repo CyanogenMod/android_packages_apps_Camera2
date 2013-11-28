@@ -1298,6 +1298,14 @@ public class VideoModule implements CameraModule,
             } else {
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
+
+            File origFile = new File(mCurrentVideoFilename);
+            if (!origFile.exists() || origFile.length() <= 0) {
+                Log.e(TAG, "Invalid file");
+                mCurrentVideoValues = null;
+                return;
+            }
+
             mActivity.getMediaSaveService().addVideo(mCurrentVideoFilename,
                     duration, mCurrentVideoValues,
                     mOnVideoSavedListener, mContentResolver);
