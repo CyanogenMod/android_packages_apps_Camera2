@@ -18,6 +18,8 @@
 <resources>
     <!-- Camera Preferences Video Quality entries -->
     <string-array name="pref_video_quality_entries" translatable="false">
+        <item>@string/pref_video_quality_entry_4kdci</item>
+        <item>@string/pref_video_quality_entry_4kuhd</item>
         <item>@string/pref_video_quality_entry_1080p</item>
         <item>@string/pref_video_quality_entry_720p</item>
         <item>@string/pref_video_quality_entry_480p</item>
@@ -31,6 +33,10 @@
    </string-array>
 
     <string-array name="pref_video_quality_entryvalues" translatable="false">
+        <!-- The integer value of CamcorderProfile.QUALITY_4kDCI -->
+        <item>13</item>
+        <!-- The integer value of CamcorderProfile.QUALITY_4kUHD -->
+        <item>12</item>
         <!-- The integer value of CamcorderProfile.QUALITY_1080P -->
         <item>6</item>
         <!-- The integer value of CamcorderProfile.QUALITY_720P -->
