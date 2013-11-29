@@ -305,7 +305,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onDataFullScreenChange(int dataID, boolean full) {
                     boolean isCameraID = isCameraPreview(dataID);
-                    if (full && isCameraID){
+                    if (full && isCameraID && CameraActivity.this.hasWindowFocus()){
                         updateStorageSpaceAndHint();
                     }
                     if (!isCameraID) {
@@ -370,7 +370,7 @@ public class CameraActivity extends Activity
                 public void onDataFocusChanged(final int dataID, final boolean focused) {
                     boolean isPreview = isCameraPreview(dataID);
                     boolean isFullScreen = mFilmStripView.inFullScreen();
-                    if (isFullScreen && isPreview){
+                    if (isFullScreen && isPreview && CameraActivity.this.hasWindowFocus()){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -1164,7 +1164,6 @@ public class CameraActivity extends Activity
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
-        updateStorageSpaceAndHint();
     }
 
     @Override

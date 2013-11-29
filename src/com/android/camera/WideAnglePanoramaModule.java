@@ -912,7 +912,12 @@ public class WideAnglePanoramaModule
             mPreviewUIWidth = size.x;
             mPreviewUIHeight = size.y;
             configMosaicPreview();
-            mActivity.updateStorageSpaceAndHint();
+            mMainHandler.post(new Runnable(){
+                @Override
+                public void run(){
+                    mActivity.updateStorageSpaceAndHint();
+                }
+            });
         }
         keepScreenOnAwhile();
 
