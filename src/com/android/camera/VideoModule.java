@@ -28,6 +28,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -47,6 +48,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -154,6 +156,11 @@ public class VideoModule implements CameraModule,
     // true.
     private int mDisplayRotation;
     private int mCameraDisplayOrientation;
+
+    private Display display;
+    private Point size;
+    private int screenWidth;
+    private int screenHeight;
 
     private int mDesiredPreviewWidth;
     private int mDesiredPreviewHeight;
@@ -372,6 +379,15 @@ public class VideoModule implements CameraModule,
 
         initializeVideoControl();
         mPendingSwitchCameraId = -1;
+
+        if (mActivity.getResources().getBoolean(R.bool.useDisplayResolutionAsPreviewSize)) {
+            display = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            size = new Point();
+            display.getRealSize(size);
+            screenWidth = size.x;
+            screenHeight = size.y;
+        }
+
     }
 
     // SingleTapListener
@@ -602,8 +618,18 @@ public class VideoModule implements CameraModule,
         }
         mParameters = mCameraDevice.getParameters();
         if (mParameters.getSupportedVideoSizes() == null) {
-            mDesiredPreviewWidth = mProfile.videoFrameWidth;
-            mDesiredPreviewHeight = mProfile.videoFrameHeight;
+            if (mActivity.getResources().getBoolean(R.bool.useDisplayResolutionAsPreviewSize)) {
+                if(mCameraDisplayOrientation == 90 || mCameraDisplayOrientation == 270) {
+                    mDesiredPreviewWidth = screenHeight;
+                    mDesiredPreviewHeight = screenWidth;
+                } else {
+                    mDesiredPreviewWidth = screenWidth;
+                    mDesiredPreviewHeight = screenHeight;
+                }
+            } else {
+                    mDesiredPreviewWidth = mProfile.videoFrameWidth;
+                    mDesiredPreviewHeight = mProfile.videoFrameHeight;
+            }
         } else { // Driver supports separates outputs for preview and video.
             List<Size> sizes = mParameters.getSupportedPreviewSizes();
             Size preferred = mParameters.getPreferredPreviewSizeForVideo();

@@ -19,4 +19,7 @@
 <resources>
     <!-- Maximum recording length in milliseconds. 0 means unlimited. -->
     <integer name="max_video_recording_length">0</integer>
+    <!-- Use the default resolution of the device as preview size
+    This prevents setting preview sizes above the device's resolution -->
+    <bool name="useDisplayResolutionAsPreviewSize">false</bool>
 </resources>
