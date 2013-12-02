@@ -895,8 +895,8 @@ public class WideAnglePanoramaModule
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        mUI.onConfigurationChanged(newConfig, mThreadRunning);
+    public void onLayoutOrientationChanged(int orientation) {
+        mUI.onConfigurationChanged(orientation, mThreadRunning);
     }
 
     @Override

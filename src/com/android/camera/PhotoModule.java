@@ -1253,8 +1253,7 @@ public class PhotoModule
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        Log.v(TAG, "onConfigurationChanged");
+    public void onLayoutOrientationChanged(int orientation) {
         setDisplayOrientation();
     }
 
