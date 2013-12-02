@@ -59,6 +59,7 @@ import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.module.ModuleController;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.util.ApiHelper;
@@ -112,7 +113,6 @@ public class VideoModule extends CameraModule
 
     private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
 
-    private ComboPreferences mPreferences;
     private PreferenceGroup mPreferenceGroup;
     // Preference must be read before starting preview. We check this before starting
     // preview.
@@ -296,17 +296,6 @@ public class VideoModule extends CameraModule
         return dateFormat.format(date);
     }
 
-    private int getPreferredCameraId(ComboPreferences preferences) {
-        int intentCameraId = CameraUtil.getCameraFacingIntentExtras(mActivity);
-        if (intentCameraId != -1) {
-            // Testing purpose. Launch a specific camera through the intent
-            // extras.
-            return intentCameraId;
-        } else {
-            return CameraSettings.readPreferredCameraId(preferences);
-        }
-    }
-
     private void initializeSurfaceView() {
         if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {  // API level < 16
             mUI.initializeSurfaceView();
@@ -318,10 +307,9 @@ public class VideoModule extends CameraModule
     public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = (CameraActivity) app.getAndroidContext();
         mUI = new VideoUI(mActivity, this,  app.getModuleLayoutRoot());
-        mPreferences = new ComboPreferences(mActivity);
-        mCameraId = getPreferredCameraId(mPreferences);
 
-        mPreferences.setLocalId(mActivity, mCameraId);
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -383,16 +371,17 @@ public class VideoModule extends CameraModule
         }
     }
 
-    private void loadCameraPreferences() {
+    private PreferenceGroup loadPreferenceGroup() {
         CameraSettings settings = new CameraSettings(mActivity, mParameters,
                 mCameraId, mActivity.getCameraProvider().getCameraInfo());
         // Remove the video quality preference setting when the quality is given in the intent.
-        mPreferenceGroup = filterPreferenceScreenByIntent(
-                settings.getPreferenceGroup(R.xml.video_preferences));
+        return filterPreferenceScreenByIntent(
+            settings.getPreferenceGroup(R.xml.video_preferences));
     }
 
     private void initializeVideoControl() {
-        loadCameraPreferences();
+        // TODO: Remove dependency on PreferenceGroup once pie menu is gone.
+        mPreferenceGroup = loadPreferenceGroup();
         mUI.initializePopup(mPreferenceGroup);
     }
 
@@ -531,14 +520,11 @@ public class VideoModule extends CameraModule
     private void readVideoPreferences() {
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
-        String videoQuality = mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY,
-                        null);
-        if (videoQuality == null) {
-            // check for highest quality before setting default value
-            videoQuality = CameraSettings.getSupportedHighestVideoQuality(mCameraId,
-                    mActivity.getResources().getString(R.string.pref_video_quality_default));
-            mPreferences.edit().putString(CameraSettings.KEY_VIDEO_QUALITY, videoQuality);
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        if (!settingsManager.isSet(SettingsManager.SETTING_VIDEO_QUALITY)) {
+            settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY);
         }
+        String videoQuality = settingsManager.get(SettingsManager.SETTING_VIDEO_QUALITY);
         int quality = Integer.valueOf(videoQuality);
 
         // Set video quality.
@@ -564,9 +550,8 @@ public class VideoModule extends CameraModule
         }
 
         // Read time lapse recording interval.
-        String frameIntervalStr = mPreferences.getString(
-                CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
-                mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
+        String frameIntervalStr = settingsManager.get(
+            SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
         mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
         mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
         // TODO: This should be checked instead directly +1000.
@@ -1321,6 +1306,8 @@ public class VideoModule extends CameraModule
 
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
         int[] fpsRange = CameraUtil.getMaxPreviewFpsRange(mParameters);
         if (fpsRange.length > 0) {
@@ -1334,9 +1321,7 @@ public class VideoModule extends CameraModule
         forceFlashOffIfSupported(!mUI.isVisible());
 
         // Set white balance parameter.
-        String whiteBalance = mPreferences.getString(
-                CameraSettings.KEY_WHITE_BALANCE,
-                mActivity.getString(R.string.pref_camera_whitebalance_default));
+        String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
         if (isSupported(whiteBalance,
                 mParameters.getSupportedWhiteBalance())) {
             mParameters.setWhiteBalance(whiteBalance);
@@ -1391,7 +1376,7 @@ public class VideoModule extends CameraModule
         mParameters = mCameraDevice.getParameters();
 
         // Update UI based on the new parameters.
-        mUI.updateOnScreenIndicators(mParameters, mPreferences);
+        mUI.updateOnScreenIndicators(mParameters);
     }
 
     @Override
@@ -1413,9 +1398,8 @@ public class VideoModule extends CameraModule
         mUI.initDisplayChangeListener();
 
         // Initialize location service.
-        boolean recordLocation = RecordLocationPreference.get(mPreferences,
-                mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
+        SettingsController settingsController = mActivity.getSettingsController();
+        settingsController.syncLocationManager();
 
         if (mPreviewing) {
             mOnResumeTime = SystemClock.uptimeMillis();
@@ -1494,52 +1478,42 @@ public class VideoModule extends CameraModule
         if (mPaused) {
             return;
         }
-        synchronized (mPreferences) {
-            // If mCameraDevice is not ready then we can set the parameter in
-            // startPreview().
-            if (mCameraDevice == null) return;
 
-            boolean recordLocation = RecordLocationPreference.get(
-                    mPreferences, mContentResolver);
-            mLocationManager.recordLocation(recordLocation);
+        if (mCameraDevice == null) return;
 
-            readVideoPreferences();
-            mUI.showTimeLapseUI(mCaptureTimeLapse);
-            // We need to restart the preview if preview size is changed.
-            Size size = mParameters.getPreviewSize();
-            if (size.width != mDesiredPreviewWidth
-                    || size.height != mDesiredPreviewHeight) {
+        SettingsController settingsController = mActivity.getSettingsController();
+        settingsController.syncLocationManager();
 
-                stopPreview();
-                resizeForPreviewAspectRatio();
-                startPreview(); // Parameters will be set in startPreview().
-            } else {
-                setCameraParameters();
-            }
-            mUI.updateOnScreenIndicators(mParameters, mPreferences);
+        readVideoPreferences();
+        mUI.showTimeLapseUI(mCaptureTimeLapse);
+        // We need to restart the preview if preview size is changed.
+        Size size = mParameters.getPreviewSize();
+        if (size.width != mDesiredPreviewWidth
+            || size.height != mDesiredPreviewHeight) {
+
+            stopPreview();
+            resizeForPreviewAspectRatio();
+            startPreview(); // Parameters will be set in startPreview().
+        } else {
+            setCameraParameters();
         }
-    }
-
-    protected void setCameraId(int cameraId) {
-        ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-        pref.setValue("" + cameraId);
+        mUI.updateOnScreenIndicators(mParameters);
     }
 
     private void switchCamera() {
         if (mPaused)  {
             return;
         }
+        SettingsManager settingsManager = mActivity.getSettingsManager();
 
         Log.d(TAG, "Start to switch camera.");
         mCameraId = mPendingSwitchCameraId;
         mPendingSwitchCameraId = -1;
-        setCameraId(mCameraId);
+        settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
 
         closeCamera();
         requestCamera(mCameraId);
         mUI.collapseCameraControls();
-        // Restart the camera and initialize the UI. From onCreate.
-        mPreferences.setLocalId(mActivity, mCameraId);
 
         // From onResume
         mZoomValue = 0;
@@ -1548,15 +1522,16 @@ public class VideoModule extends CameraModule
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
         mHandler.sendEmptyMessage(MSG_SWITCH_CAMERA_START_ANIMATION);
-        mUI.updateOnScreenIndicators(mParameters, mPreferences);
+        mUI.updateOnScreenIndicators(mParameters);
     }
 
     private void initializeVideoSnapshot() {
         if (mParameters == null) return;
+
+        SettingsManager settingsManager = mActivity.getSettingsManager();
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             // Show the tap to focus toast if this is the first start.
-            if (mPreferences.getBoolean(
-                        CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN, true)) {
+            if (settingsManager.getBoolean(SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN)) {
                 // Delay the toast for one second to wait for orientation.
                 mHandler.sendEmptyMessageDelayed(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST, 1000);
             }
@@ -1577,11 +1552,11 @@ public class VideoModule extends CameraModule
     }
 
     private void forceFlashOffIfSupported(boolean forceOff) {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
         String flashMode;
         if (!forceOff) {
-            flashMode = mPreferences.getString(
-                    CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE,
-                    mActivity.getString(R.string.pref_camera_video_flashmode_default));
+            flashMode = settingsManager.get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
         } else {
             flashMode = Parameters.FLASH_MODE_OFF;
         }
@@ -1610,7 +1585,7 @@ public class VideoModule extends CameraModule
         }
         forceFlashOffIfSupported(forceOff);
         mCameraDevice.setParameters(mParameters);
-        mUI.updateOnScreenIndicators(mParameters, mPreferences);
+        mUI.updateOnScreenIndicators(mParameters);
     }
 
     @Override
@@ -1677,12 +1652,11 @@ public class VideoModule extends CameraModule
     }
 
     private void showTapToSnapshotToast() {
-        new RotateTextToast(mActivity, R.string.video_snapshot_hint, 0)
-                .show();
+        new RotateTextToast(mActivity, R.string.video_snapshot_hint, 0).show();
         // Clear the preference.
-        Editor editor = mPreferences.edit();
-        editor.putBoolean(CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN, false);
-        editor.apply();
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.setBoolean(
+            SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
     }
 
     // required by OnPreferenceChangedListener

@@ -635,7 +635,7 @@ public class SettingsManager {
         }
 
         public String getDefault(Context context) {
-            return null;
+            return context.getString(R.string.pref_video_quality_default);
         }
 
         public String getKey() {

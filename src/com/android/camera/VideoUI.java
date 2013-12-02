@@ -146,7 +146,6 @@ public class VideoUI implements PieRenderer.PieListener,
             super.dismiss();
             popupDismissed();
             showUI();
-            mVideoMenu.popupDismissed(topLevelOnly);
 
             // Switch back into fullscreen/lights-out mode after popup
             // is dimissed.
@@ -438,8 +437,7 @@ public class VideoUI implements PieRenderer.PieListener,
         mLabelsLinearLayout = (LinearLayout) mRootView.findViewById(R.id.labels);
     }
 
-    public void updateOnScreenIndicators(Parameters param, ComboPreferences prefs) {
-
+    public void updateOnScreenIndicators(Parameters param) {
     }
 
     public void setAspectRatio(double ratio) {
