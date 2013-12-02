@@ -67,11 +67,12 @@ public interface ModuleController {
     public void onPreviewSizeChanged(int width, int height);
 
     /**
-     * Called when the
-     * {@link android.app.Activity#onConfigurationChanged(android.content.res.Configuration)}
-     * happened.
+     * Called when the framework layout orientation changed.
+     *
+     * @param orientation {@link Configuration#ORIENTATION_LANDSCAPE} or
+     *                    {@link Configuration#ORIENTATION_PORTRAIT}.
      */
-    public void onConfigurationChanged(Configuration config);
+    public void onLayoutOrientationChanged(int orientation);
 
     /**
      * Called when the UI orientation is changed.

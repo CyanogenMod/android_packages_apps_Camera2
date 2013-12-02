@@ -264,7 +264,7 @@ public class WideAnglePanoramaUI implements
     }
 
     public void onConfigurationChanged(
-            Configuration newConfig, boolean threadRunning) {
+            int orientation, boolean threadRunning) {
         Drawable lowResReview = null;
         if (threadRunning) lowResReview = mReview.getDrawable();
 

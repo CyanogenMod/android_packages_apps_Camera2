@@ -17,7 +17,6 @@
 package com.android.camera;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -116,7 +115,6 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 import java.io.File;
-import java.util.List;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -249,6 +247,7 @@ public class CameraActivity extends Activity
      * Whether the screen is kept turned on.
      */
     private boolean mKeepScreenOn;
+    private int mLastLayoutOrientation;
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
@@ -1377,6 +1376,8 @@ public class CameraActivity extends Activity
     public void onResume() {
         mPaused = false;
 
+        mLastLayoutOrientation = getResources().getConfiguration().orientation;
+
         // TODO: Handle this in OrientationManager.
         // Auto-rotate off
         if (Settings.System.getInt(getContentResolver(),
@@ -1452,7 +1453,10 @@ public class CameraActivity extends Activity
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        mCurrentModule.onConfigurationChanged(config);
+        if (mLastLayoutOrientation != config.orientation) {
+            mLastLayoutOrientation = config.orientation;
+            mCurrentModule.onLayoutOrientationChanged(mLastLayoutOrientation);
+        }
     }
 
     @Override
