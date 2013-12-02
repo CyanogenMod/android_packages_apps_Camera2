@@ -305,4 +305,5 @@
     <string name="setting_picture_size" msgid="3635524767133302049">"ទំហំ​រូបភាព"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"គុណភាព​បង្ហាញ​វីដេអូ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ម៉ាស៊ីន​ថត​លំនាំដើម"</string>
+    <string name="setting_send_feedback" msgid="1327616762665878557">"ផ្ញើ​មតិ​ត្រឡប់"</string>
 </resources>

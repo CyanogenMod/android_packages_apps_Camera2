@@ -305,4 +305,5 @@
     <string name="setting_picture_size" msgid="3635524767133302049">"Bildstorlek"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Videoupplösning"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
+    <string name="setting_send_feedback" msgid="1327616762665878557">"Skicka feedback"</string>
 </resources>
