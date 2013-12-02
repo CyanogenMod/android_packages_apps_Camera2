@@ -1111,9 +1111,6 @@ public class CameraActivity extends Activity
 
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
-        if (mFilmStripView.inCameraFullscreen()) {
-            mFilmStripView.getController().clearSurfaceViews();
-        }
     }
 
     @Override
