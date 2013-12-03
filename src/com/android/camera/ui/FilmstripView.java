@@ -523,18 +523,6 @@ public class FilmstripView extends ViewGroup implements BottomControlsListener {
                 MeasureSpec.makeMeasureSpec(heightMeasureSpec, MeasureSpec.EXACTLY));
     }
 
-    @Override
-    protected boolean fitSystemWindows(Rect insets) {
-        // Since the camera preview needs this callback to layout the camera
-        // controls correctly, we need to call super here.
-        super.fitSystemWindows(insets);
-        // After calling super, we need to return false because we have other
-        // layouts such as bottom controls that needs this callback. The
-        // framework behavior is to stop propagating this after the first
-        // child returning true is found.
-        return false;
-    }
-
     private int findTheNearestView(int pointX) {
 
         int nearest = 0;
