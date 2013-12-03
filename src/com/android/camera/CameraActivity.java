@@ -173,10 +173,6 @@ public class CameraActivity extends Activity
      * This data adapter is used by FilmStripView.
      */
     private LocalDataAdapter mDataAdapter;
-    /**
-     * This data adapter represents the real local camera data.
-     */
-    private LocalDataAdapter mWrappedDataAdapter;
 
     private SettingsManager mSettingsManager;
     private SettingsController mSettingsController;
@@ -202,7 +198,6 @@ public class CameraActivity extends Activity
     private LocationManager mLocationManager;
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
-    private CameraPreviewData mCameraPreviewData;
     private ActionBar mActionBar;
     private OnActionBarVisibilityListener mOnActionBarVisibilityListener = null;
     private Menu mActionBarMenu;
@@ -1178,19 +1173,9 @@ public class CameraActivity extends Activity
                 .getGcamProcessingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
         mPlaceholderManager.addTaskListener(mPlaceholderListener);
-        LayoutInflater inflater = getLayoutInflater();
-        View rootLayout = inflater.inflate(R.layout.camera, null, false);
-        mCameraModuleRootView = (FrameLayout) rootLayout.findViewById(R.id.camera_app_root);
+        mCameraModuleRootView = (FrameLayout) findViewById(R.id.camera_app_root);
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
-        mCameraPreviewData = new CameraPreviewData(rootLayout,
-                FilmstripImageData.SIZE_FULL,
-                FilmstripImageData.SIZE_FULL);
-        // Put a CameraPreviewData at the first position.
-        mWrappedDataAdapter = new FixedFirstDataAdapter(
-                new CameraDataAdapter(new ColorDrawable(
-                        getResources().getColor(R.color.photo_placeholder))),
-                mCameraPreviewData);
         mFilmstripController = ((FilmstripView) findViewById(R.id.filmstrip_view)).getController();
         mFilmstripController.setViewGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
@@ -1198,6 +1183,8 @@ public class CameraActivity extends Activity
         mPanoramaViewHelper.onCreate();
         mFilmstripController.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
+        mDataAdapter = new CameraDataAdapter(
+                new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
         mFilmstripController.setListener(mFilmStripListener);
 
         // TODO: Remove the 3rd parameter once mCameraModuleRoot is moved out of filmstrip
@@ -1257,7 +1244,6 @@ public class CameraActivity extends Activity
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
         if (!mSecureCamera) {
-            mDataAdapter = mWrappedDataAdapter;
             mFilmstripController.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
                 mDataAdapter.requestLoad(getContentResolver());
@@ -1281,7 +1267,7 @@ public class CameraActivity extends Activity
                 }
             });
             mDataAdapter = new FixedLastDataAdapter(
-                    mWrappedDataAdapter,
+                    mDataAdapter,
                     new SimpleViewData(
                             v,
                             v.getDrawable().getIntrinsicWidth(),
@@ -1449,7 +1435,7 @@ public class CameraActivity extends Activity
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-
+        Log.v(TAG, "onConfigurationChanged");
         if (config.orientation == Configuration.ORIENTATION_UNDEFINED) {
             return;
         }
@@ -1489,10 +1475,10 @@ public class CameraActivity extends Activity
 
     @Override
     public void onBackPressed() {
-        if (!mFilmstripController.inCameraFullscreen()) {
-            mFilmstripController.goToFirstItem();
-        } else if (!mCurrentModule.onBackPressed()) {
-            super.onBackPressed();
+        if (!mCameraAppUI.onBackPressed()) {
+            if (!mCurrentModule.onBackPressed()) {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -1818,10 +1804,11 @@ public class CameraActivity extends Activity
      * @param enable {@code true} to enable swipe.
      */
     public void setSwipingEnabled(boolean enable) {
+        // TODO: Bring back the functionality.
         if (isCaptureIntent()) {
-            mCameraPreviewData.lockPreview(true);
+            //lockPreview(true);
         } else {
-            mCameraPreviewData.lockPreview(!enable);
+            //lockPreview(!enable);
         }
     }
 

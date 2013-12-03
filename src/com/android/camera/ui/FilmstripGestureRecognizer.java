@@ -23,7 +23,7 @@ import android.view.ScaleGestureDetector;
 
 // This class aggregates two gesture detectors: GestureDetector,
 // ScaleGestureDetector.
-public class FilmStripGestureRecognizer {
+public class FilmstripGestureRecognizer {
     @SuppressWarnings("unused")
     private static final String TAG = "FilmStripGestureRecognizer";
 
@@ -43,7 +43,7 @@ public class FilmStripGestureRecognizer {
     private final ScaleGestureDetector mScaleDetector;
     private final Listener mListener;
 
-    public FilmStripGestureRecognizer(Context context, Listener listener) {
+    public FilmstripGestureRecognizer(Context context, Listener listener) {
         mListener = listener;
         mGestureDetector = new GestureDetector(context, new MyGestureListener(),
                 null, true /* ignoreMultitouch */);
@@ -52,12 +52,13 @@ public class FilmStripGestureRecognizer {
                 context, new MyScaleListener());
     }
 
-    public void onTouchEvent(MotionEvent event) {
-        mGestureDetector.onTouchEvent(event);
-        mScaleDetector.onTouchEvent(event);
+    public boolean onTouchEvent(MotionEvent event) {
+        final boolean gestureProcessed = mGestureDetector.onTouchEvent(event);
+        final boolean scaleProcessed = mScaleDetector.onTouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_UP) {
             mListener.onUp(event.getX(), event.getY());
         }
+        return (gestureProcessed | scaleProcessed);
     }
 
     private class MyGestureListener
