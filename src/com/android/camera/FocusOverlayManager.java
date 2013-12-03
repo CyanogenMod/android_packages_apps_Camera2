@@ -523,6 +523,15 @@ public class FocusOverlayManager {
         }
     }
 
+    public void restartTouchFocusTimer() {
+        if (mZslEnabled && (!mFocusDefault) && (mFocusTime != 0)) {
+            mHandler.removeMessages(RESET_TOUCH_FOCUS);
+            mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, mFocusTime);
+        } else {
+            resetTouchFocus();
+        }
+    }
+
     public void resetTouchFocus() {
         if (!mInitialized) return;
 
@@ -594,7 +603,8 @@ public class FocusOverlayManager {
     }
 
     private boolean needAutoFocusCall() {
-        return getFocusMode().equals(Parameters.FOCUS_MODE_AUTO);
+        return getFocusMode().equals(Parameters.FOCUS_MODE_AUTO) &&
+            !(mZslEnabled && (mHandler.hasMessages(RESET_TOUCH_FOCUS)));
     }
 
     public void setZslEnable(boolean value) {
