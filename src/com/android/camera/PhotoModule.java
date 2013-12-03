@@ -991,8 +991,8 @@ public class PhotoModule
             if (needRestartPreview) {
                 setupPreview();
             }else if ((mReceivedSnapNum == mBurstSnapNum)
-                        && (mCameraState != LONGSHOT)){
-                mFocusManager.resetTouchFocus();
+                        && (mCameraState != LONGSHOT)) {
+                mFocusManager.restartTouchFocusTimer();
                 if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
                         mFocusManager.getFocusMode())) {
                     mCameraDevice.cancelAutoFocus();
