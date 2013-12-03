@@ -54,6 +54,8 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+import android.media.EncoderCapabilities;
+import android.media.EncoderCapabilities.VideoEncoderCap;
 
 import com.android.camera.CameraManager.CameraAFCallback;
 import com.android.camera.CameraManager.CameraPictureCallback;
@@ -582,10 +584,9 @@ public class VideoModule implements CameraModule,
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
             Log.v(TAG, "onOrientationChanged, update parameters");
-            if ((mParameters != null) && (true == mPreviewing)){
+            if ((mParameters != null) && (true == mPreviewing) && !mMediaRecorderRecording){
                 setCameraParameters();
             }
-
         }
 
         // Show the toast after getting the first orientation changed.
@@ -1241,12 +1242,28 @@ public class VideoModule implements CameraModule,
         videoHeight = mProfile.videoFrameHeight;
         mUnsupportedResolution = false;
 
-        if (mVideoEncoder == MediaRecorder.VideoEncoder.H263) {
-            if (videoWidth >= 1280 && videoHeight >= 720) {
-                    mUnsupportedResolution = true;
-                    Toast.makeText(mActivity, R.string.error_app_unsupported,
-                    Toast.LENGTH_LONG).show();
-                    return;
+        //check if codec supports the resolution, otherwise throw toast
+        List<VideoEncoderCap> videoEncoders = EncoderCapabilities.getVideoEncoders();
+        for (VideoEncoderCap videoEncoder: videoEncoders) {
+            if (videoEncoder.mCodec == mVideoEncoder){
+                if (videoWidth > videoEncoder.mMaxFrameWidth ||
+                    videoWidth < videoEncoder.mMinFrameWidth ||
+                    videoHeight > videoEncoder.mMaxFrameHeight ||
+                    videoHeight < videoEncoder.mMinFrameHeight){
+                        Log.e(TAG,"Selected codec "+mVideoEncoder+
+                          " does not support "+ videoWidth + "x" + videoHeight
+                          +" resolution");
+                        Log.e(TAG, "Codec capabilities: " +
+                          "mMinFrameWidth = " + videoEncoder.mMinFrameWidth + " , "+
+                          "mMinFrameHeight = " + videoEncoder.mMinFrameHeight + " , "+
+                          "mMaxFrameWidth = " + videoEncoder.mMaxFrameWidth + " , "+
+                          "mMaxFrameHeight = " + videoEncoder.mMaxFrameHeight);
+                        mUnsupportedResolution = true;
+                        Toast.makeText(mActivity, R.string.error_app_unsupported,
+                          Toast.LENGTH_LONG).show();
+                        return;
+                }
+                break;
             }
         }
 
