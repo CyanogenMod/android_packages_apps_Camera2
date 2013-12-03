@@ -69,15 +69,15 @@ public interface ModuleController {
     /**
      * Called when the framework layout orientation changed.
      *
-     * @param orientation {@link Configuration#ORIENTATION_LANDSCAPE} or
-     *                    {@link Configuration#ORIENTATION_PORTRAIT}.
+     * @param isLandscape Whether the new orientation is landscape or portrait.
      */
-    public void onLayoutOrientationChanged(int orientation);
+    public void onLayoutOrientationChanged(boolean isLandscape);
 
     /**
      * Called when the UI orientation is changed.
      *
-     * @param orientation The new orientation.
+     * @param orientation The new orientation, valid values are 0, 90, 180 and
+     *                    270.
      */
     public void onOrientationChanged(int orientation);
 
