@@ -1250,7 +1250,7 @@ public class PhotoModule
     }
 
     @Override
-    public void onLayoutOrientationChanged(int orientation) {
+    public void onLayoutOrientationChanged(boolean isLandscape) {
         setDisplayOrientation();
     }
 

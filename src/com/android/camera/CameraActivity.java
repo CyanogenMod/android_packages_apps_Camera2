@@ -1450,9 +1450,15 @@ public class CameraActivity extends Activity
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
+
+        if (config.orientation == Configuration.ORIENTATION_UNDEFINED) {
+            return;
+        }
+
         if (mLastLayoutOrientation != config.orientation) {
             mLastLayoutOrientation = config.orientation;
-            mCurrentModule.onLayoutOrientationChanged(mLastLayoutOrientation);
+            mCurrentModule.onLayoutOrientationChanged(
+                    mLastLayoutOrientation == Configuration.ORIENTATION_LANDSCAPE);
         }
     }
 
