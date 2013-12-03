@@ -395,8 +395,8 @@ public class PhotoUI implements PieListener,
         // TODO init toggle buttons on bottom bar here
     }
 
-    public void onCameraOpened(PreferenceGroup prefGroup,
-            Camera.Parameters params, OnPreferenceChangedListener listener) {
+    public void onCameraOpened(Camera.Parameters params,
+        PhotoMenu.PhotoMenuListener listener) {
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
             mPieRenderer.setPieListener(this);
@@ -404,11 +404,9 @@ public class PhotoUI implements PieListener,
         }
 
         if (mMenu == null) {
-            mMenu = new PhotoMenu(mActivity, this, mPieRenderer);
-            mMenu.setListener(listener);
+            mMenu = new PhotoMenu(mActivity, listener);
         }
-        // TODO: Refactor the prefGroup out of this.
-        mMenu.initialize(prefGroup);
+        mMenu.initialize();
 
         if (mZoomRenderer == null) {
             mZoomRenderer = new ZoomRenderer(mActivity);
@@ -503,10 +501,6 @@ public class PhotoUI implements PieListener,
         }
     }
 
-    public void overrideSettings(final String ... keyvalues) {
-        mMenu.overrideSettings(keyvalues);
-    }
-
     public void animateFlash() {
         mAnimationManager.startFlashAnimation(mFlashOverlay);
     }
@@ -563,9 +557,6 @@ public class PhotoUI implements PieListener,
                 @Override
                 public void onDismiss() {
                     mPopup = null;
-                    if (mMenu != null) {
-                        mMenu.popupDismissed();
-                    }
 
                     // Switch back into fullscreen/lights-out mode after popup
                     // is dimissed.

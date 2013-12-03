@@ -28,6 +28,7 @@ import android.util.Log;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.ListPreference;
+import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
 import java.util.List;
@@ -53,11 +54,13 @@ public class SettingsManager {
             OnSharedPreferenceChangeListener globalListener,
             int nCameras) {
         mContext = context;
-        mSettingsCache = new SettingsCache();
+
+        SettingsCache.ExtraSettings extraSettings = new SettingsHelper();
+        mSettingsCache = new SettingsCache(mContext, extraSettings);
+
         mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
         initGlobal(globalListener);
 
-        DefaultCameraIdSetting cameraIdSetting = new DefaultCameraIdSetting();
         int cameraId = Integer.parseInt(get(SETTING_CAMERA_ID));
         if (cameraId < 0 || cameraId >= nCameras) {
             setDefault(SETTING_CAMERA_ID);
@@ -79,6 +82,7 @@ public class SettingsManager {
      */
     public void changeCamera(int cameraId, SettingsCapabilities capabilities) {
         mCapabilities = capabilities;
+        mSettingsCache.setCapabilities(mCapabilities);
 
         if (cameraId == mCameraId) {
             if (mCameraSettings != null) {
@@ -86,6 +90,11 @@ public class SettingsManager {
             }
             return;
         }
+
+        // We've changed camera ids, that means we need to flush the
+        // settings cache of settings dependent on SettingsCapabilities.
+        mSettingsCache.flush();
+
         // Cache the camera id so we don't need to reload preferences
         // if we're using the same camera.
         mCameraId = cameraId;
@@ -137,7 +146,24 @@ public class SettingsManager {
      * This interface is camera api agnostic.
      */
     public interface SettingsCapabilities {
+        /**
+         * Returns a list of the picture sizes currently
+         * supported by the camera device.
+         */
         public List<Size> getSupportedPictureSizes();
+
+        /**
+         * Returns a dynamically calculated list of
+         * exposure values, based on the min and max
+         * exposure compensation supported by the camera device.
+         */
+        public String[] getSupportedExposureValues();
+
+        /**
+         * Returns a list of camera ids based on the number
+         * of cameras available on the device.
+         */
+        public String[] getSupportedCameraIds();
     }
 
     /**
@@ -164,42 +190,40 @@ public class SettingsManager {
     public static final String VALUE_ON = "on";
     public static final String VALUE_OFF = "off";
 
-    public static final String VALUE_STRING = "string";
-    public static final String VALUE_BOOLEAN = "boolean";
-    public static final String VALUE_INTEGER = "integer";
+    public static final String TYPE_STRING = "string";
+    public static final String TYPE_BOOLEAN = "boolean";
+    public static final String TYPE_INTEGER = "integer";
 
-    public static final String VALUE_DEFAULT = "default";
-    public static final String VALUE_GLOBAL = "global";
-    public static final String VALUE_CAMERA = "camera";
+    public static final String SOURCE_DEFAULT = "default";
+    public static final String SOURCE_GLOBAL = "global";
+    public static final String SOURCE_CAMERA = "camera";
+
+    public static final boolean FLUSH_ON = true;
+    public static final boolean FLUSH_OFF = false;
 
     // For quick lookup from id to Setting.
-    public static final int SETTING_VERSION = 0;
-    public static final int SETTING_LOCAL_VERSION = 1;
-    public static final int SETTING_RECORD_LOCATION = 2;
-    public static final int SETTING_VIDEO_QUALITY = 3;
-    public static final int SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL = 4;
-    public static final int SETTING_PICTURE_SIZE = 5;
-    public static final int SETTING_JPEG_QUALITY = 6;
-    public static final int SETTING_FOCUS_MODE = 7;
-    public static final int SETTING_FLASH_MODE = 8;
-    public static final int SETTING_VIDEOCAMERA_FLASH_MODE = 9;
-    public static final int SETTING_WHITE_BALANCE = 10;
-    public static final int SETTING_SCENE_MODE = 11;
-    public static final int SETTING_EXPOSURE = 12;
-    public static final int SETTING_TIMER = 13;
-    public static final int SETTING_TIMER_SOUND_EFFECTS = 14;
-    public static final int SETTING_VIDEO_EFFECT = 15;
-    public static final int SETTING_CAMERA_ID = 16;
-    public static final int SETTING_CAMERA_HDR = 17;
-    public static final int SETTING_CAMERA_HDR_PLUS = 18;
-    public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 19;
-    public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 20;
-    public static final int SETTING_PHOTOSPHERE_PICTURESIZE = 21;
-    public static final int SETTING_STARTUP_MODULE_INDEX = 22;
+    public static final int SETTING_RECORD_LOCATION = 0;
+    public static final int SETTING_VIDEO_QUALITY = 1;
+    public static final int SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL = 2;
+    public static final int SETTING_PICTURE_SIZE = 3;
+    public static final int SETTING_JPEG_QUALITY = 4;
+    public static final int SETTING_FOCUS_MODE = 5;
+    public static final int SETTING_FLASH_MODE = 6;
+    public static final int SETTING_VIDEOCAMERA_FLASH_MODE = 7;
+    public static final int SETTING_WHITE_BALANCE = 8;
+    public static final int SETTING_SCENE_MODE = 9;
+    public static final int SETTING_EXPOSURE = 10;
+    public static final int SETTING_TIMER = 11;
+    public static final int SETTING_TIMER_SOUND_EFFECTS = 12;
+    public static final int SETTING_VIDEO_EFFECT = 13;
+    public static final int SETTING_CAMERA_ID = 14;
+    public static final int SETTING_CAMERA_HDR = 15;
+    public static final int SETTING_CAMERA_HDR_PLUS = 16;
+    public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 17;
+    public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 18;
+    public static final int SETTING_STARTUP_MODULE_INDEX = 19;
 
     // Shared preference keys.
-    public static final String KEY_VERSION = "pref_version_key";
-    public static final String KEY_LOCAL_VERSION = "pref_local_version_key";
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
     public static final String KEY_VIDEO_QUALITY = "pref_video_quality_key";
     public static final String KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL =
@@ -222,21 +246,87 @@ public class SettingsManager {
         "pref_camera_first_use_hint_shown_key";
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN =
         "pref_video_first_use_hint_shown_key";
-    public static final String KEY_PHOTOSPHERE_PICTURESIZE = "pref_photosphere_picturesize_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
 
     /**
-     * Defines an interface that all queriable settings
-     * must implement.
+     * Defines a simple class for holding a the spec of a setting.
+     * This spec is used by the generic api methods to query and
+     * update a setting.
      */
-    public interface Setting {
-        public String getSource();
-        public String getType();
-        public String getDefault(Context context);
-        public String getKey();
+    public static class Setting {
+        private final String mSource;
+        private final String mType;
+        private final String mDefault;
+        private final String mKey;
+        private final String[] mValues;
+        private final boolean mFlushOnCameraChange;
+
+        /**
+         * A constructor used to store a setting's profile.
+         */
+        Setting(String source, String type, String defaultValue, String key,
+                String[] values, boolean flushOnCameraChange) {
+            mSource = source;
+            mType = type;
+            mDefault = defaultValue;
+            mKey = key;
+            mValues = values;
+            mFlushOnCameraChange = flushOnCameraChange;
+        }
+
+        /**
+         * Returns the id of a SharedPreferences instance from which
+         * this Setting may be found.
+         * Possible values are {@link #SOURCE_DEFAULT}, {@link #SOURCE_GLOBAL},
+         * {@link #SOURCE_CAMERA}.
+         */
+        public String getSource() {
+            return mSource;
+        }
+
+        /**
+         * Returns the type of the setting stored in SharedPreferences.
+         * Possible values are {@link #TYPE_STRING}, {@link #TYPE_INTEGER},
+         * {@link #TYPE_BOOLEAN}.
+         */
+        public String getType() {
+            return mType;
+        }
+
+        /**
+         * Returns the default value of this setting.
+         */
+        public String getDefault() {
+            return mDefault;
+        }
+
+        /**
+         * Returns the SharedPreferences key for this setting.
+         */
+        public String getKey() {
+            return mKey;
+        }
+
+        /**
+         * Returns an array of possible String values for this setting.
+         * If this setting is not of type {@link #TYPE_STRING}, or
+         * it's not possible to generate the string values, this should
+         * return null;
+         */
+        public String[] getStringValues() {
+            return mValues;
+        }
+
+        /**
+         * Returns whether the setting should be flushed from the cache
+         * when the camera device has changed.
+         */
+        public boolean isFlushedOnCameraChanged() {
+            return mFlushOnCameraChange;
+        }
     }
 
     /**
@@ -244,26 +334,78 @@ public class SettingsManager {
      */
     public SharedPreferences getSettingSource(Setting setting) {
         String source = setting.getSource();
-        if (source.equals(VALUE_DEFAULT)) {
+        if (source.equals(SOURCE_DEFAULT)) {
             return mDefaultSettings;
         }
-        if (source.equals(VALUE_GLOBAL)) {
+        if (source.equals(SOURCE_GLOBAL)) {
             return mGlobalSettings;
         }
-        if (source.equals(VALUE_CAMERA)) {
+        if (source.equals(SOURCE_CAMERA)) {
             return mCameraSettings;
         }
         return null;
     }
 
     /**
+     * Based on Setting id, finds the index of a Setting's
+     * String value in an array of possible String values.
+     *
+     * If the Setting is not of type String, this returns -1.
+     */
+    public int getStringValueIndex(int id) {
+        Setting setting = mSettingsCache.get(id);
+        if (setting == null || setting.getType() != TYPE_STRING) {
+            return -1;
+        }
+
+        String value = get(id);
+        if (value != null) {
+            String[] possibleValues = setting.getStringValues();
+            if (possibleValues != null) {
+                for (int i = 0; i < possibleValues.length; i++) {
+                    if (value.equals(possibleValues[i])) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Based on Setting id, sets a Setting's String value using the
+     * index into an array of possible String values.
+     *
+     * Fails to set a value if the index is out of bounds or the Setting
+     * is not of type String.
+     *
+     * @return Whether the value was set.
+     */
+    public boolean setStringValueIndex(int id, int index) {
+        Setting setting = mSettingsCache.get(id);
+        if (setting == null || setting.getType() != TYPE_STRING) {
+            return false;
+        }
+
+        String[] possibleValues = setting.getStringValues();
+        if (possibleValues != null) {
+            if (index >= 0 && index < possibleValues.length) {
+                set(id, possibleValues[index]);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get a Setting's String value based on Setting id.
      */
+    // TODO: rename to something more descriptive.
     public String get(int id) {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
-            return preferences.getString(setting.getKey(), setting.getDefault(mContext));
+            return preferences.getString(setting.getKey(), setting.getDefault());
         } else {
             return null;
         }
@@ -275,7 +417,7 @@ public class SettingsManager {
     public boolean getBoolean(int id) {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
-        boolean defaultValue = setting.getDefault(mContext).equals(VALUE_ON);
+        boolean defaultValue = setting.getDefault().equals(VALUE_ON);
         if (preferences != null) {
             return preferences.getBoolean(setting.getKey(), defaultValue);
         } else {
@@ -289,7 +431,7 @@ public class SettingsManager {
     public int getInt(int id) {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
-        int defaultValue = Integer.parseInt(setting.getDefault(mContext));
+        int defaultValue = Integer.parseInt(setting.getDefault());
         if (preferences != null) {
             return preferences.getInt(setting.getKey(), defaultValue);
         } else {
@@ -300,6 +442,7 @@ public class SettingsManager {
     /**
      * Set a Setting with a String value based on Setting id.
      */
+    // TODO: rename to something more descriptive.
     public void set(int id, String value) {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
@@ -350,423 +493,172 @@ public class SettingsManager {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
-            preferences.edit().putString(setting.getKey(),
-                setting.getDefault(mContext));
+            preferences.edit().putString(setting.getKey(), setting.getDefault());
         }
     }
 
-    public static class VersionSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return "0";
-        }
-
-        public String getKey() {
-            return KEY_VERSION;
-        }
+    public static Setting getLocationSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_none_value);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_recordlocation_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_RECORD_LOCATION,
+            values, FLUSH_OFF);
     }
 
-    public static class LocalVersionSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return "0";
-        }
-
-        public String getKey() {
-            return KEY_LOCAL_VERSION;
-        }
+    public static Setting getPictureSizeSetting(Context context) {
+        String defaultValue = null;
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_picturesize_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE,
+            values, FLUSH_OFF);
     }
 
-    public static class LocationSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
+    public static Setting getDefaultCameraIdSetting(Context context,
+            SettingsCapabilities capabilities) {
+        String defaultValue = context.getString(R.string.pref_camera_id_default);
+        String[] values = null;
+        if (capabilities != null) {
+            values = capabilities.getSupportedCameraIds();
         }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return VALUE_NONE;
-        }
-
-        public String getKey() {
-            return KEY_RECORD_LOCATION;
-        }
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_CAMERA_ID,
+            values, FLUSH_ON);
     }
 
-    public static class PictureSizeSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return null;
-        }
-
-        public String getKey() {
-            return KEY_PICTURE_SIZE;
-        }
+    public static Setting getWhiteBalanceSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_whitebalance_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_whitebalance_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_WHITE_BALANCE,
+            values, FLUSH_OFF);
     }
 
-    public static class DefaultCameraIdSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return "0";
-        }
-
-        public String getKey() {
-            return KEY_CAMERA_ID;
-        }
+    public static Setting getHdrSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_hdr_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_hdr_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_CAMERA_HDR,
+            values, FLUSH_OFF);
     }
 
-    public static class WhiteBalanceSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_whitebalance_default);
-        }
-
-        public String getKey() {
-            return KEY_WHITE_BALANCE;
-        }
+    public static Setting getHdrPlusSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_hdr_plus_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_hdr_plus_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_CAMERA_HDR_PLUS,
+            values, FLUSH_OFF);
     }
 
-    public static class HdrSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_hdr_default);
-        }
-
-        public String getKey() {
-            return KEY_CAMERA_HDR;
-        }
+    public static Setting getSceneModeSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_scenemode_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_scenemode_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_SCENE_MODE,
+            values, FLUSH_OFF);
     }
 
-    public static class HdrPlusSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_hdr_plus_default);
-        }
-
-        public String getKey() {
-            return KEY_CAMERA_HDR_PLUS;
-        }
+    public static Setting getFlashSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_flashmode_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_flashmode_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_FLASH_MODE,
+            values, FLUSH_OFF);
     }
 
-    public static class SceneModeSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
+    public static Setting getExposureSetting(Context context,
+            SettingsCapabilities capabilities) {
+        String defaultValue = context.getString(R.string.pref_exposure_default);
+        String[] values = null;
+        if (capabilities != null) {
+            values = capabilities.getSupportedExposureValues();
         }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_scenemode_default);
-        }
-
-        public String getKey() {
-            return KEY_SCENE_MODE;
-        }
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_EXPOSURE,
+            values, FLUSH_ON);
     }
 
-    public static class FlashSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_flashmode_default);
-        }
-
-        public String getKey() {
-            return KEY_FLASH_MODE;
-        }
+    public static Setting getHintSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_on_value);
+        String[] values = null;
+        return new Setting(SOURCE_GLOBAL, TYPE_BOOLEAN, defaultValue,
+            KEY_CAMERA_FIRST_USE_HINT_SHOWN, values, FLUSH_OFF);
     }
 
-    public static class ExposureSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return "0";
-        }
-
-        public String getKey() {
-            return KEY_EXPOSURE;
-        }
+    public static Setting getFocusModeSetting(Context context) {
+        String defaultValue = null;
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_focusmode_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_FOCUS_MODE,
+            values, FLUSH_OFF);
     }
 
-    public static class HintSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_BOOLEAN;
-        }
-
-        public String getDefault(Context context) {
-            return VALUE_ON;
-        }
-
-        public String getKey() {
-            return KEY_CAMERA_FIRST_USE_HINT_SHOWN;
-        }
+    public static Setting getTimerSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_timer_default);
+        String[] values = null; // TODO: get the values dynamically.
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_TIMER,
+            values, FLUSH_OFF);
     }
 
-    public static class FocusModeSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return null;
-        }
-
-        public String getKey() {
-            return KEY_FOCUS_MODE;
-        }
+    public static Setting getTimerSoundSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_timer_sound_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_timer_sound_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_TIMER_SOUND_EFFECTS,
+            values, FLUSH_OFF);
     }
 
-    public static class TimerSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_timer_default);
-        }
-
-        public String getKey() {
-            return KEY_TIMER;
-        }
+    public static Setting getVideoQualitySetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_video_quality_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_video_quality_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_VIDEO_QUALITY,
+            values, FLUSH_OFF);
     }
 
-    public static class TimerSoundSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_timer_sound_default);
-        }
-
-        public String getKey() {
-            return KEY_TIMER_SOUND_EFFECTS;
-        }
+    public static Setting getTimeLapseFrameIntervalSetting(Context context) {
+        String defaultValue = context.getString(
+            R.string.pref_video_time_lapse_frame_interval_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_video_time_lapse_frame_interval_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
+            KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, values, FLUSH_OFF);
     }
 
-    public static class VideoQualitySetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_video_quality_default);
-        }
-
-        public String getKey() {
-            return KEY_VIDEO_QUALITY;
-        }
+    public static Setting getJpegQualitySetting(Context context) {
+        String defaultValue = context.getString(
+            R.string.pref_camera_jpeg_quality_normal);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_jpeg_quality_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_JPEG_QUALITY,
+            values, FLUSH_OFF);
     }
 
-    public static class TimeLapseFrameIntervalSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_video_time_lapse_frame_interval_default);
-        }
-
-        public String getKey() {
-            return KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL;
-        }
+    public static Setting getVideoFlashSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_video_flashmode_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_video_flashmode_entryvalues);
+        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue,
+            KEY_VIDEOCAMERA_FLASH_MODE, values, FLUSH_OFF);
     }
 
-    public static class JpegQualitySetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return "85";
-        }
-
-        public String getKey() {
-            return KEY_JPEG_QUALITY;
-        }
+    public static Setting getVideoEffectSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_video_effect_default);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_video_effect_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_VIDEO_EFFECT,
+            values, FLUSH_OFF);
     }
 
-    public static class VideoFlashSetting implements Setting {
-        public String getSource() {
-            return VALUE_CAMERA;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_camera_video_flashmode_default);
-        }
-
-        public String getKey() {
-            return KEY_VIDEOCAMERA_FLASH_MODE;
-        }
+    public static Setting getHintVideoSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_on_value);
+        String[] values = null;
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
+            KEY_VIDEO_FIRST_USE_HINT_SHOWN, values, FLUSH_OFF);
     }
 
-    public static class VideoEffectSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return context.getString(R.string.pref_video_effect_default);
-        }
-
-        public String getKey() {
-            return KEY_VIDEO_EFFECT;
-        }
-    }
-
-    public static class HintVideoSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_BOOLEAN;
-        }
-
-        public String getDefault(Context context) {
-            return VALUE_ON;
-        }
-
-        public String getKey() {
-            return KEY_VIDEO_FIRST_USE_HINT_SHOWN;
-        }
-    }
-
-    public static class PhotoSpherePictureSizeSetting implements Setting {
-        public String getSource() {
-            return VALUE_GLOBAL;
-        }
-
-        public String getType() {
-            return VALUE_STRING;
-        }
-
-        public String getDefault(Context context) {
-            return null;
-        }
-
-        public String getKey() {
-            return KEY_PHOTOSPHERE_PICTURESIZE;
-        }
-    }
-
-    public static class StartupModuleSetting implements Setting {
-        public String getSource() {
-            return VALUE_DEFAULT;
-        }
-
-        public String getType() {
-            return VALUE_INTEGER;
-        }
-
-        public String getDefault(Context context) {
-            return "0";
-        }
-
-        public String getKey() {
-            return KEY_STARTUP_MODULE_INDEX;
-        }
+    public static Setting getStartupModuleSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_camera_startup_index_default);
+        String[] values = null;
+        return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
+            KEY_STARTUP_MODULE_INDEX, values, FLUSH_OFF);
     }
 
     // Utilities.
@@ -825,21 +717,5 @@ public class SettingsManager {
                 set(id, value);
             }
         }
-    }
-
-    /**
-     * Utility method for converting a white balance value gotten from
-     * a SettingsManager query to an index in the array of possible values.
-     */
-    public static int getWhiteBalanceIndex(Context context, String whiteBalance) {
-        String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_whitebalance_entryvalues);
-
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].equals(whiteBalance)) {
-                return i;
-            }
-        }
-        return WHITE_BALANCE_DEFAULT_INDEX;
     }
 }

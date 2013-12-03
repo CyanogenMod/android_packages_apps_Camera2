@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
@@ -131,12 +132,35 @@ public class SettingsController implements SettingsView.SettingsViewListener {
 
     public static SettingsCapabilities
             getSettingsCapabilities(CameraManager.CameraProxy camera) {
-        Parameters parameters = camera.getParameters();
-        final List<Size> sizes = parameters.getSupportedPictureSizes();
+        final Parameters parameters = camera.getParameters();
         return (new SettingsCapabilities() {
                 @Override
                 public List<Size> getSupportedPictureSizes() {
-                    return sizes;
+                    return parameters.getSupportedPictureSizes();
+                }
+
+                @Override
+                public String[] getSupportedExposureValues() {
+                    int max = parameters.getMaxExposureCompensation();
+                    int min = parameters.getMinExposureCompensation();
+                    float step = parameters.getExposureCompensationStep();
+                    int maxValue = Math.min(3, (int) Math.floor(max * step));
+                    int minValue = Math.max(-3, (int) Math.ceil(min * step));
+                    String[] entryValues = new String[maxValue - minValue + 1];
+                    for (int i = minValue; i <= maxValue; ++i) {
+                        entryValues[i - minValue] = Integer.toString(Math.round(i / step));
+                    }
+                    return entryValues;
+                }
+
+                @Override
+                public String[] getSupportedCameraIds() {
+                    int numberOfCameras = Camera.getNumberOfCameras();
+                    String[] cameraIds = new String[numberOfCameras];
+                    for (int i = 0; i < numberOfCameras; i++) {
+                        cameraIds[i] = "" + i;
+                    }
+                    return cameraIds;
                 }
             });
     }
