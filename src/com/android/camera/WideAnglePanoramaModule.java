@@ -838,7 +838,6 @@ public class WideAnglePanoramaModule
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
         mLocationManager.recordLocation(recordLocation);
-        mUI.initDisplayChangeListener();
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PanoramaModule");
     }
@@ -876,7 +875,6 @@ public class WideAnglePanoramaModule
             mWaitProcessorTask = null;
         }
         mActivity.enableKeepScreenOn(false);
-        mUI.removeDisplayChangeListener();
         if (mSoundPlayer != null) {
             mSoundPlayer.release();
             mSoundPlayer = null;

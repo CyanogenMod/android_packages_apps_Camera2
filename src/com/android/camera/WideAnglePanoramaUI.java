@@ -41,7 +41,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.ui.CameraControls;
-import com.android.camera.ui.CameraRootView;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
@@ -51,7 +50,6 @@ import com.android.camera2.R;
 public class WideAnglePanoramaUI implements
         TextureView.SurfaceTextureListener,
         ShutterButton.OnShutterButtonListener,
-        CameraRootView.MyDisplayListener,
         View.OnLayoutChangeListener {
 
     @SuppressWarnings("unused")
@@ -363,8 +361,6 @@ public class WideAnglePanoramaUI implements
         mRootView.findViewById(R.id.on_screen_indicators).setVisibility(View.GONE);
         mReview.setBackgroundColor(mReviewBackground);
 
-        // TODO: set display change listener properly.
-        ((CameraRootView) mRootView).setDisplayChangeListener(null);
         mTextureView = (TextureView) mRootView.findViewById(R.id.pano_preview_textureview);
         mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(this);
@@ -431,20 +427,6 @@ public class WideAnglePanoramaUI implements
         } else {
             mTextureView.setRotation(0);
         }
-    }
-
-    @Override
-    public void onDisplayChanged() {
-        mCameraControls.checkLayoutFlip();
-        flipPreviewIfNeeded();
-    }
-
-    public void initDisplayChangeListener() {
-        ((CameraRootView) mRootView).setDisplayChangeListener(this);
-    }
-
-    public void removeDisplayChangeListener() {
-        ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
     public void showPreviewCover() {

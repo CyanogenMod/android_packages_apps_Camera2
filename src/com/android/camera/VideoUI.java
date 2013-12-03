@@ -42,7 +42,6 @@ import android.widget.TextView;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateLayout;
@@ -54,7 +53,6 @@ import java.util.List;
 
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
-        CameraRootView.MyDisplayListener,
         SurfaceTextureListener, SurfaceHolder.Callback {
     private static final String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
@@ -368,14 +366,6 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
-    public void initDisplayChangeListener() {
-        ((CameraRootView) mRootView).setDisplayChangeListener(this);
-    }
-
-    public void removeDisplayChangeListener() {
-        ((CameraRootView) mRootView).removeDisplayChangeListener();
-    }
-
     public void overrideSettings(final String... keyvalues) {
         mVideoMenu.overrideSettings(keyvalues);
     }
@@ -603,11 +593,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public boolean isVisible() {
         return false;
-    }
-
-    @Override
-    public void onDisplayChanged() {
-        mController.updateCameraOrientation();
     }
 
     private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {
