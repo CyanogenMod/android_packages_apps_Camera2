@@ -18,13 +18,13 @@ package com.android.camera.util;
 
 import android.app.Activity;
 import android.hardware.Camera;
+import android.view.ViewGroup;
 
 import com.android.camera.app.CameraManager.CameraProxy;
-import com.android.camera.ui.CameraRootView;
 
 public class SmartCameraHelper {
     public static void register(CameraProxy camera, Camera.Size previewSize, Activity activity,
-            CameraRootView parentView) {
+            ViewGroup parentView) {
     }
 
     public static void tearDown() {

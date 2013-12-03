@@ -47,6 +47,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
@@ -62,7 +63,6 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
@@ -555,7 +555,7 @@ public class PhotoModule
 
     private void startSmartCamera() {
         SmartCameraHelper.register(mCameraDevice, mParameters.getPreviewSize(), mActivity,
-                (CameraRootView) mActivity.findViewById(R.id.camera_app_root));
+                (ViewGroup) mActivity.findViewById(R.id.camera_app_root));
     }
 
     private void stopSmartCamera() {
@@ -1132,7 +1132,6 @@ public class PhotoModule
         } else {
             initializeSecondTime();
         }
-        mUI.initDisplayChangeListener();
 
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PhotoModule");
@@ -1239,7 +1238,6 @@ public class PhotoModule
         if (s != null) {
             s.setQueueListener(null);
         }
-        mUI.removeDisplayChangeListener();
     }
 
     @Override

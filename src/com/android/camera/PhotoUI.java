@@ -17,8 +17,6 @@
 package com.android.camera;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -36,23 +34,17 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.CompoundButton;
-import android.widget.ToggleButton;
-import android.widget.CompoundButton;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
-import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.FaceView;
@@ -69,7 +61,6 @@ import java.util.List;
 public class PhotoUI implements PieListener,
     PreviewGestures.SingleTapListener,
     FocusUI, TextureView.SurfaceTextureListener,
-    CameraRootView.MyDisplayListener,
     CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "PhotoUI";
@@ -740,14 +731,6 @@ public class PhotoUI implements PieListener,
         if (mFaceView != null) mFaceView.clear();
     }
 
-    public void initDisplayChangeListener() {
-        ((CameraRootView) mRootView).setDisplayChangeListener(this);
-    }
-
-    public void removeDisplayChangeListener() {
-        ((CameraRootView) mRootView).removeDisplayChangeListener();
-    }
-
     // focus UI implementation
 
     private FocusIndicator getFocusIndicator() {
@@ -828,12 +811,6 @@ public class PhotoUI implements PieListener,
     @Override
     public void onFaceDetection(Face[] faces, CameraManager.CameraProxy camera) {
         mFaceView.setFaces(faces);
-    }
-
-    @Override
-    public void onDisplayChanged() {
-        Log.d(TAG, "Device flip detected.");
-        mController.updateCameraOrientation();
     }
 
 }

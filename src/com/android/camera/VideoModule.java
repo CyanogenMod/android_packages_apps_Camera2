@@ -1410,8 +1410,6 @@ public class VideoModule extends CameraModule
             mUI.enableShutter(true);
         }
 
-        mUI.initDisplayChangeListener();
-
         // Initialize location service.
         boolean recordLocation = RecordLocationPreference.get(mPreferences,
                 mContentResolver);
@@ -1460,7 +1458,6 @@ public class VideoModule extends CameraModule
         mPreferenceRead = false;
 
         mUI.collapseCameraControls();
-        mUI.removeDisplayChangeListener();
     }
 
     @Override
