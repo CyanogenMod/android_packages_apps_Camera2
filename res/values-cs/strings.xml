@@ -119,7 +119,8 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 Mpx"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 Mpx"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 Mpx"</string>
+    <!-- no translation found for pref_camera_picturesize_entry_4mp_wide (3338812763544573634) -->
+    <skip />
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 Mpx"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 Mpx"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 Mpx (16:9)"</string>
@@ -298,7 +299,7 @@
     <string name="mode_camera" msgid="279763925715250603">"Fotoaparát"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Sférické fotky"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Řemeslo"</string>
+    <string name="mode_craft" msgid="6390039207517142426">"Pokročilé funkce"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Časosběr"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokoúhlé fotky"</string>
     <string name="setting_location" msgid="4459859689227893838">"Poloha"</string>
