@@ -133,18 +133,25 @@ public class MultiToggleImageButton extends ImageButton {
             R.styleable.MultiToggleImageButton,
             0, 0);
         int resId = a.getResourceId(R.styleable.MultiToggleImageButton_imageIds, 0);
+        overrideImageIds(resId);
+        a.recycle();
+    }
+
+    /**
+     * Override the image ids of this button.
+     */
+    public void overrideImageIds(int resId) {
         TypedArray ids = null;
         try {
-                ids = getResources().obtainTypedArray(resId);
-                mImageIds = new int[ids.length()];
-                for (int i = 0; i < ids.length(); i++) {
-                    mImageIds[i] = ids.getResourceId(i, 0);
-                }
+            ids = getResources().obtainTypedArray(resId);
+            mImageIds = new int[ids.length()];
+            for (int i = 0; i < ids.length(); i++) {
+                mImageIds[i] = ids.getResourceId(i, 0);
+            }
         } finally {
             if (ids != null) {
                 ids.recycle();
             }
-            a.recycle();
         }
     }
 }

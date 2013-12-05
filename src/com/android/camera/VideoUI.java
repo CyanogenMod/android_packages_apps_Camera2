@@ -365,10 +365,6 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
-    public void overrideSettings(final String... keyvalues) {
-        mVideoMenu.overrideSettings(keyvalues);
-    }
-
     public void setOrientationIndicator(int orientation, boolean animation) {
         // We change the orientation of the linearlayout only for phone UI
         // because when in portrait the width is not enough.
@@ -398,11 +394,15 @@ public class VideoUI implements PieRenderer.PieListener,
         setTransformMatrix(mPreviewWidth, mPreviewHeight);
     }
 
+    public void onCameraOpened(VideoMenu.VideoMenuListener listener) {
+        mVideoMenu = new VideoMenu(mActivity, listener);
+        mVideoMenu.initialize();
+    }
+
     private void initializeOverlay() {
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
-            mVideoMenu = new VideoMenu(mActivity, this, mPieRenderer);
             mPieRenderer.setPieListener(this);
         }
         mRenderOverlay.addRenderer(mPieRenderer);
@@ -411,10 +411,6 @@ public class VideoUI implements PieRenderer.PieListener,
         }
         mRenderOverlay.addRenderer(mZoomRenderer);
         mRenderOverlay.setGestures(null);
-    }
-
-    public void setPrefChangedListener(OnPreferenceChangedListener listener) {
-        mVideoMenu.setListener(listener);
     }
 
     private void initializeMiscControls() {
@@ -552,10 +548,6 @@ public class VideoUI implements PieRenderer.PieListener,
             mRenderOverlay.setVisibility(previewFocused ? View.VISIBLE : View.GONE);
         }
         setShowMenu(previewFocused);
-    }
-
-    public void initializePopup(PreferenceGroup pref) {
-        mVideoMenu.initialize(pref);
     }
 
     public void initializeZoom(Parameters param) {

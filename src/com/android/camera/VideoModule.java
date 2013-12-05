@@ -77,7 +77,7 @@ import java.util.List;
 public class VideoModule extends CameraModule
     implements ModuleController,
     VideoController,
-    CameraPreference.OnPreferenceChangedListener,
+    VideoMenu.VideoMenuListener,
     ShutterButton.OnShutterButtonListener,
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener {
@@ -113,7 +113,6 @@ public class VideoModule extends CameraModule
 
     private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
 
-    private PreferenceGroup mPreferenceGroup;
     // Preference must be read before starting preview. We check this before starting
     // preview.
     private boolean mPreferenceRead;
@@ -324,8 +323,6 @@ public class VideoModule extends CameraModule
         mIsVideoCaptureIntent = isVideoCaptureIntent();
         initializeSurfaceView();
 
-        mUI.setPrefChangedListener(this);
-
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = mActivity.getLocationManager();
 
@@ -371,20 +368,6 @@ public class VideoModule extends CameraModule
         }
     }
 
-    private PreferenceGroup loadPreferenceGroup() {
-        CameraSettings settings = new CameraSettings(mActivity, mParameters,
-                mCameraId, mActivity.getCameraProvider().getCameraInfo());
-        // Remove the video quality preference setting when the quality is given in the intent.
-        return filterPreferenceScreenByIntent(
-            settings.getPreferenceGroup(R.xml.video_preferences));
-    }
-
-    private void initializeVideoControl() {
-        // TODO: Remove dependency on PreferenceGroup once pie menu is gone.
-        mPreferenceGroup = loadPreferenceGroup();
-        mUI.initializePopup(mPreferenceGroup);
-    }
-
     @Override
     public void onOrientationChanged(int orientation) {
         // We keep the last known orientation. So if the user first orient
@@ -411,8 +394,8 @@ public class VideoModule extends CameraModule
         resizeForPreviewAspectRatio();
         startPreview();
         initializeVideoSnapshot();
-        initializeVideoControl();
         mUI.initializeZoom(mParameters);
+        mUI.onCameraOpened(this);
     }
 
     private void startPlayVideoActivity() {
@@ -1469,16 +1452,7 @@ public class VideoModule extends CameraModule
         setDisplayOrientation();
     }
 
-    @Override
-    public void onOverriddenPreferencesClicked() {
-    }
-
-    @Override
-    // TODO: Delete this after old camera code is removed
-    public void onRestorePreferencesClicked() {
-    }
-
-    @Override
+    // TODO: integrate this into the SettingsManager listeners.
     public void onSharedPreferenceChanged() {
         // ignore the events after "onPause()" or preview has not started yet
         if (mPaused) {
@@ -1665,7 +1639,6 @@ public class VideoModule extends CameraModule
             SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
     }
 
-    // required by OnPreferenceChangedListener
     @Override
     public void onCameraPickerClicked(int cameraId) {
         if (mPaused || mPendingSwitchCameraId != -1) return;

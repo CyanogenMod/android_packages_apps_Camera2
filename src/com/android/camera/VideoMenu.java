@@ -16,70 +16,64 @@
 
 package com.android.camera;
 
-import android.content.Context;
-import android.view.LayoutInflater;
+import android.util.Log;
+import android.view.View;
 
-import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.ListPrefSettingPopup;
-import com.android.camera.ui.MoreSettingPopup;
-import com.android.camera.ui.PieItem;
-import com.android.camera.ui.PieItem.OnClickListener;
-import com.android.camera.ui.PieRenderer;
-import com.android.camera.ui.TimeIntervalPopup;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera2.R;
 
-public class VideoMenu extends PieController {
-
+public class VideoMenu {
     private static String TAG = "CAM_VideoMenu";
 
-    private VideoUI mUI;
     private CameraActivity mActivity;
+    private VideoMenuListener mListener;
 
-    public VideoMenu(CameraActivity activity, VideoUI ui, PieRenderer pie) {
-        super(activity, pie);
-        mUI = ui;
+    // TODO: remove this class and generalize button
+    // initialization into a global manager/factory.
+    public VideoMenu(CameraActivity activity, VideoMenuListener listener) {
         mActivity = activity;
+        mListener = listener;
     }
 
-    public void initialize(PreferenceGroup group) {
-        super.initialize(group);
-        PieItem item = null;
-        // camera switcher
-        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            item = makeItem(R.drawable.ic_switch_back);
-            IconListPreference lpref = (IconListPreference) group.findPreference(
-                    CameraSettings.KEY_CAMERA_ID);
-            item.setLabel(lpref.getLabel());
-            item.setImageResource(mActivity,
-                    ((IconListPreference) lpref).getIconIds()
-                    [lpref.findIndexOfValue(lpref.getValue())]);
+    public interface VideoMenuListener {
+        public void onCameraPickerClicked(int cameraId);
+    }
 
-            final PieItem fitem = item;
-            item.setOnClickListener(new OnClickListener() {
+    public void initialize() {
+        int index;
+        final SettingsManager settingsManager = mActivity.getSettingsManager();
 
+        final MultiToggleImageButton flashToggle
+                = (MultiToggleImageButton) mActivity.findViewById(R.id.flash_toggle_button);
+        index = settingsManager.getStringValueIndex(SettingsManager.SETTING_FLASH_MODE);
+        flashToggle.overrideImageIds(R.array.video_flashmode_icons);
+        flashToggle.setState(index, false);
+        flashToggle.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
-                public void onClick(PieItem item) {
-                    // Find the index of next camera.
-                    ListPreference pref =
-                            mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-                    if (pref != null) {
-                        int index = pref.findIndexOfValue(pref.getValue());
-                        CharSequence[] values = pref.getEntryValues();
-                        index = (index + 1) % values.length;
-                        int newCameraId = Integer.parseInt((String) values[index]);
-                        fitem.setImageResource(mActivity,
-                                ((IconListPreference) pref).getIconIds()[index]);
-                        fitem.setLabel(pref.getLabel());
-                        mListener.onCameraPickerClicked(newCameraId);
+                public void stateChanged(View view, int state) {
+                    settingsManager.setStringValueIndex(SettingsManager.SETTING_FLASH_MODE, state);
                     }
+            });
+
+        final ToggleImageButton cameraToggle
+                = (ToggleImageButton) mActivity.findViewById(R.id.camera_toggle_button);
+        index = settingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_ID);
+        cameraToggle.setState(index, false);
+        flashToggle.setVisibility(index == 0 ? View.VISIBLE : View.INVISIBLE);
+        cameraToggle.setOnStateChangeListener(new ToggleImageButton.OnStateChangeListener() {
+                @Override
+                public void stateChanged(View view, boolean state) {
+                    settingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_ID,
+                        (state ? 1 : 0));
+                    int cameraId = Integer.parseInt(settingsManager.get(
+                        SettingsManager.SETTING_CAMERA_ID));
+                    mListener.onCameraPickerClicked(cameraId);
+                    flashToggle.setVisibility(state ? View.VISIBLE : View.INVISIBLE);
                 }
             });
-            mRenderer.addItem(item);
-        }
-        // flash
-        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE);
-            mRenderer.addItem(item);
-        }
+
+        final ToggleImageButton hdrPlusToggle
+                = (ToggleImageButton) mActivity.findViewById(R.id.hdr_plus_toggle_button);
+        hdrPlusToggle.setVisibility(View.INVISIBLE);
     }
 }
