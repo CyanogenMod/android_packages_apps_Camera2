@@ -1139,7 +1139,7 @@ public class PhotoModule
 
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
             Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
-            setCameraState(IDLE);
+            if (mCameraState != PhotoController.LONGSHOT) setCameraState(IDLE);
             mFocusManager.onAutoFocus(focused, mUI.isShutterPressed());
         }
     }
@@ -1588,7 +1588,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonLongClick() {
-        if ((null != mCameraDevice) && (mCameraState == IDLE)) {
+        if ((null != mCameraDevice) && ((mCameraState == IDLE) || (mCameraState == FOCUSING))) {
             boolean enable = false;
             enable = SystemProperties.getBoolean(PERSIST_LONG_ENABLE, false);
             if ( enable ) {
