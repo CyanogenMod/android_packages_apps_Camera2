@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class SettingsHelper implements ExtraSettings {
     @Override
-    public void upgradeKeyMap(Map<Integer, String> map) {
+    public void upgradeKeyMap(Map<String, Integer> map) {
     }
 
     @Override
