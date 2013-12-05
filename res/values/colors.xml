@@ -76,7 +76,7 @@
     <color name="mode_selector_background_dark">#e7e7e7</color>
     <color name="mode_list_background">#00000000</color>
 
-    <color name="camera_mode_color">#547dbe</color>
+    <color name="camera_mode_color">#76a7fa</color>
     <color name="video_mode_color">#e57368</color>
     <color name="craft_mode_color">#8bc474</color>
     <color name="photosphere_mode_color">#f1c938</color>
