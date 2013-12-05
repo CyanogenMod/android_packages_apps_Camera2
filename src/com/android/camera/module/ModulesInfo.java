@@ -20,9 +20,7 @@ import android.content.Context;
 
 import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
-import com.android.camera.WideAnglePanoramaModule;
 import com.android.camera.app.AppController;
-import com.android.camera.app.CameraServices;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.util.GcamHelper;
