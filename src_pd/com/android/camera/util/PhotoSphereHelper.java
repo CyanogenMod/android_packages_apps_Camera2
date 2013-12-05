@@ -79,6 +79,10 @@ public class PhotoSphereHelper {
         return null;
     }
 
+    public static CameraModule createWideAnglePanoramaModule(AppController app) {
+        return null;
+    }
+
     /**
      * Get the file path from a Media storage URI.
      */
