@@ -77,7 +77,6 @@ import java.util.List;
 public class VideoModule extends CameraModule
     implements ModuleController,
     VideoController,
-    VideoMenu.VideoMenuListener,
     ShutterButton.OnShutterButtonListener,
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener {
@@ -387,6 +386,22 @@ public class VideoModule extends CameraModule
         }
     }
 
+    private ButtonManager.ButtonCallback mCameraButtonCallback =
+        new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                if (mPaused || mPendingSwitchCameraId != -1) {
+                    return;
+                }
+                mPendingSwitchCameraId = state;
+                Log.d(TAG, "Start to copy texture.");
+
+                // Disable all camera controls.
+                mSwitchingCamera = true;
+                switchCamera();
+            }
+        };
+
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
         mCameraDevice = cameraProxy;
@@ -395,7 +410,7 @@ public class VideoModule extends CameraModule
         startPreview();
         initializeVideoSnapshot();
         mUI.initializeZoom(mParameters);
-        mUI.onCameraOpened(this);
+        mUI.onCameraOpened(mCameraButtonCallback);
     }
 
     private void startPlayVideoActivity() {
@@ -1637,19 +1652,6 @@ public class VideoModule extends CameraModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
         settingsManager.setBoolean(
             SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
-    }
-
-    @Override
-    public void onCameraPickerClicked(int cameraId) {
-        if (mPaused || mPendingSwitchCameraId != -1) return;
-
-        mPendingSwitchCameraId = cameraId;
-        Log.d(TAG, "Start to copy texture.");
-
-        // Disable all camera controls.
-        mSwitchingCamera = true;
-        switchCamera();
-
     }
 
     @Override

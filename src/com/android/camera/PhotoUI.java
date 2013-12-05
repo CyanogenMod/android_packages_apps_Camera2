@@ -35,6 +35,7 @@ import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
@@ -82,8 +83,6 @@ public class PhotoUI implements PieListener,
     private View mReviewRetakeButton;
     private ImageView mReviewImage;
     private DecodeImageForReview mDecodeTaskForReview = null;
-
-    private PhotoMenu mMenu;
 
     private PieRenderer mPieRenderer;
     private ZoomRenderer mZoomRenderer;
@@ -396,17 +395,26 @@ public class PhotoUI implements PieListener,
     }
 
     public void onCameraOpened(Camera.Parameters params,
-        PhotoMenu.PhotoMenuListener listener) {
+            ButtonManager.ButtonCallback cameraCallback,
+            ButtonManager.ButtonCallback hdrCallback) {
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
             mPieRenderer.setPieListener(this);
             mRenderOverlay.addRenderer(mPieRenderer);
         }
 
-        if (mMenu == null) {
-            mMenu = new PhotoMenu(mActivity, listener);
-        }
-        mMenu.initialize();
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        ImageButton flashbutton = buttonManager.getButton(ButtonManager.BUTTON_FLASH,
+            null, R.array.camera_flashmode_icons);
+        flashbutton.setVisibility(View.VISIBLE);
+
+        ImageButton camerabutton = buttonManager.getButton(ButtonManager.BUTTON_CAMERA,
+            cameraCallback, R.array.camera_id_icons);
+        camerabutton.setVisibility(View.VISIBLE);
+
+        ImageButton hdrbutton = buttonManager.getButton(ButtonManager.BUTTON_HDRPLUS,
+            hdrCallback, R.array.pref_camera_hdr_plus_icons);
+        hdrbutton.setVisibility(View.VISIBLE);
 
         if (mZoomRenderer == null) {
             mZoomRenderer = new ZoomRenderer(mActivity);
