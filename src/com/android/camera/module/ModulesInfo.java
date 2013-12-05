@@ -49,8 +49,8 @@ public class ModulesInfo {
         registerPhotoModule(moduleManager);
         moduleManager.setDefaultModuleIndex(MODULE_PHOTO);
         registerVideoModule(moduleManager);
-        registerWideAngleModule(moduleManager);
         if (PhotoSphereHelper.hasLightCycleCapture(context)) {
+            registerWideAngleModule(moduleManager);
             registerPhotoSphereModule(moduleManager);
         }
         if (RefocusHelper.hasRefocusCapture(context)) {
@@ -108,12 +108,12 @@ public class ModulesInfo {
 
             @Override
             public boolean requestAppForCamera() {
-                return false;
+                return true;
             }
 
             @Override
             public ModuleController createModule(AppController app) {
-                return new WideAnglePanoramaModule(app);
+                return PhotoSphereHelper.createWideAnglePanoramaModule(app);
             }
         });
     }
@@ -132,8 +132,7 @@ public class ModulesInfo {
 
             @Override
             public ModuleController createModule(AppController app) {
-                // TODO: remove the type casting.
-                return (ModuleController) PhotoSphereHelper.createPanoramaModule(app);
+                return PhotoSphereHelper.createPanoramaModule(app);
             }
         });
     }
