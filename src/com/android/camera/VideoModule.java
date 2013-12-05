@@ -491,7 +491,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onShutterButtonClick() {
-        if (mUI.collapseCameraControls() || mSwitchingCamera) return;
+        if (mSwitchingCamera) return;
 
         boolean stop = mMediaRecorderRecording;
 
@@ -701,10 +701,8 @@ public class VideoModule extends CameraModule
         if (mMediaRecorderRecording) {
             onStopVideoRecording();
             return true;
-        } else if (mUI.hidePieRenderer()) {
-            return true;
         } else {
-            return mUI.removeTopLevelPopup();
+            return false;
         }
     }
 
@@ -1078,8 +1076,6 @@ public class VideoModule extends CameraModule
         // update mParameters here once.
         mParameters = mCameraDevice.getParameters();
 
-        mUI.enableCameraControls(false);
-
         mMediaRecorderRecording = true;
         mActivity.lockOrientation();
         mRecordingStartTime = SystemClock.uptimeMillis();
@@ -1124,7 +1120,6 @@ public class VideoModule extends CameraModule
             mUI.showReviewImage(bitmap);
         }
         mUI.showReviewControls();
-        mUI.enableCameraControls(false);
         mUI.showTimeLapseUI(false);
     }
 
@@ -1163,9 +1158,6 @@ public class VideoModule extends CameraModule
             }
 
             mUI.showRecordingUI(false);
-            if (!mIsVideoCaptureIntent) {
-                mUI.enableCameraControls(true);
-            }
             // The orientation was fixed during video recording. Now make it
             // reflect the device orientation as video recording is stopped.
             mUI.setOrientationIndicator(0, true);
@@ -1448,8 +1440,6 @@ public class VideoModule extends CameraModule
         mPendingSwitchCameraId = -1;
         mSwitchingCamera = false;
         mPreferenceRead = false;
-
-        mUI.collapseCameraControls();
     }
 
     @Override
@@ -1508,7 +1498,6 @@ public class VideoModule extends CameraModule
 
         closeCamera();
         requestCamera(mCameraId);
-        mUI.collapseCameraControls();
 
         // From onResume
         mZoomValue = 0;
@@ -1585,13 +1574,12 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onPreviewFocusChanged(boolean previewFocused) {
-        mUI.onPreviewFocusChanged(previewFocused);
         forceFlashOff(!previewFocused);
     }
 
     @Override
     public boolean arePreviewControlsVisible() {
-        return mUI.arePreviewControlsVisible();
+        return false;
     }
 
     private final class JpegPictureCallback implements CameraPictureCallback {

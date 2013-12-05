@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -63,7 +62,6 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
@@ -87,7 +85,6 @@ public class PhotoModule
         ModuleController,
         FocusOverlayManager.Listener,
         ShutterButton.OnShutterButtonListener, MediaSaver.QueueListener,
-        OnCountDownFinishedListener,
         SensorEventListener {
 
     private static final String TAG = "CAM_PhotoModule";
@@ -442,8 +439,6 @@ public class PhotoModule
         mPendingSwitchCameraId = -1;
         settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
         mActivity.getCameraProvider().requestCamera(mCameraId);
-
-        mUI.collapseCameraControls();
         mUI.clearFaces();
         if (mFocusManager != null) mFocusManager.removeMessages();
 
@@ -1063,8 +1058,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonFocus(boolean pressed) {
-        if (mPaused || mUI.collapseCameraControls()
-                || (mCameraState == SNAPSHOT_IN_PROGRESS)
+        if (mPaused || (mCameraState == SNAPSHOT_IN_PROGRESS)
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
         // Do not do focus if there is not enough storage.
@@ -1073,18 +1067,13 @@ public class PhotoModule
         if (pressed) {
             mFocusManager.onShutterDown();
         } else {
-            // for countdown mode, we need to postpone the shutter release
-            // i.e. lock the focus during countdown.
-            if (!mUI.isCountingDown()) {
-                mFocusManager.onShutterUp();
-            }
+            mFocusManager.onShutterUp();
         }
     }
 
     @Override
     public void onShutterButtonClick() {
-        if (mPaused || mUI.collapseCameraControls()
-                || (mCameraState == SWITCHING_CAMERA)
+        if (mPaused || (mCameraState == SWITCHING_CAMERA)
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
         // Do not take the picture if there is not enough storage.
@@ -1109,21 +1098,8 @@ public class PhotoModule
             return;
         }
 
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        String timer = settingsManager.get(SettingsManager.SETTING_TIMER);
-        String playSound = settingsManager.get(SettingsManager.SETTING_TIMER_SOUND_EFFECTS);
-        int seconds = Integer.parseInt(timer);
-        // When shutter button is pressed, check whether the previous countdown is
-        // finished. If not, cancel the previous countdown and start a new one.
-        if (mUI.isCountingDown()) {
-            mUI.cancelCountDown();
-        }
-        if (seconds > 0) {
-            mUI.startCountDown(seconds, playSound.equals(SettingsManager.VALUE_ON));
-        } else {
-            mSnapshotOnIdle = false;
-            mFocusManager.doSnap();
-        }
+        mSnapshotOnIdle = false;
+        mFocusManager.doSnap();
     }
 
     private void onResumeTasks() {
@@ -1782,13 +1758,6 @@ public class PhotoModule
         mAwbLockSupported = CameraUtil.isAutoWhiteBalanceLockSupported(mInitialParams);
         mContinuousFocusSupported = mInitialParams.getSupportedFocusModes().contains(
                 CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
-    }
-
-    @Override
-    public void onCountDownFinished() {
-        mSnapshotOnIdle = false;
-        mFocusManager.doSnap();
-        mFocusManager.onShutterUp();
     }
 
     // TODO: Remove this
