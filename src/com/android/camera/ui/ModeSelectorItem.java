@@ -19,12 +19,14 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.camera.util.ApiHelper;
 import com.android.camera2.R;
 
 /**
@@ -66,6 +68,15 @@ class ModeSelectorItem extends FrameLayout {
     public void onFinishInflate() {
         mIcon = (ImageView) findViewById(R.id.selector_icon);
         mText = (TextView) findViewById(R.id.selector_text);
+        Typeface typeface;
+        if (ApiHelper.HAS_ROBOTO_LIGHT_FONT) {
+            typeface = Typeface.create("sans-serif-light", Typeface.NORMAL);
+        } else {
+            // Load roboto_light typeface from assets.
+            typeface = Typeface.createFromAsset(getResources().getAssets(),
+                    "Roboto-Light.ttf");
+        }
+        mText.setTypeface(typeface);
         mMinVisibleWidth = getResources()
                 .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
     }
