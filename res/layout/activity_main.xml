@@ -22,6 +22,8 @@
     android:layout_height="match_parent"
     android:background="@null">
 
+    <include layout="@layout/camera" />
+
     <include layout="@layout/camera_filmstrip" />
     <com.android.camera.ui.ModeTransitionView
         android:id="@+id/mode_transition_view"

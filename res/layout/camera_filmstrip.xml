@@ -15,22 +15,24 @@
      limitations under the License.
 -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_layout_root"
+<com.android.camera.ui.FilmstripLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/filmstrip_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:visibility="invisible">
 
     <com.android.camera.ui.FilmstripView
         android:id="@+id/filmstrip_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/filmstrip_background"/>
+
+    <include layout="@layout/filmstrip_bottom_controls" />
 
     <FrameLayout
         android:id="@+id/camera_above_filmstrip_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
-        <include layout="@layout/filmstrip_bottom_controls" />
 
         <LinearLayout
             android:id="@+id/pano_stitching_progress_panel"
@@ -67,5 +69,4 @@
                 android:layout_gravity="bottom|center_horizontal" />
         </LinearLayout>
     </FrameLayout>
-
-</merge>
+</com.android.camera.ui.FilmstripLayout>

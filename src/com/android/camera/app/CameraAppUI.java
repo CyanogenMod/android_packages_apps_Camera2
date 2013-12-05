@@ -31,6 +31,7 @@ import android.widget.ImageView;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.ui.CameraControls;
+import com.android.camera.ui.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
@@ -73,7 +74,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     private final ModeTransitionView mModeTransitionView;
     private final MainActivityLayout mAppRootView;
     private final ModeListView mModeListView;
-    private final View mFilmStripView;
+    private final View mFilmstripView;
+    private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
     private CameraControls mCameraControls;
     private RenderOverlay mRenderOverlay;
@@ -165,7 +167,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         mIsCaptureIntent = isCaptureIntent;
 
         mAppRootView = appRootView;
-        mFilmStripView = appRootView.findViewById(R.id.filmstrip_view);
+        mFilmstripView = appRootView.findViewById(R.id.filmstrip_view);
+        mFilmstripLayout = (FilmstripLayout) appRootView.findViewById(R.id.filmstrip_layout);
         mCameraRootView = cameraRoot;
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
@@ -215,13 +218,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
                 }
             }
         } else if (swipeState == SWIPE_LEFT) {
-            // Pass the touch sequence to filmstrip.
-            mAppRootView.redirectTouchEventsTo(mFilmStripView);
+            // Pass the touch sequence to filmstrip layout.
+            mAppRootView.redirectTouchEventsTo(mFilmstripLayout);
 
         } else if (swipeState == SWIPE_RIGHT) {
             // Pass the touch to mode switcher
             mAppRootView.redirectTouchEventsTo(mModeListView);
         }
+    }
+
+    /**
+     * Called when the back key is pressed.
+     *
+     * @return Whether the UI responded to the key event.
+     */
+    public boolean onBackPressed() {
+        return mFilmstripLayout.onBackPressed();
     }
 
     /**

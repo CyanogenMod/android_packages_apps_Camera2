@@ -32,6 +32,7 @@ public class MainActivityLayout extends FrameLayout {
     private static final int SWIPE_TIME_OUT = 500;
 
     private ModeListView mModeList;
+    private FilmstripLayout mFilmstripLayout;
     private boolean mCheckToIntercept;
     private MotionEvent mDown;
     private final int mSlop;
@@ -76,6 +77,10 @@ public class MainActivityLayout extends FrameLayout {
                     mTouchReceiver = mModeList;
                     onTouchEvent(mDown);
                     return true;
+                } else if (Math.abs(deltaX) < Math.abs(deltaY) * 2) {
+                    mTouchReceiver = mFilmstripLayout;
+                    onTouchEvent(mDown);
+                    return true;
                 }
             }
         }
@@ -86,7 +91,7 @@ public class MainActivityLayout extends FrameLayout {
     public boolean onTouchEvent(MotionEvent ev) {
         if (mTouchReceiver != null) {
             mTouchReceiver.setVisibility(VISIBLE);
-            return mTouchReceiver.onTouchEvent(ev);
+            return mTouchReceiver.dispatchTouchEvent(ev);
         }
         return false;
     }
@@ -94,6 +99,7 @@ public class MainActivityLayout extends FrameLayout {
     @Override
     public void onFinishInflate() {
         mModeList = (ModeListView) findViewById(R.id.mode_list_layout);
+        mFilmstripLayout = (FilmstripLayout) findViewById(R.id.filmstrip_layout);
     }
 
     public void redirectTouchEventsTo(View touchReceiver) {
