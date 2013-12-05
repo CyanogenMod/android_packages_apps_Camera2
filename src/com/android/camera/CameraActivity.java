@@ -64,6 +64,7 @@ import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppManagerFactory;
+import com.android.camera.app.PlaceholderManager;
 import com.android.camera.app.PanoramaStitchingManager;
 import com.android.camera.crop.CropActivity;
 import com.android.camera.data.CameraDataAdapter;
@@ -83,15 +84,20 @@ import com.android.camera.ui.FilmStripView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
+import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+
+import java.io.File;
 
 import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
 public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener,
-        ActionBar.OnMenuVisibilityListener {
+        ActionBar.OnMenuVisibilityListener,
+        ShareActionProvider.OnShareTargetSelectedListener {
 
     private static final String TAG = "CAM_Activity";
 
@@ -143,6 +149,7 @@ public class CameraActivity extends Activity
     private LocalDataAdapter mWrappedDataAdapter;
 
     private PanoramaStitchingManager mPanoramaManager;
+    private PlaceholderManager mPlaceholderManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
     private FrameLayout mAboveFilmstripControlLayout;
@@ -225,18 +232,27 @@ public class CameraActivity extends Activity
             new CameraOpenErrorCallback() {
                 @Override
                 public void onCameraDisabled(int cameraId) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_OPEN_FAIL, "security");
+
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.camera_disabled);
                 }
 
                 @Override
                 public void onDeviceOpenFailure(int cameraId) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_OPEN_FAIL, "open");
+
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.cannot_connect_camera);
                 }
 
                 @Override
                 public void onReconnectionFailure(CameraManager mgr) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_OPEN_FAIL, "reconnect");
+
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.cannot_connect_camera);
                 }
@@ -289,15 +305,30 @@ public class CameraActivity extends Activity
         sFirstStartAfterScreenOn = false;
     }
 
+    private String fileNameFromDataID(int dataID) {
+        final LocalData localData = mDataAdapter.getLocalData(dataID);
+
+        File localFile = new File(localData.getPath());
+        return localFile.getName();
+    }
+
     private FilmStripView.Listener mFilmStripListener =
             new FilmStripView.Listener() {
                 @Override
                 public void onDataPromoted(int dataID) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_DELETE, "promoted", 0,
+                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)));
+
                     removeData(dataID);
                 }
 
                 @Override
                 public void onDataDemoted(int dataID) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_DELETE, "demoted", 0,
+                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)));
+
                     removeData(dataID);
                 }
 
@@ -336,6 +367,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onReload() {
                     setPreviewControlsVisibility(true);
+                    CameraActivity.this.setSystemBarsVisibility(false);
                 }
 
                 @Override
@@ -347,6 +379,7 @@ public class CameraActivity extends Activity
 
                     if(!arePreviewControlsVisible()) {
                         setPreviewControlsVisibility(true);
+                        CameraActivity.this.setSystemBarsVisibility(false);
                     }
                 }
 
@@ -443,6 +476,9 @@ public class CameraActivity extends Activity
             };
 
     public void gotoGallery() {
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_FILMSTRIP,
+                "thumbnailTap");
+
         mFilmStripView.getController().goToNextItem();
     }
 
@@ -462,13 +498,17 @@ public class CameraActivity extends Activity
      */
     private void setSystemBarsVisibility(boolean visible, boolean hideLater) {
         mMainHandler.removeMessages(HIDE_ACTION_BAR);
-        boolean currentlyVisible = mActionBar.isShowing();
 
-        if (visible != currentlyVisible) {
-            int visibility = DEFAULT_SYSTEM_UI_VISIBILITY | (visible ? View.SYSTEM_UI_FLAG_VISIBLE
-                    : View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
-            mAboveFilmstripControlLayout.setSystemUiVisibility(visibility);
+        int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
+        int newSystemUIVisibility = DEFAULT_SYSTEM_UI_VISIBILITY |
+                (visible ? View.SYSTEM_UI_FLAG_VISIBLE :
+                        View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        if (newSystemUIVisibility != currentSystemUIVisibility) {
+            mAboveFilmstripControlLayout.setSystemUiVisibility(newSystemUIVisibility);
+        }
 
+        boolean currentActionBarVisibility = mActionBar.isShowing();
+        if (visible != currentActionBarVisibility) {
             if (visible) {
                 mActionBar.show();
             } else {
@@ -579,6 +619,18 @@ public class CameraActivity extends Activity
         }
     }
 
+    @Override
+    public boolean onShareTargetSelected(ShareActionProvider shareActionProvider, Intent intent) {
+        int currentDataId = mFilmStripView.getCurrentId();
+        if (currentDataId < 0) {
+            return false;
+        }
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_SHARE,
+                intent.getComponent().getPackageName(), 0,
+                UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
+        return true;
+    }
+
     /**
      * According to the data type, make the menu items for supported operations
      * visible.
@@ -687,6 +739,41 @@ public class CameraActivity extends Activity
             item.setVisible(visible);
     }
 
+    private ImageTaskManager.TaskListener mPlaceholderListener =
+            new ImageTaskManager.TaskListener() {
+
+                @Override
+                public void onTaskQueued(String filePath, final Uri imageUri) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyNewMedia(imageUri);
+                            int dataID = mDataAdapter.findDataByContentUri(imageUri);
+                            if (dataID != -1) {
+                                LocalData d = mDataAdapter.getLocalData(dataID);
+                                InProgressDataWrapper newData = new InProgressDataWrapper(d, true);
+                                mDataAdapter.updateData(dataID, newData);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onTaskDone(String filePath, final Uri imageUri) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDataAdapter.refresh(getContentResolver(), imageUri);
+                        }
+                    });
+                }
+
+                @Override
+                public void onTaskProgress(String filePath, Uri imageUri, int progress) {
+                    // Do nothing
+                }
+    };
+
     private ImageTaskManager.TaskListener mStitchingListener =
             new ImageTaskManager.TaskListener() {
                 @Override
@@ -760,6 +847,8 @@ public class CameraActivity extends Activity
             mDataAdapter.addNewPhoto(cr, uri);
         } else if (mimeType.startsWith("application/stitching-preview")) {
             mDataAdapter.addNewPhoto(cr, uri);
+        } else if (mimeType.startsWith(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
+            mDataAdapter.addNewPhoto(cr, uri);
         } else {
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
                     + mimeType + ", uri:" + uri);
@@ -812,6 +901,9 @@ public class CameraActivity extends Activity
             mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
         }
 
+        mStandardShareActionProvider.setOnShareTargetSelectedListener(this);
+        mPanoramaShareActionProvider.setOnShareTargetSelectedListener(this);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -828,18 +920,22 @@ public class CameraActivity extends Activity
             case android.R.id.home:
                 // ActionBar's Up/Home button was clicked
                 try {
-                    if (!CameraUtil.launchGallery(CameraActivity.this)) {
-                        mFilmStripView.getController().goToFirstItem();
-                    }
+                    startActivity(IntentHelper.getGalleryIntent(this));
                     return true;
                 } catch (ActivityNotFoundException e) {
-                    Log.w(TAG, "No activity found to handle APP_GALLERY category!");
+                    Log.w(TAG, "Failed to launch gallery activity, closing");
                     finish();
                 }
             case R.id.action_delete:
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                        UsageStatistics.ACTION_DELETE, null, 0,
+                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                 removeData(currentDataId);
                 return true;
             case R.id.action_edit:
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                        UsageStatistics.ACTION_EDIT, null, 0,
+                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                 launchEditor(localData);
                 return true;
             case R.id.action_trim: {
@@ -860,6 +956,9 @@ public class CameraActivity extends Activity
                 localData.rotate90Degrees(this, mDataAdapter, currentDataId, true);
                 return true;
             case R.id.action_crop: {
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                        UsageStatistics.ACTION_CROP, null, 0,
+                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                 Intent intent = new Intent(CropActivity.CROP_ACTION);
                 intent.setClass(this, CropActivity.class);
                 intent.setDataAndType(localData.getContentUri(), localData.getMimeType())
@@ -965,7 +1064,10 @@ public class CameraActivity extends Activity
         this.setSystemBarsVisibility(false);
         mPanoramaManager = AppManagerFactory.getInstance(this)
                 .getPanoramaStitchingManager();
+        mPlaceholderManager = AppManagerFactory.getInstance(this)
+                .getGcamProcessingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
+        mPlaceholderManager.addTaskListener(mPlaceholderListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mCameraModuleRootView = rootLayout.findViewById(R.id.camera_app_root);
@@ -994,8 +1096,14 @@ public class CameraActivity extends Activity
             moduleIndex = ModuleSwitcher.VIDEO_MODULE_INDEX;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
-                        .getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
+                        .getAction())) {
+            moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, -1)
+                        == ModuleSwitcher.GCAM_MODULE_INDEX && GcamHelper.hasGcamCapture()) {
+                moduleIndex = ModuleSwitcher.GCAM_MODULE_INDEX;
+            }
+        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
             moduleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
         } else {
@@ -1027,7 +1135,13 @@ public class CameraActivity extends Activity
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CameraUtil.launchGallery(CameraActivity.this);
+                    try {
+                        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                                UsageStatistics.ACTION_GALLERY, null);
+                        startActivity(IntentHelper.getGalleryIntent(CameraActivity.this));
+                    } catch (ActivityNotFoundException e) {
+                        Log.w(TAG, "Failed to launch gallery activity, closing");
+                    }
                     finish();
                 }
             });
@@ -1120,6 +1234,10 @@ public class CameraActivity extends Activity
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
             mAutoRotateScreen = true;
         }
+
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
+
         mOrientationListener.enable();
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();
@@ -1343,8 +1461,12 @@ public class CameraActivity extends Activity
         Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(Intent.createChooser(intent, null),
-                REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        try {
+            startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        } catch (ActivityNotFoundException e) {
+            startActivityForResult(Intent.createChooser(intent, null),
+                    REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        }
     }
 
     /**
@@ -1381,7 +1503,10 @@ public class CameraActivity extends Activity
         }
         hideUndoDeletionBar(false);
         mDataAdapter.executeDeletion(CameraActivity.this);
-        updateActionBarMenu(mFilmStripView.getCurrentId());
+
+        int currentId = mFilmStripView.getCurrentId();
+        updateActionBarMenu(currentId);
+        mFilmStripListener.onCurrentDataCentered(currentId);
     }
 
     public void showUndoDeletionBar() {
@@ -1462,6 +1587,7 @@ public class CameraActivity extends Activity
 
     @Override
     public void onShowSwitcherPopup() {
+        mCurrentModule.onShowSwitcherPopup();
     }
 
     /**

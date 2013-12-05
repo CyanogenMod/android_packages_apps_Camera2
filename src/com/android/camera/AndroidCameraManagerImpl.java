@@ -329,8 +329,14 @@ class AndroidCameraManagerImpl implements CameraManager {
                     }
                     mCamera = null;
                 } else if (mCamera == null) {
-                  Log.w(TAG, "Cannot handle message, mCamera is null.");
-                  return;
+                    if (msg.what == OPEN_CAMERA) {
+                        if (msg.obj != null) {
+                            ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                        }
+                    } else {
+                        Log.w(TAG, "Cannot handle message, mCamera is null.");
+                    }
+                    return;
                 }
                 throw e;
             }
@@ -814,7 +820,10 @@ class AndroidCameraManagerImpl implements CameraManager {
 
         private CameraOpenErrorCallbackForward(
                 Handler h, CameraOpenErrorCallback cb) {
-            mHandler = h;
+            // Given that we are using the main thread handler, we can create it
+            // here instead of holding onto the PhotoModule objects. In this
+            // way, we can avoid memory leak.
+            mHandler = new Handler(Looper.getMainLooper());
             mCallback = cb;
         }
 

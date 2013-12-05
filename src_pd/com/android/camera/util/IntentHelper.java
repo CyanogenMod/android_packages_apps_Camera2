@@ -32,7 +32,6 @@ public class IntentHelper {
 
     public static Intent getVideoPlayerIntent(Context context, Uri uri) {
         return new Intent(Intent.ACTION_VIEW)
-            .setPackage(GALLERY_PACKAGE_NAME)
             .setDataAndType(uri, "video/*");
     }
 }

@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.graphics.Rect;
 import android.view.View;
 
 import com.android.camera.ShutterButton.OnShutterButtonListener;
@@ -54,7 +55,7 @@ public interface PhotoController extends OnShutterButtonListener {
 
     public void onCountDownFinished();
 
-    public void onScreenSizeChanged(int width, int height);
+    public void onPreviewRectChanged(Rect previewRect);
 
     public void updateCameraOrientation();
 
