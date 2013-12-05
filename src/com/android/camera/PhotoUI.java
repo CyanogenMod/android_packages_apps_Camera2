@@ -23,6 +23,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
@@ -121,6 +122,8 @@ public class PhotoUI implements PieListener,
 
     private boolean mOrientationResize;
     private boolean mPrevOrientationResize;
+    private View mPreviewCover;
+    private final Object mSurfaceTextureLock = new Object();
 
     public interface SurfaceTextureSizeChangedListener {
         public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
@@ -162,11 +165,11 @@ public class PhotoUI implements PieListener,
             Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
             if ((mOrientation != 0 || mMirror) && (bitmap != null)) {
                 Matrix m = new Matrix();
-                m.preRotate(mOrientation);
                 if (mMirror) {
                     // Flip horizontally
                     m.setScale(-1f, 1f);
                 }
+                m.preRotate(mOrientation);
                 return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
                         false);
             }
@@ -205,6 +208,7 @@ public class PhotoUI implements PieListener,
                 (ViewGroup) mRootView, true);
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
+        mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
@@ -254,6 +258,24 @@ public class PhotoUI implements PieListener,
         mSurfaceTextureSizeListener = listener;
     }
 
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        if (aspectRatio <= 0) {
+            Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
+            return;
+        }
+        if (aspectRatio < 1f) {
+            aspectRatio = 1f / aspectRatio;
+        }
+
+        if (mAspectRatio != aspectRatio) {
+            mAspectRatio = aspectRatio;
+            // Update transform matrix with the new aspect ratio.
+            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
+                setTransformMatrix(mPreviewWidth, mPreviewHeight);
+            }
+        }
+    }
+
     private void setTransformMatrix(int width, int height) {
         mMatrix = mTextureView.getTransform(mMatrix);
         float scaleX = 1f, scaleY = 1f;
@@ -293,17 +315,28 @@ public class PhotoUI implements PieListener,
         scaleY = scaledTextureHeight / height;
         mMatrix.setScale(scaleX, scaleY, (float) width / 2, (float) height / 2);
         mTextureView.setTransform(mMatrix);
+
+        // Calculate the new preview rectangle.
+        RectF previewRect = new RectF(0, 0, width, height);
+        mMatrix.mapRect(previewRect);
+        mController.onPreviewRectChanged(CameraUtil.rectFToRect(previewRect));
+    }
+
+    protected Object getSurfaceTextureLock() {
+        return mSurfaceTextureLock;
     }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        Log.v(TAG, "SurfaceTexture ready.");
-        mSurfaceTexture = surface;
-        mController.onPreviewUIReady();
-        // Workaround for b/11168275, see b/10981460 for more details
-        if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-            // Re-apply transform matrix for new surface texture
-            setTransformMatrix(mPreviewWidth, mPreviewHeight);
+        synchronized (mSurfaceTextureLock) {
+            Log.v(TAG, "SurfaceTexture ready.");
+            mSurfaceTexture = surface;
+            mController.onPreviewUIReady();
+            // Workaround for b/11168275, see b/10981460 for more details
+            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
+                // Re-apply transform matrix for new surface texture
+                setTransformMatrix(mPreviewWidth, mPreviewHeight);
+            }
         }
     }
 
@@ -314,15 +347,20 @@ public class PhotoUI implements PieListener,
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        mSurfaceTexture = null;
-        mController.onPreviewUIDestroyed();
-        Log.w(TAG, "SurfaceTexture destroyed");
-        return true;
+        synchronized (mSurfaceTextureLock) {
+            mSurfaceTexture = null;
+            mController.onPreviewUIDestroyed();
+            Log.w(TAG, "SurfaceTexture destroyed");
+            return true;
+        }
     }
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Do nothing.
+        // Make sure preview cover is hidden if preview data is available.
+        if (mPreviewCover.getVisibility() != View.GONE) {
+            mPreviewCover.setVisibility(View.GONE);
+        }
     }
 
     public View getRootView() {
@@ -752,6 +790,8 @@ public class PhotoUI implements PieListener,
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }
+        // Close module selection menu when pie menu is opened.
+        mSwitcher.closePopup();
     }
 
     @Override
@@ -800,6 +840,10 @@ public class PhotoUI implements PieListener,
             mNotSelectableToast = Toast.makeText(mActivity, str, Toast.LENGTH_SHORT);
         }
         mNotSelectableToast.show();
+    }
+
+    public void showPreviewCover() {
+        mPreviewCover.setVisibility(View.VISIBLE);
     }
 
     public void onPause() {
