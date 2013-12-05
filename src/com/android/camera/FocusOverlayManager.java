@@ -29,7 +29,6 @@ import android.os.Message;
 import android.util.Log;
 
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsManager.FocusModeSetting;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 

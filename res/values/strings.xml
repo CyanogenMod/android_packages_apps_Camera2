@@ -228,6 +228,8 @@
     <string name="setting_off_value" translatable="false">off</string>
     <!-- The value of a camera preference indicating the setting is on. -->
     <string name="setting_on_value" translatable="false">on</string>
+    <!-- The value of a camera preference indicating the setting is none. -->
+    <string name="setting_none_value" translatable="false">none</string>
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
@@ -706,4 +708,15 @@ CHAR LIMIT=NONE] -->
     <!-- TODO: don't ship with these -->
     <string name="focus_ring_toggle" translatable="false">FR</string>
     <string name="immediate_capture_toggle" translatable="false">IMM</string>
+
+    <!-- camera jpeg quality settings -->
+    <string name="pref_camera_jpeg_quality_normal" translatable="false">normal</string>
+    <string name="pref_camera_jpeg_quality_fine" translatable="false">fine</string>
+    <string name="pref_camera_jpeg_quality_superfine" translatable="false">superfine</string>
+
+    <!-- Default for camera id setting -->
+    <string name="pref_camera_id_default" translatable="false">0</string>
+
+    <!-- Default for camera startup module index -->
+    <string name="pref_camera_startup_index_default" translatable="false">0</string>
  </resources>

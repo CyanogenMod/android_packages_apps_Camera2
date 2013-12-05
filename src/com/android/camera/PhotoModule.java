@@ -86,7 +86,7 @@ public class PhotoModule
         implements PhotoController,
         ModuleController,
         FocusOverlayManager.Listener,
-        CameraPreference.OnPreferenceChangedListener,
+        PhotoMenu.PhotoMenuListener,
         ShutterButton.OnShutterButtonListener, MediaSaver.QueueListener,
         OnCountDownFinishedListener,
         SensorEventListener {
@@ -240,8 +240,6 @@ public class PhotoModule
     private String mSceneMode;
 
     private final Handler mHandler = new MainHandler();
-
-    private PreferenceGroup mPreferenceGroup;
 
     private boolean mQuickCapture;
     private SensorManager mSensorManager;
@@ -461,13 +459,11 @@ public class PhotoModule
 
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        mPreferenceGroup = loadPreferenceGroup();
-
-        // TODO: remove dependency on PreferenceGroup
-        mUI.onCameraOpened(mPreferenceGroup, mParameters, this);
+        mUI.onCameraOpened(mParameters, this);
         if (mIsImageCaptureIntent) {
-            mUI.overrideSettings(CameraSettings.KEY_CAMERA_HDR_PLUS,
-                    mActivity.getString(R.string.setting_off_value));
+            // Set hdr plus to default: off.
+            SettingsManager settingsManager = mActivity.getSettingsManager();
+            settingsManager.setDefault(SettingsManager.SETTING_CAMERA_HDR_PLUS);
         }
         updateSceneMode();
         showTapToFocusToastIfNeeded();
@@ -898,16 +894,10 @@ public class PhotoModule
 
     private void overrideCameraSettings(final String flashMode,
                                         final String whiteBalance, final String focusMode) {
-        mUI.overrideSettings(
-                CameraSettings.KEY_FLASH_MODE, flashMode,
-                CameraSettings.KEY_WHITE_BALANCE, whiteBalance,
-                CameraSettings.KEY_FOCUS_MODE, focusMode);
-    }
-
-    private PreferenceGroup loadPreferenceGroup() {
-        CameraSettings settings = new CameraSettings(mActivity, mInitialParams,
-            mCameraId, CameraHolder.instance().getCameraInfo());
-        return settings.getPreferenceGroup(R.xml.camera_preferences);
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.set(SettingsManager.SETTING_FLASH_MODE, flashMode);
+        settingsManager.set(SettingsManager.SETTING_WHITE_BALANCE, whiteBalance);
+        settingsManager.set(SettingsManager.SETTING_FOCUS_MODE, focusMode);
     }
 
     @Override
@@ -1741,7 +1731,6 @@ public class PhotoModule
         }
     }
 
-    @Override
     public void onSharedPreferenceChanged() {
         // ignore the events after "onPause()"
         if (mPaused) return;
@@ -1766,9 +1755,8 @@ public class PhotoModule
     }
 
     @Override
-    public void onOverriddenPreferencesClicked() {
-        if (mPaused) return;
-        mUI.showPreferencesToast();
+    public void onHdrPickerClicked() {
+        mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
     }
 
     private void showTapToFocusToast() {
@@ -1889,13 +1877,4 @@ public class PhotoModule
             }
         }
     }
-
-/* Below is no longer needed, except to get rid of compile error
- * TODO: Remove these
- */
-
-    // TODO: Delete this function after old camera code is removed
-    @Override
-    public void onRestorePreferencesClicked() {}
-
 }
