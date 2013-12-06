@@ -678,6 +678,16 @@ public class CameraUtil {
         rect.bottom = Math.round(rectF.bottom);
     }
 
+    public static Rect rectFToRect(RectF rectF) {
+        Rect rect = new Rect();
+        rectFToRect(rectF, rect);
+        return rect;
+    }
+
+    public static RectF rectToRectF(Rect r) {
+        return new RectF(r.left, r.top, r.right, r.bottom);
+    }
+
     public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
             int viewWidth, int viewHeight) {
         // Need mirror for front camera.
@@ -688,6 +698,21 @@ public class CameraUtil {
         // UI coordinates range from (0, 0) to (width, height).
         matrix.postScale(viewWidth / 2000f, viewHeight / 2000f);
         matrix.postTranslate(viewWidth / 2f, viewHeight / 2f);
+    }
+
+    public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
+                                     Rect previewRect) {
+        // Need mirror for front camera.
+        matrix.setScale(mirror ? -1 : 1, 1);
+        // This is the value for android.hardware.Camera.setDisplayOrientation.
+        matrix.postRotate(displayOrientation);
+
+        // Camera driver coordinates range from (-1000, -1000) to (1000, 1000).
+        // We need to map camera driver coordinates to preview rect coordinates
+        Matrix mapping = new Matrix();
+        mapping.setRectToRect(new RectF(-1000, -1000, 1000, 1000), rectToRectF(previewRect),
+                Matrix.ScaleToFit.FILL);
+        matrix.setConcat(mapping, matrix);
     }
 
     public static String createJpegName(long dateTaken) {
@@ -806,7 +831,10 @@ public class CameraUtil {
      *         the right range.
      */
     public static int[] getPhotoPreviewFpsRange(Parameters params) {
-        List<int[]> frameRates = params.getSupportedPreviewFpsRange();
+        return getPhotoPreviewFpsRange(params.getSupportedPreviewFpsRange());
+    }
+
+    public static int[] getPhotoPreviewFpsRange(List<int[]> frameRates) {
         if (frameRates.size() == 0) {
             Log.e(TAG, "No suppoted frame rates returned!");
             return null;
@@ -888,6 +916,8 @@ public class CameraUtil {
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
             boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                    UsageStatistics.ACTION_PLAY_VIDEO, null);
             if (!isSecureCamera) {
                 Intent intent = IntentHelper.getVideoPlayerIntent(activity, uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
@@ -951,21 +981,5 @@ public class CameraUtil {
             ret = ret + "\t" + elems[i].toString() + '\n';
         }
         return ret;
-    }
-
-    /**
-     * Launches apps supporting action {@link Intent.ACTION_MAIN} of category
-     * {@link Intent.CATEGORY_APP_GALLERY}. Note that
-     * {@link Intent.CATEGORY_APP_GALLERY} is only available on API level 15+.
-     *
-     * @param ctx The {@link android.content.Context} to launch the app.
-     * @return {@code true} on success.
-     */
-    public static boolean launchGallery(Context ctx) {
-        if (ApiHelper.HAS_APP_GALLERY) {
-            ctx.startActivity(IntentHelper.getGalleryIntent(ctx));
-            return true;
-        }
-        return false;
     }
 }

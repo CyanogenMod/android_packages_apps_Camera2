@@ -27,6 +27,7 @@ import android.util.Log;
 import android.util.TypedValue;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 /**
@@ -159,6 +160,7 @@ public class ListPreference extends CameraPreference {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putString(mKey, value);
         editor.apply();
+        UsageStatistics.onEvent("CameraSettingsChange", value, mKey);
     }
 
     @Override

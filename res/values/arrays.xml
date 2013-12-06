@@ -486,8 +486,8 @@
     </string-array>
 
     <string-array name="pref_camera_hdr_plus_labels" translatable="false">
-        <item>@string/pref_camera_scenemode_entry_hdr_plus</item>
-        <item>@string/pref_camera_scenemode_entry_hdr_plus</item>
+        <item>@string/pref_camera_scenemode_entry_turn_hdr_plus_on</item>
+        <item>@string/pref_camera_scenemode_entry_turn_hdr_plus_off</item>
     </string-array>
 
     <string-array name="pref_camera_hdr_plus_icons" translatable="false">
@@ -507,8 +507,8 @@
     </string-array>
 
     <string-array name="pref_camera_hdr_labels" translatable="false">
-        <item>@string/pref_camera_hdr_label</item>
-        <item>@string/pref_camera_hdr_label</item>
+        <item>@string/pref_camera_scenemode_entry_turn_hdr_on</item>
+        <item>@string/pref_camera_scenemode_entry_turn_hdr_off</item>
     </string-array>
 
     <string-array name="pref_camera_hdr_icons" translatable="false">
