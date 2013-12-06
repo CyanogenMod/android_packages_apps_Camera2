@@ -1084,7 +1084,8 @@ public class PhotoModule
                     }
                 });
             }
-            if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
+            if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL &&
+                mCameraState != LONGSHOT) {
                 cancelAutoFocus();
             }
         }
