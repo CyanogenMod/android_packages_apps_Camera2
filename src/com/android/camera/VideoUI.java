@@ -35,6 +35,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -71,7 +72,6 @@ public class VideoUI implements PieRenderer.PieListener,
     private View mTimeLapseLabel;
     private RenderOverlay mRenderOverlay;
     private PieRenderer mPieRenderer;
-    private VideoMenu mVideoMenu;
     private SettingsPopup mPopup;
     private ZoomRenderer mZoomRenderer;
     private RotateLayout mRecordingTimeRect;
@@ -394,9 +394,19 @@ public class VideoUI implements PieRenderer.PieListener,
         setTransformMatrix(mPreviewWidth, mPreviewHeight);
     }
 
-    public void onCameraOpened(VideoMenu.VideoMenuListener listener) {
-        mVideoMenu = new VideoMenu(mActivity, listener);
-        mVideoMenu.initialize();
+    public void onCameraOpened(ButtonManager.ButtonCallback cameraCallback) {
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        ImageButton flashbutton = buttonManager.getButton(ButtonManager.BUTTON_FLASH,
+            null, R.array.video_flashmode_icons);
+        flashbutton.setVisibility(View.VISIBLE);
+
+        ImageButton camerabutton = buttonManager.getButton(ButtonManager.BUTTON_CAMERA,
+            cameraCallback, R.array.camera_id_icons);
+        camerabutton.setVisibility(View.VISIBLE);
+
+        ImageButton hdrbutton = buttonManager.getButton(ButtonManager.BUTTON_HDRPLUS,
+            null, 0);
+        hdrbutton.setVisibility(View.INVISIBLE);
     }
 
     private void initializeOverlay() {

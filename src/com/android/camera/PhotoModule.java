@@ -86,7 +86,6 @@ public class PhotoModule
         implements PhotoController,
         ModuleController,
         FocusOverlayManager.Listener,
-        PhotoMenu.PhotoMenuListener,
         ShutterButton.OnShutterButtonListener, MediaSaver.QueueListener,
         OnCountDownFinishedListener,
         SensorEventListener {
@@ -457,9 +456,34 @@ public class PhotoModule
         mHandler.sendEmptyMessage(MSG_SWITCH_CAMERA_START_ANIMATION);
     }
 
+    private ButtonManager.ButtonCallback mCameraButtonCallback =
+        new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                if (mPaused || mPendingSwitchCameraId != -1) {
+                    return;
+                }
+                mPendingSwitchCameraId = state;
+
+                Log.v(TAG, "Start to switch camera. cameraId=" + state);
+                // We need to keep a preview frame for the animation before
+                // releasing the camera. This will trigger onPreviewTextureCopied.
+                //TODO: Need to animate the camera switch
+                switchCamera();
+            }
+        };
+
+    private ButtonManager.ButtonCallback mHdrPlusButtonCallback =
+        new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+            }
+        };
+
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        mUI.onCameraOpened(mParameters, this);
+        mUI.onCameraOpened(mParameters, mCameraButtonCallback, mHdrPlusButtonCallback);
         if (mIsImageCaptureIntent) {
             // Set hdr plus to default: off.
             SettingsManager settingsManager = mActivity.getSettingsManager();
@@ -1739,24 +1763,6 @@ public class PhotoModule
         settingsController.syncLocationManager();
 
         setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-    }
-
-    @Override
-    public void onCameraPickerClicked(int cameraId) {
-        if (mPaused || mPendingSwitchCameraId != -1) return;
-
-        mPendingSwitchCameraId = cameraId;
-
-        Log.v(TAG, "Start to switch camera. cameraId=" + cameraId);
-        // We need to keep a preview frame for the animation before
-        // releasing the camera. This will trigger onPreviewTextureCopied.
-        //TODO: Need to animate the camera switch
-        switchCamera();
-    }
-
-    @Override
-    public void onHdrPickerClicked() {
-        mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
     }
 
     private void showTapToFocusToast() {

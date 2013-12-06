@@ -1644,6 +1644,10 @@ public class CameraActivity extends Activity
         return mSettingsController;
     }
 
+    public ButtonManager getButtonManager() {
+        return ButtonManager.getInstance(this);
+    }
+
     /**
      * Creates an AlertDialog appropriate for choosing whether to enable location
      * on the first run of the app.
