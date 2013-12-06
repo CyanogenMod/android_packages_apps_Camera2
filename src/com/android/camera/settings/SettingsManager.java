@@ -662,6 +662,17 @@ public class SettingsManager {
     }
 
     // Utilities.
+
+    /**
+     * Returns whether the camera has been set to back facing
+     * in settings.
+     */
+    public boolean isCameraBackFacing() {
+        int cameraFacingIndex = getStringValueIndex(SETTING_CAMERA_ID);
+        String backFacingIndex = mContext.getString(R.string.pref_camera_id_index_back);
+        return (cameraFacingIndex == Integer.parseInt(backFacingIndex));
+    }
+
     //TODO: refactor this into a separate utils module.
 
     /**

@@ -19,12 +19,14 @@ package com.android.camera;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.android.camera.settings.SettingsManager;
 import com.android.camera2.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A  class for generating pre-initialized
@@ -32,91 +34,94 @@ import com.android.camera2.R;
  */
 public class ButtonManager {
 
-    /**
-     * Get a new manager instance. Modules should not share
-     * a button manager instance because modules reference
-     * different button instances.
-     */
-    public static ButtonManager getInstance(CameraActivity activity) {
-        return new ButtonManager(activity);
-    }
-
     public static final int BUTTON_FLASH = 0;
     public static final int BUTTON_CAMERA = 1;
     public static final int BUTTON_HDRPLUS = 2;
 
-    /** A private store of uninitialized buttons. */
-    private static SparseArray<MultiToggleImageButton> mButtonCache;
+    /** A reference to the activity for finding button views on demand. */
+    private CameraActivity mActivity;
     /** A reference to the application's settings manager. */
     private SettingsManager mSettingsManager;
 
-    private ButtonManager(CameraActivity activity) {
+    /**
+     * Get a new global ButtonManager.
+     */
+    public ButtonManager(CameraActivity activity) {
+        mActivity = activity;
         mSettingsManager = activity.getSettingsManager();
-        mButtonCache = getButtonReferences(activity);
-    }
-
-    /** Store uninitialized references to buttons with known keys. */
-    private static SparseArray<MultiToggleImageButton> getButtonReferences(Activity activity) {
-        SparseArray<MultiToggleImageButton> cache = new SparseArray<MultiToggleImageButton>();
-
-        MultiToggleImageButton flashToggle
-            = (MultiToggleImageButton) activity.findViewById(R.id.flash_toggle_button);
-        cache.put(BUTTON_FLASH, flashToggle);
-
-        MultiToggleImageButton cameraToggle
-            = (MultiToggleImageButton) activity.findViewById(R.id.camera_toggle_button);
-        cache.put(BUTTON_CAMERA, cameraToggle);
-
-        MultiToggleImageButton hdrPlusToggle
-            = (MultiToggleImageButton) activity.findViewById(R.id.hdr_plus_toggle_button);
-        cache.put(BUTTON_HDRPLUS, hdrPlusToggle);
-        return cache;
     }
 
     /**
      * A callback executed in the state listener of a button.
-     * Used by a module to set specific behavior when button's
+     * Used by a module to set specific behavior when a button's
      * state changes.
      */
     public interface ButtonCallback {
         public void onStateChanged(int state);
     }
 
-
-    /**
-     * Initialize a known button by id, with a state change callback and
-     * a resource id that points to an array of drawables.
-     */
-    public ImageButton getButton(int id, ButtonCallback cb, int resIdImages) {
-        switch (id) {
-            case BUTTON_FLASH:
-                return getFlashButton(cb, resIdImages);
-            case BUTTON_CAMERA:
-                return getCameraButton(cb, resIdImages);
-            case BUTTON_HDRPLUS:
-                return getHdrPlusButton(cb, resIdImages);
-            default:
-                throw new IllegalArgumentException("Button not known by id=" + id);
+    private MultiToggleImageButton getButtonOrError(int buttonId, int resId) {
+        MultiToggleImageButton button
+            = (MultiToggleImageButton) mActivity.findViewById(resId);
+        if (button == null) {
+            switch (buttonId) {
+                case BUTTON_FLASH:
+                    throw new IllegalStateException("Flash button could not be found.");
+                case BUTTON_CAMERA:
+                    throw new IllegalStateException("Camera button could not be found.");
+                case BUTTON_HDRPLUS:
+                    throw new IllegalStateException("Hdr button could not be found.");
+                default:
+                    throw new IllegalArgumentException("button not known by id=" + buttonId);
+            }
         }
+        return button;
     }
 
     /**
-     * Initialize a flash button.
+     * Enable a known button by id, with a state change callback and
+     * a resource id that points to an array of drawables.
      */
-    private ImageButton getFlashButton(final ButtonCallback cb, int resIdImages) {
-        MultiToggleImageButton flashToggle
-            = (MultiToggleImageButton) mButtonCache.get(BUTTON_FLASH);
-
-        if (flashToggle == null) {
-            throw new IllegalStateException("Flash button could not be initialized.");
+    public void enableButton(int buttonId, int resId, ButtonCallback cb, int resIdImages) {
+        MultiToggleImageButton button = getButtonOrError(buttonId, resId);
+        switch (buttonId) {
+            case BUTTON_FLASH:
+                enableFlashButton(button, cb, resIdImages);
+                break;
+            case BUTTON_CAMERA:
+                enableCameraButton(button, cb, resIdImages);
+                break;
+            case BUTTON_HDRPLUS:
+                enableHdrPlusButton(button, cb, resIdImages);
+                break;
+            default:
+                throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
+        button.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Disable a known button by id.
+     */
+    public void disableButton(int buttonId, int resId) {
+        MultiToggleImageButton button = getButtonOrError(buttonId, resId);
+        button.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Enable a flash button.
+     */
+    private void enableFlashButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
-            flashToggle.overrideImageIds(resIdImages);
+            button.overrideImageIds(resIdImages);
         }
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_FLASH_MODE);
-        flashToggle.setState(index, false);
-        flashToggle.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+        if (index >= 0) {
+            button.setState(index, false);
+        }
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
                 public void stateChanged(View view, int state) {
                     mSettingsManager.setStringValueIndex(SettingsManager.SETTING_FLASH_MODE, state);
@@ -125,29 +130,24 @@ public class ButtonManager {
                     }
                 }
             });
-
-        return flashToggle;
     }
 
     /**
-     * Initialize a camera button.
+     * Enable a camera button.
      */
-    private ImageButton getCameraButton(final ButtonCallback cb, int resIdImages) {
-        MultiToggleImageButton cameraToggle
-            = (MultiToggleImageButton) mButtonCache.get(BUTTON_CAMERA);
-        final MultiToggleImageButton flashToggle
-            = (MultiToggleImageButton) mButtonCache.get(BUTTON_FLASH);
-
-        if (cameraToggle == null) {
-            throw new IllegalStateException("Camera button could not be initialized.");
-        }
+    private void enableCameraButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
-            cameraToggle.overrideImageIds(resIdImages);
+            button.overrideImageIds(resIdImages);
         }
+
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_ID);
-        cameraToggle.setState(index, false);
-        cameraToggle.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+        if (index >= 0) {
+            button.setState(index, false);
+        }
+
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
                 public void stateChanged(View view, int state) {
                     mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_ID, state);
@@ -156,36 +156,26 @@ public class ButtonManager {
                     if (cb != null) {
                         cb.onStateChanged(cameraId);
                     }
-                    if (flashToggle != null) {
-                        flashToggle.setVisibility(state == 0 ? View.VISIBLE : View.INVISIBLE);
-                    }
                 }
             });
-
-        if (flashToggle != null) {
-            flashToggle.setVisibility(index == 0 ? View.VISIBLE : View.INVISIBLE);
-        }
-
-        return cameraToggle;
     }
 
     /**
-     * Initialize an hdr plus button.
+     * Enable an hdr plus button.
      */
-    private ImageButton getHdrPlusButton(final ButtonCallback cb, int resIdImages) {
-        MultiToggleImageButton hdrPlusToggle
-            = (MultiToggleImageButton) mButtonCache.get(BUTTON_HDRPLUS);
-
-        if (hdrPlusToggle == null) {
-            throw new IllegalStateException("Hdr plus button could not be initialized.");
-        }
+    private void enableHdrPlusButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
-            hdrPlusToggle.overrideImageIds(resIdImages);
+            button.overrideImageIds(resIdImages);
         }
+
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
-        hdrPlusToggle.setState(index, false);
-        hdrPlusToggle.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+        if (index >= 0) {
+            button.setState(index, false);
+        }
+
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
                 public void stateChanged(View view, int state) {
                     mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
@@ -194,7 +184,5 @@ public class ButtonManager {
                     }
                 }
             });
-
-        return hdrPlusToggle;
     }
 }
