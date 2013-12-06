@@ -19,7 +19,13 @@ package com.android.camera.ui;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -33,11 +39,60 @@ import com.android.camera2.R;
  */
 public class FilmstripLayout extends FrameLayout {
     private static final long DEFAULT_DURATION_MS = 200;
+    private static final int ANIM_DIRECTION_IN = 1;
+    private static final int ANIM_DIRECTION_OUT = 2;
     private FilmstripView mFilmstripView;
     private FilmstripGestureRecognizer mGestureRecognizer;
     private FilmstripGestureRecognizer.Listener mFilmstripGestureListener;
     private final ValueAnimator mFilmstripAnimator = ValueAnimator.ofFloat(null);
     private int mSwipeTrend;
+    private MyBackgroundDrawable mBackgroundDrawable;
+    private int mAnimationDirection;
+    private boolean mHiding;
+
+    private Animator.AnimatorListener mFilmstripAnimatorListener = new Animator.AnimatorListener() {
+        private boolean mCanceled;
+
+        @Override
+        public void onAnimationStart(Animator animator) {
+            mCanceled = false;
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animator) {
+            if (!mCanceled) {
+                if (mFilmstripView.getTranslationX() != 0f) {
+                    mFilmstripView.getController().goToFilmStrip();
+                    setVisibility(INVISIBLE);
+                    setHiding(false);
+                } else {
+                    setHiding(true);
+                }
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animator) {
+            mCanceled = true;
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animator) {
+            // Nothing.
+        }
+    };
+
+    private ValueAnimator.AnimatorUpdateListener mFilmstripAnimatorUpdateListener =
+            new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    if (mAnimationDirection == ANIM_DIRECTION_IN && !mHiding) {
+                        mBackgroundDrawable.setFraction(valueAnimator.getAnimatedFraction());
+                    }
+                    mFilmstripView.setTranslationX((Float) valueAnimator.getAnimatedValue());
+                    invalidate();
+                }
+            };
 
     public FilmstripLayout(Context context) {
         super(context);
@@ -57,43 +112,8 @@ public class FilmstripLayout extends FrameLayout {
     private void init(Context context) {
         mGestureRecognizer = new FilmstripGestureRecognizer(context, new MyGestureListener());
         mFilmstripAnimator.setDuration(DEFAULT_DURATION_MS);
-
-        ValueAnimator.AnimatorUpdateListener updateListener =
-                new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        mFilmstripView.setTranslationX((Float) valueAnimator.getAnimatedValue());
-                    }
-                };
-        mFilmstripAnimator.addUpdateListener(updateListener);
-
-        mFilmstripAnimator.addListener(new Animator.AnimatorListener() {
-            private boolean mCanceled;
-
-            @Override
-            public void onAnimationStart(Animator animator) {
-                mCanceled = false;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                if (!mCanceled) {
-                    if (mFilmstripView.getTranslationX() != 0f) {
-                        setVisibility(INVISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-                mCanceled = true;
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-                // Nothing.
-            }
-        });
+        mFilmstripAnimator.addUpdateListener(mFilmstripAnimatorUpdateListener);
+        mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
     }
 
     @Override
@@ -121,10 +141,17 @@ public class FilmstripLayout extends FrameLayout {
 
     @Override
     public void onFinishInflate() {
+        mBackgroundDrawable = new MyBackgroundDrawable();
+        setBackground(mBackgroundDrawable);
         mFilmstripView = (FilmstripView) findViewById(R.id.filmstrip_view);
         mFilmstripView.setOnTouchListener(new OnTouchListener() {
+
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                // Adjust the coordinates back since they are relative to the
+                // child view.
+                motionEvent.setLocation(motionEvent.getX() + view.getX(),
+                        motionEvent.getY() + view.getY());
                 mGestureRecognizer.onTouchEvent(motionEvent);
                 return true;
             }
@@ -148,19 +175,33 @@ public class FilmstripLayout extends FrameLayout {
     }
 
     private void hideFilmstrip() {
-        if (mFilmstripAnimator.isRunning()) {
-            mFilmstripAnimator.cancel();
-        }
-        mFilmstripAnimator.setFloatValues(mFilmstripView.getTranslationX(), getMeasuredWidth());
-        mFilmstripAnimator.start();
+        mAnimationDirection = ANIM_DIRECTION_OUT;
+        runAnimation(mFilmstripView.getTranslationX(), getMeasuredWidth());
     }
 
     private void showFilmstrip() {
+        mAnimationDirection = ANIM_DIRECTION_IN;
+        runAnimation(mFilmstripView.getTranslationX(), 0);
+    }
+
+    private void runAnimation(float begin, float end) {
         if (mFilmstripAnimator.isRunning()) {
-            mFilmstripAnimator.cancel();
+            return;
         }
-        mFilmstripAnimator.setFloatValues(mFilmstripView.getTranslationX(), 0);
+        if (begin == end) {
+            // No need to start animation.
+            mFilmstripAnimatorListener.onAnimationEnd(mFilmstripAnimator);
+            return;
+        }
+        mFilmstripAnimator.setFloatValues(begin, end);
         mFilmstripAnimator.start();
+    }
+
+    private void setHiding(boolean hiding) {
+        mHiding = hiding;
+        if (!mHiding) {
+            mBackgroundDrawable.setFraction(0f);
+        }
     }
 
     /**
@@ -171,11 +212,14 @@ public class FilmstripLayout extends FrameLayout {
     private class MyGestureListener implements FilmstripGestureRecognizer.Listener {
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
+            if (mFilmstripAnimator.isRunning()) {
+                return true;
+            }
             if (mFilmstripView.getTranslationX() == 0f &&
                     mFilmstripGestureListener.onScroll(x, y, dx, dy)) {
                 return true;
             }
-            mSwipeTrend = (((int) dx) >> 1)  + (mSwipeTrend >> 1);
+            mSwipeTrend = (((int) dx) >> 1) + (mSwipeTrend >> 1);
             float translate = mFilmstripView.getTranslationX() - dx;
             if (translate < 0f) {
                 translate = 0f;
@@ -231,7 +275,6 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onDown(float x, float y) {
-            mFilmstripAnimator.cancel();
             if (mFilmstripView.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onDown(x, y);
             }
@@ -253,10 +296,76 @@ public class FilmstripLayout extends FrameLayout {
         }
 
         @Override
-        public void onScaleEnd () {
+        public void onScaleEnd() {
             if (mFilmstripView.getTranslationX() == 0f) {
                 mFilmstripGestureListener.onScaleEnd();
             }
+        }
+    }
+
+    private class MyBackgroundDrawable extends Drawable {
+        private Paint mPaint;
+        private float mFraction;
+
+        public MyBackgroundDrawable() {
+            mPaint = new Paint();
+            mPaint.setColor(0);
+            mPaint.setAlpha(255);
+        }
+
+        public void setFraction(float f) {
+            mFraction = f;
+        }
+
+        @Override
+        public void setAlpha(int i) {
+            mPaint.setAlpha(i);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter colorFilter) {
+            mPaint.setColorFilter(colorFilter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            int width = getMeasuredWidth();
+            float translation = mFilmstripView.getTranslationX();
+            if (translation == width) {
+                return;
+            }
+            if (mHiding) {
+                drawHiding(canvas);
+            } else {
+                drawShowing(canvas);
+            }
+        }
+
+        private void drawHiding(Canvas canvas) {
+            canvas.drawRect(mFilmstripView.getLeft() + mFilmstripView.getTranslationX(),
+                    mFilmstripView.getTop() + mFilmstripView.getTranslationY(), getMeasuredWidth(),
+                    getMeasuredHeight(), mPaint);
+        }
+
+        private void drawShowing(Canvas canvas) {
+            int width = getMeasuredWidth();
+            float translation = mFilmstripView.getTranslationX();
+            if (translation == 0f) {
+                canvas.drawRect(getBounds(), mPaint);
+                return;
+            }
+            final float height = getMeasuredHeight();
+            float x = width * (1.1f + mFraction * 0.9f);
+            float y = height / 2f;
+            float refX = width * (1 - mFraction);
+            float refY = y * (1 - mFraction);
+            canvas.drawCircle(x, getMeasuredHeight() / 2,
+                    FloatMath.sqrt((x - refX) * (x - refX) + (y - refY) * (y - refY)), mPaint);
         }
     }
 }
