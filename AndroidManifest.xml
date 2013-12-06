@@ -55,7 +55,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:icon="@mipmap/ic_launcher_camera"
             android:label="@string/app_name"
-            android:logo="@mipmap/ic_launcher_gallery"
+            android:logo="@mipmap/ic_launcher_camera"
             android:taskAffinity="com.android.camera.CameraActivity"
             android:theme="@style/Theme.Camera"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
@@ -113,7 +113,7 @@
             android:excludeFromRecents="true"
             android:icon="@mipmap/ic_launcher_camera"
             android:label="@string/app_name"
-            android:logo="@mipmap/ic_launcher_gallery"
+            android:logo="@mipmap/ic_launcher_camera"
             android:taskAffinity="com.android.camera.SecureCameraActivity"
             android:theme="@style/Theme.Camera"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >

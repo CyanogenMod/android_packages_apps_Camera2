@@ -1017,14 +1017,8 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                // ActionBar's Up/Home button was clicked
-                try {
-                    startActivity(IntentHelper.getGalleryIntent(this));
-                    return true;
-                } catch (ActivityNotFoundException e) {
-                    Log.w(TAG, "Failed to launch gallery activity, closing");
-                    finish();
-                }
+                onBackPressed();
+                return true;
             case R.id.action_delete:
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                         UsageStatistics.ACTION_DELETE, null, 0,
