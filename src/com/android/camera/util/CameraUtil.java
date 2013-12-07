@@ -154,6 +154,14 @@ public class CameraUtil {
                         params.getSupportedFocusModes()));
     }
 
+    public static boolean isSupported(Parameters params, String key) {
+        return (params.get(key) != null && !"null".equals(params.get(key)));
+    }
+
+    public static boolean isBurstSupported(Parameters params) {
+        return isSupported(params, "num-snaps-per-shutter");
+    }
+
     // Private intent extras. Test only.
     private static final String EXTRAS_CAMERA_FACING =
             "android.intent.extras.CAMERA_FACING";
