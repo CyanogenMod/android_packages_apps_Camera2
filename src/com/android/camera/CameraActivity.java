@@ -184,7 +184,6 @@ public class CameraActivity extends Activity
     private CameraModule mCurrentModule;
     private ModuleManagerImpl mModuleManager;
     private FrameLayout mAboveFilmstripControlLayout;
-    private FrameLayout mCameraModuleRootView;
     private FilmstripController mFilmstripController;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
@@ -861,7 +860,7 @@ public class CameraActivity extends Activity
 
     @Override
     public FrameLayout getModuleLayoutRoot() {
-        return mCameraModuleRootView;
+        return mCameraAppUI.getModuleRootView();
     }
 
     @Override
@@ -1168,7 +1167,6 @@ public class CameraActivity extends Activity
                 .getGcamProcessingManager();
         mPanoramaManager.addTaskListener(mStitchingListener);
         mPlaceholderManager.addTaskListener(mPlaceholderListener);
-        mCameraModuleRootView = (FrameLayout) findViewById(R.id.camera_app_root);
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mFilmstripController = ((FilmstripView) findViewById(R.id.filmstrip_view)).getController();
@@ -1182,10 +1180,8 @@ public class CameraActivity extends Activity
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
         mFilmstripController.setListener(mFilmStripListener);
 
-        // TODO: Remove the 3rd parameter once mCameraModuleRoot is moved out of filmstrip
         mCameraAppUI = new CameraAppUI(this,
                 (MainActivityLayout) findViewById(R.id.activity_root_view),
-                mCameraModuleRootView,
                 isSecureCamera(), isCaptureIntent());
 
         mLocationManager = new LocationManager(this,

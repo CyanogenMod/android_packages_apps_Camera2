@@ -27,16 +27,15 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.AnimationManager;
-import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
-import com.android.camera.ui.RenderOverlay;
 import com.android.camera2.R;
 
 /**
@@ -75,12 +74,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     private final ModeTransitionView mModeTransitionView;
     private final MainActivityLayout mAppRootView;
     private final ModeListView mModeListView;
-    private final View mFilmstripView;
     private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
-    private CameraControls mCameraControls;
     private View mFlashOverlay;
-    private ViewGroup mModuleUI;
+    private FrameLayout mModuleUI;
 
     private GestureDetector mGestureDetector;
     private int mSwipeState = IDLE;
@@ -156,7 +153,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     }
 
     public CameraAppUI(AppController controller, MainActivityLayout appRootView,
-                       ViewGroup cameraRoot,
                        boolean isSecureCamera, boolean isCaptureIntent) {
         mSlop = ViewConfiguration.get(controller.getAndroidContext()).getScaledTouchSlop();
         mController = controller;
@@ -164,9 +160,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         mIsCaptureIntent = isCaptureIntent;
 
         mAppRootView = appRootView;
-        mFilmstripView = appRootView.findViewById(R.id.filmstrip_view);
         mFilmstripLayout = (FilmstripLayout) appRootView.findViewById(R.id.filmstrip_layout);
-        mCameraRootView = cameraRoot;
+        mCameraRootView = (ViewGroup) appRootView.findViewById(R.id.camera_app_root);
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),
@@ -246,15 +241,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.generic_module, mCameraRootView, true);
 
-        mModuleUI = (ViewGroup) mCameraRootView.findViewById(R.id.module_layout);
+        mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mFlashOverlay = mCameraRootView.findViewById(R.id.flash_overlay);
         mPreviewThumbView = (ImageView) mCameraRootView.findViewById(R.id.preview_thumb);
 
-        // TODO: Remove camera controls.
-        mCameraControls = (CameraControls) mCameraRootView.findViewById(R.id.camera_controls);
     }
 
     // TODO: Remove this when refactor is done.
@@ -265,7 +258,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         mTextureView = null;
         mPreviewOverlay = null;
         mFlashOverlay = null;
-        mCameraControls = null;
     }
 
     /**
@@ -274,7 +266,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
      *
      * @return a view group for modules to attach views to
      */
-    public ViewGroup getModuleRootView() {
+    public FrameLayout getModuleRootView() {
         return mModuleUI;
     }
 
