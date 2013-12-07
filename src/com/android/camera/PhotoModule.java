@@ -51,10 +51,8 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.CameraManager.CameraAFCallback;
@@ -88,8 +86,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.SystemProperties;
-import java.util.Collections;
-import java.util.Formatter;
 
 public class PhotoModule
         implements CameraModule,
@@ -104,7 +100,6 @@ public class PhotoModule
     private static final String TAG = "CAM_PhotoModule";
 
    //QCom data members
-    public static boolean mBrightnessVisible = true;
     private static final int MAX_SHARPNESS_LEVEL = 6;
     private boolean mRestartPreview = false;
     private int mSnapshotMode;
@@ -193,11 +188,6 @@ public class PhotoModule
     private static final String PERSIST_LONG_ENABLE = "persist.camera.longshot.enable";
     private static final String PERSIST_LONG_SAVE = "persist.camera.longshot.save";
 
-    private static final int MINIMUM_BRIGHTNESS = 0;
-    private static final int MAXIMUM_BRIGHTNESS = 6;
-    private int mbrightness = 3;
-    private int mbrightness_step = 1;
-    private ProgressBar brightnessProgressBar;
     // Constant from android.hardware.Camera.Parameters
     private static final String KEY_PICTURE_FORMAT = "picture-format";
     private static final String KEY_QC_RAW_PICUTRE_SIZE = "raw-size";
@@ -476,13 +466,6 @@ public class PhotoModule
         mLocationManager = new LocationManager(mActivity, mUI);
         mSensorManager = (SensorManager)(mActivity.getSystemService(Context.SENSOR_SERVICE));
 
-        brightnessProgressBar = (ProgressBar)mRootView.findViewById(R.id.progress);
-        if (brightnessProgressBar instanceof SeekBar) {
-            SeekBar seeker = (SeekBar) brightnessProgressBar;
-            seeker.setOnSeekBarChangeListener(mSeekListener);
-        }
-        brightnessProgressBar.setMax(MAXIMUM_BRIGHTNESS);
-        brightnessProgressBar.setProgress(mbrightness);
         skinToneSeekBar = (SeekBar) mRootView.findViewById(R.id.skintoneseek);
         skinToneSeekBar.setOnSeekBarChangeListener(mskinToneSeekListener);
         skinToneSeekBar.setVisibility(View.INVISIBLE);
@@ -1107,15 +1090,6 @@ public class PhotoModule
             }
         }
     }
-    private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
-        public void onStartTrackingTouch(SeekBar bar) {
-        // no support
-        }
-        public void onProgressChanged(SeekBar bar, int progress, boolean fromtouch) {
-        }
-        public void onStopTrackingTouch(SeekBar bar) {
-        }
-    };
 
     private OnSeekBarChangeListener mskinToneSeekListener = new OnSeekBarChangeListener() {
         public void onStartTrackingTouch(SeekBar bar) {
@@ -1149,6 +1123,7 @@ public class PhotoModule
             editor.apply();
         }
     };
+
     private final class AutoFocusCallback implements CameraAFCallback {
         @Override
         public void onAutoFocus(
@@ -1905,42 +1880,7 @@ public class PhotoModule
                     onShutterButtonClick();
                 }
                 return true;
-        case KeyEvent.KEYCODE_DPAD_LEFT:
-            if (!CameraUtil.isSupported(mParameters, "luma-adaptation")) {
-                break;
-            }
-            if ( (mCameraState != PREVIEW_STOPPED) &&
-                  (mFocusManager.getCurrentFocusState() != mFocusManager.STATE_FOCUSING) &&
-                  (mFocusManager.getCurrentFocusState() != mFocusManager.STATE_FOCUSING_SNAP_ON_FINISH) ) {
-                if (mbrightness > MINIMUM_BRIGHTNESS) {
-                    mbrightness-=mbrightness_step;
-                    /* Set the "luma-adaptation" parameter */
-                    mParameters = mCameraDevice.getParameters();
-                    mParameters.set("luma-adaptation", String.valueOf(mbrightness));
-                    mCameraDevice.setParameters(mParameters);
-                }
-                brightnessProgressBar.setProgress(mbrightness);
-                brightnessProgressBar.setVisibility(View.VISIBLE);
-            }
-            break;
-           case KeyEvent.KEYCODE_DPAD_RIGHT:
-            if (!CameraUtil.isSupported(mParameters, "luma-adaptation")) {
-                break;
-            }
-            if ( (mCameraState != PREVIEW_STOPPED) &&
-                  (mFocusManager.getCurrentFocusState() != mFocusManager.STATE_FOCUSING) &&
-                  (mFocusManager.getCurrentFocusState() != mFocusManager.STATE_FOCUSING_SNAP_ON_FINISH) ) {
-                if (mbrightness < MAXIMUM_BRIGHTNESS) {
-                    mbrightness+=mbrightness_step;
-                    /* Set the "luma-adaptation" parameter */
-                    mParameters = mCameraDevice.getParameters();
-                    mParameters.set("luma-adaptation", String.valueOf(mbrightness));
-                    mCameraDevice.setParameters(mParameters);
-                }
-                brightnessProgressBar.setProgress(mbrightness);
-                brightnessProgressBar.setVisibility(View.VISIBLE);
-            }
-            break;
+
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 // If we get a dpad center event without any focused view, move
                 // the focus to the shutter button and press it.
@@ -2128,9 +2068,6 @@ public class PhotoModule
 
     private void qcomUpdateCameraParametersPreference() {
         //qcom Related Parameter update
-        //Set Brightness.
-        mParameters.set("luma-adaptation", String.valueOf(mbrightness));
-
         if (Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
             // Set Touch AF/AEC parameter.
             String touchAfAec = mPreferences.getString(
@@ -2927,8 +2864,6 @@ public class PhotoModule
 
     private void enableSkinToneSeekBar() {
         int progress;
-        if(brightnessProgressBar != null)
-            brightnessProgressBar.setVisibility(View.INVISIBLE);
         skinToneSeekBar.setMax(MAX_SCE_FACTOR-MIN_SCE_FACTOR);
         skinToneSeekBar.setVisibility(View.VISIBLE);
         skinToneSeekBar.requestFocus();
@@ -2961,10 +2896,7 @@ public class PhotoModule
         editor.putString(CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR,
             Integer.toString(mskinToneValue - MIN_SCE_FACTOR));
         editor.apply();
-        if(brightnessProgressBar != null && CameraUtil.isSupported(mParameters, "luma-adaptation")) {
-             brightnessProgressBar.setVisibility(View.VISIBLE);
-        }
-}
+    }
 
 /*
  * Provide a mapping for Jpeg encoding quality levels
