@@ -992,6 +992,7 @@ public class PhotoModule
                         mFocusManager.getFocusMode())) {
                     mCameraDevice.cancelAutoFocus();
                 }
+                mUI.resumeFaceDetection();
                 setCameraState(IDLE);
             }
 
@@ -1525,6 +1526,7 @@ public class PhotoModule
                            mFocusManager.getFocusMode())) {
                        mCameraDevice.cancelAutoFocus();
                    }
+                   mUI.resumeFaceDetection();
                }
            }
         }
