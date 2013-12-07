@@ -59,4 +59,14 @@ public interface CameraProvider {
      * @return The lowest ID of the front camera or -1 if not available.
      */
     public int getFirstFrontCameraId();
+
+    /**
+     * @returns Whether the camera is facing front.
+     */
+    public boolean isFrontFacingCamera(int id);
+
+    /**
+     * @returns Whether the camera is facing back.
+     */
+    public boolean isBackFacingCamera(int id);
 }

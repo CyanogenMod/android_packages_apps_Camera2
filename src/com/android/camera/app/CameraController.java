@@ -102,6 +102,24 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
+    public boolean isFrontFacingCamera(int id) {
+        if (id >= mCameraInfos.length || mCameraInfos[id] == null) {
+            Log.e(TAG, "Camera info not available:" + id);
+            return false;
+        }
+        return (mCameraInfos[id].facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
+    }
+
+    @Override
+    public boolean isBackFacingCamera(int id) {
+        if (id >= mCameraInfos.length || mCameraInfos[id] == null) {
+            Log.e(TAG, "Camera info not available:" + id);
+            return false;
+        }
+        return (mCameraInfos[id].facing == Camera.CameraInfo.CAMERA_FACING_BACK);
+    }
+
+    @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
         mRequestingCameraId = -1;
         mCameraProxy = camera;
