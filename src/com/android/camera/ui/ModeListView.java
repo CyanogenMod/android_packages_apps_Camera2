@@ -400,6 +400,20 @@ public class ModeListView extends ScrollView {
     }
 
     /**
+     * This starts the accordion animation with a delay.
+     *
+     * @param delay delay in milliseconds before starting animation
+     */
+    public void startAccordionAnimationWithDelay(int delay) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startAccordionAnimation();
+            }
+        }, delay);
+    }
+
+    /**
      * Resets the visible width of all the mode selectors to 0.
      */
     private void resetModeSelectors() {

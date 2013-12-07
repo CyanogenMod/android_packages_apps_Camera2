@@ -13,9 +13,15 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
+<!-- TODO: Now camera root gets cleared during mode switch. We need to move mode
+           switcher into camera root when refactor is finished. -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_app_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+    <FrameLayout
+        android:id="@+id/camera_app_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <include layout="@layout/mode_list_layout" />
 </FrameLayout>

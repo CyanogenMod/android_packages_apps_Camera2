@@ -31,6 +31,5 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <include layout="@layout/mode_list_layout" />
 
 </com.android.camera.ui.MainActivityLayout>

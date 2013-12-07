@@ -149,6 +149,7 @@ public class CameraActivity extends Activity
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SHOW_ACTION_BAR_TIMEOUT_MS = 3000;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000;  // 2 mins.
+    private static final int SHIMMY_DELAY_MS = 1000;
 
     /**
      * Whether onResume should reset the view to the preview.
@@ -1377,6 +1378,7 @@ public class CameraActivity extends Activity
         if (mResetToPreviewOnResume) {
             // Go to the preview on resume.
             mFilmstripController.goToFirstItem();
+            mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
         }
         // Default is showing the preview, unless disabled by explicitly
         // starting an activity we want to return from to the filmstrip rather
@@ -1396,7 +1398,6 @@ public class CameraActivity extends Activity
 
         keepScreenOnForAWhile();
 
-        mModeListView.startAccordionAnimation();
     }
 
     @Override
