@@ -142,12 +142,16 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
         int pos = findDataByContentUri(uri);
         LocalMediaData.VideoData newData = LocalMediaData.VideoData.buildFromCursor(c);
-        if (pos != -1) {
-            // A duplicate one, just do a substitute.
-            updateData(pos, newData);
+        if (newData != null) {
+            if (pos != -1) {
+                // A duplicate one, just do a substitute.
+                updateData(pos, newData);
+            } else {
+                // A new data.
+                insertData(newData);
+            }
         } else {
-            // A new data.
-            insertData(newData);
+            Log.e(TAG, "video data not found");
         }
     }
 
