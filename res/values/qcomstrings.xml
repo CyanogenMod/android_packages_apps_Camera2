@@ -578,36 +578,6 @@
     <string name="pref_camera_focusmode_entry_normal">Normal</string>
     <string name="pref_camera_focusmode_entry_continuous">CAF</string>
 
-    <string name="pref_camera_scenemode_entry_asd">ASD</string>
-    <!-- Scene mode that takes an image with as little noise as possible so details of the subject are maintained. -->
-    <string name="pref_camera_scenemode_entry_portrait">Portrait</string>
-    <!-- Scene mode that takes an image of a landscape assuming all subjects are relatively far from the phone. -->
-    <string name="pref_camera_scenemode_entry_landscape">Landscape</string>
-
-     <!-- Scene mode that takes night shots with long exposure and flash to illuminate the subject while still capturing darker detail in the background. -->
-    <string name="pref_camera_scenemode_entry_night_portrait">Night Portrait</string>
-    <!-- Scene mode to be used in a stage show. -->
-    <string name="pref_camera_scenemode_entry_theatre">Theatre</string>
-    <!-- Scene mode optimized for taking images on the beach. -->
-    <string name="pref_camera_scenemode_entry_beach">Beach</string>
-    <!-- Scene mode optimized for taking images in the snow. -->
-    <string name="pref_camera_scenemode_entry_snow">Snow</string>
-
-    <!-- Scene mode for taking a photo as sharp as possible. -->
-    <string name="pref_camera_scenemode_entry_steadyphoto">Steady Photo</string>
-    <!-- Scene mode optimized for taking images of fireworks. -->
-    <string name="pref_camera_scenemode_entry_fireworks">Fireworks</string>
-    <!-- Scene mode optimized for taking images during sports . -->
-    <string name="pref_camera_scenemode_entry_sports">Sports</string>
-    <!-- Scene mode optimized for capturing the naturally warm color of scenes lit by candles. [CHAR LIMIT=16] -->
-    <string name="pref_camera_scenemode_entry_candlelight">Candlelight</string>
-    <!-- Scene mode for taking a photo with backlight. -->
-    <string name="pref_camera_scenemode_entry_backlight">Backlight</string>
-    <!-- Scene mode optimized for taking images of flowers. -->
-    <string name="pref_camera_scenemode_entry_flowers">Flowers</string>
-    <!-- Scene mode optimized for taking images of AR. -->
-    <string name="pref_camera_scenemode_entry_ar">AR</string>
-
     <!-- Default auto scene detection setting. -->
     <string name="pref_camera_scenedetect_default" translatable="false">off</string>
 
