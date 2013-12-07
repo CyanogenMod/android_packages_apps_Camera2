@@ -282,6 +282,11 @@ public class CameraActivity extends Activity
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
+    @Override
+    public void onFilmstripHidden() {
+        setSystemBarsVisibility(false);
+    }
+
     private class MainHandler extends Handler {
         public MainHandler(Looper looper) {
             super(looper);

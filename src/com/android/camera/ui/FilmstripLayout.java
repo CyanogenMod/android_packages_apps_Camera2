@@ -38,6 +38,12 @@ import com.android.camera2.R;
  * filmstrip.
  */
 public class FilmstripLayout extends FrameLayout {
+
+    // TODO: Remove this quick hack.
+    public interface Listener {
+        void onFilmstripHidden();
+    }
+
     private static final long DEFAULT_DURATION_MS = 200;
     private static final int ANIM_DIRECTION_IN = 1;
     private static final int ANIM_DIRECTION_OUT = 2;
@@ -45,6 +51,7 @@ public class FilmstripLayout extends FrameLayout {
     private FilmstripGestureRecognizer mGestureRecognizer;
     private FilmstripGestureRecognizer.Listener mFilmstripGestureListener;
     private final ValueAnimator mFilmstripAnimator = ValueAnimator.ofFloat(null);
+    private Listener mListener;
     private int mSwipeTrend;
     private MyBackgroundDrawable mBackgroundDrawable;
     private int mAnimationDirection;
@@ -64,6 +71,10 @@ public class FilmstripLayout extends FrameLayout {
                 if (mFilmstripView.getTranslationX() != 0f) {
                     mFilmstripView.getController().goToFilmStrip();
                     setVisibility(INVISIBLE);
+                    // TODO: Remove this quick hack.
+                    if (mListener != null) {
+                        mListener.onFilmstripHidden();
+                    }
                     setHiding(false);
                 } else {
                     setHiding(true);
@@ -114,6 +125,10 @@ public class FilmstripLayout extends FrameLayout {
         mFilmstripAnimator.setDuration(DEFAULT_DURATION_MS);
         mFilmstripAnimator.addUpdateListener(mFilmstripAnimatorUpdateListener);
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
+    }
+
+    public void setListener(Listener l) {
+        mListener = l;
     }
 
     @Override
