@@ -70,7 +70,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     private final int SWIPE_TIME_OUT = 500;
 
     // App level views:
-    private final ViewGroup mCameraRootView;
+    private final FrameLayout mCameraRootView;
     private final ModeTransitionView mModeTransitionView;
     private final MainActivityLayout mAppRootView;
     private final ModeListView mModeListView;
@@ -161,7 +161,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
 
         mAppRootView = appRootView;
         mFilmstripLayout = (FilmstripLayout) appRootView.findViewById(R.id.filmstrip_layout);
-        mCameraRootView = (ViewGroup) appRootView.findViewById(R.id.camera_app_root);
+        mCameraRootView = (FrameLayout) appRootView.findViewById(R.id.camera_app_root);
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),
@@ -267,7 +267,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
      * @return a view group for modules to attach views to
      */
     public FrameLayout getModuleRootView() {
-        return mModuleUI;
+        // TODO: Change it to mModuleUI when refactor is done
+        return mCameraRootView;
     }
 
     /**

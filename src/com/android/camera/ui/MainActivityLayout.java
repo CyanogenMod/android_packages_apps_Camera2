@@ -71,13 +71,13 @@ public class MainActivityLayout extends FrameLayout {
             int deltaX = (int) (ev.getX() - mDown.getX());
             int deltaY = (int) (ev.getY() - mDown.getY());
             if (ev.getActionMasked() == MotionEvent.ACTION_MOVE
-                    && deltaX > mSlop) {
+                    && Math.abs(deltaX) > mSlop) {
                 // Intercept right swipe
-                if (Math.abs(deltaX) >= Math.abs(deltaY) * 2) {
+                if (deltaX >= Math.abs(deltaY) * 2) {
                     mTouchReceiver = mModeList;
                     onTouchEvent(mDown);
                     return true;
-                } else if (Math.abs(deltaX) < Math.abs(deltaY) * 2) {
+                } else if (deltaX < - Math.abs(deltaY) * 2) {
                     mTouchReceiver = mFilmstripLayout;
                     onTouchEvent(mDown);
                     return true;
