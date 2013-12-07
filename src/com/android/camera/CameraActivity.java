@@ -1106,7 +1106,7 @@ public class CameraActivity extends Activity
             registerReceiver(mScreenOffReceiver, filter);
         }
         mAboveFilmstripControlLayout =
-                (FrameLayout) findViewById(R.id.camera_above_filmstrip_layout);
+                (FrameLayout) findViewById(R.id.camera_filmstrip_content_layout);
         // Hide action bar first since we are in full screen mode first, and
         // switch the system UI to lights-out mode.
         this.setSystemBarsVisibility(false);

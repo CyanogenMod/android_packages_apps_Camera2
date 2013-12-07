@@ -61,6 +61,12 @@ public class FilmstripLayout extends FrameLayout {
     private static final long DEFAULT_DURATION_MS = 200;
     private static final int ANIM_DIRECTION_IN = 1;
     private static final int ANIM_DIRECTION_OUT = 2;
+
+    /**
+     * The layout containing the {@link com.android.camera.ui.FilmstripView}
+     * and other controls.
+     */
+    private FrameLayout mFilmstripContentLayout;
     private FilmstripView mFilmstripView;
     private FilmstripGestureRecognizer mGestureRecognizer;
     private FilmstripGestureRecognizer.Listener mFilmstripGestureListener;
@@ -83,7 +89,7 @@ public class FilmstripLayout extends FrameLayout {
         @Override
         public void onAnimationEnd(Animator animator) {
             if (!mCanceled) {
-                if (mFilmstripView.getTranslationX() != 0f) {
+                if (mFilmstripContentLayout.getTranslationX() != 0f) {
                     mFilmstripView.getController().goToFilmstrip();
                     setVisibility(INVISIBLE);
                     setDrawHidingBackground(false);
@@ -112,7 +118,7 @@ public class FilmstripLayout extends FrameLayout {
                     if (mAnimationDirection == ANIM_DIRECTION_IN && !mDrawHidingBackground) {
                         mBackgroundDrawable.setFraction(valueAnimator.getAnimatedFraction());
                     }
-                    mFilmstripView.setTranslationX((Float) valueAnimator.getAnimatedValue());
+                    mFilmstripContentLayout.setTranslationX((Float) valueAnimator.getAnimatedValue());
                     invalidate();
                 }
             };
@@ -183,7 +189,7 @@ public class FilmstripLayout extends FrameLayout {
     public void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         if (changed && mFilmstripView != null && getVisibility() == INVISIBLE) {
-            mFilmstripView.setTranslationX(getMeasuredWidth());
+            mFilmstripContentLayout.setTranslationX(getMeasuredWidth());
         }
     }
 
@@ -213,13 +219,14 @@ public class FilmstripLayout extends FrameLayout {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 // Adjust the coordinates back since they are relative to the
                 // child view.
-                motionEvent.setLocation(motionEvent.getX() + view.getX(),
-                        motionEvent.getY() + view.getY());
+                motionEvent.setLocation(motionEvent.getX() + mFilmstripContentLayout.getX(),
+                        motionEvent.getY() + mFilmstripContentLayout.getY());
                 mGestureRecognizer.onTouchEvent(motionEvent);
                 return true;
             }
         });
         mFilmstripGestureListener = mFilmstripView.getGestureListener();
+        mFilmstripContentLayout = (FrameLayout) findViewById(R.id.camera_filmstrip_content_layout);
     }
 
     /**
@@ -239,12 +246,12 @@ public class FilmstripLayout extends FrameLayout {
 
     private void hideFilmstrip() {
         mAnimationDirection = ANIM_DIRECTION_OUT;
-        runAnimation(mFilmstripView.getTranslationX(), getMeasuredWidth());
+        runAnimation(mFilmstripContentLayout.getTranslationX(), getMeasuredWidth());
     }
 
     private void showFilmstrip() {
         mAnimationDirection = ANIM_DIRECTION_IN;
-        runAnimation(mFilmstripView.getTranslationX(), 0);
+        runAnimation(mFilmstripContentLayout.getTranslationX(), 0);
     }
 
     private void runAnimation(float begin, float end) {
@@ -281,12 +288,12 @@ public class FilmstripLayout extends FrameLayout {
             if (mFilmstripAnimator.isRunning()) {
                 return true;
             }
-            if (mFilmstripView.getTranslationX() == 0f &&
+            if (mFilmstripContentLayout.getTranslationX() == 0f &&
                     mFilmstripGestureListener.onScroll(x, y, dx, dy)) {
                 return true;
             }
             mSwipeTrend = (((int) dx) >> 1) + (mSwipeTrend >> 1);
-            float translate = mFilmstripView.getTranslationX() - dx;
+            float translate = mFilmstripContentLayout.getTranslationX() - dx;
             if (translate < 0f) {
                 translate = 0f;
             } else {
@@ -294,14 +301,14 @@ public class FilmstripLayout extends FrameLayout {
                     translate = getMeasuredWidth();
                 }
             }
-            mFilmstripView.setTranslationX(translate);
+            mFilmstripContentLayout.setTranslationX(translate);
             invalidate();
             return true;
         }
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onSingleTapUp(x, y);
             }
             return false;
@@ -309,7 +316,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onDoubleTap(float x, float y) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onDoubleTap(x, y);
             }
             return false;
@@ -317,7 +324,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onFling(float velocityX, float velocityY) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onFling(velocityX, velocityY);
             }
             return false;
@@ -325,7 +332,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onScaleBegin(focusX, focusY);
             }
             return false;
@@ -333,7 +340,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onScale(focusX, focusY, scale);
             }
             return false;
@@ -341,7 +348,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onDown(float x, float y) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onDown(x, y);
             }
             return false;
@@ -349,7 +356,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public boolean onUp(float x, float y) {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 return mFilmstripGestureListener.onUp(x, y);
             }
             if (mSwipeTrend < 0) {
@@ -369,7 +376,7 @@ public class FilmstripLayout extends FrameLayout {
 
         @Override
         public void onScaleEnd() {
-            if (mFilmstripView.getTranslationX() == 0f) {
+            if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 mFilmstripGestureListener.onScaleEnd();
             }
         }
@@ -407,7 +414,7 @@ public class FilmstripLayout extends FrameLayout {
         @Override
         public void draw(Canvas canvas) {
             int width = getMeasuredWidth();
-            float translation = mFilmstripView.getTranslationX();
+            float translation = mFilmstripContentLayout.getTranslationX();
             if (translation == width) {
                 return;
             }
@@ -419,14 +426,14 @@ public class FilmstripLayout extends FrameLayout {
         }
 
         private void drawHiding(Canvas canvas) {
-            canvas.drawRect(mFilmstripView.getLeft() + mFilmstripView.getTranslationX(),
-                    mFilmstripView.getTop() + mFilmstripView.getTranslationY(), getMeasuredWidth(),
-                    getMeasuredHeight(), mPaint);
+            canvas.drawRect(mFilmstripView.getLeft() + mFilmstripContentLayout.getTranslationX(),
+                    mFilmstripView.getTop() + mFilmstripContentLayout.getTranslationY(),
+                    getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
 
         private void drawShowing(Canvas canvas) {
             int width = getMeasuredWidth();
-            float translation = mFilmstripView.getTranslationX();
+            float translation = mFilmstripContentLayout.getTranslationX();
             if (translation == 0f) {
                 canvas.drawRect(getBounds(), mPaint);
                 return;

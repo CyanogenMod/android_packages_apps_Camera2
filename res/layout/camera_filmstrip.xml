@@ -21,17 +21,17 @@
     android:layout_height="match_parent"
     android:visibility="invisible">
 
-    <com.android.camera.ui.FilmstripView
-        android:id="@+id/filmstrip_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <include layout="@layout/filmstrip_bottom_controls" />
-
     <FrameLayout
-        android:id="@+id/camera_above_filmstrip_layout"
+        android:id="@+id/camera_filmstrip_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
+
+        <com.android.camera.ui.FilmstripView
+            android:id="@+id/filmstrip_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <include layout="@layout/filmstrip_bottom_controls" />
 
         <LinearLayout
             android:id="@+id/pano_stitching_progress_panel"
