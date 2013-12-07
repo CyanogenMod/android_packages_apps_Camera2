@@ -43,6 +43,7 @@ import com.android.camera.ui.FilmStripView.ImageData.PanoramaSupportCallback;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 import java.util.Arrays;
@@ -1453,6 +1454,13 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mController.setSurroundingViewsVisible(true);
     }
 
+    private void hideZoomView() {
+        if (mController.isZoomStarted()) {
+            mController.cancelLoadingZoomedImage();
+            mZoomView.setVisibility(GONE);
+        }
+    }
+
     // Keeps the view in the view hierarchy if it's camera preview.
     // Remove from the hierarchy otherwise.
     private void checkForRemoval(ImageData data, View v) {
@@ -1785,6 +1793,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     && deltaX < mSlop * (-1)) {
                 // intercept left swipe
                 if (Math.abs(deltaX) >= Math.abs(deltaY) * 2) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_FILMSTRIP, null);
                     return true;
                 }
             }
@@ -1908,10 +1918,19 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         mController.stopScrolling(true);
         mController.stopScale();
         mDataIdOnUserScrolling = 0;
-        // Remove all views from the mViewItem buffer, except the camera view.
+        // Reload has a side effect that after this call, it will show the
+        // camera preview. So we want to know whether it starts from the camera
+        // preview to decide whether we need to call onDataFocusChanged.
+        boolean stayInPreview = false;
+
         if (mListener != null && mViewItem[mCurrentItem] != null) {
-            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), false);
+            stayInPreview = mViewItem[mCurrentItem].getId() == 0;
+            if (!stayInPreview) {
+                mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), false);
+            }
         }
+
+        // Remove all views from the mViewItem buffer, except the camera view.
         for (int i = 0; i < mViewItem.length; i++) {
             if (mViewItem[i] == null) {
                 continue;
@@ -1920,8 +1939,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (v != mCameraView) {
                 removeView(v);
             }
-            if (mDataAdapter.getImageData(mViewItem[i].getId()) != null) {
-                mDataAdapter.getImageData(mViewItem[i].getId()).recycle();
+            ImageData imageData = mDataAdapter.getImageData(mViewItem[i].getId());
+            if (imageData != null) {
+                imageData.recycle();
             }
         }
 
@@ -1954,7 +1974,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         if (mListener != null) {
             mListener.onReload();
-            mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
+            if (!stayInPreview) {
+                mListener.onDataFocusChanged(mViewItem[mCurrentItem].getId(), true);
+            }
         }
     }
 
@@ -2625,13 +2647,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (!mController.stopScrolling(false)) {
                 return false;
             }
-            // A down event is usually followed by a gesture, we apply gesture on
-            // the lower-res image during a gesture to ensure a responsive experience.
-            // TODO: Delay this until gesture starts.
-            if (mController.isZoomStarted()) {
-                mController.cancelLoadingZoomedImage();
-                mZoomView.setVisibility(GONE);
-            }
+
             return true;
         }
 
@@ -2712,12 +2728,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
-            if (mViewItem[mCurrentItem] == null) {
+            ViewItem currItem = mViewItem[mCurrentItem];
+            if (currItem == null) {
                 return false;
             }
+            if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
+                return false;
+            }
+            hideZoomView();
             // When image is zoomed in to be bigger than the screen
             if (mController.isZoomStarted()) {
-                mController.cancelLoadingZoomedImage();
                 ViewItem curr = mViewItem[mCurrentItem];
                 float transX = curr.getTranslationX() - dx;
                 float transY = curr.getTranslationY() - dy;
@@ -2775,6 +2795,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public boolean onFling(float velocityX, float velocityY) {
             final ViewItem currItem = mViewItem[mCurrentItem];
             if (currItem == null) {
+                return false;
+            }
+            if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
                 return false;
             }
             if (mController.isZoomStarted()) {
@@ -2837,6 +2860,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             if (inCameraFullscreen()) {
                 return false;
             }
+
+            hideZoomView();
             mScaleTrend = 1f;
             // If the image is smaller than screen size, we should allow to zoom
             // in to full screen size

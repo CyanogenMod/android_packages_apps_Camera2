@@ -330,6 +330,5 @@ public class ComboPreferences implements
             listener.onSharedPreferenceChanged(this, key);
         }
         BackupManager.dataChanged(mPackageName);
-        UsageStatistics.onEvent("CameraSettingsChange", null, key);
     }
 }

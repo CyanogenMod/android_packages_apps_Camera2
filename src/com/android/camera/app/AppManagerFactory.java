@@ -16,8 +16,8 @@
 
 package com.android.camera.app;
 
-import android.app.Application;
 import android.content.Context;
+
 
 /**
  * A singleton class which provides application level utility
@@ -35,13 +35,19 @@ public class AppManagerFactory {
     }
 
     private PanoramaStitchingManager mPanoramaStitchingManager;
+    private PlaceholderManager mGcamProcessingManager;
 
     /** No public constructor. */
     private AppManagerFactory(Context ctx) {
         mPanoramaStitchingManager = new PanoramaStitchingManager(ctx);
+        mGcamProcessingManager = new PlaceholderManager(ctx);
     }
 
     public PanoramaStitchingManager getPanoramaStitchingManager() {
         return mPanoramaStitchingManager;
+    }
+
+    public PlaceholderManager getGcamProcessingManager() {
+        return mGcamProcessingManager;
     }
 }

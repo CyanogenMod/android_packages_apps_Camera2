@@ -46,6 +46,7 @@ import android.view.WindowManager;
 import com.android.camera.PhotoModule;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
@@ -745,12 +746,12 @@ public class WideAnglePanoramaModule
     }
 
     private void resetToPreviewIfPossible() {
+        reset();
         if (!mMosaicFrameProcessorInitialized
                 || mUI.getSurfaceTexture() == null
                 || !mMosaicPreviewConfigured) {
             return;
         }
-        reset();
         if (!mPaused) {
             startCameraPreview();
         }
@@ -766,6 +767,10 @@ public class WideAnglePanoramaModule
                     mActivity.getResources().getString(R.string.pano_file_name_format), mTimeTaken);
             String filepath = Storage.generateFilepath(filename,
                               PhotoModule.PIXEL_FORMAT_JPEG);
+
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_PANORAMA,
+                    UsageStatistics.ACTION_CAPTURE_DONE, null, 0,
+                    UsageStatistics.hashFileName(filename + ".jpg"));
 
             Location loc = mLocationManager.getCurrentLocation();
             ExifInterface exif = new ExifInterface();
@@ -783,9 +788,8 @@ public class WideAnglePanoramaModule
                 Storage.writeFile(filepath, jpegData);
             }
             int jpegLength = (int) (new File(filepath).length());
-            return Storage.addImage(mContentResolver, filename, mTimeTaken,
-                    loc, orientation, jpegLength, filepath, width, height,
-                    PhotoModule.PIXEL_FORMAT_JPEG);
+            return Storage.addImage(mContentResolver, filename, mTimeTaken, loc, orientation,
+                    jpegLength, filepath, width, height, LocalData.MIME_TYPE_JPEG);
         }
         return null;
     }
@@ -837,7 +841,7 @@ public class WideAnglePanoramaModule
             stopCapture(true);
             reset();
         }
-
+        mUI.showPreviewCover();
         releaseCamera();
         synchronized (mRendererLock) {
             mCameraTexture = null;

@@ -185,6 +185,9 @@
     <!-- A label that overlays on top of the preview frame to indicate the camcorder is in time lapse mode [CHAR LIMIT=35] -->
     <string name="time_lapse_title">Time lapse recording</string>
 
+    <!-- Screen display message during image capture to indicate that the capture is in progress, like during HDR+. [CHAR LIMIT=20] -->
+    <string name="capturing">Capturing</string>
+
     <!-- Settings screen, camera selection dialog title. Users can select a camera from the phone (front-facing or back-facing). [CHAR LIMIT=20] -->
     <string name="pref_camera_id_title">Choose camera</string>
 
@@ -275,6 +278,8 @@
     <string name="pref_camera_picturesize_entry_2mp">2M pixels</string>
     <!-- Settings screen, dialog choice for 2 megapixels picture size [CHAR LIMIT=20] -->
     <string name="pref_camera_picturesize_entry_2mp_wide">2M pixels (16:9)</string>
+    <!-- Settings screen, dialog choice for 1.5 megapixels picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_1_5mp">1.5M pixels</string>
     <!-- Settings screen, dialog choice for 1.3 megapixels picture size [CHAR LIMIT=20] -->
     <string name="pref_camera_picturesize_entry_1_3mp">1.3M pixels</string>
     <!-- Settings screen, dialog choice for 1 megapixels picture size [CHAR LIMIT=20] -->
@@ -361,13 +366,13 @@
     <!-- Scene mode that uses HDR (high dynamic range) [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_hdr">HDR</string>
     <!-- Scene mode to turn on HDR (better high dynamic range) [CHAR LIMIT=50] -->
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on">Turn HDR+ On</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_on">HDR+ ON</string>
     <!-- Scene mode to turn off HDR (better high dynamic range) [CHAR LIMIT=50] -->
-    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off">Turn HDR+ Off</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_plus_off">HDR+ OFF</string>
     <!-- Scene mode to turn on HDR (high dynamic range) [CHAR LIMIT=50] -->
-    <string name="pref_camera_scenemode_entry_turn_hdr_on">Turn HDR On</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_on">HDR ON</string>
     <!-- Scene mode to turn off HDR (high dynamic range) [CHAR LIMIT=50] -->
-    <string name="pref_camera_scenemode_entry_turn_hdr_off">Turn HDR Off</string>
+    <string name="pref_camera_scenemode_entry_turn_hdr_off">HDR OFF</string>
     <!-- Scene mode that takes an image quickly with little motion blur. [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_action">Action</string>
     <!-- Scene mode that takes long exposures to capture night scenes without flash. [CHAR LIMIT=16] -->
