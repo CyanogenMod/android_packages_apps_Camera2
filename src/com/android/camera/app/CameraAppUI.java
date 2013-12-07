@@ -35,6 +35,7 @@ import com.android.camera.ui.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
+import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera2.R;
 
@@ -78,23 +79,28 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
     private CameraControls mCameraControls;
-    private RenderOverlay mRenderOverlay;
     private View mFlashOverlay;
     private ViewGroup mModuleUI;
 
     private GestureDetector mGestureDetector;
     private int mSwipeState = IDLE;
     private ImageView mPreviewThumbView;
+    private PreviewOverlay mPreviewOverlay;
 
     public interface AnimationFinishedListener {
         public void onAnimationFinished(boolean success);
     }
 
     private class MyTouchListener implements View.OnTouchListener {
-
+        private boolean mScaleStarted = false;
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            return mGestureDetector.onTouchEvent(event);
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                mScaleStarted = false;
+            } else if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+                mScaleStarted = true;
+            }
+            return (!mScaleStarted) && mGestureDetector.onTouchEvent(event);
         }
     }
 
@@ -145,16 +151,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         public boolean onDown(MotionEvent ev) {
             mDown = MotionEvent.obtain(ev);
             mSwipeState = IDLE;
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent ev) {
-            // This keeps pie menu functioning until the alternative is in.
-            // TODO: Remove after bottom bar is finalized.
-            mRenderOverlay.directTouchEventsToPie(mDown);
-            mRenderOverlay.directTouchEventsToPie(ev);
-            return true;
+            return false;
         }
     }
 
@@ -251,12 +248,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
 
         mModuleUI = (ViewGroup) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
-        mRenderOverlay = (RenderOverlay) mCameraRootView.findViewById(R.id.render_overlay);
-        mRenderOverlay.setOnTouchListener(new MyTouchListener());
+        mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
+        mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mFlashOverlay = mCameraRootView.findViewById(R.id.flash_overlay);
         mPreviewThumbView = (ImageView) mCameraRootView.findViewById(R.id.preview_thumb);
 
-                // TODO: Remove camera controls.
+        // TODO: Remove camera controls.
         mCameraControls = (CameraControls) mCameraRootView.findViewById(R.id.camera_controls);
     }
 
@@ -266,7 +263,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         mCameraRootView.removeAllViews();
         mModuleUI = null;
         mTextureView = null;
-        mRenderOverlay = null;
+        mPreviewOverlay = null;
         mFlashOverlay = null;
         mCameraControls = null;
     }
@@ -288,11 +285,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         if (mModuleUI != null) {
             mModuleUI.removeAllViews();
         }
-        mRenderOverlay.clear();
 
         // TODO: Bring TextureView up to the app level
         mTextureView.setSurfaceTextureListener(null);
         mTextureView.removeOnLayoutChangeListener(null);
+
+        mPreviewOverlay.reset();
     }
 
     @Override

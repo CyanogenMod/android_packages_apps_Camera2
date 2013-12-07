@@ -17,15 +17,15 @@
 package com.android.camera;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
-import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -38,25 +38,19 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.android.camera.CameraPreference.OnPreferenceChangedListener;
-import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.PieRenderer;
-import com.android.camera.ui.RenderOverlay;
+import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.RotateLayout;
-import com.android.camera.ui.ZoomRenderer;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.List;
 
-public class VideoUI implements PieRenderer.PieListener,
-        PreviewGestures.SingleTapListener,
-        SurfaceTextureListener, SurfaceHolder.Callback {
+public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
     private static final String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
+    private final PreviewOverlay mPreviewOverlay;
     // module fields
     private CameraActivity mActivity;
     private View mRootView;
@@ -70,10 +64,6 @@ public class VideoUI implements PieRenderer.PieListener,
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
     private View mTimeLapseLabel;
-    private RenderOverlay mRenderOverlay;
-    private PieRenderer mPieRenderer;
-    private SettingsPopup mPopup;
-    private ZoomRenderer mZoomRenderer;
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
     private SurfaceTexture mSurfaceTexture;
@@ -129,34 +119,6 @@ public class VideoUI implements PieRenderer.PieListener,
         mPreviewCover.setVisibility(View.VISIBLE);
     }
 
-    private class SettingsPopup extends PopupWindow {
-        public SettingsPopup(View popup) {
-            super(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            setOutsideTouchable(true);
-            setFocusable(true);
-            popup.setVisibility(View.VISIBLE);
-            setContentView(popup);
-            showAtLocation(mRootView, Gravity.CENTER, 0, 0);
-        }
-
-        public void dismiss(boolean topLevelOnly) {
-            super.dismiss();
-            popupDismissed();
-            showUI();
-
-            // Switch back into fullscreen/lights-out mode after popup
-            // is dimissed.
-            mActivity.setSystemBarsVisibility(false);
-        }
-
-        @Override
-        public void dismiss() {
-            // Called by Framework when touch outside the popup or hit back key
-            dismiss(true);
-        }
-    }
-
     public VideoUI(CameraActivity activity, VideoController controller, View parent) {
         mActivity = activity;
         mController = controller;
@@ -165,8 +127,17 @@ public class VideoUI implements PieRenderer.PieListener,
         mActivity.getLayoutInflater().inflate(R.layout.video_module,
                 (ViewGroup) moduleRoot, true);
 
-        mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
-        mRenderOverlay.setTapListener(this);
+        mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
+
+        //TODO: Setup a path to register the gesture listener through App UI
+        mPreviewOverlay.setGestureListener(new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent ev) {
+                // Preview area is touched. Take a picture.
+                mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
+                return true;
+            }
+        });
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
@@ -188,7 +159,6 @@ public class VideoUI implements PieRenderer.PieListener,
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         initializeMiscControls();
         initializeControlByIntent();
-        initializeOverlay();
         mAnimationManager = new AnimationManager();
 
         mBottomBar = mRootView.findViewById(R.id.bottom_bar);
@@ -243,14 +213,6 @@ public class VideoUI implements PieRenderer.PieListener,
             mAspectRatio = (float) height / width;
         }
         mHandler.sendEmptyMessage(UPDATE_TRANSFORM_MATRIX);
-    }
-
-    public int getPreviewWidth() {
-        return mPreviewWidth;
-    }
-
-    public int getPreviewHeight() {
-        return mPreviewHeight;
     }
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
@@ -330,41 +292,6 @@ public class VideoUI implements PieRenderer.PieListener,
         mAnimationManager.cancelAnimations();
     }
 
-    public void hideUI() {
-
-    }
-
-    public void showUI() {
-
-    }
-
-    public boolean arePreviewControlsVisible() {
-        return false;
-    }
-
-    public boolean collapseCameraControls() {
-        boolean ret = false;
-        if (mPopup != null) {
-            dismissPopup(false);
-            ret = true;
-        }
-        return ret;
-    }
-
-    public boolean removeTopLevelPopup() {
-        if (mPopup != null) {
-            dismissPopup(true);
-            return true;
-        }
-        return false;
-    }
-
-    public void enableCameraControls(boolean enable) {
-        if (mPieRenderer != null && mPieRenderer.showsItems()) {
-            mPieRenderer.hide();
-        }
-    }
-
     public void setOrientationIndicator(int orientation, boolean animation) {
         // We change the orientation of the linearlayout only for phone UI
         // because when in portrait the width is not enough.
@@ -409,20 +336,6 @@ public class VideoUI implements PieRenderer.PieListener,
         hdrbutton.setVisibility(View.INVISIBLE);
     }
 
-    private void initializeOverlay() {
-        mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
-        if (mPieRenderer == null) {
-            mPieRenderer = new PieRenderer(mActivity);
-            mPieRenderer.setPieListener(this);
-        }
-        mRenderOverlay.addRenderer(mPieRenderer);
-        if (mZoomRenderer == null) {
-            mZoomRenderer = new ZoomRenderer(mActivity);
-        }
-        mRenderOverlay.addRenderer(mZoomRenderer);
-        mRenderOverlay.setGestures(null);
-    }
-
     private void initializeMiscControls() {
         mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
         mRecordingTimeView = (TextView) mRootView.findViewById(R.id.recording_time);
@@ -446,58 +359,8 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
-    private void openMenu() {
-        if (mPieRenderer != null) {
-            mPieRenderer.showInCenter();
-        }
-    }
-
-    public void dismissPopup(boolean topLevelOnly) {
-        // In review mode, we do not want to bring up the camera UI
-        if (mController.isInReviewMode()) return;
-        if (mPopup != null) {
-            mPopup.dismiss(topLevelOnly);
-        }
-    }
-
-    private void popupDismissed() {
-        mPopup = null;
-    }
-
-    public void showPopup(AbstractSettingPopup popup) {
-        hideUI();
-
-        if (mPopup != null) {
-            mPopup.dismiss(false);
-        }
-        mPopup = new SettingsPopup(popup);
-    }
-
-    public void onShowSwitcherPopup() {
-        hidePieRenderer();
-    }
-
-    public boolean hidePieRenderer() {
-        if (mPieRenderer != null && mPieRenderer.showsItems()) {
-            mPieRenderer.hide();
-            return true;
-        }
-        return false;
-    }
-
     public void enableShutter(boolean enable) {
 
-    }
-
-    // PieListener
-    @Override
-    public void onPieOpened(int centerX, int centerY) {
-        setSwipingEnabled(false);
-    }
-
-    @Override
-    public void onPieClosed() {
-        setSwipingEnabled(true);
     }
 
     public void setSwipingEnabled(boolean enable) {
@@ -506,13 +369,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void showPreviewBorder(boolean enable) {
        // TODO: mPreviewFrameLayout.showBorder(enable);
-    }
-
-    // SingleTapListener
-    // Preview area is touched. Take a picture.
-    @Override
-    public void onSingleTapUp(View view, int x, int y) {
-        mController.onSingleTapUp(view, x, y);
     }
 
     public void showRecordingUI(boolean recording) {
@@ -542,33 +398,13 @@ public class VideoUI implements PieRenderer.PieListener,
         CameraUtil.fadeOut(mReviewPlayButton);
     }
 
-    private void setShowMenu(boolean show) {
-
-    }
-
-    public void onPreviewFocusChanged(boolean previewFocused) {
-        if (previewFocused) {
-            showUI();
-        } else {
-            hideUI();
-        }
-
-        if (mRenderOverlay != null) {
-            // this can not happen in capture mode
-            mRenderOverlay.setVisibility(previewFocused ? View.VISIBLE : View.GONE);
-        }
-        setShowMenu(previewFocused);
-    }
-
     public void initializeZoom(Parameters param) {
         mZoomMax = param.getMaxZoom();
         mZoomRatios = param.getZoomRatios();
         // Currently we use immediate zoom for fast zooming to get better UX and
         // there is no plan to take advantage of the smooth zoom.
-        mZoomRenderer.setZoomMax(mZoomMax);
-        mZoomRenderer.setZoom(param.getZoom());
-        mZoomRenderer.setZoomValue(mZoomRatios.get(param.getZoom()));
-        mZoomRenderer.setOnZoomChangeListener(new ZoomChangeListener());
+        // TODO: setup zoom through App UI.
+        mPreviewOverlay.setupZoom(mZoomMax, param.getZoom(), mZoomRatios, new ZoomChangeListener());
     }
 
     public void clickShutter() {
@@ -595,13 +431,10 @@ public class VideoUI implements PieRenderer.PieListener,
         return false;
     }
 
-    private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {
+    private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
         @Override
         public void onZoomValueChanged(int index) {
-            int newZoom = mController.onZoomChanged(index);
-            if (mZoomRenderer != null) {
-                mZoomRenderer.setZoomValue(mZoomRatios.get(newZoom));
-            }
+            mController.onZoomChanged(index);
         }
 
         @Override

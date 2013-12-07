@@ -40,8 +40,8 @@
         android:background="@android:color/white"
         android:visibility="gone"
         android:alpha="0" />
-    <com.android.camera.ui.RenderOverlay
-        android:id="@+id/render_overlay"
+    <com.android.camera.ui.PreviewOverlay
+        android:id="@+id/preview_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <FrameLayout
