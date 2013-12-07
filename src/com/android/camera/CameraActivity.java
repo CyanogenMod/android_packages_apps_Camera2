@@ -83,8 +83,6 @@ import com.android.camera.app.PanoramaStitchingManager;
 import com.android.camera.app.PlaceholderManager;
 import com.android.camera.crop.CropActivity;
 import com.android.camera.data.CameraDataAdapter;
-import com.android.camera.data.CameraPreviewData;
-import com.android.camera.data.FixedFirstDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.InProgressDataWrapper;
 import com.android.camera.data.LocalData;
@@ -93,14 +91,13 @@ import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripController;
-import com.android.camera.filmstrip.FilmstripImageData;
 import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
-import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.DetailsDialog;
+import com.android.camera.ui.FilmstripLayout;
 import com.android.camera.ui.FilmstripView;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
@@ -147,7 +144,6 @@ public class CameraActivity extends Activity
 
     private static final int MSG_HIDE_ACTION_BAR = 1;
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
-    private static final long SHOW_ACTION_BAR_TIMEOUT_MS = 3000;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000;  // 2 mins.
     private static final int SHIMMY_DELAY_MS = 1000;
 
@@ -185,6 +181,7 @@ public class CameraActivity extends Activity
     private ModuleManagerImpl mModuleManager;
     private FrameLayout mAboveFilmstripControlLayout;
     private FilmstripController mFilmstripController;
+    private boolean mFilmstripVisible;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
     private int mResultCodeForTesting;
@@ -282,11 +279,6 @@ public class CameraActivity extends Activity
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
-    @Override
-    public void onFilmstripHidden() {
-        setSystemBarsVisibility(false);
-    }
-
     private class MainHandler extends Handler {
         public MainHandler(Looper looper) {
             super(looper);
@@ -328,8 +320,32 @@ public class CameraActivity extends Activity
         return localFile.getName();
     }
 
-    private final FilmstripListener mFilmStripListener =
-            new FilmstripListener() {
+    private final FilmstripLayout.Listener mFilmstripListener =
+            new FilmstripLayout.Listener() {
+
+                @Override
+                public void onFilmstripHidden() {
+                    mFilmstripVisible = false;
+                    CameraActivity.this.setSystemBarsVisibility(false);
+                    // When the user hide the filmstrip (either swipe out or
+                    // tap on back key) we move to the first item so next time
+                    // when the user swipe in the filmstrip, the most recent
+                    // one is shown.
+                    mFilmstripController.goToFirstItem();
+                    if (mCurrentModule != null) {
+                        mCurrentModule.onPreviewVisibilityChanged(true);
+                    }
+                }
+
+                @Override
+                public void onFilmstripShown() {
+                    mFilmstripVisible = true;
+                    updateUiByData(mFilmstripController.getCurrentId());
+                    if (mCurrentModule != null) {
+                        mCurrentModule.onPreviewVisibilityChanged(false);
+                    }
+                }
+
                 @Override
                 public void onDataPromoted(int dataID) {
                     UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
@@ -349,75 +365,48 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onDataFullScreenChange(int dataID, boolean full) {
-                    boolean isCameraID = isCameraPreview(dataID);
-                    if (!isCameraID) {
-                        if (!full) {
-                            // Always show action bar in filmstrip mode
-                            CameraActivity.this.setSystemBarsVisibility(true, false);
-                        } else if (mActionBar.isShowing()) {
-                            // Hide action bar after time out in full screen mode
-                            mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR,
-                                    SHOW_ACTION_BAR_TIMEOUT_MS);
-                        }
-                    }
-                }
-
-                /**
-                 * Check if the local data corresponding to dataID is the camera
-                 * preview.
-                 *
-                 * @param dataID the ID of the local data
-                 * @return true if the local data is not null and it is the
-                 *         camera preview.
-                 */
-                private boolean isCameraPreview(int dataID) {
-                    LocalData localData = mDataAdapter.getLocalData(dataID);
-                    if (localData == null) {
-                        Log.w(TAG, "Current data ID not found.");
-                        return false;
-                    }
-                    return localData.getLocalDataType() == LocalData.LOCAL_CAMERA_PREVIEW;
-                }
-
-                @Override
-                public void onDataReloaded() {
-                    setPreviewControlsVisibility(true);
-                    CameraActivity.this.setSystemBarsVisibility(false);
-                }
-
-                @Override
-                public void onCurrentDataCentered(int dataID) {
-                    if (dataID != 0 && !mFilmstripController.isCameraPreview()) {
-                        // For now, We ignore all items that are not the camera preview.
-                        return;
-                    }
-
-                    if (!arePreviewControlsVisible()) {
-                        setPreviewControlsVisibility(true);
+                public void onEnterFullScreen(int dataId) {
+                    if (mFilmstripVisible) {
                         CameraActivity.this.setSystemBarsVisibility(false);
                     }
                 }
 
                 @Override
-                public void onCurrentDataOffCentered(int dataID) {
-                    if (dataID != 0 && !mFilmstripController.isCameraPreview()) {
-                        // For now, We ignore all items that are not the camera preview.
-                        return;
-                    }
+                public void onLeaveFullScreen(int dataId) {
+                    // Do nothing.
+                }
 
-                    if (arePreviewControlsVisible()) {
-                        setPreviewControlsVisibility(false);
+                @Override
+                public void onEnterFilmstrip(int dataId) {
+                    if (mFilmstripVisible) {
+                        CameraActivity.this.setSystemBarsVisibility(true);
                     }
                 }
 
                 @Override
-                public void onDataFocusChanged(final int dataID, final boolean focused) {
-                    // Delay hiding action bar if there is any user interaction
-                    if (mMainHandler.hasMessages(MSG_HIDE_ACTION_BAR)) {
-                        mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
-                        mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR,
-                                SHOW_ACTION_BAR_TIMEOUT_MS);
+                public void onLeaveFilmstrip(int dataId) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onDataReloaded() {
+                    if (!mFilmstripVisible) {
+                        return;
+                    }
+                    updateUiByData(mFilmstripController.getCurrentId());
+                }
+
+                @Override
+                public void onEnterZoomView(int dataID) {
+                    if (mFilmstripVisible) {
+                        CameraActivity.this.setSystemBarsVisibility(false);
+                    }
+                }
+
+                @Override
+                public void onDataFocusChanged(final int prevDataId, final int newDataId) {
+                    if (!mFilmstripVisible) {
+                        return;
                     }
                     // TODO: This callback is UI event callback, should always
                     // happen on UI thread. Find the reason for this
@@ -425,68 +414,33 @@ public class CameraActivity extends Activity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            LocalData currentData = mDataAdapter.getLocalData(dataID);
-                            if (currentData == null) {
-                                Log.w(TAG, "Current data ID not found.");
-                                hidePanoStitchingProgress();
-                                return;
-                            }
-                            boolean isCameraID = currentData.getLocalDataType() ==
-                                    LocalData.LOCAL_CAMERA_PREVIEW;
-                            if (!focused) {
-                                if (isCameraID) {
-                                    mCurrentModule.onPreviewFocusChanged(false);
-                                    CameraActivity.this.setSystemBarsVisibility(true);
-                                }
-                                hidePanoStitchingProgress();
-                            } else {
-                                if (isCameraID) {
-                                    // Don't show the action bar in Camera
-                                    // preview.
-                                    CameraActivity.this.setSystemBarsVisibility(false);
-
-                                    if (mPendingDeletion) {
-                                        performDeletion();
-                                    }
-                                } else {
-                                    updateActionBarMenu(dataID);
-                                }
-
-                                Uri contentUri = currentData.getContentUri();
-                                if (contentUri == null) {
-                                    hidePanoStitchingProgress();
-                                    return;
-                                }
-                                int panoStitchingProgress = mPanoramaManager.getTaskProgress(contentUri);
-                                if (panoStitchingProgress < 0) {
-                                    hidePanoStitchingProgress();
-                                    return;
-                                }
-                                showPanoStitchingProgress();
-                                updateStitchingProgress(panoStitchingProgress);
-                            }
+                            updateUiByData(newDataId);
                         }
                     });
                 }
 
-                @Override
-                public void onToggleSystemDecorsVisibility(int dataID) {
-                    // If action bar is showing, hide it immediately, otherwise
-                    // show action bar and hide it later
-                    if (mActionBar.isShowing()) {
-                        CameraActivity.this.setSystemBarsVisibility(false);
-                    } else {
-                        // Don't show the action bar if that is the camera preview.
-                        boolean isCameraID = isCameraPreview(dataID);
-                        if (!isCameraID) {
-                            CameraActivity.this.setSystemBarsVisibility(true, true);
-                        }
+                private void updateUiByData(int dataId) {
+                    LocalData currentData = mDataAdapter.getLocalData(dataId);
+                    if (currentData == null) {
+                        Log.w(TAG, "Current data ID not found.");
+                        hidePanoStitchingProgress();
+                        return;
                     }
-                }
+                    updateActionBarMenu(dataId);
 
-                @Override
-                public void setSystemDecorsVisibility(boolean visible) {
-                    CameraActivity.this.setSystemBarsVisibility(visible);
+                    Uri contentUri = currentData.getContentUri();
+                    if (contentUri == null) {
+                        hidePanoStitchingProgress();
+                        return;
+                    }
+                    int panoStitchingProgress =
+                            mPanoramaManager.getTaskProgress(contentUri);
+                    if (panoStitchingProgress < 0) {
+                        hidePanoStitchingProgress();
+                        return;
+                    }
+                    showPanoStitchingProgress();
+                    updateStitchingProgress(panoStitchingProgress);
                 }
             };
 
@@ -498,20 +452,11 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * If {@param visible} is false, this hides the action bar and switches the system UI
-     * to lights-out mode.
+     * If {@param visible} is false, this hides the action bar and switches the
+     * system UI to lights-out mode.
      */
     // TODO: This should not be called outside of the activity.
     public void setSystemBarsVisibility(boolean visible) {
-        setSystemBarsVisibility(visible, false);
-    }
-
-    /**
-     * If {@param visible} is false, this hides the action bar and switches the
-     * system UI to lights-out mode. If {@param hideLater} is true, a delayed message
-     * will be sent after a timeout to hide the action bar.
-     */
-    private void setSystemBarsVisibility(boolean visible, boolean hideLater) {
         mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
 
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
@@ -531,11 +476,6 @@ public class CameraActivity extends Activity
             if (mOnActionBarVisibilityListener != null) {
                 mOnActionBarVisibilityListener.onActionBarVisibilityChanged(visible);
             }
-        }
-
-        // Now delay hiding the bars
-        if (visible && hideLater) {
-            mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
         }
     }
 
@@ -626,11 +566,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onMenuVisibilityChanged(boolean isVisible) {
-        // If menu is showing, we need to make sure action bar does not go away.
-        mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
-        if (!isVisible) {
-            mMainHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTION_BAR, SHOW_ACTION_BAR_TIMEOUT_MS);
-        }
+        // TODO: Remove this or bring back the original implementation: cancel
+        // auto-hide actionbar.
     }
 
     @Override
@@ -1175,7 +1112,7 @@ public class CameraActivity extends Activity
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mFilmstripController = ((FilmstripView) findViewById(R.id.filmstrip_view)).getController();
-        mFilmstripController.setViewGap(
+        mFilmstripController.setImageGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
@@ -1183,7 +1120,9 @@ public class CameraActivity extends Activity
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter = new CameraDataAdapter(
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
-        mFilmstripController.setListener(mFilmStripListener);
+        ((FilmstripLayout) findViewById(R.id.filmstrip_layout))
+                .setFilmstripListener(mFilmstripListener);
+
 
         mCameraAppUI = new CameraAppUI(this,
                 (MainActivityLayout) findViewById(R.id.activity_root_view),
@@ -1328,8 +1267,6 @@ public class CameraActivity extends Activity
 
         // Delete photos that are pending deletion
         performDeletion();
-        // TODO: call mCurrentModule.pause() instead after all the modules
-        // support pause().
         mCurrentModule.pause();
         mOrientationManager.pause();
         // Close the camera and wait for the operation done.
@@ -1692,6 +1629,7 @@ public class CameraActivity extends Activity
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
+        module.onPreviewVisibilityChanged(!mFilmstripVisible);
     }
 
     private void closeModule(CameraModule module) {
@@ -1707,7 +1645,6 @@ public class CameraActivity extends Activity
 
         int currentId = mFilmstripController.getCurrentId();
         updateActionBarMenu(currentId);
-        mFilmStripListener.onCurrentDataCentered(currentId);
     }
 
     public void showUndoDeletionBar() {
@@ -1810,26 +1747,6 @@ public class CameraActivity extends Activity
         } else {
             //lockPreview(!enable);
         }
-    }
-
-
-    /**
-     * Check whether camera controls are visible.
-     *
-     * @return whether controls are visible.
-     */
-    private boolean arePreviewControlsVisible() {
-        return mCurrentModule.arePreviewControlsVisible();
-    }
-
-    /**
-     * Show or hide the {@link CameraControls} using the current module's
-     * implementation of {@link #onPreviewFocusChanged}.
-     *
-     * @param showControls whether to show camera controls.
-     */
-    private void setPreviewControlsVisibility(boolean showControls) {
-        mCurrentModule.onPreviewFocusChanged(showControls);
     }
 
     // Accessor methods for getting latency times used in performance testing

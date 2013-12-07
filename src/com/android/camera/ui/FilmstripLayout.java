@@ -30,6 +30,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.camera.filmstrip.FilmstripController;
+import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera2.R;
 
 /**
@@ -39,11 +41,23 @@ import com.android.camera2.R;
  */
 public class FilmstripLayout extends FrameLayout {
 
-    // TODO: Remove this quick hack.
-    public interface Listener {
-        void onFilmstripHidden();
-    }
+    /**
+     * An listener interface extending {@link
+     * com.android.camera.filmstrip.FilmstripListener} defining extra callbacks
+     * for filmstrip being shown and hidden.
+     */
+    public interface Listener extends FilmstripListener {
 
+        /**
+         * Callback when the filmstrip becomes invisible or gone.
+         */
+        public void onFilmstripHidden();
+
+        /**
+         * Callback when the filmstrip is shown in full-screen.
+         */
+        public void onFilmstripShown();
+    }
     private static final long DEFAULT_DURATION_MS = 200;
     private static final int ANIM_DIRECTION_IN = 1;
     private static final int ANIM_DIRECTION_OUT = 2;
@@ -51,7 +65,6 @@ public class FilmstripLayout extends FrameLayout {
     private FilmstripGestureRecognizer mGestureRecognizer;
     private FilmstripGestureRecognizer.Listener mFilmstripGestureListener;
     private final ValueAnimator mFilmstripAnimator = ValueAnimator.ofFloat(null);
-    private Listener mListener;
     private int mSwipeTrend;
     private MyBackgroundDrawable mBackgroundDrawable;
     private int mAnimationDirection;
@@ -69,15 +82,12 @@ public class FilmstripLayout extends FrameLayout {
         public void onAnimationEnd(Animator animator) {
             if (!mCanceled) {
                 if (mFilmstripView.getTranslationX() != 0f) {
-                    mFilmstripView.getController().goToFilmStrip();
+                    mFilmstripView.getController().goToFilmstrip();
                     setVisibility(INVISIBLE);
-                    // TODO: Remove this quick hack.
-                    if (mListener != null) {
-                        mListener.onFilmstripHidden();
-                    }
                     setHiding(false);
                 } else {
                     setHiding(true);
+                    notifyShown();
                 }
             }
         }
@@ -104,6 +114,7 @@ public class FilmstripLayout extends FrameLayout {
                     invalidate();
                 }
             };
+    private Listener mListener;
 
     public FilmstripLayout(Context context) {
         super(context);
@@ -127,8 +138,43 @@ public class FilmstripLayout extends FrameLayout {
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
     }
 
-    public void setListener(Listener l) {
-        mListener = l;
+    public void setFilmstripListener(Listener listener) {
+        mListener = listener;
+        if (getVisibility() == VISIBLE && mFilmstripView.getTranslationX() == 0) {
+            notifyShown();
+        } else {
+            notifyHidden(getVisibility());
+        }
+        mFilmstripView.getController().setListener(listener);
+    }
+
+    @Override
+    protected void onVisibilityChanged(View v, int visibility) {
+        super.onVisibilityChanged(v, visibility);
+        notifyHidden(visibility);
+    }
+
+    private void notifyHidden(int visibility) {
+        if (mListener == null) {
+            return;
+        }
+        if (visibility != VISIBLE) {
+            mListener.onFilmstripHidden();
+        }
+    }
+
+    private void notifyShown() {
+        if (mListener == null) {
+            return;
+        }
+        mListener.onFilmstripShown();
+        FilmstripController controller = mFilmstripView.getController();
+        int currentId = controller.getCurrentId();
+        if (controller.inFilmstrip()) {
+            mListener.onEnterFilmstrip(currentId);
+        } else if (controller.inFullScreen()) {
+            mListener.onEnterFullScreen(currentId);
+        }
     }
 
     @Override

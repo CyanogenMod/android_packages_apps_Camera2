@@ -1552,6 +1552,7 @@ public class VideoModule extends CameraModule
             if (flashMode == null) {
                 flashMode = mActivity.getString(
                         R.string.pref_camera_flashmode_no_flash);
+                mParameters.setFlashMode(flashMode);
             }
         }
     }
@@ -1573,13 +1574,8 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    public void onPreviewFocusChanged(boolean previewFocused) {
-        forceFlashOff(!previewFocused);
-    }
-
-    @Override
-    public boolean arePreviewControlsVisible() {
-        return false;
+    public void onPreviewVisibilityChanged(boolean visible) {
+        forceFlashOff(!visible);
     }
 
     private final class JpegPictureCallback implements CameraPictureCallback {

@@ -59,6 +59,13 @@ public interface ModuleController {
     /********************** UI / Camera preview **********************/
 
     /**
+     * Called when the preview becomes visible/invisible.
+     *
+     * @param visible Whether the preview is visible.
+     */
+    public void onPreviewVisibilityChanged(boolean visible);
+
+    /**
      * Called by the app when the preview size is changed.
      *
      * @param width The new width.

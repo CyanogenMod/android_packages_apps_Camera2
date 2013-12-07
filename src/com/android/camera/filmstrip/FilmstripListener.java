@@ -20,70 +20,70 @@ package com.android.camera.filmstrip;
  * An interface which defines the FilmStripView UI action listener.
  */
 public interface FilmstripListener {
+
     /**
-     * Callback when the data item is promoted. A data is promoted if the user swipe
-     * up a data vertically.
+     * Callback when the data item is promoted. A data is promoted if the user
+     * swipe up a data vertically.
      *
      * @param dataID The ID of the promoted data.
      */
     public void onDataPromoted(int dataID);
 
     /**
-     * Callback when the data item is demoted. A data is promoted if the user swipe
-     * down a data vertically.
+     * Callback when the data item is demoted. A data is promoted if the user
+     * swipe down a data vertically.
      *
      * @param dataID The ID of the demoted data.
      */
     public void onDataDemoted(int dataID);
 
     /**
-     * The callback when the item enters/leaves full-screen. TODO: Call this
-     * function actually.
      *
-     * @param dataID The ID of the image data.
-     * @param fullScreen {@code true} if the data is entering full-screen.
-     *            {@code false} otherwise.
-     */
-    public void onDataFullScreenChange(int dataID, boolean fullScreen);
-
-    /**
      * Called when all the data has been reloaded.
      */
     public void onDataReloaded();
 
     /**
-     * Called when the data item is centered in the film strip.
+     * The callback when the item enters full-screen state.
      *
-     * @param dataID the ID of the local data
+     * @param dataId The ID of the current focused image data.
      */
-    public void onCurrentDataCentered(int dataID);
+    public void onEnterFullScreen(int dataId);
 
     /**
-     * Called when the data item is off centered in the film strip.
+     * The callback when the item leaves full-screen.
      *
-     * @param dataID the ID of the local data
+     * @param dataId The ID of the current focused image data.
      */
-    public void onCurrentDataOffCentered(int dataID);
+    public void onLeaveFullScreen(int dataId);
 
     /**
-     * The callback when the item is centered/off-centered.
+     * The callback when the item enters filmstrip.
      *
-     * @param dataID The ID of the image data.
-     * @param focused {@code true} if the data is focused.
-     *            {@code false} otherwise.
+     * @param dataId The ID of the current focused image data.
      */
-    public void onDataFocusChanged(int dataID, boolean focused);
+    public void onEnterFilmstrip(int dataId);
 
     /**
-     * Toggles the visibility of the ActionBar.
+     * The callback when the item leaves filmstrip.
      *
-     * @param dataID The ID of the image data.
+     * @param dataId The ID of the current focused image data.
      */
-    public void onToggleSystemDecorsVisibility(int dataID);
+    public void onLeaveFilmstrip(int dataId);
 
     /**
-     * Sets the visibility of system decors, including action bar and nav bar
-     * @param visible The visibility of the system decors
+     * The callback when the item enters zoom view.
+     *
+     * @param dataID
      */
-    public void setSystemDecorsVisibility(boolean visible);
+    public void onEnterZoomView(int dataID);
+
+    /**
+     * The callback when the data focus changed.
+     *
+     * @param prevDataId The ID of the previously focused data or {@code -1} if
+     *                   none.
+     * @param newDataId The ID of the focused data of {@code -1} if none.
+     */
+    public void onDataFocusChanged(int prevDataId, int newDataId);
 }
