@@ -23,7 +23,9 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -34,6 +36,7 @@ import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * ModeListView class displays all camera modes and settings in the form
@@ -73,6 +76,9 @@ public class ModeListView extends ScrollView {
     private static final int ACCORDION_ANIMATION = 2;
     private static final int SCROLLING = 3;
 
+    // Scrolling delay between non-focused item and focused item
+    private static final int DELAY_MS = 25;
+
     private static final int[] mIconResId = {R.drawable.ic_camera_normal,
             R.drawable.ic_video_normal, R.drawable.ic_photo_sphere_normal,
             R.drawable.ic_craft_normal, R.drawable.ic_timelapse_normal,
@@ -105,9 +111,32 @@ public class ModeListView extends ScrollView {
     private float mScrollTrendX = 0f;
     private float mScrollTrendY = 0f;
     private ModeSwitchListener mListener = null;
+    private final LinkedList<TimeBasedPosition> mPositionHistory
+            = new LinkedList<TimeBasedPosition>();
+    private long mCurrentTime;
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
+    }
+
+    /**
+     * This class aims to help store time and position in pairs.
+     */
+    private static class TimeBasedPosition {
+        private float mPosition;
+        private long mTimeStamp;
+        public TimeBasedPosition(float position, long time) {
+            mPosition = position;
+            mTimeStamp = time;
+        }
+
+        public float getPosition() {
+            return mPosition;
+        }
+
+        public long getTimeStamp() {
+            return mTimeStamp;
+        }
     }
 
     /**
@@ -339,8 +368,10 @@ public class ModeListView extends ScrollView {
         Configuration config = getResources().getConfiguration();
         if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             height = height / ROWS_TO_SHOW_IN_LANDSCAPE;
+            setVerticalScrollBarEnabled(true);
         } else {
             height = height / MODE_TOTAL;
+            setVerticalScrollBarEnabled(false);
         }
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mWidth, 0);
         lp.width = LayoutParams.MATCH_PARENT;
@@ -408,18 +439,18 @@ public class ModeListView extends ScrollView {
         mScrollTrendY = mScrollTrendY * 0.3f + deltaY * 0.7f;
 
         // TODO: Change how the curve is calculated below when UX finalize their design.
+        mCurrentTime = SystemClock.uptimeMillis();
         float longestWidth;
         if (itemId != NO_ITEM_SELECTED) {
             longestWidth = mModeSelectorItems[itemId].getVisibleWidth() - deltaX;
         } else {
             longestWidth = mModeSelectorItems[0].getVisibleWidth() - deltaX;
         }
+        insertNewPosition(longestWidth, mCurrentTime);
 
         for (int i = 0; i < mModeSelectorItems.length; i++) {
-            // Only form a curve for swiping in.
-            float factor = itemId == NO_ITEM_SELECTED ? 1f
-                    : (float) Math.pow(0.8, Math.abs(itemId - i));
-            mModeSelectorItems[i].setVisibleWidth((int) (longestWidth * factor));
+            mModeSelectorItems[i].setVisibleWidth(calculateVisibleWidthForItem(i,
+                    (int) longestWidth));
         }
         if (longestWidth <= 0) {
             reset();
@@ -427,6 +458,85 @@ public class ModeListView extends ScrollView {
 
         itemId = itemId == NO_ITEM_SELECTED ? 0 : itemId;
         onVisibleWidthChanged(mModeSelectorItems[itemId].getVisibleWidth());
+    }
+
+    /**
+     * Calculate the width of a specified item based on its position relative to
+     * the item with longest width.
+     */
+    private int calculateVisibleWidthForItem(int itemId, int longestWidth) {
+        if (itemId == mFocusItem || mFocusItem == NO_ITEM_SELECTED) {
+            return longestWidth;
+        }
+
+        int delay = Math.abs(itemId - mFocusItem) * DELAY_MS;
+        return (int) getPosition(mCurrentTime - delay);
+    }
+
+    /**
+     * Insert new position and time stamp into the history position list, and
+     * remove stale position items.
+     *
+     * @param position latest position of the focus item
+     * @param time  current time in milliseconds
+     */
+    private void insertNewPosition(float position, long time) {
+        // TODO: Consider re-using stale position objects rather than
+        // always creating new position objects.
+        mPositionHistory.add(new TimeBasedPosition(position, time));
+
+        // Positions that are from too long ago will not be of any use for
+        // future position interpolation. So we need to remove those positions
+        // from the list.
+        long timeCutoff = time - (mTotalModes - 1) * DELAY_MS;
+        while (mPositionHistory.size() > 0) {
+            // Remove all the position items that are prior to the cutoff time.
+            TimeBasedPosition historyPosition = mPositionHistory.getFirst();
+            if (historyPosition.getTimeStamp() < timeCutoff) {
+                mPositionHistory.removeFirst();
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Gets the interpolated position at the specified time. This involves going
+     * through the recorded positions until a {@link TimeBasedPosition} is found
+     * such that the position the recorded before the given time, and the
+     * {@link TimeBasedPosition} after that is recorded no earlier than the given
+     * time. These two positions are then interpolated to get the position at the
+     * specified time.
+     */
+    private float getPosition(long time) {
+        int i;
+        for (i = 0; i < mPositionHistory.size(); i++) {
+            TimeBasedPosition historyPosition = mPositionHistory.get(i);
+            if (historyPosition.getTimeStamp() > time) {
+                // Found the winner. Now interpolate between position i and position i - 1
+                if (i == 0) {
+                    return historyPosition.getPosition();
+                } else {
+                    TimeBasedPosition prevTimeBasedPosition = mPositionHistory.get(i - 1);
+                    // Start interpolation
+                    float fraction = (float) (time - prevTimeBasedPosition.getTimeStamp()) /
+                            (float) (historyPosition.getTimeStamp() - prevTimeBasedPosition.getTimeStamp());
+                    float position = fraction * (historyPosition.getPosition()
+                            - prevTimeBasedPosition.getPosition()) + prevTimeBasedPosition.getPosition();
+                    return position;
+                }
+            }
+        }
+        // It should never get here.
+        Log.e(TAG, "Invalid time input for getPosition(). time: " + time);
+        if (mPositionHistory.size() == 0) {
+            Log.e(TAG, "TimeBasedPosition history size is 0");
+        } else {
+            Log.e(TAG, "First position recorded at " + mPositionHistory.getFirst().getTimeStamp()
+            + " , last position recorded at " + mPositionHistory.getLast().getTimeStamp());
+        }
+        assert (i < mPositionHistory.size());
+        return i;
     }
 
     private void reset() {
