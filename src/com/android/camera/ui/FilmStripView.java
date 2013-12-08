@@ -410,7 +410,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         public void goToFullScreen();
 
-        public void clearSurfaceViews();
     }
 
     /**
@@ -2354,19 +2353,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             enterFullScreen();
             scaleTo(1f, GEOMETRY_ADJUST_TIME_MS);
-        }
-
-        @Override
-        public void clearSurfaceViews() {
-            for(ViewItem item: mViewItem) {
-                if (item == null) {
-                    continue;
-                }
-                View v = item.getView();
-                if (v != mCameraView) {
-                    removeView(v);
-                }
-            }
         }
 
         private void cancelFlingAnimation() {
