@@ -133,22 +133,24 @@ public class PhotoMenu extends PieController
         });
         more.addItem(item);
         // Image size.
-        item = makeItem(R.drawable.ic_imagesize);
         final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
-        item.setLabel(res.getString(R.string.pref_camera_picturesize_title).toUpperCase(locale));
-        item.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                ListPrefSettingPopup popup = (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.list_pref_setting_popup, null, false);
-                popup.initialize(sizePref);
-                popup.setSettingChangedListener(PhotoMenu.this);
-                mUI.dismissPopup();
-                mPopup = popup;
-                mUI.showPopup(mPopup);
-            }
-        });
-        more.addItem(item);
+        if (sizePref != null) {
+            item = makeItem(R.drawable.ic_imagesize);
+            item.setLabel(res.getString(R.string.pref_camera_picturesize_title).toUpperCase(locale));
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    ListPrefSettingPopup popup = (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
+                            R.layout.list_pref_setting_popup, null, false);
+                    popup.initialize(sizePref);
+                    popup.setSettingChangedListener(PhotoMenu.this);
+                    mUI.dismissPopup();
+                    mPopup = popup;
+                    mUI.showPopup(mPopup);
+                }
+            });
+            more.addItem(item);   
+        }
         // White balance.
         if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
             item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
