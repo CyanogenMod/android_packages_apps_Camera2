@@ -1822,16 +1822,6 @@ public class PhotoModule
         }
     }
 
-    @Override
-    public void onPreviewFocusChanged(boolean previewFocused) {
-        mUI.onPreviewFocusChanged(previewFocused);
-    }
-
-    @Override
-    public boolean arePreviewControlsVisible() {
-        return false;
-    }
-
     // For debugging only.
     public void setDebugUri(Uri uri) {
         mDebugUri = uri;

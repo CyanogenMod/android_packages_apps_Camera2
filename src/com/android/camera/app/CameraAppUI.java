@@ -161,7 +161,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
 
         mAppRootView = appRootView;
         mFilmstripLayout = (FilmstripLayout) appRootView.findViewById(R.id.filmstrip_layout);
-        mFilmstripLayout.setListener(controller);
         mCameraRootView = (FrameLayout) appRootView.findViewById(R.id.camera_app_root);
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);

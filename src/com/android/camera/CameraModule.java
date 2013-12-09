@@ -38,12 +38,14 @@ public abstract class CameraModule implements ModuleController {
         mCameraProvider = app.getCameraProvider();
     }
 
-    @Deprecated
-    public abstract void onPreviewFocusChanged(boolean previewFocused);
-
     @Override
     public boolean onBackPressed() {
         return false;
+    }
+
+    @Override
+    public void onPreviewVisibilityChanged(boolean visible) {
+        // Do nothing.
     }
 
     @Deprecated
@@ -57,9 +59,6 @@ public abstract class CameraModule implements ModuleController {
 
     @Deprecated
     public abstract void onMediaSaverAvailable(MediaSaver s);
-
-    @Deprecated
-    public abstract boolean arePreviewControlsVisible();
 
     /**
      * @return An instance containing common services to be used by the module.

@@ -31,7 +31,7 @@ import com.android.camera.settings.SettingsManager;
 /**
  * The controller at app level.
  */
-public interface AppController extends FilmstripLayout.Listener {
+public interface AppController {
 
     /**
      * An interface which defines the shutter events listener.
