@@ -72,6 +72,15 @@ public class ModuleManagerImpl implements ModuleManager {
     }
 
     @Override
+    public List<Integer> getSupportedModeIndexList() {
+        List<Integer> modeIndexList = new ArrayList<Integer>();
+        for (int i = 0; i < mRegisteredModuleAgents.size(); i++) {
+            modeIndexList.add(mRegisteredModuleAgents.keyAt(i));
+        }
+        return modeIndexList;
+    }
+
+    @Override
     public boolean setDefaultModuleIndex(int moduleId) {
         if (mRegisteredModuleAgents.get(moduleId) != null) {
             mDefaultModuleId = moduleId;

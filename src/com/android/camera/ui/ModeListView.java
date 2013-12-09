@@ -37,6 +37,7 @@ import com.android.camera2.R;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * ModeListView class displays all camera modes and settings in the form
@@ -111,6 +112,7 @@ public class ModeListView extends ScrollView {
     private float mScrollTrendX = 0f;
     private float mScrollTrendY = 0f;
     private ModeSwitchListener mListener = null;
+    private int[] mSupportedModes;
     private final LinkedList<TimeBasedPosition> mPositionHistory
             = new LinkedList<TimeBasedPosition>();
     private long mCurrentTime;
@@ -221,7 +223,8 @@ public class ModeListView extends ScrollView {
             int index = getFocusItem(ev.getX(), ev.getY());
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
-                onModeSelected(index);
+                int modeId = getModeIndex(index);
+                onModeSelected(modeId);
             }
             return true;
         }
@@ -251,13 +254,47 @@ public class ModeListView extends ScrollView {
         mListView.setBackgroundColor(mListBackgroundColor);
     }
 
-    @Override
-    public void onFinishInflate() {
-        // TODO: Total modes will need to be dynamically queried in the beginning of
-        // app startup.
-        mTotalModes = MODE_TOTAL;
-        mModeSelectorItems = new ModeSelectorItem[mTotalModes];
+    /**
+     * Initialize mode list with a list of indices of supported modes.
+     *
+     * @param modeIndexList a list of indices of supported modes
+     */
+    public void init(List<Integer> modeIndexList) {
+        boolean[] modeIsSupported = new boolean[MODE_TOTAL];
+        // Setting should always be supported
+        modeIsSupported[MODE_SETTING] = true;
+        mTotalModes = 1;
 
+        // Mark the supported modes in a boolean array to preserve the
+        // sequence of the modes
+        for (int i = 0; i < modeIndexList.size(); i++) {
+            int mode = modeIndexList.get(i);
+            if (mode >= MODE_TOTAL) {
+                // This is a mode that we don't display in the mode list, skip.
+                continue;
+            }
+            if (modeIsSupported[mode] == false) {
+                modeIsSupported[mode] = true;
+                mTotalModes++;
+            }
+        }
+        // Put the indices of supported modes into an array preserving their
+        // display order.
+        mSupportedModes = new int[mTotalModes];
+        int modeCount = 0;
+        for (int i = 0; i < MODE_TOTAL; i++) {
+            if (modeIsSupported[i]) {
+                mSupportedModes[modeCount] = i;
+                modeCount++;
+            }
+        }
+
+        initializeModeSelectorItems();
+    }
+
+    // TODO: Initialize mode selectors with different sizes based on number of modes supported
+    private void initializeModeSelectorItems() {
+        mModeSelectorItems = new ModeSelectorItem[mTotalModes];
         // Inflate the mode selector items and add them to a linear layout
         LayoutInflater inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -274,18 +311,35 @@ public class ModeListView extends ScrollView {
                 selectorItem.setBackgroundColor(getResources()
                         .getColor(R.color.mode_selector_background_dark));
             }
-            selectorItem.setIconBackgroundColor(getResources().getColor(mIconBlockColor[i]));
+            int modeId = getModeIndex(i);
+            selectorItem.setIconBackgroundColor(getResources()
+                    .getColor(mIconBlockColor[modeId]));
 
             // Set image
-            selectorItem.setImageResource(mIconResId[i]);
+            selectorItem.setImageResource(mIconResId[modeId]);
 
             // Set text
-            CharSequence text = getResources().getText(mTextResId[i]);
+            CharSequence text = getResources().getText(mTextResId[modeId]);
             selectorItem.setText(text);
             mModeSelectorItems[i] = selectorItem;
         }
 
         resetModeSelectors();
+    }
+
+    /**
+     * Maps between the UI mode selector index to the actual mode id.
+     *
+     * @param modeSelectorIndex the index of the UI item
+     * @return the index of the corresponding camera mode
+     */
+    private int getModeIndex(int modeSelectorIndex) {
+        if (modeSelectorIndex < mTotalModes && modeSelectorIndex >= 0) {
+            return mSupportedModes[modeSelectorIndex];
+        }
+        Log.e(TAG, "Invalid mode selector index: " + modeSelectorIndex + ", total modes: "
+                + mTotalModes);
+        return MODE_PHOTO;
     }
 
     /** Notify ModeSwitchListener, if any, of the mode change. */
@@ -370,7 +424,7 @@ public class ModeListView extends ScrollView {
             height = height / ROWS_TO_SHOW_IN_LANDSCAPE;
             setVerticalScrollBarEnabled(true);
         } else {
-            height = height / MODE_TOTAL;
+            height = height / mTotalModes;
             setVerticalScrollBarEnabled(false);
         }
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mWidth, 0);

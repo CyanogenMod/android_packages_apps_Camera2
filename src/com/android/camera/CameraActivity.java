@@ -1073,6 +1073,7 @@ public class CameraActivity extends Activity
         ModulesInfo.setupModules(this, mModuleManager);
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
+        mModeListView.init(mModuleManager.getSupportedModeIndexList());
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
         }

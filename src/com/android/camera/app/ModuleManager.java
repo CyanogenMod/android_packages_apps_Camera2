@@ -82,6 +82,13 @@ public interface ModuleManager {
     List<ModuleAgent> getRegisteredModuleAgents();
 
     /**
+     * @return A {@link java.util.List} of the
+     * {@link com.android.camera.app.ModuleManager.ModuleAgent} of all the
+     * registered modules' indices.
+     */
+    List<Integer> getSupportedModeIndexList();
+
+    /**
      * Sets the default module index. No-op if the module index does not exist.
      *
      * @param moduleId The ID of the default module.
