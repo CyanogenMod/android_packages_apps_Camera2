@@ -263,7 +263,9 @@ public class PhotoUI implements PieListener,
             Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
             return;
         }
-        if (aspectRatio < 1f) {
+        if (mOrientationResize &&
+                mActivity.getResources().getConfiguration().orientation
+                != Configuration.ORIENTATION_PORTRAIT) {
             aspectRatio = 1f / aspectRatio;
         }
 
