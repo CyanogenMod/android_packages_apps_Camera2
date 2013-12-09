@@ -42,6 +42,7 @@ import android.widget.CompoundButton;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
 import com.android.camera.ui.PreviewOverlay;
@@ -387,19 +388,19 @@ public class PhotoUI implements
     public void onCameraOpened(Camera.Parameters params,
             ButtonManager.ButtonCallback cameraCallback,
             ButtonManager.ButtonCallback hdrCallback) {
-
         ButtonManager buttonManager = mActivity.getButtonManager();
-        ImageButton flashbutton = buttonManager.getButton(ButtonManager.BUTTON_FLASH,
-            null, R.array.camera_flashmode_icons);
-        flashbutton.setVisibility(View.VISIBLE);
-
-        ImageButton camerabutton = buttonManager.getButton(ButtonManager.BUTTON_CAMERA,
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        if (settingsManager.isCameraBackFacing()) {
+            buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
+                null, R.array.camera_flashmode_icons);
+        } else {
+            buttonManager.disableButton(ButtonManager.BUTTON_FLASH,
+                R.id.flash_toggle_button);
+        }
+        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
             cameraCallback, R.array.camera_id_icons);
-        camerabutton.setVisibility(View.VISIBLE);
-
-        ImageButton hdrbutton = buttonManager.getButton(ButtonManager.BUTTON_HDRPLUS,
+        buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
             hdrCallback, R.array.pref_camera_hdr_plus_icons);
-        hdrbutton.setVisibility(View.VISIBLE);
 
         initializeZoom(params);
     }

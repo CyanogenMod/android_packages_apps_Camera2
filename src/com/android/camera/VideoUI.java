@@ -40,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.util.CameraUtil;
@@ -323,17 +324,17 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
 
     public void onCameraOpened(ButtonManager.ButtonCallback cameraCallback) {
         ButtonManager buttonManager = mActivity.getButtonManager();
-        ImageButton flashbutton = buttonManager.getButton(ButtonManager.BUTTON_FLASH,
-            null, R.array.video_flashmode_icons);
-        flashbutton.setVisibility(View.VISIBLE);
-
-        ImageButton camerabutton = buttonManager.getButton(ButtonManager.BUTTON_CAMERA,
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        if (settingsManager.isCameraBackFacing()) {
+            buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
+                null, R.array.video_flashmode_icons);
+        } else {
+            buttonManager.disableButton(ButtonManager.BUTTON_FLASH,
+                R.id.flash_toggle_button);
+        }
+        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
             cameraCallback, R.array.camera_id_icons);
-        camerabutton.setVisibility(View.VISIBLE);
-
-        ImageButton hdrbutton = buttonManager.getButton(ButtonManager.BUTTON_HDRPLUS,
-            null, 0);
-        hdrbutton.setVisibility(View.INVISIBLE);
+        buttonManager.disableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
     }
 
     private void initializeMiscControls() {

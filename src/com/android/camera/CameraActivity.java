@@ -196,6 +196,7 @@ public class CameraActivity extends Activity
     private int mLastRawOrientation;
     private OrientationManagerImpl mOrientationManager;
     private LocationManager mLocationManager;
+    private ButtonManager mButtonManager;
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
     private ActionBar mActionBar;
@@ -1641,7 +1642,10 @@ public class CameraActivity extends Activity
     }
 
     public ButtonManager getButtonManager() {
-        return ButtonManager.getInstance(this);
+        if (mButtonManager == null) {
+            mButtonManager = new ButtonManager(this);
+        }
+        return mButtonManager;
     }
 
     /**
