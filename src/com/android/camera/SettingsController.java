@@ -23,10 +23,13 @@ import android.media.CamcorderProfile;
 import android.util.Log;
 
 import com.android.camera.app.CameraManager;
+import com.android.camera.app.LocationManager;
 import com.android.camera.ui.SettingsView;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera2.R;
+
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +58,6 @@ public class SettingsController implements SettingsView.SettingsViewListener {
         if (!mActivity.isPaused()) {
             mSettingsManager.set(SettingsManager.SETTING_RECORD_LOCATION,
                 (on ? SettingsManager.VALUE_ON : SettingsManager.VALUE_OFF));
-
             LocationManager locationManager = mActivity.getLocationManager();
             locationManager.recordLocation(on);
         }
