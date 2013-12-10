@@ -48,6 +48,8 @@ public class PreviewOverlay extends View {
 
     private static final String TAG = "PreviewOverlay";
 
+    public static final int ZOOM_MIN_FACTOR = 100;
+
     private final ScaleGestureDetector mScaleDetector;
     private final ZoomProcessor mZoomProcessor = new ZoomProcessor();
     private GestureDetector mGestureDetector = null;
@@ -89,6 +91,20 @@ public class PreviewOverlay extends View {
                           OnZoomChangedListener zoomChangeListener) {
         mZoomListener = zoomChangeListener;
         mZoomProcessor.setupZoom(zoomMax, zoom, zoomRatios);
+    }
+
+    /**
+     * This sets up the zoom listener and zoom related parameters when
+     * the range of zoom ratios is continuous.
+     *
+     * @param zoomMax max zoom ratio
+     * @param zoom current zoom index
+     * @param zoomChangeListener a listener that receives callbacks when zoom changes
+     */
+    public void setupZoom(float zoomMaxRatio, int zoom, OnZoomChangedListener zoomChangeListener) {
+        mZoomListener = zoomChangeListener;
+        int zoomMax = ((int) zoomMaxRatio * 100) - ZOOM_MIN_FACTOR;
+        mZoomProcessor.setupZoom(zoomMax, zoom, null);
     }
 
     @Override
@@ -218,7 +234,16 @@ public class PreviewOverlay extends View {
         public void setZoom(int index) {
             mCircleSize = (int) (mMinCircle + index * (mMaxCircle - mMinCircle)
                     / (mMaxZoom - mMinZoom));
-            setZoomValue(mZoomRatios.get(index));
+
+            int zoomValue;
+            if (mZoomRatios != null) {
+                // Discrete zoom.
+                zoomValue = mZoomRatios.get(index);
+            } else {
+                // Continuous zoom.
+                zoomValue = ZOOM_MIN_FACTOR + index;
+            }
+            setZoomValue(zoomValue);
         }
 
         public void setZoomValue(int value) {
@@ -265,7 +290,7 @@ public class PreviewOverlay extends View {
                 int zoom = mMinZoom + (int) ((mCircleSize - mMinCircle) * (mMaxZoom - mMinZoom)
                         / (mMaxCircle - mMinCircle));
                 mZoomListener.onZoomValueChanged(zoom);
-                setZoomValue(mZoomRatios.get(zoom));
+                setZoom(zoom);
             }
             invalidate();
             return true;
