@@ -1179,8 +1179,9 @@ public class CameraActivity extends Activity
         setModuleFromModeIndex(modeIndex);
 
         // TODO: Remove this when refactor is done.
-        if (modeIndex == ModulesInfo.MODULE_PHOTO ||
-                modeIndex == ModulesInfo.MODULE_VIDEO) {
+        if (modeIndex == ModulesInfo.MODULE_PHOTO
+                || modeIndex == ModulesInfo.MODULE_VIDEO
+                || modeIndex == ModulesInfo.MODULE_GCAM) {
             mCameraAppUI.prepareModuleUI();
         }
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
@@ -1508,12 +1509,15 @@ public class CameraActivity extends Activity
         int oldModuleIndex = mCurrentModeIndex;
         setModuleFromModeIndex(modeIndex);
 
-        // TODO: The following check is temporary for quick switch between video and photo.
-        // When the refactor is done, similar logic will be applied to all modules.
+        // TODO: The following check is temporary for modules attached to the
+        // generic_module layout. When the refactor is done, similar logic will
+        // be applied to all modules.
         if (mCurrentModeIndex == ModulesInfo.MODULE_PHOTO
-                || mCurrentModeIndex == ModulesInfo.MODULE_VIDEO) {
+                || mCurrentModeIndex == ModulesInfo.MODULE_VIDEO
+                || mCurrentModeIndex == ModulesInfo.MODULE_GCAM) {
             if (oldModuleIndex != ModulesInfo.MODULE_PHOTO
-                    && oldModuleIndex != ModulesInfo.MODULE_VIDEO) {
+                    && oldModuleIndex != ModulesInfo.MODULE_VIDEO
+                    && oldModuleIndex != ModulesInfo.MODULE_GCAM) {
                 mCameraAppUI.prepareModuleUI();
             } else {
                 mCameraAppUI.clearModuleUI();
