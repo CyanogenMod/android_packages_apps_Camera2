@@ -451,7 +451,7 @@ public class PhotoModule
         mHandler.sendEmptyMessage(MSG_SWITCH_CAMERA_START_ANIMATION);
     }
 
-    private ButtonManager.ButtonCallback mCameraButtonCallback =
+    private final ButtonManager.ButtonCallback mCameraButtonCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -468,7 +468,7 @@ public class PhotoModule
             }
         };
 
-    private ButtonManager.ButtonCallback mHdrPlusButtonCallback =
+    private final ButtonManager.ButtonCallback mHdrPlusButtonCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -485,7 +485,6 @@ public class PhotoModule
             settingsManager.setDefault(SettingsManager.SETTING_CAMERA_HDR_PLUS);
         }
         updateSceneMode();
-        showTapToFocusToastIfNeeded();
     }
 
     @Override
@@ -543,18 +542,6 @@ public class PhotoModule
         }
         mNamedImages = new NamedImages();
         mUI.initializeSecondTime(mParameters);
-    }
-
-    private void showTapToFocusToastIfNeeded() {
-        // Show the tap to focus toast if this is the first start.
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        boolean showHint = settingsManager.getBoolean(
-            SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN);
-        // CONVERT THIS SETTING TO A STRING
-        if (mFocusAreaSupported && showHint) {
-            // Delay the toast for one second to wait for orientation.
-            mHandler.sendEmptyMessageDelayed(MSG_SHOW_TAP_TO_FOCUS_TOAST, 1000);
-        }
     }
 
     private void addIdleHandler() {
