@@ -68,7 +68,9 @@ public class FilmstripLayout extends FrameLayout {
     private int mSwipeTrend;
     private MyBackgroundDrawable mBackgroundDrawable;
     private int mAnimationDirection;
-    private boolean mHiding;
+    // There are two versions of background. The hiding background is simply a
+    // solid black rectangle, the other is the quantum paper version.
+    private boolean mDrawHidingBackground;
 
     private Animator.AnimatorListener mFilmstripAnimatorListener = new Animator.AnimatorListener() {
         private boolean mCanceled;
@@ -84,9 +86,9 @@ public class FilmstripLayout extends FrameLayout {
                 if (mFilmstripView.getTranslationX() != 0f) {
                     mFilmstripView.getController().goToFilmstrip();
                     setVisibility(INVISIBLE);
-                    setHiding(false);
+                    setDrawHidingBackground(false);
                 } else {
-                    setHiding(true);
+                    setDrawHidingBackground(true);
                     notifyShown();
                 }
             }
@@ -107,7 +109,7 @@ public class FilmstripLayout extends FrameLayout {
             new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    if (mAnimationDirection == ANIM_DIRECTION_IN && !mHiding) {
+                    if (mAnimationDirection == ANIM_DIRECTION_IN && !mDrawHidingBackground) {
                         mBackgroundDrawable.setFraction(valueAnimator.getAnimatedFraction());
                     }
                     mFilmstripView.setTranslationX((Float) valueAnimator.getAnimatedValue());
@@ -258,9 +260,9 @@ public class FilmstripLayout extends FrameLayout {
         mFilmstripAnimator.start();
     }
 
-    private void setHiding(boolean hiding) {
-        mHiding = hiding;
-        if (!mHiding) {
+    private void setDrawHidingBackground(boolean hiding) {
+        mDrawHidingBackground = hiding;
+        if (!mDrawHidingBackground) {
             mBackgroundDrawable.setFraction(0f);
         }
     }
@@ -273,6 +275,9 @@ public class FilmstripLayout extends FrameLayout {
     private class MyGestureListener implements FilmstripGestureRecognizer.Listener {
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
+            if (mFilmstripView.getController().getCurrentId() == -1) {
+                return true;
+            }
             if (mFilmstripAnimator.isRunning()) {
                 return true;
             }
@@ -349,8 +354,14 @@ public class FilmstripLayout extends FrameLayout {
             }
             if (mSwipeTrend < 0) {
                 hideFilmstrip();
-            } else {
+            } else if (mSwipeTrend > 0) {
                 showFilmstrip();
+            } else {
+                if (mFilmstripView.getTranslationX() >= getMeasuredWidth() / 2) {
+                    hideFilmstrip();
+                } else {
+                    showFilmstrip();
+                }
             }
             mSwipeTrend = 0;
             return false;
@@ -400,7 +411,7 @@ public class FilmstripLayout extends FrameLayout {
             if (translation == width) {
                 return;
             }
-            if (mHiding) {
+            if (mDrawHidingBackground) {
                 drawHiding(canvas);
             } else {
                 drawShowing(canvas);
