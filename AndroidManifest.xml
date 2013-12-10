@@ -4,8 +4,8 @@
     package="com.android.camera2">
 
     <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="19" />
 
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
