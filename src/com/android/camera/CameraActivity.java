@@ -91,7 +91,6 @@ import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripController;
-import com.android.camera.filmstrip.FilmstripListener;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
@@ -101,6 +100,7 @@ import com.android.camera.ui.FilmstripLayout;
 import com.android.camera.ui.FilmstripView;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
+import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.SettingsView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -799,6 +799,11 @@ public class CameraActivity extends Activity
     public SurfaceTexture getPreviewBuffer() {
         // TODO: implement this
         return null;
+    }
+
+    @Override
+    public void setPreviewStatusListener(PreviewStatusListener previewStatusListener) {
+        mCameraAppUI.setPreviewStatusListener(previewStatusListener);
     }
 
     @Override

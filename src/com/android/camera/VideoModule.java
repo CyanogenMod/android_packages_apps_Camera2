@@ -305,6 +305,7 @@ public class VideoModule extends CameraModule
     public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = (CameraActivity) app.getAndroidContext();
         mUI = new VideoUI(mActivity, this,  app.getModuleLayoutRoot());
+        app.setPreviewStatusListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
@@ -1411,8 +1412,6 @@ public class VideoModule extends CameraModule
     @Override
     public void pause() {
         mPaused = true;
-
-        mUI.showPreviewCover();
         if (mMediaRecorderRecording) {
             // Camera will be released in onStopVideoRecording.
             onStopVideoRecording();

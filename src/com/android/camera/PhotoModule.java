@@ -55,7 +55,6 @@ import com.android.camera.app.CameraManager.CameraAFMoveCallback;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.CameraManager.CameraShutterCallback;
-import com.android.camera.app.AppController;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -357,6 +356,7 @@ public class PhotoModule
     public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = (CameraActivity) app.getAndroidContext();
         mUI = new PhotoUI(mActivity, this, app.getModuleLayoutRoot());
+        app.setPreviewStatusListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
