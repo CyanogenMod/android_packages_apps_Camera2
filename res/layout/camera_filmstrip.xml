@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<com.android.camera.ui.FilmstripLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.camera.widget.FilmstripLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/filmstrip_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <com.android.camera.ui.FilmstripView
+        <com.android.camera.widget.FilmstripView
             android:id="@+id/filmstrip_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -68,4 +68,4 @@
                 android:layout_gravity="bottom|center_horizontal" />
         </LinearLayout>
     </FrameLayout>
-</com.android.camera.ui.FilmstripLayout>
+</com.android.camera.widget.FilmstripLayout>

@@ -28,7 +28,7 @@ import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.app.PlaceholderManager;
-import com.android.camera.filmstrip.FilmstripImageData;
+import com.android.camera.filmstrip.ImageData;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -78,7 +78,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public FilmstripImageData getImageData(int id) {
+    public ImageData getImageData(int id) {
         return getLocalData(id);
     }
 

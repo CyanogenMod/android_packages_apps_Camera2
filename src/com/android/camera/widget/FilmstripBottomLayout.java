@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.ui;
+package com.android.camera.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -22,49 +22,22 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-import com.android.camera.CameraActivity;
+import com.android.camera.filmstrip.BottomControls;
 import com.android.camera2.R;
 
 /**
  * Shows controls at the bottom of the screen for editing, viewing a photo
  * sphere image and creating a tiny planet from a photo sphere image.
  */
-public class FilmstripBottomControls extends RelativeLayout
-        implements CameraActivity.OnActionBarVisibilityListener {
+public class FilmstripBottomLayout extends RelativeLayout
+        implements BottomControls {
 
-    /**
-     * Classes implementing this interface can listen for events on the bottom
-     * controls.
-     */
-    public static interface BottomControlsListener {
-        /**
-         * Called when the user pressed the "view" button to e.g. view a photo
-         * sphere or RGBZ image.
-         */
-        public void onView();
-
-        /**
-         * Called when the user pressed the "edit" button.
-         */
-        public void onEdit();
-
-        /**
-         * Called when the user pressed the "tiny planet" button.
-         */
-        public void onTinyPlanet();
-    }
-
-    /** Values for the view state of the button. */
-    public static final int VIEW_NONE = 0;
-    public static final int VIEW_PHOTO_SPHERE = 1;
-    public static final int VIEW_RGBZ = 2;
-
-    private BottomControlsListener mListener;
+    private Listener mListener;
     private ImageButton mEditButton;
     private ImageButton mViewButton;
     private ImageButton mTinyPlanetButton;
 
-    public FilmstripBottomControls(Context context, AttributeSet attrs) {
+    public FilmstripBottomLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -105,26 +78,17 @@ public class FilmstripBottomControls extends RelativeLayout
         });
     }
 
-    /**
-     * Sets a new or replaces an existing listener for bottom control events.
-     */
-    public void setListener(BottomControlsListener listener) {
+    @Override
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
-    /**
-     * Sets the visibility of the edit button.
-     */
+    @Override
     public void setEditButtonVisibility(boolean visible) {
         setVisibility(mEditButton, visible);
     }
 
-    /**
-     * Sets the visibility of the view-photosphere button.
-     *
-     * @param one of {@link #VIEW_NONE}, {@link #VIEW_PHOTO_SPHERE},
-     *            {@link #VIEW_RGBZ}.
-     */
+    @Override
     public void setViewButtonVisibility(int state) {
         if (state == VIEW_NONE) {
             setVisibility(mViewButton, false);
@@ -135,9 +99,7 @@ public class FilmstripBottomControls extends RelativeLayout
 
     }
 
-    /**
-     * Sets the visibility of the tiny-planet button.
-     */
+    @Override
     public void setTinyPlanetButtonVisibility(final boolean visible) {
         setVisibility(mTinyPlanetButton, visible);
     }

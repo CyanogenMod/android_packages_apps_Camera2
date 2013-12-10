@@ -21,7 +21,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import com.android.camera.filmstrip.FilmstripImageData;
+import com.android.camera.filmstrip.ImageData;
 
 import java.util.Comparator;
 
@@ -32,7 +32,7 @@ import java.util.Comparator;
  * all the members need to be final, and there is no setter. In this way, we
  * can guarantee thread safety for LocalData.
  */
-public interface LocalData extends FilmstripImageData {
+public interface LocalData extends ImageData {
     static final String TAG = "CAM_LocalData";
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";

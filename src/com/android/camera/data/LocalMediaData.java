@@ -39,7 +39,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.data.RgbzMetadataLoader.RgbzMetadataCallback;
-import com.android.camera.filmstrip.FilmstripImageData;
+import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
@@ -366,9 +366,9 @@ public abstract class LocalMediaData implements LocalData {
         };
 
         private static final int mSupportedUIActions =
-                FilmstripImageData.ACTION_DEMOTE
-                        | FilmstripImageData.ACTION_PROMOTE
-                        | FilmstripImageData.ACTION_ZOOM;
+                ImageData.ACTION_DEMOTE
+                        | ImageData.ACTION_PROMOTE
+                        | ImageData.ACTION_ZOOM;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE;
 
@@ -629,8 +629,8 @@ public abstract class LocalMediaData implements LocalData {
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
         private static final int mSupportedUIActions =
-                FilmstripImageData.ACTION_DEMOTE
-                        | FilmstripImageData.ACTION_PROMOTE;
+                ImageData.ACTION_DEMOTE
+                        | ImageData.ACTION_PROMOTE;
         private static final int mSupportedDataActions =
                 LocalData.ACTION_DELETE
                         | LocalData.ACTION_PLAY;

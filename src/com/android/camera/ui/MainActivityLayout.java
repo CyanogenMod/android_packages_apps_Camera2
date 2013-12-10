@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
+import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
 
 public class MainActivityLayout extends FrameLayout {

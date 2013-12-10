@@ -31,7 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.AnimationManager;
-import com.android.camera.ui.FilmstripLayout;
+import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;

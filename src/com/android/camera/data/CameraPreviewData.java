@@ -18,7 +18,7 @@ package com.android.camera.data;
 
 import android.view.View;
 
-import com.android.camera.filmstrip.FilmstripImageData;
+import com.android.camera.filmstrip.ImageData;
 
 /**
  * A class implementing {@link LocalData} to represent a camera preview.
@@ -41,7 +41,7 @@ public class CameraPreviewData extends SimpleViewData {
 
     @Override
     public int getViewType() {
-        return FilmstripImageData.VIEW_TYPE_STICKY;
+        return ImageData.VIEW_TYPE_STICKY;
     }
 
     @Override
