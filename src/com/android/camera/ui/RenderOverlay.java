@@ -124,11 +124,14 @@ public class RenderOverlay extends FrameLayout {
         mTapListener = listener;
     }
 
+
+    // Only Gcam is using this right now, which is only using the pie
+    // menu for the capture progress.
+    // TODO: migrate all modes to PreviewOverlay.
     @Override
-    public boolean onTouchEvent(MotionEvent m) {
-        if (mGestures != null) {
-            if (!mGestures.isEnabled()) return false;
-            mGestures.dispatchTouch(m);
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (mTapListener != null && ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mTapListener.onSingleTapUp(null, ((int) ev.getX()), ((int) ev.getY()));
         }
         return true;
     }
