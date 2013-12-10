@@ -29,26 +29,25 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewOverlay;
+import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.List;
 
-public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
+public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private static final String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
     private final PreviewOverlay mPreviewOverlay;
@@ -74,7 +73,6 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
     private View mFlashOverlay;
 
     private View mBottomBar;
-    private View mPreviewCover;
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
@@ -116,9 +114,15 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
         }
     };
 
-    public void showPreviewCover() {
-        mPreviewCover.setVisibility(View.VISIBLE);
-    }
+    private final GestureDetector.OnGestureListener mPreviewGestureListener
+            = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapUp(MotionEvent ev) {
+            // Preview area is touched. Take a picture.
+            mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
+            return true;
+        }
+    };
 
     public VideoUI(CameraActivity activity, VideoController controller, View parent) {
         mActivity = activity;
@@ -130,24 +134,12 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
 
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
 
-        //TODO: Setup a path to register the gesture listener through App UI
-        mPreviewOverlay.setGestureListener(new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(MotionEvent ev) {
-                // Preview area is touched. Take a picture.
-                mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
-                return true;
-            }
-        });
-        mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
-        mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
         if (mSurfaceTexture != null) {
             setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
-            mPreviewCover.setVisibility(View.GONE);
         }
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
@@ -155,7 +147,6 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
             mPreviewWidth = mTextureView.getWidth();
             mPreviewHeight = mTextureView.getHeight();
             setTransformMatrix(mPreviewWidth, mPreviewHeight);
-            mPreviewCover.setVisibility(View.GONE);
         }
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         initializeMiscControls();
@@ -432,6 +423,11 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
         return false;
     }
 
+    @Override
+    public GestureDetector.OnGestureListener getGestureListener() {
+        return mPreviewGestureListener;
+    }
+
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
         @Override
         public void onZoomValueChanged(int index) {
@@ -472,10 +468,6 @@ public class VideoUI implements SurfaceTextureListener, SurfaceHolder.Callback {
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Make sure preview cover is hidden if preview data is available.
-        if (mPreviewCover.getVisibility() != View.GONE) {
-            mPreviewCover.setVisibility(View.GONE);
-        }
     }
 
     // SurfaceHolder callbacks

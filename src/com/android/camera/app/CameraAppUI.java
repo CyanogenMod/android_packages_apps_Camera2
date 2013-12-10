@@ -19,6 +19,7 @@ package com.android.camera.app;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -26,7 +27,6 @@ import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -36,6 +36,7 @@ import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
+import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera2.R;
 
 /**
@@ -50,7 +51,8 @@ import com.android.camera2.R;
  * of how swipe from each direction should be handled, it can then redirect these
  * events to appropriate recipient views.
  */
-public class CameraAppUI implements ModeListView.ModeSwitchListener {
+public class CameraAppUI implements ModeListView.ModeSwitchListener,
+        TextureView.SurfaceTextureListener {
     private final static String TAG = "CameraAppUI";
 
     private final AppController mController;
@@ -83,6 +85,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     private int mSwipeState = IDLE;
     private ImageView mPreviewThumbView;
     private PreviewOverlay mPreviewOverlay;
+    private PreviewStatusListener mPreviewStatusListener;
 
     public interface AnimationFinishedListener {
         public void onAnimationFinished(boolean success);
@@ -229,6 +232,26 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
     }
 
     /**
+     * Sets a {@link com.android.camera.ui.PreviewStatusListener} that
+     * listens to SurfaceTexture changes. In addition, the listener will also provide
+     * a {@link android.view.GestureDetector.OnGestureListener}, which will listen to
+     * gestures that happen on camera preview.
+     *
+     * @param previewStatusListener the listener that gets notified when SurfaceTexture
+     *                              changes
+     */
+    public void setPreviewStatusListener(PreviewStatusListener previewStatusListener) {
+        mPreviewStatusListener = previewStatusListener;
+        if (mPreviewStatusListener != null) {
+            GestureDetector.OnGestureListener gestureListener
+                    = mPreviewStatusListener.getGestureListener();
+            if (gestureListener != null) {
+                mPreviewOverlay.setGestureListener(gestureListener);
+            }
+        }
+    }
+
+    /**
      * This inflates generic_module layout, which contains all the shared views across
      * modules. Then each module inflates their own views in the given view group. For
      * now, this is called every time switching from a not-yet-refactored module to a
@@ -243,6 +266,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
 
         mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
+        mTextureView.setSurfaceTextureListener(this);
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mFlashOverlay = mCameraRootView.findViewById(R.id.flash_overlay);
@@ -280,9 +304,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
         }
 
         // TODO: Bring TextureView up to the app level
-        mTextureView.setSurfaceTextureListener(null);
         mTextureView.removeOnLayoutChangeListener(null);
 
+        mPreviewStatusListener = null;
         mPreviewOverlay.reset();
     }
 
@@ -350,5 +374,36 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener {
      */
     public void cancelPostCaptureAnimation() {
         mAnimationManager.cancelAnimations();
+    }
+
+    /***************************SurfaceTexture Listener*********************************/
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        if (mPreviewStatusListener != null) {
+            mPreviewStatusListener.onSurfaceTextureAvailable(surface, width, height);
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        if (mPreviewStatusListener != null) {
+            mPreviewStatusListener.onSurfaceTextureSizeChanged(surface, width, height);
+        }
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        if (mPreviewStatusListener != null) {
+            return mPreviewStatusListener.onSurfaceTextureDestroyed(surface);
+        }
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        if (mPreviewStatusListener != null) {
+            mPreviewStatusListener.onSurfaceTextureUpdated(surface);
+        }
     }
 }

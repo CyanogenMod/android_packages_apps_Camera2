@@ -23,10 +23,9 @@ import android.net.Uri;
 import android.widget.FrameLayout;
 
 import com.android.camera.LocationManager;
-import com.android.camera.ui.FilmstripLayout;
-import com.android.camera.ui.ModeListView;
 import com.android.camera.SettingsController;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.PreviewStatusListener;
 
 /**
  * The controller at app level.
@@ -87,6 +86,14 @@ public interface AppController {
      * UI.
      */
     public SurfaceTexture getPreviewBuffer();
+
+    /**
+     * Sets the preview status listener, which will get notified when TextureView
+     * surface has changed
+     *
+     * @param previewStatusListener the listener to get callbacks
+     */
+    public void setPreviewStatusListener(PreviewStatusListener previewStatusListener);
 
     /**
      * Returns the {@link android.widget.FrameLayout} as the root of the module

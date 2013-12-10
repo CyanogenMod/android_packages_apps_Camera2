@@ -34,7 +34,6 @@ import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -46,13 +45,14 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
 import com.android.camera.ui.PreviewOverlay;
+import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.List;
 
 public class PhotoUI implements
-    FocusUI, TextureView.SurfaceTextureListener,
+    FocusUI, PreviewStatusListener,
     CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "PhotoUI";
@@ -87,13 +87,20 @@ public class PhotoUI implements
     private TextureView mTextureView;
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
-    private View mPreviewCover;
     private final Object mSurfaceTextureLock = new Object();
     private View mBottomBar;
 
     private boolean mHideFocusRing;
     private boolean mImmediateCapture;
     private final int mBottomBarMinHeight;
+    private final GestureDetector.OnGestureListener mPreviewGestureListener
+            = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapUp(MotionEvent ev) {
+            mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
+            return true;
+        }
+    };
 
     /*
      * @return Whether immediate capture mode is selected from the toggle button
@@ -101,6 +108,11 @@ public class PhotoUI implements
     // TODO: don't ship with this
     public boolean isImmediateCapture() {
         return mImmediateCapture;
+    }
+
+    @Override
+    public GestureDetector.OnGestureListener getGestureListener() {
+        return mPreviewGestureListener;
     }
 
     public interface SurfaceTextureSizeChangedListener {
@@ -176,10 +188,8 @@ public class PhotoUI implements
                  (ViewGroup) moduleRoot, true);
 
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
-        mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
-        mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
         initIndicators();
         mBottomBar = mRootView.findViewById(R.id.bottom_bar);
@@ -187,7 +197,6 @@ public class PhotoUI implements
         mSurfaceTexture = mTextureView.getSurfaceTexture();
         if (mSurfaceTexture != null) {
             setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
-            mPreviewCover.setVisibility(View.GONE);
         }
 
         ToggleButton focusRingToggle =
@@ -209,11 +218,6 @@ public class PhotoUI implements
                 }
             });
 
-        mSurfaceTexture = mTextureView.getSurfaceTexture();
-        if (mSurfaceTexture != null) {
-            setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
-            mPreviewCover.setVisibility(View.GONE);
-        }
         mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.camera_mode_color));
         ViewStub faceViewStub = (ViewStub) mRootView
                 .findViewById(R.id.face_view_stub);
@@ -226,16 +230,6 @@ public class PhotoUI implements
         mBottomBarMinHeight = activity.getResources()
                 .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
-
-        //TODO: This should be setup through App UI, as module should not know
-        // about app level views
-        mPreviewOverlay.setGestureListener(new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(MotionEvent ev) {
-                mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
-                return true;
-            }
-        });
     }
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
@@ -371,10 +365,6 @@ public class PhotoUI implements
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Make sure preview cover is hidden if preview data is available.
-        if (mPreviewCover.getVisibility() != View.GONE) {
-            mPreviewCover.setVisibility(View.GONE);
-        }
     }
 
     public View getRootView() {
@@ -400,7 +390,7 @@ public class PhotoUI implements
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
             cameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
-            hdrCallback, R.array.pref_camera_hdr_plus_icons);
+                hdrCallback, R.array.pref_camera_hdr_plus_icons);
 
         initializeZoom(params);
     }
@@ -492,12 +482,6 @@ public class PhotoUI implements
         }
     }
 
-    public void onPreviewFocusChanged(boolean previewFocused) {
-        if (mFaceView != null) {
-            mFaceView.setBlockDraw(!previewFocused);
-        }
-    }
-
     protected void showCapturedImageForReview(byte[] jpegData, int orientation, boolean mirror) {
         mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
         mDecodeTaskForReview.execute();
@@ -574,7 +558,6 @@ public class PhotoUI implements
     }
 
     // focus UI implementation
-
     private FocusIndicator getFocusIndicator() {
         if (mHideFocusRing) {
             return null;
