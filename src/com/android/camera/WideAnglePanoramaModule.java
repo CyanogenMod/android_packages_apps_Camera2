@@ -329,13 +329,6 @@ public class WideAnglePanoramaModule
             return false;
         }
         Parameters parameters = mCameraDevice.getParameters();
-        String sceneMode = parameters.getSceneMode();
-        if ((null != sceneMode) && (!sceneMode.equals(Parameters.SCENE_MODE_AUTO))){
-            if (CameraUtil.isSupported(Parameters.SCENE_MODE_AUTO,
-                                           parameters.getSupportedSceneModes())){
-                parameters.setSceneMode(Parameters.SCENE_MODE_AUTO);
-            }
-        }
         setupCaptureParams(parameters);
         configureCamera(parameters);
         return true;
