@@ -836,11 +836,15 @@ public class VideoModule implements CameraModule,
         }
 
         // Read time lapse recording interval.
-        String frameIntervalStr = mPreferences.getString(
-                CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
-                mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
-        mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
-        mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
+        if (!mEnableHFR) {
+            String frameIntervalStr = mPreferences.getString(
+                    CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
+                    mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
+            mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
+            mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
+        } else {
+            mCaptureTimeLapse = false;
+        }
         // TODO: This should be checked instead directly +1000.
         if (mCaptureTimeLapse) quality += 1000;
         mProfile = CamcorderProfile.get(mCameraId, quality);
@@ -2007,6 +2011,11 @@ public class VideoModule implements CameraModule,
                 mParameters.getSupportedVideoHighFrameRateModes()) &&
                 !mUnsupportedHFRVideoSize) {
             mParameters.setVideoHighFrameRate(highFrameRate);
+            if(!("off".equals(highFrameRate))){
+                mUI.overrideSettings(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, "0");
+            } else {
+                mUI.overrideSettings(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, null);
+            }
         } else {
             mParameters.setVideoHighFrameRate("off");
         }
@@ -2140,21 +2149,22 @@ public class VideoModule implements CameraModule,
         // The logic here is different from the logic in still-mode camera.
         // There we determine the preview size based on the picture size, but
         // here we determine the picture size based on the preview size.
-        List<Size> supported = mParameters.getSupportedPictureSizes();
-        Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
-                (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
-        Size original = mParameters.getPictureSize();
-        if (!original.equals(optimalSize)) {
-            mParameters.setPictureSize(optimalSize.width, optimalSize.height);
+        if (Util.isVideoSnapshotSupported(mParameters)) {
+            List<Size> supported = mParameters.getSupportedPictureSizes();
+            Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
+                    (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
+            Size original = mParameters.getPictureSize();
+            if (!original.equals(optimalSize)) {
+                mParameters.setPictureSize(optimalSize.width, optimalSize.height);
+            }
+            Log.v(TAG, "Video snapshot size is " + optimalSize.width + "x" +
+                    optimalSize.height);
         }
-        Log.v(TAG, "Video snapshot size is " + optimalSize.width + "x" +
-                optimalSize.height);
 
         // Set JPEG quality.
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
-
 
         // Beauty mode
         CameraSettings.setBeautyMode(mParameters, mPreferences.getString(CameraSettings.KEY_BEAUTY_MODE,
