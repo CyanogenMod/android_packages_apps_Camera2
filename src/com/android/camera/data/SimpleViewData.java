@@ -166,11 +166,6 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public boolean isPhoto() {
-        return false;
-    }
-
-    @Override
     public String getMimeType() {
         return null;
     }

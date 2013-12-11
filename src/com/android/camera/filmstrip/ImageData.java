@@ -26,24 +26,6 @@ import com.android.camera.util.PhotoSphereHelper;
  */
 public interface ImageData {
 
-    /**
-     * Interface that is used to tell the caller whether an image is a photo
-     * sphere.
-     *
-     * We need to deprecate this and store this data in a separate DB for additional aux data.
-     */
-    @Deprecated
-    public static interface AuxInfoSupportCallback {
-        /**
-         * Called when photo sphere info has been loaded.
-         *
-         * @param isPanorama whether the image is a valid photo sphere
-         * @param isPanorama360 whether the photo sphere is a full 360
-         *            degree horizontal panorama
-         */
-        void auxInfoAvailable(boolean isPanorama, boolean isPanorama360, boolean isRgbz);
-    }
-
     // View types.
     public static final int VIEW_TYPE_NONE = 0;
     public static final int VIEW_TYPE_STICKY = 1;
@@ -134,23 +116,13 @@ public interface ImageData {
     public void recycle();
 
     /**
-     */
-    @Deprecated
-    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback);
-
-    /**
      * If the item is a valid photo sphere panorama, this method will launch
      * the viewer.
      */
     public void view(PhotoSphereHelper.PanoramaViewHelper helper);
 
-    /** Whether this item is a photo. */
-    public boolean isPhoto();
-
     /**
-     * Returns the content URI of this data item.
-     *
-     * @return {@code Uri.EMPTY} if not valid.
+     * @return The content URI of this data, or {@code Uri.EMPTY} if not valid.
      */
     public Uri getContentUri();
 }

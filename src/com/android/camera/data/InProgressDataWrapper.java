@@ -198,11 +198,6 @@ public class InProgressDataWrapper implements LocalData {
     }
 
     @Override
-    public boolean isPhoto() {
-        return mLocalData.isPhoto();
-    }
-
-    @Override
     public Uri getContentUri() {
         return mLocalData.getContentUri();
     }

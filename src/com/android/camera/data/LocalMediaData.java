@@ -370,7 +370,7 @@ public abstract class LocalMediaData implements LocalData {
                         | ImageData.ACTION_PROMOTE
                         | ImageData.ACTION_ZOOM;
         private static final int mSupportedDataActions =
-                LocalData.ACTION_DELETE;
+                LocalData.DATA_ACTION_DELETE | LocalData.DATA_ACTION_EDIT;
 
         /** 32K buffer. */
         private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
@@ -504,11 +504,6 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public boolean isPhoto() {
-            return true;
-        }
-
-        @Override
         protected BitmapLoadTask getBitmapLoadTask(
                 ImageView v, int decodeWidth, int decodeHeight,
                 ContentResolver resolver, LocalDataAdapter adapter) {
@@ -632,8 +627,8 @@ public abstract class LocalMediaData implements LocalData {
                 ImageData.ACTION_DEMOTE
                         | ImageData.ACTION_PROMOTE;
         private static final int mSupportedDataActions =
-                LocalData.ACTION_DELETE
-                        | LocalData.ACTION_PLAY;
+                LocalData.DATA_ACTION_DELETE
+                        | LocalData.DATA_ACTION_PLAY;
 
         static final String QUERY_ORDER = MediaStore.Video.VideoColumns.DATE_TAKEN + " DESC, "
                 + MediaStore.Video.VideoColumns._ID + " DESC";
@@ -816,11 +811,6 @@ public abstract class LocalMediaData implements LocalData {
             f.addView(iv);
             f.addView(icon);
             return f;
-        }
-
-        @Override
-        public boolean isPhoto() {
-            return false;
         }
 
         @Override

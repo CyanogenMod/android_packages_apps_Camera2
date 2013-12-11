@@ -37,9 +37,11 @@ public interface LocalData extends ImageData {
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";
 
-    public static final int ACTION_NONE = 0;
-    public static final int ACTION_PLAY = 1;
-    public static final int ACTION_DELETE = (1 << 1);
+    // Data actions.
+    public static final int DATA_ACTION_NONE = 0;
+    public static final int DATA_ACTION_PLAY = 1;
+    public static final int DATA_ACTION_DELETE = (1 << 1);
+    public static final int DATA_ACTION_EDIT = (1 << 2);
 
     // Local data types. Returned by getLocalDataType().
     /**
@@ -171,6 +173,35 @@ public interface LocalData extends ImageData {
      * @return A new LocalData object if success, null otherwise.
      */
     LocalData refresh(ContentResolver resolver);
+
+    /**
+     * Request for the auxiliary info of the data. The result will be sent back
+     * through the {@link com.android.camera.data.LocalData.AuxInfoSupportCallback}.
+     *
+     * @param context The context to retrieve the auxiliary data.
+     * @param callback The callback to receive the retrieved result.
+     */
+    @Deprecated
+    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback);
+
+    /**
+     * Interface that is used to tell the caller whether an image is a photo
+     * sphere.
+     *
+     * We need to deprecate this and store this data in a separate DB for
+     * additional aux data.
+     */
+    @Deprecated
+    interface AuxInfoSupportCallback {
+        /**
+         * Called when photo sphere info has been loaded.
+         *
+         * @param isPanorama whether the image is a valid photo sphere
+         * @param isPanorama360 whether the photo sphere is a full 360
+         *            degree horizontal panorama
+         */
+        void auxInfoAvailable(boolean isPanorama, boolean isPanorama360, boolean isRgbz);
+    }
 
     static class NewestFirstComparator implements Comparator<LocalData> {
 

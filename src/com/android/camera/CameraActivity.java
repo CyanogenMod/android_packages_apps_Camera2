@@ -1849,7 +1849,8 @@ public class CameraActivity extends Activity
         final CameraAppUI.BottomControls filmstripBottomControls =
                 mCameraAppUI.getFilmstripBottomControls();
         // We can only edit photos, not videos.
-        filmstripBottomControls.setEditButtonVisibility(currentData.isPhoto());
+        filmstripBottomControls.setEditButtonVisibility(
+                currentData.isDataActionSupported(LocalData.DATA_ACTION_EDIT));
 
         /* Progress bar */
 
