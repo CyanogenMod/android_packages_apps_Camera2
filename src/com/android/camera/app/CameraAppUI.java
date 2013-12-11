@@ -61,15 +61,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final AnimationManager mAnimationManager;
 
     // Swipe states:
-    private final int IDLE = 0;
-    private final int SWIPE_UP = 1;
-    private final int SWIPE_DOWN = 2;
-    private final int SWIPE_LEFT = 3;
-    private final int SWIPE_RIGHT = 4;
+    private final static int IDLE = 0;
+    private final static int SWIPE_UP = 1;
+    private final static int SWIPE_DOWN = 2;
+    private final static int SWIPE_LEFT = 3;
+    private final static int SWIPE_RIGHT = 4;
 
     // Touch related measures:
     private final int mSlop;
-    private final int SWIPE_TIME_OUT = 500;
+    private final static int SWIPE_TIME_OUT_MS = 500;
+
+    private final static int SHIMMY_DELAY_MS = 1000;
+
+    // Mode cover states:
+    private final static int COVER_HIDDEN = 0;
+    private final static int COVER_SHOWN = 1;
+    private final static int COVER_WILL_HIDE_AT_NEXT_FRAME = 2;
 
     // App level views:
     private final FrameLayout mCameraRootView;
@@ -86,6 +93,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private ImageView mPreviewThumbView;
     private PreviewOverlay mPreviewOverlay;
     private PreviewStatusListener mPreviewStatusListener;
+    private int mModeCoverState = COVER_HIDDEN;
 
     public interface AnimationFinishedListener {
         public void onAnimationFinished(boolean success);
@@ -113,7 +121,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent ev, float distanceX, float distanceY) {
-            if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT
+            if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT_MS
                     || mSwipeState != IDLE) {
                 return true;
             }
@@ -223,6 +231,43 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
+     * Gets called when activity resumes in preview.
+     */
+    public void resume() {
+        if (mTextureView == null || mTextureView.getSurfaceTexture() != null) {
+            mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+        } else {
+            // Show mode theme cover until preview is ready
+            showModeCoverUntilPreviewReady();
+        }
+    }
+
+    /**
+     * A cover view showing the mode theme color and mode icon will be visible on
+     * top of preview until preview is ready (i.e. camera preview is started and
+     * the first frame has been received).
+     */
+    private void showModeCoverUntilPreviewReady() {
+        int modeId = mController.getCurrentModuleIndex();
+        int colorId = ModeListView.getModeThemeColor(modeId);
+        int iconId = ModeListView.getModeIconResourceId(modeId);
+        mModeTransitionView.setupModeCover(colorId, iconId);
+        mModeCoverState = COVER_SHOWN;
+    }
+
+    private void hideModeCover() {
+        mModeTransitionView.hideModeCover(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished(boolean success) {
+                if (success) {
+                    // Show shimmy in SHIMMY_DELAY_MS
+                    mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+                }
+            }
+        });
+    }
+
+    /**
      * Called when the back key is pressed.
      *
      * @return Whether the UI responded to the key event.
@@ -310,6 +355,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay.reset();
     }
 
+    /**
+     * Gets called when preview is started.
+     */
+    public void onPreviewStarted() {
+        if (mModeCoverState == COVER_SHOWN) {
+            mModeCoverState = COVER_WILL_HIDE_AT_NEXT_FRAME;
+        }
+    }
+
     @Override
     public void onModeSelected(int modeIndex) {
         mController.onModeSelected(modeIndex);
@@ -380,6 +434,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        Log.v(TAG, "SurfaceTexture is available");
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureAvailable(surface, width, height);
         }
@@ -394,6 +449,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        Log.v(TAG, "SurfaceTexture is destroyed");
         if (mPreviewStatusListener != null) {
             return mPreviewStatusListener.onSurfaceTextureDestroyed(surface);
         }
@@ -402,6 +458,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_FRAME) {
+            hideModeCover();
+            mModeCoverState = COVER_HIDDEN;
+        }
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureUpdated(surface);
         }

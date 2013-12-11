@@ -199,6 +199,7 @@ public class PhotoModule
     private ContentResolver mContentResolver;
 
     private LocationManager mLocationManager;
+    private AppController mAppController;
 
     private final PostViewPictureCallback mPostViewPictureCallback =
             new PostViewPictureCallback();
@@ -373,6 +374,7 @@ public class PhotoModule
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager)(mActivity.getSystemService(Context.SENSOR_SERVICE));
+        mAppController = app;
     }
 
     private void initializeControlByIntent() {
@@ -383,6 +385,7 @@ public class PhotoModule
     }
 
     private void onPreviewStarted() {
+        mAppController.onPreviewStarted();
         setCameraState(IDLE);
         startFaceDetection();
         startSmartCamera();

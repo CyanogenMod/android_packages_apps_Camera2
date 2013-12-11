@@ -48,11 +48,13 @@ public class ModeTransitionView extends View {
 
     private static final int PEEP_HOLE_ANIMATION_DURATION_MS = 550;
     private static final int ICON_FADE_OUT_DURATION_MS = 850;
+    private static final int FADE_OUT_DURATION_MS = 100;
 
-    private static final int PULL_UP_SHADE = 0;
-    private static final int PULL_DOWN_SHADE = 1;
-    private static final int PEEP_HOLE_ANIMATION = 2;
-    private static final int IDLE = 3;
+    private static final int IDLE = 0;
+    private static final int PULL_UP_SHADE = 1;
+    private static final int PULL_DOWN_SHADE = 2;
+    private static final int PEEP_HOLE_ANIMATION = 3;
+    private static final int FADE_OUT = 4;
 
     private static final float SCROLL_DISTANCE_MULTIPLY_FACTOR = 2f;
     private static final int ALPHA_FULLY_TRANSPARENT = 0;
@@ -172,7 +174,7 @@ public class ModeTransitionView extends View {
             }
         } else if (mAnimationType == PULL_UP_SHADE || mAnimationType == PULL_DOWN_SHADE) {
             canvas.drawPath(mShadePath, mShadePaint);
-        } else if (mAnimationType == IDLE) {
+        } else if (mAnimationType == IDLE || mAnimationType == FADE_OUT) {
             canvas.drawColor(mBackgroundColor);
         }
         super.onDraw(canvas);
@@ -462,6 +464,84 @@ public class ModeTransitionView extends View {
         } else {
             mIconDrawable = iconDrawable;
         }
+    }
+
+    /**
+     * Initialize the mode cover with a mode theme color and a mode icon.
+     *
+     * @param colorId resource id of the mode theme color
+     * @param modeIconResourceId resource id of the icon drawable
+     */
+    public void setupModeCover(int colorId, int modeIconResourceId) {
+        // Stop ongoing animation.
+        if (mPeepHoleAnimator != null && mPeepHoleAnimator.isRunning()) {
+            mPeepHoleAnimator.cancel();
+        }
+        mAnimationType = IDLE;
+        mBackgroundColor = getResources().getColor(colorId);
+        // Sets new drawable.
+        updateIconDrawableByResourceId(modeIconResourceId);
+        mIconDrawable.setAlpha(ALPHA_FULLY_OPAQUE);
+        setVisibility(VISIBLE);
+    }
+
+    /**
+     * Hides the cover view and notifies the
+     * {@link com.android.camera.app.CameraAppUI.AnimationFinishedListener} of whether
+     * the hide animation is successfully finished.
+     *
+     * @param animationFinishedListener a listener that will get notified when the
+     *        animation is finished. Could be <code>null</code>.
+     */
+    public void hideModeCover(
+            final CameraAppUI.AnimationFinishedListener animationFinishedListener) {
+        if (mAnimationType != IDLE) {
+            // Nothing to hide.
+            if (animationFinishedListener != null) {
+                // Animation not successful.
+                animationFinishedListener.onAnimationFinished(false);
+            }
+        } else {
+            // Start fade out animation.
+            mAnimationType = FADE_OUT;
+            ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 1f, 0f);
+            alphaAnimator.setDuration(FADE_OUT_DURATION_MS);
+            // Linear interpolation.
+            alphaAnimator.setInterpolator(null);
+            alphaAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    setVisibility(GONE);
+                    setAlpha(1f);
+                    animationFinishedListener.onAnimationFinished(true);
+                    mAnimationType = IDLE;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            alphaAnimator.start();
+        }
+    }
+
+    @Override
+    public void setAlpha(float alpha) {
+        super.setAlpha(alpha);
+        int alphaScaled = (int) (255f * getAlpha());
+        mBackgroundColor = (mBackgroundColor & 0xFFFFFF) | (alphaScaled << 24);
+        mIconDrawable.setAlpha(alphaScaled);
     }
 }
 

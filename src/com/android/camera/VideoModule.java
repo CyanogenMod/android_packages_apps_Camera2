@@ -25,8 +25,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
@@ -60,7 +58,6 @@ import com.android.camera.app.MediaSaver;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -87,7 +84,6 @@ public class VideoModule extends CameraModule
     private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
     private static final int MSG_UPDATE_RECORD_TIME = 5;
     private static final int MSG_ENABLE_SHUTTER_BUTTON = 6;
-    private static final int MSG_SHOW_TAP_TO_SNAPSHOT_TOAST = 7;
     private static final int MSG_SWITCH_CAMERA = 8;
     private static final int MSG_SWITCH_CAMERA_START_ANIMATION = 9;
 
@@ -153,6 +149,7 @@ public class VideoModule extends CameraModule
     // true.
     private int mDisplayRotation;
     private int mCameraDisplayOrientation;
+    private AppController mAppController;
 
     private int mDesiredPreviewWidth;
     private int mDesiredPreviewHeight;
@@ -235,11 +232,6 @@ public class VideoModule extends CameraModule
                     if (SystemClock.uptimeMillis() - mOnResumeTime < 5000) {
                         mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
                     }
-                    break;
-                }
-
-                case MSG_SHOW_TAP_TO_SNAPSHOT_TOAST: {
-                    showTapToSnapshotToast();
                     break;
                 }
 
@@ -331,6 +323,7 @@ public class VideoModule extends CameraModule
 
         mUI.showTimeLapseUI(mCaptureTimeLapse);
         mPendingSwitchCameraId = -1;
+        mAppController = app;
     }
 
     // SingleTapListener
@@ -380,11 +373,6 @@ public class VideoModule extends CameraModule
             mOrientation = newOrientation;
         }
 
-        // Show the toast after getting the first orientation changed.
-        if (mHandler.hasMessages(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST)) {
-            mHandler.removeMessages(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST);
-            showTapToSnapshotToast();
-        }
     }
 
     private ButtonManager.ButtonCallback mCameraButtonCallback =
@@ -667,6 +655,7 @@ public class VideoModule extends CameraModule
 
     private void onPreviewStarted() {
         mUI.enableShutter(true);
+        mAppController.onPreviewStarted();
     }
 
     @Override
@@ -1510,15 +1499,6 @@ public class VideoModule extends CameraModule
 
     private void initializeVideoSnapshot() {
         if (mParameters == null) return;
-
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
-            // Show the tap to focus toast if this is the first start.
-            if (settingsManager.getBoolean(SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN)) {
-                // Delay the toast for one second to wait for orientation.
-                mHandler.sendEmptyMessageDelayed(MSG_SHOW_TAP_TO_SNAPSHOT_TOAST, 1000);
-            }
-        }
     }
 
     void showVideoSnapshotUI(boolean enabled) {
@@ -1627,14 +1607,6 @@ public class VideoModule extends CameraModule
             }
             mVideoFileDescriptor = null;
         }
-    }
-
-    private void showTapToSnapshotToast() {
-        new RotateTextToast(mActivity, R.string.video_snapshot_hint, 0).show();
-        // Clear the preference.
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.setBoolean(
-            SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
     }
 
     @Override

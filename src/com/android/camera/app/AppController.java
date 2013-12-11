@@ -88,6 +88,11 @@ public interface AppController {
     public SurfaceTexture getPreviewBuffer();
 
     /**
+     * Gets called from module when preview is started.
+     */
+    public void onPreviewStarted();
+
+    /**
      * Sets the preview status listener, which will get notified when TextureView
      * surface has changed
      *
