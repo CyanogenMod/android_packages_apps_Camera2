@@ -28,11 +28,13 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.widget.FilmstripBottomLayout;
+import com.android.camera.ui.BottomBar;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
@@ -98,6 +100,77 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private int mModeCoverState = COVER_HIDDEN;
     private FilmstripBottomLayout mFilmstripBottomLayout;
     private FilmstripContentPanel mFilmstripPanel;
+
+    // TODO this isn't used by all modules universally, should be part of a util class or something
+    /**
+     * Resizes the preview texture and given bottom bar for 100% preview size
+     */
+    public void adjustPreviewAndBottomBarSize(int width, int height,
+            BottomBar bottomBar, float aspectRatio,
+            int bottomBarMinHeight, int bottomBarOptimalHeight) {
+        Matrix matrix = mTextureView.getTransform(null);
+
+        float scaleX = 1f, scaleY = 1f;
+        float scaledTextureWidth, scaledTextureHeight;
+        if (width > height) {
+            scaledTextureWidth = Math.min(width,
+                                          (int) (height * aspectRatio));
+            scaledTextureHeight = Math.min(height,
+                                           (int) (width / aspectRatio));
+        } else {
+            scaledTextureWidth = Math.min(width,
+                                          (int) (height / aspectRatio));
+            scaledTextureHeight = Math.min(height,
+                                           (int) (width * aspectRatio));
+        }
+
+        scaleX = scaledTextureWidth / width;
+        scaleY = scaledTextureHeight / height;
+
+        // TODO: Need a better way to find out whether currently in landscape
+        boolean landscape = width > height;
+        if (landscape) {
+            matrix.setScale(scaleX, scaleY, 0f, (float) height / 2);
+        } else {
+            matrix.setScale(scaleX, scaleY, (float) width / 2, 0.0f);
+        }
+        setPreviewTransformMatrix(matrix);
+
+        float previewAspectRatio =
+                (float)scaledTextureWidth / (float)scaledTextureHeight;
+        if (previewAspectRatio < 1.0) {
+            previewAspectRatio = 1.0f/previewAspectRatio;
+        }
+        float screenAspectRatio = (float)width / (float)height;
+        if (screenAspectRatio < 1.0) {
+            screenAspectRatio = 1.0f/screenAspectRatio;
+        }
+
+        if(bottomBar != null) {
+            LayoutParams lp = (LayoutParams) bottomBar.getLayoutParams();
+            // TODO accoount for cases where resizes bar height would be < bottomBarMinHeight
+            if (previewAspectRatio >= screenAspectRatio) {
+                bottomBar.setAlpha(0.5f);
+                if (landscape) {
+                    lp.width = bottomBarOptimalHeight;
+                    lp.height = LayoutParams.MATCH_PARENT;
+                } else {
+                    lp.height = bottomBarOptimalHeight;
+                    lp.width = LayoutParams.MATCH_PARENT;
+                }
+            } else {
+                bottomBar.setAlpha(1.0f);
+                if (landscape) {
+                    lp.width = (int)((float) width - scaledTextureWidth);
+                    lp.height = LayoutParams.MATCH_PARENT;
+                } else {
+                    lp.height = (int)((float) height - scaledTextureHeight);
+                    lp.width = LayoutParams.MATCH_PARENT;
+                }
+            }
+            bottomBar.setLayoutParams(lp);
+        }
+    }
 
     public interface AnimationFinishedListener {
         public void onAnimationFinished(boolean success);

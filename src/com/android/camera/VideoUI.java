@@ -39,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
@@ -72,7 +73,11 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private List<Integer> mZoomRatios;
     private View mFlashOverlay;
 
-    private View mBottomBar;
+    private BottomBar mBottomBar;
+    private final int mBottomBarMinHeight;
+    private final int mBottomBarOptimalHeight;
+
+    private View mPreviewCover;
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
@@ -153,7 +158,12 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         initializeControlByIntent();
         mAnimationManager = new AnimationManager();
 
-        mBottomBar = mRootView.findViewById(R.id.bottom_bar);
+        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
+        mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
+        mBottomBarMinHeight = activity.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
+        mBottomBarOptimalHeight = activity.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
         mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.video_mode_color));
     }
 
@@ -212,39 +222,8 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     }
 
     private void setTransformMatrix(int width, int height) {
-        mMatrix = mTextureView.getTransform(mMatrix);
-        int orientation = CameraUtil.getDisplayRotation(mActivity);
-        float scaleX = 1f, scaleY = 1f;
-        float scaledTextureWidth, scaledTextureHeight;
-        if (width > height) {
-            scaledTextureWidth = Math.max(width,
-                    (int) (height * mAspectRatio));
-            scaledTextureHeight = Math.max(height,
-                    (int)(width / mAspectRatio));
-        } else {
-            scaledTextureWidth = Math.max(width,
-                    (int) (height / mAspectRatio));
-            scaledTextureHeight = Math.max(height,
-                    (int) (width * mAspectRatio));
-        }
-
-        if (mSurfaceTextureUncroppedWidth != scaledTextureWidth ||
-                mSurfaceTextureUncroppedHeight != scaledTextureHeight) {
-            mSurfaceTextureUncroppedWidth = scaledTextureWidth;
-            mSurfaceTextureUncroppedHeight = scaledTextureHeight;
-        }
-        scaleX = scaledTextureWidth / width;
-        scaleY = scaledTextureHeight / height;
-        mMatrix.setScale(scaleX, scaleY, (float) width / 2, (float) height / 2);
-        mTextureView.setTransform(mMatrix);
-
-        if (mSurfaceView != null && mSurfaceView.getVisibility() == View.VISIBLE) {
-            LayoutParams lp = (LayoutParams) mSurfaceView.getLayoutParams();
-            lp.width = (int) mSurfaceTextureUncroppedWidth;
-            lp.height = (int) mSurfaceTextureUncroppedHeight;
-            lp.gravity = Gravity.CENTER;
-            mSurfaceView.requestLayout();
-        }
+        mActivity.getCameraAppUI().adjustPreviewAndBottomBarSize(width, height, mBottomBar,
+                mAspectRatio, mBottomBarMinHeight, mBottomBarOptimalHeight);
     }
 
     /**
@@ -317,15 +296,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         ButtonManager buttonManager = mActivity.getButtonManager();
         SettingsManager settingsManager = mActivity.getSettingsManager();
         if (settingsManager.isCameraBackFacing()) {
-            buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
+            buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
                 null, R.array.video_flashmode_icons);
         } else {
-            buttonManager.disableButton(ButtonManager.BUTTON_FLASH,
+            buttonManager.disableButton(ButtonManager.BUTTON_TORCH,
                 R.id.flash_toggle_button);
         }
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
             cameraCallback, R.array.camera_id_icons);
-        buttonManager.disableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
     }
 
     private void initializeMiscControls() {

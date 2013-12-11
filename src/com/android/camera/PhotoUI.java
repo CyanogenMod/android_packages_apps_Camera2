@@ -42,6 +42,7 @@ import android.widget.CompoundButton;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
 import com.android.camera.ui.PreviewOverlay;
@@ -57,7 +58,7 @@ public class PhotoUI implements
 
     private static final String TAG = "PhotoUI";
     private static final int DOWN_SAMPLE_FACTOR = 4;
-    private final AnimationManager mAnimationManager;
+
     private final PreviewOverlay mPreviewOverlay;
     private CameraActivity mActivity;
     private PhotoController mController;
@@ -88,11 +89,13 @@ public class PhotoUI implements
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
     private final Object mSurfaceTextureLock = new Object();
-    private View mBottomBar;
+    private BottomBar mBottomBar;
+    private final int mBottomBarMinHeight;
+    private final int mBottomBarOptimalHeight;
 
     private boolean mHideFocusRing;
     private boolean mImmediateCapture;
-    private final int mBottomBarMinHeight;
+
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -192,7 +195,13 @@ public class PhotoUI implements
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
         initIndicators();
-        mBottomBar = mRootView.findViewById(R.id.bottom_bar);
+
+        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
+        mBottomBar.setButtonLayout(R.layout.photo_bottombar_buttons);
+        mBottomBarMinHeight = activity.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
+        mBottomBarOptimalHeight = activity.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
         if (mSurfaceTexture != null) {
@@ -226,9 +235,7 @@ public class PhotoUI implements
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
-        mAnimationManager = new AnimationManager();
-        mBottomBarMinHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
+
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
     }
 
@@ -255,79 +262,8 @@ public class PhotoUI implements
     }
 
     private void setTransformMatrix(int width, int height) {
-        mMatrix = mTextureView.getTransform(mMatrix);
-        float scaleX = 1f, scaleY = 1f;
-        float scaledTextureWidth, scaledTextureHeight;
-        if (width > height) {
-            scaledTextureWidth = Math.min(width,
-                    (int) (height * mAspectRatio));
-            scaledTextureHeight = Math.min(height,
-                    (int) (width / mAspectRatio));
-        } else {
-            scaledTextureWidth = Math.min(width,
-                    (int) (height / mAspectRatio));
-            scaledTextureHeight = Math.min(height,
-                    (int) (width * mAspectRatio));
-        }
-
-        if (mSurfaceTextureUncroppedWidth != scaledTextureWidth ||
-                mSurfaceTextureUncroppedHeight != scaledTextureHeight) {
-            mSurfaceTextureUncroppedWidth = scaledTextureWidth;
-            mSurfaceTextureUncroppedHeight = scaledTextureHeight;
-            if (mSurfaceTextureSizeListener != null) {
-                mSurfaceTextureSizeListener.onSurfaceTextureSizeChanged(
-                        (int) mSurfaceTextureUncroppedWidth, (int) mSurfaceTextureUncroppedHeight);
-            }
-        }
-        scaleX = scaledTextureWidth / width;
-        scaleY = scaledTextureHeight / height;
-
-        // TODO: Need a better way to find out whether currently in landscape
-        boolean landscape = width > height;
-        if (landscape) {
-            mMatrix.setScale(scaleX, scaleY, 0f, (float) height / 2);
-        } else {
-            mMatrix.setScale(scaleX, scaleY, (float) width / 2, 0.0f);
-        }
-        mTextureView.setTransform(mMatrix);
-
-        // Calculate the new preview rectangle.
-        RectF previewRect = new RectF(0, 0, width, height);
-        mMatrix.mapRect(previewRect);
-        mController.onPreviewRectChanged(CameraUtil.rectFToRect(previewRect));
-
-        float previewAspectRatio =
-                (float)mSurfaceTextureUncroppedWidth / (float)mSurfaceTextureUncroppedHeight;
-        if (previewAspectRatio < 1.0) {
-            previewAspectRatio = 1.0f/previewAspectRatio;
-        }
-        float screenAspectRatio = (float)width / (float)height;
-        if (screenAspectRatio < 1.0) {
-            screenAspectRatio = 1.0f/screenAspectRatio;
-        }
-
-        LayoutParams lp = (LayoutParams) mBottomBar.getLayoutParams();
-        if (previewAspectRatio >= screenAspectRatio) {
-            mBottomBar.setAlpha(0.5f);
-            if (landscape) {
-                lp.width = mBottomBarMinHeight;
-                lp.height = LayoutParams.MATCH_PARENT;
-            } else {
-                lp.height = mBottomBarMinHeight;
-                lp.width = LayoutParams.MATCH_PARENT;
-            }
-        }
-        else {
-            mBottomBar.setAlpha(1.0f);
-            if (landscape) {
-                lp.width = (int)((float) width - mSurfaceTextureUncroppedWidth);
-                lp.height = LayoutParams.MATCH_PARENT;
-            } else {
-                lp.height = (int)((float) height - mSurfaceTextureUncroppedHeight);
-                lp.width = LayoutParams.MATCH_PARENT;
-            }
-        }
-        mBottomBar.setLayoutParams(lp);
+        mActivity.getCameraAppUI().adjustPreviewAndBottomBarSize(width, height, mBottomBar,
+                mAspectRatio, mBottomBarMinHeight, mBottomBarOptimalHeight);
     }
 
     protected Object getSurfaceTextureLock() {
@@ -464,7 +400,7 @@ public class PhotoUI implements
     }
 
     public void animateFlash() {
-        mAnimationManager.startFlashAnimation(mFlashOverlay);
+        mActivity.startPreCaptureAnimation();
     }
 
     public boolean onBackPressed() {

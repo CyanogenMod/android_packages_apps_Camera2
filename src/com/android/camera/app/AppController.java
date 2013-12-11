@@ -218,4 +218,11 @@ public interface AppController {
      * @return {@code null} if not available yet.
      */
     public SettingsController getSettingsController();
+
+    /**
+     * Returns the {@link com.android.camera.ui.CameraAppUI}.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public CameraAppUI getCameraAppUI();
 }

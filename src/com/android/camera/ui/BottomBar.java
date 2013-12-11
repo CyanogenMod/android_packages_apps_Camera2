@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
@@ -50,6 +51,15 @@ public class BottomBar extends FrameLayout {
             mPaddingStart = getPaddingLeft();
             mPaddingEnd = getPaddingRight();
         }
+    }
+
+    /**
+     * Sets the bottom bar buttons given a layout id
+     */
+    public void setButtonLayout(int buttonLayoutId) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(buttonLayoutId, this, true);
     }
 
     /**
