@@ -196,7 +196,6 @@ public class CameraActivity extends Activity
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
     private ActionBar mActionBar;
-    private OnActionBarVisibilityListener mOnActionBarVisibilityListener = null;
     private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
@@ -238,6 +237,43 @@ public class CameraActivity extends Activity
      */
     private boolean mKeepScreenOn;
     private int mLastLayoutOrientation;
+    private CameraAppUI.BottomControls.Listener mMyFilmstripBottomControlListener =
+            new CameraAppUI.BottomControls.Listener() {
+
+                /**
+                 * If the current photo is a photo sphere, this will launch the Photo Sphere
+                 * panorama viewer.
+                 */
+                @Override
+                public void onView() {
+                    LocalData data = getCurrentLocalData();
+                    if (data != null) {
+                        data.view(mPanoramaViewHelper);
+                    }
+                }
+
+                @Override
+                public void onEdit() {
+                    LocalData data = getCurrentLocalData();
+                    if (data == null) {
+                        return;
+                    }
+                    launchEditor(data);
+                }
+
+                @Override
+                public void onTinyPlanet() {
+                    LocalData data = getCurrentLocalData();
+                    if (data == null) {
+                        return;
+                    }
+                    launchTinyPlanetEditor(data);
+                }
+
+                private LocalData getCurrentLocalData() {
+                    return mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
+                }
+            };
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
@@ -289,7 +325,7 @@ public class CameraActivity extends Activity
             switch (msg.what) {
                 case MSG_HIDE_ACTION_BAR: {
                     removeMessages(MSG_HIDE_ACTION_BAR);
-                    CameraActivity.this.setSystemBarsVisibility(false);
+                    CameraActivity.this.setFilmstripUiVisibility(false);
                     break;
                 }
 
@@ -305,14 +341,6 @@ public class CameraActivity extends Activity
         }
     }
 
-    public interface OnActionBarVisibilityListener {
-        public void onActionBarVisibilityChanged(boolean isVisible);
-    }
-
-    public void setOnActionBarVisibilityListener(OnActionBarVisibilityListener listener) {
-        mOnActionBarVisibilityListener = listener;
-    }
-
     private String fileNameFromDataID(int dataID) {
         final LocalData localData = mDataAdapter.getLocalData(dataID);
 
@@ -326,7 +354,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onFilmstripHidden() {
                     mFilmstripVisible = false;
-                    CameraActivity.this.setSystemBarsVisibility(false);
+                    CameraActivity.this.setFilmstripUiVisibility(false);
                     // When the user hide the filmstrip (either swipe out or
                     // tap on back key) we move to the first item so next time
                     // when the user swipe in the filmstrip, the most recent
@@ -367,7 +395,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onEnterFullScreen(int dataId) {
                     if (mFilmstripVisible) {
-                        CameraActivity.this.setSystemBarsVisibility(false);
+                        CameraActivity.this.setFilmstripUiVisibility(false);
                     }
                 }
 
@@ -379,7 +407,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onEnterFilmstrip(int dataId) {
                     if (mFilmstripVisible) {
-                        CameraActivity.this.setSystemBarsVisibility(true);
+                        CameraActivity.this.setFilmstripUiVisibility(true);
                     }
                 }
 
@@ -399,7 +427,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onEnterZoomView(int dataID) {
                     if (mFilmstripVisible) {
-                        CameraActivity.this.setSystemBarsVisibility(false);
+                        CameraActivity.this.setFilmstripUiVisibility(false);
                     }
                 }
 
@@ -419,29 +447,6 @@ public class CameraActivity extends Activity
                     });
                 }
 
-                private void updateUiByData(int dataId) {
-                    LocalData currentData = mDataAdapter.getLocalData(dataId);
-                    if (currentData == null) {
-                        Log.w(TAG, "Current data ID not found.");
-                        hidePanoStitchingProgress();
-                        return;
-                    }
-                    updateActionBarMenu(dataId);
-
-                    Uri contentUri = currentData.getContentUri();
-                    if (contentUri == null) {
-                        hidePanoStitchingProgress();
-                        return;
-                    }
-                    int panoStitchingProgress =
-                            mPanoramaManager.getTaskProgress(contentUri);
-                    if (panoStitchingProgress < 0) {
-                        hidePanoStitchingProgress();
-                        return;
-                    }
-                    showPanoStitchingProgress();
-                    updateStitchingProgress(panoStitchingProgress);
-                }
             };
 
     public void gotoGallery() {
@@ -453,10 +458,10 @@ public class CameraActivity extends Activity
 
     /**
      * If {@param visible} is false, this hides the action bar and switches the
-     * system UI to lights-out mode.
+     * filmstrip UI to lights-out mode.
      */
     // TODO: This should not be called outside of the activity.
-    public void setSystemBarsVisibility(boolean visible) {
+    public void setFilmstripUiVisibility(boolean visible) {
         mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
 
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
@@ -467,14 +472,12 @@ public class CameraActivity extends Activity
         }
 
         boolean currentActionBarVisibility = mActionBar.isShowing();
+        mCameraAppUI.getFilmstripBottomControls().setVisible(visible);
         if (visible != currentActionBarVisibility) {
             if (visible) {
                 mActionBar.show();
             } else {
                 mActionBar.hide();
-            }
-            if (mOnActionBarVisibilityListener != null) {
-                mOnActionBarVisibilityListener.onActionBarVisibilityChanged(visible);
             }
         }
     }
@@ -1109,11 +1112,14 @@ public class CameraActivity extends Activity
             IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
             registerReceiver(mScreenOffReceiver, filter);
         }
+        mCameraAppUI = new CameraAppUI(this,
+                (MainActivityLayout) findViewById(R.id.activity_root_view),
+                isSecureCamera(), isCaptureIntent());
+
+        mCameraAppUI.setFilmstripBottomControlsListener(mMyFilmstripBottomControlListener);
+
         mAboveFilmstripControlLayout =
                 (FrameLayout) findViewById(R.id.camera_filmstrip_content_layout);
-        // Hide action bar first since we are in full screen mode first, and
-        // switch the system UI to lights-out mode.
-        this.setSystemBarsVisibility(false);
         mPanoramaManager = AppManagerFactory.getInstance(this)
                 .getPanoramaStitchingManager();
         mPlaceholderManager = AppManagerFactory.getInstance(this)
@@ -1127,17 +1133,11 @@ public class CameraActivity extends Activity
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
-        mFilmstripController.setPanoramaViewHelper(mPanoramaViewHelper);
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter = new CameraDataAdapter(
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
-        ((FilmstripContentPanel) findViewById(R.id.filmstrip_layout))
-                .setFilmstripListener(mFilmstripListener);
+        mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
-
-        mCameraAppUI = new CameraAppUI(this,
-                (MainActivityLayout) findViewById(R.id.activity_root_view),
-                isSecureCamera(), isCaptureIntent());
 
         mLocationManager = new LocationManager(this,
             new LocationManager.Listener() {
@@ -1322,12 +1322,9 @@ public class CameraActivity extends Activity
         mOrientationManager.resume();
         super.onResume();
         mCurrentModule.resume();
-
         setSwipingEnabled(true);
 
         if (mResetToPreviewOnResume) {
-            // Go to the preview on resume.
-            mFilmstripController.goToFirstItem();
             mCameraAppUI.resume();
         }
         // Default is showing the preview, unless disabled by explicitly
@@ -1340,14 +1337,15 @@ public class CameraActivity extends Activity
             if (!mSecureCamera) {
                 // If it's secure camera, requestLoad() should not be called
                 // as it will load all the data.
-                mDataAdapter.requestLoad(getContentResolver());
+                if (!mFilmstripVisible) {
+                    mDataAdapter.requestLoad(getContentResolver());
+                }
             }
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
 
         keepScreenOnForAWhile();
-
     }
 
     @Override
@@ -1825,5 +1823,80 @@ public class CameraActivity extends Activity
         mKeepScreenOn = false;
         mMainHandler.removeMessages(MSG_CLEAR_SCREEN_ON_FLAG);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    /**
+     * Updates the visibility of the filmstrip bottom controls.
+     */
+    private void updateUiByData(final int dataId) {
+        if (isSecureCamera()) {
+            // We cannot show buttons in secure camera since go to other
+            // activities might create a security hole.
+            return;
+        }
+
+        final LocalData currentData = mDataAdapter.getLocalData(dataId);
+        if (currentData == null) {
+            Log.w(TAG, "Current data ID not found.");
+            hidePanoStitchingProgress();
+            return;
+        }
+
+        updateActionBarMenu(dataId);
+
+        /* Bottom controls. */
+
+        final CameraAppUI.BottomControls filmstripBottomControls =
+                mCameraAppUI.getFilmstripBottomControls();
+        // We can only edit photos, not videos.
+        filmstripBottomControls.setEditButtonVisibility(currentData.isPhoto());
+
+        /* Progress bar */
+
+        final int panoStitchingProgress =
+                mPanoramaManager.getTaskProgress(currentData.getContentUri());
+        if (panoStitchingProgress < 0) {
+            hidePanoStitchingProgress();
+        } else {
+            showPanoStitchingProgress();
+            updateStitchingProgress(panoStitchingProgress);
+        }
+
+        /* View button */
+
+        // We need to add this to a separate DB.
+        // TODO: Redesign this.
+        currentData.requestAuxInfo(this, new LocalData.AuxInfoSupportCallback() {
+            @Override
+            public void auxInfoAvailable(final boolean isPanorama,
+                    final boolean isPanorama360, boolean isRgbz) {
+                // Make sure the returned data is for the current image.
+                if (dataId != mFilmstripController.getCurrentId()) {
+                    return;
+                }
+
+                // If this is a photo sphere, show the button to view it. If it's a full
+                // 360 photo sphere, show the tiny planet button.
+                final int viewButtonVisibility;
+                if (isPanorama) {
+                    viewButtonVisibility = CameraAppUI.BottomControls.VIEW_PHOTO_SPHERE;
+                } else if (isRgbz) {
+                    viewButtonVisibility = CameraAppUI.BottomControls.VIEW_RGBZ;
+                } else {
+                    viewButtonVisibility = CameraAppUI.BottomControls.VIEW_NONE;
+                }
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (mFilmstripController.getCurrentId() == dataId) {
+                            filmstripBottomControls.setTinyPlanetButtonVisibility(isPanorama360);
+                            filmstripBottomControls.setViewButtonVisibility(viewButtonVisibility);
+                        }
+                    }
+                });
+            }
+        });
     }
 }

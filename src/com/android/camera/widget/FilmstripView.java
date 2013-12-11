@@ -36,21 +36,17 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
-import com.android.camera.data.LocalData;
-import com.android.camera.filmstrip.BottomControls;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.ImageData;
-import com.android.camera.filmstrip.ImageData.AuxInfoSupportCallback;
 import com.android.camera.ui.FilmstripGestureRecognizer;
 import com.android.camera.ui.ZoomView;
-import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 import java.util.Arrays;
 
-public class FilmstripView extends ViewGroup implements BottomControls.Listener {
+public class FilmstripView extends ViewGroup {
     private static final String TAG = "FilmStripView";
 
     private static final int BUFFER_SIZE = 5;
@@ -90,7 +86,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
     private TimeInterpolator mViewAnimInterpolator;
 
     private FilmstripBottomLayout mBottomControls;
-    private PanoramaViewHelper mPanoramaViewHelper;
     private long mLastItemId = -1;
 
     // This is true if and only if the user is scrolling,
@@ -424,10 +419,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
         mViewGapInPixel = viewGap;
     }
 
-    private void setPanoramaViewHelper(PanoramaViewHelper helper) {
-        mPanoramaViewHelper = helper;
-    }
-
     /**
      * Checks if the data is at the center.
      *
@@ -685,38 +676,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
     }
 
     /**
-     * If the current photo is a photo sphere, this will launch the Photo Sphere
-     * panorama viewer.
-     *
-     * TODO: Move these back to the AppController implementation.
-     */
-    @Override
-    public void onView() {
-        ViewItem curr = mViewItem[mCurrentItem];
-        if (curr != null) {
-            mDataAdapter.getImageData(curr.getId()).view(mPanoramaViewHelper);
-        }
-    }
-
-    @Override
-    public void onEdit() {
-        ImageData data = mDataAdapter.getImageData(getCurrentId());
-        if (data == null || !(data instanceof LocalData)) {
-            return;
-        }
-        mActivity.launchEditor((LocalData) data);
-    }
-
-    @Override
-    public void onTinyPlanet() {
-        ImageData data = mDataAdapter.getImageData(getCurrentId());
-        if (data == null || !(data instanceof LocalData)) {
-            return;
-        }
-        mActivity.launchTinyPlanetEditor((LocalData) data);
-    }
-
-    /**
      * Returns the ID of the current item, or -1 if there is no data.
      */
     private int getCurrentId() {
@@ -725,91 +684,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
             return -1;
         }
         return current.getId();
-    }
-
-    /**
-     * Updates the visibility of the bottom controls.
-     *
-     * @param force update the bottom controls even if the current id has been
-     *            checked for button visibilities
-     */
-    private void updateBottomControls(boolean force) {
-        if (mActivity.isSecureCamera()) {
-            // We cannot show buttons in secure camera that send out of app
-            // intents, because another app with the same name can parade as
-            // the intented Activity.
-            return;
-        }
-
-        if (mBottomControls == null) {
-            mBottomControls = (FilmstripBottomLayout) ((View) getParent())
-                    .findViewById(R.id.filmstrip_bottom_controls);
-            mActivity.setOnActionBarVisibilityListener(mBottomControls);
-            mBottomControls.setListener(this);
-        }
-
-        final int requestId = getCurrentId();
-        if (requestId < 0) {
-            return;
-        }
-
-        // We cannot rely on the requestIds alone to check for data changes,
-        // because an item hands its id to its rightmost neighbor on deletion.
-        // To avoid loading the ImageData, we also check if the DataAdapter
-        // has fewer total items.
-        int total = mDataAdapter.getTotalNumber();
-        if (!force && requestId == mLastItemId && mLastTotalNumber == total) {
-            return;
-        }
-        mLastTotalNumber = total;
-
-        ImageData data = mDataAdapter.getImageData(requestId);
-
-        // We can only edit photos, not videos.
-        mBottomControls.setEditButtonVisibility(data.isPhoto());
-
-        // If this is a photo sphere, show the button to view it. If it's a full
-        // 360 photo sphere, show the tiny planet button.
-        if (data.getViewType() == ImageData.VIEW_TYPE_STICKY) {
-            // This is a workaround to prevent an unnecessary update of
-            // PhotoSphere metadata which fires a data focus change callback
-            // at a weird timing.
-            return;
-        }
-        // TODO: Remove this from FilmstripView as it breaks the design. We need
-        // to add this to a separate DB.
-        data.requestAuxInfo(mActivity, new AuxInfoSupportCallback() {
-            @Override
-            public void auxInfoAvailable(final boolean isPanorama,
-                    boolean isPanorama360, boolean isRgbz) {
-                // Make sure the returned data is for the current image.
-                if (requestId == getCurrentId()) {
-                    if (mListener != null) {
-                        // TODO: Remove this hack since there is no data focus
-                        // change actually.
-                        mListener.onDataFocusChanged(requestId, requestId);
-                    }
-                    mBottomControls.setTinyPlanetButtonVisibility(isPanorama360);
-
-                    final int viewButtonVisibility;
-                    if (isPanorama) {
-                        viewButtonVisibility = BottomControls.VIEW_PHOTO_SPHERE;
-                    } else if (isRgbz) {
-                        viewButtonVisibility = BottomControls.VIEW_RGBZ;
-                    } else {
-                        viewButtonVisibility = BottomControls.VIEW_NONE;
-                    }
-
-                    mBottomControls.post(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            mBottomControls.setViewButtonVisibility(viewButtonVisibility);
-                        }
-                    });
-                }
-            }
-        });
     }
 
     /**
@@ -1081,7 +955,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
         }
 
         stepIfNeeded();
-        updateBottomControls(false /* no forced update */);
         mLastItemId = getCurrentId();
     }
 
@@ -1597,7 +1470,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
         // Request a layout to find the measured width/height of the view first.
         requestLayout();
         // Update photo sphere visibility after metadata fully written.
-        updateBottomControls(true /* forced update */);
     }
 
     /**
@@ -1807,11 +1679,6 @@ public class FilmstripView extends ViewGroup implements BottomControls.Listener 
         @Override
         public void setImageGap(int imageGap) {
             FilmstripView.this.setViewGap(imageGap);
-        }
-
-        @Override
-        public void setPanoramaViewHelper(PanoramaViewHelper helper) {
-            FilmstripView.this.setPanoramaViewHelper(helper);
         }
 
         @Override

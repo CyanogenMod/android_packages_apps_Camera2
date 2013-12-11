@@ -16,8 +16,6 @@
 
 package com.android.camera.filmstrip;
 
-import com.android.camera.util.PhotoSphereHelper;
-
 /**
  * An interface which defines the controller of filmstrip.
  * A filmstrip has 4 states:
@@ -58,11 +56,6 @@ public interface FilmstripController {
      * @param imageGap The gap width in pixels.
      */
     public void setImageGap(int imageGap);
-
-    /**
-     * Sets the helper that's to be used to open photo sphere panoramas.
-     */
-    public void setPanoramaViewHelper(PhotoSphereHelper.PanoramaViewHelper helper);
 
     /**
      * @return The ID of the current item, or -1.

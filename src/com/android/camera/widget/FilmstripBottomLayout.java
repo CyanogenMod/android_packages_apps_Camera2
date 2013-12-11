@@ -22,7 +22,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-import com.android.camera.filmstrip.BottomControls;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera2.R;
 
 /**
@@ -30,7 +30,7 @@ import com.android.camera2.R;
  * sphere image and creating a tiny planet from a photo sphere image.
  */
 public class FilmstripBottomLayout extends RelativeLayout
-        implements BottomControls {
+        implements CameraAppUI.BottomControls {
 
     private Listener mListener;
     private ImageButton mEditButton;
@@ -84,6 +84,15 @@ public class FilmstripBottomLayout extends RelativeLayout
     }
 
     @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            setVisibility(View.VISIBLE);
+        } else {
+            setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
     public void setEditButtonVisibility(boolean visible) {
         setVisibility(mEditButton, visible);
     }
@@ -125,11 +134,5 @@ public class FilmstripBottomLayout extends RelativeLayout
             default:
                 return R.drawable.ic_view_photosphere;
         }
-    }
-
-    @Override
-    public void onActionBarVisibilityChanged(boolean isVisible) {
-        // TODO: Fade in and out
-        setVisibility(isVisible ? VISIBLE : INVISIBLE);
     }
 }

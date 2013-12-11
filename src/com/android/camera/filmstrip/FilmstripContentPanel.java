@@ -40,7 +40,12 @@ public interface FilmstripContentPanel {
         public void onFilmstripShown();
     }
 
+    /** Sets the listener. */
     void setFilmstripListener(FilmstripLayout.Listener listener);
+
+    void hide();
+
+    void show();
 
     /**
      * Called when the back key is pressed.
