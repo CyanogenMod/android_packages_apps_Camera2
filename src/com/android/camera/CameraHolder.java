@@ -222,7 +222,7 @@ public class CameraHolder {
                 return null;
             }
             mCameraId = cameraId;
-            mParameters = mCameraDevice.getParameters();
+            mParameters = mCameraDevice.getCamera().getParameters();
         } else {
             if (!mCameraDevice.reconnect(handler, cb)) {
                 Log.e(TAG, "fail to reconnect Camera:" + mCameraId + ", aborting.");
