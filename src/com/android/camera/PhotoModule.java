@@ -1512,9 +1512,10 @@ public class PhotoModule
             overrideCameraSettings(flashMode, whiteBalance, focusMode,
                     Integer.toString(mParameters.getExposureCompensation()),
                     mParameters.getAutoExposure(),
-                    getSaturationSafe(), getContrastSafe());
+                    getSaturationSafe(), getContrastSafe(),
+                    mParameters.getColorEffect());
         } else {
-            overrideCameraSettings(null, null, null, null, null, null, null);
+            overrideCameraSettings(null, null, null, null, null, null, null, null);
         }
     }
 
@@ -1522,7 +1523,7 @@ public class PhotoModule
             final String whiteBalance, final String focusMode,
             final String exposureMode,
             final String autoExposure, final String saturation,
-            final String contrast) {
+            final String contrast, final String colorEffect) {
         mUI.overrideSettings(
                 CameraSettings.KEY_FLASH_MODE, flashMode,
                 CameraSettings.KEY_WHITE_BALANCE, whiteBalance,
@@ -1530,7 +1531,8 @@ public class PhotoModule
                 CameraSettings.KEY_EXPOSURE, exposureMode,
                 CameraSettings.KEY_AUTOEXPOSURE, autoExposure,
                 CameraSettings.KEY_SATURATION, saturation,
-                CameraSettings.KEY_CONTRAST, contrast);
+                CameraSettings.KEY_CONTRAST, contrast,
+                CameraSettings.KEY_COLOR_EFFECT, colorEffect);
         if (CameraUtil.needSamsungHDRFormat()){
             if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
                 mUI.overrideSettings(CameraSettings.KEY_EXPOSURE,
