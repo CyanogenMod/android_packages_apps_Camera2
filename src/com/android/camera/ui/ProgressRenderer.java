@@ -19,8 +19,10 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.view.View;
 
 import com.android.camera2.R;
 
@@ -29,10 +31,6 @@ import com.android.camera2.R;
  */
 public class ProgressRenderer {
 
-    public static interface VisibilityListener {
-        public void onHidden();
-    }
-
     private final int mProgressRadius;
     private final Paint mProgressBasePaint;
     private final Paint mProgressPaint;
@@ -40,7 +38,7 @@ public class ProgressRenderer {
     private RectF mArcBounds = new RectF(0, 0, 1, 1);
     private int mProgressAngleDegrees = 270;
     private boolean mVisible = false;
-    private VisibilityListener mVisibilityListener;
+    private View mParentView;
 
     /**
      * After we reach 100%, keep on painting the progress for another x milliseconds
@@ -48,22 +46,13 @@ public class ProgressRenderer {
      */
     private static final int SHOW_PROGRESS_X_ADDITIONAL_MS = 100;
 
-    /** When to hide the progress indicator. */
-    private long mTimeToHide = 0;
-
-    public ProgressRenderer(Context context) {
+    public ProgressRenderer(Context context, View parent) {
+        mParentView = parent;
         mProgressRadius = context.getResources().getDimensionPixelSize(R.dimen.pie_progress_radius);
         int pieProgressWidth = context.getResources().getDimensionPixelSize(
                 R.dimen.pie_progress_width);
         mProgressBasePaint = createProgressPaint(pieProgressWidth, 0.2f);
         mProgressPaint = createProgressPaint(pieProgressWidth, 1.0f);
-    }
-
-    /**
-     * Sets or replaces a visiblity listener.
-     */
-    public void setVisibilityListener(VisibilityListener listener) {
-        mVisibilityListener = listener;
     }
 
     /**
@@ -80,8 +69,8 @@ public class ProgressRenderer {
         // We hide the progress once we drew the 100% state once.
         if (percent < 100) {
             mVisible = true;
-            mTimeToHide = System.currentTimeMillis() + SHOW_PROGRESS_X_ADDITIONAL_MS;
         }
+        mParentView.invalidate();
     }
 
     /**
@@ -100,11 +89,15 @@ public class ProgressRenderer {
 
         // After we reached 100%, we paint the progress renderer for another x
         // milliseconds until we hide it.
-        if (mProgressAngleDegrees == 360 && System.currentTimeMillis() > mTimeToHide) {
+        if (mProgressAngleDegrees == 360) {
             mVisible = false;
-            if (mVisibilityListener != null) {
-                mVisibilityListener.onHidden();
-            }
+            mParentView.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mParentView.invalidate();
+                    }
+                }, SHOW_PROGRESS_X_ADDITIONAL_MS);
         }
     }
 
