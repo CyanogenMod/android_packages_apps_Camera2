@@ -21,13 +21,13 @@ import android.view.View;
 
 /**
  * An interface which defines the interactions between the
- * {@link FilmstripImageData} and the
- * {@link com.android.camera.ui.FilmstripView}.
+ * {@link ImageData} and the
+ * {@link com.android.camera.widget.FilmstripView}.
  */
-public interface FilmstripDataAdapter {
+public interface DataAdapter {
     /**
      * An interface which defines the update reporter used to return to the
-     * {@link FilmstripListener}.
+     * {@link com.android.camera.filmstrip.FilmstripController.FilmstripListener}.
      */
     public interface UpdateReporter {
         /** Checks if the data of dataID is removed. */
@@ -39,8 +39,8 @@ public interface FilmstripDataAdapter {
 
     /**
      * An interface which defines the listener for data events over
-     * {@link FilmstripImageData}. Usually
-     * {@link com.android.camera.ui.FilmstripView} itself.
+     * {@link ImageData}. Usually
+     * {@link com.android.camera.widget.FilmstripView} itself.
      */
     public interface Listener {
         /**
@@ -62,7 +62,7 @@ public interface FilmstripDataAdapter {
          * @param dataID The ID of the inserted data.
          * @param data The inserted data.
          */
-        public void onDataInserted(int dataID, FilmstripImageData data);
+        public void onDataInserted(int dataID, ImageData data);
 
         /**
          * Called when a data item is removed.
@@ -70,7 +70,7 @@ public interface FilmstripDataAdapter {
          * @param dataID The ID of the removed data.
          * @param data The data.
          */
-        public void onDataRemoved(int dataID, FilmstripImageData data);
+        public void onDataRemoved(int dataID, ImageData data);
     }
 
     /** Returns the total number of image data. */
@@ -87,17 +87,17 @@ public interface FilmstripDataAdapter {
     public View getView(Context context, int dataID);
 
     /**
-     * Returns the {@link FilmstripImageData} specified by the ID.
+     * Returns the {@link ImageData} specified by the ID.
      *
-     * @param dataID The ID of the {@link FilmstripImageData}.
-     * @return The specified {@link FilmstripImageData}. Null if not available.
+     * @param dataID The ID of the {@link ImageData}.
+     * @return The specified {@link ImageData}. Null if not available.
      */
-    public FilmstripImageData getImageData(int dataID);
+    public ImageData getImageData(int dataID);
 
     /**
      * Suggests the data adapter the maximum possible size of the layout so
-     * the {@link FilmstripDataAdapter} can optimize the view returned for the
-     * {@link FilmstripImageData}.
+     * the {@link DataAdapter} can optimize the view returned for the
+     * {@link ImageData}.
      *
      * @param widthPixels Maximum width in dp.
      * @param heightPixels Maximum height in dp.

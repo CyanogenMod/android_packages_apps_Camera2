@@ -24,7 +24,7 @@ import com.android.camera.util.PhotoSphereHelper;
 /**
  * Common interface for all images in the filmstrip.
  */
-public interface FilmstripImageData {
+public interface ImageData {
 
     /**
      * Interface that is used to tell the caller whether an image is a photo
@@ -62,8 +62,8 @@ public interface FilmstripImageData {
     public static final int ACTION_ZOOM = (1 << 2);
 
     /**
-     * SIZE_FULL can be returned by {@link FilmstripImageData#getWidth()} and
-     * {@link FilmstripImageData#getHeight()}. When SIZE_FULL is returned for
+     * SIZE_FULL can be returned by {@link ImageData#getWidth()} and
+     * {@link ImageData#getHeight()}. When SIZE_FULL is returned for
      * width/height, it means the the width or height will be disregarded
      * when deciding the view size of this ImageData, just use full screen
      * size.
@@ -73,20 +73,20 @@ public interface FilmstripImageData {
     /**
      * Returns the width in pixels of the image before orientation applied.
      * The final layout of the view returned by
-     * {@link FilmstripDataAdapter#getView(Context, int)} will
+     * {@link DataAdapter#getView(Context, int)} will
      * preserve the aspect ratio of
-     * {@link FilmstripImageData#getWidth()} and
-     * {@link FilmstripImageData#getHeight()}.
+     * {@link ImageData#getWidth()} and
+     * {@link ImageData#getHeight()}.
      */
     public int getWidth();
 
     /**
      * Returns the height in pixels of the image before orientation applied.
      * The final layout of the view returned by
-     * {@link FilmstripDataAdapter#getView(Context, int)} will
+     * {@link DataAdapter#getView(Context, int)} will
      * preserve the aspect ratio of
-     * {@link FilmstripImageData#getWidth()} and
-     * {@link FilmstripImageData#getHeight()}.
+     * {@link ImageData#getWidth()} and
+     * {@link ImageData#getHeight()}.
      */
     public int getHeight();
 

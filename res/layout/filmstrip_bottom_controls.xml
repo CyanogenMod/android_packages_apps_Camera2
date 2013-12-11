@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<com.android.camera.ui.FilmstripBottomControls
+<com.android.camera.widget.FilmstripBottomLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/filmstrip_bottom_controls"
     android:layout_width="match_parent"
@@ -65,4 +65,4 @@
         android:src="@drawable/ic_menu_tiny_planet"
         android:visibility="gone" />
 
-</com.android.camera.ui.FilmstripBottomControls>
+</com.android.camera.widget.FilmstripBottomLayout>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.ui;
+package com.android.camera.widget;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -30,40 +30,24 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
-import com.android.camera.filmstrip.FilmstripListener;
+import com.android.camera.ui.FilmstripGestureRecognizer;
 import com.android.camera2.R;
 
 /**
  * A {@link android.widget.FrameLayout} used for the parent layout of a
- * {@link com.android.camera.ui.FilmstripView} to support animating in/out the
+ * {@link com.android.camera.widget.FilmstripView} to support animating in/out the
  * filmstrip.
  */
-public class FilmstripLayout extends FrameLayout {
+public class FilmstripLayout extends FrameLayout implements FilmstripContentPanel {
 
-    /**
-     * An listener interface extending {@link
-     * com.android.camera.filmstrip.FilmstripListener} defining extra callbacks
-     * for filmstrip being shown and hidden.
-     */
-    public interface Listener extends FilmstripListener {
-
-        /**
-         * Callback when the filmstrip becomes invisible or gone.
-         */
-        public void onFilmstripHidden();
-
-        /**
-         * Callback when the filmstrip is shown in full-screen.
-         */
-        public void onFilmstripShown();
-    }
     private static final long DEFAULT_DURATION_MS = 200;
     private static final int ANIM_DIRECTION_IN = 1;
     private static final int ANIM_DIRECTION_OUT = 2;
 
     /**
-     * The layout containing the {@link com.android.camera.ui.FilmstripView}
+     * The layout containing the {@link com.android.camera.widget.FilmstripView}
      * and other controls.
      */
     private FrameLayout mFilmstripContentLayout;
@@ -146,6 +130,7 @@ public class FilmstripLayout extends FrameLayout {
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
     }
 
+    @Override
     public void setFilmstripListener(Listener listener) {
         mListener = listener;
         if (getVisibility() == VISIBLE && mFilmstripView.getTranslationX() == 0) {
@@ -229,11 +214,7 @@ public class FilmstripLayout extends FrameLayout {
         mFilmstripContentLayout = (FrameLayout) findViewById(R.id.camera_filmstrip_content_layout);
     }
 
-    /**
-     * Called when the back key is pressed.
-     *
-     * @return Whether the UI responded to the key event.
-     */
+    @Override
     public boolean onBackPressed() {
         if (getVisibility() == VISIBLE) {
             if (!mFilmstripAnimator.isRunning()) {

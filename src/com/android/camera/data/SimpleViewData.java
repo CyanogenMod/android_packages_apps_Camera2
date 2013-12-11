@@ -23,7 +23,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 
-import com.android.camera.filmstrip.FilmstripImageData;
+import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.PhotoSphereHelper;
 
 /**
@@ -80,7 +80,7 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public int getViewType() {
-        return FilmstripImageData.VIEW_TYPE_REMOVABLE;
+        return ImageData.VIEW_TYPE_REMOVABLE;
     }
 
     @Override

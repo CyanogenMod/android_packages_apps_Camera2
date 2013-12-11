@@ -41,7 +41,7 @@ import com.android.camera.util.PhotoSphereHelper;
  * </ol>
  *
  * Upon entering/leaving each of the states, the
- * {@link com.android.camera.filmstrip.FilmstripListener} will be notified.
+ * {@link com.android.camera.filmstrip.FilmstripController.FilmstripListener} will be notified.
  */
 public interface FilmstripController {
 
@@ -70,9 +70,9 @@ public interface FilmstripController {
     public int getCurrentId();
 
     /**
-     * Sets the {@link com.android.camera.filmstrip.FilmstripDataAdapter}.
+     * Sets the {@link DataAdapter}.
      */
-    public void setDataAdapter(FilmstripDataAdapter adapter);
+    public void setDataAdapter(DataAdapter adapter);
 
     /**
      * Returns whether the filmstrip is in filmstrip mode.
@@ -159,4 +159,76 @@ public interface FilmstripController {
      * Scales up to full-screen mode.
      */
     public void goToFullScreen();
+
+    /**
+     * An interface which defines the FilmStripView UI action listener.
+     */
+    interface FilmstripListener {
+
+        /**
+         * Callback when the data item is promoted. A data is promoted if the user
+         * swipe up a data vertically.
+         *
+         * @param dataID The ID of the promoted data.
+         */
+        public void onDataPromoted(int dataID);
+
+        /**
+         * Callback when the data item is demoted. A data is promoted if the user
+         * swipe down a data vertically.
+         *
+         * @param dataID The ID of the demoted data.
+         */
+        public void onDataDemoted(int dataID);
+
+        /**
+         *
+         * Called when all the data has been reloaded.
+         */
+        public void onDataReloaded();
+
+        /**
+         * The callback when the item enters full-screen state.
+         *
+         * @param dataId The ID of the current focused image data.
+         */
+        public void onEnterFullScreen(int dataId);
+
+        /**
+         * The callback when the item leaves full-screen.
+         *
+         * @param dataId The ID of the current focused image data.
+         */
+        public void onLeaveFullScreen(int dataId);
+
+        /**
+         * The callback when the item enters filmstrip.
+         *
+         * @param dataId The ID of the current focused image data.
+         */
+        public void onEnterFilmstrip(int dataId);
+
+        /**
+         * The callback when the item leaves filmstrip.
+         *
+         * @param dataId The ID of the current focused image data.
+         */
+        public void onLeaveFilmstrip(int dataId);
+
+        /**
+         * The callback when the item enters zoom view.
+         *
+         * @param dataID
+         */
+        public void onEnterZoomView(int dataID);
+
+        /**
+         * The callback when the data focus changed.
+         *
+         * @param prevDataId The ID of the previously focused data or {@code -1} if
+         *                   none.
+         * @param newDataId The ID of the focused data of {@code -1} if none.
+         */
+        public void onDataFocusChanged(int prevDataId, int newDataId);
+    }
 }

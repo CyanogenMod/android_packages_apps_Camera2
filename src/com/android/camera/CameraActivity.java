@@ -16,11 +16,11 @@
 
 package com.android.camera;
 
-import android.app.AlertDialog;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -90,14 +90,14 @@ import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
+import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
-import com.android.camera.ui.FilmstripLayout;
-import com.android.camera.ui.FilmstripView;
+import com.android.camera.widget.FilmstripView;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.PreviewStatusListener;
@@ -321,8 +321,8 @@ public class CameraActivity extends Activity
         return localFile.getName();
     }
 
-    private final FilmstripLayout.Listener mFilmstripListener =
-            new FilmstripLayout.Listener() {
+    private final FilmstripContentPanel.Listener mFilmstripListener =
+            new FilmstripContentPanel.Listener() {
 
                 @Override
                 public void onFilmstripHidden() {
@@ -1127,7 +1127,7 @@ public class CameraActivity extends Activity
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter = new CameraDataAdapter(
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
-        ((FilmstripLayout) findViewById(R.id.filmstrip_layout))
+        ((FilmstripContentPanel) findViewById(R.id.filmstrip_layout))
                 .setFilmstripListener(mFilmstripListener);
 
 
