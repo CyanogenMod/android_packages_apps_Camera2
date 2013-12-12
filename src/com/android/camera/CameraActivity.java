@@ -228,6 +228,11 @@ public class CameraActivity extends Activity
 
     private FeedbackHelper mFeedbackHelper;
 
+    @Override
+    public CameraAppUI getCameraAppUI() {
+        return mCameraAppUI;
+    }
+
     // close activity when screen turns off
     private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
         @Override
@@ -1105,8 +1110,8 @@ public class CameraActivity extends Activity
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter = new CameraDataAdapter(
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
-        mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
+        mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
         mLocationManager = new LocationManager(this,
             new LocationManager.Listener() {

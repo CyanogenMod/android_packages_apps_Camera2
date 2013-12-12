@@ -35,8 +35,9 @@ import java.util.List;
 public class ButtonManager {
 
     public static final int BUTTON_FLASH = 0;
-    public static final int BUTTON_CAMERA = 1;
-    public static final int BUTTON_HDRPLUS = 2;
+    public static final int BUTTON_TORCH = 1;
+    public static final int BUTTON_CAMERA = 2;
+    public static final int BUTTON_HDRPLUS = 3;
 
     /** A reference to the activity for finding button views on demand. */
     private CameraActivity mActivity;
@@ -67,6 +68,8 @@ public class ButtonManager {
             switch (buttonId) {
                 case BUTTON_FLASH:
                     throw new IllegalStateException("Flash button could not be found.");
+                case BUTTON_TORCH:
+                    throw new IllegalStateException("Torch button could not be found.");
                 case BUTTON_CAMERA:
                     throw new IllegalStateException("Camera button could not be found.");
                 case BUTTON_HDRPLUS:
@@ -93,6 +96,9 @@ public class ButtonManager {
                 break;
             case BUTTON_HDRPLUS:
                 enableHdrPlusButton(button, cb, resIdImages);
+                break;
+            case BUTTON_TORCH:
+                enableTorchButton(button, cb, resIdImages);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -126,6 +132,31 @@ public class ButtonManager {
                 public void stateChanged(View view, int state) {
                     mSettingsManager.setStringValueIndex(SettingsManager.SETTING_FLASH_MODE, state);
                     if (cb != null) {
+                        cb.onStateChanged(state);
+                    }
+                }
+            });
+    }
+
+    /**
+     * Enable video torch button
+     */
+    private void enableTorchButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+        int index = mSettingsManager.getStringValueIndex(
+                SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
+        if (index >= 0) {
+            button.setState(index, false);
+        }
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+                @Override
+                public void stateChanged(View view, int state) {
+                    mSettingsManager.setStringValueIndex(
+                            SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE, state);
+                    if(cb != null) {
                         cb.onStateChanged(state);
                     }
                 }
