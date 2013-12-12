@@ -220,8 +220,8 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 // Adjust the coordinates back since they are relative to the
                 // child view.
-                motionEvent.setLocation(motionEvent.getX() + mFilmstripView.getX(),
-                        motionEvent.getY() + mFilmstripView.getY());
+                motionEvent.setLocation(motionEvent.getX() + mFilmstripContentLayout.getX(),
+                        motionEvent.getY() + mFilmstripContentLayout.getY());
                 mGestureRecognizer.onTouchEvent(motionEvent);
                 return true;
             }
