@@ -65,7 +65,8 @@
                 <TableRow> <SeekBar
                     android:id="@+id/skintoneseek"
                     android:layout_below="@+id/skintonetitle"
-                    android:layout_width="400px"
+                    android:layout_width="match_parent"
+                    android:maxWidth="400px"
                     android:layout_height="33dip"
                     android:layout_marginLeft="25px"
                     android:layout_marginTop="2dip"/>
