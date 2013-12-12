@@ -23,6 +23,10 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -33,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.android.camera.util.Gusterpolator;
+import com.android.camera.widget.AnimationEffects;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
@@ -76,6 +81,7 @@ public class ModeListView extends ScrollView {
     private static final int FULLY_SHOWN = 1;
     private static final int ACCORDION_ANIMATION = 2;
     private static final int SCROLLING = 3;
+    private static final int MODE_SELECTED = 4;
 
     // Scrolling delay between non-focused item and focused item
     private static final int DELAY_MS = 25;
@@ -104,6 +110,7 @@ public class ModeListView extends ScrollView {
     private ModeSelectorItem[] mModeSelectorItems;
     private AnimatorSet mAnimatorSet;
     private int mFocusItem = NO_ITEM_SELECTED;
+    private AnimationEffects mCurrentEffect;
 
     // Width and height of this view. They get updated in onLayout()
     // Unit for width and height are pixels.
@@ -224,6 +231,21 @@ public class ModeListView extends ScrollView {
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
                 int modeId = getModeIndex(index);
+                mModeSelectorItems[index].highlight();
+                mState = MODE_SELECTED;
+                PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
+                effect.setSize(mWidth, mHeight);
+                effect.setAnimationEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        setVisibility(INVISIBLE);
+                        mCurrentEffect = null;
+                        snapBack(false);
+                    }
+                });
+                effect.setAnimationStartingPosition((int) ev.getX(), (int) ev.getY());
+                mCurrentEffect = effect;
+
                 onModeSelected(modeId);
             }
             return true;
@@ -305,10 +327,10 @@ public class ModeListView extends ScrollView {
             mListView.addView(selectorItem);
             // Set alternating background color for each mode selector in the list
             if (i % 2 == 0) {
-                selectorItem.setBackgroundColor(getResources()
+                selectorItem.setDefaultBackgroundColor(getResources()
                         .getColor(R.color.mode_selector_background_light));
             } else {
-                selectorItem.setBackgroundColor(getResources()
+                selectorItem.setDefaultBackgroundColor(getResources()
                         .getColor(R.color.mode_selector_background_dark));
             }
             int modeId = getModeIndex(i);
@@ -347,9 +369,6 @@ public class ModeListView extends ScrollView {
         if (mListener != null) {
             mListener.onModeSelected(modeIndex);
         }
-        // TODO: There will be another animation indicating selection
-        // for now, just snap back.
-        snapBack();
     }
 
     /**
@@ -363,6 +382,10 @@ public class ModeListView extends ScrollView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        if (mCurrentEffect != null) {
+            return mCurrentEffect.onTouchEvent(ev);
+        }
+
         super.onTouchEvent(ev);
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             getParent().requestDisallowInterceptTouchEvent(true);
@@ -401,6 +424,9 @@ public class ModeListView extends ScrollView {
         super.onLayout(changed, left, top, right, bottom);
         mWidth = right - left;
         mHeight = bottom - top - getPaddingTop() - getPaddingBottom();
+        if (mCurrentEffect != null) {
+            mCurrentEffect.setSize(mWidth, mHeight);
+        }
     }
 
     /**
@@ -439,11 +465,25 @@ public class ModeListView extends ScrollView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    @Override
+    public void draw(Canvas canvas) {
+        if (mCurrentEffect != null) {
+            mCurrentEffect.drawBackground(canvas);
+            super.draw(canvas);
+            mCurrentEffect.drawForeground(canvas);
+        } else {
+            super.draw(canvas);
+        }
+    }
+
     /**
      * This starts the accordion animation, unless it's already running, in which
      * case the start animation call will be ignored.
      */
     public void startAccordionAnimation() {
+        if (mState != IDLE) {
+            return;
+        }
         if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
             return;
         }
@@ -473,6 +513,7 @@ public class ModeListView extends ScrollView {
     private void resetModeSelectors() {
         for (int i = 0; i < mModeSelectorItems.length; i++) {
             mModeSelectorItems[i].setVisibleWidth(0);
+            mModeSelectorItems[i].unHighlight();
         }
     }
 
@@ -611,6 +652,7 @@ public class ModeListView extends ScrollView {
         resetModeSelectors();
         mScrollTrendX = 0f;
         mScrollTrendY = 0f;
+        mCurrentEffect = null;
         setVisibility(INVISIBLE);
     }
 
@@ -629,6 +671,16 @@ public class ModeListView extends ScrollView {
             // till it reaches its max width
             int alpha = 127 * (focusItemWidth - mIconBlockWidth) / (mWidth - mIconBlockWidth);
             setBackgroundAlpha(alpha);
+        }
+    }
+
+    @Override
+    public void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility != VISIBLE) {
+            // Reset mode list if the window is no longer visible.
+            reset();
+            mState = IDLE;
         }
     }
 
@@ -651,9 +703,27 @@ public class ModeListView extends ScrollView {
         }
     }
 
+    /**
+     * Snaps back out of the screen.
+     *
+     * @param withAnimation whether snapping back should be animated
+     */
+    public void snapBack(boolean withAnimation) {
+        if (withAnimation) {
+            animateListToWidth(0);
+            mState = IDLE;
+        } else {
+            setVisibility(INVISIBLE);
+            resetModeSelectors();
+            mState = IDLE;
+        }
+    }
+
+    /**
+     * Snaps the mode list back out with animation.
+     */
     private void snapBack() {
-        animateListToWidth(0);
-        mState = IDLE;
+        snapBack(true);
     }
 
     private void snapToFullScreen() {
@@ -769,6 +839,127 @@ public class ModeListView extends ScrollView {
             return 0;
         } else {
             return mIconResId[modeIndex];
+        }
+    }
+
+    public void startModeSelectionAnimation() {
+        if (mState != MODE_SELECTED || mCurrentEffect == null) {
+            setVisibility(INVISIBLE);
+            snapBack(false);
+            mCurrentEffect = null;
+        } else {
+            mCurrentEffect.startAnimation();
+        }
+
+    }
+
+    private class PeepholeAnimationEffect extends AnimationEffects {
+
+        private final static int UNSET = -1;
+        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 650;
+
+        private int mWidth;
+        private int mHeight;
+
+        private int mPeepHoleCenterX = UNSET;
+        private int mPeepHoleCenterY = UNSET;
+        private float mRadius = 0f;
+        private ValueAnimator mPeepHoleAnimator;
+        private Runnable mEndAction;
+        private final Paint mMaskPaint = new Paint();
+
+        public PeepholeAnimationEffect() {
+            mMaskPaint.setAlpha(0);
+            mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        }
+
+        public void setSize(int width, int height) {
+            mWidth = width;
+            mHeight = height;
+        }
+
+        public void drawForeground(Canvas canvas) {
+            // Draw the circle in clear mode
+            if (mPeepHoleAnimator != null) {
+                // Draw a transparent circle using clear mode
+                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mMaskPaint);
+            }
+        }
+
+        public void setAnimationStartingPosition(int x, int y) {
+            mPeepHoleCenterX = x;
+            mPeepHoleCenterY = y;
+        }
+
+        public void startAnimation() {
+            if (mPeepHoleAnimator != null && mPeepHoleAnimator.isRunning()) {
+                return;
+            }
+            if (mPeepHoleCenterY == UNSET || mPeepHoleCenterX == UNSET) {
+                mPeepHoleCenterX = mWidth / 2;
+                mPeepHoleCenterY = mHeight / 2;
+            }
+
+            int horizontalDistanceToFarEdge = Math.max(mPeepHoleCenterX, mWidth - mPeepHoleCenterX);
+            int verticalDistanceToFarEdge = Math.max(mPeepHoleCenterY, mHeight - mPeepHoleCenterY);
+            int endRadius = (int) (Math.sqrt(horizontalDistanceToFarEdge * horizontalDistanceToFarEdge
+                    + verticalDistanceToFarEdge * verticalDistanceToFarEdge));
+
+            mPeepHoleAnimator = ValueAnimator.ofFloat(0, endRadius);
+            mPeepHoleAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
+            mPeepHoleAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            mPeepHoleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    // Modify mask by enlarging the hole
+                    mRadius = (Float) mPeepHoleAnimator.getAnimatedValue();
+                    invalidate();
+                }
+            });
+
+            mPeepHoleAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (mEndAction != null) {
+                        post(mEndAction);
+                        mEndAction = null;
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPeepHoleAnimator = null;
+                                mRadius = 0;
+                                mPeepHoleCenterX = UNSET;
+                                mPeepHoleCenterY = UNSET;
+                            }
+                        });
+                    } else {
+                        mPeepHoleAnimator = null;
+                        mRadius = 0;
+                        mPeepHoleCenterX = UNSET;
+                        mPeepHoleCenterY = UNSET;
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            mPeepHoleAnimator.start();
+        }
+
+        public void setAnimationEndAction(Runnable runnable) {
+            mEndAction = runnable;
         }
     }
 }

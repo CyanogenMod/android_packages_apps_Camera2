@@ -194,6 +194,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private int mModeCoverState = COVER_HIDDEN;
     private FilmstripBottomControls mFilmstripBottomControls;
     private FilmstripContentPanel mFilmstripPanel;
+    private Runnable mHideCoverRunnable;
 
     // TODO this isn't used by all modules universally, should be part of a util class or something
     /**
@@ -294,7 +295,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean onScroll(MotionEvent e1, MotionEvent ev, float distanceX, float distanceY) {
             if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT_MS
                     || mSwipeState != IDLE) {
-                return true;
+                return false;
             }
 
             int deltaX = (int) (ev.getX() - mDown.getX());
@@ -429,19 +430,28 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         int colorId = ModeListView.getModeThemeColor(modeId);
         int iconId = ModeListView.getModeIconResourceId(modeId);
         mModeTransitionView.setupModeCover(colorId, iconId);
+        mHideCoverRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mModeTransitionView.hideModeCover(new AnimationFinishedListener() {
+                    @Override
+                    public void onAnimationFinished(boolean success) {
+                        if (success) {
+                            // Show shimmy in SHIMMY_DELAY_MS
+                            mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+                        }
+                    }
+                });
+            }
+        };
         mModeCoverState = COVER_SHOWN;
     }
 
     private void hideModeCover() {
-        mModeTransitionView.hideModeCover(new AnimationFinishedListener() {
-            @Override
-            public void onAnimationFinished(boolean success) {
-                if (success) {
-                    // Show shimmy in SHIMMY_DELAY_MS
-                    mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
-                }
-            }
-        });
+        if (mHideCoverRunnable != null) {
+            mAppRootView.post(mHideCoverRunnable);
+            mHideCoverRunnable = null;
+        }
     }
 
     /**
@@ -542,9 +552,35 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     }
 
+    /**
+     * Gets called when a mode is selected from {@link com.android.camera.ui.ModeListView}
+     *
+     * @param modeIndex mode index of the selected mode
+     */
     @Override
     public void onModeSelected(int modeIndex) {
         mController.onModeSelected(modeIndex);
+        mHideCoverRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mModeListView.startModeSelectionAnimation();
+            }
+        };
+
+        if (mTextureView == null) {
+            // TODO: Remove this when all the modules use TextureView
+            int temporaryDelay = 600; // ms
+            mModeListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    hideModeCover();
+                }
+            }, temporaryDelay);
+        } else if (mTextureView.getSurfaceTexture() != null) {
+            hideModeCover();
+        } else {
+            mModeCoverState = COVER_SHOWN;
+        }
     }
 
     /**

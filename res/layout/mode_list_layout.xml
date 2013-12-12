@@ -20,6 +20,8 @@
     android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layerType="hardware"
+    android:background="@null"
     android:visibility="invisible" >
     <LinearLayout
         android:id="@+id/mode_list"

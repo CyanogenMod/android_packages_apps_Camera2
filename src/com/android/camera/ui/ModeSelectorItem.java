@@ -59,9 +59,15 @@ class ModeSelectorItem extends FrameLayout {
     private int mDrawingMode = TRUNCATE_TEXT_END;
     private int mHeight;
     private int mWidth;
+    private int mDefaultBackgroundColor;
+    private int mDefaultTextColor;
+    private int mIconBlockColor;
+    private final int mHighlightTextColor;
 
     public ModeSelectorItem(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mHighlightTextColor = context.getResources()
+                .getColor(R.color.mode_selector_text_highlight_color);
     }
 
     @Override
@@ -79,6 +85,12 @@ class ModeSelectorItem extends FrameLayout {
         mText.setTypeface(typeface);
         mMinVisibleWidth = getResources()
                 .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
+        mDefaultTextColor = mText.getCurrentTextColor();
+    }
+
+    public void setDefaultBackgroundColor(int color) {
+        mDefaultBackgroundColor = color;
+        setBackgroundColor(color);
     }
 
     @Override
@@ -88,6 +100,16 @@ class ModeSelectorItem extends FrameLayout {
         // Gradient shade will draw at the end of the item
         mGradientShade = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
                 new int[] {startColor, color});
+    }
+
+    public void highlight() {
+        mText.setTextColor(mHighlightTextColor);
+        setBackgroundColor(mIconBlockColor);
+    }
+
+    public void unHighlight() {
+        setBackgroundColor(mDefaultBackgroundColor);
+        mText.setTextColor(mDefaultTextColor);
     }
 
     /**
@@ -104,6 +126,7 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     public void setIconBackgroundColor(int color) {
+        mIconBlockColor = color;
         mIcon.setBackgroundColor(color);
     }
 
@@ -189,7 +212,7 @@ class ModeSelectorItem extends FrameLayout {
             canvas.clipRect(0, 0, width, height);
         }
         super.draw(canvas);
-        if (shadeStart > 0) {
+        if (shadeStart > 0 && width < mWidth) {
             mGradientShade.setBounds(shadeStart, 0, width, height);
             mGradientShade.draw(canvas);
         }
