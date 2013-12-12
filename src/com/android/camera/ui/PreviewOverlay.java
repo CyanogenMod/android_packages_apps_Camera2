@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -50,7 +49,7 @@ public class PreviewOverlay extends View {
 
     public static final int ZOOM_MIN_FACTOR = 100;
 
-    private final ScaleGestureDetector mScaleDetector;
+    private final ZoomGestureDetector mScaleDetector;
     private final ZoomProcessor mZoomProcessor = new ZoomProcessor();
     private GestureDetector mGestureDetector = null;
     private OnZoomChangedListener mZoomListener = null;
@@ -181,7 +180,7 @@ public class PreviewOverlay extends View {
          * Calculate the angle between two fingers. Range: [-pi, pi]
          */
         public float getAngle() {
-            return (float) Math.atan2(mDeltaY, mDeltaX);
+            return (float) Math.atan2(-mDeltaY, mDeltaX);
         }
     }
 
@@ -192,106 +191,102 @@ public class PreviewOverlay extends View {
     private class ZoomProcessor implements ScaleGestureDetector.OnScaleGestureListener {
         private static final String TAG = "CAM_Zoom";
 
-        private int mMaxZoom;
-        private int mMinZoom;
+        // Diameter of Zoom UI as fraction of maximum possible without clipping.
+        private static final float ZOOM_UI_SIZE = 0.8f;
+        // Diameter of Zoom UI donut hole as fraction of Zoom UI diameter.
+        private static final float ZOOM_UI_DONUT = 0.25f;
+
+        final private int mMinIndex = 0;
+        private int mMaxIndex;
+        // Discrete Zoom level [mMinIndex,mMaxIndex].
+        private int mCurrentIndex;
+        // Continuous Zoom level [0,1].
+        private float mCurrentFraction;
+        private double mFingerAngle;  // in radians.
         private Paint mPaint;
-        private Paint mTextPaint;
-        private int mCircleSize;
         private int mCenterX;
         private int mCenterY;
-        private float mMaxCircle;
-        private float mMinCircle;
-        private int mInnerStroke;
-        private int mOuterStroke;
-        private int mZoomSig;
-        private int mZoomFraction;
-        private Rect mTextBounds;
+        private float mOuterRadius;
+        private float mInnerRadius;
+        private int mZoomStroke;
         private boolean mVisible = false;
         private List<Integer> mZoomRatios;
 
         public ZoomProcessor() {
             Resources res = getResources();
+            mZoomStroke = res.getDimensionPixelSize(R.dimen.zoom_stroke);
             mPaint = new Paint();
             mPaint.setAntiAlias(true);
             mPaint.setColor(Color.WHITE);
             mPaint.setStyle(Paint.Style.STROKE);
-            mTextPaint = new Paint(mPaint);
-            mTextPaint.setStyle(Paint.Style.FILL);
-            mTextPaint.setTextSize(res.getDimensionPixelSize(R.dimen.zoom_font_size));
-            mTextPaint.setTextAlign(Paint.Align.LEFT);
-            mTextPaint.setAlpha(192);
-            mInnerStroke = res.getDimensionPixelSize(R.dimen.focus_inner_stroke);
-            mOuterStroke = res.getDimensionPixelSize(R.dimen.focus_outer_stroke);
-            mMinCircle = res.getDimensionPixelSize(R.dimen.zoom_ring_min);
-            mTextBounds = new Rect();
+            mPaint.setStrokeWidth(mZoomStroke);
+            mPaint.setStrokeCap(Paint.Cap.ROUND);
         }
 
+        // Set maximum Zoom Index from Module.
         public void setZoomMax(int zoomMaxIndex) {
-            mMaxZoom = zoomMaxIndex;
-            mMinZoom = 0;
+            mMaxIndex = zoomMaxIndex;
         }
 
+        // Set current Zoom Index from Module.
         public void setZoom(int index) {
-            mCircleSize = (int) (mMinCircle + index * (mMaxCircle - mMinCircle)
-                    / (mMaxZoom - mMinZoom));
-
-            int zoomValue;
-            if (mZoomRatios != null) {
-                // Discrete zoom.
-                zoomValue = mZoomRatios.get(index);
-            } else {
-                // Continuous zoom.
-                zoomValue = ZOOM_MIN_FACTOR + index;
-            }
-            setZoomValue(zoomValue);
+            mCurrentIndex = index;
+            mCurrentFraction = (float) index / (mMaxIndex - mMinIndex);
         }
 
         public void setZoomValue(int value) {
-            value = value / 10;
-            mZoomSig = value / 10;
-            mZoomFraction = value % 10;
+            // Do nothing because we are not display text value in current UI.
         }
 
         public void layout(int l, int t, int r, int b) {
+            // TODO: Needs to be centered in preview TextureView
             mCenterX = (r - l) / 2;
             mCenterY = (b - t) / 2;
-            int width = r - l;
-            int height = b - t;
-            mMaxCircle = Math.min(width, height);
-            mMaxCircle = (mMaxCircle - mMinCircle) / 2;
+            // UI will extend from 20% to 80% of maximum inset circle.
+            float insetCircleDiameter = Math.min(getWidth(), getHeight());
+            mOuterRadius = insetCircleDiameter * 0.5f * ZOOM_UI_SIZE;
+            mInnerRadius = mOuterRadius * ZOOM_UI_DONUT;
         }
 
         public void draw(Canvas canvas) {
             if (!mVisible) {
                 return;
             }
-            mPaint.setStrokeWidth(mInnerStroke);
-            canvas.drawCircle(mCenterX, mCenterY, mMinCircle, mPaint);
-            canvas.drawCircle(mCenterX, mCenterY, mMaxCircle, mPaint);
-            canvas.drawLine(mCenterX - mMinCircle, mCenterY,
-                    mCenterX - mMaxCircle - 4, mCenterY, mPaint);
-            mPaint.setStrokeWidth(mOuterStroke);
-            canvas.drawCircle((float) mCenterX, (float) mCenterY,
-                    (float) mCircleSize, mPaint);
-            String txt = mZoomSig+"."+mZoomFraction+"x";
-            mTextPaint.getTextBounds(txt, 0, txt.length(), mTextBounds);
-            canvas.drawText(txt, mCenterX - mTextBounds.centerX(), mCenterY - mTextBounds.centerY(),
-                    mTextPaint);
+            // Draw background.
+            mPaint.setAlpha(70);
+            canvas.drawLine(mCenterX + mInnerRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY - mInnerRadius * (float) Math.sin(mFingerAngle),
+                    mCenterX + mOuterRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY - mOuterRadius * (float) Math.sin(mFingerAngle), mPaint);
+            canvas.drawLine(mCenterX - mInnerRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY + mInnerRadius * (float) Math.sin(mFingerAngle),
+                    mCenterX - mOuterRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY + mOuterRadius * (float) Math.sin(mFingerAngle), mPaint);
+            // Draw Zoom progress.
+            mPaint.setAlpha(255);
+            float zoomRadius = mInnerRadius + mCurrentFraction * (mOuterRadius - mInnerRadius);
+            canvas.drawLine(mCenterX + mInnerRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY - mInnerRadius * (float) Math.sin(mFingerAngle),
+                    mCenterX + zoomRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY - zoomRadius * (float) Math.sin(mFingerAngle), mPaint);
+            canvas.drawLine(mCenterX - mInnerRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY + mInnerRadius * (float) Math.sin(mFingerAngle),
+                    mCenterX - zoomRadius * (float) Math.cos(mFingerAngle),
+                    mCenterY + zoomRadius * (float) Math.sin(mFingerAngle), mPaint);
         }
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             final float sf = detector.getScaleFactor();
-            float circle = (int) (mCircleSize * sf * sf);
-            circle = Math.max(mMinCircle, circle);
-            circle = Math.min(mMaxCircle, circle);
-            if (mZoomListener != null && (int) circle != mCircleSize) {
-                mCircleSize = (int) circle;
-                int zoom = mMinZoom + (int) ((mCircleSize - mMinCircle) * (mMaxZoom - mMinZoom)
-                        / (mMaxCircle - mMinCircle));
-                mZoomListener.onZoomValueChanged(zoom);
-                setZoom(zoom);
+            mCurrentFraction = (0.33f + mCurrentFraction) * sf * sf - 0.33f;
+            if (mCurrentFraction < 0.0f) mCurrentFraction = 0.0f;
+            if (mCurrentFraction > 1.0f) mCurrentFraction = 1.0f;
+            int newIndex = mMinIndex + (int) (mCurrentFraction * (float) (mMaxIndex - mMinIndex));
+            if (mZoomListener != null && (int) newIndex != mCurrentIndex) {
+                mZoomListener.onZoomValueChanged(newIndex);
+                mCurrentIndex = newIndex;
             }
+            mFingerAngle = mScaleDetector.getAngle();
             invalidate();
             return true;
         }
@@ -305,6 +300,7 @@ public class PreviewOverlay extends View {
             if (mZoomListener != null) {
                 mZoomListener.onZoomStart();
             }
+            mFingerAngle = mScaleDetector.getAngle();
             invalidate();
             return true;
         }
