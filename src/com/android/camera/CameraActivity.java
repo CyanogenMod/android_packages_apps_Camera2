@@ -38,7 +38,6 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
 import android.nfc.NfcEvent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,8 +50,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -74,18 +71,15 @@ import com.android.camera.app.CameraManager;
 import com.android.camera.app.CameraManagerFactory;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
-import com.android.camera.app.MediaSaver;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
-import com.android.camera.crop.CropActivity;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.InProgressDataWrapper;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalMediaObserver;
-import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
@@ -96,7 +90,6 @@ import com.android.camera.session.PlaceholderManager;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
-import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.PreviewStatusListener;
@@ -124,9 +117,6 @@ public class CameraActivity extends Activity
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";
     public static final String ACTION_IMAGE_CAPTURE_SECURE =
             "android.media.action.IMAGE_CAPTURE_SECURE";
-    public static final String ACTION_TRIM_VIDEO =
-            "com.android.camera.action.TRIM";
-    public static final String MEDIA_ITEM_PATH = "media-item-path";
 
     // The intent extra for camera from secure lock screen. True if the gallery
     // should only show newly captured pictures. sSecureAlbumId does not
@@ -150,20 +140,6 @@ public class CameraActivity extends Activity
      * Whether onResume should reset the view to the preview.
      */
     private boolean mResetToPreviewOnResume = true;
-
-    // Supported operations at FilmStripView. Different data has different
-    // set of supported operations.
-    private static final int SUPPORT_DELETE = 1 << 0;
-    private static final int SUPPORT_ROTATE = 1 << 1;
-    private static final int SUPPORT_INFO = 1 << 2;
-    private static final int SUPPORT_CROP = 1 << 3;
-    private static final int SUPPORT_SETAS = 1 << 4;
-    private static final int SUPPORT_EDIT = 1 << 5;
-    private static final int SUPPORT_TRIM = 1 << 6;
-    private static final int SUPPORT_SHARE = 1 << 7;
-    private static final int SUPPORT_SHARE_PANORAMA360 = 1 << 8;
-    private static final int SUPPORT_SHOW_ON_MAP = 1 << 9;
-    private static final int SUPPORT_ALL = 0xffffffff;
 
     /**
      * This data adapter is used by FilmStripView.
@@ -202,29 +178,19 @@ public class CameraActivity extends Activity
     private Handler mMainHandler;
     private PanoramaViewHelper mPanoramaViewHelper;
     private ActionBar mActionBar;
-    private Menu mActionBarMenu;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
 
     private final Uri[] mNfcPushUris = new Uri[1];
 
-    private ShareActionProvider mStandardShareActionProvider;
-    private Intent mStandardShareIntent;
-    private ShareActionProvider mPanoramaShareActionProvider;
-    private Intent mPanoramaShareIntent;
     private LocalMediaObserver mLocalImagesObserver;
     private LocalMediaObserver mLocalVideosObserver;
 
     private boolean mPendingDeletion = false;
 
-    private Intent mVideoShareIntent;
-    private Intent mImageShareIntent;
-
     private CameraController mCameraController;
     private boolean mPaused;
     private CameraAppUI mCameraAppUI;
-
-    private MediaSaver mMediaSaver;
 
     private FeedbackHelper mFeedbackHelper;
 
@@ -240,8 +206,6 @@ public class CameraActivity extends Activity
             finish();
         }
     };
-
-    private static BroadcastReceiver sScreenOffReceiver;
 
     /**
      * Whether the screen is kept turned on.
@@ -296,7 +260,11 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onShare() {
-                    // TODO: Implement.
+                    final LocalData data = getCurrentLocalData();
+                    Intent shareIntent = getShareIntentByData(data);
+                    if (shareIntent != null) {
+                        startActivityForResult(shareIntent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+                    }
                 }
 
                 @Override
@@ -310,6 +278,51 @@ public class CameraActivity extends Activity
 
                 private LocalData getCurrentLocalData() {
                     return mDataAdapter.getLocalData(getCurrentDataId());
+                }
+
+                /**
+                 * Sets up the share intent and NFC properly according to the data.
+                 *
+                 * @param data The data to be shared.
+                 */
+                private Intent getShareIntentByData(final LocalData data) {
+                    Intent intent = null;
+                    final Uri contentUri = data.getContentUri();
+                    if (data.getLocalDataType() == LocalData.LOCAL_360_PHOTO_SPHERE &&
+                            data.getContentUri() != Uri.EMPTY) {
+                        intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("application/vnd.google.panorama360+jpg");
+                        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                    } else if (data.isDataActionSupported(LocalData.DATA_ACTION_SHARE)) {
+                        final String mimeType = data.getMimeType();
+                        intent = getShareIntentFromType(mimeType);
+                        if (intent != null) {
+                            intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+                    }
+                    return intent;
+                }
+
+                /**
+                 * Get the share intent according to the mimeType
+                 *
+                 * @param mimeType The mimeType of current data.
+                 * @return the video/image's ShareIntent or null if mimeType is invalid.
+                 */
+                private Intent getShareIntentFromType(String mimeType) {
+                    // Lazily create the intent object.
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    if (mimeType.startsWith("video/")) {
+                        intent.setType("video/*");
+                    } else {
+                        if (mimeType.startsWith("image/")) {
+                            intent.setType("image/*");
+                        } else {
+                            Log.w(TAG, "unsupported mimeType " + mimeType);
+                        }
+                    }
+                    return intent;
                 }
             };
 
@@ -554,57 +567,6 @@ public class CameraActivity extends Activity
         }, CameraActivity.this);
     }
 
-    private void setNfcBeamPushUri(Uri uri) {
-        mNfcPushUris[0] = uri;
-    }
-
-    private void setStandardShareIntent(Uri contentUri, String mimeType) {
-        mStandardShareIntent = getShareIntentFromType(mimeType);
-        if (mStandardShareIntent != null) {
-            mStandardShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            mStandardShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            if (mStandardShareActionProvider != null) {
-                mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
-            }
-        }
-    }
-
-    /**
-     * Get the share intent according to the mimeType
-     *
-     * @param mimeType The mimeType of current data.
-     * @return the video/image's ShareIntent or null if mimeType is invalid.
-     */
-    private Intent getShareIntentFromType(String mimeType) {
-        // Lazily create the intent object.
-        if (mimeType.startsWith("video/")) {
-            if (mVideoShareIntent == null) {
-                mVideoShareIntent = new Intent(Intent.ACTION_SEND);
-                mVideoShareIntent.setType("video/*");
-            }
-            return mVideoShareIntent;
-        } else if (mimeType.startsWith("image/")) {
-            if (mImageShareIntent == null) {
-                mImageShareIntent = new Intent(Intent.ACTION_SEND);
-                mImageShareIntent.setType("image/*");
-            }
-            return mImageShareIntent;
-        }
-        Log.w(TAG, "unsupported mimeType " + mimeType);
-        return null;
-    }
-
-    private void setPanoramaShareIntent(Uri contentUri) {
-        if (mPanoramaShareIntent == null) {
-            mPanoramaShareIntent = new Intent(Intent.ACTION_SEND);
-        }
-        mPanoramaShareIntent.setType("application/vnd.google.panorama360+jpg");
-        mPanoramaShareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-        if (mPanoramaShareActionProvider != null) {
-            mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
-        }
-    }
-
     @Override
     public void onMenuVisibilityChanged(boolean isVisible) {
         // TODO: Remove this or bring back the original implementation: cancel
@@ -621,115 +583,6 @@ public class CameraActivity extends Activity
                 intent.getComponent().getPackageName(), 0,
                 UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
         return true;
-    }
-
-    /**
-     * According to the data type, make the menu items for supported operations
-     * visible.
-     *
-     * @param dataID the data ID of the current item.
-     */
-    private void updateActionBarMenu(int dataID) {
-        LocalData currentData = mDataAdapter.getLocalData(dataID);
-        if (currentData == null) {
-            return;
-        }
-        int type = currentData.getLocalDataType();
-
-        if (mActionBarMenu == null) {
-            return;
-        }
-
-        int supported = 0;
-
-        switch (type) {
-            case LocalData.LOCAL_IMAGE:
-                supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
-                        | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
-                        | SUPPORT_SHARE | SUPPORT_SHOW_ON_MAP;
-                break;
-            case LocalData.LOCAL_VIDEO:
-                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM
-                        | SUPPORT_SHARE;
-                break;
-            case LocalData.LOCAL_PHOTO_SPHERE:
-                supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
-                        | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
-                        | SUPPORT_SHARE | SUPPORT_SHOW_ON_MAP;
-                break;
-            case LocalData.LOCAL_360_PHOTO_SPHERE:
-                supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
-                        | SUPPORT_CROP | SUPPORT_SETAS | SUPPORT_EDIT
-                        | SUPPORT_SHARE | SUPPORT_SHARE_PANORAMA360
-                        | SUPPORT_SHOW_ON_MAP;
-                break;
-            default:
-                break;
-        }
-
-        // In secure camera mode, we only support delete operation.
-        if (isSecureCamera()) {
-            supported &= SUPPORT_DELETE;
-        }
-
-        setMenuItemVisible(mActionBarMenu, R.id.action_delete,
-                (supported & SUPPORT_DELETE) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_rotate_ccw,
-                (supported & SUPPORT_ROTATE) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_rotate_cw,
-                (supported & SUPPORT_ROTATE) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_details,
-                (supported & SUPPORT_INFO) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_crop,
-                (supported & SUPPORT_CROP) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_setas,
-                (supported & SUPPORT_SETAS) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_edit,
-                (supported & SUPPORT_EDIT) != 0);
-        setMenuItemVisible(mActionBarMenu, R.id.action_trim,
-                (supported & SUPPORT_TRIM) != 0);
-
-        boolean standardShare = (supported & SUPPORT_SHARE) != 0;
-        boolean panoramaShare = (supported & SUPPORT_SHARE_PANORAMA360) != 0;
-        setMenuItemVisible(mActionBarMenu, R.id.action_share, standardShare);
-        setMenuItemVisible(mActionBarMenu, R.id.action_share_panorama, panoramaShare);
-
-        if (panoramaShare) {
-            // For 360 PhotoSphere, relegate standard share to the overflow menu
-            MenuItem item = mActionBarMenu.findItem(R.id.action_share);
-            if (item != null) {
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-                item.setTitle(getResources().getString(R.string.share_as_photo));
-            }
-            // And, promote "share as panorama" to action bar
-            item = mActionBarMenu.findItem(R.id.action_share_panorama);
-            if (item != null) {
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            }
-            setPanoramaShareIntent(currentData.getContentUri());
-        }
-        if (standardShare) {
-            if (!panoramaShare) {
-                MenuItem item = mActionBarMenu.findItem(R.id.action_share);
-                if (item != null) {
-                    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-                    item.setTitle(getResources().getString(R.string.share));
-                }
-            }
-            setStandardShareIntent(currentData.getContentUri(), currentData.getMimeType());
-            setNfcBeamPushUri(currentData.getContentUri());
-        }
-
-        boolean itemHasLocation = currentData.getLatLong() != null;
-        setMenuItemVisible(mActionBarMenu, R.id.action_show_on_map,
-                itemHasLocation && (supported & SUPPORT_SHOW_ON_MAP) != 0);
-    }
-
-    private void setMenuItemVisible(Menu menu, int itemId, boolean visible) {
-        MenuItem item = menu.findItem(itemId);
-        if (item != null) {
-            item.setVisible(visible);
-        }
     }
 
     private final SessionListener mSessionListener =
@@ -934,119 +787,12 @@ public class CameraActivity extends Activity
         }
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO: Remove this method.
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.operations, menu);
-        mActionBarMenu = menu;
-
-        // Configure the standard share action provider
-        MenuItem item = menu.findItem(R.id.action_share);
-        mStandardShareActionProvider = (ShareActionProvider) item.getActionProvider();
-        mStandardShareActionProvider.setShareHistoryFileName("standard_share_history.xml");
-        if (mStandardShareIntent != null) {
-            mStandardShareActionProvider.setShareIntent(mStandardShareIntent);
-        }
-
-        // Configure the panorama share action provider
-        item = menu.findItem(R.id.action_share_panorama);
-        mPanoramaShareActionProvider = (ShareActionProvider) item.getActionProvider();
-        mPanoramaShareActionProvider.setShareHistoryFileName("panorama_share_history.xml");
-        if (mPanoramaShareIntent != null) {
-            mPanoramaShareActionProvider.setShareIntent(mPanoramaShareIntent);
-        }
-
-        mStandardShareActionProvider.setOnShareTargetSelectedListener(this);
-        mPanoramaShareActionProvider.setOnShareTargetSelectedListener(this);
-
-        return false;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int currentDataId = mFilmstripController.getCurrentId();
-        if (currentDataId < 0) {
-            return false;
-        }
-        final LocalData localData = mDataAdapter.getLocalData(currentDataId);
-
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                return true;
-            case R.id.action_delete:
-                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                        UsageStatistics.ACTION_DELETE, null, 0,
-                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
-                removeData(currentDataId);
-                return true;
-            case R.id.action_edit:
-                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                        UsageStatistics.ACTION_EDIT, null, 0,
-                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
-                launchEditor(localData);
-                return true;
-            case R.id.action_trim: {
-                // This is going to be handled by the Gallery app.
-                Intent intent = new Intent(ACTION_TRIM_VIDEO);
-                LocalData currentData = mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
-                intent.setData(currentData.getContentUri());
-                // We need the file path to wrap this into a RandomAccessFile.
-                intent.putExtra(MEDIA_ITEM_PATH, currentData.getPath());
-                startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
-                return true;
-            }
-            case R.id.action_rotate_ccw:
-                localData.rotate90Degrees(this, mDataAdapter, currentDataId, false);
-                return true;
-            case R.id.action_rotate_cw:
-                localData.rotate90Degrees(this, mDataAdapter, currentDataId, true);
-                return true;
-            case R.id.action_crop: {
-                UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                        UsageStatistics.ACTION_CROP, null, 0,
-                        UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
-                Intent intent = new Intent(CropActivity.CROP_ACTION);
-                intent.setClass(this, CropActivity.class);
-                intent.setDataAndType(localData.getContentUri(), localData.getMimeType())
-                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
-                return true;
-            }
-            case R.id.action_setas: {
-                Intent intent = new Intent(Intent.ACTION_ATTACH_DATA)
-                        .setDataAndType(localData.getContentUri(),
-                                localData.getMimeType())
-                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.putExtra("mimeType", intent.getType());
-                startActivityForResult(Intent.createChooser(
-                        intent, getString(R.string.set_as)), REQ_CODE_DONT_SWITCH_TO_PREVIEW);
-                return true;
-            }
-            case R.id.action_details:
-                (new AsyncTask<Void, Void, MediaDetails>() {
-                    @Override
-                    protected MediaDetails doInBackground(Void... params) {
-                        return localData.getMediaDetails(CameraActivity.this);
-                    }
-
-                    @Override
-                    protected void onPostExecute(MediaDetails mediaDetails) {
-                        if (mediaDetails != null) {
-                            DetailsDialog.create(CameraActivity.this, mediaDetails).show();
-                        }
-                    }
-                }).execute();
-                return true;
-            case R.id.action_show_on_map:
-                double[] latLong = localData.getLatLong();
-                if (latLong != null) {
-                    CameraUtil.showOnMap(this, latLong);
-                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1821,6 +1567,15 @@ public class CameraActivity extends Activity
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
+    private void setNfcBeamPushUriFromData(LocalData data) {
+        final Uri uri = data.getContentUri();
+        if (uri != Uri.EMPTY) {
+            mNfcPushUris[0] = uri;
+        } else {
+            mNfcPushUris[0] = null;
+        }
+    }
+
     /**
      * Updates the visibility of the filmstrip bottom controls.
      */
@@ -1837,6 +1592,8 @@ public class CameraActivity extends Activity
             hideSessionProgress();
             return;
         }
+
+        setNfcBeamPushUriFromData(currentData);
 
         /* Bottom controls. */
 
