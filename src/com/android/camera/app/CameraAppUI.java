@@ -27,13 +27,13 @@ import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.filmstrip.FilmstripContentPanel;
-import com.android.camera.widget.FilmstripBottomLayout;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
@@ -57,6 +57,98 @@ import com.android.camera2.R;
  */
 public class CameraAppUI implements ModeListView.ModeSwitchListener,
         TextureView.SurfaceTextureListener {
+
+    /**
+     * The bottom controls on the filmstrip.
+     */
+    public static interface BottomControls {
+        /** Values for the view state of the button. */
+        public final int VIEW_NONE = 0;
+        public final int VIEW_PHOTO_SPHERE = 1;
+        public final int VIEW_RGBZ = 2;
+
+        /**
+         * Sets a new or replaces an existing listener for bottom control events.
+         */
+        void setListener(Listener listener);
+
+        /**
+         * Set if the bottom controls are visible.
+         * @param visible {@code true} if visible.
+         */
+        void setVisible(boolean visible);
+
+        /**
+         * @param visible Whether the button is visible.
+         */
+        void setEditButtonVisibility(boolean visible);
+
+        /**
+         * Sets the visibility of the view-photosphere button.
+         *
+         * @param state one of {@link #VIEW_NONE}, {@link #VIEW_PHOTO_SPHERE},
+         *            {@link #VIEW_RGBZ}.
+         */
+        void setViewButtonVisibility(int state);
+
+        /**
+         * @param visible Whether the button is visible.
+         */
+        void setTinyPlanetButtonVisibility(boolean visible);
+
+        /**
+         * @param visible Whether the button is visible.
+         */
+        void setDeleteButtonVisibility(boolean visible);
+
+        /**
+         * @param visible Whether the button is visible.
+         */
+        void setShareButtonVisibility(boolean visible);
+
+        /**
+         * @param visible Whether the button is visible.
+         */
+        void setGalleryButtonVisibility(boolean visible);
+
+        /**
+         * Classes implementing this interface can listen for events on the bottom
+         * controls.
+         */
+        public static interface Listener {
+            /**
+             * Called when the user pressed the "view" button to e.g. view a photo
+             * sphere or RGBZ image.
+             */
+            public void onView();
+
+            /**
+             * Called when the "edit" button is pressed.
+             */
+            public void onEdit();
+
+            /**
+             * Called when the "tiny planet" button is pressed.
+             */
+            public void onTinyPlanet();
+
+            /**
+             * Called when the "delete" button is pressed.
+             */
+            public void onDelete();
+
+            /**
+             * Called when the "share" button is pressed.
+             */
+            public void onShare();
+
+            /**
+             * Called when the "gallery" button is pressed.
+             */
+            public void onGallery();
+        }
+    }
+
     private final static String TAG = "CameraAppUI";
 
     private final AppController mController;
@@ -98,7 +190,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private PreviewOverlay mPreviewOverlay;
     private PreviewStatusListener mPreviewStatusListener;
     private int mModeCoverState = COVER_HIDDEN;
-    private FilmstripBottomLayout mFilmstripBottomLayout;
+    private FilmstripBottomControls mFilmstripBottomControls;
     private FilmstripContentPanel mFilmstripPanel;
 
     // TODO this isn't used by all modules universally, should be part of a util class or something
@@ -252,8 +344,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mCameraRootView = (FrameLayout) appRootView.findViewById(R.id.camera_app_root);
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
-        mFilmstripBottomLayout =
-                (FilmstripBottomLayout) mAppRootView.findViewById(R.id.filmstrip_bottom_controls);
+        mFilmstripBottomControls = new FilmstripBottomControls(
+                (ViewGroup) mAppRootView.findViewById(R.id.filmstrip_bottom_controls));
         mFilmstripPanel = (FilmstripContentPanel) mAppRootView.findViewById(R.id.filmstrip_layout);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),
                 new MyGestureListener());
@@ -522,14 +614,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * bottom of the filmstrip.
      */
     public BottomControls getFilmstripBottomControls() {
-        return mFilmstripBottomLayout;
+        return mFilmstripBottomControls;
     }
 
     /**
      * @param listener The listener for bottom controls.
      */
     public void setFilmstripBottomControlsListener(BottomControls.Listener listener) {
-        mFilmstripBottomLayout.setListener(listener);
+        mFilmstripBottomControls.setListener(listener);
     }
 
     /***************************SurfaceTexture Listener*********************************/
@@ -566,67 +658,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureUpdated(surface);
-        }
-    }
-
-    /**
-     * The bottom controls on the filmstrip.
-     */
-    public static interface BottomControls {
-        /** Values for the view state of the button. */
-        public final int VIEW_NONE = 0;
-        public final int VIEW_PHOTO_SPHERE = 1;
-        public final int VIEW_RGBZ = 2;
-
-        /**
-         * Sets a new or replaces an existing listener for bottom control events.
-         */
-        void setListener(Listener listener);
-
-        /**
-         * Set if the bottom controls are visible.
-         * @param visible {@code true} if visible.
-         */
-        void setVisible(boolean visible);
-
-        /**
-         * Sets the visibility of the edit button.
-         */
-        void setEditButtonVisibility(boolean visible);
-
-        /**
-         * Sets the visibility of the view-photosphere button.
-         *
-         * @param state one of {@link #VIEW_NONE}, {@link #VIEW_PHOTO_SPHERE},
-         *            {@link #VIEW_RGBZ}.
-         */
-        void setViewButtonVisibility(int state);
-
-        /**
-         * Sets the visibility of the tiny-planet button.
-         */
-        void setTinyPlanetButtonVisibility(boolean visible);
-
-        /**
-         * Classes implementing this interface can listen for events on the bottom
-         * controls.
-         */
-        public static interface Listener {
-            /**
-             * Called when the user pressed the "view" button to e.g. view a photo
-             * sphere or RGBZ image.
-             */
-            public void onView();
-
-            /**
-             * Called when the user pressed the "edit" button.
-             */
-            public void onEdit();
-
-            /**
-             * Called when the user pressed the "tiny planet" button.
-             */
-            public void onTinyPlanet();
         }
     }
 }

@@ -158,7 +158,11 @@
     <dimen name="mode_selector_icon_block_width">84dp</dimen>
     <dimen name="mode_selector_icon_drawable_size">32dp</dimen>
 
-    <!-- bottom bar ui -->
+    <!-- Filmstrip bottom controls -->
+    <dimen name="filmstrip_bottom_control_size">48dp</dimen>
+    <dimen name="filmstrip_bottom_control_spacing">8dp</dimen>
+
+    <!-- Bottom bar ui -->
     <dimen name="bottom_bar_height_min">80dp</dimen>
     <dimen name="bottom_bar_height_max">120dp</dimen>
     <dimen name="bottom_bar_height_optimal">96dp</dimen>

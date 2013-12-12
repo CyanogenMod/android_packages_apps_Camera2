@@ -15,54 +15,91 @@
      limitations under the License.
 -->
 
-<com.android.camera.widget.FilmstripBottomLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/filmstrip_bottom_controls"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:padding="10dp"
-    android:visibility="visible" >
+    android:orientation="vertical"
+    android:visibility="visible">
 
-    <ImageButton
-        android:id="@+id/filmstrip_bottom_control_edit"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_view"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@drawable/transparent_button_background"
+            android:clickable="true"
+            android:src="@drawable/ic_view_photosphere"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_tiny_planet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/photopage_bottom_button_background"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:src="@drawable/ic_menu_tiny_planet"
+            android:visibility="invisible" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/photopage_bottom_button_background"
-        android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:paddingTop="5dp"
-        android:src="@drawable/ic_menu_edit_holo_dark"
-        android:visibility="gone" />
+        android:layout_gravity="bottom"
+        android:paddingBottom="@dimen/filmstrip_bottom_control_spacing"
+        android:orientation="horizontal"
+        android:visibility="visible" >
 
-    <ImageButton
-        android:id="@+id/filmstrip_bottom_control_view"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/transparent_button_background"
-        android:clickable="true"
-        android:src="@drawable/ic_view_photosphere"
-        android:visibility="gone" />
+        <!-- A filler view -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
 
-    <ImageButton
-        android:id="@+id/filmstrip_bottom_control_tiny_planet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/photopage_bottom_button_background"
-        android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:paddingTop="5dp"
-        android:src="@drawable/ic_menu_tiny_planet"
-        android:visibility="gone" />
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_gallery"
+            style="@style/FilmstripBottomControlButton"
+            android:src="@mipmap/ic_launcher_gallery"
+            android:visibility="visible" />
 
-</com.android.camera.widget.FilmstripBottomLayout>
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_edit"
+            style="@style/FilmstripBottomControlButton"
+            android:src="@drawable/ic_menu_edit_holo_dark"
+            android:visibility="invisible" />
+
+
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_share"
+            style="@style/FilmstripBottomControlButton"
+            android:src="@drawable/ic_menu_share_holo_light"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_delete"
+            style="@style/FilmstripBottomControlButton"
+            android:src="@drawable/ic_menu_trash_holo_light"
+            android:visibility="invisible" />
+
+        <!-- A filler view -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</LinearLayout>

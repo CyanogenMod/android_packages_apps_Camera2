@@ -365,12 +365,9 @@ public abstract class LocalMediaData implements LocalData {
                 MediaStore.Images.ImageColumns.LONGITUDE      // 11, double
         };
 
-        private static final int mSupportedUIActions =
-                ImageData.ACTION_DEMOTE
-                        | ImageData.ACTION_PROMOTE
-                        | ImageData.ACTION_ZOOM;
+        private static final int mSupportedUIActions = ACTION_DEMOTE | ACTION_PROMOTE | ACTION_ZOOM;
         private static final int mSupportedDataActions =
-                LocalData.DATA_ACTION_DELETE | LocalData.DATA_ACTION_EDIT;
+                DATA_ACTION_DELETE | DATA_ACTION_EDIT | DATA_ACTION_SHARE;
 
         /** 32K buffer. */
         private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
@@ -623,12 +620,9 @@ public abstract class LocalMediaData implements LocalData {
 
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
-        private static final int mSupportedUIActions =
-                ImageData.ACTION_DEMOTE
-                        | ImageData.ACTION_PROMOTE;
+        private static final int mSupportedUIActions = ACTION_DEMOTE | ACTION_PROMOTE;
         private static final int mSupportedDataActions =
-                LocalData.DATA_ACTION_DELETE
-                        | LocalData.DATA_ACTION_PLAY;
+                DATA_ACTION_DELETE | DATA_ACTION_PLAY | DATA_ACTION_SHARE;
 
         static final String QUERY_ORDER = MediaStore.Video.VideoColumns.DATE_TAKEN + " DESC, "
                 + MediaStore.Video.VideoColumns._ID + " DESC";

@@ -278,11 +278,38 @@ public class CameraActivity extends Activity
                     if (data == null) {
                         return;
                     }
+                    final int currentDataId = getCurrentDataId();
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_EDIT, null, 0,
+                            UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                     launchTinyPlanetEditor(data);
                 }
 
+                @Override
+                public void onDelete() {
+                    final int currentDataId = getCurrentDataId();
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                            UsageStatistics.ACTION_DELETE, null, 0,
+                            UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
+                    removeData(currentDataId);
+                }
+
+                @Override
+                public void onShare() {
+                    // TODO: Implement.
+                }
+
+                @Override
+                public void onGallery() {
+                    // TODO: Implement.
+                }
+
+                private int getCurrentDataId() {
+                    return mFilmstripController.getCurrentId();
+                }
+
                 private LocalData getCurrentLocalData() {
-                    return mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
+                    return mDataAdapter.getLocalData(getCurrentDataId());
                 }
             };
 
@@ -910,6 +937,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO: Remove this method.
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.operations, menu);
@@ -934,7 +962,7 @@ public class CameraActivity extends Activity
         mStandardShareActionProvider.setOnShareTargetSelectedListener(this);
         mPanoramaShareActionProvider.setOnShareTargetSelectedListener(this);
 
-        return super.onCreateOptionsMenu(menu);
+        return false;
     }
 
     @Override
@@ -1629,9 +1657,6 @@ public class CameraActivity extends Activity
         }
         hideUndoDeletionBar(false);
         mDataAdapter.executeDeletion(CameraActivity.this);
-
-        int currentId = mFilmstripController.getCurrentId();
-        updateActionBarMenu(currentId);
     }
 
     public void showUndoDeletionBar() {
@@ -1813,15 +1838,16 @@ public class CameraActivity extends Activity
             return;
         }
 
-        updateActionBarMenu(dataId);
-
         /* Bottom controls. */
 
         final CameraAppUI.BottomControls filmstripBottomControls =
                 mCameraAppUI.getFilmstripBottomControls();
-        // We can only edit photos, not videos.
         filmstripBottomControls.setEditButtonVisibility(
                 currentData.isDataActionSupported(LocalData.DATA_ACTION_EDIT));
+        filmstripBottomControls.setShareButtonVisibility(
+                currentData.isDataActionSupported(LocalData.DATA_ACTION_SHARE));
+        filmstripBottomControls.setDeleteButtonVisibility(
+                currentData.isDataActionSupported(LocalData.DATA_ACTION_DELETE));
 
         /* Progress bar */
 

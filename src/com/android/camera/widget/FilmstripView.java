@@ -85,7 +85,6 @@ public class FilmstripView extends ViewGroup {
     private int mSlop;
     private TimeInterpolator mViewAnimInterpolator;
 
-    private FilmstripBottomLayout mBottomControls;
     private long mLastItemId = -1;
 
     // This is true if and only if the user is scrolling,

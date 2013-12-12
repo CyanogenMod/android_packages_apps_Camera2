@@ -42,6 +42,7 @@ public interface LocalData extends ImageData {
     public static final int DATA_ACTION_PLAY = 1;
     public static final int DATA_ACTION_DELETE = (1 << 1);
     public static final int DATA_ACTION_EDIT = (1 << 2);
+    public static final int DATA_ACTION_SHARE = (1 << 3);
 
     // Local data types. Returned by getLocalDataType().
     /**
