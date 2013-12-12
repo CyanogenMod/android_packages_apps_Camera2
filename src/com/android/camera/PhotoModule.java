@@ -246,7 +246,7 @@ public class PhotoModule
     private int mHeading = -1;
 
     /** Whether shutter is enabled. */
-    private boolean mShutterEnabled;
+    private boolean mShutterEnabled = true;
 
     /** True if all the parameters needed to start preview is ready. */
     private boolean mCameraPreviewParamsReady = false;
