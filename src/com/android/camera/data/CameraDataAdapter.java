@@ -363,7 +363,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         @Override
         protected Void doInBackground(LocalData... data) {
             for (int i = 0; i < data.length; i++) {
-                if (!data[i].isDataActionSupported(LocalData.ACTION_DELETE)) {
+                if (!data[i].isDataActionSupported(LocalData.DATA_ACTION_DELETE)) {
                     Log.v(TAG, "Deletion is not supported:" + data[i]);
                     continue;
                 }
