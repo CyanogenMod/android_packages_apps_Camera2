@@ -743,6 +743,10 @@ public class ModeListView extends ScrollView {
      * @return theme color of the mode if input index is valid, otherwise 0
      */
     public static int getModeThemeColor(int modeIndex) {
+        // Photo and gcam has the same theme color
+        if (modeIndex == MODE_GCAM) {
+            return mIconBlockColor[MODE_PHOTO];
+        }
         if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
             return 0;
         } else {
@@ -757,6 +761,10 @@ public class ModeListView extends ScrollView {
      * @return icon resource id if the index is valid, otherwise 0
      */
     public static int getModeIconResourceId(int modeIndex) {
+        // Photo and gcam has the same mode icon
+        if (modeIndex == MODE_GCAM) {
+            return mIconResId[MODE_PHOTO];
+        }
         if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
             return 0;
         } else {
