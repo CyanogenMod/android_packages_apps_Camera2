@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -415,6 +416,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             if (translation == width) {
                 return;
             }
+            canvas.drawColor(Color.argb((int) (127 * (width - translation) / width), 0, 0, 0));
             if (mDrawHidingBackground) {
                 drawHiding(canvas);
             } else {
