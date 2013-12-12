@@ -38,6 +38,9 @@ public class ButtonManager {
     public static final int BUTTON_TORCH = 1;
     public static final int BUTTON_CAMERA = 2;
     public static final int BUTTON_HDRPLUS = 3;
+    public static final int BUTTON_CANCEL = 4;
+    public static final int BUTTON_DONE = 5;
+    public static final int BUTTON_RETAKE = 6;
 
     /** A reference to the activity for finding button views on demand. */
     private CameraActivity mActivity;
@@ -81,6 +84,23 @@ public class ButtonManager {
         return button;
     }
 
+    private ImageButton getImageButtonOrError(int buttonId, int resId) {
+        ImageButton button = (ImageButton) mActivity.findViewById(resId);
+        if (button == null) {
+            switch (buttonId) {
+                case BUTTON_CANCEL:
+                    throw new IllegalStateException("Cancel button could not be found.");
+                case BUTTON_DONE:
+                    throw new IllegalStateException("Done button could not be found.");
+                case BUTTON_RETAKE:
+                    throw new IllegalStateException("Retake button could not be found.");
+                default:
+                    throw new IllegalArgumentException("button not known by id=" + buttonId);
+            }
+        }
+        return button;
+    }
+
     /**
      * Enable a known button by id, with a state change callback and
      * a resource id that points to an array of drawables.
@@ -103,6 +123,12 @@ public class ButtonManager {
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
+        button.setVisibility(View.VISIBLE);
+    }
+
+    public void enablePushButton(int buttonId, int resId, View.OnClickListener cb) {
+        ImageButton button = getImageButtonOrError(buttonId, resId);
+        button.setOnClickListener(cb);
         button.setVisibility(View.VISIBLE);
     }
 

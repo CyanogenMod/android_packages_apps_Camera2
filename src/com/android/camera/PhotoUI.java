@@ -32,10 +32,12 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.CompoundButton;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
@@ -65,10 +67,6 @@ public class PhotoUI implements
     private SurfaceTexture mSurfaceTexture;
 
     private FaceView mFaceView;
-    private View mReviewCancelButton;
-    private View mReviewDoneButton;
-    private View mReviewRetakeButton;
-    private ImageView mReviewImage;
     private DecodeImageForReview mDecodeTaskForReview = null;
     private Toast mNotSelectableToast;
 
@@ -91,6 +89,29 @@ public class PhotoUI implements
 
     private boolean mHideFocusRing;
     private boolean mImmediateCapture;
+
+    private ButtonManager.ButtonCallback mCameraCallback;
+    private ButtonManager.ButtonCallback mHdrCallback;
+
+    private final OnClickListener mCancelCallback = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mController.onCaptureCancelled();
+        }
+    };
+    private final OnClickListener mDoneCallback = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mController.onCaptureDone();
+        }
+    };
+    private final OnClickListener mRetakeCallback = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setupBottomBarIntentLayout();
+            mController.onCaptureRetake();
+        }
+    };
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
@@ -171,8 +192,6 @@ public class PhotoUI implements
             if (isCancelled()) {
                 return;
             }
-            mReviewImage.setImageBitmap(bitmap);
-            mReviewImage.setVisibility(View.VISIBLE);
             mDecodeTaskForReview = null;
         }
     }
@@ -191,7 +210,6 @@ public class PhotoUI implements
         initIndicators();
 
         mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
-        mBottomBar.setButtonLayout(R.layout.photo_bottombar_buttons);
         mBottomBarMinHeight = activity.getResources()
                 .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
         mBottomBarOptimalHeight = activity.getResources()
@@ -308,19 +326,15 @@ public class PhotoUI implements
     public void onCameraOpened(Camera.Parameters params,
             ButtonManager.ButtonCallback cameraCallback,
             ButtonManager.ButtonCallback hdrCallback) {
-        ButtonManager buttonManager = mActivity.getButtonManager();
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (settingsManager.isCameraBackFacing()) {
-            buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
-                null, R.array.camera_flashmode_icons);
+
+        mCameraCallback = cameraCallback;
+        mHdrCallback = hdrCallback;
+
+        if (mController.isImageCaptureIntent()) {
+            setupBottomBarIntentLayout();
         } else {
-            buttonManager.disableButton(ButtonManager.BUTTON_FLASH,
-                R.id.flash_toggle_button);
+            setupBottomBarLayout();
         }
-        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
-            cameraCallback, R.array.camera_id_icons);
-        buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
-                hdrCallback, R.array.pref_camera_hdr_plus_icons);
 
         initializeZoom(params);
     }
@@ -331,36 +345,52 @@ public class PhotoUI implements
         task.execute();
     }
 
+    private void setupToggleButtons() {
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
+        if (settingsManager.isCameraBackFacing()) {
+            buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
+                null, R.array.camera_flashmode_icons);
+        } else {
+            buttonManager.disableButton(ButtonManager.BUTTON_FLASH,
+                R.id.flash_toggle_button);
+        }
+        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
+            mCameraCallback, R.array.camera_id_icons);
+        buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
+            mHdrCallback, R.array.pref_camera_hdr_plus_icons);
+    }
+    private void setupBottomBarLayout() {
+        mBottomBar.setButtonLayout(R.layout.photo_bottombar_buttons);
+
+        setupToggleButtons();
+    }
+
+    private void setupBottomBarIntentLayout() {
+        mBottomBar.setButtonLayout(R.layout.photo_intent_bottombar_buttons);
+
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
+                mCancelCallback);
+        setupToggleButtons();
+    }
+
+    private void setupBottomBarIntentReviewLayout() {
+        mBottomBar.setButtonLayout(R.layout.photo_intent_review_bottombar_buttons);
+
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
+                mCancelCallback);
+        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE, R.id.done_button,
+                mDoneCallback);
+        buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE, R.id.retake_button,
+                mRetakeCallback);
+    }
+
     public void initializeControlByIntent() {
         if (mController.isImageCaptureIntent()) {
-            ViewGroup cameraControls = (ViewGroup) mRootView.findViewById(R.id.camera_controls);
-            mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
-
-            mReviewDoneButton = mRootView.findViewById(R.id.btn_done);
-            mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
-            mReviewRetakeButton = mRootView.findViewById(R.id.btn_retake);
-            mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
-            mReviewCancelButton.setVisibility(View.VISIBLE);
-
-            mReviewDoneButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mController.onCaptureDone();
-                }
-            });
-            mReviewCancelButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mController.onCaptureCancelled();
-                }
-            });
-
-            mReviewRetakeButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mController.onCaptureRetake();
-                }
-            });
+            setupBottomBarIntentLayout();
         }
     }
 
@@ -415,7 +445,7 @@ public class PhotoUI implements
     protected void showCapturedImageForReview(byte[] jpegData, int orientation, boolean mirror) {
         mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
         mDecodeTaskForReview.execute();
-        CameraUtil.fadeIn(mReviewDoneButton);
+        setupBottomBarIntentReviewLayout();
         pauseFaceDetection();
     }
 
@@ -423,9 +453,6 @@ public class PhotoUI implements
         if (mDecodeTaskForReview != null) {
             mDecodeTaskForReview.cancel(true);
         }
-        mReviewImage.setVisibility(View.GONE);
-        CameraUtil.fadeOut(mReviewDoneButton);
-        CameraUtil.fadeOut(mReviewRetakeButton);
         resumeFaceDetection();
     }
 

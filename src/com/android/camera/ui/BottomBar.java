@@ -57,6 +57,7 @@ public class BottomBar extends FrameLayout {
      * Sets the bottom bar buttons given a layout id
      */
     public void setButtonLayout(int buttonLayoutId) {
+        removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(buttonLayoutId, this, true);
