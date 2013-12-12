@@ -23,13 +23,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <View
-        android:id="@+id/flash_overlay"
+    <com.android.camera.ui.CaptureAnimationOverlay
+        android:id="@+id/capture_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        android:alpha="0" />
+        android:visibility="invisible" />
+
     <com.android.camera.ui.PreviewOverlay
         android:id="@+id/preview_overlay"
         android:layout_width="match_parent"

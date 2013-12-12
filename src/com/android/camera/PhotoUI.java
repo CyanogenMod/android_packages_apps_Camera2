@@ -19,7 +19,6 @@ package com.android.camera;
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
@@ -33,7 +32,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -81,8 +79,6 @@ public class PhotoUI implements
     private int mPreviewHeight = 0;
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
-
-    private View mFlashOverlay;
 
     private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
     private TextureView mTextureView;
@@ -189,8 +185,6 @@ public class PhotoUI implements
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                  (ViewGroup) moduleRoot, true);
-
-        mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
@@ -400,7 +394,7 @@ public class PhotoUI implements
     }
 
     public void animateFlash() {
-        mActivity.startPreCaptureAnimation();
+        mController.startPreCaptureAnimation();
     }
 
     public boolean onBackPressed() {

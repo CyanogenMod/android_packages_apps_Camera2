@@ -1612,6 +1612,11 @@ public class VideoModule extends CameraModule
         stopPreview();
     }
 
+    @Override
+    public void startPreCaptureAnimation() {
+        mAppController.startPreCaptureAnimation();
+    }
+
     private void requestCamera(int id) {
         mActivity.getCameraProvider().requestCamera(id);
     }

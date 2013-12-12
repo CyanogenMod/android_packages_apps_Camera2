@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import com.android.camera.AnimationManager;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.ui.BottomBar;
+import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
@@ -188,6 +189,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private int mSwipeState = IDLE;
     private ImageView mPreviewThumbView;
     private PreviewOverlay mPreviewOverlay;
+    private CaptureAnimationOverlay mCaptureOverlay;
     private PreviewStatusListener mPreviewStatusListener;
     private int mModeCoverState = COVER_HIDDEN;
     private FilmstripBottomControls mFilmstripBottomControls;
@@ -489,7 +491,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureView.setSurfaceTextureListener(this);
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
-        mFlashOverlay = mCameraRootView.findViewById(R.id.flash_overlay);
+        mCaptureOverlay = (CaptureAnimationOverlay)
+                mCameraRootView.findViewById(R.id.capture_overlay);
         mPreviewThumbView = (ImageView) mCameraRootView.findViewById(R.id.preview_thumb);
 
     }
@@ -566,7 +569,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Starts the pre-capture animation.
      */
     public void startPreCaptureAnimation() {
-        mAnimationManager.startFlashAnimation(mFlashOverlay);
+        mCaptureOverlay.startFlashAnimation();
     }
 
     /**

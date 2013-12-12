@@ -430,6 +430,11 @@ public class PhotoModule
         stopPreview();
     }
 
+    @Override
+    public void startPreCaptureAnimation() {
+        mAppController.startPreCaptureAnimation();
+    }
+
     private void onCameraOpened() {
         View root = mUI.getRootView();
         // These depend on camera parameters.

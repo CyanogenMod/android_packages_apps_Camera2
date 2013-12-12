@@ -694,7 +694,7 @@ public class CameraActivity extends Activity
 
     @Override
     public void startPreCaptureAnimation() {
-        // TODO: implement this
+        mCameraAppUI.startPreCaptureAnimation();
     }
 
     @Override

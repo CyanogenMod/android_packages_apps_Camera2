@@ -71,4 +71,11 @@ public interface PhotoController extends OnShutterButtonListener {
      * The controller should try to stop the preview in this callback.
      */
     public void onPreviewUIDestroyed();
+
+    /********************** Capture animation **********************/
+
+    /**
+     * Starts the pre-capture animation.
+     */
+    public void startPreCaptureAnimation();
 }

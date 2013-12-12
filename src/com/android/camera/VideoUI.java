@@ -71,7 +71,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
-    private View mFlashOverlay;
 
     private BottomBar mBottomBar;
     private final int mBottomBarMinHeight;
@@ -153,7 +152,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
             mPreviewHeight = mTextureView.getHeight();
             setTransformMatrix(mPreviewWidth, mPreviewHeight);
         }
-        mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         initializeMiscControls();
         initializeControlByIntent();
         mAnimationManager = new AnimationManager();
@@ -230,7 +228,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
      * Starts a flash animation
      */
     public void animateFlash() {
-        mAnimationManager.startFlashAnimation(mFlashOverlay);
+        mController.startPreCaptureAnimation();
     }
 
     /**
