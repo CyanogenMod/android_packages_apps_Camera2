@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.android.camera.util.IntentHelper;
 import com.android.camera2.R;
 
 /**
@@ -119,6 +120,7 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
 
     private void setupGalleryButton() {
         mGalleryButton = (ImageButton) mLayout.findViewById(R.id.filmstrip_bottom_control_gallery);
+        mGalleryButton.setImageResource(IntentHelper.getGalleryIntentIcon());
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

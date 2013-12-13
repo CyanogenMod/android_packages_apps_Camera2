@@ -269,7 +269,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onGallery() {
-                    // TODO: Implement.
+                    startGallery();
                 }
 
                 private int getCurrentDataId() {
@@ -951,13 +951,7 @@ public class CameraActivity extends Activity
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try {
-                        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                                UsageStatistics.ACTION_GALLERY, null);
-                        startActivity(IntentHelper.getGalleryIntent(CameraActivity.this));
-                    } catch (ActivityNotFoundException e) {
-                        Log.w(TAG, "Failed to launch gallery activity, closing");
-                    }
+                    startGallery();
                     finish();
                 }
             });
@@ -1565,6 +1559,17 @@ public class CameraActivity extends Activity
         mKeepScreenOn = false;
         mMainHandler.removeMessages(MSG_CLEAR_SCREEN_ON_FLAG);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    private void startGallery() {
+        try {
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                    UsageStatistics.ACTION_GALLERY, null);
+            startActivityForResult(IntentHelper.getGalleryIntent(CameraActivity.this),
+                    REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        } catch (ActivityNotFoundException e) {
+            Log.w(TAG, "Failed to launch gallery activity, closing");
+        }
     }
 
     private void setNfcBeamPushUriFromData(LocalData data) {
