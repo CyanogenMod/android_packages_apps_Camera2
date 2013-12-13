@@ -104,6 +104,8 @@ public class PhotoUI implements PieListener,
     // Small indicators which show the camera settings in the viewfinder.
     private ImageView mSceneDetectView;
 
+    private ImageView mBurstModeView;
+
     private OnScreenIndicators mOnScreenIndicators;
 
     private PieRenderer mPieRenderer;
@@ -236,6 +238,7 @@ public class PhotoUI implements PieListener,
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
+        mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
 
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mAnimationManager = new AnimationManager();
@@ -980,6 +983,29 @@ public class PhotoUI implements PieListener,
             mSceneDetectView.setImageResource(imgs.getResourceId(i, -1));
         }
         mSceneDetectView.setVisibility(View.VISIBLE);
+    }
+
+    public void updateBurstModeIcon(int burstCount) {
+        if (burstCount == 1) {
+            mBurstModeView.setVisibility(View.GONE);
+            return;
+        }
+
+        switch (burstCount) {
+            case 5:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_5);
+                break;
+            case 10:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_10);
+                break;
+            case 15:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_15);
+                break;
+            case 20:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_20);
+                break;
+        }
+        mBurstModeView.setVisibility(View.VISIBLE);
     }
 }
 
