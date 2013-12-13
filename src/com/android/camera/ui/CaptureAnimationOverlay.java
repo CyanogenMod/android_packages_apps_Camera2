@@ -36,9 +36,9 @@ import com.android.camera2.R;
 public class CaptureAnimationOverlay extends View {
     private final static String TAG = "CaptureAnimationOverlay";
 
-    private final static int FLASH_CIRCLE_SHRINK_DURATION_MS = 250;
-    private final static int FLASH_CIRCLE_SLIDE_DURATION_MS = 300;
-    private final static int FLASH_CIRCLE_SLIDE_START_DELAY_MS = 150;
+    private final static int FLASH_CIRCLE_SHRINK_DURATION_MS = 200;
+    private final static int FLASH_CIRCLE_SLIDE_DURATION_MS = 400;
+    private final static int FLASH_CIRCLE_SLIDE_START_DELAY_MS = 0;
     private final static int FLASH_ALPHA_BEFORE_SHRINK = 180;
     private final static int FLASH_ALPHA_AFTER_SHRINK = 50;
     private final static int FLASH_COLOR = Color.WHITE;
@@ -60,15 +60,15 @@ public class CaptureAnimationOverlay extends View {
     }
 
     @Override
-    public void onLayout(boolean changed, int left, int top, int bottom, int right) {
-        super.onLayout(changed, left, top, bottom, right);
+    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
         mWidth = right - left;
         mHeight = bottom - top;
     }
 
     /**
      * Start flash animation with the circle of the flash being at position (x, y).
-     * 
+     *
      * @param x position on x axis
      * @param y position on y axis
      */
@@ -84,13 +84,11 @@ public class CaptureAnimationOverlay extends View {
         final ValueAnimator alphaAnimator = ValueAnimator.ofInt(FLASH_ALPHA_BEFORE_SHRINK,
                 FLASH_ALPHA_AFTER_SHRINK);
         alphaAnimator.setDuration(FLASH_CIRCLE_SHRINK_DURATION_MS);
-        alphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
 
         int startingRadius = (int) Math.sqrt(mWidth * mWidth + mHeight * mHeight) / 2;
         final ValueAnimator radiusAnimator = ValueAnimator.ofInt(startingRadius,
                 mFlashCircleSizeAfterShrink);
         radiusAnimator.setDuration(FLASH_CIRCLE_SHRINK_DURATION_MS);
-        radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
         radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -106,12 +104,10 @@ public class CaptureAnimationOverlay extends View {
         final ValueAnimator slideAnimatorX = ValueAnimator.ofInt(mFlashCircleCenterX, endPositionX);
         slideAnimatorX.setDuration(FLASH_CIRCLE_SLIDE_DURATION_MS);
         slideAnimatorX.setStartDelay(FLASH_CIRCLE_SLIDE_START_DELAY_MS);
-        slideAnimatorX.setInterpolator(null);
 
         final ValueAnimator slideAnimatorY = ValueAnimator.ofInt(y, mHeight / 2);
         slideAnimatorY.setDuration(FLASH_CIRCLE_SLIDE_DURATION_MS);
         slideAnimatorY.setStartDelay(FLASH_CIRCLE_SLIDE_START_DELAY_MS);
-        slideAnimatorY.setInterpolator(null);
         slideAnimatorY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -126,6 +122,7 @@ public class CaptureAnimationOverlay extends View {
                 .with(radiusAnimator)
                 .with(slideAnimatorX)
                 .with(slideAnimatorY);
+        mFlashAnimation.setInterpolator(Gusterpolator.INSTANCE);
         mFlashAnimation.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
