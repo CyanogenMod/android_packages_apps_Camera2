@@ -83,15 +83,15 @@ public class ModeListView extends ScrollView {
     private static final int[] mIconResId = {R.drawable.ic_camera_normal,
             R.drawable.ic_video_normal, R.drawable.ic_photo_sphere_normal,
             R.drawable.ic_craft_normal, R.drawable.ic_timelapse_normal,
-            R.drawable.ic_wide_angle_normal, R.drawable.ic_settings_normal,};
+            R.drawable.ic_panorama_normal, R.drawable.ic_settings_normal,};
 
     private static final int[] mTextResId = {R.string.mode_camera, R.string.mode_video,
             R.string.mode_photosphere, R.string.mode_craft, R.string.mode_timelapse,
-            R.string.mode_wideangle, R.string.mode_settings};
+            R.string.mode_panorama, R.string.mode_settings};
 
     private static final int[] mIconBlockColor = {R.color.camera_mode_color,
             R.color.video_mode_color, R.color.photosphere_mode_color, R.color.craft_mode_color,
-            R.color.timelapse_mode_color, R.color.wideangle_mode_color,
+            R.color.timelapse_mode_color, R.color.panorama_mode_color,
             R.color.settings_mode_color};
 
     private final GestureDetector mGestureDetector;
