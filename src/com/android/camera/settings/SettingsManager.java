@@ -531,7 +531,7 @@ public class SettingsManager {
         String defaultValue = context.getString(R.string.pref_camera_hdr_default);
         String[] values = context.getResources().getStringArray(
             R.array.pref_camera_hdr_entryvalues);
-        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_CAMERA_HDR,
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_CAMERA_HDR,
             values, FLUSH_OFF);
     }
 
@@ -539,7 +539,7 @@ public class SettingsManager {
         String defaultValue = context.getString(R.string.pref_camera_hdr_plus_default);
         String[] values = context.getResources().getStringArray(
             R.array.pref_camera_hdr_plus_entryvalues);
-        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_CAMERA_HDR_PLUS,
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_CAMERA_HDR_PLUS,
             values, FLUSH_OFF);
     }
 
