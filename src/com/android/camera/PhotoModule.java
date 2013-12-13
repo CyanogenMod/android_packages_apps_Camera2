@@ -486,7 +486,12 @@ public class PhotoModule
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
-                mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+                if (GcamHelper.hasGcamCapture()) {
+                    mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+                } else {
+                    mSceneMode = CameraUtil.SCENE_MODE_HDR;
+                    updateParametersSceneMode();
+                }
             }
         };
 
@@ -1523,7 +1528,7 @@ public class PhotoModule
         }
     }
 
-    private boolean updateCameraParametersPreference() {
+    private void updateCameraParametersPreference() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         setAutoExposureLockIfSupported();
@@ -1574,43 +1579,6 @@ public class PhotoModule
         }
         Log.v(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);
 
-        // Since changing scene mode may change supported values, set scene mode
-        // first. HDR is a scene mode. To promote it in UI, it is stored in a
-        // separate preference.
-        String onValue = mActivity.getString(R.string.setting_on_value);
-        String hdr = settingsManager.get(SettingsManager.SETTING_CAMERA_HDR);
-        String hdrPlus = settingsManager.get(SettingsManager.SETTING_CAMERA_HDR_PLUS);
-        boolean hdrOn = onValue.equals(hdr);
-        boolean hdrPlusOn = onValue.equals(hdrPlus);
-
-        boolean doGcamModeSwitch = false;
-        if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
-            // Kick off mode switch to gcam.
-            doGcamModeSwitch = true;
-        } else {
-            if (hdrOn) {
-                mSceneMode = CameraUtil.SCENE_MODE_HDR;
-            } else {
-                mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
-            }
-        }
-        if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
-            if (!mParameters.getSceneMode().equals(mSceneMode)) {
-                mParameters.setSceneMode(mSceneMode);
-
-                // Setting scene mode will change the settings of flash mode,
-                // white balance, and focus mode. Here we read back the
-                // parameters, so we can know those settings.
-                mCameraDevice.setParameters(mParameters);
-                mParameters = mCameraDevice.getParameters();
-            }
-        } else {
-            mSceneMode = mParameters.getSceneMode();
-            if (mSceneMode == null) {
-                mSceneMode = Parameters.SCENE_MODE_AUTO;
-            }
-        }
-
         // Set JPEG quality.
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
@@ -1627,6 +1595,34 @@ public class PhotoModule
             mParameters.setExposureCompensation(value);
         } else {
             Log.w(TAG, "invalid exposure range: " + value);
+        }
+
+        mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
+        updateParametersSceneMode();
+
+        if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
+            updateAutoFocusMoveCallback();
+        }
+    }
+
+    public void updateParametersSceneMode() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
+        if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
+            if (!mParameters.getSceneMode().equals(mSceneMode)) {
+                mParameters.setSceneMode(mSceneMode);
+
+                // Setting scene mode will change the settings of flash mode,
+                // white balance, and focus mode. Here we read back the
+                // parameters, so we can know those settings.
+                mCameraDevice.setParameters(mParameters);
+                mParameters = mCameraDevice.getParameters();
+            }
+        } else {
+            mSceneMode = mParameters.getSceneMode();
+            if (mSceneMode == null) {
+                mSceneMode = Parameters.SCENE_MODE_AUTO;
+            }
         }
 
         if (Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
@@ -1661,12 +1657,6 @@ public class PhotoModule
         } else {
             mFocusManager.overrideFocusMode(mParameters.getFocusMode());
         }
-
-        if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
-            updateAutoFocusMoveCallback();
-        }
-
-        return doGcamModeSwitch;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -1683,8 +1673,6 @@ public class PhotoModule
     // the subsets actually need updating. The PREFERENCE set needs extra
     // locking because the preference can be changed from GLThread as well.
     private void setCameraParameters(int updateSet) {
-        boolean doModeSwitch = false;
-
         if ((updateSet & UPDATE_PARAM_INITIALIZE) != 0) {
             updateCameraParametersInitialize();
         }
@@ -1694,15 +1682,10 @@ public class PhotoModule
         }
 
         if ((updateSet & UPDATE_PARAM_PREFERENCE) != 0) {
-            doModeSwitch = updateCameraParametersPreference();
+            updateCameraParametersPreference();
         }
 
         mCameraDevice.setParameters(mParameters);
-
-        // Switch to gcam module if HDR+ was selected
-        if (doModeSwitch && !mIsImageCaptureIntent) {
-            mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
-        }
     }
 
     // If the Camera is idle, update the parameters immediately, otherwise
