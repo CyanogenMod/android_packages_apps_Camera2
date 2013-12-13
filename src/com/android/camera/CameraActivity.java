@@ -933,7 +933,8 @@ public class CameraActivity extends Activity
         // TODO: Remove this when refactor is done.
         if (modeIndex == ModulesInfo.MODULE_PHOTO
                 || modeIndex == ModulesInfo.MODULE_VIDEO
-                || modeIndex == ModulesInfo.MODULE_GCAM) {
+                || modeIndex == ModulesInfo.MODULE_GCAM
+                || modeIndex == ModulesInfo.MODULE_CRAFT) {
             mCameraAppUI.prepareModuleUI();
         }
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
@@ -1258,10 +1259,12 @@ public class CameraActivity extends Activity
         // be applied to all modules.
         if (mCurrentModeIndex == ModulesInfo.MODULE_PHOTO
                 || mCurrentModeIndex == ModulesInfo.MODULE_VIDEO
-                || mCurrentModeIndex == ModulesInfo.MODULE_GCAM) {
+                || mCurrentModeIndex == ModulesInfo.MODULE_GCAM
+                || mCurrentModeIndex == ModulesInfo.MODULE_CRAFT) {
             if (oldModuleIndex != ModulesInfo.MODULE_PHOTO
                     && oldModuleIndex != ModulesInfo.MODULE_VIDEO
-                    && oldModuleIndex != ModulesInfo.MODULE_GCAM) {
+                    && oldModuleIndex != ModulesInfo.MODULE_GCAM
+                    && oldModuleIndex != ModulesInfo.MODULE_CRAFT) {
                 mCameraAppUI.prepareModuleUI();
             } else {
                 mCameraAppUI.clearModuleUI();
