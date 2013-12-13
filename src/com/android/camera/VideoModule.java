@@ -366,6 +366,15 @@ public class VideoModule extends CameraModule
 
     }
 
+    private final ButtonManager.ButtonCallback mFlashButtonCallback =
+        new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                // Update flash parameters.
+                enableTorchMode(true);
+            }
+        };
+
     private final ButtonManager.ButtonCallback mCameraButtonCallback =
         new ButtonManager.ButtonCallback() {
             @Override
@@ -390,7 +399,7 @@ public class VideoModule extends CameraModule
         startPreview();
         initializeVideoSnapshot();
         mUI.initializeZoom(mParameters);
-        mUI.onCameraOpened(mCameraButtonCallback);
+        mUI.onCameraOpened(mFlashButtonCallback, mCameraButtonCallback);
     }
 
     private void startPlayVideoActivity() {
@@ -1291,7 +1300,7 @@ public class VideoModule extends CameraModule
             mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
         }
 
-        forceFlashOffIfSupported(!mUI.isVisible());
+        enableTorchMode(settingsManager.isCameraBackFacing());
 
         // Set white balance parameter.
         String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
@@ -1507,11 +1516,22 @@ public class VideoModule extends CameraModule
         }
     }
 
-    private void forceFlashOffIfSupported(boolean forceOff) {
+    /**
+     * Used to update the flash mode. Video mode can turn on the flash as torch
+     * mode, which we would like to turn on and off when we switching in and
+     * out to the preview.
+     *
+     * @param enable Whether torch mode can be enabled.
+     */
+    private void enableTorchMode(boolean enable) {
+        if (mParameters.getFlashMode() == null) {
+            return;
+        }
+
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         String flashMode;
-        if (!forceOff) {
+        if (enable) {
             flashMode = settingsManager.get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
         } else {
             flashMode = Parameters.FLASH_MODE_OFF;
@@ -1527,27 +1547,15 @@ public class VideoModule extends CameraModule
                 mParameters.setFlashMode(flashMode);
             }
         }
-    }
-
-    /**
-     * Used to update the flash mode. Video mode can turn on the flash as torch
-     * mode, which we would like to turn on and off when we switching in and
-     * out to the preview.
-     *
-     * @param forceOff whether we want to force the flash off.
-     */
-    private void forceFlashOff(boolean forceOff) {
-        if (!mPreviewing || mParameters.getFlashMode() == null) {
-            return;
-        }
-        forceFlashOffIfSupported(forceOff);
         mCameraDevice.setParameters(mParameters);
         mUI.updateOnScreenIndicators(mParameters);
     }
 
     @Override
     public void onPreviewVisibilityChanged(boolean visible) {
-        forceFlashOff(!visible);
+        if (mPreviewing) {
+            enableTorchMode(visible);
+        }
     }
 
     private final class JpegPictureCallback implements CameraPictureCallback {

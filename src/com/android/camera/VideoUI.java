@@ -290,12 +290,13 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         setTransformMatrix(mPreviewWidth, mPreviewHeight);
     }
 
-    public void onCameraOpened(ButtonManager.ButtonCallback cameraCallback) {
+    public void onCameraOpened(ButtonManager.ButtonCallback flashCallback,
+            ButtonManager.ButtonCallback cameraCallback) {
         ButtonManager buttonManager = mActivity.getButtonManager();
         SettingsManager settingsManager = mActivity.getSettingsManager();
         if (settingsManager.isCameraBackFacing()) {
             buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
-                null, R.array.video_flashmode_icons);
+                flashCallback, R.array.video_flashmode_icons);
         } else {
             buttonManager.disableButton(ButtonManager.BUTTON_TORCH,
                 R.id.flash_toggle_button);
