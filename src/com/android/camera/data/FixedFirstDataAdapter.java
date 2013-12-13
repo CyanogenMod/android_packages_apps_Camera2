@@ -109,7 +109,7 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     public View getView(Context context, int dataID) {
         if (dataID == 0) {
             return mFirstData.getView(
-                    context, mSuggestedWidth, mSuggestedHeight, null, null);
+                    context, mSuggestedWidth, mSuggestedHeight, null, null, false);
         }
         return mAdapter.getView(context, dataID - 1);
     }

@@ -49,16 +49,17 @@ public class InProgressDataWrapper implements LocalData {
 
     @Override
     public View getView(
-            Context contex, int width, int height,
-            Drawable placeHolder, LocalDataAdapter adapter) {
-        View v =  mLocalData.getView(contex, width, height, placeHolder, adapter);
+            Context context, int width, int height,
+            Drawable placeHolder, LocalDataAdapter adapter, boolean isInProgress) {
+        isInProgress = true;
+        View v =  mLocalData.getView(context, width, height, placeHolder, adapter, isInProgress);
 
         if (mHasProgressBar) {
             // Return a framelayout with the progressbar and imageview.
-            FrameLayout frame = new FrameLayout(contex);
+            FrameLayout frame = new FrameLayout(context);
             frame.setLayoutParams(new FrameLayout.LayoutParams(width, height));
             frame.addView(v);
-            ((LayoutInflater) contex.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+            ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                     .inflate(R.layout.placeholder_progressbar, frame);
             return frame;
         }

@@ -585,42 +585,33 @@ public class CameraActivity extends Activity
         return true;
     }
 
+    // Note: All callbacks come back on the main thread.
     private final SessionListener mSessionListener =
             new SessionListener() {
                 @Override
                 public void onSessionQueued(final Uri uri) {
-                    mMainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyNewMedia(uri);
-                            int dataID = mDataAdapter.findDataByContentUri(uri);
-                            if (dataID != -1) {
-                                // Don't allow special UI actions (swipe to
-                                // delete, for example) on in-progress data.
-                                LocalData d = mDataAdapter.getLocalData(dataID);
-                                InProgressDataWrapper newData = new InProgressDataWrapper(d);
-                                mDataAdapter.updateData(dataID, newData);
-                            }
-                        }
-                    });
+                    notifyNewMedia(uri);
+                    int dataID = mDataAdapter.findDataByContentUri(uri);
+                    if (dataID != -1) {
+                        // Don't allow special UI actions (swipe to
+                        // delete, for example) on in-progress data.
+                        LocalData d = mDataAdapter.getLocalData(dataID);
+                        InProgressDataWrapper newData = new InProgressDataWrapper(d);
+                        mDataAdapter.updateData(dataID, newData);
+                    }
                 }
 
                 @Override
                 public void onSessionDone(final Uri uri) {
                     Log.v(TAG, "onSessionDone:" + uri);
-                    mMainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int doneID = mDataAdapter.findDataByContentUri(uri);
-                            int currentDataId = mFilmstripController.getCurrentId();
+                    int doneID = mDataAdapter.findDataByContentUri(uri);
+                    int currentDataId = mFilmstripController.getCurrentId();
 
-                            if (currentDataId == doneID) {
-                                hideSessionProgress();
-                                updateSessionProgress(0);
-                            }
-                            mDataAdapter.refresh(getContentResolver(), uri);
-                        }
-                    });
+                    if (currentDataId == doneID) {
+                        hideSessionProgress();
+                        updateSessionProgress(0);
+                    }
+                    mDataAdapter.refresh(getContentResolver(), uri, /* isInProgress */ false);
                 }
 
                 @Override
@@ -629,19 +620,19 @@ public class CameraActivity extends Activity
                         // Do nothing, there is no task for this URI.
                         return;
                     }
-                    mMainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            int currentDataId = mFilmstripController.getCurrentId();
-                            if (currentDataId == -1) {
-                                return;
-                            }
-                            if (uri.equals(
-                                    mDataAdapter.getLocalData(currentDataId).getContentUri())) {
-                                updateSessionProgress(progress);
-                            }
-                        }
-                    });
+                    int currentDataId = mFilmstripController.getCurrentId();
+                    if (currentDataId == -1) {
+                        return;
+                    }
+                    if (uri.equals(
+                            mDataAdapter.getLocalData(currentDataId).getContentUri())) {
+                        updateSessionProgress(progress);
+                    }
+                }
+
+                @Override
+                public void onSessionUpdated(Uri uri) {
+                    mDataAdapter.refresh(getContentResolver(), uri, /* isInProgress */ true);
                 }
             };
 

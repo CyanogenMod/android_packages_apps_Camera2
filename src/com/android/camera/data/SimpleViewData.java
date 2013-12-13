@@ -120,7 +120,7 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public View getView(Context ctx, int width, int height, Drawable placeHolder,
-            LocalDataAdapter adapter) {
+            LocalDataAdapter adapter, boolean isInProgressSession) {
         return mView;
     }
 
