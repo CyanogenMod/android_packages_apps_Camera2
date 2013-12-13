@@ -70,8 +70,28 @@ public interface LocalData extends ImageData {
 
     // TODO: Re-think how the in-progress logic works. We shouldn't need to pass
     // in the information about whether this session is in progress.
+
+    /**
+     * Creates View to represent media.
+     *
+     * @param context The {@link android.content.Context} to create the view.
+     * @param width Width in pixels of rendered view.
+     * @param height Height in pixels of rendered view.
+     * @param adapter Data adapter for this data item.
+     */
     View getView(Context context, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress);
+
+   /**
+     * Request resize of View created by getView().
+     *
+     * @param context The {@link android.content.Context} to create the view.
+     * @param width Width in pixels of rendered view.
+     * @param height Height in pixels of rendered view.
+     * @param view View created by getView();
+     * @param adapter Data adapter for this data item.
+     */
+    public void resizeView(Context context, int width, int height, View view, LocalDataAdapter adapter);
 
     /**
      * Gets the date when this data is created. The returned date is also used

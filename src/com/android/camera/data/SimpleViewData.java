@@ -128,6 +128,11 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
+    public void resizeView(Context context, int w, int h, View view, LocalDataAdapter adapter) {
+        // do nothing.
+    }
+
+    @Override
     public void prepare() {
         // do nothing.
     }

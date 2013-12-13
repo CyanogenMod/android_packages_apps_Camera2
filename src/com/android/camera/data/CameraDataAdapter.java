@@ -71,7 +71,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
         qtask.execute(context.getContentResolver());
     }
 
-
     @Override
     public void updateMetadata(Context context, int dataId) {
         new MetadataUpdateTask(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
@@ -106,12 +105,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void suggestViewSizeBound(int w, int h) {
-        if (w <= 0 || h <= 0) {
-            mSuggestedWidth  = mSuggestedHeight = DEFAULT_DECODE_SIZE;
-        } else {
-            mSuggestedWidth = (w < DEFAULT_DECODE_SIZE ? w : DEFAULT_DECODE_SIZE);
-            mSuggestedHeight = (h < DEFAULT_DECODE_SIZE ? h : DEFAULT_DECODE_SIZE);
-        }
+        mSuggestedWidth = w;
+        mSuggestedHeight = h;
     }
 
     @Override
@@ -123,6 +118,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
         return mImages.get(dataID).getView(
                 context, mSuggestedWidth, mSuggestedHeight,
                 mPlaceHolder.getConstantState().newDrawable(), this, /* inProgress */ false);
+    }
+
+    @Override
+    public void resizeView(Context context, int dataID, View view, int w, int h) {
+        if (dataID >= mImages.size() || dataID < 0) {
+            return;
+        }
+        mImages.get(dataID).resizeView(context, w, h, view, this);
     }
 
     @Override

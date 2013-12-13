@@ -167,7 +167,11 @@ public abstract class LocalMediaData implements LocalData {
             int decodeWidth, int decodeHeight, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress) {
         v.setScaleType(ImageView.ScaleType.FIT_XY);
-        v.setImageDrawable(placeHolder);
+        if (placeHolder != null) {
+            v.setImageDrawable(placeHolder);
+        }
+
+        // TODO: Load MediaStore or embedded-in-JPEG-stream thumbnail.
 
         BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
                 context.getContentResolver(), adapter, isInProgress);
@@ -180,6 +184,13 @@ public abstract class LocalMediaData implements LocalData {
             LocalDataAdapter adapter, boolean isInProgress) {
         return fillImageView(context, new ImageView(context), decodeWidth, decodeHeight,
                 placeHolder, adapter, isInProgress);
+    }
+
+    @Override
+    public void resizeView(Context context, int width, int height, View view,
+                           LocalDataAdapter adapter) {
+        // Default is do nothing.
+        // Can be implemented by sub-classes.
     }
 
     @Override
@@ -251,6 +262,11 @@ public abstract class LocalMediaData implements LocalData {
         return MetadataLoader.isMetadataLoaded(this);
     }
 
+    /**
+     * A background task that loads the provided ImageView with a Bitmap.
+     * A Bitmap of maximum size that fits into a decodeWidth x decodeHeight
+     * box will be decoded.
+     */
     protected abstract BitmapLoadTask getBitmapLoadTask(
             Context context, ImageView v, int decodeWidth, int decodeHeight,
             ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession);
@@ -270,6 +286,11 @@ public abstract class LocalMediaData implements LocalData {
         public static final int COL_SIZE = 9;
         public static final int COL_LATITUDE = 10;
         public static final int COL_LONGITUDE = 11;
+
+        // GL max texture size: keep bitmaps below this value.
+        private static final int MAXIMUM_TEXTURE_SIZE = 2048;
+        // Maximum pixel count for Bitmaps.  To limit RAM consumption.
+        private static final int MAXIMUM_DECODE_PIXELS = 3200000;
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -310,6 +331,7 @@ public abstract class LocalMediaData implements LocalData {
             super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
                     path, width, height, sizeInBytes, latitude, longitude);
             mOrientation = orientation;
+
         }
 
         static PhotoData buildFromCursor(Context context, Cursor c) {
@@ -422,6 +444,13 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public void resizeView(Context context, int w, int h, View v, LocalDataAdapter adapter)
+        {
+            // This will call PhotoBitmapLoadTask.
+            fillImageView(context, (ImageView) v, w, h, null, adapter, false);
+        }
+        
+        @Override
         protected BitmapLoadTask getBitmapLoadTask(Context context, ImageView v, int decodeWidth,
                 int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter,
                 boolean isInProgressSession) {
@@ -454,18 +483,24 @@ public abstract class LocalMediaData implements LocalData {
 
             @Override
             protected Bitmap doInBackground(Void... v) {
+                // Generate Bitmap of maximum size that fits
+                // into decodeWidth x decodeHeight
+                int targetWidth = mWidth;
+                int targetHeight = mHeight;
                 int sampleSize = 1;
-                if (mWidth > mDecodeWidth || mHeight > mDecodeHeight) {
-                    int heightRatio = Math.round((float) mHeight / (float) mDecodeHeight);
-                    int widthRatio = Math.round((float) mWidth / (float) mDecodeWidth);
-                    sampleSize = Math.max(heightRatio, widthRatio);
+
+                while (targetHeight > mDecodeHeight || targetWidth > mDecodeWidth ||
+                        targetHeight > MAXIMUM_TEXTURE_SIZE || targetWidth > MAXIMUM_TEXTURE_SIZE ||
+                        targetHeight*targetWidth > MAXIMUM_DECODE_PIXELS) {
+                    sampleSize *= 2;
+                    targetWidth = mWidth / sampleSize;
+                    targetHeight = mHeight / sampleSize;
                 }
 
-                // For correctness, we need to double check the size here. The
-                // good news is that decoding bounds take much less time than
-                // decoding samples like < 1%.
-                // TODO: better organize the decoding and sampling by using a
-                // image cache.
+                // TODO: Implement image cache, which can verify image dims.
+
+                // For correctness, double check image size here.
+                // This only takes 1% of full decode time.
                 int decodedWidth = 0;
                 int decodedHeight = 0;
                 BitmapFactory.Options justBoundsOpts = new BitmapFactory.Options();
@@ -476,9 +511,9 @@ public abstract class LocalMediaData implements LocalData {
                     decodedHeight = justBoundsOpts.outHeight;
                 }
 
-                // If the width and height is valid and not matching the values
+                // If the width and height are valid and not matching the values
                 // from MediaStore, then update the MediaStore. This only
-                // happened when the MediaStore had been told a wrong data.
+                // happens when the MediaStore has been told incorrect values.
                 if (decodedWidth > 0 && decodedHeight > 0 &&
                         (decodedWidth != mWidth || decodedHeight != mHeight)) {
                     ContentValues values = new ContentValues();
@@ -499,6 +534,7 @@ public abstract class LocalMediaData implements LocalData {
                 }
                 Bitmap b = BitmapFactory.decodeFile(mPath, opts);
 
+                // Not called often because most modes save image data non-rotated.
                 if (mOrientation != 0 && b != null) {
                     if (isCancelled() || !isUsing()) {
                         return null;
@@ -810,6 +846,8 @@ public abstract class LocalMediaData implements LocalData {
             BitmapDrawable d = new BitmapDrawable(mContext.getResources(), bitmap);
             mView.setScaleType(ImageView.ScaleType.FIT_XY);
             mView.setImageDrawable(d);
+            Log.v(TAG, "Created bitmap: " + bitmap.getWidth() + " x " + bitmap.getHeight());
         }
     }
+
 }

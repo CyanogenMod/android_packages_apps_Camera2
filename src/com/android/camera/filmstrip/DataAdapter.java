@@ -87,6 +87,18 @@ public interface DataAdapter {
     public View getView(Context context, int dataID);
 
     /**
+     * Resizes the view used to visually present the image data.  This is
+     * useful when the view contains a bitmap.
+     *
+     * @param context The {@link android.content.Context} to create the view.
+     * @param dataID The ID of the resize data to be presented.
+     * @param view The view to update that was created by getView().
+     * @param w Width in pixels of rendered view.
+     * @param h Height in pixels of rendered view.
+     */
+    public void resizeView(Context context, int dataID, View view, int w, int h);
+
+    /**
      * Returns the {@link ImageData} specified by the ID.
      *
      * @param dataID The ID of the {@link ImageData}.
@@ -99,8 +111,8 @@ public interface DataAdapter {
      * the {@link DataAdapter} can optimize the view returned for the
      * {@link ImageData}.
      *
-     * @param widthPixels Maximum width in dp.
-     * @param heightPixels Maximum height in dp.
+     * @param widthPixels Width in pixels of rendered view.
+     * @param heightPixels Height in pixels of rendered view.
      */
     public void suggestViewSizeBound(int widthPixels, int heightPixels);
 
