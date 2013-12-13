@@ -26,7 +26,6 @@ import com.android.camera.session.PlaceholderManager;
 import com.android.camera.session.ProcessingNotificationManager;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
-import com.android.camera2.R;
 
 /**
  * The Camera application class containing important services and functionality
@@ -49,10 +48,8 @@ public class CameraApp extends Application implements CameraServices {
         mMediaSaver = new MediaSaverImpl();
         mNotificationManager = new ProcessingNotificationManager(this);
         mPlaceHolderManager = new PlaceholderManager(context);
-        CharSequence defaultProgressMessage = getText(R.string.processing);
-
         mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
-                mNotificationManager, mPlaceHolderManager, defaultProgressMessage);
+                mNotificationManager, mPlaceHolderManager);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
     }
 

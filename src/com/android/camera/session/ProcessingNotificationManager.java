@@ -21,6 +21,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.SparseArray;
 
 import com.android.camera2.R;
 
@@ -56,7 +57,8 @@ public class ProcessingNotificationManager {
 
     private final Context mContext;
     private final NotificationManager mNotificationManager;
-    private Notification.Builder mInProgressNotificationBuilder;
+    private final SparseArray<Notification.Builder> mNotificationBuilders =
+            new SparseArray<Notification.Builder>();
 
     /**
      * Creates a new {@code ProcessingNotificationManager} with a
@@ -77,12 +79,12 @@ public class ProcessingNotificationManager {
      * @return whether the update was successful
      */
     public boolean setProgress(int progress, int notificationId) {
-        if (mInProgressNotificationBuilder == null) {
+        Notification.Builder builder = mNotificationBuilders.get(notificationId);
+        if (builder == null) {
             return false;
         }
-        mInProgressNotificationBuilder.setProgress(100, progress, false);
-        mNotificationManager.notify(
-                notificationId, buildNotification(mInProgressNotificationBuilder));
+        builder.setProgress(100, progress, false);
+        mNotificationManager.notify(notificationId, buildNotification(builder));
         return true;
     }
 
@@ -91,12 +93,12 @@ public class ProcessingNotificationManager {
      * @return whether the update was successful
      */
     public boolean setStatus(CharSequence status, int notificationId) {
-        if (mInProgressNotificationBuilder == null) {
+        Notification.Builder builder = mNotificationBuilders.get(notificationId);
+        if (builder == null) {
             return false;
         }
-        mInProgressNotificationBuilder.setContentText(status);
-        mNotificationManager.notify(
-                notificationId, buildNotification(mInProgressNotificationBuilder));
+        builder.setContentText(status);
+        mNotificationManager.notify(notificationId, buildNotification(builder));
         return true;
     }
 
@@ -109,15 +111,13 @@ public class ProcessingNotificationManager {
      * @return The ID of the notification.
      */
     public int notifyStart(CharSequence statusMessage) {
-        if (mInProgressNotificationBuilder != null) {
-            return -1;
-        }
-        mInProgressNotificationBuilder = createInProgressNotificationBuilder(statusMessage);
+        Notification.Builder builder = createInProgressNotificationBuilder(statusMessage);
         // Increment the global notification id to make sure we have a unique
         // id.
         int notificationId = sUniqueNotificationId.incrementAndGet();
+        mNotificationBuilders.put(notificationId, builder);
         mNotificationManager.notify(
-                notificationId, buildNotification(mInProgressNotificationBuilder));
+                notificationId, buildNotification(builder));
         return notificationId;
     }
 
@@ -126,11 +126,12 @@ public class ProcessingNotificationManager {
      * notification.
      */
     public void notifyCompletion(int notificationId) {
-        if (mInProgressNotificationBuilder == null) {
+        Notification.Builder builder = mNotificationBuilders.get(notificationId);
+        if (builder == null) {
             return;
         }
         mNotificationManager.cancel(notificationId);
-        mInProgressNotificationBuilder = null;
+        builder = null;
     }
 
     /**
@@ -138,11 +139,12 @@ public class ProcessingNotificationManager {
      * left intact.
      */
     public void cancel(int notificationId) {
-        if (mInProgressNotificationBuilder == null) {
+        Notification.Builder builder = mNotificationBuilders.get(notificationId);
+        if (builder == null) {
             return;
         }
         mNotificationManager.cancel(notificationId);
-        mInProgressNotificationBuilder = null;
+        builder = null;
     }
 
     /**
@@ -158,7 +160,7 @@ public class ProcessingNotificationManager {
                 .setOngoing(true)
                 .setContentTitle(mContext.getText(R.string.app_name))
                 .setProgress(100, 0, false)
-                .setTicker(statusMessage);
+                .setContentText(statusMessage);
     }
 
     @SuppressLint("NewApi")

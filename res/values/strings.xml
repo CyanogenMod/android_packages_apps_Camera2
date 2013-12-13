@@ -158,9 +158,6 @@
     <!-- The content of a dialog showing trimming in progress. [CHAR LIMIT=30] -->
     <string name="please_wait">Please wait</string>
 
-    <!-- Text to show with progress bar while stitching a photo sphere. 'Photo sphere' is a product name. [CHAR LIMIT=35]-->
-    <string name="rendering_photo_sphere">Rendering photo sphere</string>
-
     <!-- title for the dialog showing the error of camera hardware -->
     <string name="camera_error_title">Camera error</string>
 
@@ -720,7 +717,7 @@ CHAR LIMIT=NONE] -->
 
     <!-- Default for camera startup module index -->
     <string name="pref_camera_startup_index_default" translatable="false">0</string>
-    
-    <!-- A message shown to the user, indicating that a media item is being processed. [CHAR LIMIT=25] -->
-    <string name="processing">Processing &#8230;</string>
+
+    <!-- A message shown to the user, indicating that an HDR+ photo is being processed. [CHAR LIMIT=25] -->
+    <string name="processing_hdr_plus">Processing HDR+ &#8230;</string>
  </resources>

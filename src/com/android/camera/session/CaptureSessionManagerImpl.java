@@ -53,7 +53,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         private CaptureSessionImpl(String title) {
             mTitle = title;
-            mProgressMessage = mDefaultProgressMessage;
         }
 
         @Override
@@ -171,7 +170,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     private final ProcessingNotificationManager mNotificationManager;
     private final PlaceholderManager mPlaceholderManager;
     private final ContentResolver mContentResolver;
-    private final CharSequence mDefaultProgressMessage;
 
     /**
      * We use this to fire events to the session listeners from the main thread.
@@ -193,18 +191,15 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
      *            progress
      * @param placeholderManager used to manage placeholders in the filmstrip
      *            before the final result is ready
-     * @param defaultProgressMessage message shown as the current progress
-     *            status by default
      */
     public CaptureSessionManagerImpl(MediaSaver mediaSaver,
             ContentResolver contentResolver, ProcessingNotificationManager notificationManager,
-            PlaceholderManager placeholderManager, CharSequence defaultProgressMessage) {
+            PlaceholderManager placeholderManager) {
         mSessions = new HashMap<String, CaptureSession>();
         mMediaSaver = mediaSaver;
         mContentResolver = contentResolver;
         mNotificationManager = notificationManager;
         mPlaceholderManager = placeholderManager;
-        mDefaultProgressMessage = defaultProgressMessage;
     }
 
     @Override
