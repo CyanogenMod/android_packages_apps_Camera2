@@ -697,6 +697,8 @@ CHAR LIMIT=NONE] -->
     <string name="mode_timelapse">Time Lapse</string>
     <!-- Text shown in the camera mode options list for putting camera in wide angle panorama mode [CHAR LIMIT=25] -->
     <string name="mode_wideangle">Wide Angle</string>
+    <!-- Text shown in the camera mode options list for putting camera in panorama mode [CHAR LIMIT=25] -->
+    <string name="mode_panorama">Panorama</string>
 
     <!-- Text shown in camera settings list for toggling photo location on or off [CHAR LIMIT=25] -->
     <string name="setting_location">Location</string>
