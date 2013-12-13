@@ -196,6 +196,8 @@ public class VideoModule implements CameraModule,
     private boolean mStartPrevPending = false;
     private boolean mStopPrevPending = false;
 
+    // The preview window is on focus
+    private boolean mPreviewFocused = false;
 
     private final MediaSaveService.OnMediaSavedListener mOnVideoSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
@@ -240,6 +242,7 @@ public class VideoModule implements CameraModule,
             return;
         }
         mParameters = mCameraDevice.getParameters();
+        mPreviewFocused = true;
         initializeCapabilities();
     }
 
@@ -1076,6 +1079,7 @@ public class VideoModule implements CameraModule,
         mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
+        mPreviewFocused = false;
         mFocusManager.onCameraReleased();
     }
 
@@ -2036,7 +2040,8 @@ public class VideoModule implements CameraModule,
         // Set video mode
         CameraSettings.setVideoMode(mParameters, true);
 
-        forceFlashOffIfSupported(!mUI.isVisible());
+        forceFlashOffIfSupported(!mPreviewFocused);
+
         videoWidth = mProfile.videoFrameWidth;
         videoHeight = mProfile.videoFrameHeight;
         String recordSize = videoWidth + "x" + videoHeight;
@@ -2319,6 +2324,7 @@ public class VideoModule implements CameraModule,
     public void onPreviewFocusChanged(boolean previewFocused) {
         mUI.onPreviewFocusChanged(previewFocused);
         forceFlashOff(!previewFocused);
+        mPreviewFocused = previewFocused;
     }
 
     @Override
