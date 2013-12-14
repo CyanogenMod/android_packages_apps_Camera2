@@ -515,6 +515,8 @@ public class ModeListView extends ScrollView {
             mModeSelectorItems[i].setVisibleWidth(0);
             mModeSelectorItems[i].unHighlight();
         }
+        // Visible width has been changed to 0
+        onVisibleWidthChanged(0);
     }
 
     private boolean isRunningAccordionAnimation() {
