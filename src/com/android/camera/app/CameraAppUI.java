@@ -85,6 +85,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         void setEditButtonVisibility(boolean visible);
 
         /**
+         * @param enabled Whether the button is enabled.
+         */
+        void setEditEnabled(boolean enabled);
+
+        /**
          * Sets the visibility of the view-photosphere button.
          *
          * @param state one of {@link #VIEW_NONE}, {@link #VIEW_PHOTO_SPHERE},
@@ -93,9 +98,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         void setViewButtonVisibility(int state);
 
         /**
+         * @param enabled Whether the button is enabled.
+         */
+        void setViewEnabled(boolean enabled);
+
+        /**
          * @param visible Whether the button is visible.
          */
         void setTinyPlanetButtonVisibility(boolean visible);
+
+        /**
+         * @param enabled Whether the button is enabled.
+         */
+        void setTinyPlanetEnabled(boolean enabled);
 
         /**
          * @param visible Whether the button is visible.
@@ -103,9 +118,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         void setDeleteButtonVisibility(boolean visible);
 
         /**
+         * @param enabled Whether the button is enabled.
+         */
+        void setDeleteEnabled(boolean enabled);
+
+        /**
          * @param visible Whether the button is visible.
          */
         void setShareButtonVisibility(boolean visible);
+
+        /**
+         * @param enabled Whether the button is enabled.
+         */
+        void setShareEnabled(boolean enabled);
 
         /**
          * @param visible Whether the button is visible.

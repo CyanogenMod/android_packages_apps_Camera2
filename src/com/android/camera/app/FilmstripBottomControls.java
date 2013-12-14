@@ -70,6 +70,11 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     }
 
     @Override
+    public void setEditEnabled(boolean enabled) {
+        mEditButton.setEnabled(enabled);
+    }
+
+    @Override
     public void setViewButtonVisibility(int state) {
         if (state == VIEW_NONE) {
             setVisibility(mViewButton, false);
@@ -81,8 +86,18 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     }
 
     @Override
+    public void setViewEnabled(boolean enabled) {
+        mViewButton.setEnabled(enabled);
+    }
+
+    @Override
     public void setTinyPlanetButtonVisibility(final boolean visible) {
         setVisibility(mTinyPlanetButton, visible);
+    }
+
+    @Override
+    public void setTinyPlanetEnabled(boolean enabled) {
+        mTinyPlanetButton.setEnabled(enabled);
     }
 
     @Override
@@ -91,8 +106,18 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     }
 
     @Override
+    public void setDeleteEnabled(boolean enabled) {
+        mDeleteButton.setEnabled(enabled);
+    }
+
+    @Override
     public void setShareButtonVisibility(boolean visible) {
         setVisibility(mShareButton, visible);
+    }
+
+    @Override
+    public void setShareEnabled(boolean enabled) {
+        mShareButton.setEnabled(enabled);
     }
 
     @Override

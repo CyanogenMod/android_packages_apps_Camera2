@@ -263,7 +263,12 @@ public class CameraActivity extends Activity
                     final LocalData data = getCurrentLocalData();
                     Intent shareIntent = getShareIntentByData(data);
                     if (shareIntent != null) {
-                        startActivityForResult(shareIntent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+                        try {
+                            startActivityForResult(shareIntent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+                            mCameraAppUI.getFilmstripBottomControls().setShareEnabled(false);
+                        } catch (ActivityNotFoundException ex) {
+                            // Nothing.
+                        }
                     }
                 }
 
@@ -1060,6 +1065,8 @@ public class CameraActivity extends Activity
         if (mResetToPreviewOnResume) {
             mCameraAppUI.resume();
         }
+        // The share button might be disabled to avoid double tapping.
+        mCameraAppUI.getFilmstripBottomControls().setShareEnabled(true);
         // Default is showing the preview, unless disabled by explicitly
         // starting an activity we want to return from to the filmstrip rather
         // than the preview.
