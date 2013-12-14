@@ -36,6 +36,7 @@
 GLuint gSurfaceTextureID[1];
 
 bool gWarpImage = true;
+int PREVIEW_FBO_WIDTH_SCALE = 4;
 
 // Low-Res input image frame in YUVA format for preview rendering and processing
 // and high-res YUVA input image for processing.
@@ -396,7 +397,12 @@ void AllocateTextureMemory(int widthHR, int heightHR, int widthLR, int heightLR)
     gPreviewImage[HR] = ImageUtils::allocateImage(gPreviewImageWidth[HR],
             gPreviewImageHeight[HR], 4);
     sem_post(&gPreviewImage_semaphore);
+}
 
+// Delay calculation of gPreviewFBOWidth until we update PREVIEW_FBO_WIDTH_SCALE
+// (we need an EGL Context to query GL_MAX_TEXTURE_SIZE)
+void UpdateTextureCalculation()
+{
     gPreviewFBOWidth = PREVIEW_FBO_WIDTH_SCALE * gPreviewImageWidth[HR];
     gPreviewFBOHeight = PREVIEW_FBO_HEIGHT_SCALE * gPreviewImageHeight[HR];
 
@@ -511,6 +517,19 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
 JNIEXPORT jint JNICALL Java_com_android_camera_MosaicRenderer_init(
         JNIEnv * env, jobject obj)
 {
+    // Reduce PREVIEW_FBO_WIDTH_SCALE on older devices
+    int maxTextureSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    checkGlError("glGetIntegerv");
+
+    int requiredTextureSize = PREVIEW_FBO_WIDTH_SCALE * gPreviewImageWidth[HR];
+    if (maxTextureSize < requiredTextureSize) {
+        LOGE("Reducing PREVIEW_FBO_WIDTH_SCALE, max = %d, req = %d",
+                maxTextureSize, requiredTextureSize);
+        PREVIEW_FBO_WIDTH_SCALE = 2;
+    }
+    UpdateTextureCalculation();
+
     gSurfTexRenderer[LR].InitializeGLProgram();
     gSurfTexRenderer[HR].InitializeGLProgram();
     gYVURenderer[LR].InitializeGLProgram();

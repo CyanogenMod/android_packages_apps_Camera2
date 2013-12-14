@@ -4,7 +4,7 @@
 // The Preview FBO dimensions are determined from the high-res
 // frame dimensions (gPreviewImageWidth, gPreviewImageHeight)
 // using the scale factors below.
-const int PREVIEW_FBO_WIDTH_SCALE = 4;
+/* const int PREVIEW_FBO_WIDTH_SCALE = 4; */
 const int PREVIEW_FBO_HEIGHT_SCALE = 2;
 
 // The factor below determines the (horizontal) speed at which the viewfinder
