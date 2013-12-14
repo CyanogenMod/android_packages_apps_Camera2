@@ -77,6 +77,30 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
     private float mAspectRatio = 16f / 9f;
+
+    private ButtonManager.ButtonCallback mFlashCallback;
+    private ButtonManager.ButtonCallback mCameraCallback;
+
+    private final OnClickListener mCancelCallback = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mController.onReviewCancelClicked(v);
+        }
+    };
+    private final OnClickListener mDoneCallback = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mController.onReviewDoneClicked(v);
+        }
+    };
+    private final OnClickListener mReviewCallback = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setupBottomBarIntentLayout();
+            mController.onReviewPlayClicked(v);
+        }
+    };
+
     private final AnimationManager mAnimationManager;
 
     @Override
@@ -140,40 +164,55 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mAnimationManager = new AnimationManager();
     }
 
-
     public void initializeSurfaceView() {
         mSurfaceView = new SurfaceView(mActivity);
         ((ViewGroup) mRootView).addView(mSurfaceView, 0);
         mSurfaceView.getHolder().addCallback(this);
     }
 
+    private void setupToggleButtons() {
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        if (settingsManager.isCameraBackFacing()) {
+            buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
+                mFlashCallback, R.array.video_flashmode_icons);
+        } else {
+            buttonManager.disableButton(ButtonManager.BUTTON_TORCH,
+                R.id.flash_toggle_button);
+        }
+        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
+            mCameraCallback, R.array.camera_id_icons);
+
+    }
+
+    private void setupBottomBarLayout() {
+        mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
+        setupToggleButtons();
+    }
+
+    private void setupBottomBarIntentLayout() {
+        mBottomBar.setButtonLayout(R.layout.video_intent_bottombar_buttons);
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
+                mCancelCallback);
+        setupToggleButtons();
+    }
+
+    private void setupBottomBarIntentReviewLayout() {
+        mBottomBar.setButtonLayout(R.layout.video_intent_review_bottombar_buttons);
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
+                mCancelCallback);
+        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE, R.id.done_button,
+                mDoneCallback);
+        buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW, R.id.review_button,
+                mReviewCallback);
+
+    }
+
     private void initializeControlByIntent() {
         if (mController.isVideoCaptureIntent()) {
-            // Cannot use RotateImageView for "done" and "cancel" button because
-            // the tablet layout uses RotateLayout, which cannot be cast to
-            // RotateImageView.
-            mReviewDoneButton = mRootView.findViewById(R.id.btn_done);
-            mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
-            mReviewPlayButton = mRootView.findViewById(R.id.btn_play);
-            mReviewCancelButton.setVisibility(View.VISIBLE);
-            mReviewDoneButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mController.onReviewDoneClicked(v);
-                }
-            });
-            mReviewCancelButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mController.onReviewCancelClicked(v);
-                }
-            });
-            mReviewPlayButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mController.onReviewPlayClicked(v);
-                }
-            });
+            setupBottomBarLayout();
         }
     }
 
@@ -268,17 +307,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
 
     public void onCameraOpened(ButtonManager.ButtonCallback flashCallback,
             ButtonManager.ButtonCallback cameraCallback) {
-        ButtonManager buttonManager = mActivity.getButtonManager();
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (settingsManager.isCameraBackFacing()) {
-            buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
-                flashCallback, R.array.video_flashmode_icons);
+        mFlashCallback = flashCallback;
+        mCameraCallback = cameraCallback;
+
+        if (mController.isVideoCaptureIntent()) {
+            setupBottomBarIntentLayout();
         } else {
-            buttonManager.disableButton(ButtonManager.BUTTON_TORCH,
-                R.id.flash_toggle_button);
+            setupBottomBarLayout();
         }
-        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
-            cameraCallback, R.array.camera_id_icons);
     }
 
     private void initializeMiscControls() {
@@ -339,8 +375,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     }
 
     public void showReviewControls() {
-        CameraUtil.fadeIn(mReviewDoneButton);
-        CameraUtil.fadeIn(mReviewPlayButton);
+        setupBottomBarIntentReviewLayout();
         mReviewImage.setVisibility(View.VISIBLE);
     }
 

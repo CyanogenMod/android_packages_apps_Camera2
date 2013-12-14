@@ -41,6 +41,7 @@ public class ButtonManager {
     public static final int BUTTON_CANCEL = 4;
     public static final int BUTTON_DONE = 5;
     public static final int BUTTON_RETAKE = 6;
+    public static final int BUTTON_REVIEW = 7;
 
     /** A reference to the activity for finding button views on demand. */
     private CameraActivity mActivity;
@@ -94,6 +95,9 @@ public class ButtonManager {
                     throw new IllegalStateException("Done button could not be found.");
                 case BUTTON_RETAKE:
                     throw new IllegalStateException("Retake button could not be found.");
+                case BUTTON_REVIEW:
+                    throw new IllegalStateException("Review button could not be found.");
+
                 default:
                     throw new IllegalArgumentException("button not known by id=" + buttonId);
             }

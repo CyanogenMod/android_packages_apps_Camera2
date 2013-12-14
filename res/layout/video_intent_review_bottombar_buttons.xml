@@ -24,27 +24,16 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_menu_cancel_holo_light"
             android:background="@null" />
-        <!-- dummy invisible view only for spacing -->
-        <View
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            android:visibility="invisible" />
-        <com.android.camera.MultiToggleImageButton
-            android:id="@+id/flash_toggle_button"
+        <ImageButton
+            android:id="@+id/done_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
-            camera:imageIds="@array/camera_flashmode_icons" />
-        <com.android.camera.MultiToggleImageButton
-            android:id="@+id/camera_toggle_button"
+            android:src="@drawable/ic_menu_done_holo_light"
+            android:background="@null" />
+        <ImageButton
+            android:id="@+id/review_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
-            camera:imageIds="@array/camera_id_icons" />
-        <com.android.camera.MultiToggleImageButton
-            android:id="@+id/hdr_plus_toggle_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            camera:imageIds="@array/pref_camera_hdr_plus_icons" />
+            android:src="@drawable/ic_menu_trash_holo_light"
+            android:background="@null" />
 </merge>

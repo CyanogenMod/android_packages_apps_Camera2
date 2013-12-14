@@ -34,17 +34,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            camera:imageIds="@array/camera_flashmode_icons" />
+            camera:imageIds="@array/video_flashmode_icons" />
         <com.android.camera.MultiToggleImageButton
             android:id="@+id/camera_toggle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
             camera:imageIds="@array/camera_id_icons" />
-        <com.android.camera.MultiToggleImageButton
-            android:id="@+id/hdr_plus_toggle_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            camera:imageIds="@array/pref_camera_hdr_plus_icons" />
 </merge>
