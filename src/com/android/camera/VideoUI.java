@@ -17,14 +17,10 @@
 package com.android.camera;
 
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Parameters;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -33,7 +29,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,9 +48,9 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
 
     private final PreviewOverlay mPreviewOverlay;
     // module fields
-    private CameraActivity mActivity;
-    private View mRootView;
-    private TextureView mTextureView;
+    private final CameraActivity mActivity;
+    private final View mRootView;
+    private final TextureView mTextureView;
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
@@ -68,11 +63,11 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
     private SurfaceTexture mSurfaceTexture;
-    private VideoController mController;
+    private final VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
 
-    private BottomBar mBottomBar;
+    private final BottomBar mBottomBar;
     private final int mBottomBarMinHeight;
     private final int mBottomBarOptimalHeight;
 
@@ -84,7 +79,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private float mAspectRatio = 16f / 9f;
     private final AnimationManager mAnimationManager;
 
-    private OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
+    private final OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(View v, int left, int top, int right,
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -121,7 +116,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mRootView = parent;
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.video_module,
-                (ViewGroup) moduleRoot, true);
+                moduleRoot, true);
 
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
 
@@ -129,6 +124,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mPreviewWidth = mTextureView.getWidth();
         mPreviewHeight = mTextureView.getHeight();
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
+        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
+        mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
+        mBottomBarMinHeight = activity.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
+        mBottomBarOptimalHeight = activity.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
+        mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.video_mode_color));
+
         mSurfaceTexture = mTextureView.getSurfaceTexture();
         if (mSurfaceTexture != null) {
             setTransformMatrix(mPreviewWidth, mPreviewHeight);
@@ -137,14 +140,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         initializeMiscControls();
         initializeControlByIntent();
         mAnimationManager = new AnimationManager();
-
-        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
-        mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
-        mBottomBarMinHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
-        mBottomBarOptimalHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
-        mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.video_mode_color));
     }
 
 
