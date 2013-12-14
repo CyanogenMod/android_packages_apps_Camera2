@@ -230,7 +230,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             matrix.setScale(scaleX, scaleY, (float) width / 2, 0.0f);
         }
         setPreviewTransformMatrix(matrix);
-
         float previewAspectRatio =
                 (float)scaledTextureWidth / (float)scaledTextureHeight;
         if (previewAspectRatio < 1.0) {
@@ -383,9 +382,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 AnimationFinishedListener listener = new AnimationFinishedListener() {
                     public void onAnimationFinished(boolean success) {
                         if (success) {
+                            mHideCoverRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    mModeTransitionView.startPeepHoleAnimation();
+                                }
+                            };
+                            mModeCoverState = COVER_SHOWN;
                             // Go to new module when the previous operation is successful.
                             mController.onModeSelected(moduleToTransitionTo);
-                            mModeTransitionView.startPeepHoleAnimation();
                         }
                     }
                 };
@@ -452,6 +457,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mAppRootView.post(mHideCoverRunnable);
             mHideCoverRunnable = null;
         }
+        mModeCoverState = COVER_HIDDEN;
     }
 
     /**
@@ -559,13 +565,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     @Override
     public void onModeSelected(int modeIndex) {
-        mController.onModeSelected(modeIndex);
         mHideCoverRunnable = new Runnable() {
             @Override
             public void run() {
                 mModeListView.startModeSelectionAnimation();
             }
         };
+        mModeCoverState = COVER_SHOWN;
+
+        int lastIndex = mController.getCurrentModuleIndex();
+        mController.onModeSelected(modeIndex);
+        int currentIndex = mController.getCurrentModuleIndex();
 
         if (mTextureView == null) {
             // TODO: Remove this when all the modules use TextureView
@@ -576,10 +586,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     hideModeCover();
                 }
             }, temporaryDelay);
-        } else if (mTextureView.getSurfaceTexture() != null) {
+        } else if (lastIndex == currentIndex) {
             hideModeCover();
-        } else {
-            mModeCoverState = COVER_SHOWN;
         }
     }
 

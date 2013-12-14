@@ -50,7 +50,7 @@ import java.util.List;
 
 public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private static final String TAG = "CAM_VideoUI";
-    private static final int UPDATE_TRANSFORM_MATRIX = 1;
+
     private final PreviewOverlay mPreviewOverlay;
     // module fields
     private CameraActivity mActivity;
@@ -76,27 +76,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private final int mBottomBarMinHeight;
     private final int mBottomBarOptimalHeight;
 
-    private View mPreviewCover;
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
-    private float mAspectRatio = 4f / 3f;
-    private Matrix mMatrix = null;
+    private float mAspectRatio = 16f / 9f;
     private final AnimationManager mAnimationManager;
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UPDATE_TRANSFORM_MATRIX:
-                    setTransformMatrix(mPreviewWidth, mPreviewHeight);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+
     private OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(View v, int left, int top, int right,
@@ -139,19 +126,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
 
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
+        mPreviewWidth = mTextureView.getWidth();
+        mPreviewHeight = mTextureView.getHeight();
         mTextureView.addOnLayoutChangeListener(mLayoutListener);
-
         mSurfaceTexture = mTextureView.getSurfaceTexture();
         if (mSurfaceTexture != null) {
-            setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
-        }
-
-        mSurfaceTexture = mTextureView.getSurfaceTexture();
-        if (mSurfaceTexture != null) {
-            mPreviewWidth = mTextureView.getWidth();
-            mPreviewHeight = mTextureView.getHeight();
             setTransformMatrix(mPreviewWidth, mPreviewHeight);
         }
+
         initializeMiscControls();
         initializeControlByIntent();
         mAnimationManager = new AnimationManager();
@@ -207,12 +189,13 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
             Log.w(TAG, "Preview size should not be 0.");
             return;
         }
+        float aspectRatio;
         if (width > height) {
-            mAspectRatio = (float) width / height;
+            aspectRatio = (float) width / height;
         } else {
-            mAspectRatio = (float) height / width;
+            aspectRatio = (float) height / width;
         }
-        mHandler.sendEmptyMessage(UPDATE_TRANSFORM_MATRIX);
+        setAspectRatio(aspectRatio);
     }
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
@@ -318,8 +301,15 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     public void updateOnScreenIndicators(Parameters param) {
     }
 
-    public void setAspectRatio(double ratio) {
-      //  mPreviewFrameLayout.setAspectRatio(ratio);
+    public void setAspectRatio(float ratio) {
+        if (ratio <= 0) {
+            return;
+        }
+        float aspectRatio = ratio > 1 ? ratio : 1 / ratio;
+        if (aspectRatio != mAspectRatio) {
+            mAspectRatio = aspectRatio;
+            setTransformMatrix(mPreviewWidth, mPreviewHeight);
+        }
     }
 
     public void showTimeLapseUI(boolean enable) {
