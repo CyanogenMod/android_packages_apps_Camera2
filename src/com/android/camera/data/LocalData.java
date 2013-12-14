@@ -81,6 +81,8 @@ public interface LocalData extends ImageData {
      */
     public static final int LOCAL_RGBZ = 8;
 
+    // TODO: Re-think how the in-progress logic works. We shouldn't need to pass
+    // in the information about whether this session is in progress.
     View getView(Context ctx, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress);
 

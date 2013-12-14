@@ -512,6 +512,9 @@ public abstract class LocalMediaData implements LocalData {
             private final int mDecodeHeight;
             private final ContentResolver mResolver;
             private final LocalDataAdapter mAdapter;
+
+            // TODO: Re-think how we can avoid having the in-progress indication
+            // here.
             private final boolean mIsInProgressSession;
 
             private boolean mNeedsRefresh;
