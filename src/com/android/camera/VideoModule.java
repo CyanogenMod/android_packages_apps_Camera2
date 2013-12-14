@@ -580,7 +580,7 @@ public class VideoModule extends CameraModule
     }
 
     private void resizeForPreviewAspectRatio() {
-        mUI.setAspectRatio((double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
+        mUI.setAspectRatio((float) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
     }
 
     private void installIntentFilter() {
