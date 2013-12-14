@@ -48,7 +48,8 @@ public class ModulesInfo {
         moduleManager.setDefaultModuleIndex(MODULE_PHOTO);
         registerVideoModule(moduleManager);
         if (PhotoSphereHelper.hasLightCycleCapture(context)) {
-            registerWideAngleModule(moduleManager);
+            // TODO: Re-enable once we have wide-angle mode CLs in.
+            // registerWideAngleModule(moduleManager);
             registerPhotoSphereModule(moduleManager);
         }
         if (RefocusHelper.hasRefocusCapture(context)) {
@@ -150,7 +151,7 @@ public class ModulesInfo {
             @Override
             public ModuleController createModule(AppController app) {
                 // TODO: remove the type casting.
-                return (ModuleController) RefocusHelper.createRefocusModule(app);
+                return RefocusHelper.createRefocusModule(app);
             }
         });
     }
@@ -169,7 +170,7 @@ public class ModulesInfo {
 
             @Override
             public ModuleController createModule(AppController app) {
-                return (ModuleController) GcamHelper.createGcamModule(app);
+                return GcamHelper.createGcamModule(app);
             }
         });
     }
