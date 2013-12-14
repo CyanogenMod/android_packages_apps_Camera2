@@ -17,7 +17,6 @@
 package com.android.camera.app;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
@@ -30,18 +29,17 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
-import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
 
 /**
@@ -210,15 +208,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private View mFlashOverlay;
     private FrameLayout mModuleUI;
 
-    private GestureDetector mGestureDetector;
+    private final GestureDetector mGestureDetector;
     private int mSwipeState = IDLE;
-    private ImageView mPreviewThumbView;
     private PreviewOverlay mPreviewOverlay;
     private CaptureAnimationOverlay mCaptureOverlay;
     private PreviewStatusListener mPreviewStatusListener;
     private int mModeCoverState = COVER_HIDDEN;
-    private FilmstripBottomControls mFilmstripBottomControls;
-    private FilmstripContentPanel mFilmstripPanel;
+    private final FilmstripBottomControls mFilmstripBottomControls;
+    private final FilmstripContentPanel mFilmstripPanel;
     private Runnable mHideCoverRunnable;
 
     // TODO this isn't used by all modules universally, should be part of a util class or something
@@ -257,7 +254,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         setPreviewTransformMatrix(matrix);
 
         float previewAspectRatio =
-                (float)scaledTextureWidth / (float)scaledTextureHeight;
+                scaledTextureWidth / scaledTextureHeight;
         if (previewAspectRatio < 1.0) {
             previewAspectRatio = 1.0f/previewAspectRatio;
         }
@@ -281,10 +278,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             } else {
                 bottomBar.setAlpha(1.0f);
                 if (landscape) {
-                    lp.width = (int)((float) width - scaledTextureWidth);
+                    lp.width = (int)(width - scaledTextureWidth);
                     lp.height = LayoutParams.MATCH_PARENT;
                 } else {
-                    lp.height = (int)((float) height - scaledTextureHeight);
+                    lp.height = (int)(height - scaledTextureHeight);
                     lp.width = LayoutParams.MATCH_PARENT;
                 }
             }
@@ -406,6 +403,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 int iconRes = ModeListView.getModeIconResourceId(moduleToTransitionTo);
 
                 AnimationFinishedListener listener = new AnimationFinishedListener() {
+                    @Override
                     public void onAnimationFinished(boolean success) {
                         if (success) {
                             // Go to new module when the previous operation is successful.
@@ -528,8 +526,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mCaptureOverlay = (CaptureAnimationOverlay)
                 mCameraRootView.findViewById(R.id.capture_overlay);
-        mPreviewThumbView = (ImageView) mCameraRootView.findViewById(R.id.preview_thumb);
-
     }
 
     // TODO: Remove this when refactor is done.
@@ -638,28 +634,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void cancelPreCaptureAnimation() {
         mAnimationManager.cancelAnimations();
-    }
-
-    /**
-     * Starts the post-capture animation with the current preview image.
-     */
-    public void startPostCaptureAnimation() {
-        if (mTextureView == null) {
-            Log.e(TAG, "Cannot get a frame from a null TextureView for animation");
-            return;
-        }
-        // TODO: Down sample bitmap
-        startPostCaptureAnimation(mTextureView.getBitmap());
-    }
-
-    /**
-     * Starts the post-capture animation with the given thumbnail.
-     *
-     * @param thumbnail The thumbnail for the animation.
-     */
-    public void startPostCaptureAnimation(Bitmap thumbnail) {
-        mPreviewThumbView.setImageBitmap(thumbnail);
-        mAnimationManager.startCaptureAnimation(mPreviewThumbView);
     }
 
     /**
