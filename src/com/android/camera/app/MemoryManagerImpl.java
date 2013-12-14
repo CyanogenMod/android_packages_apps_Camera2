@@ -19,6 +19,7 @@ package com.android.camera.app;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.Log;
 
 import com.android.camera.app.MediaSaver.QueueListener;
 
@@ -30,6 +31,8 @@ import java.util.LinkedList;
  * TODO: Add GCam signals.
  */
 public class MemoryManagerImpl implements MemoryManager, QueueListener, ComponentCallbacks2 {
+    private static final String TAG = "MemoryManagerImpl";
+
     private static final int[] sCriticalStates = new int[] {
             ComponentCallbacks2.TRIM_MEMORY_COMPLETE,
             ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL
@@ -72,7 +75,8 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     public void removeListener(MemoryListener listener) {
         synchronized (mListeners) {
             if (!mListeners.contains(listener)) {
-                throw new IllegalStateException("Listener was never added.");
+                Log.w(TAG, "Cannot remove listener that was never added.");
+                return;
             }
             mListeners.remove(listener);
         }
