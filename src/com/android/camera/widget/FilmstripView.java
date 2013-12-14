@@ -2242,9 +2242,15 @@ public class FilmstripView extends ViewGroup {
     }
 
     private class MyGestureReceiver implements FilmstripGestureRecognizer.Listener {
+
+        private static final int SCROLL_DIR_NONE = 0;
+        private static final int SCROLL_DIR_VERTICAL = 1;
+        private static final int SCROLL_DIR_HORIZONTAL = 2;
         // Indicating the current trend of scaling is up (>1) or down (<1).
         private float mScaleTrend;
         private float mMaxScale;
+        private int mScrollingDirection = SCROLL_DIR_NONE;
+
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -2305,6 +2311,7 @@ public class FilmstripView extends ViewGroup {
             }
             float halfH = getHeight() / 2;
             mIsUserScrolling = false;
+            mScrollingDirection = SCROLL_DIR_NONE;
             // Finds items promoted/demoted.
             for (int i = 0; i < BUFFER_SIZE; i++) {
                 if (mViewItem[i] == null) {
@@ -2385,16 +2392,23 @@ public class FilmstripView extends ViewGroup {
             int deltaX = (int) (dx / mScale);
             // Forces the current scrolling to stop.
             mController.stopScrolling(true);
-            if (mCenterX == currItem.getCenterX() && currItem.getId() == 0 && dx < 0) {
-                // Already at the beginning, don't process the swipe.
-                return false;
-            }
             if (!mIsUserScrolling) {
                 mIsUserScrolling = true;
                 mDataIdOnUserScrolling = mViewItem[mCurrentItem].getId();
             }
             if (inFilmstrip()) {
-                if (Math.abs(dx) > Math.abs(dy)) {
+                // Disambiguate horizontal/vertical first.
+                if (mScrollingDirection == SCROLL_DIR_NONE) {
+                    mScrollingDirection = (Math.abs(dx) > Math.abs(dy)) ? SCROLL_DIR_HORIZONTAL :
+                            SCROLL_DIR_VERTICAL;
+                }
+                if (mScrollingDirection == SCROLL_DIR_HORIZONTAL) {
+                    if (mCenterX == currItem.getCenterX() && currItem.getId() == 0 && dx < 0) {
+                        // Already at the beginning, don't process the swipe.
+                        mIsUserScrolling = false;
+                        mScrollingDirection = SCROLL_DIR_NONE;
+                        return false;
+                    }
                     mController.scroll(deltaX);
                 } else {
                     // Vertical part. Promote or demote.
