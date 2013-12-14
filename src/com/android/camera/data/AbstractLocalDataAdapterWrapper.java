@@ -95,7 +95,7 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void refresh(ContentResolver resolver, Uri uri) {
-        mAdapter.refresh(resolver, uri);
+    public void refresh(ContentResolver resolver, Uri uri, boolean isInProgressSession) {
+        mAdapter.refresh(resolver, uri, isInProgressSession);
     }
 }

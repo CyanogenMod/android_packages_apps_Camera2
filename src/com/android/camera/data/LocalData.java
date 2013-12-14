@@ -82,7 +82,7 @@ public interface LocalData extends ImageData {
     public static final int LOCAL_RGBZ = 8;
 
     View getView(Context ctx, int width, int height, Drawable placeHolder,
-            LocalDataAdapter adapter);
+            LocalDataAdapter adapter, boolean isInProgress);
 
     /**
      * Gets the date when this data is created. The returned date is also used

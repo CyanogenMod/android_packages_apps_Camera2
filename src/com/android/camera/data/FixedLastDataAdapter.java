@@ -116,7 +116,7 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
             return mAdapter.getView(context, dataID);
         } else if (dataID == totalNumber) {
             return mLastData.getView(context,
-                    mSuggestedWidth, mSuggestedHeight, null, null);
+                    mSuggestedWidth, mSuggestedHeight, null, null, false);
         }
 
         return null;

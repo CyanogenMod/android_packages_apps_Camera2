@@ -45,7 +45,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private LocalDataList mImages;
 
     private Listener mListener;
-    private Drawable mPlaceHolder;
+    private final Drawable mPlaceHolder;
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
@@ -100,7 +100,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
         return mImages.get(dataID).getView(
                 context, mSuggestedWidth, mSuggestedHeight,
-                mPlaceHolder.getConstantState().newDrawable(), this);
+                mPlaceHolder.getConstantState().newDrawable(), this, /* inProgress */ false);
     }
 
     @Override
@@ -121,7 +121,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void removeData(Context c, int dataID) {
-        if (dataID >= mImages.size()) return;
+        if (dataID >= mImages.size()) {
+            return;
+        }
         LocalData d = mImages.remove(dataID);
         // Delete previously removed data first.
         executeDeletion(c);
@@ -214,7 +216,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void refresh(ContentResolver resolver, Uri contentUri) {
+    public void refresh(ContentResolver resolver, Uri contentUri, boolean isInProgressSession) {
         int pos = findDataByContentUri(contentUri);
         if (pos == -1) {
             return;
@@ -222,6 +224,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
         LocalData data = mImages.get(pos);
         LocalData refreshedData = data.refresh(resolver);
+
+        // Wrap the data item if this represents a session that is in progress.
+        if (isInProgressSession) {
+            refreshedData = new InProgressDataWrapper(refreshedData);
+        }
+
         if (refreshedData != null) {
             updateData(pos, refreshedData);
         }

@@ -141,7 +141,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             }
 
             // Set final values in media store, such as mime type and size.
-            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession);
+            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, LocalData.MIME_TYPE_JPEG,
+                    /* finalImage */ true);
             mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
             notifyTaskDone(mPlaceHolderSession.outputUri);
@@ -161,8 +162,10 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public void onMediaChanged() {
-            // TODO: Refresh filmstrip et al.
+        public void onPreviewChanged() {
+            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession,
+                    PlaceholderManager.PLACEHOLDER_MIME_TYPE, /* finalImage */ false);
+            notifySessionUpdate(mPlaceHolderSession.outputUri);
         }
     }
 
@@ -303,6 +306,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 synchronized (mTaskListeners) {
                     for (SessionListener listener : mTaskListeners) {
                         listener.onSessionProgress(uri, progressPercent);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Notifies all task listeners that the task with the given URI has updated
+     * its media.
+     */
+    private void notifySessionUpdate(final Uri uri) {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mTaskListeners) {
+                    for (SessionListener listener : mTaskListeners) {
+                        listener.onSessionUpdated(uri);
                     }
                 }
             }

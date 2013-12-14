@@ -72,8 +72,10 @@ public interface LocalDataAdapter extends DataAdapter {
      *
      * @param resolver {@link ContentResolver} used to refresh the data.
      * @param uri The {@link Uri} of the data to refresh.
+     * @param isInProgressSession Whether this data item has a session in
+     *            progress associated with it.
      */
-    public void refresh(ContentResolver resolver, Uri uri);
+    public void refresh(ContentResolver resolver, Uri uri, boolean isInProgressSession);
 
     /**
      * Finds the {@link LocalData} of the specified content Uri.

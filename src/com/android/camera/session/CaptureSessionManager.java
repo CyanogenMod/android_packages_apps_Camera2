@@ -34,13 +34,19 @@ public interface CaptureSessionManager {
          * Called when the session with the given Uri was queued and will be
          * processed.
          */
-        public void onSessionQueued(Uri imageUri);
+        public void onSessionQueued(Uri mediaUri);
+
+        /**
+         * Called when the media underlying the session with the given Uri has
+         * been updated.
+         */
+        public void onSessionUpdated(Uri mediaUri);
 
         /** Called when the session with the given Uri finished. */
-        public void onSessionDone(Uri imageUri);
+        public void onSessionDone(Uri mediaUri);
 
-        /** Called when the session with the given Uri was progressed. */
-        public void onSessionProgress(Uri imageUri, int progress);
+        /** Called when the session with the given Uri has progressed. */
+        public void onSessionProgress(Uri mediaUri, int progress);
     }
 
     /**

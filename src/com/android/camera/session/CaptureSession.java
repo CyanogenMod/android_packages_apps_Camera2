@@ -108,5 +108,5 @@ public interface CaptureSession {
      * Called when the underlying media file has been changed and the session
      * should update itself.
      */
-    public void onMediaChanged();
+    public void onPreviewChanged();
 }

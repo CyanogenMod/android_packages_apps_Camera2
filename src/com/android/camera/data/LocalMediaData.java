@@ -39,7 +39,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.data.RgbzMetadataLoader.RgbzMetadataCallback;
-import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
@@ -247,21 +246,21 @@ public abstract class LocalMediaData implements LocalData {
 
     protected ImageView fillImageView(Context ctx, ImageView v,
             int decodeWidth, int decodeHeight, Drawable placeHolder,
-            LocalDataAdapter adapter) {
+            LocalDataAdapter adapter, boolean isInProgress) {
         v.setScaleType(ImageView.ScaleType.FIT_XY);
         v.setImageDrawable(placeHolder);
 
         BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight,
-                ctx.getContentResolver(), adapter);
+                ctx.getContentResolver(), adapter, isInProgress);
         task.execute();
         return v;
     }
 
     @Override
     public View getView(Context ctx, int decodeWidth, int decodeHeight, Drawable placeHolder,
-            LocalDataAdapter adapter) {
+            LocalDataAdapter adapter, boolean isInProgress) {
         return fillImageView(ctx, new ImageView(ctx), decodeWidth, decodeHeight,
-                placeHolder, adapter);
+                placeHolder, adapter, isInProgress);
     }
 
     @Override
@@ -325,7 +324,7 @@ public abstract class LocalMediaData implements LocalData {
 
     protected abstract BitmapLoadTask getBitmapLoadTask(
             ImageView v, int decodeWidth, int decodeHeight,
-            ContentResolver resolver, LocalDataAdapter adapter);
+            ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession);
 
     public static final class PhotoData extends LocalMediaData {
         private static final String TAG = "CAM_PhotoData";
@@ -503,9 +502,9 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
                 ImageView v, int decodeWidth, int decodeHeight,
-                ContentResolver resolver, LocalDataAdapter adapter) {
+                ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession) {
             return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight,
-                    resolver, adapter);
+                    resolver, adapter, isInProgressSession);
         }
 
         private final class PhotoBitmapLoadTask extends BitmapLoadTask {
@@ -513,17 +512,19 @@ public abstract class LocalMediaData implements LocalData {
             private final int mDecodeHeight;
             private final ContentResolver mResolver;
             private final LocalDataAdapter mAdapter;
+            private final boolean mIsInProgressSession;
 
             private boolean mNeedsRefresh;
 
             public PhotoBitmapLoadTask(ImageView v, int decodeWidth,
                     int decodeHeight, ContentResolver resolver,
-                    LocalDataAdapter adapter) {
+                    LocalDataAdapter adapter, boolean isInProgressSession) {
                 super(v);
                 mDecodeWidth = decodeWidth;
                 mDecodeHeight = decodeHeight;
                 mResolver = resolver;
                 mAdapter = adapter;
+                mIsInProgressSession = isInProgressSession;
             }
 
             @Override
@@ -588,7 +589,7 @@ public abstract class LocalMediaData implements LocalData {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 if (mNeedsRefresh && mAdapter != null) {
-                    mAdapter.refresh(mResolver, getContentUri());
+                    mAdapter.refresh(mResolver, getContentUri(), mIsInProgressSession);
                 }
             }
         }
@@ -775,7 +776,7 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public View getView(final Context ctx,
                 int decodeWidth, int decodeHeight, Drawable placeHolder,
-                LocalDataAdapter adapter) {
+                LocalDataAdapter adapter, boolean isInProgress) {
 
             // ImageView for the bitmap.
             ImageView iv = new ImageView(ctx);
@@ -783,7 +784,7 @@ public abstract class LocalMediaData implements LocalData {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
             fillImageView(ctx, iv, decodeWidth, decodeHeight, placeHolder,
-                    adapter);
+                    adapter, isInProgress);
 
             // ImageView for the play icon.
             ImageView icon = new ImageView(ctx);
@@ -810,7 +811,8 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
                 ImageView v, int decodeWidth, int decodeHeight,
-                ContentResolver resolver, LocalDataAdapter adapter) {
+                ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession) {
+            // TODO: Support isInProgressSession for videos when we need it.
             return new VideoBitmapLoadTask(v);
         }
 
