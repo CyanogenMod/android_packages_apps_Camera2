@@ -112,11 +112,21 @@
         android:layout="@layout/face_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
     <com.android.camera.ui.RenderOverlay
         android:id="@+id/render_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <com.android.camera.ui.RotateImageView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/scene_detect_icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="23dp"
+            android:visibility="gone"
+            android:src="@drawable/smart_scene_sports" />
+    </com.android.camera.ui.RenderOverlay>
     <include layout="@layout/camera_controls"
         android:layout_gravity="center"
         style="@style/CameraControls"/>

@@ -157,21 +157,15 @@ public class VideoUI implements PieRenderer.PieListener,
             showAtLocation(mRootView, Gravity.CENTER, 0, 0);
         }
 
-        public void dismiss(boolean topLevelOnly) {
+        public void dismiss() {
             super.dismiss();
             popupDismissed();
             showUI();
-            mVideoMenu.popupDismissed(topLevelOnly);
+            mVideoMenu.popupDismissed();
 
             // Switch back into fullscreen/lights-out mode after popup
             // is dimissed.
             mActivity.setSystemBarsVisibility(false);
-        }
-
-        @Override
-        public void dismiss() {
-            // Called by Framework when touch outside the popup or hit back key
-            dismiss(true);
         }
     }
 
@@ -401,7 +395,7 @@ public class VideoUI implements PieRenderer.PieListener,
     public boolean collapseCameraControls() {
         boolean ret = false;
         if (mPopup != null) {
-            dismissPopup(false);
+            dismissPopup();
             ret = true;
         }
         return ret;
@@ -409,7 +403,7 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public boolean removeTopLevelPopup() {
         if (mPopup != null) {
-            dismissPopup(true);
+            dismissPopup();
             return true;
         }
         return false;
@@ -549,11 +543,11 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
-    public void dismissPopup(boolean topLevelOnly) {
+    public void dismissPopup() {
         // In review mode, we do not want to bring up the camera UI
         if (mController.isInReviewMode()) return;
         if (mPopup != null) {
-            mPopup.dismiss(topLevelOnly);
+            mPopup.dismiss();
         }
     }
 
@@ -565,7 +559,7 @@ public class VideoUI implements PieRenderer.PieListener,
         hideUI();
 
         if (mPopup != null) {
-            mPopup.dismiss(false);
+            mPopup.dismiss();
         }
         mPopup = new SettingsPopup(popup);
     }

@@ -20,7 +20,9 @@ package com.android.camera;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -55,6 +57,7 @@ import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
+import com.android.camera.ui.RotateImageView;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
@@ -96,6 +99,8 @@ public class PhotoUI implements PieListener,
     private AlertDialog mLocationDialog;
 
     // Small indicators which show the camera settings in the viewfinder.
+    private ImageView mSceneDetectView;
+
     private OnScreenIndicators mOnScreenIndicators;
 
     private PieRenderer mPieRenderer;
@@ -227,6 +232,8 @@ public class PhotoUI implements PieListener,
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
+        mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
+
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mAnimationManager = new AnimationManager();
 
@@ -940,4 +947,23 @@ public class PhotoUI implements PieListener,
         mController.updateCameraOrientation();
     }
 
+    public void updateSceneDetectionIcon(String scene) {
+        if (scene == null) {
+            mSceneDetectView.setVisibility(View.GONE);
+            return;
+        }
+        String[] values = mActivity.getResources().getStringArray(R.array.camera_asd_values);
+        int i = 0;
+        for (i = 0; i < values.length; i++) {
+            if (values[i].equals(scene)) {
+                break;
+            }
+        }
+        if (i < values.length) {
+            TypedArray imgs = mActivity.getResources().obtainTypedArray(R.array.camera_asd_icons);
+            mSceneDetectView.setImageResource(imgs.getResourceId(i, -1));
+        }
+        mSceneDetectView.setVisibility(View.VISIBLE);
+    }
 }
+

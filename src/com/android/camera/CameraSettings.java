@@ -36,6 +36,7 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import android.os.Build;
@@ -55,6 +56,7 @@ public class CameraSettings {
     public static final String KEY_PICTURE_SIZE = "pref_camera_picturesize_key";
     public static final String KEY_JPEG_QUALITY = "pref_camera_jpegquality_key";
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
+    public static final String KEY_FOCUS_TIME = "pref_camera_focustime_key";
     public static final String KEY_FLASH_MODE = "pref_camera_flashmode_key";
     public static final String KEY_VIDEOCAMERA_FLASH_MODE = "pref_camera_video_flashmode_key";
     public static final String KEY_WHITE_BALANCE = "pref_camera_whitebalance_key";
@@ -127,6 +129,10 @@ public class CameraSettings {
     private static final String VIDEO_QUALITY_MMS = "mms";
     private static final String VIDEO_QUALITY_YOUTUBE = "youtube";
 
+    public static final String KEY_BURST_MODE = "pref_camera_burst_key";
+    public static final String KEY_BEAUTY_MODE = "pref_camera_beauty_mode";
+    public static final String KEY_SLOW_SHUTTER = "pref_camera_slow_shutter";
+    public static final String KEY_ASD = "pref_camera_asd";
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
@@ -297,7 +303,6 @@ public class CameraSettings {
         ListPreference faceRC = group.findPreference(KEY_FACE_RECOGNITION);
         ListPreference jpegQuality = group.findPreference(KEY_JPEG_QUALITY);
         ListPreference videoSnapSize = group.findPreference(KEY_VIDEO_SNAPSHOT_SIZE);
-        ListPreference videoHdr = group.findPreference(KEY_VIDEO_HDR);
         ListPreference pictureFormat = group.findPreference(KEY_PICTURE_FORMAT);
 
         if (touchAfAec != null) {
@@ -327,11 +332,6 @@ public class CameraSettings {
         if (denoise != null) {
             filterUnsupportedOptions(group,
                     denoise, mParameters.getSupportedDenoiseModes());
-        }
-
-        if (videoHdr != null) {
-            filterUnsupportedOptions(group,
-                    videoHdr, mParameters.getSupportedVideoHDRModes());
         }
 
         if (colorEffect != null) {
@@ -408,6 +408,9 @@ public class CameraSettings {
         ListPreference cameraHdr = group.findPreference(KEY_CAMERA_HDR);
         ListPreference disMode = group.findPreference(KEY_DIS);
         ListPreference cameraHdrPlus = group.findPreference(KEY_CAMERA_HDR_PLUS);
+        ListPreference beautyMode = group.findPreference(KEY_BEAUTY_MODE);
+        ListPreference slowShutter = group.findPreference(KEY_SLOW_SHUTTER);
+        ListPreference asd = group.findPreference(KEY_ASD);
 
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
@@ -463,6 +466,17 @@ public class CameraSettings {
         if (cameraHdrPlus != null && (!ApiHelper.HAS_CAMERA_HDR_PLUS ||
                 !GcamHelper.hasGcamCapture() || isFrontCamera)) {
             removePreference(group, cameraHdrPlus.getKey());
+        }
+        if (beautyMode != null) {
+            if (!isBeautyModeSupported(mParameters)) {
+                removePreference(group, beautyMode.getKey());
+            }
+        }
+        if (slowShutter != null) {
+            filterUnsupportedOptions(group, slowShutter, getSupportedSlowShutter(mParameters));
+        }
+        if (asd != null && !CameraUtil.isAutoSceneDetectionSupported(mParameters)) {
+            removePreference(group, asd.getKey());
         }
         qcomInitPreferences(group);
     }
@@ -829,4 +843,38 @@ public class CameraSettings {
         }
         return DEFAULT_VIDEO_DURATION * 1000;
     }
+
+    /**
+     * Beauty mode
+     */
+    public static void setBeautyMode(Parameters params, boolean enable) {
+        if (isBeautyModeSupported(params)) {
+            params.set("video-skinbeauty-mode", enable ? "on" : "off");
+            params.set("face-beautify", enable ? "3" : "0");
+        }
+    }
+
+    public static boolean isBeautyModeSupported(Parameters params) {
+        return params.get("face-beautify") != null;
+    }
+
+    public static List<String> getSupportedSlowShutter(Parameters params) {
+        String p = params.get("slow-shutter-values");
+        if (p != null) {
+            return Arrays.asList(p.split(","));
+        }
+        return null;
+    }
+
+    public static void setSlowShutter(Parameters params, String value) {
+        if (getSupportedSlowShutter(params) != null) {
+            params.set("slow-shutter", value);
+        }
+    }
+
+    public static boolean isSlowShutterEnabled(Parameters params) {
+        return (getSupportedSlowShutter(params) != null) &&
+                !"slow-shutter-off".equals(params.get("slow-shutter"));
+    }
+
 }

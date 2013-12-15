@@ -1905,10 +1905,16 @@ public class VideoModule implements CameraModule,
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
 
-        CameraUtil.dumpParameters(mParameters);
+
+        // Beauty mode
+        CameraSettings.setBeautyMode(mParameters, mPreferences.getString(CameraSettings.KEY_BEAUTY_MODE,
+                mActivity.getString(R.string.pref_camera_beauty_mode_default)).equals("on"));
 
         //Call Qcom related Camera Parameters
         qcomSetCameraParameters();
+
+        CameraUtil.dumpParameters(mParameters);
+
         mCameraDevice.setParameters(mParameters);
 
         // Keep preview size up to date.
