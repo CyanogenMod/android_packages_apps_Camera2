@@ -86,9 +86,6 @@ public class PhotoUI implements
     private final int mBottomBarMinHeight;
     private final int mBottomBarOptimalHeight;
 
-    private boolean mHideFocusRing;
-    private boolean mImmediateCapture;
-
     private ButtonManager.ButtonCallback mCameraCallback;
     private ButtonManager.ButtonCallback mHdrCallback;
 
@@ -488,10 +485,8 @@ public class PhotoUI implements
 
     // focus UI implementation
     private FocusIndicator getFocusIndicator() {
-        if (mHideFocusRing) {
-            return null;
-        }
-        return (mFaceView != null && mFaceView.faceExists()) ? mFaceView : null;
+        return null;
+        //return (mFaceView != null && mFaceView.faceExists()) ? mFaceView : null;
     }
 
     @Override
