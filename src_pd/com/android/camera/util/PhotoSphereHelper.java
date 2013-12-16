@@ -19,11 +19,11 @@ package com.android.camera.util;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 
 import com.android.camera.CameraModule;
 import com.android.camera.app.AppController;
-import com.android.camera.app.CameraServices;
 
 public class PhotoSphereHelper {
     public static class PanoramaMetadata {
@@ -56,8 +56,13 @@ public class PhotoSphereHelper {
             /* Do nothing */
         }
 
-        public void showPanorama(Uri uri) {
+        /**
+         * @return The {@link android.content.Intent} to invoke the external
+         * PhotoSphere viewer.
+         */
+        public Intent showPanorama(Uri uri) {
             /* Do nothing */
+            return null;
         }
 
         public void showRgbz(Uri uri) {
