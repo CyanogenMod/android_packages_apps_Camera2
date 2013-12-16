@@ -1043,6 +1043,9 @@ public class FilmstripView extends ViewGroup {
     }
 
     private void animateItemRemoval(int dataID, final ImageData data) {
+        if (mScale > FULL_SCREEN_SCALE) {
+            resetZoomView();
+        }
         int removedItem = findItemByDataID(dataID);
 
         // adjust the data id to be consistent
