@@ -106,7 +106,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void setListener(Listener listener) {
         mListener = listener;
-        if (mImages != null) {
+        if (mImages.size() != 0) {
             mListener.onDataLoaded();
         }
     }
