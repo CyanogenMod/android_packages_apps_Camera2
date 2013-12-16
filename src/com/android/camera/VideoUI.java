@@ -437,6 +437,10 @@ public class VideoUI implements PieRenderer.PieListener,
         mVideoMenu.overrideSettings(keyvalues);
     }
 
+    public void enableItem(int resId, boolean enable) {
+        mVideoMenu.enableItem(resId, enable);
+    }
+
     public void setOrientationIndicator(int orientation, boolean animation) {
         // We change the orientation of the linearlayout only for phone UI
         // because when in portrait the width is not enough.
