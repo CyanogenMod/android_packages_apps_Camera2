@@ -37,7 +37,6 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
@@ -121,14 +120,6 @@ public class PhotoUI implements
             return true;
         }
     };
-
-    /*
-     * @return Whether immediate capture mode is selected from the toggle button
-     */
-    // TODO: don't ship with this
-    public boolean isImmediateCapture() {
-        return mImmediateCapture;
-    }
 
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
@@ -219,25 +210,6 @@ public class PhotoUI implements
         if (mSurfaceTexture != null) {
             setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
         }
-
-        ToggleButton focusRingToggle =
-                (ToggleButton) mRootView.findViewById(R.id.toggle_focus_ring_button);
-        mHideFocusRing = !focusRingToggle.isChecked();
-        focusRingToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mHideFocusRing = !isChecked;
-                }
-            });
-        ToggleButton immediateToggle =
-                (ToggleButton) mRootView.findViewById(R.id.toggle_immediate_capture_button);
-        mImmediateCapture= immediateToggle.isChecked();
-        immediateToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mImmediateCapture = isChecked;
-                }
-            });
 
         mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.camera_mode_color));
         ViewStub faceViewStub = (ViewStub) mRootView
