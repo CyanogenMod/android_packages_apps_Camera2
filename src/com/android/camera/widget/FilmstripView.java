@@ -1407,6 +1407,9 @@ public class FilmstripView extends ViewGroup {
         }
         adjustChildZOrder();
         invalidate();
+        if (mListener != null) {
+            mListener.onDataUpdated(newItem.getId());
+        }
     }
 
     /** Some of the data is changed. */

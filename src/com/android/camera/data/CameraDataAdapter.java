@@ -58,9 +58,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void requestLoad(ContentResolver resolver) {
-        QueryTask qtask = new QueryTask();
-        qtask.execute(resolver);
+    public void requestLoad(Context context) {
+        QueryTask qtask = new QueryTask(context);
+        qtask.execute(context.getContentResolver());
     }
 
     @Override
@@ -133,8 +133,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     // TODO: put the database query on background thread
     @Override
-    public void addNewVideo(ContentResolver cr, Uri uri) {
-        Cursor c = cr.query(uri,
+    public void addNewVideo(Context context, Uri uri) {
+        Cursor c = context.getContentResolver().query(uri,
                 LocalMediaData.VideoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalMediaData.VideoData.QUERY_ORDER);
@@ -154,8 +154,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     // TODO: put the database query on background thread
     @Override
-    public void addNewPhoto(ContentResolver cr, Uri uri) {
-        Cursor c = cr.query(uri,
+    public void addNewPhoto(Context context, Uri uri) {
+        Cursor c = context.getContentResolver().query(uri,
                 LocalMediaData.PhotoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalMediaData.PhotoData.QUERY_ORDER);
@@ -165,7 +165,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
             if (c == null || !c.moveToFirst()) {
                 return;
             }
-            newData = LocalMediaData.PhotoData.buildFromCursor(c);
+            newData = LocalMediaData.PhotoData.buildFromCursor(context, c);
         } finally {
             // Ensure cursor is closed before returning
             if (c != null) {
@@ -216,14 +216,15 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void refresh(ContentResolver resolver, Uri contentUri, boolean isInProgressSession) {
+    public void refresh(Context context, Uri contentUri,
+            boolean isInProgressSession) {
         int pos = findDataByContentUri(contentUri);
         if (pos == -1) {
             return;
         }
 
         LocalData data = mImages.get(pos);
-        LocalData refreshedData = data.refresh(resolver);
+        LocalData refreshedData = data.refresh(context);
 
         // Wrap the data item if this represents a session that is in progress.
         if (isInProgressSession) {
@@ -280,6 +281,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     private class QueryTask extends AsyncTask<ContentResolver, Void, LocalDataList> {
+        private Context mContext;
+
+        public QueryTask(Context context) {
+            super();
+            mContext = context;
+        }
 
         /**
          * Loads all the photo and video data in the camera folder in background
@@ -300,7 +307,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
             if (c != null && c.moveToFirst()) {
                 // build up the list.
                 while (true) {
-                    LocalData data = LocalMediaData.PhotoData.buildFromCursor(c);
+                    LocalData data = LocalMediaData.PhotoData.buildFromCursor(mContext, c);
                     if (data != null) {
                         if (data.getMimeType().equals(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
                             l.add(new InProgressDataWrapper(data, true));

@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.Log;
@@ -38,7 +39,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.camera.data.RgbzMetadataLoader.RgbzMetadataCallback;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
@@ -68,9 +68,7 @@ public abstract class LocalMediaData implements LocalData {
     protected final long mSizeInBytes;
     protected final double mLatitude;
     protected final double mLongitude;
-
-    /** The panorama metadata information of this media data. */
-    protected PhotoSphereHelper.PanoramaMetadata mPanoramaMetadata;
+    protected final Bundle mMetaData;
 
     /** Used to load photo sphere metadata from image files. */
     protected PanoramaMetadataLoader mPanoramaMetadataLoader;
@@ -99,6 +97,7 @@ public abstract class LocalMediaData implements LocalData {
         mSizeInBytes = sizeInBytes;
         mLatitude = latitude;
         mLongitude = longitude;
+        mMetaData = new Bundle();
     }
 
     @Override
@@ -157,81 +156,9 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public boolean delete(Context ctx) {
+    public boolean delete(Context context) {
         File f = new File(mPath);
         return f.delete();
-    }
-
-    @Override
-    public void view(PhotoSphereHelper.PanoramaViewHelper helper) {
-        if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
-            helper.showPanorama(getContentUri());
-        } else if (mIsRgbz != null && mIsRgbz.booleanValue()) {
-            helper.showRgbz(getContentUri());
-        }
-    }
-
-    @Override
-    public void requestAuxInfo(Context context, final AuxInfoSupportCallback callback) {
-        // If we already have metadata, use it.
-        if (mPanoramaMetadata != null && mIsRgbz != null) {
-            callback.auxInfoAvailable(mPanoramaMetadata.mUsePanoramaViewer,
-                    mPanoramaMetadata.mIsPanorama360, mIsRgbz.booleanValue());
-            return;
-        }
-
-        final Semaphore sem = new Semaphore(1);
-        if (mPanoramaMetadata == null) {
-            // Drain all permits so the rgbz return callback waits for the
-            // panorama data result.
-            sem.drainPermits();
-            // Otherwise prepare a loader, if we don't have one already.
-            if (mPanoramaMetadataLoader == null) {
-                mPanoramaMetadataLoader = new PanoramaMetadataLoader(getContentUri());
-            }
-            // Load the metadata asynchronously.
-            mPanoramaMetadataLoader.getPanoramaMetadata(context,
-                    new PanoramaMetadataLoader.PanoramaMetadataCallback() {
-                        @Override
-                        public void onPanoramaMetadataLoaded(
-                                PhotoSphereHelper.PanoramaMetadata metadata) {
-                            // Store the metadata and remove the loader to free
-                            // up
-                            // space.
-                            mPanoramaMetadata = metadata;
-                            mPanoramaMetadataLoader = null;
-                            sem.release();
-                        }
-                    });
-        }
-
-        if (mIsRgbz == null) {
-            if (mRgbzMetadataLoader == null) {
-                mRgbzMetadataLoader = new RgbzMetadataLoader(getContentUri());
-            }
-            mRgbzMetadataLoader.getRgbzMetadata(context, new RgbzMetadataCallback() {
-                @Override
-                public void onRgbzMetadataLoaded(Boolean isRgbz) {
-                    mIsRgbz = isRgbz;
-                    mRgbzMetadataLoader = null;
-                    try {
-                        // Wait, if needed, for the result of the panorama data
-                        // update.
-                        sem.acquire();
-                    } catch (InterruptedException e) {
-                        // Do nothing
-                    }
-
-                    boolean usePanoramaViewer = mPanoramaMetadata != null
-                            && mPanoramaMetadata.mUsePanoramaViewer;
-                    boolean isPanorama360 = mPanoramaMetadata != null
-                            && mPanoramaMetadata.mIsPanorama360;
-                    boolean isItRgbz = mIsRgbz != null & mIsRgbz.booleanValue();
-                    callback.auxInfoAvailable(usePanoramaViewer,
-                            isPanorama360, isItRgbz);
-                }
-            });
-        }
     }
 
     @Override
@@ -244,22 +171,22 @@ public abstract class LocalMediaData implements LocalData {
         return true;
     }
 
-    protected ImageView fillImageView(Context ctx, ImageView v,
+    protected ImageView fillImageView(Context context, ImageView v,
             int decodeWidth, int decodeHeight, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress) {
         v.setScaleType(ImageView.ScaleType.FIT_XY);
         v.setImageDrawable(placeHolder);
 
-        BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight,
-                ctx.getContentResolver(), adapter, isInProgress);
+        BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
+                context.getContentResolver(), adapter, isInProgress);
         task.execute();
         return v;
     }
 
     @Override
-    public View getView(Context ctx, int decodeWidth, int decodeHeight, Drawable placeHolder,
+    public View getView(Context context, int decodeWidth, int decodeHeight, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress) {
-        return fillImageView(ctx, new ImageView(ctx), decodeWidth, decodeHeight,
+        return fillImageView(context, new ImageView(context), decodeWidth, decodeHeight,
                 placeHolder, adapter, isInProgress);
     }
 
@@ -322,8 +249,13 @@ public abstract class LocalMediaData implements LocalData {
     @Override
     public abstract int getViewType();
 
+    @Override
+    public Bundle getMetadata() {
+        return mMetaData;
+    }
+
     protected abstract BitmapLoadTask getBitmapLoadTask(
-            ImageView v, int decodeWidth, int decodeHeight,
+            Context context, ImageView v, int decodeWidth, int decodeHeight,
             ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession);
 
     public static final class PhotoData extends LocalMediaData {
@@ -383,7 +315,7 @@ public abstract class LocalMediaData implements LocalData {
             mOrientation = orientation;
         }
 
-        static PhotoData buildFromCursor(Cursor c) {
+        static PhotoData buildFromCursor(Context context, Cursor c) {
             long id = c.getLong(COL_ID);
             String title = c.getString(COL_TITLE);
             String mimeType = c.getString(COL_MIME_TYPE);
@@ -425,6 +357,9 @@ public abstract class LocalMediaData implements LocalData {
             PhotoData result = new PhotoData(id, title, mimeType, dateTakenInSeconds,
                     dateModifiedInSeconds, path, orientation, width, height,
                     sizeInBytes, latitude, longitude);
+            PanoramaMetadataLoader.loadPanoramaMetadata(context, result.getContentUri(),
+                    result.getMetadata());
+            RgbzMetadataLoader.loadRgbzMetadata(context, result.getContentUri(), result.getMetadata());
             return result;
         }
 
@@ -456,10 +391,10 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public boolean delete(Context c) {
-            ContentResolver cr = c.getContentResolver();
+        public boolean delete(Context context) {
+            ContentResolver cr = context.getContentResolver();
             cr.delete(CONTENT_URI, MediaStore.Images.ImageColumns._ID + "=" + mContentId, null);
-            return super.delete(c);
+            return super.delete(context);
         }
 
         @Override
@@ -478,39 +413,32 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public int getLocalDataType() {
-            if (mPanoramaMetadata != null) {
-                if (mPanoramaMetadata.mIsPanorama360) {
-                    return LOCAL_360_PHOTO_SPHERE;
-                } else if (mPanoramaMetadata.mUsePanoramaViewer) {
-                    return LOCAL_PHOTO_SPHERE;
-                }
-            }
             return LOCAL_IMAGE;
         }
 
         @Override
-        public LocalData refresh(ContentResolver resolver) {
-            Cursor c = resolver.query(
-                    getContentUri(), QUERY_PROJECTION, null, null, null);
+        public LocalData refresh(Context context) {
+            Cursor c = context.getContentResolver().query(getContentUri(), QUERY_PROJECTION, null,
+                    null, null);
             if (c == null || !c.moveToFirst()) {
                 return null;
             }
-            PhotoData newData = buildFromCursor(c);
+            PhotoData newData = buildFromCursor(context, c);
             return newData;
         }
 
         @Override
-        protected BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight,
-                ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession) {
-            return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight,
-                    resolver, adapter, isInProgressSession);
+        protected BitmapLoadTask getBitmapLoadTask(Context context, ImageView v, int decodeWidth,
+                int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter,
+                boolean isInProgressSession) {
+            return new PhotoBitmapLoadTask(context, v, decodeWidth, decodeHeight, resolver, adapter,
+                    isInProgressSession);
         }
 
         private final class PhotoBitmapLoadTask extends BitmapLoadTask {
             private final int mDecodeWidth;
             private final int mDecodeHeight;
-            private final ContentResolver mResolver;
+            private final Context mContext;
             private final LocalDataAdapter mAdapter;
 
             // TODO: Re-think how we can avoid having the in-progress indication
@@ -519,13 +447,13 @@ public abstract class LocalMediaData implements LocalData {
 
             private boolean mNeedsRefresh;
 
-            public PhotoBitmapLoadTask(ImageView v, int decodeWidth,
-                    int decodeHeight, ContentResolver resolver,
-                    LocalDataAdapter adapter, boolean isInProgressSession) {
-                super(v);
+            public PhotoBitmapLoadTask(Context context, ImageView v, int decodeWidth,
+                    int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter,
+                    boolean isInProgressSession) {
+                super(context, v);
                 mDecodeWidth = decodeWidth;
                 mDecodeHeight = decodeHeight;
-                mResolver = resolver;
+                mContext = context;
                 mAdapter = adapter;
                 mIsInProgressSession = isInProgressSession;
             }
@@ -562,7 +490,7 @@ public abstract class LocalMediaData implements LocalData {
                     ContentValues values = new ContentValues();
                     values.put(Images.Media.WIDTH, decodedWidth);
                     values.put(Images.Media.HEIGHT, decodedHeight);
-                    mResolver.update(getContentUri(), values, null, null);
+                    mContext.getContentResolver().update(getContentUri(), values, null, null);
                     mNeedsRefresh = true;
                     Log.w(TAG, "Uri " + getContentUri() + " has been updated with" +
                             " correct size!");
@@ -585,6 +513,7 @@ public abstract class LocalMediaData implements LocalData {
                     m.setRotate(mOrientation);
                     b = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, false);
                 }
+
                 return b;
             }
 
@@ -592,7 +521,7 @@ public abstract class LocalMediaData implements LocalData {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 if (mNeedsRefresh && mAdapter != null) {
-                    mAdapter.refresh(mResolver, getContentUri(), mIsInProgressSession);
+                    mAdapter.refresh(mContext, getContentUri(), mIsInProgressSession);
                 }
             }
         }
@@ -740,10 +669,10 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public boolean delete(Context ctx) {
-            ContentResolver cr = ctx.getContentResolver();
+        public boolean delete(Context context) {
+            ContentResolver cr = context.getContentResolver();
             cr.delete(CONTENT_URI, MediaStore.Video.VideoColumns._ID + "=" + mContentId, null);
-            return super.delete(ctx);
+            return super.delete(context);
         }
 
         @Override
@@ -766,9 +695,9 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public LocalData refresh(ContentResolver resolver) {
-            Cursor c = resolver.query(
-                    getContentUri(), QUERY_PROJECTION, null, null, null);
+        public LocalData refresh(Context context) {
+            Cursor c = context.getContentResolver().query(getContentUri(), QUERY_PROJECTION, null,
+                    null, null);
             if (c == null || !c.moveToFirst()) {
                 return null;
             }
@@ -777,20 +706,20 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public View getView(final Context ctx,
+        public View getView(final Context context,
                 int decodeWidth, int decodeHeight, Drawable placeHolder,
                 LocalDataAdapter adapter, boolean isInProgress) {
 
             // ImageView for the bitmap.
-            ImageView iv = new ImageView(ctx);
+            ImageView iv = new ImageView(context);
             iv.setLayoutParams(new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-            fillImageView(ctx, iv, decodeWidth, decodeHeight, placeHolder,
+            fillImageView(context, iv, decodeWidth, decodeHeight, placeHolder,
                     adapter, isInProgress);
 
             // ImageView for the play icon.
-            ImageView icon = new ImageView(ctx);
+            ImageView icon = new ImageView(context);
             icon.setImageResource(R.drawable.ic_control_play);
             icon.setScaleType(ImageView.ScaleType.CENTER);
             icon.setLayoutParams(new FrameLayout.LayoutParams(
@@ -801,11 +730,11 @@ public abstract class LocalMediaData implements LocalData {
                 public void onClick(View v) {
                     // TODO: refactor this into activities to avoid this class
                     // conversion.
-                    CameraUtil.playVideo((Activity) ctx, getContentUri(), mTitle);
+                    CameraUtil.playVideo((Activity) context, getContentUri(), mTitle);
                 }
             });
 
-            FrameLayout f = new FrameLayout(ctx);
+            FrameLayout f = new FrameLayout(context);
             f.addView(iv);
             f.addView(icon);
             return f;
@@ -813,16 +742,16 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight,
+                Context context, ImageView v, int decodeWidth, int decodeHeight,
                 ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession) {
             // TODO: Support isInProgressSession for videos when we need it.
-            return new VideoBitmapLoadTask(v);
+            return new VideoBitmapLoadTask(context, v);
         }
 
         private final class VideoBitmapLoadTask extends BitmapLoadTask {
 
-            public VideoBitmapLoadTask(ImageView v) {
-                super(v);
+            public VideoBitmapLoadTask(Context context, ImageView v) {
+                super(context, v);
             }
 
             @Override
@@ -867,9 +796,11 @@ public abstract class LocalMediaData implements LocalData {
      * {@code BitmapLoadTask#doInBackground(Void...)}."
      */
     protected abstract class BitmapLoadTask extends AsyncTask<Void, Void, Bitmap> {
+        protected final Context mContext;
         protected ImageView mView;
 
-        protected BitmapLoadTask(ImageView v) {
+        protected BitmapLoadTask(Context context, ImageView v) {
+            mContext = context;
             mView = v;
         }
 

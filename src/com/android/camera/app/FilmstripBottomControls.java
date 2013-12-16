@@ -16,8 +16,6 @@
 
 package com.android.camera.app;
 
-import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -174,7 +172,7 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onView();
+                    mListener.onExternalViewer();
                 }
             }
         });

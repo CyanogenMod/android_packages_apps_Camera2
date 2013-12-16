@@ -19,7 +19,7 @@ package com.android.camera.filmstrip;
 import com.android.camera.widget.FilmstripLayout;
 
 /**
- * The filmstrip panel holding the filmstrip and other widgets.
+ * The filmstrip panel holding the filmstrip and other controls/widgets.
  */
 public interface FilmstripContentPanel {
     /**
@@ -43,8 +43,10 @@ public interface FilmstripContentPanel {
     /** Sets the listener. */
     void setFilmstripListener(FilmstripLayout.Listener listener);
 
+    /** Hides this panel */
     void hide();
 
+    /** Shows this panel */
     void show();
 
     /**

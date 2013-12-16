@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
@@ -31,9 +30,10 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Request for loading the local data.
      *
-     * @param resolver  {@link ContentResolver} used for data loading.
+     * @param context The Android {@link android.content.Context} this data
+     *                adapter is used in.
      */
-    public void requestLoad(ContentResolver resolver);
+    public void requestLoad(Context context);
 
     /**
      * Returns the specified {@link LocalData}.
@@ -54,28 +54,30 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Add new local video data.
      *
-     * @param resolver  {@link ContentResolver} used to add the data.
-     * @param uri       {@link Uri} of the video.
+     * @param context The Android {@link android.content.Context} this data
+     *                adapter is used in.
+     * @param uri      {@link Uri} of the video.
      */
-    public void addNewVideo(ContentResolver resolver, Uri uri);
+    public void addNewVideo(Context context, Uri uri);
 
     /**
      * Adds new local photo data.
      *
-     * @param resolver  {@link ContentResolver} used to add the data.
+     * @param context The Android {@link android.content.Context} this data
+     *                adapter is used in.
      * @param uri       {@link Uri} of the photo.
      */
-    public void addNewPhoto(ContentResolver resolver, Uri uri);
+    public void addNewPhoto(Context context, Uri uri);
 
     /**
      * Refresh the data by {@link Uri}.
      *
-     * @param resolver {@link ContentResolver} used to refresh the data.
+     * @param context The Android {@link android.content.Context}.
      * @param uri The {@link Uri} of the data to refresh.
      * @param isInProgressSession Whether this data item has a session in
      *            progress associated with it.
      */
-    public void refresh(ContentResolver resolver, Uri uri, boolean isInProgressSession);
+    public void refresh(Context context, Uri uri, boolean isInProgressSession);
 
     /**
      * Finds the {@link LocalData} of the specified content Uri.

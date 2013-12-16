@@ -116,12 +116,6 @@ public interface ImageData {
     public void recycle();
 
     /**
-     * If the item is a valid photo sphere panorama, this method will launch
-     * the viewer.
-     */
-    public void view(PhotoSphereHelper.PanoramaViewHelper helper);
-
-    /**
      * @return The content URI of this data, or {@code Uri.EMPTY} if not valid.
      */
     public Uri getContentUri();

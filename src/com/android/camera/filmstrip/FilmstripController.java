@@ -175,10 +175,16 @@ public interface FilmstripController {
         public void onDataDemoted(int dataID);
 
         /**
-         *
          * Called when all the data has been reloaded.
          */
         public void onDataReloaded();
+
+        /**
+         * Called when data is updated.
+         *
+         * @param dataId The ID of the updated data.
+         */
+        public void onDataUpdated(int dataId);
 
         /**
          * The callback when the item enters full-screen state.

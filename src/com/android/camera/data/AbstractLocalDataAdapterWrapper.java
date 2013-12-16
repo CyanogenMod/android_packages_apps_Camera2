@@ -60,18 +60,18 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void requestLoad(ContentResolver resolver) {
-        mAdapter.requestLoad(resolver);
+    public void requestLoad(Context context) {
+        mAdapter.requestLoad(context);
     }
 
     @Override
-    public void addNewVideo(ContentResolver resolver, Uri uri) {
-        mAdapter.addNewVideo(resolver, uri);
+    public void addNewVideo(Context context, Uri uri) {
+        mAdapter.addNewVideo(context, uri);
     }
 
     @Override
-    public void addNewPhoto(ContentResolver resolver, Uri uri) {
-        mAdapter.addNewPhoto(resolver, uri);
+    public void addNewPhoto(Context context, Uri uri) {
+        mAdapter.addNewPhoto(context, uri);
     }
 
     @Override
@@ -95,7 +95,7 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void refresh(ContentResolver resolver, Uri uri, boolean isInProgressSession) {
-        mAdapter.refresh(resolver, uri, isInProgressSession);
+    public void refresh(Context context, Uri uri, boolean isInProgressSession) {
+        mAdapter.refresh(context, uri, isInProgressSession);
     }
 }

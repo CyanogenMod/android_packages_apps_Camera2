@@ -146,7 +146,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
              * Called when the user pressed the "view" button to e.g. view a photo
              * sphere or RGBZ image.
              */
-            public void onView();
+            public void onExternalViewer();
 
             /**
              * Called when the "edit" button is pressed.

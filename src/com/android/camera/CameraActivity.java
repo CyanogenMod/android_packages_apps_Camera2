@@ -81,6 +81,8 @@ import com.android.camera.data.InProgressDataWrapper;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalMediaObserver;
+import com.android.camera.data.PanoramaMetadataLoader;
+import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
@@ -221,10 +223,23 @@ public class CameraActivity extends Activity
                  * panorama viewer.
                  */
                 @Override
-                public void onView() {
-                    LocalData data = getCurrentLocalData();
-                    if (data != null) {
-                        data.view(mPanoramaViewHelper);
+                public void onExternalViewer() {
+                    if (mPanoramaViewHelper == null) {
+                        return;
+                    }
+                    final LocalData data = getCurrentLocalData();
+                    if (data == null) {
+                        return;
+                    }
+                    final Uri contentUri = data.getContentUri();
+                    if (contentUri == Uri.EMPTY) {
+                        return;
+                    }
+
+                    if (PanoramaMetadataLoader.isPanorama(data)) {
+                        mPanoramaViewHelper.showPanorama(contentUri);
+                    } else if (RgbzMetadataLoader.hasRGBZData(data)) {
+                        mPanoramaViewHelper.showRgbz(contentUri);
                     }
                 }
 
@@ -294,7 +309,7 @@ public class CameraActivity extends Activity
                 private Intent getShareIntentByData(final LocalData data) {
                     Intent intent = null;
                     final Uri contentUri = data.getContentUri();
-                    if (data.getLocalDataType() == LocalData.LOCAL_360_PHOTO_SPHERE &&
+                    if (PanoramaMetadataLoader.isPanorama360(data) &&
                             data.getContentUri() != Uri.EMPTY) {
                         intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("application/vnd.google.panorama360+jpg");
@@ -482,6 +497,14 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
+                public void onDataUpdated(int dataId) {
+                    if (!mFilmstripVisible) {
+                        return;
+                    }
+                    updateUiByData(mFilmstripController.getCurrentId());
+                }
+
+                @Override
                 public void onEnterZoomView(int dataID) {
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(false);
@@ -617,7 +640,7 @@ public class CameraActivity extends Activity
                         hideSessionProgress();
                         updateSessionProgress(0);
                     }
-                    mDataAdapter.refresh(getContentResolver(), uri, /* isInProgress */ false);
+                    mDataAdapter.refresh(CameraActivity.this, uri, /* isInProgress */ false);
                 }
 
                 @Override
@@ -638,7 +661,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSessionUpdated(Uri uri) {
-                    mDataAdapter.refresh(getContentResolver(), uri, /* isInProgress */ true);
+                    mDataAdapter.refresh(CameraActivity.this, uri, /* isInProgress */ true);
                 }
             };
 
@@ -755,12 +778,12 @@ public class CameraActivity extends Activity
         String mimeType = cr.getType(uri);
         if (mimeType.startsWith("video/")) {
             sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-            mDataAdapter.addNewVideo(cr, uri);
+            mDataAdapter.addNewVideo(this, uri);
         } else if (mimeType.startsWith("image/")) {
             CameraUtil.broadcastNewPicture(this, uri);
-            mDataAdapter.addNewPhoto(cr, uri);
+            mDataAdapter.addNewPhoto(this, uri);
         } else if (mimeType.startsWith(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
-            mDataAdapter.addNewPhoto(cr, uri);
+            mDataAdapter.addNewPhoto(this, uri);
         } else {
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
                     + mimeType + ", uri:" + uri);
@@ -954,7 +977,7 @@ public class CameraActivity extends Activity
         if (!mSecureCamera) {
             mFilmstripController.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
-                mDataAdapter.requestLoad(getContentResolver());
+                mDataAdapter.requestLoad(this);
             }
         } else {
             // Put a lock placeholder as the last image by setting its date to
@@ -1095,7 +1118,7 @@ public class CameraActivity extends Activity
                 // If it's secure camera, requestLoad() should not be called
                 // as it will load all the data.
                 if (!mFilmstripVisible) {
-                    mDataAdapter.requestLoad(getContentResolver());
+                    mDataAdapter.requestLoad(this);
                 }
             }
         }
@@ -1645,38 +1668,17 @@ public class CameraActivity extends Activity
         /* View button */
 
         // We need to add this to a separate DB.
-        // TODO: Redesign this.
-        currentData.requestAuxInfo(this, new LocalData.AuxInfoSupportCallback() {
-            @Override
-            public void auxInfoAvailable(final boolean isPanorama,
-                    final boolean isPanorama360, boolean isRgbz) {
-                // Make sure the returned data is for the current image.
-                if (dataId != mFilmstripController.getCurrentId()) {
-                    return;
-                }
+        final int viewButtonVisibility;
+        if (PanoramaMetadataLoader.isPanorama(currentData)) {
+            viewButtonVisibility = CameraAppUI.BottomControls.VIEW_PHOTO_SPHERE;
+        } else if (RgbzMetadataLoader.hasRGBZData(currentData)) {
+            viewButtonVisibility = CameraAppUI.BottomControls.VIEW_RGBZ;
+        } else {
+            viewButtonVisibility = CameraAppUI.BottomControls.VIEW_NONE;
+        }
 
-                // If this is a photo sphere, show the button to view it. If it's a full
-                // 360 photo sphere, show the tiny planet button.
-                final int viewButtonVisibility;
-                if (isPanorama) {
-                    viewButtonVisibility = CameraAppUI.BottomControls.VIEW_PHOTO_SPHERE;
-                } else if (isRgbz) {
-                    viewButtonVisibility = CameraAppUI.BottomControls.VIEW_RGBZ;
-                } else {
-                    viewButtonVisibility = CameraAppUI.BottomControls.VIEW_NONE;
-                }
-
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (mFilmstripController.getCurrentId() == dataId) {
-                            filmstripBottomControls.setTinyPlanetButtonVisibility(isPanorama360);
-                            filmstripBottomControls.setViewButtonVisibility(viewButtonVisibility);
-                        }
-                    }
-                });
-            }
-        });
+        filmstripBottomControls.setTinyPlanetButtonVisibility(
+                PanoramaMetadataLoader.isPanorama360(currentData));
+        filmstripBottomControls.setViewButtonVisibility(viewButtonVisibility);
     }
 }

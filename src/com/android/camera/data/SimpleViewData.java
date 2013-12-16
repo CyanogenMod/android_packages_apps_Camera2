@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -37,6 +38,7 @@ public class SimpleViewData implements LocalData {
     private final View mView;
     private final long mDateTaken;
     private final long mDateModified;
+    private final Bundle mMetaData;
 
     public SimpleViewData(
             View v, int width, int height,
@@ -46,6 +48,7 @@ public class SimpleViewData implements LocalData {
         mHeight = height;
         mDateTaken = dateTaken;
         mDateModified = dateModified;
+        mMetaData = new Bundle();
     }
 
     @Override
@@ -99,7 +102,7 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public LocalData refresh(ContentResolver resolver) {
+    public LocalData refresh(Context context) {
         return null;
     }
 
@@ -119,7 +122,7 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public View getView(Context ctx, int width, int height, Drawable placeHolder,
+    public View getView(Context context, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgressSession) {
         return mView;
     }
@@ -131,17 +134,6 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public void recycle() {
-        // do nothing.
-    }
-
-    @Override
-    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback) {
-        // Not a photo sphere panorama or rgbz image.
-        callback.auxInfoAvailable(false, false, false);
-    }
-
-    @Override
-    public void view(PhotoSphereHelper.PanoramaViewHelper helper) {
         // do nothing.
     }
 
@@ -186,5 +178,10 @@ public class SimpleViewData implements LocalData {
     @Override
     public long getContentId() {
         return -1;
+    }
+
+    @Override
+    public Bundle getMetadata() {
+        return mMetaData;
     }
 }

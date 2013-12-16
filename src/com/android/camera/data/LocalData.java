@@ -16,9 +16,9 @@
 
 package com.android.camera.data;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.View;
 
 import com.android.camera.filmstrip.ImageData;
@@ -62,28 +62,15 @@ public interface LocalData extends ImageData {
      */
     public static final int LOCAL_VIDEO            = 4;
     /**
-     * Constant for denoting a still image, with valid PhotoSphere metadata.
-     */
-    public static final int LOCAL_PHOTO_SPHERE     = 5;
-    /**
-     * Constant for denoting a still image, with valid 360 PhotoSphere metadata.
-     */
-    public static final int LOCAL_360_PHOTO_SPHERE = 6;
-    /**
      * Constant for denoting an in-progress item which should not be touched
      * before the related task is done. Data of this type should not support
      * any actions like sharing, editing, etc.
      */
-    public static final int LOCAL_IN_PROGRESS_DATA = 7;
-
-    /**
-     * Constant for denoting an RGBZ image.
-     */
-    public static final int LOCAL_RGBZ = 8;
+    public static final int LOCAL_IN_PROGRESS_DATA = 5;
 
     // TODO: Re-think how the in-progress logic works. We shouldn't need to pass
     // in the information about whether this session is in progress.
-    View getView(Context ctx, int width, int height, Drawable placeHolder,
+    View getView(Context context, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress);
 
     /**
@@ -172,39 +159,20 @@ public interface LocalData extends ImageData {
     /**
      * Refresh the data content.
      *
-     * @param resolver {@link ContentResolver} to refresh the data.
+     * @param context The Android {@link android.content.Context}.
      * @return A new LocalData object if success, null otherwise.
      */
-    LocalData refresh(ContentResolver resolver);
+    LocalData refresh(Context context);
 
     /**
-     * Request for the auxiliary info of the data. The result will be sent back
-     * through the {@link com.android.camera.data.LocalData.AuxInfoSupportCallback}.
-     *
-     * @param context The context to retrieve the auxiliary data.
-     * @param callback The callback to receive the retrieved result.
+     * @return the {@link android.content.ContentResolver} Id of the data.
      */
-    @Deprecated
-    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback);
+    long getContentId();
 
     /**
-     * Interface that is used to tell the caller whether an image is a photo
-     * sphere.
-     *
-     * We need to deprecate this and store this data in a separate DB for
-     * additional aux data.
+     * @return the metadata. Should never be {@code null}.
      */
-    @Deprecated
-    interface AuxInfoSupportCallback {
-        /**
-         * Called when photo sphere info has been loaded.
-         *
-         * @param isPanorama whether the image is a valid photo sphere
-         * @param isPanorama360 whether the photo sphere is a full 360
-         *            degree horizontal panorama
-         */
-        void auxInfoAvailable(boolean isPanorama, boolean isPanorama360, boolean isRgbz);
-    }
+    Bundle getMetadata();
 
     static class NewestFirstComparator implements Comparator<LocalData> {
 
@@ -232,10 +200,4 @@ public interface LocalData extends ImageData {
             return cmp;
         }
     }
-
-    /**
-     * @return the {@link android.content.ContentResolver} Id of the data.
-     */
-    long getContentId();
 }
-

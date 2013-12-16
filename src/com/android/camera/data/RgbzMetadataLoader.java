@@ -18,88 +18,63 @@ package com.android.camera.data;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.android.camera.exif.ExifInterface;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  * Asynchronously loads RGBZ data.
  */
 public class RgbzMetadataLoader {
-  public static interface RgbzMetadataCallback {
-    public void onRgbzMetadataLoaded(Boolean isRgbz);
-  }
+    private static final String KEY_RGBZ_INFO = "metadata_key_rgbz_info";
+    private static final String EXIF_SOFTWARE_VALUE = "RGBZ";
 
-  private static final String EXIF_SOFTWARE_VALUE = "RGBZ";
-  private Boolean mIsRgbz = null;
-  private ArrayList<RgbzMetadataCallback> mCallbacksWaiting;
-  private final Uri mMediaUri;
-
-  public RgbzMetadataLoader(Uri uri) {
-    mMediaUri = uri;
-  }
-
-  /**
-   * Check whether this file is an RGBZ file.
-   *
-   * @param context The app context.
-   * @param callback Will be called with the result.
-   */
-  public synchronized void getRgbzMetadata(final Context context, RgbzMetadataCallback callback) {
-    if (mIsRgbz != null) {
-      callback.onRgbzMetadataLoaded(mIsRgbz);
-      return;
+    /**
+     * @return whether the data has RGBZ metadata.
+     */
+    public static boolean hasRGBZData(final LocalData data) {
+        return data.getMetadata().getBoolean(KEY_RGBZ_INFO);
     }
 
-    if (mCallbacksWaiting == null) {
-      mCallbacksWaiting = new ArrayList<RgbzMetadataCallback>();
-      (new Thread() {
-        @Override
-        public void run() {
-          boolean isRgbz = false;
+    /**
+     * Checks whether this file is an RGBZ file and fill in the metadata.
+     *
+     * @param context  The app context.
+     */
+    public static void loadRgbzMetadata(final Context context, Uri contentUri, Bundle metadata) {
+        boolean isRgbz = false;
 
-          try {
+        try {
             InputStream input;
-            input = context.getContentResolver().openInputStream(mMediaUri);
+            input = context.getContentResolver().openInputStream(contentUri);
             isRgbz = isRgbz(input);
-          } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-          }
-          onLoadingDone(isRgbz);
         }
-      }).start();
-
+        if (isRgbz) {
+            metadata.putBoolean(KEY_RGBZ_INFO, true);
+        }
     }
-    mCallbacksWaiting.add(callback);
-  }
 
-  private synchronized void onLoadingDone(boolean isRgbz) {
-    mIsRgbz = isRgbz;
-    for (RgbzMetadataCallback cb : mCallbacksWaiting) {
-      cb.onRgbzMetadataLoaded(mIsRgbz);
+    /**
+     * @return Whether the file is an RGBZ file.
+     */
+    private static boolean isRgbz(InputStream input) {
+        ExifInterface exif = new ExifInterface();
+        try {
+            exif.readExif(input);
+            // TODO: Rather than this, check for the presence of the XMP.
+            String software = exif.getTagStringValue(ExifInterface.TAG_SOFTWARE);
+            return software != null && software.startsWith(EXIF_SOFTWARE_VALUE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    mCallbacksWaiting = null;
-  }
-
-  /**
-   * @return Whether the file is an RGBZ file.
-   */
-  public static boolean isRgbz(InputStream input) {
-    ExifInterface exif = new ExifInterface();
-    try {
-      exif.readExif(input);
-      // TODO: Rather than this, check for the presence of the XMP.
-      String software = exif.getTagStringValue(ExifInterface.TAG_SOFTWARE);
-      return software != null && software.startsWith(EXIF_SOFTWARE_VALUE);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return false;
-  }
 }

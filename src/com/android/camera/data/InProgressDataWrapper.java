@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -74,7 +75,7 @@ public class InProgressDataWrapper implements LocalData {
 
     @Override
     public long getDateModified() {
-        return mLocalData.getLocalDataType();
+        return mLocalData.getDateModified();
     }
 
     @Override
@@ -138,13 +139,18 @@ public class InProgressDataWrapper implements LocalData {
     }
 
     @Override
-    public LocalData refresh(ContentResolver resolver) {
-        return mLocalData.refresh(resolver);
+    public LocalData refresh(Context context) {
+        return mLocalData.refresh(context);
     }
 
     @Override
     public long getContentId() {
         return mLocalData.getContentId();
+    }
+
+    @Override
+    public Bundle getMetadata() {
+        return mLocalData.getMetadata();
     }
 
     @Override
@@ -185,17 +191,6 @@ public class InProgressDataWrapper implements LocalData {
     @Override
     public void recycle() {
         mLocalData.recycle();
-    }
-
-    @Override
-    public void requestAuxInfo(Context context, AuxInfoSupportCallback callback) {
-        mLocalData.requestAuxInfo(context, callback);
-    }
-
-
-    @Override
-    public void view(PhotoSphereHelper.PanoramaViewHelper helper) {
-        mLocalData.view(helper);
     }
 
     @Override
