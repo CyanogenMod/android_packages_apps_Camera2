@@ -84,7 +84,6 @@
     <string name="unknown" msgid="564184550182858146">"不明"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"這個項目已儲存在本機上，並且可供離線使用。"</string>
     <string name="please_wait" msgid="1416313324505140068">"請稍候"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"正在轉譯全景拍攝相片"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"相機發生錯誤"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"無法連接相機。"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"由於安全性政策規定，相機已遭停用。"</string>
@@ -301,9 +300,11 @@
     <string name="mode_craft" msgid="6390039207517142426">"手工藝"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"縮時攝影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"廣角"</string>
+    <string name="mode_panorama" msgid="6882648621305828861">"全景"</string>
     <string name="setting_location" msgid="4459859689227893838">"地點"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"圖片大小"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"影片解析度"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"預設相機"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"意見回饋"</string>
+    <string name="processing_hdr_plus" msgid="9160093263037540304">"正在處理 HDR+…"</string>
 </resources>

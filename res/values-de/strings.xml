@@ -84,7 +84,6 @@
     <string name="unknown" msgid="564184550182858146">"Unbekannt"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Dieses Element ist lokal gespeichert und offline verfügbar."</string>
     <string name="please_wait" msgid="1416313324505140068">"Bitte warten"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Panoramaaufnahme wird gerendert"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Kamerafehler"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Keine Verbindung zur Kamera möglich"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Die Kamera wurde aufgrund von Sicherheitsrichtlinien deaktiviert."</string>
@@ -301,9 +300,11 @@
     <string name="mode_craft" msgid="6390039207517142426">"Erweiterte Optionen"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Zeitraffer"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Weitwinkel"</string>
+    <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
     <string name="setting_location" msgid="4459859689227893838">"Standort"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Bildgröße"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Videoauflösung"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Feedback geben"</string>
+    <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ wird verarbeitet…"</string>
 </resources>

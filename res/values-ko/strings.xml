@@ -84,7 +84,6 @@
     <string name="unknown" msgid="564184550182858146">"알 수 없음"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"이 항목은 로컬에 저장되어 있으며 오프라인에서 사용할 수 있습니다."</string>
     <string name="please_wait" msgid="1416313324505140068">"잠시 기다려 주세요."</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Photo Sphere 사진 렌더링"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"카메라 오류"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"카메라에 연결할 수 없습니다."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"보안 정책으로 인해 카메라 사용이 중지되었습니다."</string>
@@ -301,9 +300,11 @@
     <string name="mode_craft" msgid="6390039207517142426">"공예"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"시간 경과"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"광각"</string>
+    <string name="mode_panorama" msgid="6882648621305828861">"파노라마"</string>
     <string name="setting_location" msgid="4459859689227893838">"위치"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"사진 크기"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"동영상 해상도"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"기본 카메라"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"의견 보내기"</string>
+    <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ 처리 중…"</string>
 </resources>

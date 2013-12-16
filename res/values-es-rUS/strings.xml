@@ -84,7 +84,6 @@
     <string name="unknown" msgid="564184550182858146">"Desconocido"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Este elemento se guardó de manera local y se encuentra disponible sin conexión."</string>
     <string name="please_wait" msgid="1416313324505140068">"Espera un momento."</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Procesando foto esférica"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Error de cámara"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"No se puede establecer conexión con la cámara."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Se inhabilitó la cámara por políticas de seguridad."</string>
@@ -301,9 +300,13 @@
     <string name="mode_craft" msgid="6390039207517142426">"Artesanía"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervalo"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Gran angular"</string>
+    <!-- no translation found for mode_panorama (6882648621305828861) -->
+    <skip />
     <string name="setting_location" msgid="4459859689227893838">"Ubicación"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Tamaño de imagen"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Resolución de video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Cámara predeterminada"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Enviar comentarios"</string>
+    <!-- no translation found for processing_hdr_plus (9160093263037540304) -->
+    <skip />
 </resources>
