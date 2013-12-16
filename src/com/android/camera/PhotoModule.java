@@ -1298,13 +1298,8 @@ public class PhotoModule
     // Preview area is touched.
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        if (mUI.isImmediateCapture()) {
-            cancelAutoFocus();
-            onShutterButtonClick();
-       } else {
-            onShutterButtonFocus(true);
-            onShutterButtonClick();
-        }
+        cancelAutoFocus();
+        onShutterButtonClick();
     }
 
     @Override
