@@ -18,6 +18,7 @@ package com.android.camera.app;
 
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -252,6 +253,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             matrix.setScale(scaleX, scaleY, (float) width / 2, 0.0f);
         }
         setPreviewTransformMatrix(matrix);
+        adjustBottomBar(width, height, bottomBar, bottomBarOptimalHeight, scaledTextureWidth,
+                scaledTextureHeight, landscape);
+    }
+
+    private void adjustBottomBar(int width, int height, BottomBar bottomBar,
+                                 int bottomBarOptimalHeight, float scaledTextureWidth,
+                                 float scaledTextureHeight, boolean landscape) {
         float previewAspectRatio =
                 scaledTextureWidth / scaledTextureHeight;
         if (previewAspectRatio < 1.0) {
@@ -286,6 +294,39 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
             bottomBar.setLayoutParams(lp);
         }
+    }
+
+    /**
+     * This is to support modules that calculate their own transform matrix because
+     * they need to use a transform matrix to rotate the preview.
+     *
+     * @param width width of the TextureView where preview is hosted
+     * @param height height of the TextureView where preview is hosted
+     * @param matrix transform matrix to be set on the TextureView
+     */
+    public void updatePreviewTransform(int width, int height, Matrix matrix) {
+        if (width == 0 || height == 0) {
+            Log.e(TAG, "Invalid screen size: " + width + " x " + height);
+            return;
+        }
+        int bottomBarMinHeight = mCameraRootView.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
+        int bottomBarOptimalHeight = mCameraRootView.getResources()
+                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
+        RectF previewRect = new RectF(0, 0, width, height);
+        matrix.mapRect(previewRect);
+
+        float previewWidth = previewRect.width();
+        float previewHeight = previewRect.height();
+        if (previewHeight == 0 || previewWidth == 0) {
+            Log.e(TAG, "Invalid preview size: " + previewWidth + " x " + previewHeight);
+            return;
+        }
+
+        BottomBar bottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
+        setPreviewTransformMatrix(matrix);
+        adjustBottomBar(width, height, bottomBar, bottomBarOptimalHeight, previewWidth,
+                previewHeight, width > height);
     }
 
     public interface AnimationFinishedListener {
