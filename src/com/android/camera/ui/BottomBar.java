@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.view.MotionEvent;
 
 /**
  * BottomBar swaps its width and height on rotation. In addition, it also changes
@@ -140,4 +141,10 @@ public class BottomBar extends FrameLayout {
         }
     }
 
+    // prevent touches on bottom bar (not its children)
+    // from triggering a touch event on preview area
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return true;
+    }
 }
