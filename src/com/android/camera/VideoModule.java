@@ -2012,9 +2012,9 @@ public class VideoModule implements CameraModule,
                 !mUnsupportedHFRVideoSize) {
             mParameters.setVideoHighFrameRate(highFrameRate);
             if(!("off".equals(highFrameRate))){
-                mUI.overrideSettings(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, "0");
+                mUI.enableItem(R.drawable.ic_timer, false);
             } else {
-                mUI.overrideSettings(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, null);
+                mUI.enableItem(R.drawable.ic_timer, true);
             }
         } else {
             mParameters.setVideoHighFrameRate("off");
