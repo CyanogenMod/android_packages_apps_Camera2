@@ -51,6 +51,24 @@ import java.util.List;
  * with an animation. To dismiss this list, simply swipe left or select a mode.
  */
 public class ModeListView extends ScrollView {
+
+    /** Simple struct that defines the look of a mode in the mode switcher. */
+    private static class Mode {
+        /** Resource ID of the icon for this mode. */
+        public final int iconResId;
+        /** Resource ID for the text of this mode. */
+        public final int textResId;
+        /** The ID of the color for this mode. */
+        public final int colorId;
+
+        public Mode(int iconResId, int textResId, int colorId) {
+            this.iconResId = iconResId;
+            this.textResId = textResId;
+            this.colorId = colorId;
+        }
+    }
+
+
     private static final String TAG = "ModeListView";
 
     // Animation Durations
@@ -62,13 +80,14 @@ public class ModeListView extends ScrollView {
     private static final int TOTAL_DURATION_MS = FLY_IN_DURATION_MS + HOLD_DURATION_MS
             + FLY_OUT_DURATION_MS;
 
-    // Different modes in the mode list
+    // Different modes in the mode list. Change these to change the order they
+    // appear in the mode switcher.
     public static final int MODE_PHOTO = 0;
     public static final int MODE_VIDEO = 1;
-    public static final int MODE_PHOTOSPHERE = 2;
-    public static final int MODE_CRAFT = 3;
-    public static final int MODE_TIMELAPSE = 4;
-    public static final int MODE_WIDEANGLE = 5;
+    public static final int MODE_CRAFT = 2;
+    public static final int MODE_WIDEANGLE = 3;
+    public static final int MODE_PHOTOSPHERE = 4;
+    public static final int MODE_TIMELAPSE = 5;
     public static final int MODE_SETTING = 6;
     // Special case
     public static final int MODE_GCAM = 100;
@@ -86,19 +105,25 @@ public class ModeListView extends ScrollView {
     // Scrolling delay between non-focused item and focused item
     private static final int DELAY_MS = 25;
 
-    private static final int[] mIconResId = {R.drawable.ic_camera_normal,
-            R.drawable.ic_video_normal, R.drawable.ic_photo_sphere_normal,
-            R.drawable.ic_craft_normal, R.drawable.ic_timelapse_normal,
-            R.drawable.ic_panorama_normal, R.drawable.ic_settings_normal,};
-
-    private static final int[] mTextResId = {R.string.mode_camera, R.string.mode_video,
-            R.string.mode_photosphere, R.string.mode_craft, R.string.mode_timelapse,
-            R.string.mode_panorama, R.string.mode_settings};
-
-    private static final int[] mIconBlockColor = {R.color.camera_mode_color,
-            R.color.video_mode_color, R.color.photosphere_mode_color, R.color.craft_mode_color,
-            R.color.timelapse_mode_color, R.color.panorama_mode_color,
-            R.color.settings_mode_color};
+    private static final Mode[] mModes;
+    static {
+        mModes = new Mode[MODE_TOTAL];
+        mModes[MODE_PHOTO] = new Mode(R.drawable.ic_camera_normal, R.string.mode_camera,
+                R.color.camera_mode_color);
+        mModes[MODE_VIDEO] = new Mode(R.drawable.ic_video_normal, R.string.mode_video,
+                R.color.video_mode_color);
+        mModes[MODE_PHOTOSPHERE] = new Mode(R.drawable.ic_photo_sphere_normal,
+                R.string.mode_photosphere,
+                R.color.photosphere_mode_color);
+        mModes[MODE_CRAFT] = new Mode(R.drawable.ic_camera_normal, R.string.mode_advanced_camera,
+                R.color.craft_mode_color);
+        mModes[MODE_TIMELAPSE] = new Mode(R.drawable.ic_timelapse_normal, R.string.mode_timelapse,
+                R.color.timelapse_mode_color);
+        mModes[MODE_WIDEANGLE] = new Mode(R.drawable.ic_panorama_normal, R.string.mode_panorama,
+                R.color.panorama_mode_color);
+        mModes[MODE_SETTING] = new Mode(R.drawable.ic_settings_normal, R.string.mode_settings,
+                R.color.settings_mode_color);
+    }
 
     private final GestureDetector mGestureDetector;
     private final int mIconBlockWidth;
@@ -132,8 +157,8 @@ public class ModeListView extends ScrollView {
      * This class aims to help store time and position in pairs.
      */
     private static class TimeBasedPosition {
-        private float mPosition;
-        private long mTimeStamp;
+        private final float mPosition;
+        private final long mTimeStamp;
         public TimeBasedPosition(float position, long time) {
             mPosition = position;
             mTimeStamp = time;
@@ -164,7 +189,7 @@ public class ModeListView extends ScrollView {
      * The interpolation output should be [0f, 0.5f] during animation between 1)
      * to 2), and [0.5f, 1f] for flying from 2) to 3).
      */
-    private TimeInterpolator mAccordionInterpolator = new TimeInterpolator() {
+    private final TimeInterpolator mAccordionInterpolator = new TimeInterpolator() {
         @Override
         public float getInterpolation(float input) {
 
@@ -195,7 +220,7 @@ public class ModeListView extends ScrollView {
      * The listener that is used to notify when gestures occur.
      * Here we only listen to a subset of gestures.
      */
-    private GestureDetector.OnGestureListener mOnGestureListener
+    private final GestureDetector.OnGestureListener mOnGestureListener
             = new GestureDetector.SimpleOnGestureListener(){
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
@@ -335,13 +360,13 @@ public class ModeListView extends ScrollView {
             }
             int modeId = getModeIndex(i);
             selectorItem.setIconBackgroundColor(getResources()
-                    .getColor(mIconBlockColor[modeId]));
+                    .getColor(mModes[modeId].colorId));
 
             // Set image
-            selectorItem.setImageResource(mIconResId[modeId]);
+            selectorItem.setImageResource(mModes[modeId].iconResId);
 
             // Set text
-            CharSequence text = getResources().getText(mTextResId[modeId]);
+            CharSequence text = getResources().getText(mModes[modeId].textResId);
             selectorItem.setText(text);
             mModeSelectorItems[i] = selectorItem;
         }
@@ -817,12 +842,12 @@ public class ModeListView extends ScrollView {
     public static int getModeThemeColor(int modeIndex) {
         // Photo and gcam has the same theme color
         if (modeIndex == MODE_GCAM) {
-            return mIconBlockColor[MODE_PHOTO];
+            return mModes[MODE_PHOTO].colorId;
         }
         if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
             return 0;
         } else {
-            return mIconBlockColor[modeIndex];
+            return mModes[modeIndex].colorId;
         }
     }
 
@@ -835,12 +860,12 @@ public class ModeListView extends ScrollView {
     public static int getModeIconResourceId(int modeIndex) {
         // Photo and gcam has the same mode icon
         if (modeIndex == MODE_GCAM) {
-            return mIconResId[MODE_PHOTO];
+            return mModes[MODE_PHOTO].iconResId;
         }
         if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
             return 0;
         } else {
-            return mIconResId[modeIndex];
+            return mModes[modeIndex].iconResId;
         }
     }
 
@@ -875,11 +900,13 @@ public class ModeListView extends ScrollView {
             mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         }
 
+        @Override
         public void setSize(int width, int height) {
             mWidth = width;
             mHeight = height;
         }
 
+        @Override
         public void drawForeground(Canvas canvas) {
             // Draw the circle in clear mode
             if (mPeepHoleAnimator != null) {
@@ -893,6 +920,7 @@ public class ModeListView extends ScrollView {
             mPeepHoleCenterY = y;
         }
 
+        @Override
         public void startAnimation() {
             if (mPeepHoleAnimator != null && mPeepHoleAnimator.isRunning()) {
                 return;
