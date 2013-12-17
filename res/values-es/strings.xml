@@ -84,7 +84,6 @@
     <string name="unknown" msgid="564184550182858146">"Desconocido"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"El elemento se ha almacenado de forma local y está disponible sin conexión."</string>
     <string name="please_wait" msgid="1416313324505140068">"Espera..."</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Procesando foto esférica"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Error de cámara"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"No se puede establecer conexión con la cámara."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Se ha inhabilitado la cámara debido a las políticas de seguridad."</string>
@@ -230,8 +229,8 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Revisar cancelación"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Revisión terminada"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Revisar repetición"</string>
-    <string name="capital_on" msgid="1118214824959797269">"ACTIVADO"</string>
-    <string name="capital_off" msgid="3020696135020167263">"DESACTIVADO"</string>
+    <string name="capital_on" msgid="1118214824959797269">"SÍ"</string>
+    <string name="capital_off" msgid="3020696135020167263">"NO"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"No"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 segundos"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 segundo"</string>
@@ -301,9 +300,11 @@
     <string name="mode_craft" msgid="6390039207517142426">"Artesanía"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervalo de tiempo"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Gran angular"</string>
+    <string name="mode_panorama" msgid="6882648621305828861">"Panorámica"</string>
     <string name="setting_location" msgid="4459859689227893838">"Ubicación"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Tamaño de imagen"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Resolución de vídeo"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Cámara predeterminada"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Danos tu opinión"</string>
+    <string name="processing_hdr_plus" msgid="9160093263037540304">"Procesando HDR+…"</string>
 </resources>
