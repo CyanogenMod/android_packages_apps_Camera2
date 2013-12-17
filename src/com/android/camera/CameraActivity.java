@@ -264,7 +264,7 @@ public class CameraActivity extends Activity
                     Intent shareIntent = getShareIntentByData(data);
                     if (shareIntent != null) {
                         try {
-                            startActivityForResult(shareIntent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+                            launchActivityByIntent(shareIntent);
                             mCameraAppUI.getFilmstripBottomControls().setShareEnabled(false);
                         } catch (ActivityNotFoundException ex) {
                             // Nothing.
@@ -644,6 +644,11 @@ public class CameraActivity extends Activity
     @Override
     public Context getAndroidContext() {
         return this;
+    }
+
+    @Override
+    public void launchActivityByIntent(Intent intent) {
+        startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
     }
 
     @Override
@@ -1359,10 +1364,9 @@ public class CameraActivity extends Activity
                 .setDataAndType(data.getContentUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
-            startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            launchActivityByIntent(intent);
         } catch (ActivityNotFoundException e) {
-            startActivityForResult(Intent.createChooser(intent, null),
-                    REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            launchActivityByIntent(Intent.createChooser(intent, null));
         }
     }
 
@@ -1566,8 +1570,7 @@ public class CameraActivity extends Activity
         try {
             UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                     UsageStatistics.ACTION_GALLERY, null);
-            startActivityForResult(IntentHelper.getGalleryIntent(CameraActivity.this),
-                    REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            launchActivityByIntent(IntentHelper.getGalleryIntent(CameraActivity.this));
         } catch (ActivityNotFoundException e) {
             Log.w(TAG, "Failed to launch gallery activity, closing");
         }

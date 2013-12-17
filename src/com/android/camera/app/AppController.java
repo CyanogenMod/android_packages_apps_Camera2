@@ -17,6 +17,7 @@
 package com.android.camera.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
@@ -58,9 +59,16 @@ public interface AppController {
     }
 
     /**
-     * Returns the {@link android.content.Context} being used.
+     * @return the {@link android.content.Context} being used.
      */
     public Context getAndroidContext();
+
+    /**
+     * Starts an activity.
+     *
+     * @param intent Used to start the activity.
+     */
+    public void launchActivityByIntent(Intent intent);
 
     /**
      * Returns whether the app is currently paused.
