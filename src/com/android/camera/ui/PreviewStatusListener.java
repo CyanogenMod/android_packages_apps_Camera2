@@ -18,6 +18,7 @@ package com.android.camera.ui;
 
 import android.view.GestureDetector;
 import android.view.TextureView;
+import android.view.View;
 
 /**
  * This interface defines a listener that watches preview status, including SurfaceTexture
@@ -32,4 +33,10 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
      * @return a listener that listens to touch events
      */
     public GestureDetector.OnGestureListener getGestureListener();
+
+    /**
+     * Gets called when preview TextureView gets a layout change call.
+     */
+    public void onPreviewLayoutChanged(View v, int left, int top, int right,
+            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom);
 }

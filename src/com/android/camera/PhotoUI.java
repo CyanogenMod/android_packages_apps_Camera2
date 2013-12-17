@@ -127,19 +127,17 @@ public class PhotoUI implements
         public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
     }
 
-    private OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right,
-                int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            int width = right - left;
-            int height = bottom - top;
-            if (mPreviewWidth != width || mPreviewHeight != height) {
-                mPreviewWidth = width;
-                mPreviewHeight = height;
-                setTransformMatrix(width, height);
-            }
+    @Override
+    public void onPreviewLayoutChanged(View v, int left, int top, int right,
+            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        int width = right - left;
+        int height = bottom - top;
+        if (mPreviewWidth != width || mPreviewHeight != height) {
+            mPreviewWidth = width;
+            mPreviewHeight = height;
+            setTransformMatrix(width, height);
         }
-    };
+    }
 
     private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
         private final byte [] mData;
@@ -194,7 +192,6 @@ public class PhotoUI implements
                  (ViewGroup) moduleRoot, true);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
-        mTextureView.addOnLayoutChangeListener(mLayoutListener);
         initIndicators();
 
         mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);

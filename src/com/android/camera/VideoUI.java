@@ -79,26 +79,24 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private float mAspectRatio = 16f / 9f;
     private final AnimationManager mAnimationManager;
 
-    private final OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right,
-                int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            int width = right - left;
-            int height = bottom - top;
-            // Full-screen screennail
-            int w = width;
-            int h = height;
-            if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
-                w = height;
-                h = width;
-            }
-            if (mPreviewWidth != width || mPreviewHeight != height) {
-                mPreviewWidth = width;
-                mPreviewHeight = height;
-                onScreenSizeChanged(width, height, w, h);
-            }
+    @Override
+    public void onPreviewLayoutChanged(View v, int left, int top, int right,
+            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        int width = right - left;
+        int height = bottom - top;
+        // Full-screen screennail
+        int w = width;
+        int h = height;
+        if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
+            w = height;
+            h = width;
         }
-    };
+        if (mPreviewWidth != width || mPreviewHeight != height) {
+            mPreviewWidth = width;
+            mPreviewHeight = height;
+            onScreenSizeChanged(width, height, w, h);
+        }
+    }
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
@@ -123,7 +121,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mPreviewWidth = mTextureView.getWidth();
         mPreviewHeight = mTextureView.getHeight();
-        mTextureView.addOnLayoutChangeListener(mLayoutListener);
+
         mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
         mBottomBarMinHeight = activity.getResources()

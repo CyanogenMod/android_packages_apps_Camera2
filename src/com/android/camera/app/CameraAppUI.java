@@ -218,6 +218,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final FilmstripBottomControls mFilmstripBottomControls;
     private final FilmstripContentPanel mFilmstripPanel;
     private Runnable mHideCoverRunnable;
+    private final View.OnLayoutChangeListener mPreviewLayoutChangeListener
+            = new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+                int oldTop, int oldRight, int oldBottom) {
+            if (mPreviewStatusListener != null) {
+                mPreviewStatusListener.onPreviewLayoutChanged(v, left, top, right, bottom, oldLeft,
+                        oldTop, oldRight, oldBottom);
+            }
+        }
+    };
 
     // TODO this isn't used by all modules universally, should be part of a util class or something
     /**
@@ -568,6 +579,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
+        mTextureView.addOnLayoutChangeListener(mPreviewLayoutChangeListener);
         mTextureView.setSurfaceTextureListener(this);
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
@@ -580,6 +592,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void clearCameraUI() {
         mCameraRootView.removeAllViews();
         mModuleUI = null;
+        mTextureView.removeOnLayoutChangeListener(mPreviewLayoutChangeListener);
         mTextureView = null;
         mPreviewOverlay = null;
         mFlashOverlay = null;
@@ -603,9 +616,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModuleUI != null) {
             mModuleUI.removeAllViews();
         }
-
-        // TODO: Bring TextureView up to the app level
-        mTextureView.removeOnLayoutChangeListener(null);
 
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
