@@ -47,7 +47,6 @@
 
             <TextView
                 android:id="@+id/pano_session_progress_text"
-                android:text="@string/rendering_photo_sphere"
                 android:textColor="#ffffffff"
                 android:textSize="14sp"
                 android:shadowColor="#ff000000"
