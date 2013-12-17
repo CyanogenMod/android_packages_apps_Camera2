@@ -48,8 +48,7 @@ public class ModulesInfo {
         moduleManager.setDefaultModuleIndex(MODULE_PHOTO);
         registerVideoModule(moduleManager);
         if (PhotoSphereHelper.hasLightCycleCapture(context)) {
-            // TODO: Re-enable once we have wide-angle mode CLs in.
-            // registerWideAngleModule(moduleManager);
+            registerWideAngleModule(moduleManager);
             registerPhotoSphereModule(moduleManager);
         }
         if (RefocusHelper.hasRefocusCapture(context)) {

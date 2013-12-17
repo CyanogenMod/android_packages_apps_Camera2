@@ -80,9 +80,9 @@
     <color name="camera_mode_color">#76a7fa</color>
     <color name="video_mode_color">#e57368</color>
     <color name="craft_mode_color">#8bc474</color>
-    <color name="photosphere_mode_color">#f1c938</color>
+    <color name="photosphere_mode_color">#9e69af</color>
     <color name="timelapse_mode_color">#88695e</color>
-    <color name="panorama_mode_color">#9e69af</color>
+    <color name="panorama_mode_color">#f1c938</color>
     <color name="settings_mode_color">#58595b</color>
 
     <color name="filmstrip_background">#000000</color>
