@@ -27,7 +27,6 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,6 +45,7 @@ import java.util.List;
 public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private static final String TAG = "CAM_VideoUI";
 
+    private final static float UNSET = 0f;
     private final PreviewOverlay mPreviewOverlay;
     // module fields
     private final CameraActivity mActivity;
@@ -68,15 +68,10 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private List<Integer> mZoomRatios;
 
     private final BottomBar mBottomBar;
-    private final int mBottomBarMinHeight;
-    private final int mBottomBarOptimalHeight;
 
     private SurfaceView mSurfaceView = null;
-    private int mPreviewWidth = 0;
-    private int mPreviewHeight = 0;
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
-    private float mAspectRatio = 16f / 9f;
 
     private ButtonManager.ButtonCallback mFlashCallback;
     private ButtonManager.ButtonCallback mCameraCallback;
@@ -101,25 +96,22 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         }
     };
 
+    private float mAspectRatio = UNSET;
     private final AnimationManager mAnimationManager;
 
     @Override
     public void onPreviewLayoutChanged(View v, int left, int top, int right,
             int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        int width = right - left;
-        int height = bottom - top;
-        // Full-screen screennail
-        int w = width;
-        int h = height;
-        if (CameraUtil.getDisplayRotation(mActivity) % 180 != 0) {
-            w = height;
-            h = width;
-        }
-        if (mPreviewWidth != width || mPreviewHeight != height) {
-            mPreviewWidth = width;
-            mPreviewHeight = height;
-            onScreenSizeChanged(width, height, w, h);
-        }
+    }
+
+    @Override
+    public boolean shouldAutoAdjustTransformMatrixOnLayout() {
+        return true;
+    }
+
+    @Override
+    public boolean shouldAutoAdjustBottomBar() {
+        return true;
     }
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener
@@ -141,23 +133,13 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
                 moduleRoot, true);
 
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
-
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
-        mPreviewWidth = mTextureView.getWidth();
-        mPreviewHeight = mTextureView.getHeight();
 
         mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
-        mBottomBarMinHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
-        mBottomBarOptimalHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
         mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.video_mode_color));
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
-        if (mSurfaceTexture != null) {
-            setTransformMatrix(mPreviewWidth, mPreviewHeight);
-        }
 
         initializeMiscControls();
         initializeControlByIntent();
@@ -230,15 +212,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         setAspectRatio(aspectRatio);
     }
 
-    public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
-        setTransformMatrix(width, height);
-    }
-
-    private void setTransformMatrix(int width, int height) {
-        mActivity.getCameraAppUI().adjustPreviewAndBottomBarSize(width, height, mBottomBar,
-                mAspectRatio, mBottomBarMinHeight, mBottomBarOptimalHeight);
-    }
-
     /**
      * Starts a flash animation
      */
@@ -296,13 +269,11 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     public void hideSurfaceView() {
         mSurfaceView.setVisibility(View.GONE);
         mTextureView.setVisibility(View.VISIBLE);
-        setTransformMatrix(mPreviewWidth, mPreviewHeight);
     }
 
     public void showSurfaceView() {
         mSurfaceView.setVisibility(View.VISIBLE);
         mTextureView.setVisibility(View.GONE);
-        setTransformMatrix(mPreviewWidth, mPreviewHeight);
     }
 
     public void onCameraOpened(ButtonManager.ButtonCallback flashCallback,
@@ -337,7 +308,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         float aspectRatio = ratio > 1 ? ratio : 1 / ratio;
         if (aspectRatio != mAspectRatio) {
             mAspectRatio = aspectRatio;
-            setTransformMatrix(mPreviewWidth, mPreviewHeight);
+            mController.updatePreviewAspectRatio(mAspectRatio);
         }
     }
 

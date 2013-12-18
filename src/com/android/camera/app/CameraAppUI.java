@@ -32,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.android.camera.AnimationManager;
+import com.android.camera.TextureViewHelper;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
@@ -206,9 +207,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final ModeListView mModeListView;
     private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
-    private View mFlashOverlay;
     private FrameLayout mModuleUI;
 
+    private BottomBar mBottomBar;
+    private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
     private int mSwipeState = IDLE;
     private PreviewOverlay mPreviewOverlay;
@@ -230,114 +232,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
 
-    // TODO this isn't used by all modules universally, should be part of a util class or something
-    /**
-     * Resizes the preview texture and given bottom bar for 100% preview size
-     */
-    public void adjustPreviewAndBottomBarSize(int width, int height,
-            BottomBar bottomBar, float aspectRatio,
-            int bottomBarMinHeight, int bottomBarOptimalHeight) {
-        Matrix matrix = mTextureView.getTransform(null);
-
-        float scaleX = 1f, scaleY = 1f;
-        float scaledTextureWidth, scaledTextureHeight;
-        if (width > height) {
-            scaledTextureWidth = Math.min(width,
-                                          (int) (height * aspectRatio));
-            scaledTextureHeight = Math.min(height,
-                                           (int) (width / aspectRatio));
-        } else {
-            scaledTextureWidth = Math.min(width,
-                                          (int) (height / aspectRatio));
-            scaledTextureHeight = Math.min(height,
-                                           (int) (width * aspectRatio));
-        }
-
-        scaleX = scaledTextureWidth / width;
-        scaleY = scaledTextureHeight / height;
-
-        // TODO: Need a better way to find out whether currently in landscape
-        boolean landscape = width > height;
-        if (landscape) {
-            matrix.setScale(scaleX, scaleY, 0f, (float) height / 2);
-        } else {
-            matrix.setScale(scaleX, scaleY, (float) width / 2, 0.0f);
-        }
-        setPreviewTransformMatrix(matrix);
-        adjustBottomBar(width, height, bottomBar, bottomBarOptimalHeight, scaledTextureWidth,
-                scaledTextureHeight, landscape);
-    }
-
-    private void adjustBottomBar(int width, int height, BottomBar bottomBar,
-                                 int bottomBarOptimalHeight, float scaledTextureWidth,
-                                 float scaledTextureHeight, boolean landscape) {
-        float previewAspectRatio =
-                scaledTextureWidth / scaledTextureHeight;
-        if (previewAspectRatio < 1.0) {
-            previewAspectRatio = 1.0f/previewAspectRatio;
-        }
-        float screenAspectRatio = (float)width / (float)height;
-        if (screenAspectRatio < 1.0) {
-            screenAspectRatio = 1.0f/screenAspectRatio;
-        }
-
-        if(bottomBar != null) {
-            LayoutParams lp = (LayoutParams) bottomBar.getLayoutParams();
-            // TODO accoount for cases where resizes bar height would be < bottomBarMinHeight
-            if (previewAspectRatio >= screenAspectRatio) {
-                bottomBar.setAlpha(0.5f);
-                if (landscape) {
-                    lp.width = bottomBarOptimalHeight;
-                    lp.height = LayoutParams.MATCH_PARENT;
-                } else {
-                    lp.height = bottomBarOptimalHeight;
-                    lp.width = LayoutParams.MATCH_PARENT;
-                }
-            } else {
-                bottomBar.setAlpha(1.0f);
-                if (landscape) {
-                    lp.width = (int)(width - scaledTextureWidth);
-                    lp.height = LayoutParams.MATCH_PARENT;
-                } else {
-                    lp.height = (int)(height - scaledTextureHeight);
-                    lp.width = LayoutParams.MATCH_PARENT;
-                }
-            }
-            bottomBar.setLayoutParams(lp);
-        }
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        mTextureViewHelper.updateAspectRatio(aspectRatio);
     }
 
     /**
      * This is to support modules that calculate their own transform matrix because
      * they need to use a transform matrix to rotate the preview.
      *
-     * @param width width of the TextureView where preview is hosted
-     * @param height height of the TextureView where preview is hosted
      * @param matrix transform matrix to be set on the TextureView
      */
-    public void updatePreviewTransform(int width, int height, Matrix matrix) {
-        if (width == 0 || height == 0) {
-            Log.e(TAG, "Invalid screen size: " + width + " x " + height);
-            return;
-        }
-        int bottomBarMinHeight = mCameraRootView.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
-        int bottomBarOptimalHeight = mCameraRootView.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
-        RectF previewRect = new RectF(0, 0, width, height);
-        matrix.mapRect(previewRect);
-
-        float previewWidth = previewRect.width();
-        float previewHeight = previewRect.height();
-        if (previewHeight == 0 || previewWidth == 0) {
-            Log.e(TAG, "Invalid preview size: " + previewWidth + " x " + previewHeight);
-            return;
-        }
-
-        BottomBar bottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
-        setPreviewTransformMatrix(matrix);
-        adjustBottomBar(width, height, bottomBar, bottomBarOptimalHeight, previewWidth,
-                previewHeight, width > height);
+    public void updatePreviewTransform(Matrix matrix) {
+        mTextureViewHelper.updateTransform(matrix);
     }
 
     public interface AnimationFinishedListener {
@@ -561,6 +467,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             if (gestureListener != null) {
                 mPreviewOverlay.setGestureListener(gestureListener);
             }
+            mTextureViewHelper.setAutoAdjustTransform(
+                    mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
+            if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
+                mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
+                mTextureViewHelper.setPreviewSizeChangedListener(mBottomBar);
+            }
         }
     }
 
@@ -579,8 +491,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
-        mTextureView.addOnLayoutChangeListener(mPreviewLayoutChangeListener);
-        mTextureView.setSurfaceTextureListener(this);
+        mTextureViewHelper = new TextureViewHelper(mTextureView);
+        mTextureViewHelper.setSurfaceTextureListener(this);
+        mTextureViewHelper.setOnLayoutChangeListener(mPreviewLayoutChangeListener);
+
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mCaptureOverlay = (CaptureAnimationOverlay)
@@ -592,10 +506,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void clearCameraUI() {
         mCameraRootView.removeAllViews();
         mModuleUI = null;
-        mTextureView.removeOnLayoutChangeListener(mPreviewLayoutChangeListener);
         mTextureView = null;
         mPreviewOverlay = null;
-        mFlashOverlay = null;
     }
 
     /**
@@ -616,6 +528,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModuleUI != null) {
             mModuleUI.removeAllViews();
         }
+        // TODO: Remove this when bottom bar is at the app level
+        mBottomBar = null;
+        mTextureViewHelper.setPreviewSizeChangedListener(null);
 
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
@@ -662,18 +577,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             hideModeCover();
         }
     }
-
-    /**
-     * Sets the transform matrix on the preview TextureView
-     */
-    public void setPreviewTransformMatrix(Matrix transformMatrix) {
-        if (mTextureView == null) {
-            throw new UnsupportedOperationException("Cannot set transform matrix on a null" +
-                    " TextureView");
-        }
-        mTextureView.setTransform(transformMatrix);
-    }
-
 
     /********************** Capture animation **********************/
     /* TODO: This session is subject to UX changes. In addition to the generic

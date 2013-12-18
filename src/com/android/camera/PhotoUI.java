@@ -29,13 +29,8 @@ import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
@@ -57,6 +52,7 @@ public class PhotoUI implements
 
     private static final String TAG = "PhotoUI";
     private static final int DOWN_SAMPLE_FACTOR = 4;
+    private static final float UNSET = 0f;
 
     private final PreviewOverlay mPreviewOverlay;
     private CameraActivity mActivity;
@@ -80,11 +76,9 @@ public class PhotoUI implements
     private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
     private TextureView mTextureView;
     private Matrix mMatrix = null;
-    private float mAspectRatio = 4f / 3f;
+    private float mAspectRatio = UNSET;
     private final Object mSurfaceTextureLock = new Object();
     private BottomBar mBottomBar;
-    private final int mBottomBarMinHeight;
-    private final int mBottomBarOptimalHeight;
 
     private ButtonManager.ButtonCallback mCameraCallback;
     private ButtonManager.ButtonCallback mHdrCallback;
@@ -135,8 +129,17 @@ public class PhotoUI implements
         if (mPreviewWidth != width || mPreviewHeight != height) {
             mPreviewWidth = width;
             mPreviewHeight = height;
-            setTransformMatrix(width, height);
         }
+    }
+
+    @Override
+    public boolean shouldAutoAdjustTransformMatrixOnLayout() {
+        return true;
+    }
+
+    @Override
+    public boolean shouldAutoAdjustBottomBar() {
+        return true;
     }
 
     private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
@@ -194,17 +197,8 @@ public class PhotoUI implements
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         initIndicators();
 
-        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
-        mBottomBarMinHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_min);
-        mBottomBarOptimalHeight = activity.getResources()
-                .getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
-
         mSurfaceTexture = mTextureView.getSurfaceTexture();
-        if (mSurfaceTexture != null) {
-            setTransformMatrix(mTextureView.getWidth(), mTextureView.getHeight());
-        }
-
+        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.camera_mode_color));
         ViewStub faceViewStub = (ViewStub) mRootView
                 .findViewById(R.id.face_view_stub);
@@ -233,15 +227,8 @@ public class PhotoUI implements
         if (mAspectRatio != aspectRatio) {
             mAspectRatio = aspectRatio;
             // Update transform matrix with the new aspect ratio.
-            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-                setTransformMatrix(mPreviewWidth, mPreviewHeight);
-            }
+            mController.updatePreviewAspectRatio(mAspectRatio);
         }
-    }
-
-    private void setTransformMatrix(int width, int height) {
-        mActivity.getCameraAppUI().adjustPreviewAndBottomBarSize(width, height, mBottomBar,
-                mAspectRatio, mBottomBarMinHeight, mBottomBarOptimalHeight);
     }
 
     protected Object getSurfaceTextureLock() {
@@ -254,11 +241,6 @@ public class PhotoUI implements
             Log.v(TAG, "SurfaceTexture ready.");
             mSurfaceTexture = surface;
             mController.onPreviewUIReady();
-            // Workaround for b/11168275, see b/10981460 for more details
-            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-                // Re-apply transform matrix for new surface texture
-                setTransformMatrix(mPreviewWidth, mPreviewHeight);
-            }
         }
     }
 
@@ -466,14 +448,6 @@ public class PhotoUI implements
 
     public SurfaceTexture getSurfaceTexture() {
         return mSurfaceTexture;
-    }
-
-    public void showPreferencesToast() {
-        if (mNotSelectableToast == null) {
-            String str = mActivity.getResources().getString(R.string.not_selectable_in_scene_mode);
-            mNotSelectableToast = Toast.makeText(mActivity, str, Toast.LENGTH_SHORT);
-        }
-        mNotSelectableToast.show();
     }
 
     public void onPause() {

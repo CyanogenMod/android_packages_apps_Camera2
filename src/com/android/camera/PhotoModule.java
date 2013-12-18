@@ -517,6 +517,11 @@ public class PhotoModule
             mFocusManager.setPreviewRect(previewRect);
     }
 
+    @Override
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        mAppController.updatePreviewAspectRatio(aspectRatio);
+    }
+
     private void resetExposureCompensation() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
         if (settingsManager == null) {

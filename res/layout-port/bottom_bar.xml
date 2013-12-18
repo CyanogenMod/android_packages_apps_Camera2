@@ -20,7 +20,7 @@
     <com.android.camera.ui.BottomBar
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_bar_height_optimal"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:paddingLeft="@dimen/camera_controls_padding_start"
         android:paddingRight="@dimen/camera_controls_padding_end"

@@ -39,4 +39,30 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
      */
     public void onPreviewLayoutChanged(View v, int left, int top, int right,
             int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom);
+
+    /**
+     * This listener gets notified when the actual preview frame changes size due
+     * to a transform matrix being applied to the TextureView
+     */
+    public interface PreviewSizeChangedListener {
+        public void onPreviewSizeChanged(float previewWidth, float previewHeight);
+    }
+
+    /**
+     * The preview status listener needs to know for the specific module whether
+     * preview TextureView should automatically adjust its transform matrix based
+     * on the current aspect ratio, width and height of the TextureView.
+     *
+     * @return whether transform matrix should be automatically adjusted
+     */
+    public boolean shouldAutoAdjustTransformMatrixOnLayout();
+
+    /**
+     * The preview status listener needs to know for the specific module whether
+     * bottom bar should be automatically adjusted when preview has changed size
+     * or orientation.
+     *
+     * @return whether bottom bar should be automatically adjusted
+     */
+    public boolean shouldAutoAdjustBottomBar();
 }

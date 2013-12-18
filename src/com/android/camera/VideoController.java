@@ -35,6 +35,7 @@ public interface VideoController extends OnShutterButtonListener {
     public void stopPreview();
 
     public void updateCameraOrientation();
+    public void updatePreviewAspectRatio(float aspectRatio);
 
     // Callbacks for camera preview UI events.
     public void onPreviewUIReady();
@@ -46,4 +47,5 @@ public interface VideoController extends OnShutterButtonListener {
      * Starts the pre-capture animation.
      */
     public void startPreCaptureAnimation();
+
 }

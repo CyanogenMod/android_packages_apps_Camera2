@@ -19,6 +19,7 @@ package com.android.camera.app;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.widget.FrameLayout;
@@ -99,6 +100,23 @@ public interface AppController {
      * Gets called from module when preview is started.
      */
     public void onPreviewStarted();
+
+    /**
+     * Gets called from module when preview aspect ratio has changed.
+     *
+     * @param aspectRatio aspect ratio of preview stream
+     */
+    public void updatePreviewAspectRatio(float aspectRatio);
+
+    /**
+     * Gets called from module when the module needs to change the transform matrix
+     * of the preview TextureView. It is encouraged to use
+     * {@link #updatePreviewAspectRatio(float)} over this function, unless the module
+     * needs to rotate the surface texture using transform matrix.
+     *
+     * @param matrix transform matrix to be set on preview TextureView
+     */
+    public void updatePreviewTransform(Matrix matrix);
 
     /**
      * Sets the preview status listener, which will get notified when TextureView

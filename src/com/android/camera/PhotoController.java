@@ -55,6 +55,8 @@ public interface PhotoController extends OnShutterButtonListener {
 
     public void onPreviewRectChanged(Rect previewRect);
 
+    public void updatePreviewAspectRatio(float aspectRatio);
+
     public void updateCameraOrientation();
 
     /**
@@ -78,4 +80,5 @@ public interface PhotoController extends OnShutterButtonListener {
      * Starts the pre-capture animation.
      */
     public void startPreCaptureAnimation();
+
 }

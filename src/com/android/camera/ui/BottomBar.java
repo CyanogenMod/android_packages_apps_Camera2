@@ -19,6 +19,7 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.view.MotionEvent;
+
+import com.android.camera2.R;
 
 /**
  * BottomBar swaps its width and height on rotation. In addition, it also changes
@@ -37,9 +40,18 @@ import android.view.MotionEvent;
  * In addition to adjusting itself, this class also makes sure its children are
  * always spaced evenly in the new orientation.
  */
-public class BottomBar extends FrameLayout {
+public class BottomBar extends FrameLayout
+        implements PreviewStatusListener.PreviewSizeChangedListener {
+    private static final String TAG = "BottomBar";
     private final int mPaddingStart;
     private final int mPaddingEnd;
+    private int mWidth;
+    private int mHeight;
+    private float mOffsetShorterEdge;
+    private float mOffsetLongerEdge;
+
+    private final int mOptimalHeight;
+    private boolean mOverLayBottomBar;
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,6 +64,7 @@ public class BottomBar extends FrameLayout {
             mPaddingStart = getPaddingLeft();
             mPaddingEnd = getPaddingRight();
         }
+        mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
     }
 
     /**
@@ -64,34 +77,88 @@ public class BottomBar extends FrameLayout {
         inflater.inflate(buttonLayoutId, this, true);
     }
 
-    /**
-     * Adjust layout orientation, width, height and gravity based on new orientation.
-     */
-    private void adjustSelf(Configuration configuration) {
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
-        int shortEdge;
-        if (lp.width != FrameLayout.LayoutParams.MATCH_PARENT) {
-            shortEdge = lp.width;
-        } else {
-            shortEdge = lp.height;
+    @Override
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        mWidth = MeasureSpec.getSize(widthMeasureSpec);
+        mHeight = MeasureSpec.getSize(heightMeasureSpec);
+        if (mWidth == 0 || mHeight == 0) {
+            return;
         }
-        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            lp.width = FrameLayout.LayoutParams.MATCH_PARENT;
-            lp.height = shortEdge;
-            lp.gravity = Gravity.BOTTOM;
-            setLayoutParams(lp);
+
+        if (mOffsetShorterEdge != 0 && mOffsetLongerEdge != 0) {
+            float previewAspectRatio =
+                    mOffsetLongerEdge / mOffsetShorterEdge;
+            if (previewAspectRatio < 1.0) {
+                previewAspectRatio = 1.0f/previewAspectRatio;
+            }
+            float screenAspectRatio = (float) mWidth / (float) mHeight;
+            if (screenAspectRatio < 1.0) {
+                screenAspectRatio = 1.0f/screenAspectRatio;
+            }
+            if (previewAspectRatio >= screenAspectRatio) {
+                mOverLayBottomBar = true;
+                setAlpha(0.5f);
+            } else {
+                mOverLayBottomBar = false;
+                setAlpha(1.0f);
+            }
+        }
+
+        // Calculates the width and height needed for the bar.
+        int barWidth, barHeight;
+        if (mWidth > mHeight) {
+            ((LayoutParams) getLayoutParams()).gravity = Gravity.RIGHT;
+            if ((mOffsetLongerEdge == 0 && mOffsetShorterEdge == 0) || mOverLayBottomBar) {
+                barWidth = mOptimalHeight;
+                barHeight = mHeight;
+            } else {
+                barWidth = (int) (mWidth - mOffsetLongerEdge);
+                barHeight = mHeight;
+            }
         } else {
-            lp.height = FrameLayout.LayoutParams.MATCH_PARENT;
-            lp.width = shortEdge;
-            lp.gravity = Gravity.RIGHT;
-            setLayoutParams(lp);
+            ((LayoutParams) getLayoutParams()).gravity = Gravity.BOTTOM;
+            if ((mOffsetLongerEdge == 0 && mOffsetShorterEdge == 0) || mOverLayBottomBar) {
+                barWidth = mWidth;
+                barHeight = mOptimalHeight;
+            } else {
+                barWidth = mWidth;
+                barHeight = (int) (mHeight - mOffsetLongerEdge);
+            }
+        }
+        super.onMeasure(MeasureSpec.makeMeasureSpec(barWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY));
+    }
+
+    private void adjustBottomBar(float scaledTextureWidth,
+                                 float scaledTextureHeight) {
+        setOffset(scaledTextureWidth, scaledTextureHeight);
+    }
+
+    @Override
+    public void onPreviewSizeChanged(float scaledTextureWidth,
+                                     float scaledTextureHeight) {
+        adjustBottomBar(scaledTextureWidth, scaledTextureHeight);
+    }
+
+    private void setOffset(float scaledTextureWidth, float scaledTextureHeight) {
+        float offsetLongerEdge, offsetShorterEdge;
+        if (scaledTextureHeight > scaledTextureWidth) {
+            offsetLongerEdge = scaledTextureHeight;
+            offsetShorterEdge = scaledTextureWidth;
+        } else {
+            offsetLongerEdge = scaledTextureWidth;
+            offsetShorterEdge = scaledTextureHeight;
+        }
+        if (mOffsetLongerEdge != offsetLongerEdge || mOffsetShorterEdge != offsetShorterEdge) {
+            mOffsetLongerEdge = offsetLongerEdge;
+            mOffsetShorterEdge = offsetShorterEdge;
+            requestLayout();
         }
     }
 
     @Override
     protected void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        adjustSelf(config);
     }
 
     /**

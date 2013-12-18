@@ -611,6 +611,11 @@ public class VideoModule extends CameraModule
     }
 
     @Override
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        mAppController.updatePreviewAspectRatio(aspectRatio);
+    }
+
+    @Override
     public int onZoomChanged(int index) {
         // Not useful to change zoom value when the activity is paused.
         if (mPaused) return index;

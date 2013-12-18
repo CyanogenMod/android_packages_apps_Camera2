@@ -32,6 +32,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -665,6 +666,16 @@ public class CameraActivity extends Activity
     @Override
     public void onPreviewStarted() {
         mCameraAppUI.onPreviewStarted();
+    }
+
+    @Override
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        mCameraAppUI.updatePreviewAspectRatio(aspectRatio);
+    }
+
+    @Override
+    public void updatePreviewTransform(Matrix matrix) {
+        mCameraAppUI.updatePreviewTransform(matrix);
     }
 
     @Override
