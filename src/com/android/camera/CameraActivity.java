@@ -984,7 +984,8 @@ public class CameraActivity extends Activity
         if (modeIndex == ModulesInfo.MODULE_PHOTO
                 || modeIndex == ModulesInfo.MODULE_VIDEO
                 || modeIndex == ModulesInfo.MODULE_GCAM
-                || modeIndex == ModulesInfo.MODULE_CRAFT) {
+                || modeIndex == ModulesInfo.MODULE_CRAFT
+                || modeIndex == ModulesInfo.MODULE_REFOCUS) {
             mCameraAppUI.prepareModuleUI();
         }
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
@@ -1312,11 +1313,13 @@ public class CameraActivity extends Activity
         if (mCurrentModeIndex == ModulesInfo.MODULE_PHOTO
                 || mCurrentModeIndex == ModulesInfo.MODULE_VIDEO
                 || mCurrentModeIndex == ModulesInfo.MODULE_GCAM
-                || mCurrentModeIndex == ModulesInfo.MODULE_CRAFT) {
+                || mCurrentModeIndex == ModulesInfo.MODULE_CRAFT
+                || mCurrentModeIndex == ModulesInfo.MODULE_REFOCUS) {
             if (oldModuleIndex != ModulesInfo.MODULE_PHOTO
                     && oldModuleIndex != ModulesInfo.MODULE_VIDEO
                     && oldModuleIndex != ModulesInfo.MODULE_GCAM
-                    && oldModuleIndex != ModulesInfo.MODULE_CRAFT) {
+                    && oldModuleIndex != ModulesInfo.MODULE_CRAFT
+                    && oldModuleIndex != ModulesInfo.MODULE_REFOCUS) {
                 mCameraAppUI.prepareModuleUI();
             } else {
                 mCameraAppUI.clearModuleUI();
@@ -1436,6 +1439,14 @@ public class CameraActivity extends Activity
     }
 
     private void openModule(CameraModule module) {
+        // Currently not all modules use the generic_module UI.
+        // TODO: once all modules have a bottom bar, move this
+        // logic into the app.
+        if (module.isUsingBottomBar()) {
+            int color = mModeListView.getModeThemeColor(mCurrentModeIndex);
+            mCameraAppUI.setBottomBarColor(color);
+        }
+
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
         module.onPreviewVisibilityChanged(!mFilmstripVisible);

@@ -103,4 +103,12 @@ public interface ModuleController {
      * @param cameraProxy The camera device proxy.
      */
     public void onCameraAvailable(CameraManager.CameraProxy cameraProxy);
+
+    /**
+     * Used by the app on configuring the bottom bar color and visibility.
+     */
+    // Necessary because not all modules have a bottom bar.
+    // TODO: once all modules use the generic module UI, move this
+    // logic into the app.
+    public boolean isUsingBottomBar();
 }

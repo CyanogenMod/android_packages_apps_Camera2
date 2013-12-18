@@ -293,6 +293,7 @@ public class VideoModule extends CameraModule
         mActivity = (CameraActivity) app.getAndroidContext();
         mUI = new VideoUI(mActivity, this,  app.getModuleLayoutRoot());
         app.setPreviewStatusListener(mUI);
+        app.getCameraAppUI().setBottomBarShutterListener(this);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
@@ -321,11 +322,14 @@ public class VideoModule extends CameraModule
         mAppController = app;
     }
 
-    // SingleTapListener
-    // Preview area is touched. Take a picture.
+    @Override
+    public boolean isUsingBottomBar() {
+        return true;
+    }
+
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        onShutterButtonClick();
+        // TODO: Add touch to focus.
     }
 
     private void takeASnapshot() {

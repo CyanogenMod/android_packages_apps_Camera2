@@ -22,9 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:paddingLeft="@dimen/camera_controls_padding_start"
-        android:paddingRight="@dimen/camera_controls_padding_end"
-        android:gravity="center" >
+        android:gravity="center">
+
+      <include layout="@layout/bottom_bar_contents" />
 
     </com.android.camera.ui.BottomBar>
 </merge>

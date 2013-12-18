@@ -33,7 +33,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
@@ -67,8 +66,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private int mZoomMax;
     private List<Integer> mZoomRatios;
 
-    private final BottomBar mBottomBar;
-
     private SurfaceView mSurfaceView = null;
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
@@ -91,7 +88,8 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private final OnClickListener mReviewCallback = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setupBottomBarIntentLayout();
+            setupIntentToggleButtons();
+            mActivity.getCameraAppUI().transitionToIntentLayout();
             mController.onReviewPlayClicked(v);
         }
     };
@@ -118,7 +116,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
             = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            // Preview area is touched. Take a picture.
             mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
             return true;
         }
@@ -135,9 +132,9 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
 
-        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
-        mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
-        mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.video_mode_color));
+        // Customize the bottom bar.
+        activity.getCameraAppUI().setBottomBarColor(
+            activity.getResources().getColor(R.color.video_mode_color));
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
 
@@ -154,47 +151,29 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
 
     private void setupToggleButtons() {
         ButtonManager buttonManager = mActivity.getButtonManager();
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (settingsManager.isCameraBackFacing()) {
-            buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
-                mFlashCallback, R.array.video_flashmode_icons);
-        } else {
-            buttonManager.disableButton(ButtonManager.BUTTON_TORCH,
-                R.id.flash_toggle_button);
-        }
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
             mCameraCallback, R.array.camera_id_icons);
-
+        buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
+            mFlashCallback, R.array.video_flashmode_icons);
+        buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
+        buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS, R.id.refocus_toggle_button);
     }
 
-    private void setupBottomBarLayout() {
-        mBottomBar.setButtonLayout(R.layout.video_bottombar_buttons);
+    private void setupIntentToggleButtons() {
         setupToggleButtons();
-    }
-
-    private void setupBottomBarIntentLayout() {
-        mBottomBar.setButtonLayout(R.layout.video_intent_bottombar_buttons);
-        ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
-                mCancelCallback);
-        setupToggleButtons();
-    }
-
-    private void setupBottomBarIntentReviewLayout() {
-        mBottomBar.setButtonLayout(R.layout.video_intent_review_bottombar_buttons);
         ButtonManager buttonManager = mActivity.getButtonManager();
         buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
                 mCancelCallback);
         buttonManager.enablePushButton(ButtonManager.BUTTON_DONE, R.id.done_button,
                 mDoneCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW, R.id.review_button,
-                mReviewCallback);
-
+        buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW, R.id.retake_button,
+                mReviewCallback, R.drawable.ic_play);
     }
 
     private void initializeControlByIntent() {
         if (mController.isVideoCaptureIntent()) {
-            setupBottomBarLayout();
+            setupIntentToggleButtons();
+            mActivity.getCameraAppUI().transitionToIntentLayout();
         }
     }
 
@@ -282,9 +261,10 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mCameraCallback = cameraCallback;
 
         if (mController.isVideoCaptureIntent()) {
-            setupBottomBarIntentLayout();
+            setupIntentToggleButtons();
+            mActivity.getCameraAppUI().transitionToIntentLayout();
         } else {
-            setupBottomBarLayout();
+            setupToggleButtons();
         }
     }
 
@@ -346,7 +326,8 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     }
 
     public void showReviewControls() {
-        setupBottomBarIntentReviewLayout();
+        setupIntentToggleButtons();
+        mActivity.getCameraAppUI().transitionToIntentReviewLayout();
         mReviewImage.setVisibility(View.VISIBLE);
     }
 

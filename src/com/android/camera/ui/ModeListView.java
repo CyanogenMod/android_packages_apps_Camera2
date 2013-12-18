@@ -91,6 +91,7 @@ public class ModeListView extends ScrollView {
     public static final int MODE_SETTING = 6;
     // Special case
     public static final int MODE_GCAM = 100;
+    public static final int MODE_REFOCUS = 101;
     private static final int MODE_TOTAL = 7;
     private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
     private static final int NO_ITEM_SELECTED = -1;
@@ -841,8 +842,8 @@ public class ModeListView extends ScrollView {
      */
     public static int getModeThemeColor(int modeIndex) {
         // Photo and gcam has the same theme color
-        if (modeIndex == MODE_GCAM) {
-            return mModes[MODE_PHOTO].colorId;
+        if (modeIndex == MODE_GCAM || modeIndex == MODE_REFOCUS) {
+            return mModes[MODE_CRAFT].colorId;
         }
         if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
             return 0;
@@ -859,8 +860,8 @@ public class ModeListView extends ScrollView {
      */
     public static int getModeIconResourceId(int modeIndex) {
         // Photo and gcam has the same mode icon
-        if (modeIndex == MODE_GCAM) {
-            return mModes[MODE_PHOTO].iconResId;
+        if (modeIndex == MODE_GCAM || modeIndex == MODE_REFOCUS) {
+            return mModes[MODE_CRAFT].iconResId;
         }
         if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
             return 0;

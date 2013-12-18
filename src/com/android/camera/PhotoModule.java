@@ -363,6 +363,7 @@ public class PhotoModule
         mActivity = (CameraActivity) app.getAndroidContext();
         mUI = new PhotoUI(mActivity, this, app.getModuleLayoutRoot());
         app.setPreviewStatusListener(mUI);
+        app.getCameraAppUI().setBottomBarShutterListener(this);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
@@ -380,6 +381,11 @@ public class PhotoModule
         mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
         mAppController = app;
+    }
+
+    @Override
+    public boolean isUsingBottomBar() {
+        return true;
     }
 
     private void initializeControlByIntent() {
@@ -492,6 +498,9 @@ public class PhotoModule
             @Override
             public void onStateChanged(int state) {
                 if (GcamHelper.hasGcamCapture()) {
+                    // Set the camera setting to default backfacing.
+                    SettingsManager settingsManager = mActivity.getSettingsManager();
+                    settingsManager.setDefault(SettingsManager.SETTING_CAMERA_ID);
                     mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
                 } else {
                     mSceneMode = CameraUtil.SCENE_MODE_HDR;
@@ -500,9 +509,22 @@ public class PhotoModule
             }
         };
 
+    private final ButtonManager.ButtonCallback mRefocusButtonCallback =
+        new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                if (state == ButtonManager.OFF) {
+                    throw new IllegalStateException(
+                        "Can't switch refocus off because it should already be off.");
+                }
+                mActivity.onModeSelected(ModeListView.MODE_REFOCUS);
+            }
+        };
+
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        mUI.onCameraOpened(mParameters, mCameraButtonCallback, mHdrPlusButtonCallback);
+        mUI.onCameraOpened(mParameters, mCameraButtonCallback, mHdrPlusButtonCallback,
+            mRefocusButtonCallback);
         if (mIsImageCaptureIntent) {
             // Set hdr plus to default: off.
             SettingsManager settingsManager = mActivity.getSettingsManager();
@@ -1300,11 +1322,9 @@ public class PhotoModule
         setCameraParameters(UPDATE_PARAM_PREFERENCE);
     }
 
-    // Preview area is touched.
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        cancelAutoFocus();
-        onShutterButtonClick();
+        // TODO: Add touch to focus.
     }
 
     @Override
