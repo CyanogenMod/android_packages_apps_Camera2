@@ -179,10 +179,11 @@ public class ListPreference extends CameraPreference {
         if (preferences == null) {
             return false;
         }
+        String oldValue = preferences.getString(mKey, null);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(mKey, value);
         editor.apply();
-        UsageStatistics.onEvent("CameraSettingsChange", value, mKey);
+        UsageStatistics.changePreference(mKey, value, oldValue);
         return true;
     }
 

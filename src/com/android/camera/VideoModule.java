@@ -70,6 +70,7 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+import com.google.common.logging.eventprotos;
 
 import java.io.File;
 import java.io.IOException;
@@ -395,8 +396,8 @@ public class VideoModule extends CameraModule
                     null, null, null, new JpegPictureCallback(loc));
             showVideoSnapshotUI(true);
             mSnapshotInProgress = true;
-            UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                    UsageStatistics.ACTION_CAPTURE_DONE, "VideoSnapshot");
+            UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_STILL,
+                    null, null);
         }
     }
 
@@ -1245,8 +1246,6 @@ public class VideoModule extends CameraModule
         setFocusParameters();
         updateRecordingTime();
         mActivity.enableKeepScreenOn(true);
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_CAPTURE_START, "Video");
     }
 
     private Bitmap getVideoThumbnail() {
@@ -1302,9 +1301,12 @@ public class VideoModule extends CameraModule
                 mCurrentVideoFilename = mVideoFilename;
                 Log.v(TAG, "stopVideoRecording: Setting current video filename: "
                         + mCurrentVideoFilename);
+                float duration = (SystemClock.uptimeMillis() - mRecordingStartTime) / 1000;
+                UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
+                        mCurrentVideoFilename, mParameters, duration);
                 AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
                         mActivity.getAndroidContext().getString(R.string
-                        .video_recording_stopped));
+                                .video_recording_stopped));
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
                 if (mVideoFilename != null) deleteVideoFile(mVideoFilename);
@@ -1349,9 +1351,6 @@ public class VideoModule extends CameraModule
         // Update the parameters here because the parameters might have been altered
         // by MediaRecorder.
         if (!mPaused) mParameters = mCameraDevice.getParameters();
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                fail ? UsageStatistics.ACTION_CAPTURE_FAIL : UsageStatistics.ACTION_CAPTURE_DONE,
-                "Video", SystemClock.uptimeMillis() - mRecordingStartTime);
         return fail;
     }
 
@@ -1587,8 +1586,8 @@ public class VideoModule extends CameraModule
             mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
         }
 
-        UsageStatistics.onContentViewChanged(
-                UsageStatistics.COMPONENT_CAMERA, "VideoModule");
+        UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
+                eventprotos.CameraEvent.InteractionCause.BUTTON);
         getServices().getMemoryManager().addListener(this);
     }
 
