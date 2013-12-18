@@ -239,15 +239,15 @@
     </string-array>
 
     <array name="camera_flashmode_icons" translatable="false">
-        <item>@drawable/ic_flash_off_holo_light</item>
-        <item>@drawable/ic_flash_auto_holo_light</item>
-        <item>@drawable/ic_flash_on_holo_light</item>
+        <item>@drawable/ic_flash_off</item>
+        <item>@drawable/ic_flash_auto</item>
+        <item>@drawable/ic_flash_on</item>
     </array>
 
     <array name="camera_flashmode_largeicons" translatable="false">
-        <item>@drawable/ic_flash_off_holo_light</item>
-        <item>@drawable/ic_flash_auto_holo_light</item>
-        <item>@drawable/ic_flash_on_holo_light</item>
+        <item>@drawable/ic_flash_off</item>
+        <item>@drawable/ic_flash_auto</item>
+        <item>@drawable/ic_flash_on</item>
     </array>
 
     <!-- Videocamera Preferences flash mode dialog box entries -->
@@ -267,13 +267,13 @@
     </string-array>
 
     <array name="video_flashmode_icons" translatable="false">
-        <item>@drawable/ic_flash_on_holo_light</item>
-        <item>@drawable/ic_flash_off_holo_light</item>
+        <item>@drawable/ic_flash_on</item>
+        <item>@drawable/ic_flash_off</item>
     </array>
 
     <array name="video_flashmode_largeicons" translatable="false">
-        <item>@drawable/ic_flash_on_holo_light</item>
-        <item>@drawable/ic_flash_off_holo_light</item>
+        <item>@drawable/ic_flash_on</item>
+        <item>@drawable/ic_flash_off</item>
     </array>
 
     <string-array name="pref_camera_recordlocation_entryvalues" translatable="false">
@@ -394,13 +394,13 @@
     </array>
 
     <array name="camera_id_icons" translatable="false">
-        <item>@drawable/ic_switch_back</item>
-        <item>@drawable/ic_switch_front</item>
+        <item>@drawable/ic_switch_camera_back</item>
+        <item>@drawable/ic_switch_camera_front</item>
     </array>
 
     <array name="camera_id_largeicons" translatable="false">
-        <item>@drawable/ic_switch_back</item>
-        <item>@drawable/ic_switch_front</item>
+        <item>@drawable/ic_switch_camera_back</item>
+        <item>@drawable/ic_switch_camera_front</item>
     </array>
 
     <string-array name="pref_video_effect_entries" translatable="false">
@@ -453,8 +453,8 @@
     </string-array>
 
     <string-array name="pref_camera_hdr_plus_icons" translatable="false">
-        <item>@drawable/ic_hdr_plus_disabled</item>
-        <item>@drawable/ic_hdr_plus_normal</item>
+        <item>@drawable/ic_hdr_plus_off</item>
+        <item>@drawable/ic_hdr_plus_on</item>
     </string-array>
 
     <string-array name="pref_camera_hdr_plus_entryvalues" translatable="false">
@@ -472,7 +472,6 @@
         <item>@string/pref_camera_scenemode_entry_turn_hdr_on</item>
         <item>@string/pref_camera_scenemode_entry_turn_hdr_off</item>
     </string-array>
-
     <string-array name="pref_camera_hdr_icons" translatable="false">
         <item>@drawable/ic_hdr_off</item>
         <item>@drawable/ic_hdr</item>
