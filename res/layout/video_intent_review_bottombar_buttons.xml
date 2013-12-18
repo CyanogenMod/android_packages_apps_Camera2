@@ -22,18 +22,18 @@
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_cancel_holo_light"
+            android:src="@drawable/ic_cancel"
             android:background="@null" />
         <ImageButton
             android:id="@+id/done_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_done_holo_light"
+            android:src="@drawable/ic_confirm"
             android:background="@null" />
         <ImageButton
             android:id="@+id/review_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_trash_holo_light"
+            android:src="@drawable/ic_play"
             android:background="@null" />
 </merge>

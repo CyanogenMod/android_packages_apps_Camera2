@@ -133,7 +133,7 @@ public class ButtonManager {
     public void enablePushButton(int buttonId, int resId, View.OnClickListener cb) {
         ImageButton button = getImageButtonOrError(buttonId, resId);
         button.setOnClickListener(cb);
-        button.setVisibility(View.VISIBLE);
+        button.setEnabled(true);
     }
 
     /**
@@ -141,7 +141,7 @@ public class ButtonManager {
      */
     public void disableButton(int buttonId, int resId) {
         MultiToggleImageButton button = getButtonOrError(buttonId, resId);
-        button.setVisibility(View.INVISIBLE);
+        button.setEnabled(false);
     }
 
     /**
