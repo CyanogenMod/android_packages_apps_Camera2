@@ -1207,13 +1207,17 @@ public class PhotoModule
             mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
                     defaultFocusModes,
                     mInitialParams, this, mMirror,
-                    mActivity.getMainLooper(), mUI);
+                    mActivity.getMainLooper(), mUI.getFocusUI());
         }
+        mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
     }
 
     @Override
     public void resume() {
         mPaused = false;
+        if (mFocusManager != null) {
+            mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
+        }
         // Add delay on resume from lock screen only, in order to to speed up
         // the onResume --> onPause --> onResume cycle from lock screen.
         // Don't do always because letting go of thread can cause delay.
@@ -1281,6 +1285,7 @@ public class PhotoModule
             mFocusManager.removeMessages();
         }
         getServices().getMemoryManager().removeListener(this);
+        mAppController.removePreviewAreaSizeChangedListener(mFocusManager);
     }
 
     @Override
@@ -1326,7 +1331,16 @@ public class PhotoModule
 
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        // TODO: Add touch to focus.
+        if (mPaused || mCameraDevice == null || !mFirstTimeInitialized
+                || mCameraState == SNAPSHOT_IN_PROGRESS
+                || mCameraState == SWITCHING_CAMERA
+                || mCameraState == PREVIEW_STOPPED) {
+            return;
+        }
+
+        // Check if metering area or focus area is supported.
+        if (!mFocusAreaSupported && !mMeteringAreaSupported) return;
+        mFocusManager.onSingleTapUp(x, y);
     }
 
     @Override

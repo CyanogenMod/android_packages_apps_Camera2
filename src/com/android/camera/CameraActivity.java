@@ -710,14 +710,26 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public void addPreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+        mCameraAppUI.addPreviewAreaSizeChangedListener(listener);
+    }
+
+    @Override
+    public void removePreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+        mCameraAppUI.removePreviewAreaSizeChangedListener(listener);
+    }
+
+    @Override
     public void setupOneShotPreviewListener() {
         mCameraController.setOneShotPreviewCallback(mMainHandler,
                 new CameraManager.CameraPreviewDataCallback() {
-            @Override
-            public void onPreviewFrame(byte[] data, CameraManager.CameraProxy camera) {
-                mCameraAppUI.onNewPreviewFrame();
-            }
-        });
+                    @Override
+                    public void onPreviewFrame(byte[] data, CameraManager.CameraProxy camera) {
+                        mCameraAppUI.onNewPreviewFrame();
+                    }
+                });
     }
 
     @Override

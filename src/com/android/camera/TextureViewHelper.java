@@ -26,6 +26,8 @@ import android.view.View.OnLayoutChangeListener;
 
 import com.android.camera.ui.PreviewStatusListener;
 
+import java.util.ArrayList;
+
 /**
  * This class aims to automate TextureView transform change and notify listeners
  * (e.g. bottom bar) of the preview size change.
@@ -42,7 +44,9 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private boolean mAutoAdjustTransform = true;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
 
-    private PreviewStatusListener.PreviewSizeChangedListener mPreviewSizeChangedListener;
+    private final ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>
+            mPreviewSizeChangedListeners =
+            new ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>();
     private OnLayoutChangeListener mOnLayoutChangeListener = null;
 
     public TextureViewHelper(TextureView preview) {
@@ -153,22 +157,38 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
     private void onPreviewSizeChanged(float scaledTextureWidth, float scaledTextureHeight) {
         // Notify listeners of preview size change
-        if (mPreviewSizeChangedListener == null) {
-            return;
+        for (int i = 0;  i < mPreviewSizeChangedListeners.size(); i++) {
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener
+                    = mPreviewSizeChangedListeners.get(i);
+            listener.onPreviewAreaSizeChanged(scaledTextureWidth, scaledTextureHeight);
         }
-        mPreviewSizeChangedListener.onPreviewSizeChanged(scaledTextureWidth, scaledTextureHeight);
     }
 
     /**
-     * Sets a listener that will get notified when the preview size changed. This
+     * Adds a listener that will get notified when the preview size changed. This
      * can be useful for UI elements or focus overlay to adjust themselves according
      * to the preview size change.
      *
      * @param listener the listener that will get notified of preview size change
      */
-    public void setPreviewSizeChangedListener(
-            PreviewStatusListener.PreviewSizeChangedListener listener) {
-        mPreviewSizeChangedListener = listener;
+    public void addPreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+        if (listener != null && !mPreviewSizeChangedListeners.contains(listener)) {
+            mPreviewSizeChangedListeners.add(listener);
+            listener.onPreviewAreaSizeChanged(mWidth, mHeight);
+        }
+    }
+
+    /**
+     * Removes a listener that gets notified when the preview size changed.
+     *
+     * @param listener the listener that gets notified of preview size change
+     */
+    public void removePreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+        if (listener != null && mPreviewSizeChangedListeners.contains(listener)) {
+            mPreviewSizeChangedListeners.remove(listener);
+        }
     }
 
     @Override

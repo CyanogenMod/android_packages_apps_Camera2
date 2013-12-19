@@ -44,8 +44,8 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
      * This listener gets notified when the actual preview frame changes size due
      * to a transform matrix being applied to the TextureView
      */
-    public interface PreviewSizeChangedListener {
-        public void onPreviewSizeChanged(float previewWidth, float previewHeight);
+    public interface PreviewAreaSizeChangedListener {
+        public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight);
     }
 
     /**

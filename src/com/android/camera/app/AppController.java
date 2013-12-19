@@ -103,6 +103,18 @@ public interface AppController {
     public void onPreviewStarted();
 
     /**
+     * Adds a listener to receive callbacks when preview area size changes.
+     */
+    public void addPreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener);
+
+    /**
+     * Removes a listener that receives callbacks when preview area size changes.
+     */
+    public void removePreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener);
+
+    /**
      * Sets up one shot preview callback in order to notify UI when the next
      * preview frame comes in.
      */

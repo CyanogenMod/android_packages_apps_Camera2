@@ -22,7 +22,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera2.R;
@@ -36,7 +35,7 @@ import com.android.camera.ToggleImageButton;
  * a horizontal layout orientation.
  */
 public class BottomBar extends FrameLayout
-        implements PreviewStatusListener.PreviewSizeChangedListener {
+        implements PreviewStatusListener.PreviewAreaSizeChangedListener {
     private static final String TAG = "BottomBar";
     private int mWidth;
     private int mHeight;
@@ -215,8 +214,8 @@ public class BottomBar extends FrameLayout
     }
 
     @Override
-    public void onPreviewSizeChanged(float scaledTextureWidth,
-                                     float scaledTextureHeight) {
+    public void onPreviewAreaSizeChanged(float scaledTextureWidth,
+                                         float scaledTextureHeight) {
         adjustBottomBar(scaledTextureWidth, scaledTextureHeight);
     }
 

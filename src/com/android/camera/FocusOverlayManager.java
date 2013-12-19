@@ -29,6 +29,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 
@@ -57,7 +58,7 @@ import java.util.List;
  * (10) The camera has no autofocus and supports metering area. Touch the screen
  *     to change metering area.
  */
-public class FocusOverlayManager {
+public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSizeChangedListener {
     private static final String TAG = "CAM_FocusManager";
 
     private static final int RESET_TOUCH_FOCUS = 0;
@@ -169,6 +170,15 @@ public class FocusOverlayManager {
         if (!mPreviewRect.equals(previewRect)) {
             mPreviewRect.set(previewRect);
             setMatrix();
+        }
+    }
+
+    @Override
+    public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
+        int w = (int) previewWidth;
+        int h = (int) previewHeight;
+        if (mPreviewRect.width() != w || mPreviewRect.height() != h) {
+            setPreviewRect(new Rect(0, 0, w, h));
         }
     }
 

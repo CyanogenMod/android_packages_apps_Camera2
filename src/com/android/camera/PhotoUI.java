@@ -46,8 +46,7 @@ import com.android.camera2.R;
 
 import java.util.List;
 
-public class PhotoUI implements
-    FocusUI, PreviewStatusListener,
+public class PhotoUI implements PreviewStatusListener,
     CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "PhotoUI";
@@ -55,6 +54,7 @@ public class PhotoUI implements
     private static final float UNSET = 0f;
 
     private final PreviewOverlay mPreviewOverlay;
+    private final FocusUI mFocusUI;
     private CameraActivity mActivity;
     private PhotoController mController;
 
@@ -218,8 +218,12 @@ public class PhotoUI implements
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
-
+        mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
+    }
+
+    public FocusUI getFocusUI() {
+        return mFocusUI;
     }
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
@@ -459,65 +463,16 @@ public class PhotoUI implements
         if (mFaceView != null) mFaceView.clear();
     }
 
-    // focus UI implementation
-    private FocusIndicator getFocusIndicator() {
-        return null;
-        //return (mFaceView != null && mFaceView.faceExists()) ? mFaceView : null;
-    }
-
-    @Override
-    public boolean hasFaces() {
-        return (mFaceView != null && mFaceView.faceExists());
-    }
-
     public void clearFaces() {
         if (mFaceView != null) {
             mFaceView.clear();
         }
     }
 
-    @Override
-    public void clearFocus() {
-        FocusIndicator indicator = getFocusIndicator();
-        if (indicator != null) {
-            indicator.clear();
-        }
-    }
-
-    @Override
-    public void setFocusPosition(int x, int y) {
-    }
-
-    @Override
-    public void onFocusStarted() {
-        FocusIndicator indicator = getFocusIndicator();
-        if (indicator != null) {
-            indicator.showStart();
-        }
-    }
-
-    @Override
-    public void onFocusSucceeded(boolean timeout) {
-        FocusIndicator indicator = getFocusIndicator();
-        if (indicator != null) {
-            indicator.showSuccess(timeout);
-        }
-    }
-
-    @Override
-    public void onFocusFailed(boolean timeout) {
-        FocusIndicator indicator = getFocusIndicator();
-        if (indicator != null) {
-            indicator.showFail(timeout);
-        }
-    }
-
-    @Override
     public void pauseFaceDetection() {
         if (mFaceView != null) mFaceView.pause();
     }
 
-    @Override
     public void resumeFaceDetection() {
         if (mFaceView != null) mFaceView.resume();
     }

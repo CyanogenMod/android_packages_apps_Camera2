@@ -32,7 +32,6 @@ import android.widget.FrameLayout;
 import com.android.camera.AnimationManager;
 import com.android.camera.TextureViewHelper;
 import com.android.camera.ShutterButton;
-import com.android.camera.MultiToggleImageButton;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
@@ -480,9 +479,25 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
             if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
                 mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
-                mTextureViewHelper.setPreviewSizeChangedListener(mBottomBar);
+                mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
             }
         }
+    }
+
+    /**
+     * Adds a listener to receive callbacks when preview area size changes.
+     */
+    public void addPreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(listener);
+    }
+
+    /**
+     * Removes a listener that receives callbacks when preview area size changes.
+     */
+    public void removePreviewAreaSizeChangedListener(
+            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+        mTextureViewHelper.removePreviewAreaSizeChangedListener(listener);
     }
 
     /**
@@ -542,7 +557,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModuleUI != null) {
             mModuleUI.removeAllViews();
         }
-        mTextureViewHelper.setPreviewSizeChangedListener(null);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(null);
 
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
