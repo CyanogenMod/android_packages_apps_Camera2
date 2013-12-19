@@ -115,7 +115,7 @@ public class ModeListView extends ScrollView {
         mModes[MODE_PHOTOSPHERE] = new Mode(R.drawable.ic_photo_sphere,
                 R.string.mode_photosphere,
                 R.color.photosphere_mode_color);
-        mModes[MODE_CRAFT] = new Mode(R.drawable.ic_craft, R.string.mode_advanced_camera,
+        mModes[MODE_CRAFT] = new Mode(R.drawable.ic_camera, R.string.mode_advanced_camera,
                 R.color.craft_mode_color);
         mModes[MODE_TIMELAPSE] = new Mode(R.drawable.ic_timelapse, R.string.mode_timelapse,
                 R.color.timelapse_mode_color);
