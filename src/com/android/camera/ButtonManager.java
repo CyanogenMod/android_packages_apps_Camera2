@@ -16,17 +16,10 @@
 
 package com.android.camera;
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.android.camera.settings.SettingsManager;
-import com.android.camera2.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A  class for generating pre-initialized
@@ -44,9 +37,9 @@ public class ButtonManager {
     public static final int BUTTON_REVIEW = 7;
 
     /** A reference to the activity for finding button views on demand. */
-    private CameraActivity mActivity;
+    private final CameraActivity mActivity;
     /** A reference to the application's settings manager. */
-    private SettingsManager mSettingsManager;
+    private final SettingsManager mSettingsManager;
 
     /**
      * Get a new global ButtonManager.
