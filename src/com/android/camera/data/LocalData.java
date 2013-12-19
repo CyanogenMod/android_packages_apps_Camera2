@@ -174,6 +174,11 @@ public interface LocalData extends ImageData {
      */
     Bundle getMetadata();
 
+    /**
+     * @return whether the metadata is updated.
+     */
+    public boolean isMetadataUpdated();
+
     static class NewestFirstComparator implements Comparator<LocalData> {
 
         /** Compare taken/modified date of LocalData in descent order to make

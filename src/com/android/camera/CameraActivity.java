@@ -108,6 +108,7 @@ import com.android.camera.widget.FilmstripView;
 import com.android.camera2.R;
 
 import java.io.File;
+import java.util.List;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -528,6 +529,19 @@ public class CameraActivity extends Activity
                 }
             };
 
+    private LocalDataAdapter.LocalDataListener mLocalDataListener =
+            new LocalDataAdapter.LocalDataListener() {
+                @Override
+                public void onMetadataUpdated(List<Integer> updatedData) {
+                    int currentDataId = mFilmstripController.getCurrentId();
+                    for (Integer dataId : updatedData) {
+                        if (dataId == currentDataId) {
+                            updateBottomControlsByData(mDataAdapter.getLocalData(dataId));
+                        }
+                    }
+                }
+            };
+
     public void gotoGallery() {
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_FILMSTRIP,
                 "thumbnailTap");
@@ -919,6 +933,7 @@ public class CameraActivity extends Activity
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter = new CameraDataAdapter(
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
+        mDataAdapter.setLocalDataListener(mLocalDataListener);
 
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
@@ -1639,6 +1654,17 @@ public class CameraActivity extends Activity
         setNfcBeamPushUriFromData(currentData);
 
         /* Bottom controls. */
+
+        updateBottomControlsByData(currentData);
+        if (!mDataAdapter.isMetadataUpdated(dataId)) {
+            mDataAdapter.updateMetadata(this, dataId);
+        }
+    }
+
+    /**
+     * Updates the bottom controls based on the data.
+     */
+    private void updateBottomControlsByData(final LocalData currentData) {
 
         final CameraAppUI.BottomControls filmstripBottomControls =
                 mCameraAppUI.getFilmstripBottomControls();

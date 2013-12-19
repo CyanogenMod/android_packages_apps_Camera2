@@ -60,6 +60,11 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
+    public void setLocalDataListener(LocalDataListener listener) {
+        mAdapter.setLocalDataListener(listener);
+    }
+
+    @Override
     public void requestLoad(Context context) {
         mAdapter.requestLoad(context);
     }
@@ -97,5 +102,15 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     @Override
     public void refresh(Context context, Uri uri, boolean isInProgressSession) {
         mAdapter.refresh(context, uri, isInProgressSession);
+    }
+
+    @Override
+    public void updateMetadata(Context context, int dataId) {
+        mAdapter.updateMetadata(context, dataId);
+    }
+
+    @Override
+    public boolean isMetadataUpdated(int dataId) {
+        return mAdapter.isMetadataUpdated(dataId);
     }
 }

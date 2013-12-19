@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.android.camera.session.PlaceholderManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * A {@link LocalDataAdapter} that provides data in the camera folder.
@@ -45,6 +47,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private LocalDataList mImages;
 
     private Listener mListener;
+    private LocalDataListener mLocalDataListener;
     private final Drawable mPlaceHolder;
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
@@ -58,9 +61,28 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
+    public void setLocalDataListener(LocalDataListener listener) {
+        mLocalDataListener = listener;
+    }
+
+    @Override
     public void requestLoad(Context context) {
         QueryTask qtask = new QueryTask(context);
         qtask.execute(context.getContentResolver());
+    }
+
+
+    @Override
+    public void updateMetadata(Context context, int dataId) {
+        new MetadataUpdateTask(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
+    }
+
+    @Override
+    public boolean isMetadataUpdated(int dataId) {
+        if (dataId < 0 || dataId >= mImages.size()) {
+            return true;
+        }
+        return mImages.get(dataId).isMetadataUpdated();
     }
 
     @Override
@@ -385,6 +407,39 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 data[i].delete(mContext);
             }
             return null;
+        }
+    }
+
+    private class MetadataUpdateTask extends AsyncTask<Integer, Void, List<Integer> > {
+        Context mContext;
+
+        MetadataUpdateTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected List<Integer> doInBackground(Integer... dataId) {
+            List<Integer> updatedList = new ArrayList<Integer>();
+            for (Integer id : dataId) {
+                if (id < 0 || id >= mImages.size()) {
+                    continue;
+                }
+                final LocalData data = mImages.get(id);
+                if (data.getLocalDataType() != LocalData.LOCAL_IMAGE) {
+                    continue;
+                }
+                MetadataLoader.loadMetadata(mContext, data);
+                updatedList.add(id);
+            }
+            return updatedList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Integer> updatedData) {
+            if (mLocalDataListener == null) {
+                return;
+            }
+            mLocalDataListener.onMetadataUpdated(updatedData);
         }
     }
 }
