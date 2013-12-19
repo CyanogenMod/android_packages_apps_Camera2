@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package com.android.camera;
+package com.android.camera.app;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 
 /**
- * A class that handles everything about location.
+ * A class that handles legacy (network, gps) location providers, in the event
+ * the fused location provider from Google Play Services is unavailable.
  */
-public class LocationManager {
-    private static final String TAG = "LocationManager";
+public class LegacyLocationProvider implements LocationProvider {
+    private static final String TAG = "LegacyLocationProvider";
 
     private Context mContext;
-    private Listener mListener;
     private android.location.LocationManager mLocationManager;
     private boolean mRecordLocation;
 
@@ -38,16 +37,11 @@ public class LocationManager {
             new LocationListener(android.location.LocationManager.NETWORK_PROVIDER)
     };
 
-    public interface Listener {
-        public void showGpsOnScreenIndicator(boolean hasSignal);
-        public void hideGpsOnScreenIndicator();
-   }
-
-    public LocationManager(Context context, Listener listener) {
+    public LegacyLocationProvider(Context context) {
         mContext = context;
-        mListener = listener;
     }
 
+    @Override
     public Location getCurrentLocation() {
         if (!mRecordLocation) return null;
 
@@ -69,6 +63,13 @@ public class LocationManager {
                 stopReceivingLocationUpdates();
             }
         }
+    }
+
+    @Override
+    public void disconnect() {
+        Log.d(TAG, "disconnect");
+        // The onPause() call to stopReceivingLocationUpdates is sufficient to unregister the
+        // Network/GPS listener.
     }
 
     private void startReceivingLocationUpdates() {
@@ -94,7 +95,6 @@ public class LocationManager {
                         1000,
                         0F,
                         mLocationListeners[0]);
-                if (mListener != null) mListener.showGpsOnScreenIndicator(false);
             } catch (SecurityException ex) {
                 Log.i(TAG, "fail to request location update, ignore", ex);
             } catch (IllegalArgumentException ex) {
@@ -115,7 +115,6 @@ public class LocationManager {
             }
             Log.d(TAG, "stopReceivingLocationUpdates");
         }
-        if (mListener != null) mListener.hideGpsOnScreenIndicator();
     }
 
     private class LocationListener
@@ -135,12 +134,6 @@ public class LocationManager {
                     && newLocation.getLongitude() == 0.0) {
                 // Hack to filter out 0.0,0.0 locations
                 return;
-            }
-            // If GPS is available before start camera, we won't get status
-            // update so update GPS indicator when we receive data.
-            if (mListener != null && mRecordLocation &&
-                    android.location.LocationManager.GPS_PROVIDER.equals(mProvider)) {
-                mListener.showGpsOnScreenIndicator(true);
             }
             if (!mValid) {
                 Log.d(TAG, "Got first location.");
@@ -162,13 +155,9 @@ public class LocationManager {
         public void onStatusChanged(
                 String provider, int status, Bundle extras) {
             switch(status) {
-                case LocationProvider.OUT_OF_SERVICE:
-                case LocationProvider.TEMPORARILY_UNAVAILABLE: {
+                case android.location.LocationProvider.OUT_OF_SERVICE:
+                case android.location.LocationProvider.TEMPORARILY_UNAVAILABLE: {
                     mValid = false;
-                    if (mListener != null && mRecordLocation &&
-                            android.location.LocationManager.GPS_PROVIDER.equals(provider)) {
-                        mListener.showGpsOnScreenIndicator(false);
-                    }
                     break;
                 }
             }

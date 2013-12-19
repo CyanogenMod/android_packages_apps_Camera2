@@ -343,7 +343,7 @@ public class PhotoUI implements
     }
 
     // called from onResume but only the first time
-    public  void initializeFirstTime() {
+    public void initializeFirstTime() {
 
     }
 

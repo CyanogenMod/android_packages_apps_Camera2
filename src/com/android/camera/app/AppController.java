@@ -24,7 +24,8 @@ import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.widget.FrameLayout;
 
-import com.android.camera.LocationManager;
+import com.android.camera.app.LocationManager;
+import com.android.camera.ui.ModeListView;
 import com.android.camera.SettingsController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;

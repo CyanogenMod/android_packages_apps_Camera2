@@ -72,6 +72,7 @@ import com.android.camera.app.CameraManager;
 import com.android.camera.app.CameraManagerFactory;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
+import com.android.camera.app.LocationManager;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
@@ -347,6 +348,9 @@ public class CameraActivity extends Activity
                     return intent;
                 }
             };
+
+    private ComboPreferences mPreferences;
+    private ContentResolver mContentResolver;
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
@@ -871,13 +875,15 @@ public class CameraActivity extends Activity
         mCameraController =
                 new CameraController(this, this, mMainHandler,
                         CameraManagerFactory.getAndroidCameraManager());
-        ComboPreferences prefs = new ComboPreferences(getAndroidContext());
+        mPreferences = new ComboPreferences(getAndroidContext());
+        mContentResolver = this.getContentResolver();
 
         mSettingsManager = new SettingsManager(this, null, mCameraController.getNumberOfCameras());
         // Remove this after we get rid of ComboPreferences.
         int cameraId = Integer.parseInt(mSettingsManager.get(SettingsManager.SETTING_CAMERA_ID));
-        prefs.setLocalId(this, cameraId);
-        CameraSettings.upgradeGlobalPreferences(prefs, mCameraController.getNumberOfCameras());
+        mPreferences.setLocalId(this, cameraId);
+        CameraSettings.upgradeGlobalPreferences(mPreferences,
+                mCameraController.getNumberOfCameras());
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
         mModuleManager = new ModuleManagerImpl();
@@ -937,16 +943,7 @@ public class CameraActivity extends Activity
 
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
-        mLocationManager = new LocationManager(this,
-            new LocationManager.Listener() {
-                @Override
-                public void showGpsOnScreenIndicator(boolean hasSignal) {
-                }
-
-                @Override
-                public void hideGpsOnScreenIndicator() {
-                }
-            });
+        mLocationManager = new LocationManager(this);
 
         mSettingsController = new SettingsController(this, mSettingsManager, mLocationManager);
 
@@ -1147,6 +1144,9 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
         mPanoramaViewHelper.onStart();
+        boolean recordLocation = RecordLocationPreference.get(
+                mPreferences, mContentResolver);
+        mLocationManager.recordLocation(recordLocation);
     }
 
     @Override
@@ -1156,6 +1156,7 @@ public class CameraActivity extends Activity
             mFeedbackHelper.stopFeedback();
         }
 
+        mLocationManager.disconnect();
         CameraManagerFactory.recycle();
         super.onStop();
     }
