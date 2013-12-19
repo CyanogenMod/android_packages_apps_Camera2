@@ -298,6 +298,7 @@
     <string name="mode_video" msgid="8633929034048169139">"វីដេអូ"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"រូបថត​វិល​ជុំ"</string>
     <string name="mode_craft" msgid="6390039207517142426">"សិប្បកម្ម"</string>
+    <string name="mode_advanced_camera" msgid="3606021380917044124">"ម៉ាស៊ីន​ថត​កម្រិត​ខ្ពស់"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"ពេលវេលា​កន្លងទៅ"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"មុំ​ពេញ"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"ប៉ាណូរ៉ាម៉ា"</string>

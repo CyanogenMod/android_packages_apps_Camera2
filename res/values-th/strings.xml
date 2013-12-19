@@ -298,6 +298,8 @@
     <string name="mode_video" msgid="8633929034048169139">"วิดีโอ"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"โฟโตสเฟียร์"</string>
     <string name="mode_craft" msgid="6390039207517142426">"งานฝีมือ"</string>
+    <!-- no translation found for mode_advanced_camera (3606021380917044124) -->
+    <skip />
     <string name="mode_timelapse" msgid="1517168724627815453">"ย่นระยะเวลา"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"มุมกว้าง"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"พาโนรามา"</string>
