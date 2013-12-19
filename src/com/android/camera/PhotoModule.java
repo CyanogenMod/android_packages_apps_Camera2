@@ -1121,7 +1121,7 @@ public class PhotoModule
                     }
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
-                if (!mBurstShotInProgress) {
+                if (!mBurstShotInProgress && mCameraState != LONGSHOT) {
                     mUI.animateCapture(jpegData, orientation, mMirror);
                 }
             } else {
