@@ -298,15 +298,14 @@
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Pokročilé funkcie"</string>
+    <string name="mode_advanced_camera" msgid="3606021380917044124">"Režim pre pokročilých"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Časozberné video"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
-    <!-- no translation found for mode_panorama (6882648621305828861) -->
-    <skip />
+    <string name="mode_panorama" msgid="6882648621305828861">"Panoráma"</string>
     <string name="setting_location" msgid="4459859689227893838">"Poloha"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Veľkosť fotografie"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Rozlíšenie videa"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Predvolený fotoaparát"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Odoslať spätnú väzbu"</string>
-    <!-- no translation found for processing_hdr_plus (9160093263037540304) -->
-    <skip />
+    <string name="processing_hdr_plus" msgid="9160093263037540304">"Spracovanie HDR+…"</string>
 </resources>

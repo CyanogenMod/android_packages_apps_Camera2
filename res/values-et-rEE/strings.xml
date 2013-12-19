@@ -298,6 +298,7 @@
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_craft" msgid="6390039207517142426">"Käsitöö"</string>
+    <string name="mode_advanced_camera" msgid="3606021380917044124">"Täiustatud kaamera"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Aeglustatud"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Lainurgarežiim"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoraam"</string>
