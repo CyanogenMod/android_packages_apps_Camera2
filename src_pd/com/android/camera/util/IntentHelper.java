@@ -28,7 +28,7 @@ public class IntentHelper {
         "com.android.gallery3d.app.GalleryActivity";
 
     public static int getGalleryIntentIcon() {
-        return R.mipmap.ic_launcher_gallery;
+        return R.drawable.ic_wide_angle_normal;
     }
 
     public static Intent getGalleryIntent(Context context) {

@@ -71,7 +71,7 @@
         <ImageButton
             android:id="@+id/filmstrip_bottom_control_gallery"
             style="@style/FilmstripBottomControlButton"
-            android:src="@mipmap/ic_launcher_gallery"
+            android:src="@drawable/ic_wide_angle_normal"
             android:visibility="visible" />
 
         <ImageButton
