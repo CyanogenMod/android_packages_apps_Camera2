@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -25,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
 
 /**
@@ -151,6 +149,11 @@ public class InProgressDataWrapper implements LocalData {
     @Override
     public Bundle getMetadata() {
         return mLocalData.getMetadata();
+    }
+
+    @Override
+    public boolean isMetadataUpdated() {
+        return mLocalData.isMetadataUpdated();
     }
 
     @Override

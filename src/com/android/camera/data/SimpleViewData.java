@@ -184,4 +184,9 @@ public class SimpleViewData implements LocalData {
     public Bundle getMetadata() {
         return mMetaData;
     }
+
+    @Override
+    public boolean isMetadataUpdated() {
+        return true;
+    }
 }

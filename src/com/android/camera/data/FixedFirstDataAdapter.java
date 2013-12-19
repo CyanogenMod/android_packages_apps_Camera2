@@ -198,7 +198,7 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         if (dataId > 0) {
         return mAdapter.isMetadataUpdated(dataId);
         } else {
-            return MetadataLoader.isMetadataLoaded(mFirstData);
+            return mFirstData.isMetadataUpdated();
         }
     }
 }

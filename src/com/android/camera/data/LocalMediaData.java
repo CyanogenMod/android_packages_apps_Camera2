@@ -171,7 +171,7 @@ public abstract class LocalMediaData implements LocalData {
 
         BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
                 context.getContentResolver(), adapter, isInProgress);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
         return v;
     }
 
@@ -244,6 +244,11 @@ public abstract class LocalMediaData implements LocalData {
     @Override
     public Bundle getMetadata() {
         return mMetaData;
+    }
+
+    @Override
+    public boolean isMetadataUpdated() {
+        return MetadataLoader.isMetadataLoaded(this);
     }
 
     protected abstract BitmapLoadTask getBitmapLoadTask(
