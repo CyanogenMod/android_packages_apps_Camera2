@@ -40,14 +40,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.Semaphore;
 
 /**
  * A base class for all the local media files. The bitmap is loaded in
@@ -69,12 +67,6 @@ public abstract class LocalMediaData implements LocalData {
     protected final double mLatitude;
     protected final double mLongitude;
     protected final Bundle mMetaData;
-
-    /** Used to load photo sphere metadata from image files. */
-    protected PanoramaMetadataLoader mPanoramaMetadataLoader;
-
-    protected RgbzMetadataLoader mRgbzMetadataLoader;
-    protected Boolean mIsRgbz = null;
 
     /**
      * Used for thumbnail loading optimization. True if this data has a
@@ -179,7 +171,7 @@ public abstract class LocalMediaData implements LocalData {
 
         BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
                 context.getContentResolver(), adapter, isInProgress);
-        task.execute();
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
         return v;
     }
 
@@ -357,9 +349,6 @@ public abstract class LocalMediaData implements LocalData {
             PhotoData result = new PhotoData(id, title, mimeType, dateTakenInSeconds,
                     dateModifiedInSeconds, path, orientation, width, height,
                     sizeInBytes, latitude, longitude);
-            PanoramaMetadataLoader.loadPanoramaMetadata(context, result.getContentUri(),
-                    result.getMetadata());
-            RgbzMetadataLoader.loadRgbzMetadata(context, result.getContentUri(), result.getMetadata());
             return result;
         }
 
@@ -813,7 +802,7 @@ public abstract class LocalMediaData implements LocalData {
                 Log.e(TAG, "Failed decoding bitmap for file:" + mPath);
                 return;
             }
-            BitmapDrawable d = new BitmapDrawable(bitmap);
+            BitmapDrawable d = new BitmapDrawable(mContext.getResources(), bitmap);
             mView.setScaleType(ImageView.ScaleType.FIT_XY);
             mView.setImageDrawable(d);
         }

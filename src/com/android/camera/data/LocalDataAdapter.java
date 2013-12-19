@@ -21,11 +21,24 @@ import android.net.Uri;
 
 import com.android.camera.filmstrip.DataAdapter;
 
+import java.util.List;
+
 /**
  * An interface which extends {@link com.android.camera.filmstrip.DataAdapter} and defines operations on
  * the data in the local camera folder.
  */
 public interface LocalDataAdapter extends DataAdapter {
+
+    public interface LocalDataListener {
+        /**
+         * Metadata of a {@link com.android.camera.data.LocalData} is loaded
+         * on demand. Once the metadata is loaded this listener is notified.
+         *
+         * @param updatedData The IDs of the data whose metadata has been
+         *                    updated.
+         */
+        public void onMetadataUpdated(List<Integer> updatedData);
+    }
 
     /**
      * Request for loading the local data.
@@ -82,7 +95,7 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Finds the {@link LocalData} of the specified content Uri.
      *
-     * @param Uri  The content Uri of the {@link LocalData}.
+     * @param uri  The content Uri of the {@link LocalData}.
      * @return     The index of the data. {@code -1} if not found.
      */
     public int findDataByContentUri(Uri uri);
@@ -119,4 +132,23 @@ public interface LocalDataAdapter extends DataAdapter {
 
     /** Insert a data. */
     public void insertData(LocalData data);
+
+    /** Sets the listener for the LocalData change. */
+    public void setLocalDataListener(LocalDataListener listener);
+
+    /**
+     * Updates the metadata in the background. The completion of the updating
+     * will be notified through
+     * {@link com.android.camera.data.LocalDataAdapter.LocalDataListener}.
+     *
+     * @param context The Android {@link android.content.Context} to update
+     *                the metadata.
+     * @param dataId The ID of the data to update the metadata for.
+     */
+    public void updateMetadata(Context context, int dataId);
+
+    /**
+     * @return whether the metadata is already updated.
+     */
+    public boolean isMetadataUpdated(int dataId);
 }

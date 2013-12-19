@@ -145,5 +145,22 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
         }
         return false;
     }
-}
 
+    @Override
+    public void updateMetadata(Context context, int dataId) {
+        if (dataId < mAdapter.getTotalNumber()) {
+            mAdapter.updateMetadata(context, dataId);
+        } else {
+            MetadataLoader.loadMetadata(context, mLastData);
+        }
+    }
+
+    @Override
+    public boolean isMetadataUpdated(int dataId) {
+        if (dataId < mAdapter.getTotalNumber()) {
+            return mAdapter.isMetadataUpdated(dataId);
+        } else {
+            return MetadataLoader.isMetadataLoaded(mLastData);
+        }
+    }
+}

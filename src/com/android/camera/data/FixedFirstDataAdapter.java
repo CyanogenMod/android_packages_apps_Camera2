@@ -183,4 +183,22 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     public void onDataRemoved(int dataID, ImageData data) {
         mListener.onDataRemoved(dataID + 1, data);
     }
+
+    @Override
+    public void updateMetadata(Context context, int dataId) {
+        if (dataId > 0) {
+            mAdapter.updateMetadata(context, dataId);
+        } else {
+            MetadataLoader.loadMetadata(context, mFirstData);
+        }
+    }
+
+    @Override
+    public boolean isMetadataUpdated(int dataId) {
+        if (dataId > 0) {
+        return mAdapter.isMetadataUpdated(dataId);
+        } else {
+            return MetadataLoader.isMetadataLoaded(mFirstData);
+        }
+    }
 }
