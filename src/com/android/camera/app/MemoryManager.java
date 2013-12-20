@@ -59,8 +59,8 @@ public interface MemoryManager {
     public void removeListener(MemoryListener listener);
 
     /**
-     * Returns the maximum amount of memory to be allocated in native code by
-     * our app (in megabytes).
+     * Returns the maximum amount of memory allowed to be allocated in native
+     * code by our app (in megabytes).
      */
-    public int getMaxNativeMemoryAllocation();
+    public int getMaxAllowedNativeMemoryAllocation();
 }

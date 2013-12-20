@@ -45,7 +45,7 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * The maximum amount of memory allowed to be allocated in native code (in
      * megabytes)
      */
-    private final int mMaxNativeMemory;
+    private final int mMaxAllowedNativeMemory;
 
     /**
      * Use this to create a wired-up memory manager.
@@ -55,7 +55,7 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * @return A wired-up memory manager instance.
      */
     public static MemoryManagerImpl create(Context context, MediaSaver mediaSaver) {
-        MemoryManagerImpl memoryManager = new MemoryManagerImpl(getMaxNativeMemory(context));
+        MemoryManagerImpl memoryManager = new MemoryManagerImpl(getMaxAllowedNativeMemory(context));
         context.registerComponentCallbacks(memoryManager);
         mediaSaver.setQueueListener(memoryManager);
         return memoryManager;
@@ -66,8 +66,8 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * correctly.
      */
     private MemoryManagerImpl(int maxNativeMemory) {
-        mMaxNativeMemory = maxNativeMemory;
-        Log.d(TAG, "Max native memory: " + mMaxNativeMemory + " MB");
+        mMaxAllowedNativeMemory = maxNativeMemory;
+        Log.d(TAG, "Max native memory: " + mMaxAllowedNativeMemory + " MB");
     }
 
     @Override
@@ -116,12 +116,12 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     }
 
     @Override
-    public int getMaxNativeMemoryAllocation() {
-        return mMaxNativeMemory;
+    public int getMaxAllowedNativeMemoryAllocation() {
+        return mMaxAllowedNativeMemory;
     }
 
-    /** Helper to determine max allowed native memory allocation. */
-    private static int getMaxNativeMemory(Context context) {
+    /** Helper to determine max allowed native memory allocation (in megabytes). */
+    private static int getMaxAllowedNativeMemory(Context context) {
         ActivityManager activityManager = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
