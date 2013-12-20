@@ -108,20 +108,26 @@ public class ModeListView extends ScrollView {
     private static final Mode[] mModes;
     static {
         mModes = new Mode[MODE_TOTAL];
-        mModes[MODE_PHOTO] = new Mode(R.drawable.ic_camera, R.string.mode_camera,
+        mModes[MODE_PHOTO] = new Mode(R.drawable.ic_camera_normal,
+                R.string.mode_camera,
                 R.color.camera_mode_color);
-        mModes[MODE_VIDEO] = new Mode(R.drawable.ic_video, R.string.mode_video,
+        mModes[MODE_VIDEO] = new Mode(R.drawable.ic_video_normal,
+                R.string.mode_video,
                 R.color.video_mode_color);
-        mModes[MODE_PHOTOSPHERE] = new Mode(R.drawable.ic_photo_sphere,
+        mModes[MODE_PHOTOSPHERE] = new Mode(R.drawable.ic_photo_sphere_normal,
                 R.string.mode_photosphere,
                 R.color.photosphere_mode_color);
-        mModes[MODE_CRAFT] = new Mode(R.drawable.ic_camera, R.string.mode_advanced_camera,
+        mModes[MODE_CRAFT] = new Mode(R.drawable.ic_camera_normal,
+                R.string.mode_advanced_camera,
                 R.color.craft_mode_color);
-        mModes[MODE_TIMELAPSE] = new Mode(R.drawable.ic_timelapse, R.string.mode_timelapse,
+        mModes[MODE_TIMELAPSE] = new Mode(R.drawable.ic_timelapse_normal,
+                R.string.mode_timelapse,
                 R.color.timelapse_mode_color);
-        mModes[MODE_WIDEANGLE] = new Mode(R.drawable.ic_panorama, R.string.mode_panorama,
+        mModes[MODE_WIDEANGLE] = new Mode(R.drawable.ic_panorama_normal,
+                R.string.mode_panorama,
                 R.color.panorama_mode_color);
-        mModes[MODE_SETTING] = new Mode(R.drawable.ic_settings, R.string.mode_settings,
+        mModes[MODE_SETTING] = new Mode(R.drawable.ic_settings_normal,
+                R.string.mode_settings,
                 R.color.settings_mode_color);
     }
 
