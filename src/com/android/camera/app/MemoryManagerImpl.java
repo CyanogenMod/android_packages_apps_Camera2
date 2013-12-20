@@ -16,6 +16,7 @@
 
 package com.android.camera.app;
 
+import android.app.ActivityManager;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -41,6 +42,12 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     private final LinkedList<MemoryListener> mListeners = new LinkedList<MemoryListener>();
 
     /**
+     * The maximum amount of memory allowed to be allocated in native code (in
+     * megabytes)
+     */
+    private final int mMaxNativeMemory;
+
+    /**
      * Use this to create a wired-up memory manager.
      *
      * @param context this is used to register for system memory events.
@@ -48,7 +55,7 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * @return A wired-up memory manager instance.
      */
     public static MemoryManagerImpl create(Context context, MediaSaver mediaSaver) {
-        MemoryManagerImpl memoryManager = new MemoryManagerImpl();
+        MemoryManagerImpl memoryManager = new MemoryManagerImpl(getMaxNativeMemory(context));
         context.registerComponentCallbacks(memoryManager);
         mediaSaver.setQueueListener(memoryManager);
         return memoryManager;
@@ -58,7 +65,9 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * Use {@link #create(Context, MediaSaver)} to make sure it's wired up
      * correctly.
      */
-    private MemoryManagerImpl() {
+    private MemoryManagerImpl(int maxNativeMemory) {
+        mMaxNativeMemory = maxNativeMemory;
+        Log.d(TAG, "Max native memory: " + mMaxNativeMemory + " MB");
     }
 
     @Override
@@ -104,6 +113,23 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     @Override
     public void onQueueStatus(boolean full) {
         notifyCaptureStateUpdate(full ? STATE_LOW_MEMORY : STATE_OK);
+    }
+
+    @Override
+    public int getMaxNativeMemoryAllocation() {
+        return mMaxNativeMemory;
+    }
+
+    /** Helper to determine max allowed native memory allocation. */
+    private static int getMaxNativeMemory(Context context) {
+        ActivityManager activityManager = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+
+        // Use the max of the regular memory class and the large memory class.
+        // This is defined as the maximum memory allowed to be used by the
+        // Dalvik heap, but it's safe to assume the app can use the same amount
+        // once more in native code.
+        return Math.max(activityManager.getMemoryClass(), activityManager.getLargeMemoryClass());
     }
 
     /** Notify our listener that memory is running low. */

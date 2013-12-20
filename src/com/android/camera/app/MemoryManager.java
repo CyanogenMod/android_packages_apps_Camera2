@@ -57,4 +57,10 @@ public interface MemoryManager {
      * Removes an already registered listener.
      */
     public void removeListener(MemoryListener listener);
+
+    /**
+     * Returns the maximum amount of memory to be allocated in native code by
+     * our app (in megabytes).
+     */
+    public int getMaxNativeMemoryAllocation();
 }
