@@ -16,7 +16,10 @@
 
 package com.android.camera.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,6 +29,8 @@ import android.widget.FrameLayout;
 
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
+
+import android.util.Log;
 
 public class MainActivityLayout extends FrameLayout {
 
@@ -40,10 +45,20 @@ public class MainActivityLayout extends FrameLayout {
     private final String TAG = "MainActivityLayout";
     private boolean mRequestToInterceptTouchEvents = false;
     private View mTouchReceiver = null;
+    private Activity mActivity;
+
+    private boolean mIsCaptureIntent;
 
     public MainActivityLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+
+        mActivity = (Activity) context;
+        Intent intent = mActivity.getIntent();
+        String action = intent.getAction();
+        mIsCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action)
+                || MediaStore.ACTION_VIDEO_CAPTURE.equals(action));
     }
 
     @Override
@@ -69,6 +84,9 @@ public class MainActivityLayout extends FrameLayout {
             if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT) {
                 return false;
             }
+            if (mIsCaptureIntent) {
+                return false;
+            }
             int deltaX = (int) (ev.getX() - mDown.getX());
             int deltaY = (int) (ev.getY() - mDown.getY());
             if (ev.getActionMasked() == MotionEvent.ACTION_MOVE
@@ -78,7 +96,9 @@ public class MainActivityLayout extends FrameLayout {
                     mTouchReceiver = mModeList;
                     onTouchEvent(mDown);
                     return true;
-                } else if (deltaX < - Math.abs(deltaY) * 2) {
+                }
+                // Intercept left swipe
+                else if (deltaX < - Math.abs(deltaY) * 2) {
                     mTouchReceiver = mFilmstripLayout;
                     onTouchEvent(mDown);
                     return true;
