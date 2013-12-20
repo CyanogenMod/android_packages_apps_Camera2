@@ -171,7 +171,7 @@ public abstract class LocalMediaData implements LocalData {
 
         BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
                 context.getContentResolver(), adapter, isInProgress);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
+        task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, (Void[]) null);
         return v;
     }
 
