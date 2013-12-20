@@ -32,7 +32,7 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         implements DataAdapter.Listener {
 
     @SuppressWarnings("unused")
-    private static final String TAG = "CAM_FixedFirstDataAdapter";
+    private static final String TAG = "FixedFirstDataAdapter";
 
     private LocalData mFirstData;
     private Listener mListener;
@@ -40,14 +40,16 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     /**
      * Constructor.
      *
+     * @param context Valid Android context.
      * @param wrappedAdapter The {@link LocalDataAdapter} to be wrapped.
-     * @param firstData      The {@link LocalData} to be placed at the first
-     *                       position.
+     * @param firstData The {@link LocalData} to be placed at the first
+     *            position.
      */
     public FixedFirstDataAdapter(
+            Context context,
             LocalDataAdapter wrappedAdapter,
             LocalData firstData) {
-        super(wrappedAdapter);
+        super(context, wrappedAdapter);
         if (firstData == null) {
             throw new AssertionError("data is null");
         }
@@ -63,9 +65,9 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public void removeData(Context context, int dataID) {
+    public void removeData(int dataID) {
         if (dataID > 0) {
-            mAdapter.removeData(context, dataID - 1);
+            mAdapter.removeData(dataID - 1);
         }
     }
 
@@ -185,11 +187,11 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public void updateMetadata(Context context, int dataId) {
+    public void updateMetadata(int dataId) {
         if (dataId > 0) {
-            mAdapter.updateMetadata(context, dataId);
+            mAdapter.updateMetadata(dataId);
         } else {
-            MetadataLoader.loadMetadata(context, mFirstData);
+            MetadataLoader.loadMetadata(mContext, mFirstData);
         }
     }
 

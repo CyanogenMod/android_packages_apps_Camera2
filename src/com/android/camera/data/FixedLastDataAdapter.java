@@ -35,13 +35,15 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     /**
      * Constructor.
      *
-     * @param wrappedAdapter  The {@link LocalDataAdapter} to be wrapped.
-     * @param lastData       The {@link LocalData} to be placed at the last position.
+     * @param context A valid Android context.
+     * @param wrappedAdapter The {@link LocalDataAdapter} to be wrapped.
+     * @param lastData The {@link LocalData} to be placed at the last position.
      */
     public FixedLastDataAdapter(
+            Context context,
             LocalDataAdapter wrappedAdapter,
             LocalData lastData) {
-        super(wrappedAdapter);
+        super(context, wrappedAdapter);
         if (lastData == null) {
             throw new AssertionError("data is null");
         }
@@ -68,9 +70,9 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public void removeData(Context context, int dataID) {
+    public void removeData(int dataID) {
         if (dataID < mAdapter.getTotalNumber()) {
-            mAdapter.removeData(context, dataID);
+            mAdapter.removeData(dataID);
         }
     }
 
@@ -147,11 +149,11 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public void updateMetadata(Context context, int dataId) {
+    public void updateMetadata(int dataId) {
         if (dataId < mAdapter.getTotalNumber()) {
-            mAdapter.updateMetadata(context, dataId);
+            mAdapter.updateMetadata(dataId);
         } else {
-            MetadataLoader.loadMetadata(context, mLastData);
+            MetadataLoader.loadMetadata(mContext, mLastData);
         }
     }
 

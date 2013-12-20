@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
@@ -31,6 +30,7 @@ import android.net.Uri;
  */
 public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapter {
 
+    protected final Context mContext;
     protected final LocalDataAdapter mAdapter;
     protected int mSuggestedWidth;
     protected int mSuggestedHeight;
@@ -38,12 +38,14 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     /**
      * Constructor.
      *
-     * @param wrappedAdapter  The {@link LocalDataAdapter} to be wrapped.
+     * @param context A valid Android context.
+     * @param wrappedAdapter The {@link LocalDataAdapter} to be wrapped.
      */
-    AbstractLocalDataAdapterWrapper(LocalDataAdapter wrappedAdapter) {
+    AbstractLocalDataAdapterWrapper(Context context, LocalDataAdapter wrappedAdapter) {
         if (wrappedAdapter == null) {
             throw new AssertionError("data adapter is null");
         }
+        mContext = context;
         mAdapter = wrappedAdapter;
     }
 
@@ -65,18 +67,18 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void requestLoad(Context context) {
-        mAdapter.requestLoad(context);
+    public void requestLoad() {
+        mAdapter.requestLoad();
     }
 
     @Override
-    public void addNewVideo(Context context, Uri uri) {
-        mAdapter.addNewVideo(context, uri);
+    public void addNewVideo(Uri uri) {
+        mAdapter.addNewVideo(uri);
     }
 
     @Override
-    public void addNewPhoto(Context context, Uri uri) {
-        mAdapter.addNewPhoto(context, uri);
+    public void addNewPhoto(Uri uri) {
+        mAdapter.addNewPhoto(uri);
     }
 
     @Override
@@ -90,8 +92,8 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public boolean executeDeletion(Context context) {
-        return mAdapter.executeDeletion(context);
+    public boolean executeDeletion() {
+        return mAdapter.executeDeletion();
     }
 
     @Override
@@ -100,13 +102,13 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void refresh(Context context, Uri uri, boolean isInProgressSession) {
-        mAdapter.refresh(context, uri, isInProgressSession);
+    public void refresh(Uri uri, boolean isInProgressSession) {
+        mAdapter.refresh(uri, isInProgressSession);
     }
 
     @Override
-    public void updateMetadata(Context context, int dataId) {
-        mAdapter.updateMetadata(context, dataId);
+    public void updateMetadata(int dataId) {
+        mAdapter.updateMetadata(dataId);
     }
 
     @Override

@@ -533,7 +533,7 @@ public class CameraActivity extends Activity
                 }
             };
 
-    private LocalDataAdapter.LocalDataListener mLocalDataListener =
+    private final LocalDataAdapter.LocalDataListener mLocalDataListener =
             new LocalDataAdapter.LocalDataListener() {
                 @Override
                 public void onMetadataUpdated(List<Integer> updatedData) {
@@ -658,7 +658,7 @@ public class CameraActivity extends Activity
                         hideSessionProgress();
                         updateSessionProgress(0);
                     }
-                    mDataAdapter.refresh(CameraActivity.this, uri, /* isInProgress */ false);
+                    mDataAdapter.refresh(uri, /* isInProgress */ false);
                 }
 
                 @Override
@@ -679,7 +679,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSessionUpdated(Uri uri) {
-                    mDataAdapter.refresh(CameraActivity.this, uri, /* isInProgress */ true);
+                    mDataAdapter.refresh(uri, /* isInProgress */ true);
                 }
             };
 
@@ -807,12 +807,12 @@ public class CameraActivity extends Activity
         String mimeType = cr.getType(uri);
         if (mimeType.startsWith("video/")) {
             sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-            mDataAdapter.addNewVideo(this, uri);
+            mDataAdapter.addNewVideo(uri);
         } else if (mimeType.startsWith("image/")) {
             CameraUtil.broadcastNewPicture(this, uri);
-            mDataAdapter.addNewPhoto(this, uri);
+            mDataAdapter.addNewPhoto(uri);
         } else if (mimeType.startsWith(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
-            mDataAdapter.addNewPhoto(this, uri);
+            mDataAdapter.addNewPhoto(uri);
         } else {
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
                     + mimeType + ", uri:" + uri);
@@ -840,7 +840,7 @@ public class CameraActivity extends Activity
     }
 
     private void removeData(int dataID) {
-        mDataAdapter.removeData(CameraActivity.this, dataID);
+        mDataAdapter.removeData(dataID);
         if (mDataAdapter.getTotalNumber() > 1) {
             showUndoDeletionBar();
         } else {
@@ -948,7 +948,7 @@ public class CameraActivity extends Activity
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
         // Set up the camera preview first so the preview shows up ASAP.
-        mDataAdapter = new CameraDataAdapter(
+        mDataAdapter = new CameraDataAdapter(getApplicationContext(),
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
         mDataAdapter.setLocalDataListener(mLocalDataListener);
 
@@ -1000,7 +1000,7 @@ public class CameraActivity extends Activity
         if (!mSecureCamera) {
             mFilmstripController.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
-                mDataAdapter.requestLoad(this);
+                mDataAdapter.requestLoad();
             }
         } else {
             // Put a lock placeholder as the last image by setting its date to
@@ -1015,6 +1015,7 @@ public class CameraActivity extends Activity
                 }
             });
             mDataAdapter = new FixedLastDataAdapter(
+                    getApplicationContext(),
                     mDataAdapter,
                     new SimpleViewData(
                             v,
@@ -1141,7 +1142,7 @@ public class CameraActivity extends Activity
                 // If it's secure camera, requestLoad() should not be called
                 // as it will load all the data.
                 if (!mFilmstripVisible) {
-                    mDataAdapter.requestLoad(this);
+                    mDataAdapter.requestLoad();
                 }
             }
         }
@@ -1462,7 +1463,7 @@ public class CameraActivity extends Activity
             return;
         }
         hideUndoDeletionBar(false);
-        mDataAdapter.executeDeletion(CameraActivity.this);
+        mDataAdapter.executeDeletion();
     }
 
     public void showUndoDeletionBar() {
@@ -1669,7 +1670,7 @@ public class CameraActivity extends Activity
 
         updateBottomControlsByData(currentData);
         if (!mDataAdapter.isMetadataUpdated(dataId)) {
-            mDataAdapter.updateMetadata(this, dataId);
+            mDataAdapter.updateMetadata(dataId);
         }
     }
 

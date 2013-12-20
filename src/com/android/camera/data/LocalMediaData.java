@@ -515,7 +515,7 @@ public abstract class LocalMediaData implements LocalData {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 if (mNeedsRefresh && mAdapter != null) {
-                    mAdapter.refresh(mContext, getContentUri(), mIsInProgressSession);
+                    mAdapter.refresh(getContentUri(), mIsInProgressSession);
                 }
             }
         }

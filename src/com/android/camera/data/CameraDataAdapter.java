@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +43,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private static final int DEFAULT_DECODE_SIZE = 1600;
     private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
 
+    private final Context mContext;
+
     private LocalDataList mImages;
 
     private Listener mListener;
@@ -55,7 +56,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     private LocalData mLocalDataToDelete;
 
-    public CameraDataAdapter(Drawable placeHolder) {
+    public CameraDataAdapter(Context context, Drawable placeHolder) {
+        mContext = context;
         mImages = new LocalDataList();
         mPlaceHolder = placeHolder;
     }
@@ -66,15 +68,15 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void requestLoad(Context context) {
-        QueryTask qtask = new QueryTask(context);
-        qtask.execute(context.getContentResolver());
+    public void requestLoad() {
+        QueryTask qtask = new QueryTask();
+        qtask.execute(mContext.getContentResolver());
     }
 
 
     @Override
-    public void updateMetadata(Context context, int dataId) {
-        new MetadataUpdateTask(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
+    public void updateMetadata(int dataId) {
+        new MetadataUpdateTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
     }
 
     @Override
@@ -142,29 +144,29 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void removeData(Context c, int dataID) {
+    public void removeData(int dataID) {
         if (dataID >= mImages.size()) {
             return;
         }
         LocalData d = mImages.remove(dataID);
         // Delete previously removed data first.
-        executeDeletion(c);
+        executeDeletion();
         mLocalDataToDelete = d;
         mListener.onDataRemoved(dataID, d);
     }
 
     // TODO: put the database query on background thread
     @Override
-    public void addNewVideo(Context context, Uri uri) {
-        Cursor c = context.getContentResolver().query(uri,
+    public void addNewVideo(Uri uri) {
+        Cursor cursor = mContext.getContentResolver().query(uri,
                 LocalMediaData.VideoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalMediaData.VideoData.QUERY_ORDER);
-        if (c == null || !c.moveToFirst()) {
+        if (cursor == null || !cursor.moveToFirst()) {
             return;
         }
         int pos = findDataByContentUri(uri);
-        LocalMediaData.VideoData newData = LocalMediaData.VideoData.buildFromCursor(c);
+        LocalMediaData.VideoData newData = LocalMediaData.VideoData.buildFromCursor(cursor);
         if (pos != -1) {
             // A duplicate one, just do a substitute.
             updateData(pos, newData);
@@ -176,22 +178,22 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     // TODO: put the database query on background thread
     @Override
-    public void addNewPhoto(Context context, Uri uri) {
-        Cursor c = context.getContentResolver().query(uri,
+    public void addNewPhoto(Uri uri) {
+        Cursor cursor = mContext.getContentResolver().query(uri,
                 LocalMediaData.PhotoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                 LocalMediaData.PhotoData.QUERY_ORDER);
         LocalMediaData.PhotoData newData = null;
 
         try {
-            if (c == null || !c.moveToFirst()) {
+            if (cursor == null || !cursor.moveToFirst()) {
                 return;
             }
-            newData = LocalMediaData.PhotoData.buildFromCursor(context, c);
+            newData = LocalMediaData.PhotoData.buildFromCursor(mContext, cursor);
         } finally {
             // Ensure cursor is closed before returning
-            if (c != null) {
-                c.close();
+            if (cursor != null) {
+                cursor.close();
             }
         }
         int pos = findDataByContentUri(uri);
@@ -223,10 +225,10 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public boolean executeDeletion(Context c) {
+    public boolean executeDeletion() {
         if (mLocalDataToDelete == null) return false;
 
-        DeletionTask task = new DeletionTask(c);
+        DeletionTask task = new DeletionTask();
         task.execute(mLocalDataToDelete);
         mLocalDataToDelete = null;
         return true;
@@ -238,15 +240,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void refresh(Context context, Uri contentUri,
-            boolean isInProgressSession) {
+    public void refresh(Uri contentUri, boolean isInProgressSession) {
         int pos = findDataByContentUri(contentUri);
         if (pos == -1) {
             return;
         }
 
         LocalData data = mImages.get(pos);
-        LocalData refreshedData = data.refresh(context);
+        LocalData refreshedData = data.refresh(mContext);
 
         // Wrap the data item if this represents a session that is in progress.
         if (isInProgressSession) {
@@ -303,13 +304,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     private class QueryTask extends AsyncTask<ContentResolver, Void, LocalDataList> {
-        private Context mContext;
-
-        public QueryTask(Context context) {
-            super();
-            mContext = context;
-        }
-
         /**
          * Loads all the photo and video data in the camera folder in background
          * and combine them into one single list.
@@ -391,12 +385,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     private class DeletionTask extends AsyncTask<LocalData, Void, Void> {
-        Context mContext;
-
-        DeletionTask(Context context) {
-            mContext = context;
-        }
-
         @Override
         protected Void doInBackground(LocalData... data) {
             for (int i = 0; i < data.length; i++) {
@@ -411,12 +399,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     private class MetadataUpdateTask extends AsyncTask<Integer, Void, List<Integer> > {
-        Context mContext;
-
-        MetadataUpdateTask(Context context) {
-            mContext = context;
-        }
-
         @Override
         protected List<Integer> doInBackground(Integer... dataId) {
             List<Integer> updatedList = new ArrayList<Integer>();
