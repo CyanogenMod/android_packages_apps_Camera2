@@ -447,7 +447,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * @return Whether the UI responded to the key event.
      */
     public boolean onBackPressed() {
-        return mFilmstripLayout.onBackPressed();
+        if (mFilmstripLayout.getVisibility() == View.VISIBLE) {
+            return mFilmstripLayout.onBackPressed();
+        } else {
+            return mModeListView.onBackPressed();
+        }
     }
 
     /**

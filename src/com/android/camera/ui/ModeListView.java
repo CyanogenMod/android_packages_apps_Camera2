@@ -869,6 +869,20 @@ public class ModeListView extends ScrollView {
         }
     }
 
+    /**
+     * Called when the back key is pressed.
+     *
+     * @return Whether the UI responded to the key event.
+     */
+    public boolean onBackPressed() {
+        if (mState == FULLY_SHOWN) {
+            snapBack();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void startModeSelectionAnimation() {
         if (mState != MODE_SELECTED || mCurrentEffect == null) {
             setVisibility(INVISIBLE);
