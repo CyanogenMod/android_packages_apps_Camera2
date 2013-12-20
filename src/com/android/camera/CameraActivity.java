@@ -710,6 +710,17 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public void setupOneShotPreviewListener() {
+        mCameraController.setOneShotPreviewCallback(mMainHandler,
+                new CameraManager.CameraPreviewDataCallback() {
+            @Override
+            public void onPreviewFrame(byte[] data, CameraManager.CameraProxy camera) {
+                mCameraAppUI.onNewPreviewFrame();
+            }
+        });
+    }
+
+    @Override
     public void updatePreviewAspectRatio(float aspectRatio) {
         mCameraAppUI.updatePreviewAspectRatio(aspectRatio);
     }
