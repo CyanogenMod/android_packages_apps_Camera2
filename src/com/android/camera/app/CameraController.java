@@ -201,4 +201,9 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
             });
         }
     }
+
+    public void setOneShotPreviewCallback(Handler handler,
+            CameraManager.CameraPreviewDataCallback cb) {
+        mCameraProxy.setOneShotPreviewCallback(handler, cb);
+    }
 }

@@ -18,7 +18,6 @@ package com.android.camera.app;
 
 import android.content.Context;
 import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -29,7 +28,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.TextureViewHelper;
@@ -199,6 +197,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final static int COVER_HIDDEN = 0;
     private final static int COVER_SHOWN = 1;
     private final static int COVER_WILL_HIDE_AT_NEXT_FRAME = 2;
+    private static final int COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE = 3;
 
     // App level views:
     private final FrameLayout mCameraRootView;
@@ -545,8 +544,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void onPreviewStarted() {
         if (mModeCoverState == COVER_SHOWN) {
-            mModeCoverState = COVER_WILL_HIDE_AT_NEXT_FRAME;
+            if (mController.getCurrentModuleIndex() == ModeListView.MODE_GCAM) {
+                // For modules that use camera2 api, check surfaceTexture update
+                mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
+            } else {
+                mModeCoverState = COVER_WILL_HIDE_AT_NEXT_FRAME;
+                mController.setupOneShotPreviewListener();
+            }
         }
+    }
+
+    /**
+     * Gets notified when next preview frame comes in.
+     */
+    public void onNewPreviewFrame() {
+        hideModeCover();
+        mModeCoverState = COVER_HIDDEN;
     }
 
     /**
@@ -656,7 +669,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_FRAME) {
+        if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
             hideModeCover();
             mModeCoverState = COVER_HIDDEN;
         }

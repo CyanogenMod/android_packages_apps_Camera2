@@ -70,6 +70,7 @@ class AndroidCameraManagerImpl implements CameraManager {
     private static final int ADD_CALLBACK_BUFFER =              105;
     private static final int SET_PREVIEW_DISPLAY_ASYNC =        106;
     private static final int SET_PREVIEW_CALLBACK =             107;
+    private static final int SET_ONE_SHOT_PREVIEW_CALLBACK =    108;
     // Parameters
     private static final int SET_PARAMETERS =     201;
     private static final int GET_PARAMETERS =     202;
@@ -324,6 +325,12 @@ class AndroidCameraManagerImpl implements CameraManager {
                         return;
                     }
 
+                    case SET_ONE_SHOT_PREVIEW_CALLBACK: {
+                        mCamera.setOneShotPreviewCallback(
+                                (PreviewCallback) msg.obj);
+                        return;
+                    }
+
                     case ADD_CALLBACK_BUFFER: {
                         mCamera.addCallbackBuffer((byte[]) msg.obj);
                         return;
@@ -548,6 +555,11 @@ class AndroidCameraManagerImpl implements CameraManager {
                 Handler handler, CameraPreviewDataCallback cb) {
             mCameraHandler.obtainMessage(
                     SET_PREVIEW_CALLBACK,
+                    PreviewCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
+        }
+        @Override
+        public void setOneShotPreviewCallback(Handler handler, CameraPreviewDataCallback cb) {
+            mCameraHandler.obtainMessage(SET_ONE_SHOT_PREVIEW_CALLBACK,
                     PreviewCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
         }
 

@@ -250,6 +250,16 @@ public interface CameraManager {
         public void setPreviewDataCallback(Handler handler, CameraPreviewDataCallback cb);
 
         /**
+         * Sets the one-time callback for preview data.
+         *
+         * @param handler    The {@link android.os.Handler} in which the callback was handled.
+         * @param cb         The callback to be invoked when the preview data for
+         *                   next frame is available.
+         * @see  android.hardware.Camera#setPreviewCallback(android.hardware.Camera.PreviewCallback)
+         */
+        public void setOneShotPreviewCallback(Handler handler, CameraPreviewDataCallback cb);
+
+        /**
          * Sets the callback for preview data.
          *
          * @param handler The handler in which the callback will be invoked.

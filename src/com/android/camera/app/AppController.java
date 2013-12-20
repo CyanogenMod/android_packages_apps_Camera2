@@ -103,6 +103,12 @@ public interface AppController {
     public void onPreviewStarted();
 
     /**
+     * Sets up one shot preview callback in order to notify UI when the next
+     * preview frame comes in.
+     */
+    public void setupOneShotPreviewListener();
+
+    /**
      * Gets called from module when preview aspect ratio has changed.
      *
      * @param aspectRatio aspect ratio of preview stream
