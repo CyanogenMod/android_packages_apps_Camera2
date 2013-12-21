@@ -31,6 +31,8 @@ import android.widget.FrameLayout;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.TextureViewHelper;
+import com.android.camera.ShutterButton;
+import com.android.camera.MultiToggleImageButton;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
@@ -207,8 +209,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
-
     private BottomBar mBottomBar;
+
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
     private int mSwipeState = IDLE;
@@ -473,7 +475,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mTextureViewHelper.setAutoAdjustTransform(
                     mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
             if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-                mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
+                mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
                 mTextureViewHelper.setPreviewSizeChangedListener(mBottomBar);
             }
         }
@@ -502,6 +504,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mCaptureOverlay = (CaptureAnimationOverlay)
                 mCameraRootView.findViewById(R.id.capture_overlay);
+
+        mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
+        mBottomBar.setupToggle(mIsCaptureIntent);
     }
 
     // TODO: Remove this when refactor is done.
@@ -511,6 +516,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModuleUI = null;
         mTextureView = null;
         mPreviewOverlay = null;
+        mBottomBar = null;
+        setBottomBarShutterListener(null);
     }
 
     /**
@@ -531,8 +538,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModuleUI != null) {
             mModuleUI.removeAllViews();
         }
-        // TODO: Remove this when bottom bar is at the app level
-        mBottomBar = null;
         mTextureViewHelper.setPreviewSizeChangedListener(null);
 
         mPreviewStatusListener = null;
@@ -676,5 +681,48 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureUpdated(surface);
         }
+    }
+
+    /**
+     * Sets the color of the bottom bar.
+     */
+    public void setBottomBarColor(int colorId) {
+        mBottomBar.setBackgroundColor(colorId);
+    }
+
+    /**
+     * Set the visibility of the bottom bar.
+     */
+    // TODO: needed for when panorama is managed by the generic module ui.
+    public void setBottomBarVisible(boolean visible) {
+        mBottomBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    /**
+     * If the bottom bar is visible (hence has been drawn),
+     * this sets a {@link #ShutterButton.OnShutterButtonListener}
+     * on the global shutter button,
+     */
+    public void setBottomBarShutterListener(
+            ShutterButton.OnShutterButtonListener listener) {
+        ShutterButton shutterButton
+            = (ShutterButton) mCameraRootView.findViewById(R.id.shutter_button);
+        if (shutterButton != null) {
+            shutterButton.setOnShutterButtonListener(listener);
+        }
+    }
+
+    /**
+     * Performs a transition to the global intent layout.
+     */
+    public void transitionToIntentLayout() {
+        mBottomBar.transitionToIntentLayout();
+    }
+
+    /**
+     * Performs a transition to the global intent review layout.
+     */
+    public void transitionToIntentReviewLayout() {
+        mBottomBar.transitionToIntentReviewLayout();
     }
 }

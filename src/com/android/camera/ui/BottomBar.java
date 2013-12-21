@@ -19,16 +19,14 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.android.camera2.R;
+import com.android.camera.ToggleImageButton;
 
 /**
  * BottomBar swaps its width and height on rotation. In addition, it also changes
@@ -36,15 +34,10 @@ import com.android.camera2.R;
  * landscape it aligns to the right side of its parent and lays out its children
  * vertically, whereas in portrait, it stays at the bottom of the parent and has
  * a horizontal layout orientation.
- *
- * In addition to adjusting itself, this class also makes sure its children are
- * always spaced evenly in the new orientation.
  */
 public class BottomBar extends FrameLayout
         implements PreviewStatusListener.PreviewSizeChangedListener {
     private static final String TAG = "BottomBar";
-    private final int mPaddingStart;
-    private final int mPaddingEnd;
     private int mWidth;
     private int mHeight;
     private float mOffsetShorterEdge;
@@ -53,28 +46,115 @@ public class BottomBar extends FrameLayout
     private final int mOptimalHeight;
     private boolean mOverLayBottomBar;
 
+    private TopRightMostOverlay mSettingsOverlay;
+    private TopRightWeightedLayout mSettingsLayout;
+    private FrameLayout mCaptureLayout;
+    private TopRightWeightedLayout mIntentLayout;
+
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        if (context.getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            mPaddingStart = getPaddingTop();
-            mPaddingEnd = getPaddingBottom();
-        } else {
-            // Portrait mode
-            mPaddingStart = getPaddingLeft();
-            mPaddingEnd = getPaddingRight();
-        }
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
     }
 
+    @Override
+    public void onFinishInflate() {
+        mSettingsOverlay
+            = (TopRightMostOverlay) findViewById(R.id.bottombar_settings_overlay);
+        mSettingsLayout
+            = (TopRightWeightedLayout) findViewById(R.id.bottombar_settings);
+        mCaptureLayout
+            = (FrameLayout) findViewById(R.id.bottombar_capture);
+        mIntentLayout
+            = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent);
+    }
+
     /**
-     * Sets the bottom bar buttons given a layout id
+     * Initializes the bottom bar toggle for switching between
+     * capture and the bottom bar settings toggles.
      */
-    public void setButtonLayout(int buttonLayoutId) {
-        removeAllViews();
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(buttonLayoutId, this, true);
+    public void setupToggle(final boolean isCaptureIntent) {
+        // Of type ToggleImageButton because ToggleButton
+        // has a non-removable spacing for text on the right-hand side.
+        ToggleImageButton toggle = (ToggleImageButton) findViewById(R.id.bottombar_settings_toggle);
+        toggle.setState(0, false);
+        toggle.setOnStateChangeListener(new ToggleImageButton.OnStateChangeListener() {
+                @Override
+                public void stateChanged(View view, boolean toSettings) {
+                    if (toSettings) {
+                        if (isCaptureIntent) {
+                            hideIntentLayout();
+                        }
+                        transitionToSettings();
+                    } else {
+                        if (isCaptureIntent) {
+                            transitionToIntentLayout();
+                        } else {
+                            transitionToCapture();
+                        }
+                    }
+                }
+            });
+        mSettingsOverlay.setReferenceViewParent(mSettingsLayout);
+    }
+
+    /**
+     * Hide the intent layout.  This is necessary for switching between
+     * the intent capture layout and the bottom bar settings.
+     */
+    private void hideIntentLayout() {
+        mIntentLayout.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Perform a transition from the bottom bar capture layout to the
+     * bottom bar settings layout.
+     */
+    private void transitionToCapture() {
+        mSettingsLayout.setVisibility(View.INVISIBLE);
+        mCaptureLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Perform a transition from the bottom bar settings layout to the
+     * bottom bar capture layout.
+     */
+    private void transitionToSettings() {
+        mCaptureLayout.setVisibility(View.INVISIBLE);
+        mSettingsLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Perform a transition to the global intent layout.  The current
+     * layout state of the bottom bar is irrelevant.
+     */
+    public void transitionToIntentLayout() {
+        mCaptureLayout.setVisibility(View.VISIBLE);
+        mSettingsLayout.setVisibility(View.INVISIBLE);
+        mSettingsOverlay.setVisibility(View.VISIBLE);
+        mIntentLayout.setVisibility(View.VISIBLE);
+
+        View button;
+        button = mIntentLayout.findViewById(R.id.done_button);
+        button.setVisibility(View.INVISIBLE);
+        button = mIntentLayout.findViewById(R.id.retake_button);
+        button.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Perform a transition to the global intent review layout.
+     * The current layout state of the bottom bar is irrelevant.
+     */
+    public void transitionToIntentReviewLayout() {
+        mCaptureLayout.setVisibility(View.INVISIBLE);
+        mSettingsLayout.setVisibility(View.INVISIBLE);
+        mSettingsOverlay.setVisibility(View.INVISIBLE);
+
+        View button;
+        button = mIntentLayout.findViewById(R.id.done_button);
+        button.setVisibility(View.VISIBLE);
+        button = mIntentLayout.findViewById(R.id.retake_button);
+        button.setVisibility(View.VISIBLE);
+        mIntentLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -159,53 +239,6 @@ public class BottomBar extends FrameLayout
     @Override
     protected void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-    }
-
-    /**
-     * Custom layout call that aims to space all children evenly in the given rect.
-     */
-    @Override
-    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        final int childCount = getChildCount();
-        if (childCount == 0) {
-            return;
-        }
-        // Convert parent coordinates into child coordinates
-        right -= left;
-        bottom -= top;
-        left = 0;
-        top = 0;
-
-        // Evenly space all children
-        if (bottom < right) {
-            // Portrait mode
-            int centerY = (top + bottom) / 2;
-            int perChildHorizontalSpace = (right - left - mPaddingStart - mPaddingEnd) / childCount;
-            for (int i = 0; i < childCount; i++) {
-                int centerX = mPaddingStart + perChildHorizontalSpace * i
-                        + perChildHorizontalSpace / 2;
-                View child = getChildAt(i);
-                int childWidth = child.getMeasuredWidth();
-                int childHeight = child.getMeasuredHeight();
-                child.layout(centerX - childWidth / 2, centerY - childHeight / 2,
-                        centerX + childWidth / 2, centerY + childHeight / 2);
-            }
-        } else {
-            // Landscape
-            int centerX = (left + right) / 2;
-            int perChildVerticalSpace = (bottom - top - mPaddingStart - mPaddingEnd) / childCount;
-            // Layout children from bottom up so that they remain nearly the same position
-            // as when they were in portrait
-            for (int i = 0; i < childCount; i++) {
-                int centerY = mPaddingStart + perChildVerticalSpace * (childCount - 1 - i)
-                        + perChildVerticalSpace / 2;
-                View child = getChildAt(i);
-                int childWidth = child.getMeasuredWidth();
-                int childHeight = child.getMeasuredHeight();
-                child.layout(centerX - childWidth / 2, centerY - childHeight / 2,
-                        centerX + childWidth / 2, centerY + childHeight / 2);
-            }
-        }
     }
 
     // prevent touches on bottom bar (not its children)

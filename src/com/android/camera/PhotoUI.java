@@ -36,9 +36,9 @@ import android.widget.Toast;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
+import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
@@ -78,10 +78,10 @@ public class PhotoUI implements
     private Matrix mMatrix = null;
     private float mAspectRatio = UNSET;
     private final Object mSurfaceTextureLock = new Object();
-    private BottomBar mBottomBar;
 
     private ButtonManager.ButtonCallback mCameraCallback;
     private ButtonManager.ButtonCallback mHdrCallback;
+    private ButtonManager.ButtonCallback mRefocusCallback;
 
     private final OnClickListener mCancelCallback = new OnClickListener() {
         @Override
@@ -98,7 +98,8 @@ public class PhotoUI implements
     private final OnClickListener mRetakeCallback = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setupBottomBarIntentLayout();
+            setupIntentToggleButtons();
+            mActivity.getCameraAppUI().transitionToIntentLayout();
             mController.onCaptureRetake();
         }
     };
@@ -198,8 +199,18 @@ public class PhotoUI implements
         initIndicators();
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
-        mBottomBar = (BottomBar) mRootView.findViewById(R.id.bottom_bar);
-        mBottomBar.setBackgroundColor(activity.getResources().getColor(R.color.camera_mode_color));
+
+        // Customize the bottom bar.
+        if (mActivity.getCurrentModuleIndex() == ModeListView.MODE_PHOTO) {
+            // Simple photo mode.
+            activity.getCameraAppUI().setBottomBarColor(
+                activity.getResources().getColor(R.color.camera_mode_color));
+        } else {
+            // Advanced photo mode.
+            activity.getCameraAppUI().setBottomBarColor(
+                activity.getResources().getColor(R.color.craft_mode_color));
+        }
+
         ViewStub faceViewStub = (ViewStub) mRootView
                 .findViewById(R.id.face_view_stub);
         if (faceViewStub != null) {
@@ -273,15 +284,17 @@ public class PhotoUI implements
 
     public void onCameraOpened(Camera.Parameters params,
             ButtonManager.ButtonCallback cameraCallback,
-            ButtonManager.ButtonCallback hdrCallback) {
-
+            ButtonManager.ButtonCallback hdrCallback,
+            ButtonManager.ButtonCallback refocusCallback) {
         mCameraCallback = cameraCallback;
         mHdrCallback = hdrCallback;
+        mRefocusCallback = refocusCallback;
 
         if (mController.isImageCaptureIntent()) {
-            setupBottomBarIntentLayout();
+            setupIntentToggleButtons();
+            mActivity.getCameraAppUI().transitionToIntentLayout();
         } else {
-            setupBottomBarLayout();
+            setupToggleButtons();
         }
 
         initializeZoom(params);
@@ -295,38 +308,26 @@ public class PhotoUI implements
 
     private void setupToggleButtons() {
         ButtonManager buttonManager = mActivity.getButtonManager();
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-
-        if (settingsManager.isCameraBackFacing()) {
-            buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
-                null, R.array.camera_flashmode_icons);
-        } else {
-            buttonManager.disableButton(ButtonManager.BUTTON_FLASH,
-                R.id.flash_toggle_button);
-        }
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
             mCameraCallback, R.array.camera_id_icons);
-        buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
-            mHdrCallback, R.array.pref_camera_hdr_plus_icons);
-    }
-    private void setupBottomBarLayout() {
-        mBottomBar.setButtonLayout(R.layout.photo_bottombar_buttons);
+        buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
+            null, R.array.camera_flashmode_icons);
 
+        if (mActivity.getCurrentModuleIndex() == ModeListView.MODE_PHOTO) {
+            // Simple photo mode.
+            buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
+            buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS, R.id.refocus_toggle_button);
+        } else {
+            // Advanced photo mode.
+            buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
+                mHdrCallback, R.array.pref_camera_hdr_plus_icons);
+            buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS, R.id.refocus_toggle_button,
+                mRefocusCallback, R.array.refocus_icons);
+        }
+    }
+
+    private void setupIntentToggleButtons() {
         setupToggleButtons();
-    }
-
-    private void setupBottomBarIntentLayout() {
-        mBottomBar.setButtonLayout(R.layout.photo_intent_bottombar_buttons);
-
-        ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
-                mCancelCallback);
-        setupToggleButtons();
-    }
-
-    private void setupBottomBarIntentReviewLayout() {
-        mBottomBar.setButtonLayout(R.layout.photo_intent_review_bottombar_buttons);
-
         ButtonManager buttonManager = mActivity.getButtonManager();
         buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
                 mCancelCallback);
@@ -338,7 +339,8 @@ public class PhotoUI implements
 
     public void initializeControlByIntent() {
         if (mController.isImageCaptureIntent()) {
-            setupBottomBarIntentLayout();
+            setupIntentToggleButtons();
+            mActivity.getCameraAppUI().transitionToIntentLayout();
         }
     }
 
@@ -393,7 +395,10 @@ public class PhotoUI implements
     protected void showCapturedImageForReview(byte[] jpegData, int orientation, boolean mirror) {
         mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
         mDecodeTaskForReview.execute();
-        setupBottomBarIntentReviewLayout();
+
+        setupIntentToggleButtons();
+        mActivity.getCameraAppUI().transitionToIntentReviewLayout();
+
         pauseFaceDetection();
     }
 

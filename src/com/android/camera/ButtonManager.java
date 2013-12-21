@@ -31,10 +31,16 @@ public class ButtonManager {
     public static final int BUTTON_TORCH = 1;
     public static final int BUTTON_CAMERA = 2;
     public static final int BUTTON_HDRPLUS = 3;
-    public static final int BUTTON_CANCEL = 4;
-    public static final int BUTTON_DONE = 5;
-    public static final int BUTTON_RETAKE = 6;
-    public static final int BUTTON_REVIEW = 7;
+    public static final int BUTTON_REFOCUS = 4;
+    public static final int BUTTON_CANCEL = 5;
+    public static final int BUTTON_DONE = 6;
+    public static final int BUTTON_RETAKE = 7;
+    public static final int BUTTON_REVIEW = 8;
+
+    /** For two state MultiStateToggleButtons, the off index. */
+    public static final int OFF = 0;
+    /** For two state MultiStateToggleButtons, the on index. */
+    public static final int ON = 1;
 
     /** A reference to the activity for finding button views on demand. */
     private final CameraActivity mActivity;
@@ -71,6 +77,8 @@ public class ButtonManager {
                     throw new IllegalStateException("Camera button could not be found.");
                 case BUTTON_HDRPLUS:
                     throw new IllegalStateException("Hdr button could not be found.");
+                case BUTTON_REFOCUS:
+                    throw new IllegalStateException("Refocus button could not be found.");
                 default:
                     throw new IllegalArgumentException("button not known by id=" + buttonId);
             }
@@ -117,12 +125,30 @@ public class ButtonManager {
             case BUTTON_TORCH:
                 enableTorchButton(button, cb, resIdImages);
                 break;
+            case BUTTON_REFOCUS:
+                enableRefocusButton(button, cb, resIdImages);
+                break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
         button.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Enable a known button with a click listener and a resource id.
+     * Sets the button visible.
+     */
+    public void enablePushButton(int buttonId, int resId, View.OnClickListener cb,
+            int imageId) {
+        ImageButton button = getImageButtonOrError(buttonId, resId);
+        button.setOnClickListener(cb);
+        button.setEnabled(true);
+        button.setImageResource(imageId);
+    }
+
+    /**
+     * Enable a known button with a click listener. Sets the button visible.
+     */
     public void enablePushButton(int buttonId, int resId, View.OnClickListener cb) {
         ImageButton button = getImageButtonOrError(buttonId, resId);
         button.setOnClickListener(cb);
@@ -130,11 +156,24 @@ public class ButtonManager {
     }
 
     /**
-     * Disable a known button by id.
+     * Sets a button in its disabled (greyed out) state.
      */
     public void disableButton(int buttonId, int resId) {
         MultiToggleImageButton button = getButtonOrError(buttonId, resId);
+        disableButton(button);
+    }
+
+    private void disableButton(MultiToggleImageButton button) {
         button.setEnabled(false);
+        button.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Hide a button by id.
+     */
+    public void hideButton(int buttonId, int resId) {
+        MultiToggleImageButton button = getButtonOrError(buttonId, resId);
+        button.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -143,13 +182,17 @@ public class ButtonManager {
     private void enableFlashButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
+        if (!mSettingsManager.isCameraBackFacing()) {
+            disableButton(button);
+            return;
+        }
+
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_FLASH_MODE);
-        if (index >= 0) {
-            button.setState(index, false);
-        }
+        button.setState(index >= 0 ? index : 0, false);
+
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
                 public void stateChanged(View view, int state) {
@@ -159,6 +202,8 @@ public class ButtonManager {
                     }
                 }
             });
+
+        button.setEnabled(true);
     }
 
     /**
@@ -166,14 +211,19 @@ public class ButtonManager {
      */
     private void enableTorchButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
+
+        if (!mSettingsManager.isCameraBackFacing()) {
+            disableButton(button);
+            return;
+        }
+
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
         int index = mSettingsManager.getStringValueIndex(
                 SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
-        if (index >= 0) {
-            button.setState(index, false);
-        }
+        button.setState(index >= 0 ? index : 0, false);
+
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
                 public void stateChanged(View view, int state) {
@@ -184,6 +234,8 @@ public class ButtonManager {
                     }
                 }
             });
+
+        button.setEnabled(true);
     }
 
     /**
@@ -197,9 +249,7 @@ public class ButtonManager {
         }
 
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_ID);
-        if (index >= 0) {
-            button.setState(index, false);
-        }
+        button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
@@ -212,6 +262,8 @@ public class ButtonManager {
                     }
                 }
             });
+
+        button.setEnabled(true);
     }
 
     /**
@@ -225,9 +277,7 @@ public class ButtonManager {
         }
 
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
-        if (index >= 0) {
-            button.setState(index, false);
-        }
+        button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
                 @Override
@@ -238,5 +288,34 @@ public class ButtonManager {
                     }
                 }
             });
+
+        button.setEnabled(true);
     }
+
+    /**
+     * Enable a refocus button.
+     */
+    private void enableRefocusButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+
+        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_REFOCUS);
+        button.setState(index >= 0 ? index : 0, false);
+
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+                @Override
+                public void stateChanged(View view, int state) {
+                    mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_REFOCUS, state);
+                    if (cb != null) {
+                        cb.onStateChanged(state);
+                    }
+                }
+            });
+
+        button.setEnabled(true);
+    }
+
 }

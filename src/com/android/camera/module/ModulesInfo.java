@@ -42,10 +42,12 @@ public class ModulesInfo {
     public static final int MODULE_TIMELAPSE = ModeListView.MODE_TIMELAPSE;
     public static final int MODULE_WIDEANGLE = ModeListView.MODE_WIDEANGLE;
     public static final int MODULE_GCAM = ModeListView.MODE_GCAM;
+    public static final int MODULE_REFOCUS = ModeListView.MODE_REFOCUS;
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         registerPhotoModule(moduleManager);
         moduleManager.setDefaultModuleIndex(MODULE_PHOTO);
+        registerCraftModule(moduleManager);
         registerVideoModule(moduleManager);
         if (PhotoSphereHelper.hasLightCycleCapture(context)) {
             registerWideAngleModule(moduleManager);
@@ -64,6 +66,25 @@ public class ModulesInfo {
             @Override
             public int getModuleId() {
                 return MODULE_PHOTO;
+            }
+
+            @Override
+            public boolean requestAppForCamera() {
+                return true;
+            }
+
+            @Override
+            public ModuleController createModule(AppController app) {
+                return new PhotoModule(app);
+            }
+        });
+    }
+
+    private static void registerCraftModule(ModuleManager moduleManager) {
+        moduleManager.registerModule(new ModuleManager.ModuleAgent() {
+            @Override
+            public int getModuleId() {
+                return MODULE_CRAFT;
             }
 
             @Override
@@ -139,7 +160,7 @@ public class ModulesInfo {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_CRAFT;
+                return MODULE_REFOCUS;
             }
 
             @Override

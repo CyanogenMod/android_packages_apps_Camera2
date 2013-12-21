@@ -217,6 +217,7 @@ public class SettingsManager {
     public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 17;
     public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 18;
     public static final int SETTING_STARTUP_MODULE_INDEX = 19;
+    public static final int SETTING_CAMERA_REFOCUS = 20;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -242,6 +243,7 @@ public class SettingsManager {
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN =
         "pref_video_first_use_hint_shown_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
+    public static final String KEY_CAMERA_REFOCUS = "pref_camera_refocus";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -654,6 +656,14 @@ public class SettingsManager {
         String[] values = null;
         return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
             KEY_STARTUP_MODULE_INDEX, values, FLUSH_OFF);
+    }
+
+    public static Setting getRefocusSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_off_value);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_refocus_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
+            KEY_CAMERA_REFOCUS, values, FLUSH_OFF);
     }
 
     // Utilities.

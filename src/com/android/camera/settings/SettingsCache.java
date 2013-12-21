@@ -120,6 +120,7 @@ public class SettingsCache {
                 SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN);
         mKeyMap.put(SettingsManager.KEY_STARTUP_MODULE_INDEX,
                 SettingsManager.SETTING_STARTUP_MODULE_INDEX);
+        mKeyMap.put(SettingsManager.KEY_CAMERA_REFOCUS, SettingsManager.SETTING_CAMERA_REFOCUS);
     }
 
     /**
@@ -190,6 +191,8 @@ public class SettingsCache {
             return SettingsManager.getHintVideoSetting(mContext);
         case SettingsManager.SETTING_STARTUP_MODULE_INDEX:
             return SettingsManager.getStartupModuleSetting(mContext);
+        case SettingsManager.SETTING_CAMERA_REFOCUS:
+            return SettingsManager.getRefocusSetting(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }
