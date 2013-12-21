@@ -157,9 +157,8 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
     private void onPreviewSizeChanged(float scaledTextureWidth, float scaledTextureHeight) {
         // Notify listeners of preview size change
-        for (int i = 0;  i < mPreviewSizeChangedListeners.size(); i++) {
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener
-                    = mPreviewSizeChangedListeners.get(i);
+        for (PreviewStatusListener.PreviewAreaSizeChangedListener listener
+                : mPreviewSizeChangedListeners) {
             listener.onPreviewAreaSizeChanged(scaledTextureWidth, scaledTextureHeight);
         }
     }
@@ -168,6 +167,12 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * Adds a listener that will get notified when the preview size changed. This
      * can be useful for UI elements or focus overlay to adjust themselves according
      * to the preview size change.
+     *
+     * Note that a listener will only be added once. A newly added listener will receive
+     * a notification of current preview size immediately after being added.
+     *
+     * This function should be called on the UI thread and listeners will be notified
+     * on the UI thread.
      *
      * @param listener the listener that will get notified of preview size change
      */

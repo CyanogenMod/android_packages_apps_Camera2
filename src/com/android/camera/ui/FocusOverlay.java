@@ -28,21 +28,22 @@ import com.android.camera.FocusOverlayManager;
 import com.android.camera2.R;
 
 /**
- * Displays focus indicator.
+ * Displays a focus indicator.
  */
 public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
 
-    private final Drawable mFocusIndicator;
     private final static int FOCUS_DURATION_MS = 500;
     private final static int FOCUS_INDICATOR_ROTATION_DEGREES = 50;
+
+    private final Drawable mFocusIndicator;
+    private final Rect mBounds = new Rect();
+    private final ValueAnimator mFocusAnimation = new ValueAnimator();
+
     private int mPositionX;
     private int mPositionY;
     private int mAngle;
-
     // TODO: make this dp in dimens.xml when UI has a spec
     private int mFocusIndicatorSize = 200;
-    private final Rect mBounds = new Rect();
-    private final ValueAnimator mFocusAnimation = new ValueAnimator();
     private boolean mShowIndicator;
     private int mCenterX;
     private int mCenterY;
@@ -54,6 +55,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
 
     @Override
     public boolean hasFaces() {
+        // TODO: Add face detection support.
         return false;
     }
 
@@ -114,12 +116,12 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
 
     @Override
     public void pauseFaceDetection() {
-
+        // TODO: Add face detection support.
     }
 
     @Override
     public void resumeFaceDetection() {
-
+        // TODO: Add face detection support.
     }
 
     public void onDraw(Canvas canvas) {

@@ -449,7 +449,7 @@ public class PhotoModule
 
         int width = root.getWidth();
         int height = root.getHeight();
-        mFocusManager.setPreviewSize(width, height);
+        mFocusManager.setPreviewRect(new Rect(0, 0, width, height));
         openCameraCommon();
     }
 
@@ -1216,6 +1216,9 @@ public class PhotoModule
     public void resume() {
         mPaused = false;
         if (mFocusManager != null) {
+            // If camera is not open when resume is called, focus manager will not
+            // be initialized yet, in which case it will start listening to
+            // preview area size change later in the initialization.
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
         // Add delay on resume from lock screen only, in order to to speed up
@@ -1339,7 +1342,9 @@ public class PhotoModule
         }
 
         // Check if metering area or focus area is supported.
-        if (!mFocusAreaSupported && !mMeteringAreaSupported) return;
+        if (!mFocusAreaSupported && !mMeteringAreaSupported) {
+            return;
+        }
         mFocusManager.onSingleTapUp(x, y);
     }
 

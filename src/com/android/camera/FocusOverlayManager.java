@@ -159,12 +159,6 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
                 CameraUtil.isAutoWhiteBalanceLockSupported(mParameters));
     }
 
-    public void setPreviewSize(int previewWidth, int previewHeight) {
-        if (mPreviewRect.width() != previewWidth || mPreviewRect.height() != previewHeight) {
-            setPreviewRect(new Rect(0, 0, previewWidth, previewHeight));
-        }
-    }
-
     /** This setter should be the only way to mutate mPreviewRect. */
     public void setPreviewRect(Rect previewRect) {
         if (!mPreviewRect.equals(previewRect)) {
@@ -175,11 +169,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
 
     @Override
     public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
-        int w = (int) previewWidth;
-        int h = (int) previewHeight;
-        if (mPreviewRect.width() != w || mPreviewRect.height() != h) {
-            setPreviewRect(new Rect(0, 0, w, h));
-        }
+        setPreviewRect(new Rect(0, 0, (int) previewWidth, (int) previewHeight));
     }
 
     /** Returns a copy of mPreviewRect so that outside class cannot modify preview
