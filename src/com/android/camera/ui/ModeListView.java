@@ -413,6 +413,10 @@ public class ModeListView extends ScrollView {
 
         super.onTouchEvent(ev);
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            if  (mState == ACCORDION_ANIMATION) {
+                // Let taps go through to take a capture during the accordion
+                return false;
+            }
             getParent().requestDisallowInterceptTouchEvent(true);
             if (mState == FULLY_SHOWN) {
                 mFocusItem = NO_ITEM_SELECTED;
@@ -421,6 +425,11 @@ public class ModeListView extends ScrollView {
                 mFocusItem = getFocusItem(ev.getX(), ev.getY());
                 setSwipeMode(true);
             }
+        } else if (mState == ACCORDION_ANIMATION) {
+            // This is a swipe during accordion animation
+            mFocusItem = getFocusItem(ev.getX(), ev.getY());
+            setSwipeMode(true);
+
         }
         // Pass all touch events to gesture detector for gesture handling.
         mGestureDetector.onTouchEvent(ev);
