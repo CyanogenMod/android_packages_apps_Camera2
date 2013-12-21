@@ -56,6 +56,11 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
+        public String getTitle() {
+            return mTitle;
+        }
+
+        @Override
         public synchronized void setProgress(int percent) {
             mProgressPercent = percent;
             notifyTaskProgress(mUri, mProgressPercent);
@@ -154,6 +159,11 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 throw new IllegalStateException("Cannot retrieve URI of not started session.");
             }
             return ImageLoader.getLocalPathFromUri(mContentResolver, mUri);
+        }
+
+        @Override
+        public Uri getUri() {
+            return mUri;
         }
 
         @Override
