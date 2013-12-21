@@ -274,7 +274,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent ev, float distanceX, float distanceY) {
             if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT_MS
-                    || mSwipeState != IDLE) {
+                    || mSwipeState != IDLE
+                    || mIsCaptureIntent) {
                 return false;
             }
 
@@ -385,7 +386,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         } else if (swipeState == SWIPE_LEFT) {
             // Pass the touch sequence to filmstrip layout.
             mAppRootView.redirectTouchEventsTo(mFilmstripLayout);
-
         } else if (swipeState == SWIPE_RIGHT) {
             // Pass the touch to mode switcher
             mAppRootView.redirectTouchEventsTo(mModeListView);
@@ -397,7 +397,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void resume() {
         if (mTextureView == null || mTextureView.getSurfaceTexture() != null) {
-            mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+            if (!mIsCaptureIntent) {
+                mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+            }
         } else {
             // Show mode theme cover until preview is ready
             showModeCoverUntilPreviewReady();
@@ -425,7 +427,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     public void onAnimationFinished(boolean success) {
                         if (success) {
                             // Show shimmy in SHIMMY_DELAY_MS
-                            mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+                            if (!mIsCaptureIntent) {
+                                mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+                            }
                         }
                     }
                 });
