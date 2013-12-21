@@ -45,16 +45,14 @@ public class MainActivityLayout extends FrameLayout {
     private final String TAG = "MainActivityLayout";
     private boolean mRequestToInterceptTouchEvents = false;
     private View mTouchReceiver = null;
-    private Activity mActivity;
-
     private boolean mIsCaptureIntent;
 
     public MainActivityLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 
-        mActivity = (Activity) context;
-        Intent intent = mActivity.getIntent();
+        Activity activity = (Activity) context;
+        Intent intent = activity.getIntent();
         String action = intent.getAction();
         mIsCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action)
