@@ -22,6 +22,17 @@ import android.location.Location;
  * A generic interface for a location provider {Fused, GPS, Network}.
  */
 public interface LocationProvider {
+
+    /**
+     * Report when connection fails so another location provider may be used.
+     */
+    public interface OnConnectionFailedListener {
+        /**
+         * Report connection failure.
+         */
+        public void onConnectionFailed();
+    }
+
     /**
      * Get the current location.
      */
