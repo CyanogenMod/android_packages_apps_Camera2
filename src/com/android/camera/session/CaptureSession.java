@@ -28,6 +28,9 @@ import com.android.camera.exif.ExifInterface;
  */
 public interface CaptureSession {
 
+    /** Returns the title/name of this session. */
+    public String getTitle();
+
     /**
      * Set the progress in percent for the current session. If set to or left at
      * 0, no progress bar is shown.
@@ -96,6 +99,12 @@ public interface CaptureSession {
      * available after startSession has been called.
      */
     public String getPath();
+
+    /**
+     * Returns the URI to the final output of this session. This is only available
+     * after startSession has been called.
+     */
+    public Uri getUri();
 
     /**
      * Whether this session already has a path. This is the case once it has
