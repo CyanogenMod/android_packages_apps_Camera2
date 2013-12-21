@@ -105,7 +105,7 @@ public class FilmstripView extends ViewGroup {
         private int mLeftPosition;
         private final View mView;
         private final RectF mViewArea;
-
+        private boolean mMaximumBitmapRequested;
         private final ValueAnimator mTranslationXAnimator;
 
         /**
@@ -121,10 +121,19 @@ public class FilmstripView extends ViewGroup {
             v.setPivotY(0f);
             mDataId = id;
             mView = v;
+            mMaximumBitmapRequested = false;
             mLeftPosition = -1;
             mViewArea = new RectF();
             mTranslationXAnimator = new ValueAnimator();
             mTranslationXAnimator.addUpdateListener(listener);
+        }
+
+        public boolean isMaximumBitmapRequested() {
+            return mMaximumBitmapRequested;
+        }
+
+        public void setMaximumBitmapRequested() {
+            mMaximumBitmapRequested = true;
         }
 
         /**
@@ -395,7 +404,7 @@ public class FilmstripView extends ViewGroup {
         // tiny to clearly see the details at 1:1 zoom. We should not scale
         // beyond what 1:1 would look like on a medium density screen, as
         // scaling beyond that would only yield blur.
-        mOverScaleFactor = (float) metrics.densityDpi / (float) DisplayMetrics.DENSITY_MEDIUM;
+        mOverScaleFactor = (float) metrics.densityDpi / (float) DisplayMetrics.DENSITY_HIGH;
         if (mOverScaleFactor < 1f) {
             mOverScaleFactor = 1f;
         }
@@ -491,10 +500,6 @@ public class FilmstripView extends ViewGroup {
             return;
         }
 
-        if (mDataAdapter != null) {
-            mDataAdapter.suggestViewSizeBound(boundWidth / 2, boundHeight / 2);
-        }
-
         for (ViewItem item : mViewItem) {
             if (item != null) {
                 measureViewItem(item, boundWidth, boundHeight);
@@ -542,6 +547,10 @@ public class FilmstripView extends ViewGroup {
             return null;
         }
         data.prepare();
+
+        int maxEdge = (int) ((float) Math.max(this.getHeight(), this.getWidth())
+                * FILM_STRIP_SCALE);
+        mDataAdapter.suggestViewSizeBound(maxEdge, maxEdge);
         View v = mDataAdapter.getView(mActivity, dataID);
         if (v == null) {
             return null;
@@ -557,6 +566,19 @@ public class FilmstripView extends ViewGroup {
             v.setTranslationY(0);
         }
         return item;
+    }
+
+    private void checkItemAtMaxSize() {
+        ViewItem item = mViewItem[mCurrentItem];
+        if (item.isMaximumBitmapRequested()) {
+            return;
+        };
+        item.setMaximumBitmapRequested();
+        // Request full size bitmap, or max that DataAdapter will create.
+        int id = item.getId();
+        int h = mDataAdapter.getImageData(id).getHeight();
+        int w = mDataAdapter.getImageData(id).getWidth();
+        mDataAdapter.resizeView(mActivity, id, item.getView(), w, h);
     }
 
     private void removeItem(int itemID) {
@@ -2289,6 +2311,7 @@ public class FilmstripView extends ViewGroup {
                 return false;
             }
             mController.zoomAt(current, x, y);
+            checkItemAtMaxSize();
             return true;
         }
 
@@ -2600,6 +2623,7 @@ public class FilmstripView extends ViewGroup {
                 if (mScale == FULL_SCREEN_SCALE) {
                     onEnterFullScreen();
                 }
+                checkItemAtMaxSize();
             }
             return true;
         }

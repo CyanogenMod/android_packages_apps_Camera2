@@ -67,6 +67,11 @@ public class InProgressDataWrapper implements LocalData {
     }
 
     @Override
+    public void resizeView(Context context, int w, int h, View v, LocalDataAdapter adapter) {
+        // do nothing.
+    }
+
+    @Override
     public long getDateTaken() {
         return mLocalData.getDateTaken();
     }

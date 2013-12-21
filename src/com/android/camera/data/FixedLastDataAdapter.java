@@ -125,6 +125,11 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
+    public void resizeView(Context context, int dataID, View view, int w, int h) {
+        // Do nothing.
+    }
+
+    @Override
     public ImageData getImageData(int dataID) {
         int totalNumber = mAdapter.getTotalNumber();
 
