@@ -553,13 +553,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void onPreviewStarted() {
         if (mModeCoverState == COVER_SHOWN) {
-            if (mController.getCurrentModuleIndex() == ModeListView.MODE_GCAM) {
-                // For modules that use camera2 api, check surfaceTexture update
-                mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
-            } else {
-                mModeCoverState = COVER_WILL_HIDE_AT_NEXT_FRAME;
-                mController.setupOneShotPreviewListener();
-            }
+            mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
         }
     }
 
