@@ -758,8 +758,9 @@ public class CameraSettings {
     private static ArrayList<String> getSupportedVideoQuality(int cameraId,Parameters parameters) {
         ArrayList<String> supported = new ArrayList<String>();
         // Check for supported quality
-        if (ApiHelper.HAS_FINE_RESOLUTION_QUALITY_LEVELS) {
-        getFineResolutionQuality(supported,cameraId,parameters);
+        if (ApiHelper.HAS_FINE_RESOLUTION_QUALITY_LEVELS &&
+                parameters.getSupportedVideoSizes() != null) {
+            getFineResolutionQuality(supported,cameraId,parameters);
         } else {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_HIGH));
             CamcorderProfile high = CamcorderProfile.get(
