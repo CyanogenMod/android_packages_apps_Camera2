@@ -1991,6 +1991,12 @@ public class PhotoModule
             return;
         }
         mCameraDevice.setErrorCallback(mErrorCallback);
+        // ICS camera frameworks has a bug. Face detection state is not cleared 1589
+        // after taking a picture. Stop the preview to work around it. The bug
+        // was fixed in JB.
+        if (mCameraState != PREVIEW_STOPPED) {
+            stopPreview();
+        }
 
         setDisplayOrientation();
 
