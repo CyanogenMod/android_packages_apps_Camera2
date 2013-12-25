@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2013 The CyanogenMod Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_camera_picturesize_entry_20_7mp">20,7 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_18mp">18 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_12_8mp">12,8 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_12_7mp">12,7 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_12mp">12 Мпикс. (4:3)</string>
+    <string name="pref_camera_picturesize_entry_11_5mp">11,5 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_10_4mp">10,4 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_9mp">9 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_8_2mp">8,2 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_7_7mp">7,7 Мпикс. (4:3)</string>
+    <string name="pref_camera_picturesize_entry_6_4mp">6,4 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_6mp">6 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_4_5mp">4,5 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_3_7mp">3,7 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_2_5mp">2,5 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_2_1mp">2,1 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_1_9mp">1,9 Мпикс.</string>
+
+    <string name="pref_camera_scenemode_entry_antimotionblur">Устранение разм. движения</string>
+    <string name="pref_camera_scenemode_entry_aqua">Вода</string>
+    <string name="pref_camera_scenemode_entry_ar">Дополненная реальность</string>
+    <string name="pref_camera_scenemode_entry_asd">Лучший снимок</string>
+    <string name="pref_camera_scenemode_entry_baby">Ребёнок</string>
+    <string name="pref_camera_scenemode_entry_backgroundblur">Размытие фона</string>
+    <string name="pref_camera_scenemode_entry_backlight">Контровой свет</string>
+    <string name="pref_camera_scenemode_entry_backlightportrait">Портрет с контр. светом</string>
+    <string name="pref_camera_scenemode_entry_barcode">Штрих-код</string>
+    <string name="pref_camera_scenemode_entry_beach">Пляж</string>
+    <string name="pref_camera_scenemode_entry_beauty">Красота</string>
+    <string name="pref_camera_scenemode_entry_candlelight">Свечи</string>
+    <string name="pref_camera_scenemode_entry_cine">Кино</string>
+    <string name="pref_camera_scenemode_entry_closeup">Крупный план</string>
+    <string name="pref_camera_scenemode_entry_dark">Темнота</string>
+    <string name="pref_camera_scenemode_entry_dish">Блюда</string>
+    <string name="pref_camera_scenemode_entry_duskdawn">Сумерки</string>
+    <string name="pref_camera_scenemode_entry_document">Документ</string>
+    <string name="pref_camera_scenemode_entry_fallcolor">Осенние цвета</string>
+    <string name="pref_camera_scenemode_entry_fireworks">Фейерверк</string>
+    <string name="pref_camera_scenemode_entry_flowers">Цветы</string>
+    <string name="pref_camera_scenemode_entry_handheldtwilight">Сумерки с рук</string>
+    <string name="pref_camera_scenemode_entry_highsensitivity">Высокая чувствительность</string>
+    <string name="pref_camera_scenemode_entry_indoor">В помещении</string>
+    <string name="pref_camera_scenemode_entry_landscape">Пейзаж</string>
+    <string name="pref_camera_scenemode_entry_mix_illuminant">Комбинированное освещение</string>
+    <string name="pref_camera_scenemode_entry_mood">Настроение</string>
+    <string name="pref_camera_scenemode_entry_nightportrait">Ночной портрет</string>
+    <string name="pref_camera_scenemode_entry_nightindoor">В помещении ночью</string>
+    <string name="pref_camera_scenemode_entry_oldfilm">Старый фильм</string>
+    <string name="pref_camera_scenemode_entry_pet">Домашний любимец</string>
+    <string name="pref_camera_scenemode_entry_portrait">Портрет</string>
+    <string name="pref_camera_scenemode_entry_snow">Снег</string>
+    <string name="pref_camera_scenemode_entry_softskin">Эффект нежной кожи</string>
+    <string name="pref_camera_scenemode_entry_sports">Спорт</string>
+    <string name="pref_camera_scenemode_entry_spotlight">Направленный свет</string>
+    <string name="pref_camera_scenemode_entry_steadyphoto">Стабильный снимок</string>
+    <string name="pref_camera_scenemode_entry_supernight">Тёмная ночь</string>
+    <string name="pref_camera_scenemode_entry_sweepstitch">Панорамная съёмка</string>
+    <string name="pref_camera_scenemode_entry_text">Текст</string>
+    <string name="pref_camera_scenemode_entry_theatre">Театр</string>
+    <string name="pref_camera_scenemode_entry_whiteboard">Белая доска</string>
+
+    <string name="pref_camera_focusmode_entry_continuouspicture">Непрерывный</string>
+    <string name="pref_camera_focusmode_entry_extended">Расширенный</string>
+    <string name="pref_camera_focusmode_entry_facedetect">Обнаружение лиц</string>
+    <string name="pref_camera_focusmode_entry_facepriority">Фокус на лица</string>
+    <string name="pref_camera_focusmode_entry_fixed">Фиксированный</string>
+    <string name="pref_camera_focusmode_entry_portrait">Портрет</string>
+    <string name="pref_camera_focusmode_entry_hyperfocal">Гиперфокальный</string>
+
+    <string name="pref_camera_coloreffect_entry_washed">Размытие</string>
+    <string name="pref_camera_coloreffect_entry_vintage_warm">Винтаж теплый</string>
+    <string name="pref_camera_coloreffect_entry_vintage_cold">Винтаж холодный</string>
+    <string name="pref_camera_coloreffect_entry_point_blue">Выделить синий</string>
+    <string name="pref_camera_coloreffect_entry_point_green">Выделить зеленый</string>
+    <string name="pref_camera_coloreffect_entry_point_red_yellow">Выделить красный и жёлтый</string>
+    <string name="pref_camera_coloreffect_entry_cartoonize">Комикс</string>
+
+    <string name="pref_camera_burst_title">Серийная съёмка</string>
+    <string name="pref_camera_burst_entry_off">Выкл.</string>
+    <string name="pref_camera_burst_entry_5">5 снимков</string>
+    <string name="pref_camera_burst_entry_10">10 снимков</string>
+    <string name="pref_camera_burst_entry_15">15 снимков</string>
+    <string name="pref_camera_burst_entry_20">20 снимков</string>
+    <string name="pref_camera_focustime_title">Фокус касанием</string>
+    <string name="pref_camera_focustime_summary">Выберите длительность удержания фокуса касанием</string>
+    <string name="pref_camera_focustime_entry_5">5 секунд</string>
+    <string name="pref_camera_focustime_entry_10">10 секунд</string>
+    <string name="pref_camera_focustime_entry_15">15 секунд</string>
+    <string name="pref_camera_focustime_entry_20">20 секунд</string>
+    <string name="pref_camera_focustime_entry_30">30 секунд</string>
+    <string name="pref_camera_focustime_entry_infinite">Бесконечно</string>
+    <string name="pref_camera_flashmode_entry_redeye">Ум. эфф. красных глаз</string>
+    <string name="pref_camera_flashmode_label_redeye">УМ. ЭФФ. КРАСНЫХ ГЛАЗ</string>
+    <string name="pref_camera_beauty_mode_title">Автоулучшение</string>
+    <string name="pref_camera_slow_shutter_title">Длит. выдержка</string>
+    <string name="pref_camera_slow_shutter_entry_off">Выкл.</string>
+    <string name="pref_camera_slow_shutter_entry_auto">Авто</string>
+    <string name="pref_camera_slow_shutter_entry_half_second">1/2 секунды</string>
+    <string name="pref_camera_slow_shutter_entry_1s">1 секунда</string>
+    <string name="pref_camera_slow_shutter_entry_2s">2 секунды</string>
+    <string name="pref_camera_slow_shutter_entry_4s">4 секунды</string>
+    <string name="pref_camera_slow_shutter_entry_8s">8 секунд</string>
+    <string name="camera_menu_enhance_label">УЛУЧШЕНИЕ</string>
+    <string name="camera_menu_slow_shutter_label">ДЛИТ. ВЫДЕРЖКА</string>
+    <string name="camera_menu_beauty_mode_label">АВТОУЛУЧШЕНИЕ</string>
+    <string name="camera_menu_colorize_label">ОКРАСКА</string>
+    <string name="camera_menu_effects_label">ЭФФЕКТЫ</string>
+    <string name="camera_menu_asd_label">РАСПОЗН. УСЛОВИЙ СЪЕМКИ</string>
+</resources>
