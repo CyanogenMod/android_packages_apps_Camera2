@@ -137,11 +137,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         void setShareEnabled(boolean enabled);
 
         /**
-         * @param visible Whether the button is visible.
-         */
-        void setGalleryButtonVisibility(boolean visible);
-
-        /**
          * Classes implementing this interface can listen for events on the bottom
          * controls.
          */
@@ -171,11 +166,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
              * Called when the "share" button is pressed.
              */
             public void onShare();
-
-            /**
-             * Called when the "gallery" button is pressed.
-             */
-            public void onGallery();
         }
     }
 

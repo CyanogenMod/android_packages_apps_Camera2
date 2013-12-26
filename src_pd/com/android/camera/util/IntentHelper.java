@@ -19,16 +19,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.android.camera2.R;
-
 public class IntentHelper {
 
     private static final String GALLERY_PACKAGE_NAME = "com.android.gallery3d";
     private static final String GALLERY_ACTIVITY_CLASS =
         "com.android.gallery3d.app.GalleryActivity";
 
-    public static int getGalleryIntentIcon() {
-        return R.drawable.ic_wide_angle_normal;
+    public static boolean shouldLaunchGalleryOnUpAction() {
+        return false;
     }
 
     public static Intent getGalleryIntent(Context context) {

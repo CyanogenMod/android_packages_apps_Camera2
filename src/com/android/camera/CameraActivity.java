@@ -290,11 +290,6 @@ public class CameraActivity extends Activity
                     }
                 }
 
-                @Override
-                public void onGallery() {
-                    startGallery();
-                }
-
                 private int getCurrentDataId() {
                     return mFilmstripController.getCurrentId();
                 }
@@ -868,7 +863,11 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                if (mFilmstripVisible && IntentHelper.shouldLaunchGalleryOnUpAction()) {
+                    startGallery();
+                } else {
+                    onBackPressed();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

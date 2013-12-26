@@ -36,11 +36,9 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     private ImageButton mTinyPlanetButton;
     private ImageButton mDeleteButton;
     private ImageButton mShareButton;
-    private ImageButton mGalleryButton;
 
     public FilmstripBottomControls(ViewGroup bottomControlsLayout) {
         mLayout = bottomControlsLayout;
-        setupGalleryButton();
         setupEditButton();
         setupViewButton();
         setupTinyPlanetButton();
@@ -118,11 +116,6 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
         mShareButton.setEnabled(enabled);
     }
 
-    @Override
-    public void setGalleryButtonVisibility(boolean visible) {
-        setVisibility(mGalleryButton, visible);
-    }
-
     /**
      * Sets the visibility of the given view.
      */
@@ -139,19 +132,6 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
             default:
                 return R.drawable.ic_control_play;
         }
-    }
-
-    private void setupGalleryButton() {
-        mGalleryButton = (ImageButton) mLayout.findViewById(R.id.filmstrip_bottom_control_gallery);
-        mGalleryButton.setImageResource(IntentHelper.getGalleryIntentIcon());
-        mGalleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null) {
-                    mListener.onGallery();
-                }
-            }
-        });
     }
 
     private void setupEditButton() {

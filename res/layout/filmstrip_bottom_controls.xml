@@ -69,12 +69,6 @@
             android:visibility="invisible" />
 
         <ImageButton
-            android:id="@+id/filmstrip_bottom_control_gallery"
-            style="@style/FilmstripBottomControlButton"
-            android:src="@drawable/ic_wide_angle_normal"
-            android:visibility="visible" />
-
-        <ImageButton
             android:id="@+id/filmstrip_bottom_control_edit"
             style="@style/FilmstripBottomControlButton"
             android:src="@drawable/ic_menu_edit_holo_dark"
