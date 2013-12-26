@@ -175,6 +175,8 @@ public class VideoModule implements CameraModule,
     private final AutoFocusCallback mAutoFocusCallback =
             new AutoFocusCallback();
 
+    private static final String KEY_PREVIEW_FORMAT = "preview-format";
+    private static final String QC_FORMAT_NV12_VENUS = "nv12-venus";
     private int mPendingSwitchCameraId;
 
     // This handles everything about focus.
@@ -840,13 +842,22 @@ public class VideoModule implements CameraModule,
         mPreferenceRead = true;
     }
 
+    private boolean is4KEnabled() {
+       if (mProfile.quality == CamcorderProfile.QUALITY_4kUHD ||
+           mProfile.quality == CamcorderProfile.QUALITY_4kDCI) {
+           return true;
+       } else {
+           return false;
+       }
+    }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void getDesiredPreviewSize() {
         if (mCameraDevice == null) {
             return;
         }
         mParameters = mCameraDevice.getParameters();
-        if (mParameters.getSupportedVideoSizes() == null) {
+        if (mParameters.getSupportedVideoSizes() == null || is4KEnabled()) {
             mDesiredPreviewWidth = mProfile.videoFrameWidth;
             mDesiredPreviewHeight = mProfile.videoFrameHeight;
         } else { // Driver supports separates outputs for preview and video.
@@ -1916,7 +1927,11 @@ public class VideoModule implements CameraModule,
             Log.v(TAG, "preview format set to YV12");
             mParameters.setPreviewFormat (ImageFormat.YV12);
         }
-
+       // if 4K recoding is enabled, set preview format to NV12_VENUS
+       if (is4KEnabled()) {
+           Log.v(TAG, "4K enabled, preview format set to NV12_VENUS");
+           mParameters.set(KEY_PREVIEW_FORMAT, QC_FORMAT_NV12_VENUS);
+       }
         // Set High Frame Rate.
         String HighFrameRate = mPreferences.getString(
             CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
