@@ -1974,6 +1974,12 @@ public class PhotoModule
         }
         mCameraDevice.setErrorCallback(mErrorCallback);
 
+        // Preview needs to be stopped when changing resolution
+        if (mRestartPreview && mCameraState != PREVIEW_STOPPED) {
+            stopPreview();
+            mRestartPreview = false;
+        }
+
         setDisplayOrientation();
 
         if (!mSnapshotOnIdle) {
