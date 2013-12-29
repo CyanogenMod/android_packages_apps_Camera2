@@ -31,7 +31,7 @@
     </string-array>
 
     <!-- Camera Preferences Picture format dialog box entries -->
-    <string-array name="pref_camera_picture_format_entries">
+    <string-array name="pref_camera_picture_format_entries" translatable="false">
         <item>@string/pref_camera_picture_format_entry_jpeg</item>
         <item>@string/pref_camera_picture_format_entry_raw</item>
         <item>@string/pref_camera_picture_format_entry_raw_yuv_422_sp</item>
@@ -104,7 +104,7 @@
         <item>@string/pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb</item>
         <item>@string/pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr</item>
     </string-array>
-    <string-array name="pref_camera_picture_format_entryvalues">
+    <string-array name="pref_camera_picture_format_entryvalues" translatable="false">
         <item>@string/pref_camera_picture_format_value_jpeg</item>
         <item>@string/pref_camera_picture_format_value_raw</item>
         <item>@string/pref_camera_picture_format_value_raw_yuv_422_sp</item>
@@ -255,55 +255,55 @@
     </string-array>
 
     <!-- Camera Preferences AE Bracketing dialog box entries -->
-    <string-array name="pref_camera_ae_bracket_hdr_entries">
+    <string-array name="pref_camera_ae_bracket_hdr_entries" translatable="false">
         <item>@string/pref_camera_ae_bracket_hdr_entry_off</item>
         <item>@string/pref_camera_ae_bracket_hdr_entry_on</item>
     </string-array>
 
     <!-- Do not localize entryvalues -->
-    <string-array name="pref_camera_ae_bracket_hdr_entryvalues">
+    <string-array name="pref_camera_ae_bracket_hdr_entryvalues" translatable="false">
         <item>Off</item>
         <item>AE-Bracket</item>
     </string-array>
 
     <!-- Camera Preferences Touch AF/AEC dialog box entries -->
-    <string-array name="pref_camera_touchafaec_entries">
+    <string-array name="pref_camera_touchafaec_entries" translatable="false">
         <item>@string/pref_camera_touchafaec_entry_off</item>
         <item>@string/pref_camera_touchafaec_entry_on</item>
     </string-array>
 
     <!-- Do not localize entryvalues -->
-    <string-array name="pref_camera_touchafaec_entryvalues">
+    <string-array name="pref_camera_touchafaec_entryvalues" translatable="false">
         <item>touch-off</item>
         <item>touch-on</item>
     </string-array>
 
     <!-- DIS dialog box entries -->
-    <string-array name="pref_camera_dis_entries">
+    <string-array name="pref_camera_dis_entries" translatable="false">
         <item>@string/pref_camera_dis_entry_off</item>
         <item>@string/pref_camera_dis_entry_on</item>
     </string-array>
 
     <!-- Do not localize entryvalues -->
-    <string-array name="pref_camera_dis_entryvalues">
+    <string-array name="pref_camera_dis_entryvalues" translatable="false">
         <item>disable</item>
         <item>enable</item>
     </string-array>
 
     <!-- Face Recognition dialog box entries -->
-    <string-array name="pref_camera_facerc_entries">
+    <string-array name="pref_camera_facerc_entries" translatable="false">
         <item>@string/pref_camera_facerc_entry_off</item>
         <item>@string/pref_camera_facerc_entry_on</item>
     </string-array>
 
     <!-- Do not localize entryvalues -->
-    <string-array name="pref_camera_facerc_entryvalues">
+    <string-array name="pref_camera_facerc_entryvalues" translatable="false">
         <item>off</item>
         <item>on</item>
    </string-array>
 
     <!-- Camera Preferences MultiLevel dialog box entries -->
-    <string-array name="pref_camera_sharpness_entries">
+    <string-array name="pref_camera_sharpness_entries" translatable="false">
         <item>@string/pref_camera_sharpness_entry_level0</item>
         <item>@string/pref_camera_sharpness_entry_level1</item>
         <item>@string/pref_camera_sharpness_entry_level2</item>
@@ -314,7 +314,7 @@
     </string-array>
 
     <!-- Camera Preferences MultiLevel dialog box entries -->
-    <string-array name="pref_camera_contrast_entries">
+    <string-array name="pref_camera_contrast_entries" translatable="false">
         <item>@string/pref_camera_contrast_entry_level0</item>
         <item>@string/pref_camera_contrast_entry_level1</item>
         <item>@string/pref_camera_contrast_entry_level2</item>
@@ -329,7 +329,7 @@
     </string-array>
 
     <!-- Camera Preferences Saturation dialog box entries -->
-    <string-array name="pref_camera_saturation_entries">
+    <string-array name="pref_camera_saturation_entries" translatable="false">
         <item>@string/pref_camera_saturation_entry_level0</item>
         <item>@string/pref_camera_saturation_entry_level1</item>
         <item>@string/pref_camera_saturation_entry_level2</item>
@@ -344,7 +344,7 @@
     </string-array>
 
     <!-- Entry Valur array for sharpness -->
-    <string-array name="pref_camera_multilevel_sharpness_entryvalues">
+    <string-array name="pref_camera_multilevel_sharpness_entryvalues" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -355,7 +355,7 @@
     </string-array>
 
     <!-- Entry values array is shared between Saturation & Contrast -->
-    <string-array name="pref_camera_multilevel_entryvalues">
+    <string-array name="pref_camera_multilevel_entryvalues" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -370,7 +370,7 @@
     </string-array>
 
     <!-- Camera Preferences ISO dialog box entries -->
-     <string-array name="pref_camera_iso_entries">
+     <string-array name="pref_camera_iso_entries" translatable="false">
          <item>@string/pref_camera_iso_entry_auto</item>
          <item>@string/pref_camera_iso_entry_isodeblur</item>
          <item>@string/pref_camera_iso_entry_iso100</item>
@@ -381,7 +381,7 @@
     </string-array>
 
     <!-- Do not localize entryvalues -->
-    <string-array name="pref_camera_iso_entryvalues">
+    <string-array name="pref_camera_iso_entryvalues" translatable="false">
          <item>@string/pref_camera_iso_value_auto</item>
          <item>@string/pref_camera_iso_value_isodeblur</item>
          <item>@string/pref_camera_iso_value_iso100</item>
@@ -392,14 +392,14 @@
      </string-array>
 
     <!-- Camera Preferences Anti Banding dialog box entries -->
-     <string-array name="pref_camera_antibanding_entries">
+     <string-array name="pref_camera_antibanding_entries" translatable="false">
          <item>@string/pref_camera_antibanding_entry_0</item>
          <item>@string/pref_camera_antibanding_entry_1</item>
          <item>@string/pref_camera_antibanding_entry_2</item>
          <item>@string/pref_camera_antibanding_entry_3</item>
      </string-array>
 
-     <string-array name="pref_camera_antibanding_entryvalues">
+     <string-array name="pref_camera_antibanding_entryvalues" translatable="false">
          <item>off</item>
          <item>50hz</item>
          <item>60hz</item>
@@ -407,13 +407,13 @@
      </string-array>
 
      <!-- Camera Preferences Histogram dialog box entries -->
-     <string-array name="pref_camera_histogram_entries">
+     <string-array name="pref_camera_histogram_entries" translatable="false">
           <item>@string/pref_camera_histogram_entry_enable</item>
           <item>@string/pref_camera_histogram_entry_disable</item>
      </string-array>
 
      <!-- Video Preferences High Frame Rate dialog box entries -->
-     <string-array name="pref_camera_hfr_entries">
+     <string-array name="pref_camera_hfr_entries" translatable="false">
           <item>@string/pref_camera_hfr_entry_off</item>
           <item>@string/pref_camera_hfr_entry_2x</item>
           <item>@string/pref_camera_hfr_entry_3x</item>
@@ -421,7 +421,7 @@
      </string-array>
 
      <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_hfr_entryvalues">
+     <string-array name="pref_camera_hfr_entryvalues" translatable="false">
           <item>@string/pref_camera_hfr_value_off</item>
           <item>@string/pref_camera_hfr_value_2x</item>
           <item>@string/pref_camera_hfr_value_3x</item>
@@ -429,13 +429,13 @@
      </string-array>
 
      <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_histogram_entryvalues">
+     <string-array name="pref_camera_histogram_entryvalues" translatable="false">
           <item>@string/pref_camera_histogram_value_enable</item>
           <item>@string/pref_camera_histogram_value_disable</item>
      </string-array>
 
     <!-- Camera Preferences Face Detection dialog box entries -->
-    <string-array name="pref_camera_facedetection_entries">
+    <string-array name="pref_camera_facedetection_entries" translatable="false">
          <item>@string/pref_camera_facedetection_entry_off</item>
          <item>@string/pref_camera_facedetection_entry_on</item>
     </string-array>
@@ -467,14 +467,14 @@
     </string-array>
 
     <!-- Camera Preferences Auto Exposure dialog box entries -->
-     <string-array name="pref_camera_autoexposure_entries">
+     <string-array name="pref_camera_autoexposure_entries" translatable="false">
          <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
          <item>@string/pref_camera_autoexposure_entry_centerweighted</item>
          <item>@string/pref_camera_autoexposure_entry_spotmetering</item>
      </string-array>
 
      <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_autoexposure_entryvalues">
+     <string-array name="pref_camera_autoexposure_entryvalues" translatable="false">
          <item>@string/pref_camera_autoexposure_value_frameaverage</item>
          <item>@string/pref_camera_autoexposure_value_centerweighted</item>
          <item>@string/pref_camera_autoexposure_value_spotmetering</item>
@@ -518,13 +518,13 @@
     </string-array>
 
     <!-- Camera Preferences Skin Tone Enhancement dialog box entries -->
-     <string-array name="pref_camera_skinToneEnhancement_entries">
+     <string-array name="pref_camera_skinToneEnhancement_entries" translatable="false">
           <item>@string/pref_camera_skinToneEnhancement_entry_enable</item>
           <item>@string/pref_camera_skinToneEnhancement_entry_disable</item>
      </string-array>
 
      <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_skinToneEnhancement_entryvalues">
+     <string-array name="pref_camera_skinToneEnhancement_entryvalues" translatable="false">
           <item>@string/pref_camera_skinToneEnhancement_value_enable</item>
           <item>@string/pref_camera_skinToneEnhancement_value_disable</item>
      </string-array>
