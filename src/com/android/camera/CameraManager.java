@@ -25,6 +25,7 @@ import android.hardware.Camera.Parameters;
 import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
+import android.hardware.Camera.CameraDataCallback;
 
 /**
  * An interface which provides possible camera device operations.
@@ -349,5 +350,23 @@ public interface CameraManager {
          *                 {@code false} to disable it.
          */
         public void enableShutterSound(boolean enable);
+        /**
+         * Set histogram Mode
+         *
+         * @param cb   cameraDataCallback to use
+         */
+        public void setHistogramMode(CameraDataCallback cb);
+        /**
+         * Send the Histogram Data.
+         *
+        */
+        public void sendHistogramData();
+        /**
+         * Enables/Disables longshot mode.
+         *
+         * @param enable   {@code true} to enable longshot mode,
+         *                 {@code false} to disable it.
+        */
+        public void setLongshot(boolean enable);
     }
 }

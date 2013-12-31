@@ -143,7 +143,7 @@ public class OnScreenIndicators {
     /**
      * Set the flash indicator to the given value.
      *
-     * @param value One of Parameters.FLASH_MODE_OFF,
+     * @param value One of Parameters.FLASH_MODE_OFF, Parameters.FLASH_MODE_RED_EYE,
      *            Parameters.FLASH_MODE_AUTO, Parameters.FLASH_MODE_ON.
      */
     public void updateFlashOnScreenIndicator(String value) {
@@ -158,6 +158,8 @@ public class OnScreenIndicators {
             } else if (Parameters.FLASH_MODE_ON.equals(value)
                     || Parameters.FLASH_MODE_TORCH.equals(value)) {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
+            } else if (Parameters.FLASH_MODE_RED_EYE.equals(value)) {
+                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_redeye);
             } else {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
             }
@@ -175,12 +177,20 @@ public class OnScreenIndicators {
             return;
         }
 
-        if (SCENE_MODE_HDR_PLUS.equals(value)) {
+        if (value == null) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
+        } else if (SCENE_MODE_HDR_PLUS.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_hdr_plus_on);
-        } else if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)) {
+        } else if ("beauty".equals(value)) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_beautify);
+        } else if ("slow".equals(value)) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_slowshutter);
+        } else if (Parameters.SCENE_MODE_AUTO.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
         } else if (Parameters.SCENE_MODE_HDR.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_hdr);
+        } else if ("asd".equals(value)) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_asd);
         } else {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_on);
         }

@@ -16,9 +16,6 @@
 
 package com.android.camera.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
@@ -40,12 +37,19 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 import com.android.camera.drawable.TextDrawable;
+import com.android.camera.ui.ProgressRenderer.VisibilityListener;
 import com.android.camera2.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * An overlay renderer that is used to display focus state and progress state.
+ */
 public class PieRenderer extends OverlayRenderer
         implements FocusIndicator {
 
-    private static final String TAG = "CAM Pie";
+    private static final String TAG = "PieRenderer";
 
     // Sometimes continuous autofocus starts and stops several times quickly.
     // These states are used to make sure the animation is run for at least some
@@ -114,7 +118,7 @@ public class PieRenderer extends OverlayRenderer
     private int mPieCenterX;
     private int mPieCenterY;
     private int mSliceRadius;
-    private int mArcRadius;
+    private int mArcRadius, mMaxArcRadius;
     private int mArcOffset;
 
     private int mDialAngle;
@@ -143,7 +147,7 @@ public class PieRenderer extends OverlayRenderer
     private int mAngleZone;
     private float mCenterAngle;
 
-
+    private ProgressRenderer mProgressRenderer;
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -221,11 +225,13 @@ public class PieRenderer extends OverlayRenderer
         mMenuArcPaint.setStyle(Paint.Style.STROKE);
         mSliceRadius = res.getDimensionPixelSize(R.dimen.pie_item_radius);
         mArcRadius = res.getDimensionPixelSize(R.dimen.pie_arc_radius);
+        mMaxArcRadius = mArcRadius;
         mArcOffset = res.getDimensionPixelSize(R.dimen.pie_arc_offset);
         mLabel = new TextDrawable(res);
         mLabel.setDropShadow(true);
         mDeadZone = res.getDimensionPixelSize(R.dimen.pie_deadzone_width);
         mAngleZone = res.getDimensionPixelSize(R.dimen.pie_anglezone_width);
+        mProgressRenderer = new ProgressRenderer(ctx);
     }
 
     private PieItem getRoot() {
@@ -308,6 +314,10 @@ public class PieRenderer extends OverlayRenderer
         return mState == STATE_PIE && isVisible();
     }
 
+    public void setProgress(int percent) {
+        mProgressRenderer.setProgress(percent);
+    }
+
     private void fadeIn() {
         mFadeIn = new ValueAnimator();
         mFadeIn.setFloatValues(0f, 1f);
@@ -348,6 +358,12 @@ public class PieRenderer extends OverlayRenderer
         mCenterX = (r - l) / 2;
         mCenterY = (b - t) / 2;
 
+        int layoutWidth = r - l;
+        if( (layoutWidth > 0) && ((mMaxArcRadius + mCenterX) > layoutWidth) ){
+            mArcRadius = layoutWidth - mCenterX;
+        } else {
+            mArcRadius = mMaxArcRadius;
+        }
         mFocusX = mCenterX;
         mFocusY = mCenterY;
         resetPieCenter();
@@ -517,6 +533,8 @@ public class PieRenderer extends OverlayRenderer
 
     @Override
     public void onDraw(Canvas canvas) {
+        mProgressRenderer.onDraw(canvas, mFocusX, mFocusY);
+
         float alpha = 1;
         if (mXFade != null) {
             alpha = (Float) mXFade.getAnimatedValue();
@@ -697,6 +715,11 @@ public class PieRenderer extends OverlayRenderer
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return super.isVisible() || mProgressRenderer.isVisible();
     }
 
     private boolean pulledToCenter(PointF polarCoords) {
@@ -911,17 +934,6 @@ public class PieRenderer extends OverlayRenderer
         setCircle(mFocusX, mFocusY);
     }
 
-    public void alignFocus(int x, int y) {
-        mOverlay.removeCallbacks(mDisappear);
-        mAnimation.cancel();
-        mAnimation.reset();
-        mFocusX = x;
-        mFocusY = y;
-        mDialAngle = DIAL_HORIZONTAL;
-        setCircle(x, y);
-        mFocused = false;
-    }
-
     public int getSize() {
         return 2 * mCircleSize;
     }
@@ -1015,11 +1027,27 @@ public class PieRenderer extends OverlayRenderer
         mState = STATE_IDLE;
     }
 
+    public void clear(boolean waitUntilProgressIsHidden) {
+        if (mState == STATE_PIE)
+            return;
+        cancelFocus();
+
+        if (waitUntilProgressIsHidden) {
+            mProgressRenderer.setVisibilityListener(new VisibilityListener() {
+                @Override
+                public void onHidden() {
+                    mOverlay.post(mDisappear);
+                }
+            });
+        } else {
+            mOverlay.post(mDisappear);
+            mProgressRenderer.setVisibilityListener(null);
+        }
+    }
+
     @Override
     public void clear() {
-        if (mState == STATE_PIE) return;
-        cancelFocus();
-        mOverlay.post(mDisappear);
+        clear(false);
     }
 
     private void startAnimation(long duration, boolean timeout,

@@ -39,6 +39,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.hardware.Camera.CameraDataCallback;
+import com.android.camera.util.ApiHelper;
 
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.
@@ -83,6 +85,11 @@ class AndroidCameraManagerImpl implements CameraManager {
     // Presentation
     private static final int ENABLE_SHUTTER_SOUND =    501;
     private static final int SET_DISPLAY_ORIENTATION = 502;
+    // Histogram
+    private static final int SET_HISTOGRAM_MODE =    601;
+    private static final int SEND_HISTOGRAM_DATA =   602;
+    //LONGSHOT
+    private static final int SET_LONGSHOT = 701;
 
     private CameraHandler mCameraHandler;
     private android.hardware.Camera mCamera;
@@ -317,6 +324,18 @@ class AndroidCameraManagerImpl implements CameraManager {
                         mParametersIsDirty = true;
                         return;
 
+                    case SET_HISTOGRAM_MODE:
+                        mCamera.setHistogramMode((CameraDataCallback) msg.obj);
+                        break;
+
+                    case SEND_HISTOGRAM_DATA:
+                        mCamera.sendHistogramData();
+                        break;
+
+                    case SET_LONGSHOT:
+                        mCamera.setLongshot((Boolean) msg.obj);
+                        break;
+
                     default:
                         throw new RuntimeException("Invalid CameraProxy message=" + msg.what);
                 }
@@ -329,8 +348,14 @@ class AndroidCameraManagerImpl implements CameraManager {
                     }
                     mCamera = null;
                 } else if (mCamera == null) {
-                  Log.w(TAG, "Cannot handle message, mCamera is null.");
-                  return;
+                    if (msg.what == OPEN_CAMERA) {
+                        if (msg.obj != null) {
+                            ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                        }
+                    } else {
+                        Log.w(TAG, "Cannot handle message, mCamera is null.");
+                    }
+                    return;
                 }
                 throw e;
             }
@@ -539,6 +564,21 @@ class AndroidCameraManagerImpl implements CameraManager {
         public void enableShutterSound(boolean enable) {
             mCameraHandler.obtainMessage(
                     ENABLE_SHUTTER_SOUND, (enable ? 1 : 0), 0).sendToTarget();
+        }
+
+        @Override
+        public void setLongshot(boolean enable) {
+            mCameraHandler.obtainMessage(SET_LONGSHOT,
+                    new Boolean(enable)).sendToTarget();
+        }
+
+        @Override
+        public void setHistogramMode(CameraDataCallback cb) {
+            mCameraHandler.obtainMessage(SET_HISTOGRAM_MODE, cb).sendToTarget();
+        }
+        @Override
+        public void sendHistogramData() {
+            mCameraHandler.sendEmptyMessage(SEND_HISTOGRAM_DATA);
         }
     }
 
@@ -814,7 +854,10 @@ class AndroidCameraManagerImpl implements CameraManager {
 
         private CameraOpenErrorCallbackForward(
                 Handler h, CameraOpenErrorCallback cb) {
-            mHandler = h;
+            // Given that we are using the main thread handler, we can create it
+            // here instead of holding onto the PhotoModule objects. In this
+            // way, we can avoid memory leak.
+            mHandler = new Handler(Looper.getMainLooper());
             mCallback = cb;
         }
 

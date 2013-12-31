@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2013 The CyanogenMod Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string-array name="pref_switch_entryvalues" translatable="false">
+        <item>off</item>
+        <item>on</item>
+    </string-array>
+
+    <array name="pref_switch_entries" translatable="false">
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
+    </array>
+
+    <!-- Camera Preferences for burst modes -->
+    <string-array name="pref_camera_burst_mode_entries" translatable="false">
+        <item>@string/pref_camera_burst_entry_20</item>
+        <item>@string/pref_camera_burst_entry_15</item>
+        <item>@string/pref_camera_burst_entry_10</item>
+        <item>@string/pref_camera_burst_entry_5</item>
+        <item>@string/pref_camera_burst_entry_off</item>
+    </string-array>
+
+    <string-array name="pref_camera_burst_mode_values" translatable="false">
+        <item>20</item>
+        <item>15</item>
+        <item>10</item>
+        <item>5</item>
+        <item>1</item>
+     </string-array>
+
+    <!-- Camera Preferences for timer duration -->
+    <string-array name="pref_camera_focustime_duration_entries" translatable="false">
+        <item>@string/pref_camera_focustime_entry_infinite</item>
+        <item>@string/pref_camera_focustime_entry_30</item>
+        <item>@string/pref_camera_focustime_entry_20</item>
+        <item>@string/pref_camera_focustime_entry_15</item>
+        <item>@string/pref_camera_focustime_entry_10</item>
+        <item>@string/pref_camera_focustime_entry_5</item>
+    </string-array>
+
+    <!-- Camera focus duration - stored in milliseconds -->
+    <string-array name="pref_camera_focustime_duration_values" translatable="false">
+        <item>0</item>
+        <item>30000</item>
+        <item>20000</item>
+        <item>15000</item>
+        <item>10000</item>
+        <item>5000</item>
+    </string-array>
+
+    <!-- Slow shutter feature -->
+    <string-array name="pref_camera_slow_shutter_entries" translatable="false">
+        <item>@string/pref_camera_slow_shutter_entry_off</item>
+        <item>@string/pref_camera_slow_shutter_entry_auto</item>
+        <!--
+        <item>@string/pref_camera_slow_shutter_entry_half_second</item>
+        <item>@string/pref_camera_slow_shutter_entry_1s</item>
+        <item>@string/pref_camera_slow_shutter_entry_2s</item>
+        <item>@string/pref_camera_slow_shutter_entry_4s</item>
+        <item>@string/pref_camera_slow_shutter_entry_8s</item>
+        -->
+    </string-array>
+
+    <string-array name="pref_camera_slow_shutter_entryvalues" translatable="false">
+        <item>slow-shutter-off</item>
+        <item>slow-shutter-auto</item>
+        <!--
+        <item>slow-shutter-1/2s</item>
+        <item>slow-shutter-1s</item>
+        <item>slow-shutter-2s</item>
+        <item>slow-shutter-4s</item>
+        <item>slow-shutter-8s</item>
+       -->
+    </string-array>
+
+    <string-array name="pref_camera_slow_shutter_icons" translatable="false">
+        <item>@drawable/ic_slowshutter_off</item>
+        <item>@drawable/ic_slowshutter</item>
+    </string-array>
+
+    <string-array name="pref_camera_beauty_mode_icons" translatable="false">
+        <item>@drawable/ic_beautify_off</item>
+        <item>@drawable/ic_beautify</item>
+    </string-array>
+
+    <string-array name="pref_camera_beauty_mode_labels" translatable="false">
+        <item>@string/camera_menu_beauty_mode_label</item>
+        <item>@string/camera_menu_beauty_mode_label</item>
+    </string-array>
+
+    <string-array name="pref_camera_slow_shutter_labels" translatable="false">
+        <item>@string/camera_menu_slow_shutter_label</item>
+        <item>@string/camera_menu_slow_shutter_label</item>
+    </string-array>
+
+    <string-array name="camera_asd_values" translatable="false">
+        <item>indoor</item>
+        <item>landscape</item>
+        <item>macro</item>
+        <item>mix_illuminant</item>
+        <item>night</item>
+        <item>portrait</item>
+        <item>sports</item>
+    </string-array>
+
+    <string-array name="camera_asd_icons" translatable="false">
+        <item>@drawable/smart_scene_indoor</item>
+        <item>@drawable/smart_scene_landscape</item>
+        <item>@drawable/smart_scene_macro</item>
+        <item>@drawable/smart_scene_mix_illuminant</item>
+        <item>@drawable/smart_scene_night</item>
+        <item>@drawable/smart_scene_portrait</item>
+        <item>@drawable/smart_scene_sports</item>
+    </string-array>
+
+    <string-array name="pref_camera_asd_labels" translatable="false">
+        <item>@string/camera_menu_asd_label</item>
+        <item>@string/camera_menu_asd_label</item>
+    </string-array>
+
+    <string-array name="pref_camera_asd_icons" translatable="false">
+        <item>@drawable/ic_asd_off</item>
+        <item>@drawable/ic_asd</item>
+    </string-array>
+
+    <string-array name="pref_camera_asd_entryvalues" translatable="false">
+        <item>@string/setting_off_value</item>
+        <item>@string/setting_on_value</item>
+    </string-array>
+
+</resources>

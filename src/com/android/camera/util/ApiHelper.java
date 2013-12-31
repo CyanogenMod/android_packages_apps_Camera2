@@ -49,7 +49,8 @@ public class ApiHelper {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     public static final boolean HAS_ROTATION_ANIMATION =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
-
+    public static final boolean HAS_FINE_RESOLUTION_QUALITY_LEVELS =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     public static final boolean HAS_HIDEYBARS = isKitKatOrHigher();
 
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,

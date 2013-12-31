@@ -15,46 +15,39 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <!-- Settings screen, dialog choice for 20.7 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixels</string>
-    <!-- Settings screen, dialog choice for 18.7 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_18_7mp">18.7M pixels</string>
-    <!-- Settings screen, dialog choice for 13.1 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_13_1mp">13.1M pixels</string>
+    <!-- Settings screen, dialog choice for 18 megapixels picture size [CHAR LIMIT=15] -->
+    <string name="pref_camera_picturesize_entry_18mp">18M pixels</string>
     <!-- Settings screen, dialog choice for 12.8 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixels</string>
     <!-- Settings screen, dialog choice for 12.7 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_12_7mp">12.7M pixels</string>
-    <!-- Settings screen, dialog choice for 12 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_12mp">12M pixels</string>
     <!-- Settings screen, dialog choice for 11.5 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
     <!-- Settings screen, dialog choice for 10.4 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
-    <!-- Settings screen, dialog choice for 8.6 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_8_6mp_wide">8.6M pixels (16:9)</string>
-    <!-- Settings screen, dialog choice for 8.3 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_8_3mp_wide">8.3M pixels (16:9)</string>
+    <!-- Settings screen, dialog choice for 9 megapixels picture size [CHAR LIMIT=15] -->
+    <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
+    <!-- Settings screen, dialog choice for 8.2 megapixels picture size [CHAR LIMIT=15] -->
+    <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
     <!-- Settings screen, dialog choice for 7.7 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels</string>
+    <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels (4:3)</string>
     <!-- Settings screen, dialog choice for 6.4 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_6_4mp_wide">6.4M pixels (16:9)</string>
+    <string name="pref_camera_picturesize_entry_6_4mp">6.4M pixels</string>
     <!-- Settings screen, dialog choice for 6 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_6mp_wide">6M pixels (16:9)</string>
+    <string name="pref_camera_picturesize_entry_6mp">6M pixels</string>
     <!-- Settings screen, dialog choice for 4.5 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixels</string>
-    <!-- Settings screen, dialog choice for 4.1 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_4_1mp_wide">4.1M pixels (16:9)</string>
     <!-- Settings screen, dialog choice for 3.7 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_3_7mp_wide">3.7M pixels (16:9)</string>
+    <string name="pref_camera_picturesize_entry_3_7mp">3.7M pixels</string>
     <!-- Settings screen, dialog choice for 2.5 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_2_5mp_wide">2.5M pixels (16:9)</string>
+    <string name="pref_camera_picturesize_entry_2_5mp">2.5M pixels</string>
     <!-- Settings screen, dialog choice for 2.1 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_2_1mp_wide">2.1M pixels (16:9)</string>
+    <string name="pref_camera_picturesize_entry_2_1mp">2.1M pixels</string>
     <!-- Settings screen, dialog choice for 1.9 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_1_9mp">1.9M pixels</string>
-    <!-- Settings screen, dialog choice for 1.5 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_1_5mp_wide">1.5M pixels (16:9)</string>
     <!-- Settings screen, dialog choice for WXGA picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
     <!-- Settings screen, dialog choice for XGA picture size [CHAR LIMIT=15] -->
@@ -65,4 +58,120 @@
     <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
     <!-- Settings screen, dialog choice for WQVGA picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
+
+    <!-- Settings screen, scene mode -->
+    <string name="pref_camera_scenemode_entry_antimotionblur">Motion blur reduction</string>
+    <string name="pref_camera_scenemode_entry_aqua">Aqua</string>
+    <string name="pref_camera_scenemode_entry_ar">Augmented reality</string>
+    <string name="pref_camera_scenemode_entry_asd">Best shot</string>
+    <string name="pref_camera_scenemode_entry_baby">Baby</string>
+    <string name="pref_camera_scenemode_entry_backgroundblur">Background blur</string>
+    <string name="pref_camera_scenemode_entry_backlight">Backlight</string>
+    <string name="pref_camera_scenemode_entry_backlightportrait">Backlight portrait</string>
+    <string name="pref_camera_scenemode_entry_barcode">Barcode</string>
+    <string name="pref_camera_scenemode_entry_beach">Beach</string>
+    <string name="pref_camera_scenemode_entry_beauty">Beauty</string>
+    <string name="pref_camera_scenemode_entry_candlelight">Candlelight</string>
+    <string name="pref_camera_scenemode_entry_cine">Cine</string>
+    <string name="pref_camera_scenemode_entry_closeup">Closeup</string>
+    <string name="pref_camera_scenemode_entry_dark">Dark</string>
+    <string name="pref_camera_scenemode_entry_dish">Dish</string>
+    <string name="pref_camera_scenemode_entry_duskdawn">Duskdawn</string>
+    <string name="pref_camera_scenemode_entry_document">Document</string>
+    <string name="pref_camera_scenemode_entry_fallcolor">Fallcolor</string>
+    <string name="pref_camera_scenemode_entry_fireworks">Fireworks</string>
+    <string name="pref_camera_scenemode_entry_flowers">Flowers</string>
+    <string name="pref_camera_scenemode_entry_handheldtwilight">Handheld twilight</string>
+    <string name="pref_camera_scenemode_entry_highsensitivity">High sensivity</string>
+    <string name="pref_camera_scenemode_entry_indoor">Indoor</string>
+    <string name="pref_camera_scenemode_entry_landscape">Landscape</string>
+    <string name="pref_camera_scenemode_entry_mix_illuminant">Mixed lighting</string>
+    <string name="pref_camera_scenemode_entry_mood">Mood</string>
+    <string name="pref_camera_scenemode_entry_nightportrait">Night portrait</string>
+    <string name="pref_camera_scenemode_entry_nightindoor">Night indoor</string>
+    <string name="pref_camera_scenemode_entry_oldfilm">Old film</string>
+    <string name="pref_camera_scenemode_entry_pet">Pet</string>
+    <string name="pref_camera_scenemode_entry_portrait">Portrait</string>
+    <string name="pref_camera_scenemode_entry_snow">Snow</string>
+    <string name="pref_camera_scenemode_entry_softskin">Soft skin</string>
+    <string name="pref_camera_scenemode_entry_sports">Sports</string>
+    <string name="pref_camera_scenemode_entry_spotlight">Spotlight</string>
+    <string name="pref_camera_scenemode_entry_steadyphoto">Steady photo</string>
+    <string name="pref_camera_scenemode_entry_supernight">Dark night</string>
+    <string name="pref_camera_scenemode_entry_sweepstitch">Sweep stitch</string>
+    <string name="pref_camera_scenemode_entry_text">Text</string>
+    <string name="pref_camera_scenemode_entry_theatre">Theatre</string>
+    <string name="pref_camera_scenemode_entry_whiteboard">Whiteboard</string>
+
+    <!-- Settings screen, focus mode -->
+    <string name="pref_camera_focusmode_entry_continuouspicture">Continuous picture</string>
+    <string name="pref_camera_focusmode_entry_extended">Extended</string>
+    <string name="pref_camera_focusmode_entry_facedetect">Face detect</string>
+    <string name="pref_camera_focusmode_entry_facepriority">Face priority</string>
+    <string name="pref_camera_focusmode_entry_fixed">Fixed</string>
+    <string name="pref_camera_focusmode_entry_portrait">Portrait</string>
+    <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
+
+    <!-- Color effects -->
+    <string name="pref_camera_coloreffect_entry_washed">Washed</string>
+    <string name="pref_camera_coloreffect_entry_vintage_warm">Vintage warm</string>
+    <string name="pref_camera_coloreffect_entry_vintage_cold">Vintage cold</string>
+    <string name="pref_camera_coloreffect_entry_point_blue">Point blue</string>
+    <string name="pref_camera_coloreffect_entry_point_green">Point green</string>
+    <string name="pref_camera_coloreffect_entry_point_red_yellow">Point red-yellow</string>
+    <string name="pref_camera_coloreffect_entry_cartoonize">Cartoonize</string>
+
+    <!-- Settings screen, Burst mode title -->
+    <string name="pref_camera_burst_title">Burst mode</string>
+    <string name="pref_camera_burst_default" translatable="false">1</string>
+
+    <!-- Settings screen, Burst mode entries -->
+    <string name="pref_camera_burst_entry_off">Off</string>
+    <string name="pref_camera_burst_entry_5">5 shots</string>
+    <string name="pref_camera_burst_entry_10">10 shots</string>
+    <string name="pref_camera_burst_entry_15">15 shots</string>
+    <string name="pref_camera_burst_entry_20">20 shots</string>
+
+    <!-- Touch-to-focus duration settings -->
+    <string name="pref_camera_focustime_title">Touch focus duration</string>
+    <string name="pref_camera_focustime_summary">Select duration for touch focus</string>
+    <string name="pref_camera_focustime_default" translatable="false">5000</string>
+
+    <!-- Settings screen, Timer mode entries -->
+    <string name="pref_camera_focustime_entry_5">5s</string>
+    <string name="pref_camera_focustime_entry_10">10s</string>
+    <string name="pref_camera_focustime_entry_15">15s</string>
+    <string name="pref_camera_focustime_entry_20">20s</string>
+    <string name="pref_camera_focustime_entry_30">30s</string>
+    <string name="pref_camera_focustime_entry_infinite">Infinite</string>
+
+    <!-- Red eye flash mode title -->
+    <string name="pref_camera_flashmode_entry_redeye">Red eye</string>
+    <string name="pref_camera_flashmode_label_redeye">RED EYE</string>
+
+    <!-- Beauty mode -->
+    <string name="pref_camera_beauty_mode_title">Beauty mode</string>
+    <string name="pref_camera_beauty_mode_default" translatable="false">off</string>
+
+    <!-- Slow shutter modes -->
+    <string name="pref_camera_slow_shutter_title">Slow shutter</string>
+    <string name="pref_camera_slow_shutter_default" translatable="false">slow-shutter-off</string>
+    <string name="pref_camera_slow_shutter_entry_off">Off</string>
+    <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
+    <string name="pref_camera_slow_shutter_entry_half_second">1/2 second</string>
+    <string name="pref_camera_slow_shutter_entry_1s">1 second</string>
+    <string name="pref_camera_slow_shutter_entry_2s">2 seconds</string>
+    <string name="pref_camera_slow_shutter_entry_4s">4 seconds</string>
+    <string name="pref_camera_slow_shutter_entry_8s">8 seconds</string>
+
+    <!-- ASD -->
+    <string name="pref_camera_asd_default" translatable="false">@string/setting_off_value</string>
+
+    <string name="camera_menu_enhance_label">ENHANCE</string>
+    <string name="camera_menu_slow_shutter_label">SLOW SHUTTER</string>
+    <string name="camera_menu_beauty_mode_label">BEAUTIFY</string>
+    <string name="camera_menu_colorize_label">COLORIZE</string>
+    <string name="camera_menu_effects_label">EFFECTS</string>
+    <string name="camera_menu_asd_label">SMART SCENE</string>
+
 </resources>

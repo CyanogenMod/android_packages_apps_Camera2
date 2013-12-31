@@ -37,7 +37,7 @@ public class CameraRootView extends FrameLayout {
     private int mBottomMargin = 0;
     private int mLeftMargin = 0;
     private int mRightMargin = 0;
-    private Rect mCurrentInsets;
+    private final Rect mCurrentInsets = new Rect(0, 0, 0, 0);
     private int mOffset = 0;
     private Object mDisplayListener;
     private MyDisplayListener mListener;
@@ -53,19 +53,24 @@ public class CameraRootView extends FrameLayout {
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        mCurrentInsets = insets;
         // insets include status bar, navigation bar, etc
         // In this case, we are only concerned with the size of nav bar
-        if (mOffset > 0) {
-            return true;
+        if (mCurrentInsets.equals(insets)) {
+            // Local copy of the insets is up to date. No need to do anything.
+            return false;
         }
 
-        if (insets.bottom > 0) {
-            mOffset = insets.bottom;
-        } else if (insets.right > 0) {
-            mOffset = insets.right;
+        if (mOffset == 0) {
+            if (insets.bottom > 0) {
+                mOffset = insets.bottom;
+            } else if (insets.right > 0) {
+                mOffset = insets.right;
+            }
         }
-        return true;
+        mCurrentInsets.set(insets);
+        // Make sure onMeasure will be called to adapt to the new insets.
+        requestLayout();
+        return false;
     }
 
     public void initDisplayListener() {
@@ -148,9 +153,15 @@ public class CameraRootView extends FrameLayout {
             if (mCurrentInsets.right > 0) {
                 // navigation bar on the right
                 mRightMargin = mRightMargin > 0 ? mRightMargin : mCurrentInsets.right;
+                if (mBottomMargin > 0) {
+                    mBottomMargin -= mOffset;
+                }
             } else {
                 // navigation bar on the bottom
                 mBottomMargin = mBottomMargin > 0 ? mBottomMargin : mCurrentInsets.bottom;
+                if (mRightMargin > 0) {
+                    mRightMargin -= mOffset;
+                }
             }
         }
         // make sure all the children are resized

@@ -43,6 +43,7 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.camera.CameraActivity;
 import com.android.camera.MediaSaveService;
+import com.android.camera.PhotoModule;
 import com.android.camera.MediaSaveService.OnMediaSavedListener;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.tinyplanet.TinyPlanetPreview.PreviewSizeListener;
@@ -321,7 +322,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                 mediaSaveService.addImage(image.mJpegData, tinyPlanetTitle, (new Date()).getTime(),
                         null,
                         image.mSize, image.mSize, 0, null, doneListener, getActivity()
-                                .getContentResolver());
+                                .getContentResolver(),PhotoModule.PIXEL_FORMAT_JPEG);
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

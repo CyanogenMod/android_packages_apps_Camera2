@@ -28,7 +28,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.provider.MediaStore.Video;
 import android.util.Log;
-
+import com.android.camera.PhotoModule;
 import com.android.camera.exif.ExifInterface;
 
 import java.io.File;
@@ -39,8 +39,8 @@ import java.io.File;
 public class MediaSaveService extends Service {
     public static final String VIDEO_BASE_URI = "content://media/external/video/media";
 
-    // The memory limit for unsaved image is 20MB.
-    private static final int SAVE_TASK_MEMORY_LIMIT = 20 * 1024 * 1024;
+    // The memory limit for unsaved image is 50MB.
+    private static final int SAVE_TASK_MEMORY_LIMIT = 50 * 1024 * 1024;
     private static final String TAG = "CAM_" + MediaSaveService.class.getSimpleName();
 
     private final IBinder mBinder = new LocalBinder();
@@ -87,14 +87,14 @@ public class MediaSaveService extends Service {
 
     public void addImage(final byte[] data, String title, long date, Location loc,
             int width, int height, int orientation, ExifInterface exif,
-            OnMediaSavedListener l, ContentResolver resolver) {
+            OnMediaSavedListener l, ContentResolver resolver, String pictureFormat) {
         if (isQueueFull()) {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
         }
         ImageSaveTask t = new ImageSaveTask(data, title, date,
                 (loc == null) ? null : new Location(loc),
-                width, height, orientation, exif, resolver, l);
+                width, height, orientation, exif, resolver, l, pictureFormat);
 
         mMemoryUse += data.length;
         if (isQueueFull()) {
@@ -108,13 +108,14 @@ public class MediaSaveService extends Service {
                          OnMediaSavedListener l, ContentResolver resolver) {
         // When dimensions are unknown, pass 0 as width and height,
         // and decode image for width and height later in a background thread
-        addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver);
+        addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver,
+                 PhotoModule.PIXEL_FORMAT_JPEG);
     }
     public void addImage(final byte[] data, String title, Location loc,
             int width, int height, int orientation, ExifInterface exif,
             OnMediaSavedListener l, ContentResolver resolver) {
         addImage(data, title, System.currentTimeMillis(), loc, width, height,
-                orientation, exif, l, resolver);
+                orientation, exif, l, resolver,PhotoModule.PIXEL_FORMAT_JPEG);
     }
 
     public void addVideo(String path, long duration, ContentValues values,
@@ -148,10 +149,11 @@ public class MediaSaveService extends Service {
         private ExifInterface exif;
         private ContentResolver resolver;
         private OnMediaSavedListener listener;
+        private String pictureFormat;
 
         public ImageSaveTask(byte[] data, String title, long date, Location loc,
                              int width, int height, int orientation, ExifInterface exif,
-                             ContentResolver resolver, OnMediaSavedListener listener) {
+                             ContentResolver resolver, OnMediaSavedListener listener, String pictureFormat) {
             this.data = data;
             this.title = title;
             this.date = date;
@@ -162,6 +164,7 @@ public class MediaSaveService extends Service {
             this.exif = exif;
             this.resolver = resolver;
             this.listener = listener;
+            this.pictureFormat = pictureFormat;
         }
 
         @Override
@@ -180,7 +183,7 @@ public class MediaSaveService extends Service {
                 height = options.outHeight;
             }
             return Storage.addImage(
-                    resolver, title, date, loc, orientation, exif, data, width, height);
+                    resolver, title, date, loc, orientation, exif, data, width, height, pictureFormat);
         }
 
         @Override

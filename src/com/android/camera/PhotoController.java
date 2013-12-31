@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.graphics.Rect;
 import android.view.View;
 
 import com.android.camera.ShutterButton.OnShutterButtonListener;
@@ -30,6 +31,8 @@ public interface PhotoController extends OnShutterButtonListener {
     public static final int SNAPSHOT_IN_PROGRESS = 3;
     // Switching between cameras.
     public static final int SWITCHING_CAMERA = 4;
+    // Longshot mode
+    public static final int LONGSHOT = 5;
 
     // returns the actual set zoom value
     public int onZoomChanged(int requestedZoom);
@@ -55,6 +58,8 @@ public interface PhotoController extends OnShutterButtonListener {
     public void onCountDownFinished();
 
     public void onScreenSizeChanged(int width, int height);
+
+    public void onPreviewRectChanged(Rect previewRect);
 
     public void updateCameraOrientation();
 

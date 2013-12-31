@@ -19,9 +19,13 @@ package com.android.camera;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
@@ -53,6 +57,7 @@ import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
+import com.android.camera.ui.RotateImageView;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
@@ -94,6 +99,8 @@ public class PhotoUI implements PieListener,
     private AlertDialog mLocationDialog;
 
     // Small indicators which show the camera settings in the viewfinder.
+    private ImageView mSceneDetectView;
+
     private OnScreenIndicators mOnScreenIndicators;
 
     private PieRenderer mPieRenderer;
@@ -105,6 +112,7 @@ public class PhotoUI implements PieListener,
 
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
+    public boolean mMenuInitialized = false;
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
 
@@ -115,6 +123,12 @@ public class PhotoUI implements PieListener,
     private TextureView mTextureView;
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
+    private boolean mAspectRatioResize;
+
+    private boolean mOrientationResize;
+    private boolean mPrevOrientationResize;
+    private View mPreviewCover;
+    private final Object mSurfaceTextureLock = new Object();
 
     public interface SurfaceTextureSizeChangedListener {
         public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
@@ -126,12 +140,15 @@ public class PhotoUI implements PieListener,
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
-            if (mPreviewWidth != width || mPreviewHeight != height) {
+            if (mPreviewWidth != width || mPreviewHeight != height
+                    || (mOrientationResize != mPrevOrientationResize)
+                    || mAspectRatioResize) {
                 mPreviewWidth = width;
                 mPreviewHeight = height;
                 setTransformMatrix(width, height);
                 mController.onScreenSizeChanged((int) mSurfaceTextureUncroppedWidth,
                         (int) mSurfaceTextureUncroppedHeight);
+                mAspectRatioResize = false;
             }
         }
     };
@@ -151,13 +168,13 @@ public class PhotoUI implements PieListener,
         protected Bitmap doInBackground(Void... params) {
             // Decode image in background.
             Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
-            if (mOrientation != 0 || mMirror) {
+            if ((mOrientation != 0 || mMirror) && (bitmap != null)) {
                 Matrix m = new Matrix();
-                m.preRotate(mOrientation);
                 if (mMirror) {
                     // Flip horizontally
                     m.setScale(-1f, 1f);
                 }
+                m.preRotate(mOrientation);
                 return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
                         false);
             }
@@ -196,6 +213,7 @@ public class PhotoUI implements PieListener,
                 (ViewGroup) mRootView, true);
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
+        mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
@@ -214,28 +232,79 @@ public class PhotoUI implements PieListener,
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
+        mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
+
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mAnimationManager = new AnimationManager();
+
+        mOrientationResize = false;
+        mPrevOrientationResize = false;
+    }
+
+     public void cameraOrientationPreviewResize(boolean orientation){
+        mPrevOrientationResize = mOrientationResize;
+        mOrientationResize = orientation;
+     }
+
+    public void setAspectRatio(float ratio) {
+        if (ratio <= 0.0) throw new IllegalArgumentException();
+
+        if (mOrientationResize && CameraUtil.isScreenRotated(mActivity)) {
+            ratio = 1 / ratio;
+        }
+
+        Log.d(TAG,"setAspectRatio() ratio["+ratio+"] mAspectRatio["+mAspectRatio+"]");
+        mAspectRatio = ratio;
+        mAspectRatioResize = true;
+        mTextureView.requestLayout();
     }
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
         mSurfaceTextureSizeListener = listener;
     }
 
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        if (aspectRatio <= 0) {
+            Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
+            return;
+        }
+        if (mOrientationResize && CameraUtil.isScreenRotated(mActivity)) {
+            aspectRatio = 1f / aspectRatio;
+        }
+
+        if (mAspectRatio != aspectRatio) {
+            mAspectRatio = aspectRatio;
+            // Update transform matrix with the new aspect ratio.
+            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
+                setTransformMatrix(mPreviewWidth, mPreviewHeight);
+            }
+        }
+    }
+
     private void setTransformMatrix(int width, int height) {
         mMatrix = mTextureView.getTransform(mMatrix);
         float scaleX = 1f, scaleY = 1f;
         float scaledTextureWidth, scaledTextureHeight;
-        if (width > height) {
-            scaledTextureWidth = Math.max(width,
-                    (int) (height * mAspectRatio));
-            scaledTextureHeight = Math.max(height,
-                    (int)(width / mAspectRatio));
+        if (mOrientationResize){
+            scaledTextureWidth = height * mAspectRatio;
+            if(scaledTextureWidth > width){
+                scaledTextureWidth = width;
+                scaledTextureHeight = scaledTextureWidth / mAspectRatio;
+            } else {
+                scaledTextureHeight = height;
+            }
         } else {
-            scaledTextureWidth = Math.max(width,
-                    (int) (height / mAspectRatio));
-            scaledTextureHeight = Math.max(height,
-                    (int) (width * mAspectRatio));
+            if (width > height) {
+                scaledTextureWidth = Math.max(width,
+                        (int) (height * mAspectRatio));
+                scaledTextureHeight = Math.max(height,
+                        (int)(width / mAspectRatio));
+            } else {
+                scaledTextureWidth = Math.max(width,
+                        (int) (height / mAspectRatio));
+                scaledTextureHeight = Math.max(height,
+                        (int) (width * mAspectRatio));
+            }
         }
 
         if (mSurfaceTextureUncroppedWidth != scaledTextureWidth ||
@@ -251,17 +320,28 @@ public class PhotoUI implements PieListener,
         scaleY = scaledTextureHeight / height;
         mMatrix.setScale(scaleX, scaleY, (float) width / 2, (float) height / 2);
         mTextureView.setTransform(mMatrix);
+
+        // Calculate the new preview rectangle.
+        RectF previewRect = new RectF(0, 0, width, height);
+        mMatrix.mapRect(previewRect);
+        mController.onPreviewRectChanged(CameraUtil.rectFToRect(previewRect));
+    }
+
+    protected Object getSurfaceTextureLock() {
+        return mSurfaceTextureLock;
     }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        Log.v(TAG, "SurfaceTexture ready.");
-        mSurfaceTexture = surface;
-        mController.onPreviewUIReady();
-        // Workaround for b/11168275, see b/10981460 for more details
-        if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-            // Re-apply transform matrix for new surface texture
-            setTransformMatrix(mPreviewWidth, mPreviewHeight);
+        synchronized (mSurfaceTextureLock) {
+            Log.v(TAG, "SurfaceTexture ready.");
+            mSurfaceTexture = surface;
+            mController.onPreviewUIReady();
+            // Workaround for b/11168275, see b/10981460 for more details
+            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
+                // Re-apply transform matrix for new surface texture
+                setTransformMatrix(mPreviewWidth, mPreviewHeight);
+            }
         }
     }
 
@@ -272,15 +352,20 @@ public class PhotoUI implements PieListener,
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        mSurfaceTexture = null;
-        mController.onPreviewUIDestroyed();
-        Log.w(TAG, "SurfaceTexture destroyed");
-        return true;
+        synchronized (mSurfaceTextureLock) {
+            mSurfaceTexture = null;
+            mController.onPreviewUIDestroyed();
+            Log.w(TAG, "SurfaceTexture destroyed");
+            return true;
+        }
     }
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Do nothing.
+        // Make sure preview cover is hidden if preview data is available.
+        if (mPreviewCover.getVisibility() != View.GONE) {
+            mPreviewCover.setVisibility(View.GONE);
+        }
     }
 
     public View getRootView() {
@@ -305,6 +390,7 @@ public class PhotoUI implements PieListener,
             mMenu.setListener(listener);
         }
         mMenu.initialize(prefGroup);
+        mMenuInitialized = true;
 
         if (mZoomRenderer == null) {
             mZoomRenderer = new ZoomRenderer(mActivity);
@@ -480,12 +566,13 @@ public class PhotoUI implements PieListener,
     public void hideGpsOnScreenIndicator() { }
 
     public void overrideSettings(final String ... keyvalues) {
+        if (mMenu == null) return;
         mMenu.overrideSettings(keyvalues);
     }
 
     public void updateOnScreenIndicators(Camera.Parameters params,
             PreferenceGroup group, ComboPreferences prefs) {
-        if (params == null) return;
+        if (params == null || group == null) return;
         mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
@@ -689,6 +776,7 @@ public class PhotoUI implements PieListener,
         @Override
         public void onZoomStart() {
             if (mPieRenderer != null) {
+                mPieRenderer.hide();
                 mPieRenderer.setBlockFocus(true);
             }
         }
@@ -707,6 +795,8 @@ public class PhotoUI implements PieListener,
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }
+        // Close module selection menu when pie menu is opened.
+        mSwitcher.closePopup();
     }
 
     @Override
@@ -732,6 +822,7 @@ public class PhotoUI implements PieListener,
                 (ViewGroup) mRootView, true);
         mCountDownView = (CountDownView) (mRootView.findViewById(R.id.count_down_to_capture));
         mCountDownView.setCountDownFinishedListener((OnCountDownFinishedListener) mController);
+        mCountDownView.bringToFront();
     }
 
     public boolean isCountingDown() {
@@ -754,6 +845,10 @@ public class PhotoUI implements PieListener,
             mNotSelectableToast = Toast.makeText(mActivity, str, Toast.LENGTH_SHORT);
         }
         mNotSelectableToast.show();
+    }
+
+    public void showPreviewCover() {
+        mPreviewCover.setVisibility(View.VISIBLE);
     }
 
     public void onPause() {
@@ -848,4 +943,23 @@ public class PhotoUI implements PieListener,
         mController.updateCameraOrientation();
     }
 
+    public void updateSceneDetectionIcon(String scene) {
+        if (scene == null) {
+            mSceneDetectView.setVisibility(View.GONE);
+            return;
+        }
+        String[] values = mActivity.getResources().getStringArray(R.array.camera_asd_values);
+        int i = 0;
+        for (i = 0; i < values.length; i++) {
+            if (values[i].equals(scene)) {
+                break;
+            }
+        }
+        if (i < values.length) {
+            TypedArray imgs = mActivity.getResources().obtainTypedArray(R.array.camera_asd_icons);
+            mSceneDetectView.setImageResource(imgs.getResourceId(i, -1));
+        }
+        mSceneDetectView.setVisibility(View.VISIBLE);
+    }
 }
+

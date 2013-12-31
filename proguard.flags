@@ -1,5 +1,7 @@
 # Disable the warnings of using dynamic method call in common library.
 -dontnote com.android.gallery3d.common.*
+#Avoid the library class dependency error
+-dontwarn android.view.inputmethod.InputMethodManager
 
 # ctors of subclasses of CameraPreference are called with Java reflection.
 -keep class * extends com.android.camera.CameraPreference {

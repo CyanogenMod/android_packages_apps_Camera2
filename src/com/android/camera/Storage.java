@@ -43,6 +43,8 @@ public class Storage {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
 
     public static final String DIRECTORY = DCIM + "/Camera";
+    public static final String RAW_DIRECTORY = DCIM + "/Camera/raw";
+    public static final String JPEG_POSTFIX = ".jpg";
 
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
@@ -62,6 +64,24 @@ public class Storage {
         }
     }
 
+    public static void writeFile(String path, byte[] jpeg, ExifInterface exif,
+            String mimeType) {
+        if (exif != null && (mimeType == null ||
+            mimeType.equalsIgnoreCase("jpeg"))) {
+            try {
+                exif.writeExif(jpeg, path);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to write data", e);
+            }
+        } else if (jpeg != null) {
+            if (!(mimeType.equalsIgnoreCase("jpeg") || mimeType == null)) {
+                 File dir = new File(RAW_DIRECTORY);
+                 dir.mkdirs();
+            }
+            writeFile(path, jpeg);
+        }
+    }
+
     public static void writeFile(String path, byte[] data) {
         FileOutputStream out = null;
         try {
@@ -73,39 +93,36 @@ public class Storage {
             try {
                 out.close();
             } catch (Exception e) {
+                Log.e(TAG, "Failed to close file after write", e);
             }
         }
     }
 
-    // Save the image and add it to media store.
-    public static Uri addImage(ContentResolver resolver, String title,
-            long date, Location location, int orientation, ExifInterface exif,
-            byte[] jpeg, int width, int height) {
-        // Save the image.
-        String path = generateFilepath(title);
-        if (exif != null) {
-            try {
-                exif.writeExif(jpeg, path);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to write data", e);
-            }
-        } else {
-            writeFile(path, jpeg);
-        }
+    // Save the image with a given mimeType and add it the MediaStore.
+    public static Uri addImage(ContentResolver resolver, String title, long date,
+            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
+            int height, String mimeType) {
+
+        String path = generateFilepath(title, mimeType);
+        writeFile(path, jpeg, exif, mimeType);
         return addImage(resolver, title, date, location, orientation,
-                jpeg.length, path, width, height);
+                jpeg.length, path, width, height, mimeType);
     }
 
-    // Add the image to media store.
-    public static Uri addImage(ContentResolver resolver, String title,
+    // Get a ContentValues object for the given photo data
+    public static ContentValues getContentValuesForData(String title,
             long date, Location location, int orientation, int jpegLength,
-            String path, int width, int height) {
+            String path, int width, int height, String mimeType) {
         // Insert into MediaStore.
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
-        values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
+        if (mimeType.equalsIgnoreCase("jpeg") || mimeType == null) {
+            values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
+        } else {
+            values.put(ImageColumns.DISPLAY_NAME, title + ".raw");
+        }
         values.put(ImageColumns.DATE_TAKEN, date);
-        values.put(ImageColumns.MIME_TYPE, LocalData.MIME_TYPE_JPEG);
+        values.put(ImageColumns.MIME_TYPE, "image/jpeg");
         // Clockwise rotation in degrees. 0, 90, 180, or 270.
         values.put(ImageColumns.ORIENTATION, orientation);
         values.put(ImageColumns.DATA, path);
@@ -117,19 +134,54 @@ public class Storage {
             values.put(ImageColumns.LATITUDE, location.getLatitude());
             values.put(ImageColumns.LONGITUDE, location.getLongitude());
         }
+        return values;
+    }
 
-        Uri uri = null;
-        try {
-            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-        } catch (Throwable th)  {
-            // This can happen when the external volume is already mounted, but
-            // MediaScanner has not notify MediaProvider to add that volume.
-            // The picture is still safe and MediaScanner will find it and
-            // insert it into MediaProvider. The only problem is that the user
-            // cannot click the thumbnail to review the picture.
-            Log.e(TAG, "Failed to write MediaStore" + th);
+    // Add the image to media store.
+    public static Uri addImage(ContentResolver resolver, String title,
+            long date, Location location, int orientation, int jpegLength,
+            String path, int width, int height, String mimeType) {
+        // Insert into MediaStore.
+        ContentValues values =
+                getContentValuesForData(title, date, location, orientation, jpegLength, path,
+                        width, height, mimeType);
+
+         return insertImage(resolver, values);
+    }
+
+    // Overwrites the file and updates the MediaStore, or inserts the image if
+    // one does not already exist.
+    public static void updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
+            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
+            int height, String mimeType) {
+        String path = generateFilepath(title, mimeType);
+        writeFile(path, jpeg, exif, mimeType);
+        updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
+                width, height, mimeType);
+    }
+
+    // Updates the image values in MediaStore, or inserts the image if one does
+    // not already exist.
+    public static void updateImage(Uri imageUri, ContentResolver resolver, String title,
+            long date, Location location, int orientation, int jpegLength,
+            String path, int width, int height, String mimeType) {
+
+        ContentValues values =
+                getContentValuesForData(title, date, location, orientation, jpegLength, path,
+                        width, height, mimeType);
+
+        // Update the MediaStore
+        int rowsModified = resolver.update(imageUri, values, null, null);
+
+        if (rowsModified == 0) {
+            // If no prior row existed, insert a new one.
+            Log.w(TAG, "updateImage called with no prior image at uri: " + imageUri);
+            insertImage(resolver, values);
+        } else if (rowsModified != 1) {
+            // This should never happen
+            throw new IllegalStateException("Bad number of rows (" + rowsModified
+                    + ") updated for uri: " + imageUri);
         }
-        return uri;
     }
 
     public static void deleteImage(ContentResolver resolver, Uri uri) {
@@ -140,8 +192,12 @@ public class Storage {
         }
     }
 
-    public static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+    public static String generateFilepath(String title, String pictureFormat) {
+        if (pictureFormat.equalsIgnoreCase("jpeg") || pictureFormat == null) {
+            return DIRECTORY + '/' + title + ".jpg";
+        } else {
+            return RAW_DIRECTORY + '/' + title + ".raw";
+        }
     }
 
     public static long getAvailableSpace() {
@@ -178,5 +234,20 @@ public class Storage {
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
+    }
+
+    private static Uri insertImage(ContentResolver resolver, ContentValues values) {
+        Uri uri = null;
+        try {
+            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+        } catch (Throwable th)  {
+            // This can happen when the external volume is already mounted, but
+            // MediaScanner has not notify MediaProvider to add that volume.
+            // The picture is still safe and MediaScanner will find it and
+            // insert it into MediaProvider. The only problem is that the user
+            // cannot click the thumbnail to review the picture.
+            Log.e(TAG, "Failed to write MediaStore" + th);
+        }
+        return uri;
     }
 }

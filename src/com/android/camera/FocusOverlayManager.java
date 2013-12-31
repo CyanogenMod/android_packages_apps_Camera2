@@ -29,6 +29,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.UsageStatistics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,15 +60,14 @@ public class FocusOverlayManager {
     private static final String TAG = "CAM_FocusManager";
 
     private static final int RESET_TOUCH_FOCUS = 0;
-    private static final int RESET_TOUCH_FOCUS_DELAY = 3000;
 
     private int mState = STATE_IDLE;
-    private static final int STATE_IDLE = 0; // Focus is not active.
-    private static final int STATE_FOCUSING = 1; // Focus is in progress.
+    public static final int STATE_IDLE = 0; // Focus is not active.
+    public static final int STATE_FOCUSING = 1; // Focus is in progress.
     // Focus is in progress and the camera should take a picture after focus finishes.
-    private static final int STATE_FOCUSING_SNAP_ON_FINISH = 2;
-    private static final int STATE_SUCCESS = 3; // Focus finishes and succeeds.
-    private static final int STATE_FAIL = 4; // Focus finishes and fails.
+    public static final int STATE_FOCUSING_SNAP_ON_FINISH = 2;
+    public static final int STATE_SUCCESS = 3; // Focus finishes and succeeds.
+    public static final int STATE_FAIL = 4; // Focus finishes and fails.
 
     private boolean mInitialized;
     private boolean mFocusAreaSupported;
@@ -76,8 +76,6 @@ public class FocusOverlayManager {
     private boolean mAeAwbLock;
     private Matrix mMatrix;
 
-    private int mPreviewWidth; // The width of the preview frame layout.
-    private int mPreviewHeight; // The height of the preview frame layout.
     private boolean mMirror; // true if the camera is front-facing.
     private int mDisplayOrientation;
     private List<Object> mFocusArea; // focus area in driver format
@@ -91,8 +89,12 @@ public class FocusOverlayManager {
     Listener mListener;
     private boolean mPreviousMoving;
     private boolean mFocusDefault;
+    private boolean mZslEnabled = false;  //QCom Parameter to disable focus for ZSL
 
     private FocusUI mUI;
+    private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
+
+    private int mFocusTime;
 
     public  interface FocusUI {
         public boolean hasFaces();
@@ -159,11 +161,23 @@ public class FocusOverlayManager {
     }
 
     public void setPreviewSize(int previewWidth, int previewHeight) {
-        if (mPreviewWidth != previewWidth || mPreviewHeight != previewHeight) {
-            mPreviewWidth = previewWidth;
-            mPreviewHeight = previewHeight;
+        if (mPreviewRect.width() != previewWidth || mPreviewRect.height() != previewHeight) {
+            setPreviewRect(new Rect(0, 0, previewWidth, previewHeight));
+        }
+    }
+
+    /** This setter should be the only way to mutate mPreviewRect. */
+    public void setPreviewRect(Rect previewRect) {
+        if (!mPreviewRect.equals(previewRect)) {
+            mPreviewRect.set(previewRect);
             setMatrix();
         }
+    }
+
+    /** Returns a copy of mPreviewRect so that outside class cannot modify preview
+     *  rect except deliberately doing so through the setter. */
+    public Rect getPreviewRect() {
+        return new Rect(mPreviewRect);
     }
 
     public void setMirror(boolean mirror) {
@@ -177,10 +191,9 @@ public class FocusOverlayManager {
     }
 
     private void setMatrix() {
-        if (mPreviewWidth != 0 && mPreviewHeight != 0) {
+        if (mPreviewRect.width() != 0 && mPreviewRect.height() != 0) {
             Matrix matrix = new Matrix();
-            CameraUtil.prepareMatrix(matrix, mMirror, mDisplayOrientation,
-                    mPreviewWidth, mPreviewHeight);
+            CameraUtil.prepareMatrix(matrix, mMirror, mDisplayOrientation, getPreviewRect());
             // In face detection, the matrix converts the driver coordinates to UI
             // coordinates. In tap focus, the inverted matrix converts the UI
             // coordinates to driver coordinates.
@@ -190,7 +203,7 @@ public class FocusOverlayManager {
     }
 
     private void lockAeAwbIfNeeded() {
-        if (mLockAeAwbNeeded && !mAeAwbLock) {
+        if (mLockAeAwbNeeded && !mAeAwbLock && !mZslEnabled) {
             mAeAwbLock = true;
             mListener.setFocusParameters();
         }
@@ -256,6 +269,11 @@ public class FocusOverlayManager {
         }
     }
 
+    // set touch-to-focus duration
+    public void setFocusTime(int time) {
+        mFocusTime = time;
+    }
+
     public void onAutoFocus(boolean focused, boolean shutterButtonPressed) {
         if (mState == STATE_FOCUSING_SNAP_ON_FINISH) {
             // Take the picture no matter focus succeeds or fails. No need
@@ -280,8 +298,8 @@ public class FocusOverlayManager {
             updateFocusUI();
             // If this is triggered by touch focus, cancel focus after a
             // while.
-            if (!mFocusDefault) {
-                mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+            if ((!mFocusDefault) && (mFocusTime != 0)) {
+                mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, mFocusTime);
             }
             if (shutterButtonPressed) {
                 // Lock AE & AWB so users can half-press shutter and recompose.
@@ -347,12 +365,15 @@ public class FocusOverlayManager {
     public void onSingleTapUp(int x, int y) {
         if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) return;
 
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_TOUCH_FOCUS, x + "," + y);
+
         // Let users be able to cancel previous touch focus.
         if ((!mFocusDefault) && (mState == STATE_FOCUSING ||
                     mState == STATE_SUCCESS || mState == STATE_FAIL)) {
             cancelAutoFocus();
         }
-        if (mPreviewWidth == 0 || mPreviewHeight == 0) return;
+        if (mPreviewRect.width() == 0 || mPreviewRect.height() == 0) return;
         mFocusDefault = false;
         // Initialize mFocusArea.
         if (mFocusAreaSupported) {
@@ -375,9 +396,10 @@ public class FocusOverlayManager {
             autoFocus();
         } else {  // Just show the indicator in all other cases.
             updateFocusUI();
-            // Reset the metering area in 3 seconds.
             mHandler.removeMessages(RESET_TOUCH_FOCUS);
-            mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+            if (mFocusTime != 0) {
+                mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, mFocusTime);
+            }
         }
     }
 
@@ -433,7 +455,8 @@ public class FocusOverlayManager {
         if (mParameters == null) return Parameters.FOCUS_MODE_AUTO;
         List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
 
-        if (mFocusAreaSupported && !mFocusDefault) {
+        if (mFocusAreaSupported && !mFocusDefault
+                 && !CameraUtil.noFocusModeChangeForTouch()) {
             // Always use autofocus in tap-to-focus.
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
         } else {
@@ -506,8 +529,12 @@ public class FocusOverlayManager {
         // Put focus indicator to the center. clear reset position
         mUI.clearFocus();
         // Initialize mFocusArea.
+        mFocusArea = null;
+        // Initialize mMeteringArea.
+        mMeteringArea = null;
+
         if (mFocusAreaSupported) {
-            initializeFocusAreas(mPreviewWidth / 2, mPreviewHeight / 2);
+            initializeFocusAreas(mPreviewRect.centerX(), mPreviewRect.centerY());
         }
         // Reset metering area when no specific region is selected.
         if (mMeteringAreaSupported) {
@@ -518,8 +545,10 @@ public class FocusOverlayManager {
 
     private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
         int areaSize = (int) (getAreaSize() * areaMultiple);
-        int left = CameraUtil.clamp(x - areaSize / 2, 0, mPreviewWidth - areaSize);
-        int top = CameraUtil.clamp(y - areaSize / 2, 0, mPreviewHeight - areaSize);
+        int left = CameraUtil.clamp(x - areaSize / 2, mPreviewRect.left,
+                mPreviewRect.right - areaSize);
+        int top = CameraUtil.clamp(y - areaSize / 2, mPreviewRect.top,
+                mPreviewRect.bottom - areaSize);
 
         RectF rectF = new RectF(left, top, left + areaSize, top + areaSize);
         mMatrix.mapRect(rectF);
@@ -529,7 +558,7 @@ public class FocusOverlayManager {
     private int getAreaSize() {
         // Recommended focus area size from the manufacture is 1/8 of the image
         // width (i.e. longer edge of the image)
-        return Math.max(mPreviewWidth, mPreviewHeight) / 8;
+        return Math.max(mPreviewRect.width(), mPreviewRect.height()) / 8;
     }
 
     /* package */ int getFocusState() {
@@ -538,6 +567,10 @@ public class FocusOverlayManager {
 
     public boolean isFocusCompleted() {
         return mState == STATE_SUCCESS || mState == STATE_FAIL;
+    }
+
+    public int getCurrentFocusState() {
+        return mState;
     }
 
     public boolean isFocusingSnapOnFinish() {
@@ -561,9 +594,14 @@ public class FocusOverlayManager {
     }
 
     private boolean needAutoFocusCall() {
-        String focusMode = getFocusMode();
-        return !(focusMode.equals(Parameters.FOCUS_MODE_INFINITY)
-                || focusMode.equals(Parameters.FOCUS_MODE_FIXED)
-                || focusMode.equals(Parameters.FOCUS_MODE_EDOF));
+        return getFocusMode().equals(Parameters.FOCUS_MODE_AUTO);
+    }
+
+    public void setZslEnable(boolean value) {
+        mZslEnabled = value;
+    }
+
+    public boolean isZslEnabled() {
+        return mZslEnabled;
     }
 }

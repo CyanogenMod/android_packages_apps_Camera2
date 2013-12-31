@@ -24,16 +24,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center">
+    <include layout="@layout/count_down_to_capture"/>
     <!-- Wrap a frame layout around texture view so that when scaled, texture
          view will not draw outside its unscaled bounds -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal">
         <TextureView
             android:id="@+id/preview_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </FrameLayout>
+     </FrameLayout>
+       <RelativeLayout android:id="@+id/linear"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.android.camera.GraphView
+                android:id="@+id/graph_view"
+                android:layout_width="200dip"
+                android:layout_height="200dip"
+                android:layout_marginTop="15dip"
+                android:layout_marginLeft="15dip" />
+            <TableLayout
+                android:id="@+id/relative_seek"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20px"
+                android:layout_marginRight="20px"
+                android:layout_marginLeft="20px"
+                android:stretchColumns="1">
+                <TableRow> <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/skintonetitle"
+                    android:layout_gravity="center"
+                    android:textSize="22.0sp"
+                    android:textStyle="bold" />
+                </TableRow>
+                <TableRow> <SeekBar
+                    android:id="@+id/skintoneseek"
+                    android:layout_below="@+id/skintonetitle"
+                    android:layout_width="400px"
+                    android:layout_height="33dip"
+                    android:layout_marginLeft="25px"
+                    android:layout_marginTop="2dip"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/skintoneleft"
+                        android:textSize="22.0sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/skintoneright"
+                        android:textSize="22.0sp"
+                        android:textStyle="bold"/>
+                </TableRow>
+            </TableLayout>
+        </RelativeLayout>
+        <View
+            android:id="@+id/preview_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:visibility="gone" />
     <ImageView
         android:id="@+id/review_image"
         android:layout_width="match_parent"
@@ -54,11 +112,21 @@
         android:layout="@layout/face_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
     <com.android.camera.ui.RenderOverlay
         android:id="@+id/render_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <com.android.camera.ui.RotateImageView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/scene_detect_icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="23dp"
+            android:visibility="gone"
+            android:src="@drawable/smart_scene_sports" />
+    </com.android.camera.ui.RenderOverlay>
     <include layout="@layout/camera_controls"
         android:layout_gravity="center"
         style="@style/CameraControls"/>
