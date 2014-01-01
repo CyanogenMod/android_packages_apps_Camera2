@@ -1068,8 +1068,10 @@ public class PhotoModule
                             jpegData, title, date, mLocation, width, height,
                             orientation, exif, mOnMediaSavedListener, mContentResolver, mPictureFormat);
                 }
-                // Animate capture with real jpeg data instead of a preview frame.
-                mUI.animateCapture(jpegData, orientation, mMirror);
+                if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
+                    // Animate capture with real jpeg data instead of a preview frame.
+                    mUI.animateCapture(jpegData, orientation, mMirror);
+                }
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
