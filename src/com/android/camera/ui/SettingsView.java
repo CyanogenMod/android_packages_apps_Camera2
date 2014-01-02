@@ -53,7 +53,7 @@ public class SettingsView extends ListView {
     private final int mHeadingIconBlockColor = R.color.settings_mode_color;
 
     private Context mContext;
-    private SettingsViewListener mListener;
+    private SettingsViewController mController;
     private AlertDialog.Builder mDialogBuilder;
 
     private SettingsAdapter mAdapter;
@@ -69,7 +69,43 @@ public class SettingsView extends ListView {
     private static final int[] mAllSettings = {LOCATION_SETTING, PICTURE_SIZE_SETTING,
             VIDEO_RES_SETTING, DEFAULT_CAMERA_SETTING, SEND_FEEDBACK_SETTING,};
 
-    public class SettingsAdapter extends ArrayAdapter<Integer> {
+    /**
+     * A listener for receiving setting selection events.
+     */
+    private final SettingsViewListener mListener =
+        new SettingsViewListener() {
+            @Override
+            public void onSettingSelected(int settingId) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                switch (settingId) {
+                    case LOCATION_SETTING:
+                        mDialogBuilder = getLocationAlertBuilder(builder, mController);
+                        break;
+                    case PICTURE_SIZE_SETTING:
+                        mDialogBuilder = getPictureSizeAlertBuilder(builder, mContext);
+                        break;
+                    case VIDEO_RES_SETTING:
+                        mDialogBuilder = getVideoQualityAlertBuilder(builder, mContext);
+                        break;
+                    case DEFAULT_CAMERA_SETTING:
+                        mDialogBuilder = getDefaultCameraAlertBuilder(builder, mContext);
+                        break;
+                    case SEND_FEEDBACK_SETTING:
+                        mFeedbackHelper.startFeedback();
+                        mDialogBuilder = null;
+                        break;
+                    default:
+                        throw new IllegalArgumentException();
+                }
+                if (mDialogBuilder != null) {
+                    AlertDialog alert = mDialogBuilder.create();
+                    alert.show();
+                }
+            }
+        };
+
+    private class SettingsAdapter extends ArrayAdapter<Integer> {
         private SettingsAdapter(Context context, int viewId, ArrayList<Integer> settings) {
             super(context, viewId, settings);
         }
@@ -86,6 +122,7 @@ public class SettingsView extends ListView {
     public SettingsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+
         ArrayList<Integer> listContent = new ArrayList();
         for (int settingId: mAllSettings) {
             if (settingId != SEND_FEEDBACK_SETTING || FeedbackHelper.feedbackAvailable()) {
@@ -99,13 +136,24 @@ public class SettingsView extends ListView {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int pos, long id) {
-                onSettingSelected((Integer) getItemAtPosition(pos));
+                mListener.onSettingSelected((Integer) getItemAtPosition(pos));
             }
         });
 
     }
 
+    /**
+     * A listener for responding to setting selection events.
+     */
     public interface SettingsViewListener {
+        public void onSettingSelected(int settingId);
+    }
+
+    /**
+     * A controller for formatting the settings dialogs
+     * according to the device and application state.
+     */
+    public interface SettingsViewController {
         public void setLocation(boolean on);
 
         public String[] getSupportedPictureSizeEntries();
@@ -114,44 +162,25 @@ public class SettingsView extends ListView {
         public String[] getSupportedVideoQualityEntries();
         public void setVideoQuality(String resolution);
 
+        public String[] getSupportedDefaultCameras();
         public void setDefaultCamera(int index);
     }
 
-    public void setSettingsListener(SettingsViewListener listener) {
-        mListener = listener;
+    /**
+     * Set a controller responsible for providing the supported
+     * options to {@link android.app.AlertDialog.Builder}s and for
+     * updating the application state once a dialog option has been
+     * selected.
+     *
+     * If no controller is set, no {@link android.app.AlertDialog}s
+     * will be shown.
+     */
+    public void setController(SettingsViewController controller) {
+        mController = controller;
     }
 
     public void setFeedbackHelper(FeedbackHelper feedback) {
         mFeedbackHelper = feedback;
-    }
-
-    private void onSettingSelected(int settingId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
-        switch (settingId) {
-            case LOCATION_SETTING:
-                mDialogBuilder = getLocationAlertBuilder(builder, mListener);
-                break;
-            case PICTURE_SIZE_SETTING:
-                mDialogBuilder = getPictureSizeAlertBuilder(builder, mContext, mListener);
-                break;
-            case VIDEO_RES_SETTING:
-                mDialogBuilder = getVideoQualityAlertBuilder(builder, mContext, mListener);
-                break;
-            case DEFAULT_CAMERA_SETTING:
-                mDialogBuilder = getDefaultCameraAlertBuilder(builder, mContext, mListener);
-                break;
-            case SEND_FEEDBACK_SETTING:
-                mFeedbackHelper.startFeedback();
-                mDialogBuilder = null;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        if (mDialogBuilder != null) {
-            AlertDialog alert = mDialogBuilder.create();
-            alert.show();
-        }
     }
 
     private int getResId(int settingId) {
@@ -181,21 +210,24 @@ public class SettingsView extends ListView {
      * location on captures.
      */
     public static AlertDialog.Builder getLocationAlertBuilder(AlertDialog.Builder builder,
-            final SettingsViewListener listener) {
+            final SettingsViewController controller) {
+        if (controller == null) {
+            return null;
+        }
 
         builder.setTitle(R.string.remember_location_title)
         .setPositiveButton(R.string.remember_location_yes,
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int arg1) {
-                    listener.setLocation(true);
+                    controller.setLocation(true);
                 }
             })
         .setNegativeButton(R.string.remember_location_no,
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int arg1) {
-                    listener.setLocation(false);
+                    controller.setLocation(false);
                 }
             });
 
@@ -207,9 +239,12 @@ public class SettingsView extends ListView {
      * location on captures.
      */
     public static AlertDialog.Builder getFirstTimeLocationAlertBuilder(
-            AlertDialog.Builder builder, final SettingsViewListener listener) {
+            AlertDialog.Builder builder, SettingsViewController controller) {
+        if (controller == null) {
+            return null;
+        }
 
-        getLocationAlertBuilder(builder, listener)
+        getLocationAlertBuilder(builder, controller)
         .setMessage(R.string.remember_location_prompt);
 
         return builder;
@@ -219,10 +254,13 @@ public class SettingsView extends ListView {
      * Updates an AlertDialog.Builder to allow selection of a supported
      * picture size.
      */
-    public static AlertDialog.Builder getPictureSizeAlertBuilder(AlertDialog.Builder builder,
-            final Context context, final SettingsViewListener listener) {
+    public AlertDialog.Builder getPictureSizeAlertBuilder(AlertDialog.Builder builder,
+            final Context context) {
+        if (mController == null) {
+            return null;
+        }
 
-        final String[] supported = listener.getSupportedPictureSizeEntries();
+        final String[] supported = mController.getSupportedPictureSizeEntries();
         final String[] entries = context.getResources().getStringArray(
             R.array.pref_camera_picturesize_entries);
         final String[] values = context.getResources().getStringArray(
@@ -234,7 +272,7 @@ public class SettingsView extends ListView {
                public void onClick(DialogInterface dialog, int which) {
                    int index = getIndex(entries, supported[which]);
                    if (index > 0) {
-                       listener.setPictureSize(values[index]);
+                       mController.setPictureSize(values[index]);
                    }
                }
            });
@@ -246,10 +284,13 @@ public class SettingsView extends ListView {
      * Updates an AlertDialog.Builder to allow the user to choose a supported
      * video quality.
      */
-    public static AlertDialog.Builder getVideoQualityAlertBuilder(AlertDialog.Builder builder,
-            final Context context, final SettingsViewListener listener) {
+    public AlertDialog.Builder getVideoQualityAlertBuilder(AlertDialog.Builder builder,
+            final Context context) {
+        if (mController == null) {
+            return null;
+        }
 
-        final String[] supported = listener.getSupportedVideoQualityEntries();
+        final String[] supported = mController.getSupportedVideoQualityEntries();
         final String[] entries = context.getResources().getStringArray(
             R.array.pref_video_quality_entries);
         final String[] values = context.getResources().getStringArray(
@@ -261,7 +302,7 @@ public class SettingsView extends ListView {
                 public void onClick(DialogInterface dialog, int which) {
                     int index = getIndex(entries, supported[which]);
                     if (index > 0) {
-                        listener.setVideoQuality(values[index]);
+                        mController.setVideoQuality(values[index]);
                     }
                 }
             });
@@ -273,21 +314,18 @@ public class SettingsView extends ListView {
      * Updates an AlertDialog.Builder to allow the user to choose one of the
      * camera modes as a preferred app at startup.
      */
-    public static AlertDialog.Builder getDefaultCameraAlertBuilder(AlertDialog.Builder builder,
-            final Context context, final SettingsViewListener listener) {
+    public AlertDialog.Builder getDefaultCameraAlertBuilder(AlertDialog.Builder builder,
+            final Context context) {
+        if (mController == null) {
+            return null;
+        }
 
-        String[] modes = {context.getString(R.string.mode_camera),
-                          context.getString(R.string.mode_video),
-                          context.getString(R.string.mode_photosphere),
-                          context.getString(R.string.mode_craft),
-                          context.getString(R.string.mode_timelapse),
-                          context.getString(R.string.mode_wideangle)};
-
+        String[] modes = mController.getSupportedDefaultCameras();
         builder.setTitle(R.string.setting_default_camera)
         .setItems(modes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    listener.setDefaultCamera(which);
+                    mController.setDefaultCamera(which);
                 }
             });
 

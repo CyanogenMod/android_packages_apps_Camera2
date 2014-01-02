@@ -31,18 +31,17 @@ import com.android.camera2.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsController implements SettingsView.SettingsViewListener {
+public class SettingsController implements SettingsView.SettingsViewController {
     private static final String TAG = "SettingsController";
 
     private final CameraActivity mActivity;
     private final SettingsManager mSettingsManager;
     private final LocationManager mLocationManager;
 
-    public SettingsController(CameraActivity activity, SettingsManager settingsManager,
-            LocationManager locationManager) {
+    public SettingsController(CameraActivity activity) {
         mActivity = activity;
-        mSettingsManager = settingsManager;
-        mLocationManager = locationManager;
+        mSettingsManager = activity.getSettingsManager();
+        mLocationManager = activity.getLocationManager();
     }
 
     public void syncLocationManager() {
@@ -122,6 +121,12 @@ public class SettingsController implements SettingsView.SettingsViewListener {
         if (!mActivity.isPaused()) {
             mSettingsManager.set(SettingsManager.SETTING_VIDEO_QUALITY, quality);
         }
+    }
+
+    @Override
+    public String[] getSupportedDefaultCameras() {
+        List<String> supported = mActivity.getSupportedModeNames();
+        return supported.toArray(new String[supported.size()]);
     }
 
     @Override

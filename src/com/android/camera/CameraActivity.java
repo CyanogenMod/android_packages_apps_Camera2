@@ -110,6 +110,7 @@ import com.android.camera2.R;
 
 import java.io.File;
 import java.util.List;
+import java.util.ArrayList;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -992,8 +993,7 @@ public class CameraActivity extends Activity
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
         mLocationManager = new LocationManager(this);
-
-        mSettingsController = new SettingsController(this, mSettingsManager, mLocationManager);
+        mSettingsController = new SettingsController(this);
 
         int modeIndex = -1;
         int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
@@ -1420,7 +1420,9 @@ public class CameraActivity extends Activity
         LayoutInflater inflater = getLayoutInflater();
         SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
             null, false);
-        settingsView.setSettingsListener(mSettingsController);
+        if (mSettingsController != null) {
+            settingsView.setController(mSettingsController);
+        }
         if (mFeedbackHelper != null) {
             settingsView.setFeedbackHelper(mFeedbackHelper);
         }
@@ -1461,6 +1463,19 @@ public class CameraActivity extends Activity
     @Override
     public SettingsController getSettingsController() {
         return mSettingsController;
+    }
+
+    public List<String> getSupportedModeNames() {
+        List<Integer> indices = mModuleManager.getSupportedModeIndexList();
+        List<String> supported = new ArrayList<String>();
+
+        for (Integer modeIndex : indices) {
+            String name = CameraUtil.getCameraModeText(modeIndex, this);
+            if (name != null && !name.equals("")) {
+                supported.add(name);
+            }
+        }
+        return supported;
     }
 
     @Override
