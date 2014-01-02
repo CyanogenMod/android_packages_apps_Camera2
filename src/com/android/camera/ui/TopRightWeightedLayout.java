@@ -66,12 +66,22 @@ public class TopRightWeightedLayout extends LinearLayout {
             // and reversing children
             setOrientation(LinearLayout.HORIZONTAL);
             reverseChildren();
+            for (int i = 0; i < getChildCount(); i++) {
+                ViewGroup.LayoutParams params = getChildAt(i).getLayoutParams();
+                params.width = 0;
+                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            }
             requestLayout();
         } else if (!isPortrait && isHorizontal) {
             // Landscape orientation is out of sync, setting to vertical
             // and reversing children
             setOrientation(LinearLayout.VERTICAL);
             reverseChildren();
+            for (int i = 0; i < getChildCount(); i++) {
+                ViewGroup.LayoutParams params = getChildAt(i).getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                params.height = 0;
+            }
             requestLayout();
         }
     }
