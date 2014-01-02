@@ -185,7 +185,6 @@ public class PhotoModule
     private ContentProviderClient mMediaProviderClient;
     private boolean mFaceDetectionStarted = false;
 
-    private static final String PERSIST_LONG_ENABLE = "persist.camera.longshot.enable";
     private static final String PERSIST_LONG_SAVE = "persist.camera.longshot.save";
 
     // Constant from android.hardware.Camera.Parameters
@@ -1591,15 +1590,10 @@ public class PhotoModule
     @Override
     public void onShutterButtonLongClick() {
         if ((null != mCameraDevice) && ((mCameraState == IDLE) || (mCameraState == FOCUSING))) {
-            boolean enable = false;
-            enable = SystemProperties.getBoolean(PERSIST_LONG_ENABLE, false);
-            if ( enable ) {
-                enable = SystemProperties.getBoolean(PERSIST_LONG_SAVE, false);
-                mLongshotSave = enable;
-                mCameraDevice.setLongshot(true);
-                setCameraState(PhotoController.LONGSHOT);
-                mFocusManager.doSnap();
-            }
+            mLongshotSave = SystemProperties.getBoolean(PERSIST_LONG_SAVE, false);
+            mCameraDevice.setLongshot(true);
+            setCameraState(PhotoController.LONGSHOT);
+            mFocusManager.doSnap();
         }
     }
 

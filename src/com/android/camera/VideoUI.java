@@ -498,7 +498,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private void initializeMiscControls() {
         mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
         mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
-        mShutterButton.setOnShutterButtonListener(mController);
+        mShutterButton.setOnShutterButtonListener(mController, false);
         mShutterButton.setVisibility(View.VISIBLE);
         mShutterButton.requestFocus();
         mShutterButton.enableTouch(true);
