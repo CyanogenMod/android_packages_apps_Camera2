@@ -55,7 +55,6 @@ import com.android.camera.app.CameraManager.CameraAFMoveCallback;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.CameraManager.CameraShutterCallback;
-import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
@@ -97,16 +96,10 @@ public class PhotoModule
     private static final int REQUEST_CROP = 1000;
 
     // Messages defined for the UI thread handler.
-    private static final int MSG_SETUP_PREVIEW = 1;
-    private static final int MSG_FIRST_TIME_INIT = 2;
-    private static final int MSG_SET_CAMERA_PARAMETERS_WHEN_IDLE = 3;
-    private static final int MSG_SHOW_TAP_TO_FOCUS_TOAST = 4;
-    private static final int MSG_SWITCH_CAMERA = 5;
-    private static final int MSG_SWITCH_CAMERA_START_ANIMATION = 6;
-    private static final int MSG_CAMERA_OPEN_DONE = 7;
-    private static final int MSG_OPEN_CAMERA_FAIL = 8;
-    private static final int MSG_CAMERA_DISABLED = 9;
-    private static final int MSG_SWITCH_TO_GCAM_MODULE = 10;
+    private static final int MSG_FIRST_TIME_INIT = 1;
+    private static final int MSG_SET_CAMERA_PARAMETERS_WHEN_IDLE = 2;
+    private static final int MSG_SHOW_TAP_TO_FOCUS_TOAST = 3;
+    private static final int MSG_SWITCH_TO_GCAM_MODULE = 4;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -133,8 +126,6 @@ public class PhotoModule
     // needed because texture copy is done in GL thread. -1 means camera is not
     // switching.
     protected int mPendingSwitchCameraId = -1;
-    private boolean mOpenCameraFail;
-    private boolean mCameraDisabled;
 
     // When setCameraParametersWhenIdle() is called, we accumulate the subsets
     // needed to be updated in mUpdateSet.
@@ -294,11 +285,6 @@ public class PhotoModule
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_SETUP_PREVIEW: {
-                    setupPreview();
-                    break;
-                }
-
                 case MSG_FIRST_TIME_INIT: {
                     initializeFirstTime();
                     break;
@@ -311,37 +297,6 @@ public class PhotoModule
 
                 case MSG_SHOW_TAP_TO_FOCUS_TOAST: {
                     showTapToFocusToast();
-                    break;
-                }
-
-                case MSG_SWITCH_CAMERA: {
-                    switchCamera();
-                    break;
-                }
-
-                case MSG_SWITCH_CAMERA_START_ANIMATION: {
-                    // TODO: Need to revisit
-                    // ((CameraScreenNail)
-                    // mActivity.mCameraScreenNail).animateSwitchCamera();
-                    break;
-                }
-
-                case MSG_CAMERA_OPEN_DONE: {
-                    onCameraOpened();
-                    break;
-                }
-
-                case MSG_OPEN_CAMERA_FAIL: {
-                    mOpenCameraFail = true;
-                    CameraUtil.showErrorAndFinish(mActivity,
-                            R.string.cannot_connect_camera);
-                    break;
-                }
-
-                case MSG_CAMERA_DISABLED: {
-                    mCameraDisabled = true;
-                    CameraUtil.showErrorAndFinish(mActivity,
-                            R.string.camera_disabled);
                     break;
                 }
 
@@ -475,7 +430,6 @@ public class PhotoModule
         mFocusManager.setMirror(mMirror);
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
-        mHandler.sendEmptyMessage(MSG_SWITCH_CAMERA_START_ANIMATION);
     }
 
     private final ButtonManager.ButtonCallback mCameraButtonCallback =
@@ -1155,10 +1109,6 @@ public class PhotoModule
 
     private void onResumeTasks() {
         Log.v(TAG, "Executing onResumeTasks.");
-        if (mOpenCameraFail || mCameraDisabled) {
-            return;
-        }
-
         mActivity.getCameraProvider().requestCamera(mCameraId);
 
         mJpegPictureCallbackTime = 0;
