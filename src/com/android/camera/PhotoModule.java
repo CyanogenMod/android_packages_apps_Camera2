@@ -89,7 +89,8 @@ public class PhotoModule
         MemoryListener,
         FocusOverlayManager.Listener,
         ShutterButton.OnShutterButtonListener,
-        SensorEventListener {
+        SensorEventListener,
+        SettingsManager.OnSettingChangedListener {
 
     private static final String TAG = "CAM_PhotoModule";
 
@@ -996,9 +997,15 @@ public class PhotoModule
         }
         mFocusManager.setParameters(mInitialParams);
 
+        // Do camera parameter dependent initialization.
         mParameters = mCameraDevice.getParameters();
         setCameraParameters(UPDATE_PARAM_ALL);
+        // Set a listener which updates camera parameters based
+        // on changed settings.
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.setOnSettingChangedListener(this);
         mCameraPreviewParamsReady = true;
+
         startPreview();
 
         onCameraOpened();
@@ -1521,6 +1528,29 @@ public class PhotoModule
         stopSmartCamera();
     }
 
+    @Override
+    public void onSettingChanged(int id) {
+        switch (id) {
+            case SettingsManager.SETTING_FLASH_MODE: {
+                updateParametersFlashMode();
+                break;
+            }
+            case SettingsManager.SETTING_PICTURE_SIZE: {
+                updateParametersPictureSize();
+                break;
+            }
+            case SettingsManager.SETTING_RECORD_LOCATION: {
+                SettingsController settingsController = mActivity.getSettingsController();
+                settingsController.syncLocationManager();
+                break;
+            }
+            default: {
+                // Do nothing.
+            }
+        }
+        mCameraDevice.setParameters(mParameters);
+    }
+
     private void updateCameraParametersInitialize() {
         // Reset preview frame rate to the maximum because it may be lowered by
         // video camera application.
@@ -1587,6 +1617,28 @@ public class PhotoModule
         mParameters.setFocusMode(mFocusManager.getFocusMode());
 
         // Set picture size.
+        updateParametersPictureSize();
+
+        // Set JPEG quality.
+        updateParametersPictureQuality();
+
+        // For the following settings, we need to check if the settings are
+        // still supported by latest driver, if not, ignore the settings.
+
+        // Set exposure compensation
+        updateParametersExposureCompensation();
+
+        // Set the scene mode: also sets flash and white balance.
+        updateParametersSceneMode();
+
+        if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
+            updateAutoFocusMoveCallback();
+        }
+    }
+
+    private void updateParametersPictureSize() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
         String pictureSize = settingsManager.get(SettingsManager.SETTING_PICTURE_SIZE);
         if (pictureSize == null) {
             //TODO: deprecate CameraSettings.
@@ -1624,16 +1676,17 @@ public class PhotoModule
                     / (float) optimalSize.height);
         }
         Log.v(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);
+    }
 
-        // Set JPEG quality.
+    private void updateParametersPictureQuality() {
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
+    }
 
-        // For the following settings, we need to check if the settings are
-        // still supported by latest driver, if not, ignore the settings.
+    private void updateParametersExposureCompensation() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        // Set exposure compensation
         int value = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_EXPOSURE));
         int max = mParameters.getMaxExposureCompensation();
         int min = mParameters.getMinExposureCompensation();
@@ -1642,18 +1695,12 @@ public class PhotoModule
         } else {
             Log.w(TAG, "invalid exposure range: " + value);
         }
-
-        mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
-        updateParametersSceneMode();
-
-        if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
-            updateAutoFocusMoveCallback();
-        }
     }
 
-    public void updateParametersSceneMode() {
+    private void updateParametersSceneMode() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
+        mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
         if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
             if (!mParameters.getSceneMode().equals(mSceneMode)) {
                 mParameters.setSceneMode(mSceneMode);
@@ -1673,35 +1720,37 @@ public class PhotoModule
 
         if (Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
             // Set flash mode.
-            String flashMode = settingsManager.get(SettingsManager.SETTING_FLASH_MODE);
-            List<String> supportedFlash = mParameters.getSupportedFlashModes();
-            if (CameraUtil.isSupported(flashMode, supportedFlash)) {
-                mParameters.setFlashMode(flashMode);
-            } else {
-                flashMode = mParameters.getFlashMode();
-                if (flashMode == null) {
-                    flashMode = mActivity.getString(
-                            R.string.pref_camera_flashmode_no_flash);
-                }
-            }
+            updateParametersFlashMode();
 
-            // Set white balance parameter.
-            String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
-            if (CameraUtil.isSupported(whiteBalance,
-                    mParameters.getSupportedWhiteBalance())) {
-                mParameters.setWhiteBalance(whiteBalance);
-            } else {
-                whiteBalance = mParameters.getWhiteBalance();
-                if (whiteBalance == null) {
-                    whiteBalance = Parameters.WHITE_BALANCE_AUTO;
-                }
-            }
+            // Set white balance mode.
+            updateParametersWhiteBalanceMode();
 
             // Set focus mode.
             mFocusManager.overrideFocusMode(null);
             mParameters.setFocusMode(mFocusManager.getFocusMode());
         } else {
             mFocusManager.overrideFocusMode(mParameters.getFocusMode());
+        }
+    }
+
+    private void updateParametersFlashMode() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
+        String flashMode = settingsManager.get(SettingsManager.SETTING_FLASH_MODE);
+        List<String> supportedFlash = mParameters.getSupportedFlashModes();
+        if (CameraUtil.isSupported(flashMode, supportedFlash)) {
+            mParameters.setFlashMode(flashMode);
+        }
+    }
+
+    private void updateParametersWhiteBalanceMode() {
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+
+        // Set white balance parameter.
+        String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
+        if (CameraUtil.isSupported(whiteBalance,
+            mParameters.getSupportedWhiteBalance())) {
+            mParameters.setWhiteBalance(whiteBalance);
         }
     }
 
