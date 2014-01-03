@@ -1213,7 +1213,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mFilmstripController.inCameraFullscreen()) {
+        if (!mFilmstripVisible) {
             if (mCurrentModule.onKeyDown(keyCode, event)) {
                 return true;
             }
@@ -1231,7 +1231,7 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (mFilmstripController.inCameraFullscreen() && mCurrentModule.onKeyUp(keyCode, event)) {
+        if (!mFilmstripVisible && mCurrentModule.onKeyUp(keyCode, event)) {
             return true;
         }
         return super.onKeyUp(keyCode, event);
