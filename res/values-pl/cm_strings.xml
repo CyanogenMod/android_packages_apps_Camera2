@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2013-2014 The CyanogenMod Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <string name="pref_camera_picturesize_entry_20_7mp">20,7 Mpix</string>
+    <string name="pref_camera_picturesize_entry_18mp">18 Mpix</string>
+    <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mpix</string>
+    <string name="pref_camera_picturesize_entry_12_7mp">12,7 Mpix</string>
+    <string name="pref_camera_picturesize_entry_12mp">12 Mpix (4:3)</string>
+    <string name="pref_camera_picturesize_entry_11_5mp">11,5 Mpix</string>
+    <string name="pref_camera_picturesize_entry_10_4mp">10,4 Mpix</string>
+    <string name="pref_camera_picturesize_entry_9mp">9 Mpix</string>
+    <string name="pref_camera_picturesize_entry_8_2mp">8,2 Mpix</string>
+    <string name="pref_camera_picturesize_entry_7_7mp">7,7 Mpix (4:3)</string>
+    <string name="pref_camera_picturesize_entry_6_4mp">6,4 Mpix</string>
+    <string name="pref_camera_picturesize_entry_6mp">6 Mpix</string>
+    <string name="pref_camera_picturesize_entry_4_5mp">4,5 Mpix</string>
+    <string name="pref_camera_picturesize_entry_3_7mp">3,7 Mpix</string>
+    <string name="pref_camera_picturesize_entry_2_5mp">2,5 Mpix</string>
+    <string name="pref_camera_picturesize_entry_2_1mp">2,1 Mpix</string>
+    <string name="pref_camera_picturesize_entry_1_9mp">1,9 Mpix</string>
+    <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
+    <string name="pref_camera_picturesize_entry_xga">XGA</string>
+    <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+    <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
+    <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
+    <string name="pref_camera_scenemode_entry_antimotionblur">Redukcja rozmazywania</string>
+    <string name="pref_camera_scenemode_entry_aqua">Woda</string>
+    <string name="pref_camera_scenemode_entry_ar">Rozszerzona rzeczywistość</string>
+    <string name="pref_camera_scenemode_entry_asd">Najlepsze ujęcie</string>
+    <string name="pref_camera_scenemode_entry_baby">Dziecko</string>
+    <string name="pref_camera_scenemode_entry_backgroundblur">Rozmazane tło</string>
+    <string name="pref_camera_scenemode_entry_backlight">Podświetlenie</string>
+    <string name="pref_camera_scenemode_entry_backlightportrait">Portret z podświetleniem</string>
+    <string name="pref_camera_scenemode_entry_barcode">Kod kreskowy</string>
+    <string name="pref_camera_scenemode_entry_beach">Plaża</string>
+    <string name="pref_camera_scenemode_entry_beauty">Uroda</string>
+    <string name="pref_camera_scenemode_entry_candlelight">Przy świecach</string>
+    <string name="pref_camera_scenemode_entry_cine">Kino</string>
+    <string name="pref_camera_scenemode_entry_closeup">Zbliżenie</string>
+    <string name="pref_camera_scenemode_entry_dark">Ciemność</string>
+    <string name="pref_camera_scenemode_entry_dish">Jedzenie</string>
+    <string name="pref_camera_scenemode_entry_duskdawn">Wschód-zachód słońca</string>
+    <string name="pref_camera_scenemode_entry_document">Dokument</string>
+    <string name="pref_camera_scenemode_entry_fallcolor">Brak kolorów</string>
+    <string name="pref_camera_scenemode_entry_fireworks">Fajerwerki</string>
+    <string name="pref_camera_scenemode_entry_flowers">Kwiaty</string>
+    <string name="pref_camera_scenemode_entry_handheldtwilight">Zmierzch bez statywu</string>
+    <string name="pref_camera_scenemode_entry_highsensitivity">Wysoka czułość</string>
+    <string name="pref_camera_scenemode_entry_indoor">W pomieszczeniu</string>
+    <string name="pref_camera_scenemode_entry_landscape">Krajobraz</string>
+    <string name="pref_camera_scenemode_entry_mix_illuminant">Mieszane oświetlenie</string>
+    <string name="pref_camera_scenemode_entry_mood">Nastrój</string>
+    <string name="pref_camera_scenemode_entry_nightportrait">Nocny portret</string>
+    <string name="pref_camera_scenemode_entry_nightindoor">W pomieszczeniu nocą</string>
+    <string name="pref_camera_scenemode_entry_oldfilm">Stary film</string>
+    <string name="pref_camera_scenemode_entry_pet">Zwierzęta</string>
+    <string name="pref_camera_scenemode_entry_portrait">Portret</string>
+    <string name="pref_camera_scenemode_entry_snow">Śnieg</string>
+    <string name="pref_camera_scenemode_entry_softskin">Delikatna skóra</string>
+    <string name="pref_camera_scenemode_entry_sports">Sport</string>
+    <string name="pref_camera_scenemode_entry_spotlight">Reflektor</string>
+    <string name="pref_camera_scenemode_entry_steadyphoto">Stabilne ujęcie</string>
+    <string name="pref_camera_scenemode_entry_supernight">Ciemna noc</string>
+    <string name="pref_camera_scenemode_entry_sweepstitch">Rozległy ścieg</string>
+    <string name="pref_camera_scenemode_entry_text">Tekst</string>
+    <string name="pref_camera_scenemode_entry_theatre">Teatr</string>
+    <string name="pref_camera_scenemode_entry_whiteboard">Biała tablica</string>
+    <string name="pref_camera_focusmode_entry_continuouspicture">Ciągłe ujęcie</string>
+    <string name="pref_camera_focusmode_entry_extended">Rozszerzony</string>
+    <string name="pref_camera_focusmode_entry_facedetect">Wykrywanie twarzy</string>
+    <string name="pref_camera_focusmode_entry_facepriority">Priorytet twarzy</string>
+    <string name="pref_camera_focusmode_entry_fixed">Stały</string>
+    <string name="pref_camera_focusmode_entry_portrait">Portret</string>
+    <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfokalnie</string>
+    <string name="pref_camera_coloreffect_entry_washed">Zmyty</string>
+    <string name="pref_camera_coloreffect_entry_vintage_warm">Klasyczne ciepło</string>
+    <string name="pref_camera_coloreffect_entry_vintage_cold">Klasyczne zimno</string>
+    <string name="pref_camera_coloreffect_entry_point_blue">Punktowy niebieski</string>
+    <string name="pref_camera_coloreffect_entry_point_green">Punktowy zielony</string>
+    <string name="pref_camera_coloreffect_entry_point_red_yellow">Punktowy żółto-czerwony</string>
+    <string name="pref_camera_coloreffect_entry_cartoonize">Kreskówka</string>
+    <string name="pref_camera_burst_title">Tryb zdjęć seryjnych</string>
+    <string name="pref_camera_burst_entry_off">Wyłączony</string>
+    <string name="pref_camera_burst_entry_5">5 zdjęć</string>
+    <string name="pref_camera_burst_entry_10">10 zdjęć</string>
+    <string name="pref_camera_burst_entry_15">15 zdjęć</string>
+    <string name="pref_camera_burst_entry_20">20 zdjęć</string>
+    <string name="pref_camera_focustime_title">Czas ustawiania ostrości</string>
+    <string name="pref_camera_focustime_summary">Określ czas ustawiania ostrości dotykiem</string>
+    <string name="pref_camera_focustime_entry_5">5 sekund</string>
+    <string name="pref_camera_focustime_entry_10">10 sekund</string>
+    <string name="pref_camera_focustime_entry_15">15 sekund</string>
+    <string name="pref_camera_focustime_entry_20">20 sekund</string>
+    <string name="pref_camera_focustime_entry_30">30 sekund</string>
+    <string name="pref_camera_focustime_entry_infinite">Nieskończony</string>
+    <string name="pref_camera_flashmode_entry_redeye">Czerwone oczy</string>
+    <string name="pref_camera_flashmode_label_redeye">CZERWONE OCZY</string>
+    <string name="pref_camera_beauty_mode_title">Tryb upiększania</string>
+    <string name="pref_camera_slow_shutter_title">Spowolnienie migawki</string>
+    <string name="pref_camera_slow_shutter_entry_off">Wyłączone</string>
+    <string name="pref_camera_slow_shutter_entry_auto">Automatyczne</string>
+    <string name="pref_camera_slow_shutter_entry_half_second">1/2 sekundy</string>
+    <string name="pref_camera_slow_shutter_entry_1s">1 sekunda</string>
+    <string name="pref_camera_slow_shutter_entry_2s">2 sekundy</string>
+    <string name="pref_camera_slow_shutter_entry_4s">4 sekundy</string>
+    <string name="pref_camera_slow_shutter_entry_8s">8 sekund</string>
+    <string name="camera_menu_enhance_label">POPRAWKI</string>
+    <string name="camera_menu_slow_shutter_label">SPOWOLNIENIE MIGAWKI</string>
+    <string name="camera_menu_beauty_mode_label">UPIĘKSZANIE</string>
+    <string name="camera_menu_colorize_label">KOLOROWANIE</string>
+    <string name="camera_menu_effects_label">EFEKTY</string>
+    <string name="camera_menu_asd_label">ROZPOZNAWANIE SCENY</string>
+</resources>
