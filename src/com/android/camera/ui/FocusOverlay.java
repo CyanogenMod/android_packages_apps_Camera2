@@ -45,8 +45,6 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     // TODO: make this dp in dimens.xml when UI has a spec
     private int mFocusIndicatorSize = 200;
     private boolean mShowIndicator;
-    private int mCenterX;
-    private int mCenterY;
 
     public FocusOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,7 +60,6 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     @Override
     public void clearFocus() {
         mShowIndicator = false;
-        resetFocusPosition();
     }
 
     @Override
@@ -101,17 +98,6 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mFocusAnimation.cancel();
         mShowIndicator = false;
         invalidate();
-    }
-
-    private void resetFocusPosition() {
-        setFocusPosition(mCenterX, mCenterY);
-    }
-
-    @Override
-    public void onLayout(boolean change, int left, int top, int right, int bottom) {
-        super.onLayout(change, left, top, right, bottom);
-        mCenterX = (right - left) / 2;
-        mCenterY = (bottom - top) / 2;
     }
 
     @Override

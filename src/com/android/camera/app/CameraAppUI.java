@@ -523,6 +523,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mCaptureOverlay = (CaptureAnimationOverlay)
                 mCameraRootView.findViewById(R.id.capture_overlay);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mPreviewOverlay);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mCaptureOverlay);
 
         mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setupToggle(mIsCaptureIntent);

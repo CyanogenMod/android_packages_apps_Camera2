@@ -43,7 +43,8 @@ import java.util.List;
  * will receive callbacks as the scaling happens, and a zoom UI will be hosted in
  * this class.
  */
-public class PreviewOverlay extends View {
+public class PreviewOverlay extends View
+    implements PreviewStatusListener.PreviewAreaSizeChangedListener {
 
     private static final String TAG = "PreviewOverlay";
 
@@ -96,7 +97,7 @@ public class PreviewOverlay extends View {
      * This sets up the zoom listener and zoom related parameters when
      * the range of zoom ratios is continuous.
      *
-     * @param zoomMax max zoom ratio
+     * @param zoomMaxRatio max zoom ratio
      * @param zoom current zoom index
      * @param zoomChangeListener a listener that receives callbacks when zoom changes
      */
@@ -117,9 +118,8 @@ public class PreviewOverlay extends View {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        mZoomProcessor.layout(left, top, right, bottom);
+    public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
+        mZoomProcessor.layout(0, 0, (int) previewWidth, (int) previewHeight);
     }
 
     @Override
