@@ -26,6 +26,7 @@ import com.android.camera.ui.ModeListView;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
+import com.android.camera2.R;
 
 /**
  * A class holding the module information and registers them to
@@ -34,38 +35,35 @@ import com.android.camera.util.RefocusHelper;
 public class ModulesInfo {
     private static final String TAG = "ModulesInfo";
 
-    // TODO: Decouple the logic between modules and modes.
-    public static final int MODULE_PHOTO = ModeListView.MODE_PHOTO;
-    public static final int MODULE_VIDEO = ModeListView.MODE_VIDEO;
-    public static final int MODULE_PHOTOSPHERE = ModeListView.MODE_PHOTOSPHERE;
-    public static final int MODULE_CRAFT = ModeListView.MODE_CRAFT;
-    public static final int MODULE_TIMELAPSE = ModeListView.MODE_TIMELAPSE;
-    public static final int MODULE_WIDEANGLE = ModeListView.MODE_WIDEANGLE;
-    public static final int MODULE_GCAM = ModeListView.MODE_GCAM;
-    public static final int MODULE_REFOCUS = ModeListView.MODE_REFOCUS;
-
     public static void setupModules(Context context, ModuleManager moduleManager) {
-        registerPhotoModule(moduleManager);
-        moduleManager.setDefaultModuleIndex(MODULE_PHOTO);
-        registerCraftModule(moduleManager);
-        registerVideoModule(moduleManager);
+        int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
+        registerPhotoModule(moduleManager, photoModuleId);
+        moduleManager.setDefaultModuleIndex(photoModuleId);
+        registerCraftModule(moduleManager, context.getResources()
+                .getInteger(R.integer.camera_mode_craft));
+        registerVideoModule(moduleManager, context.getResources()
+                .getInteger(R.integer.camera_mode_video));
         if (PhotoSphereHelper.hasLightCycleCapture(context)) {
-            registerWideAngleModule(moduleManager);
-            registerPhotoSphereModule(moduleManager);
+            registerWideAngleModule(moduleManager, context.getResources()
+                    .getInteger(R.integer.camera_mode_panorama));
+            registerPhotoSphereModule(moduleManager, context.getResources()
+                    .getInteger(R.integer.camera_mode_photosphere));
         }
         if (RefocusHelper.hasRefocusCapture(context)) {
-            registerRefocusModule(moduleManager);
+            registerRefocusModule(moduleManager, context.getResources()
+                    .getInteger(R.integer.camera_mode_refocus));
         }
         if (GcamHelper.hasGcamCapture()) {
-            registerGcamModule(moduleManager);
+            registerGcamModule(moduleManager, context.getResources()
+                    .getInteger(R.integer.camera_mode_gcam));
         }
     }
 
-    private static void registerPhotoModule(ModuleManager moduleManager) {
+    private static void registerPhotoModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_PHOTO;
+                return moduleId;
             }
 
             @Override
@@ -80,11 +78,11 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerCraftModule(ModuleManager moduleManager) {
+    private static void registerCraftModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_CRAFT;
+                return moduleId;
             }
 
             @Override
@@ -99,11 +97,11 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerVideoModule(ModuleManager moduleManager) {
+    private static void registerVideoModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_VIDEO;
+                return moduleId;
             }
 
             @Override
@@ -118,11 +116,11 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerWideAngleModule(ModuleManager moduleManager) {
+    private static void registerWideAngleModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_WIDEANGLE;
+                return moduleId;
             }
 
             @Override
@@ -137,11 +135,11 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerPhotoSphereModule(ModuleManager moduleManager) {
+    private static void registerPhotoSphereModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_PHOTOSPHERE;
+                return moduleId;
             }
 
             @Override
@@ -156,11 +154,11 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerRefocusModule(ModuleManager moduleManager) {
+    private static void registerRefocusModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_REFOCUS;
+                return moduleId;
             }
 
             @Override
@@ -176,11 +174,11 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerGcamModule(ModuleManager moduleManager) {
+    private static void registerGcamModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
-                return MODULE_GCAM;
+                return moduleId;
             }
 
             @Override

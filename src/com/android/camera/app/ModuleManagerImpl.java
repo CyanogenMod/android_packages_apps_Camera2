@@ -16,7 +16,11 @@
 
 package com.android.camera.app;
 
+import android.content.Context;
 import android.util.SparseArray;
+
+import com.android.camera.settings.SettingsManager;
+import com.android.camera2.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,4 +106,27 @@ public class ModuleManagerImpl implements ModuleManager {
         }
         return agent;
     }
+
+    @Override
+    public int getQuickSwitchToModuleId(int moduleId, SettingsManager settingsManager,
+            Context context) {
+        final int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
+        final int videoModuleId = context.getResources().getInteger(R.integer.camera_mode_video);
+
+        int quickSwitchTo = moduleId;
+        if (moduleId == photoModuleId) {
+            quickSwitchTo = videoModuleId;
+        } else if (moduleId == videoModuleId) {
+            // TODO: Get the last used camera module id from settings manager and switch
+            // to it.
+            quickSwitchTo = photoModuleId;
+        }
+
+        if (mRegisteredModuleAgents.get(quickSwitchTo) != null) {
+            return quickSwitchTo;
+        } else {
+            return moduleId;
+        }
+    }
+
 }

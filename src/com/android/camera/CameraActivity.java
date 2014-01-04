@@ -694,6 +694,11 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public int getQuickSwitchToModuleId(int currentModuleIndex) {
+        return mModuleManager.getQuickSwitchToModuleId(currentModuleIndex, mSettingsManager, this);
+    }
+
+    @Override
     public SurfaceTexture getPreviewBuffer() {
         // TODO: implement this
         return null;
@@ -988,27 +993,29 @@ public class CameraActivity extends Activity
         mSettingsController = new SettingsController(this, mSettingsManager, mLocationManager);
 
         int modeIndex = -1;
+        int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
+        int gcamIndex = getResources().getInteger(R.integer.camera_mode_gcam);
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            modeIndex = ModeListView.MODE_VIDEO;
+            modeIndex = photoIndex;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
-            modeIndex = ModeListView.MODE_PHOTO;
+            modeIndex = photoIndex;
             if (mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX)
-                        == ModeListView.MODE_GCAM && GcamHelper.hasGcamCapture()) {
-                modeIndex = ModeListView.MODE_GCAM;
+                        == gcamIndex && GcamHelper.hasGcamCapture()) {
+                modeIndex = gcamIndex;
             }
         } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            modeIndex = ModeListView.MODE_PHOTO;
+            modeIndex = photoIndex;
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
             modeIndex = mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
-            if ((modeIndex == ModeListView.MODE_GCAM &&
+            if ((modeIndex == gcamIndex &&
                     !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
-                modeIndex = ModeListView.MODE_PHOTO;
+                modeIndex = photoIndex;
             }
         }
 
@@ -1016,13 +1023,12 @@ public class CameraActivity extends Activity
         mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
 
         setModuleFromModeIndex(modeIndex);
-
         // TODO: Remove this when refactor is done.
-        if (modeIndex == ModulesInfo.MODULE_PHOTO
-                || modeIndex == ModulesInfo.MODULE_VIDEO
-                || modeIndex == ModulesInfo.MODULE_GCAM
-                || modeIndex == ModulesInfo.MODULE_CRAFT
-                || modeIndex == ModulesInfo.MODULE_REFOCUS) {
+        if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
+                || modeIndex == getResources().getInteger(R.integer.camera_mode_video)
+                || modeIndex == getResources().getInteger(R.integer.camera_mode_gcam)
+                || modeIndex == getResources().getInteger(R.integer.camera_mode_craft)
+                || modeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
             mCameraAppUI.prepareModuleUI();
         }
 
@@ -1345,7 +1351,8 @@ public class CameraActivity extends Activity
             return;
         }
 
-        if (modeIndex == ModeListView.MODE_SETTING) {
+        int settingsIndex = getResources().getInteger(R.integer.camera_mode_setting);
+        if (modeIndex == settingsIndex) {
             onSettingsSelected();
             return;
         }
@@ -1356,16 +1363,16 @@ public class CameraActivity extends Activity
         // Refocus and Gcam are modes that cannot be selected
         // from the mode list view, because they are not list items.
         // Check whether we should interpret MODULE_CRAFT as either.
-        if (modeIndex == ModulesInfo.MODULE_CRAFT) {
+        if (modeIndex == getResources().getInteger(R.integer.camera_mode_craft)) {
             boolean refocusOn = mSettingsManager.isRefocusOn();
             boolean hdrPlusOn = mSettingsManager.isHdrPlusOn();
             if (refocusOn && hdrPlusOn) {
                 throw new IllegalStateException("Refocus and hdr plus cannot be on together.");
             }
             if (refocusOn) {
-                modeIndex = ModulesInfo.MODULE_REFOCUS;
+                modeIndex = getResources().getInteger(R.integer.camera_mode_refocus);
             } else if (hdrPlusOn) {
-                modeIndex = ModulesInfo.MODULE_GCAM;
+                modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
             } else {
                 // Do nothing, keep MODULE_CRAFT.
             }
@@ -1376,16 +1383,16 @@ public class CameraActivity extends Activity
         // TODO: The following check is temporary for modules attached to the
         // generic_module layout. When the refactor is done, similar logic will
         // be applied to all modules.
-        if (mCurrentModeIndex == ModulesInfo.MODULE_PHOTO
-                || mCurrentModeIndex == ModulesInfo.MODULE_VIDEO
-                || mCurrentModeIndex == ModulesInfo.MODULE_GCAM
-                || mCurrentModeIndex == ModulesInfo.MODULE_CRAFT
-                || mCurrentModeIndex == ModulesInfo.MODULE_REFOCUS) {
-            if (oldModuleIndex != ModulesInfo.MODULE_PHOTO
-                    && oldModuleIndex != ModulesInfo.MODULE_VIDEO
-                    && oldModuleIndex != ModulesInfo.MODULE_GCAM
-                    && oldModuleIndex != ModulesInfo.MODULE_CRAFT
-                    && oldModuleIndex != ModulesInfo.MODULE_REFOCUS) {
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_photo)
+                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_video)
+                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_gcam)
+                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_craft)
+                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
+            if (oldModuleIndex != getResources().getInteger(R.integer.camera_mode_photo)
+                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_video)
+                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_gcam)
+                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_craft)
+                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_refocus)) {
                 mCameraAppUI.prepareModuleUI();
             } else {
                 mCameraAppUI.clearModuleUI();
@@ -1510,8 +1517,9 @@ public class CameraActivity extends Activity
         // TODO: once all modules have a bottom bar, remove
         // isUsingBottomBar check.
         if (mCurrentModule.isUsingBottomBar()) {
-            int colorResId = mModeListView.getModeThemeColor(mCurrentModeIndex);
-            mCameraAppUI.setBottomBarColor(getResources().getColor(colorResId));
+            int color = getResources().getColor(
+                    CameraUtil.getCameraThemeColorId(mCurrentModeIndex, this));
+            mCameraAppUI.setBottomBarColor(color);
         }
     }
 

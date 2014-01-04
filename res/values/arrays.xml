@@ -560,4 +560,69 @@
       <item>@drawable/ic_capture_options</item>
     </array>
 
+    <!--Index of camera modes. -->
+    <integer name="camera_mode_photo">0</integer>
+    <integer name="camera_mode_video">1</integer>
+    <integer name="camera_mode_craft">2</integer>
+    <integer name="camera_mode_photosphere">3</integer>
+    <integer name="camera_mode_panorama">4</integer>
+    <integer name="camera_mode_timelapse">5</integer>
+    <integer name="camera_mode_setting">6</integer>
+    <integer name="camera_mode_gcam">7</integer>
+    <integer name="camera_mode_refocus">8</integer>
+
+    <!-- An array of camera mode indices in the sequence of their appearance
+    in the mode drawer. -->
+    <integer-array name="camera_modes_in_nav_drawer_if_supported">
+        <item>@integer/camera_mode_photo</item>
+        <item>@integer/camera_mode_video</item>
+        <item>@integer/camera_mode_craft</item>
+        <item>@integer/camera_mode_photosphere</item>
+        <item>@integer/camera_mode_panorama</item>
+        <item>@integer/camera_mode_timelapse</item>
+        <item>@integer/camera_mode_setting</item>
+    </integer-array>
+
+    <!-- An array of camera mode indices that should always be visible in mode drawer. -->
+    <integer-array name="camera_modes_always_visible">
+        <item>@integer/camera_mode_photo</item>
+        <item>@integer/camera_mode_setting</item>
+    </integer-array>
+
+    <array name="camera_mode_theme_color">
+        <item>@color/camera_mode_color</item>
+        <item>@color/video_mode_color</item>
+        <item>@color/craft_mode_color</item>
+        <item>@color/photosphere_mode_color</item>
+        <item>@color/panorama_mode_color</item>
+        <item>@color/timelapse_mode_color</item>
+        <item>@color/settings_mode_color</item>
+        <item>@color/craft_mode_color</item>
+        <item>@color/craft_mode_color</item>
+    </array>
+
+    <string-array name="camera_mode_text">
+        <item>@string/mode_camera</item>
+        <item>@string/mode_video</item>
+        <item>@string/mode_advanced_camera</item>
+        <item>@string/mode_photosphere</item>
+        <item>@string/mode_panorama</item>
+        <item>@string/mode_timelapse</item>
+        <item>@string/mode_settings</item>
+        <item>""</item>
+        <item>""</item>
+    </string-array>
+
+    <array name="camera_mode_icon">
+        <item>@drawable/ic_camera_normal</item>
+        <item>@drawable/ic_video_normal</item>
+        <item>@drawable/ic_craft_normal</item>
+        <item>@drawable/ic_photo_sphere_normal</item>
+        <item>@drawable/ic_panorama_normal</item>
+        <item>@drawable/ic_timelapse_normal</item>
+        <item>@drawable/ic_settings_normal</item>
+        <item>@drawable/ic_craft_normal</item>
+        <item>@drawable/ic_craft_normal</item>
+    </array>
+
 </resources>

@@ -228,6 +228,9 @@ public class PhotoModule
     // This handles everything about focus.
     private FocusOverlayManager mFocusManager;
 
+    private final int mGcamModeIndex;
+    private final int mRefocusModeIndex;
+
     private String mSceneMode;
 
     private final Handler mHandler = new MainHandler();
@@ -302,7 +305,7 @@ public class PhotoModule
                 }
 
                 case MSG_SWITCH_TO_GCAM_MODULE: {
-                    mActivity.onModeSelected(ModeListView.MODE_GCAM);
+                    mActivity.onModeSelected(mGcamModeIndex);
                 }
             }
         }
@@ -313,6 +316,10 @@ public class PhotoModule
      */
     public PhotoModule(AppController app) {
         super(app);
+        mGcamModeIndex = app.getAndroidContext().getResources()
+                .getInteger(R.integer.camera_mode_gcam);
+        mRefocusModeIndex = app.getAndroidContext().getResources()
+                .getInteger(R.integer.camera_mode_refocus);
     }
 
 
@@ -468,7 +475,7 @@ public class PhotoModule
                     throw new IllegalStateException(
                         "Can't switch refocus off because it should already be off.");
                 }
-                mActivity.onModeSelected(ModeListView.MODE_REFOCUS);
+                mActivity.onModeSelected(mRefocusModeIndex);
             }
         };
 

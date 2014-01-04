@@ -84,6 +84,16 @@ public interface AppController {
     public int getCurrentModuleIndex();
 
     /**
+     * Gets the mode that can be switched to from the given mode id through
+     * quick switch.
+     *
+     * @param currentModuleIndex index of the current mode
+     * @return mode id to quick switch to if index is valid, otherwise returns
+     *         the given mode id itself
+     */
+    public int getQuickSwitchToModuleId(int currentModuleIndex);
+
+    /**
      * This gets called when mode is changed.
      *
      * @param moduleIndex index of the new module to switch to

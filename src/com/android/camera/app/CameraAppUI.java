@@ -390,16 +390,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     private void onSwipeDetected(int swipeState) {
         if (swipeState == SWIPE_UP || swipeState == SWIPE_DOWN) {
-            // Quick switch between photo/video.
-            if (mController.getCurrentModuleIndex() == ModeListView.MODE_PHOTO ||
-                    mController.getCurrentModuleIndex() == ModeListView.MODE_VIDEO) {
+            // Quick switch between modes.
+            int currentModuleIndex = mController.getCurrentModuleIndex();
+            final int moduleToTransitionTo =
+                    mController.getQuickSwitchToModuleId(currentModuleIndex);
+            if (currentModuleIndex != moduleToTransitionTo) {
                 mAppRootView.redirectTouchEventsTo(mModeTransitionView);
 
-                final int moduleToTransitionTo =
-                        mController.getCurrentModuleIndex() == ModeListView.MODE_PHOTO ?
-                        ModeListView.MODE_VIDEO : ModeListView.MODE_PHOTO;
-                int shadeColorId = ModeListView.getModeThemeColor(moduleToTransitionTo);
-                int iconRes = ModeListView.getModeIconResourceId(moduleToTransitionTo);
+                int shadeColorId = CameraUtil.getCameraThemeColorId(moduleToTransitionTo,
+                        mController.getAndroidContext());
+                int iconRes = CameraUtil.getCameraModeIconResId(moduleToTransitionTo,
+                        mController.getAndroidContext());
 
                 AnimationFinishedListener listener = new AnimationFinishedListener() {
                     @Override
@@ -456,8 +457,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     private void showModeCoverUntilPreviewReady() {
         int modeId = mController.getCurrentModuleIndex();
-        int colorId = ModeListView.getModeThemeColor(modeId);
-        int iconId = ModeListView.getModeIconResourceId(modeId);
+        int colorId = CameraUtil.getCameraThemeColorId(modeId, mController.getAndroidContext());
+        int iconId = CameraUtil.getCameraModeIconResId(modeId, mController.getAndroidContext());
         mModeTransitionView.setupModeCover(colorId, iconId);
         mHideCoverRunnable = new Runnable() {
             @Override

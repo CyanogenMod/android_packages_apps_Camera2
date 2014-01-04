@@ -312,7 +312,8 @@ public class PhotoUI implements PreviewStatusListener,
         buttonManager.enableButton(ButtonManager.BUTTON_FLASH,
             null, R.array.camera_flashmode_icons);
 
-        if (mActivity.getCurrentModuleIndex() == ModeListView.MODE_PHOTO) {
+        if (mActivity.getCurrentModuleIndex() ==
+                mActivity.getResources().getInteger(R.integer.camera_mode_photo)) {
             // Simple photo mode.
             buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
             buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);

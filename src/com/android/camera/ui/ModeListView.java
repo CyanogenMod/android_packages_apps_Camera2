@@ -30,12 +30,14 @@ import android.graphics.PorterDuffXfermode;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.widget.AnimationEffects;
 import com.android.camera2.R;
@@ -52,23 +54,6 @@ import java.util.List;
  */
 public class ModeListView extends ScrollView {
 
-    /** Simple struct that defines the look of a mode in the mode switcher. */
-    private static class Mode {
-        /** Resource ID of the icon for this mode. */
-        public final int iconResId;
-        /** Resource ID for the text of this mode. */
-        public final int textResId;
-        /** The ID of the color for this mode. */
-        public final int colorId;
-
-        public Mode(int iconResId, int textResId, int colorId) {
-            this.iconResId = iconResId;
-            this.textResId = textResId;
-            this.colorId = colorId;
-        }
-    }
-
-
     private static final String TAG = "ModeListView";
 
     // Animation Durations
@@ -80,19 +65,6 @@ public class ModeListView extends ScrollView {
     private static final int TOTAL_DURATION_MS = FLY_IN_DURATION_MS + HOLD_DURATION_MS
             + FLY_OUT_DURATION_MS;
 
-    // Different modes in the mode list. Change these to change the order they
-    // appear in the mode switcher.
-    public static final int MODE_PHOTO = 0;
-    public static final int MODE_VIDEO = 1;
-    public static final int MODE_CRAFT = 2;
-    public static final int MODE_WIDEANGLE = 3;
-    public static final int MODE_PHOTOSPHERE = 4;
-    public static final int MODE_TIMELAPSE = 5;
-    public static final int MODE_SETTING = 6;
-    // Special case
-    public static final int MODE_GCAM = 100;
-    public static final int MODE_REFOCUS = 101;
-    private static final int MODE_TOTAL = 7;
     private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
     private static final int NO_ITEM_SELECTED = -1;
 
@@ -105,32 +77,6 @@ public class ModeListView extends ScrollView {
 
     // Scrolling delay between non-focused item and focused item
     private static final int DELAY_MS = 25;
-
-    private static final Mode[] mModes;
-    static {
-        mModes = new Mode[MODE_TOTAL];
-        mModes[MODE_PHOTO] = new Mode(R.drawable.ic_camera_normal,
-                R.string.mode_camera,
-                R.color.camera_mode_color);
-        mModes[MODE_VIDEO] = new Mode(R.drawable.ic_video_normal,
-                R.string.mode_video,
-                R.color.video_mode_color);
-        mModes[MODE_PHOTOSPHERE] = new Mode(R.drawable.ic_photo_sphere_normal,
-                R.string.mode_photosphere,
-                R.color.photosphere_mode_color);
-        mModes[MODE_CRAFT] = new Mode(R.drawable.ic_camera_normal,
-                R.string.mode_advanced_camera,
-                R.color.craft_mode_color);
-        mModes[MODE_TIMELAPSE] = new Mode(R.drawable.ic_timelapse_normal,
-                R.string.mode_timelapse,
-                R.color.timelapse_mode_color);
-        mModes[MODE_WIDEANGLE] = new Mode(R.drawable.ic_panorama_normal,
-                R.string.mode_panorama,
-                R.color.panorama_mode_color);
-        mModes[MODE_SETTING] = new Mode(R.drawable.ic_settings_normal,
-                R.string.mode_settings,
-                R.color.settings_mode_color);
-    }
 
     private final GestureDetector mGestureDetector;
     private final int mIconBlockWidth;
@@ -152,7 +98,7 @@ public class ModeListView extends ScrollView {
     private float mScrollTrendX = 0f;
     private float mScrollTrendY = 0f;
     private ModeSwitchListener mModeSwitchListener = null;
-    private int[] mSupportedModes;
+    private ArrayList<Integer> mSupportedModes;
     private final LinkedList<TimeBasedPosition> mPositionHistory
             = new LinkedList<TimeBasedPosition>();
     private long mCurrentTime;
@@ -319,39 +265,36 @@ public class ModeListView extends ScrollView {
      * @param modeIndexList a list of indices of supported modes
      */
     public void init(List<Integer> modeIndexList) {
-        boolean[] modeIsSupported = new boolean[MODE_TOTAL];
-        // Setting should always be supported
-        modeIsSupported[MODE_SETTING] = true;
-        mTotalModes = 1;
+        int[] modeSequence = getResources()
+                .getIntArray(R.array.camera_modes_in_nav_drawer_if_supported);
+        int[] visibleModes = getResources()
+                .getIntArray(R.array.camera_modes_always_visible);
 
         // Mark the supported modes in a boolean array to preserve the
         // sequence of the modes
+        SparseArray<Boolean> modeIsSupported = new SparseArray<Boolean>();
         for (int i = 0; i < modeIndexList.size(); i++) {
             int mode = modeIndexList.get(i);
-            if (mode >= MODE_TOTAL) {
-                // This is a mode that we don't display in the mode list, skip.
-                continue;
-            }
-            if (modeIsSupported[mode] == false) {
-                modeIsSupported[mode] = true;
-                mTotalModes++;
-            }
+            modeIsSupported.put(mode, true);
         }
-        // Put the indices of supported modes into an array preserving their
-        // display order.
-        mSupportedModes = new int[mTotalModes];
-        int modeCount = 0;
-        for (int i = 0; i < MODE_TOTAL; i++) {
-            if (modeIsSupported[i]) {
-                mSupportedModes[modeCount] = i;
-                modeCount++;
-            }
+        for (int i = 0; i < visibleModes.length; i++) {
+            int mode = visibleModes[i];
+            modeIsSupported.put(mode, true);
         }
 
+        // Put the indices of supported modes into an array preserving their
+        // display order.
+        mSupportedModes = new ArrayList<Integer>();
+        for (int i = 0; i < modeSequence.length; i++) {
+            int mode = modeSequence[i];
+            if (modeIsSupported.get(mode, false)) {
+                mSupportedModes.add(mode);
+            }
+        }
+        mTotalModes = mSupportedModes.size();
         initializeModeSelectorItems();
     }
 
-    // TODO: Initialize mode selectors with different sizes based on number of modes supported
     private void initializeModeSelectorItems() {
         mModeSelectorItems = new ModeSelectorItem[mTotalModes];
         // Inflate the mode selector items and add them to a linear layout
@@ -372,14 +315,13 @@ public class ModeListView extends ScrollView {
             }
             int modeId = getModeIndex(i);
             selectorItem.setIconBackgroundColor(getResources()
-                    .getColor(mModes[modeId].colorId));
+                    .getColor(CameraUtil.getCameraThemeColorId(modeId, getContext())));
 
             // Set image
-            selectorItem.setImageResource(mModes[modeId].iconResId);
+            selectorItem.setImageResource(CameraUtil.getCameraModeIconResId(modeId, getContext()));
 
             // Set text
-            CharSequence text = getResources().getText(mModes[modeId].textResId);
-            selectorItem.setText(text);
+            selectorItem.setText(CameraUtil.getCameraModeText(modeId, getContext()));
             mModeSelectorItems[i] = selectorItem;
         }
 
@@ -394,11 +336,11 @@ public class ModeListView extends ScrollView {
      */
     private int getModeIndex(int modeSelectorIndex) {
         if (modeSelectorIndex < mTotalModes && modeSelectorIndex >= 0) {
-            return mSupportedModes[modeSelectorIndex];
+            return mSupportedModes.get(modeSelectorIndex);
         }
         Log.e(TAG, "Invalid mode selector index: " + modeSelectorIndex + ", total modes: "
                 + mTotalModes);
-        return MODE_PHOTO;
+        return getResources().getInteger(R.integer.camera_mode_photo);
     }
 
     /** Notify ModeSwitchListener, if any, of the mode change. */
@@ -864,42 +806,6 @@ public class ModeListView extends ScrollView {
             }
         });
         mAnimatorSet.start();
-    }
-
-    /**
-     * Get the theme color of a specific mode.
-     *
-     * @param modeIndex index of the mode
-     * @return theme color of the mode if input index is valid, otherwise 0
-     */
-    public static int getModeThemeColor(int modeIndex) {
-        // Photo and gcam has the same theme color
-        if (modeIndex == MODE_GCAM || modeIndex == MODE_REFOCUS) {
-            return mModes[MODE_CRAFT].colorId;
-        }
-        if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
-            return 0;
-        } else {
-            return mModes[modeIndex].colorId;
-        }
-    }
-
-    /**
-     * Get the mode icon resource id of a specific mode.
-     *
-     * @param modeIndex index of the mode
-     * @return icon resource id if the index is valid, otherwise 0
-     */
-    public static int getModeIconResourceId(int modeIndex) {
-        // Photo and gcam has the same mode icon
-        if (modeIndex == MODE_GCAM || modeIndex == MODE_REFOCUS) {
-            return mModes[MODE_CRAFT].iconResId;
-        }
-        if (modeIndex < 0 || modeIndex >= MODE_TOTAL) {
-            return 0;
-        } else {
-            return mModes[modeIndex].iconResId;
-        }
     }
 
     /**

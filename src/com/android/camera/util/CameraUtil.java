@@ -25,6 +25,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -971,5 +972,63 @@ public class CameraUtil {
             ret = ret + "\t" + elems[i].toString() + '\n';
         }
         return ret;
+    }
+
+
+    /**
+     * Gets the theme color of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return theme color of the mode if input index is valid, otherwise 0
+     */
+    public static int getCameraThemeColorId(int modeIndex, Context context) {
+
+        // Find the theme color using id from the color array
+        TypedArray colorRes = context.getResources()
+                .obtainTypedArray(R.array.camera_mode_theme_color);
+        if (modeIndex >= colorRes.length() || modeIndex < 0) {
+            // Mode index not found
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return 0;
+        }
+        return colorRes.getResourceId(modeIndex, 0);
+    }
+
+    /**
+     * Gets the mode icon resource id of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return icon resource id if the index is valid, otherwise 0
+     */
+    public static int getCameraModeIconResId(int modeIndex, Context context) {
+        // Find the camera mode icon using id
+        TypedArray cameraModesIcons = context.getResources()
+                .obtainTypedArray(R.array.camera_mode_icon);
+        if (modeIndex >= cameraModesIcons.length() || modeIndex < 0) {
+            // Mode index not found
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return 0;
+        }
+        return cameraModesIcons.getResourceId(modeIndex, 0);
+    }
+
+    /**
+     * Gets the mode text of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return mode text if the index is valid, otherwise a new empty string
+     */
+    public static String getCameraModeText(int modeIndex, Context context) {
+        // Find the camera mode icon using id
+        String[] cameraModesText = context.getResources()
+                .getStringArray(R.array.camera_mode_text);
+        if (modeIndex < 0 || modeIndex >= cameraModesText.length) {
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return new String();
+        }
+        return cameraModesText[modeIndex];
     }
 }

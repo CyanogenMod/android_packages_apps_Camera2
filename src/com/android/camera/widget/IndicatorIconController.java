@@ -130,7 +130,8 @@ public class IndicatorIconController
                 && buttonManager.isVisible(ButtonManager.BUTTON_FLASH)) {
 
             int modeIndex = controller.getCurrentModuleIndex();
-            if (modeIndex == ModulesInfo.MODULE_VIDEO) {
+            if (modeIndex == controller.getAndroidContext().getResources()
+                    .getInteger(R.integer.camera_mode_video)) {
                 setIndicatorState(controller.getSettingsManager(),
                                   SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE,
                                   mFlashIndicator, mFlashIndicatorVideoIcons);
