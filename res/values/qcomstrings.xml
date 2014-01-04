@@ -64,27 +64,27 @@
     <string name="pref_camera_autoexposure_value_spotmetering" translatable="false">spot-metering</string>
 
     <!-- Settings screen, Video encoder title -->
-    <string name="pref_camera_videoencoder_title">Video encoder</string>
+    <string name="pref_camera_videoencoder_title">Video codec</string>
 
     <!-- Settings screen, Video encoder dialog radio button choices -->
-    <string name="pref_camera_videoencoder_entry_0" translatable="false">MPEG4</string>
-    <string name="pref_camera_videoencoder_entry_1" translatable="false">H263</string>
-    <string name="pref_camera_videoencoder_entry_2" translatable="false">H264</string>
+    <string name="pref_camera_videoencoder_entry_0" translatable="false">MPEG-4</string>
+    <string name="pref_camera_videoencoder_entry_1" translatable="false">H.263</string>
+    <string name="pref_camera_videoencoder_entry_2" translatable="false">H.264</string>
 
     <!-- Default video encoder setting. A numerical value. -->
     <string name="pref_camera_videoencoder_default" translatable="false">h264</string>
 
     <!-- Settings screen, Video encoder dialog title -->
-    <string name="pref_camera_videoencoder_dialogtitle">Video encoder</string>
+    <string name="pref_camera_videoencoder_dialogtitle">Video codec</string>
 
     <!-- Default audio encoder setting. A numerical value. -->
     <string name="pref_camera_audioencoder_default" translatable="false">aac</string>
 
     <!-- Settings screen, Audio encoder title -->
-    <string name="pref_camera_audioencoder_title">Audio encoder</string>
+    <string name="pref_camera_audioencoder_title">Audio codec</string>
 
     <!-- Settings screen, Audio encoder dialog radio button choices -->
-    <string name="pref_camera_audioencoder_entry_0" translatable="false">AMRNB</string>
+    <string name="pref_camera_audioencoder_entry_0" translatable="false">AMR-NB</string>
     <string name="pref_camera_audioencoder_entry_1" translatable="false">AAC</string>
 
     <!-- Default video duration setting. A numerical value.-->
@@ -180,10 +180,10 @@
     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported video codec for HFR mode -->
-    <string name="error_app_unsupported_hfr_codec">Only H264 video encoding is supported when HFR is ON</string>
+    <string name="error_app_unsupported_hfr_codec">Only H.264 video encoding is supported when HFR is on</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
-     <string name="error_app_unsupported">Unsupported video resolution for this encoder type</string>
+     <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
 
     <!--The message is shown in dialog when the raw snapshot is selected in zsl mode-->
     <string name="error_app_unsupported_raw">Raw picture format is not supported in ZSL mode</string>
