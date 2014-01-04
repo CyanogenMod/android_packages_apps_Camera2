@@ -115,23 +115,23 @@
 
     <string name="pref_camera_zsl_default" translatable="false">off</string>
 
-         <!-- Default selectable zone af setting. Do not translate. -->
-     <string name="pref_camera_selectablezoneaf_default" translatable="false">auto</string>
+    <!-- Default selectable zone af setting. Do not translate. -->
+    <string name="pref_camera_selectablezoneaf_default" translatable="false">auto</string>
 
-     <!-- Settings screen, Selectable zone af title -->
-     <string name="pref_camera_selectablezoneaf_title"> Selectable Zone Auto Focus</string>
+    <!-- Settings screen, Selectable zone af title -->
+    <string name="pref_camera_selectablezoneaf_title"> Selectable Zone Auto Focus</string>
 
-     <!-- Settings screen, Selectable Zone Af dialog radio button choices -->
-     <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>
-     <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spot Metering</string>
-     <string name="pref_camera_selectablezoneaf_entry_centerweighted">Center Weighted</string>
-     <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame Average</string>
+    <!-- Settings screen, Selectable Zone Af dialog radio button choices -->
+    <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>
+    <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spot Metering</string>
+    <string name="pref_camera_selectablezoneaf_entry_centerweighted">Center Weighted</string>
+    <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame Average</string>
 
-     <!-- Auto exposure entry values. Do not translate. -->
-     <string name="pref_camera_selectablezoneaf_value_auto" translatable="false">auto</string>
-     <string name="pref_camera_selectablezoneaf_value_spotmetering" translatable="false">spot-metering</string>
-     <string name="pref_camera_selectablezoneaf_value_centerweighted" translatable="false">center-weighted</string>
-     <string name="pref_camera_selectablezoneaf_value_frameaverage" translatable="false">frame-average</string>
+    <!-- Auto exposure entry values. Do not translate. -->
+    <string name="pref_camera_selectablezoneaf_value_auto" translatable="false">auto</string>
+    <string name="pref_camera_selectablezoneaf_value_spotmetering" translatable="false">spot-metering</string>
+    <string name="pref_camera_selectablezoneaf_value_centerweighted" translatable="false">center-weighted</string>
+    <string name="pref_camera_selectablezoneaf_value_frameaverage" translatable="false">frame-average</string>
 
     <!-- Settings screen, ZSL location dialog choices -->
     <string name="pref_camera_zsl_entry_off">Off</string>
@@ -162,25 +162,25 @@
     <string name="pref_camera_facedetection_entry_off">Off</string>
     <string name="pref_camera_facedetection_entry_on">On</string>
 
-     <!-- Default redeye reduction setting. -->
-     <string name="pref_camera_redeyereduction_default" translatable="false">disable</string>
+    <!-- Default redeye reduction setting. -->
+    <string name="pref_camera_redeyereduction_default" translatable="false">disable</string>
 
-     <!-- Settings screen, Select Redeye Reduction -->
-     <string name="pref_camera_redeyereduction_title">Redeye Reduction</string>
+    <!-- Settings screen, Select Redeye Reduction -->
+    <string name="pref_camera_redeyereduction_title">Redeye Reduction</string>
 
-     <!-- Settings menu, redeye reduction choices -->
-     <string name="pref_camera_redeyereduction_entry_enable">Enable</string>
-     <string name="pref_camera_redeyereduction_entry_disable">Disable</string>
-     <!-- Default mce setting. Do not translate. -->
-     <string name="pref_camera_mce_default" translatable="false">enable</string>
+    <!-- Settings menu, redeye reduction choices -->
+    <string name="pref_camera_redeyereduction_entry_enable">Enable</string>
+    <string name="pref_camera_redeyereduction_entry_disable">Disable</string>
+    <!-- Default mce setting. Do not translate. -->
+    <string name="pref_camera_mce_default" translatable="false">enable</string>
 
-     <!-- The message is shown in dialog when the app encounters an unsupported resolution for HFR mode -->
-     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
+    <!-- The message is shown in dialog when the app encounters an unsupported resolution for HFR mode -->
+    <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
 
-     <!-- The message is shown in dialog when the app encounters an unsupported video codec for HFR mode -->
-     <string name="error_app_unsupported_hfr_codec">Only H264 video encoding is supported when HFR is ON</string>
+    <!-- The message is shown in dialog when the app encounters an unsupported video codec for HFR mode -->
+    <string name="error_app_unsupported_hfr_codec">Only H264 video encoding is supported when HFR is ON</string>
 
-     <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
+    <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
      <string name="error_app_unsupported">Unsupported video resolution for this encoder type</string>
 
     <!--The message is shown in dialog when the raw snapshot is selected in zsl mode-->
@@ -191,20 +191,20 @@
     <string name="error_app_unsupported_hdr_zsl">HDR is not supported in zsl
         mode</string>
 
-     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
-     <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
-     <string name="pref_camera_ae_bracket_hdr_value_ae_bracket" translatable="false">AE-Bracket</string>
+    <!-- Settings screen, AE bracketing and HDR location dialog choices -->
+    <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
+    <string name="pref_camera_ae_bracket_hdr_value_ae_bracket" translatable="false">AE-Bracket</string>
 
-     <string name="pref_camera_ae_bracket_hdr_title" translatable="false">AE-Bracket</string>
-     <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
+    <string name="pref_camera_ae_bracket_hdr_title" translatable="false">AE-Bracket</string>
+    <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
 
-     <string name="pref_camera_ae_bracket_hdr_entry_on">On</string>
-     <string name="pref_camera_ae_bracket_hdr_entry_off">Off</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_on">On</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_off">Off</string>
 
-     <string name="err_app_unsupport_ae_bracket_code">no ae bracket support by Apps now</string>
+    <string name="err_app_unsupport_ae_bracket_code">no ae bracket support by Apps now</string>
 
-        <!-- The messsage shown if user selects a snapshot resolution lower than the current video size. -->
-    <string name="snapshot_lower_than_video">Video snapshot size lower than video size. Capping to Video size. Please select a resolution higher or equal to the current video size. </string>
+    <!-- The messsage shown if user selects a snapshot resolution lower than the current video size. -->
+    <string name="snapshot_lower_than_video">Video snapshot size lower than video size. Capping to Video size. Please select a resolution higher or equal to the current video size.</string>
 
     <!-- The messsage shown if user selects a snapshot resolution in low power mode. -->
     <string name="snapshotsize_low_powermode">We do not support picture
@@ -213,27 +213,27 @@
     </string>
 
     <!-- The messsage shown if user tries to take snapshot during D1/QCIF resolution. -->
-    <string name="snapshot_qcif_and_d1">Only Video size snapshot supported for this resolution. </string>
+    <string name="snapshot_qcif_and_d1">Only Video size snapshot supported for this resolution.</string>
 
-     <!-- Default hfr setting. Do not translate. -->
-     <string name="pref_camera_hfr_default" translatable="false">off</string>
+    <!-- Default hfr setting. Do not translate. -->
+    <string name="pref_camera_hfr_default" translatable="false">off</string>
 
-     <!-- Settings screen, Select hfr title -->
-     <string name="pref_camera_hfr_title">Video High FrameRate</string>
+    <!-- Settings screen, Select hfr title -->
+    <string name="pref_camera_hfr_title">Video High FrameRate</string>
 
-     <!-- Settings screen, hfr radio button choices -->
-     <string name="pref_camera_hfr_entry_off">Off</string>
-     <string name="pref_camera_hfr_entry_2x">60</string>
-     <string name="pref_camera_hfr_entry_3x">90</string>
-     <string name="pref_camera_hfr_entry_4x">120</string>
+    <!-- Settings screen, hfr radio button choices -->
+    <string name="pref_camera_hfr_entry_off">Off</string>
+    <string name="pref_camera_hfr_entry_2x">60</string>
+    <string name="pref_camera_hfr_entry_3x">90</string>
+    <string name="pref_camera_hfr_entry_4x">120</string>
 
-     <!-- HFR entry values. Do not translate. -->
-     <string name="pref_camera_hfr_value_off" translatable="false">off</string>
-     <string name="pref_camera_hfr_value_2x" translatable="false">60</string>
-     <string name="pref_camera_hfr_value_3x" translatable="false">90</string>
-     <string name="pref_camera_hfr_value_4x" translatable="false">120</string>
+    <!-- HFR entry values. Do not translate. -->
+    <string name="pref_camera_hfr_value_off" translatable="false">off</string>
+    <string name="pref_camera_hfr_value_2x" translatable="false">60</string>
+    <string name="pref_camera_hfr_value_3x" translatable="false">90</string>
+    <string name="pref_camera_hfr_value_4x" translatable="false">120</string>
 
-        <!-- Denoise Settings screen, setting title text -->
+    <!-- Denoise Settings screen, setting title text -->
     <string name="pref_camera_denoise_title">Wavelet Denoise Mode</string>
     <string name="pref_camera_denoise_default" translatable="false">denoise-off</string>
 
@@ -241,43 +241,43 @@
     <string name="pref_camera_denoise_entry_off">Off</string>
     <string name="pref_camera_denoise_entry_on">On</string>
 
-     <!-- Default iso setting. Do not translate. -->
-     <string name="pref_camera_iso_default" translatable="false">auto</string>
+    <!-- Default iso setting. Do not translate. -->
+    <string name="pref_camera_iso_default" translatable="false">auto</string>
 
-     <!-- Settings screen, Select Iso title -->
-     <string name="pref_camera_iso_title">Select ISO</string>
+    <!-- Settings screen, Select Iso title -->
+    <string name="pref_camera_iso_title">Select ISO</string>
 
-     <!-- Settings screen, ISO dialog radio button choices -->
-     <string name="pref_camera_iso_entry_auto">Auto</string>
-     <string name="pref_camera_iso_entry_isodeblur">ISO Auto(HJR)</string>
-     <string name="pref_camera_iso_entry_iso100">ISO100</string>
-     <string name="pref_camera_iso_entry_iso200">ISO200</string>
-     <string name="pref_camera_iso_entry_iso400">ISO400</string>
-     <string name="pref_camera_iso_entry_iso800">ISO800</string>
-     <string name="pref_camera_iso_entry_iso1600">ISO1600</string>
+    <!-- Settings screen, ISO dialog radio button choices -->
+    <string name="pref_camera_iso_entry_auto">Auto</string>
+    <string name="pref_camera_iso_entry_isodeblur">ISO Auto(HJR)</string>
+    <string name="pref_camera_iso_entry_iso100">ISO100</string>
+    <string name="pref_camera_iso_entry_iso200">ISO200</string>
+    <string name="pref_camera_iso_entry_iso400">ISO400</string>
+    <string name="pref_camera_iso_entry_iso800">ISO800</string>
+    <string name="pref_camera_iso_entry_iso1600">ISO1600</string>
 
-     <!-- ISO entry values. Do not translate. -->
-     <string name="pref_camera_iso_value_auto" translatable="false">auto</string>
-     <string name="pref_camera_iso_value_isodeblur" translatable="false">ISO_HJR</string>
-     <string name="pref_camera_iso_value_iso100" translatable="false">ISO100</string>
-     <string name="pref_camera_iso_value_iso200" translatable="false">ISO200</string>
-     <string name="pref_camera_iso_value_iso400" translatable="false">ISO400</string>
-     <string name="pref_camera_iso_value_iso800" translatable="false">ISO800</string>
-     <string name="pref_camera_iso_value_iso1600" translatable="false">ISO1600</string>
+    <!-- ISO entry values. Do not translate. -->
+    <string name="pref_camera_iso_value_auto" translatable="false">auto</string>
+    <string name="pref_camera_iso_value_isodeblur" translatable="false">ISO_HJR</string>
+    <string name="pref_camera_iso_value_iso100" translatable="false">ISO100</string>
+    <string name="pref_camera_iso_value_iso200" translatable="false">ISO200</string>
+    <string name="pref_camera_iso_value_iso400" translatable="false">ISO400</string>
+    <string name="pref_camera_iso_value_iso800" translatable="false">ISO800</string>
+    <string name="pref_camera_iso_value_iso1600" translatable="false">ISO1600</string>
 
-     <!-- Settings screen, Anti Banding title -->
-     <string name="pref_camera_antibanding_title">Anti Banding</string>
+    <!-- Settings screen, Anti Banding title -->
+    <string name="pref_camera_antibanding_title">Anti Banding</string>
 
-     <!-- Default Anti Banding setting. -->
-     <string name="pref_camera_antibanding_default" translatable="false">auto</string>
+    <!-- Default Anti Banding setting. -->
+    <string name="pref_camera_antibanding_default" translatable="false">auto</string>
 
-     <!-- Settings screen, Anti Banding entries -->
-     <string name="pref_camera_antibanding_entry_0">Off</string>
-     <string name="pref_camera_antibanding_entry_1">50 Hz</string>
-     <string name="pref_camera_antibanding_entry_2">60 Hz</string>
-     <string name="pref_camera_antibanding_entry_3">Auto</string>
+    <!-- Settings screen, Anti Banding entries -->
+    <string name="pref_camera_antibanding_entry_0">Off</string>
+    <string name="pref_camera_antibanding_entry_1">50 Hz</string>
+    <string name="pref_camera_antibanding_entry_2">60 Hz</string>
+    <string name="pref_camera_antibanding_entry_3">Auto</string>
 
-        <!-- Default color effect setting. -->
+    <!-- Default color effect setting. -->
     <string name="pref_camera_coloreffect_default" translatable="false">none</string>
 
     <!-- Settings screen, Select Color effect title -->
@@ -549,19 +549,19 @@
     <string name="pref_camera_jpegquality_entry_4">Jpeg 95%</string>
     <string name="pref_camera_jpegquality_entry_5">Jpeg 100%</string>
 
-     <!-- Default auto histogram setting. Do not translate. -->
-     <string name="pref_camera_histogram_default" translatable="false">disable</string>
+    <!-- Default auto histogram setting. Do not translate. -->
+    <string name="pref_camera_histogram_default" translatable="false">disable</string>
 
-     <!-- Settings screen, Select Histogram title -->
-     <string name="pref_camera_histogram_title">Histogram</string>
+    <!-- Settings screen, Select Histogram title -->
+    <string name="pref_camera_histogram_title">Histogram</string>
 
-     <!-- Settings screen, Histogram radio button choices -->
-     <string name="pref_camera_histogram_entry_enable">Enable</string>
-     <string name="pref_camera_histogram_entry_disable">Disable</string>
+    <!-- Settings screen, Histogram radio button choices -->
+    <string name="pref_camera_histogram_entry_enable">Enable</string>
+    <string name="pref_camera_histogram_entry_disable">Disable</string>
 
-     <!-- Histogram entry values. Do not translate. -->
-     <string name="pref_camera_histogram_value_enable" translatable="false">enable</string>
-     <string name="pref_camera_histogram_value_disable" translatable="false">disable</string>
+    <!-- Histogram entry values. Do not translate. -->
+    <string name="pref_camera_histogram_value_enable" translatable="false">enable</string>
+    <string name="pref_camera_histogram_value_disable" translatable="false">disable</string>
 
     <string name="pref_camera_picturesize_entry_1920x1080">HD1080</string>
     <string name="pref_camera_picturesize_entry_1280x768">WXGA</string>
