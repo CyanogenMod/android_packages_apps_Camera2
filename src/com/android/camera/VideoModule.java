@@ -428,6 +428,11 @@ public class VideoModule implements CameraModule,
 
         mOrientationManager = new OrientationManager(mActivity);
 
+        // Force a re-check of the storage path
+        if (mActivity.setStoragePath(mPreferences)) {
+            mActivity.updateStorageSpaceAndHint();
+        }
+
         /*
          * To reduce startup time, we start the preview in another thread.
          * We make sure the preview is started at the end of onCreate.
@@ -1394,7 +1399,7 @@ public class VideoModule implements CameraModule,
         // Used when emailing.
         String filename = title + convertOutputFormatToFileExt(outputFileFormat);
         String mime = convertOutputFormatToMimeType(outputFileFormat);
-        String path = Storage.DIRECTORY + '/' + filename;
+        String path = Storage.getInstance().generateDirectory() + '/' + filename;
         String tmpPath = path + ".tmp";
         mCurrentVideoValues = new ContentValues(9);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
@@ -2076,6 +2081,10 @@ public class VideoModule implements CameraModule,
             boolean recordLocation = RecordLocationPreference.get(
                     mPreferences, mContentResolver);
             mLocationManager.recordLocation(recordLocation);
+
+            if (mActivity.setStoragePath(mPreferences)) {
+                mActivity.updateStorageSpaceAndHint();
+            }
 
             readVideoPreferences();
             mUI.showTimeLapseUI(mCaptureTimeLapse);

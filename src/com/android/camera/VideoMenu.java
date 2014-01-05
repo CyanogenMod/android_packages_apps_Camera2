@@ -28,7 +28,6 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimeIntervalPopup;
-
 import com.android.camera2.R;
 
 import java.util.Locale;
@@ -191,6 +190,7 @@ public class VideoMenu extends PieController
         }
         // extra settings popup
         mOtherKeys = new String[] {
+                CameraSettings.KEY_STORAGE,
                 CameraSettings.KEY_VIDEO_ENCODER,
                 CameraSettings.KEY_AUDIO_ENCODER,
                 CameraSettings.KEY_FOCUS_TIME,
