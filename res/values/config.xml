@@ -23,4 +23,6 @@
     <!-- Stay in continuous focus even if touch-to-focus is used
          This option doesn't make sense if wantsFocusModes is on -->
     <bool name="useContinuosFocusForTouch">false</bool>
+    <!-- Decode YV16 format on Samsung HDR hardware -->
+    <bool name="needsSamsungHDRFormat">false</bool>
 </resources>
