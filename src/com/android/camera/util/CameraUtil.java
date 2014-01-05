@@ -193,6 +193,8 @@ public class CameraUtil {
 
     private static float sPixelDensity = 1;
     private static ImageFileNamer sImageFileNamer;
+    // Use samsung HDR format
+    private static boolean sSamsungHDRFormat;
 
     private CameraUtil() {
     }
@@ -208,10 +210,15 @@ public class CameraUtil {
         sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
         sNoFocusModeChangeForTouch = context.getResources().getBoolean(
                 R.bool.useContinuosFocusForTouch);
+        sSamsungHDRFormat = context.getResources().getBoolean(R.bool.needsSamsungHDRFormat);
     }
 
     public static int dpToPixel(int dp) {
         return Math.round(sPixelDensity * dp);
+    }
+
+    public static boolean needSamsungHDRFormat() {
+        return sSamsungHDRFormat;
     }
 
     public static boolean noFocusModeChangeForTouch() {
@@ -346,6 +353,47 @@ public class CameraUtil {
             Log.e(TAG, "Got oom exception ", ex);
             return null;
         }
+    }
+
+    public static Bitmap decodeYUV422P(byte[] yuv422p, int width, int height)
+                        throws NullPointerException, IllegalArgumentException {
+        final int frameSize = width * height;
+        int[] rgb = new int[frameSize];
+        for (int j = 0, yp = 0; j < height; j++) {
+            int up = frameSize + (j * (width/2)), u = 0, v = 0;
+            int vp = ((int)(frameSize*1.5) + (j*(width/2)));
+            for (int i = 0; i < width; i++, yp++) {
+                int y = (0xff & ((int) yuv422p[yp])) - 16;
+                if (y < 0)
+                    y = 0;
+                if ((i & 1) == 0) {
+                    u = (0xff & yuv422p[up++]) - 128;
+                    v = (0xff & yuv422p[vp++]) - 128;
+                }
+
+                int r = y + (int)(1.403 * v);
+
+                int g = y - (int)((0.344 * u) - (0.714 * v));
+
+                int b = y + (int)(1.770 * u);
+
+                if (r < 0)
+                    r = 0;
+                else if (r > 255)
+                    r = 255;
+                if (g < 0)
+                    g = 0;
+                else if (g > 255)
+                    g = 255;
+                if (b < 0)
+                    b = 0;
+                else if (b > 255)
+                    b = 255;
+
+                rgb[yp] = 0xff000000 | (r<<16) | (g<<8) | b;
+            }
+        }
+        return Bitmap.createBitmap(rgb, width, height, Bitmap.Config.ARGB_8888);
     }
 
     public static void closeSilently(Closeable c) {
