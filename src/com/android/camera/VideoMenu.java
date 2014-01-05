@@ -68,6 +68,7 @@ public class VideoMenu extends PieController
         // exposure compensation
         if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
             item = makeItem(CameraSettings.KEY_EXPOSURE);
+            item.setLabel(res.getString(R.string.pref_exposure_label));
             mRenderer.addItem(item);
         }
         // enhance
