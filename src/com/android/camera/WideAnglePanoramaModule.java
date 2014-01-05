@@ -757,7 +757,7 @@ public class WideAnglePanoramaModule
         if (jpegData != null) {
             String filename = PanoUtil.createName(
                     mActivity.getResources().getString(R.string.pano_file_name_format), mTimeTaken);
-            String filepath = Storage.generateFilepath(filename,
+            String filepath = Storage.getInstance().generateFilepath(filename,
                               PhotoModule.PIXEL_FORMAT_JPEG);
 
             UsageStatistics.onEvent(UsageStatistics.COMPONENT_PANORAMA,
@@ -777,10 +777,10 @@ public class WideAnglePanoramaModule
                 exif.writeExif(jpegData, filepath);
             } catch (IOException e) {
                 Log.e(TAG, "Cannot set exif for " + filepath, e);
-                Storage.writeFile(filepath, jpegData);
+                Storage.getInstance().writeFile(filepath, jpegData);
             }
             int jpegLength = (int) (new File(filepath).length());
-            return Storage.addImage(mContentResolver, filename, mTimeTaken, loc, orientation,
+            return Storage.getInstance().addImage(mContentResolver, filename, mTimeTaken, loc, orientation,
                     jpegLength, filepath, width, height, LocalData.MIME_TYPE_JPEG);
         }
         return null;

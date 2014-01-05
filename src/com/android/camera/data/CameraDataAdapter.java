@@ -41,7 +41,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private static final String TAG = "CAM_CameraDataAdapter";
 
     private static final int DEFAULT_DECODE_SIZE = 1600;
-    private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
+    private static final String[] CAMERA_PATH = { Storage.getInstance().generateDirectory() + "%" };
 
     private LocalDataList mImages;
 
