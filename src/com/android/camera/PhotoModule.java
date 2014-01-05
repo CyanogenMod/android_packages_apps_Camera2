@@ -742,7 +742,7 @@ public class PhotoModule
         queue.addIdleHandler(new MessageQueue.IdleHandler() {
             @Override
             public boolean queueIdle() {
-                Storage.ensureOSXCompatible();
+                Storage.getInstance().ensureOSXCompatible();
                 return false;
             }
         });
@@ -903,7 +903,7 @@ public class PhotoModule
                 return;
             }
 
-            String dstPath = Storage.DIRECTORY;
+            String dstPath = Storage.getInstance().generateDirectory();
             File sdCard = android.os.Environment.getExternalStorageDirectory();
             File dstFile = new File(dstPath);
             if (dstFile == null) {
@@ -2614,6 +2614,10 @@ public class PhotoModule
         boolean recordLocation = RecordLocationPreference.get(
                 mPreferences, mContentResolver);
         mLocationManager.recordLocation(recordLocation);
+
+        if (mActivity.setStoragePath(mPreferences)) {
+            mActivity.updateStorageSpaceAndHint();
+        }
 
         /* Check if the PhotoUI Menu is initialized or not. This
          * should be initialized during onCameraOpen() which should
