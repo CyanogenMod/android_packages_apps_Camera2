@@ -331,6 +331,7 @@ public class VideoModule extends CameraModule
     @Override
     public void onSingleTapUp(View view, int x, int y) {
         // TODO: Add touch to focus.
+        onShutterButtonClick();
     }
 
     private void takeASnapshot() {
@@ -491,8 +492,10 @@ public class VideoModule extends CameraModule
 
         if (stop) {
             onStopVideoRecording();
+            mActivity.getCameraAppUI().setBottomBarVisible(true);
         } else {
             startVideoRecording();
+            mActivity.getCameraAppUI().setBottomBarVisible(false);
         }
         mUI.enableShutter(false);
 
