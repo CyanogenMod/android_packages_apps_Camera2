@@ -26,6 +26,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.android.camera.TextureViewHelper;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
@@ -33,7 +34,8 @@ import com.android.camera2.R;
  * This class handles all the animations at capture time. Post capture animations
  * will be handled in a separate place.
  */
-public class CaptureAnimationOverlay extends View {
+public class CaptureAnimationOverlay extends View
+    implements PreviewStatusListener.PreviewAreaSizeChangedListener {
     private final static String TAG = "CaptureAnimationOverlay";
 
     private final static int FLASH_CIRCLE_SHRINK_DURATION_MS = 200;
@@ -57,13 +59,6 @@ public class CaptureAnimationOverlay extends View {
         mPaint.setColor(FLASH_COLOR);
         mFlashCircleSizeAfterShrink = getResources()
                 .getDimensionPixelSize(R.dimen.flash_circle_size_after_shrink);
-    }
-
-    @Override
-    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        mWidth = right - left;
-        mHeight = bottom - top;
     }
 
     /**
@@ -162,5 +157,11 @@ public class CaptureAnimationOverlay extends View {
         if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
             canvas.drawCircle(mFlashCircleCenterX, mFlashCircleCenterY, mFlashCircleRadius, mPaint);
         }
+    }
+
+    @Override
+    public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
+        mWidth = (int) previewWidth;
+        mHeight = (int) previewHeight;
     }
 }

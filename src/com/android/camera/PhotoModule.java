@@ -400,12 +400,6 @@ public class PhotoModule
     }
 
     private void onCameraOpened() {
-        View root = mUI.getRootView();
-        // These depend on camera parameters.
-
-        int width = root.getWidth();
-        int height = root.getHeight();
-        mFocusManager.setPreviewRect(new Rect(0, 0, width, height));
         openCameraCommon();
     }
 
