@@ -901,7 +901,8 @@ public class CameraActivity extends Activity
         mPreferences = new ComboPreferences(getAndroidContext());
         mContentResolver = this.getContentResolver();
 
-        mSettingsManager = new SettingsManager(this, null, mCameraController.getNumberOfCameras());
+        mSettingsManager = new SettingsManager(this, mCameraController.getNumberOfCameras());
+
         // Remove this after we get rid of ComboPreferences.
         int cameraId = Integer.parseInt(mSettingsManager.get(SettingsManager.SETTING_CAMERA_ID));
         mPreferences.setLocalId(this, cameraId);
@@ -1095,6 +1096,7 @@ public class CameraActivity extends Activity
         // Delete photos that are pending deletion
         performDeletion();
         mCurrentModule.pause();
+        mSettingsManager.removeOnSettingChangedListener();
         mOrientationManager.pause();
         // Close the camera and wait for the operation done.
         mCameraController.closeCamera();

@@ -45,16 +45,14 @@ public class SettingsManager {
 
     private int mCameraId = -1;
 
-    public SettingsManager(Context context,
-            OnSharedPreferenceChangeListener globalListener,
-            int nCameras) {
+    public SettingsManager(Context context, int nCameras) {
         mContext = context;
 
         SettingsCache.ExtraSettings extraSettings = new SettingsHelper();
         mSettingsCache = new SettingsCache(mContext, extraSettings);
 
         mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
-        initGlobal(globalListener);
+        initGlobal();
 
         int cameraId = Integer.parseInt(get(SETTING_CAMERA_ID));
         if (cameraId < 0 || cameraId >= nCameras) {
@@ -65,11 +63,10 @@ public class SettingsManager {
     /**
      * Initialize global SharedPreferences.
      */
-    private void initGlobal(OnSharedPreferenceChangeListener listener) {
+    private void initGlobal() {
         String globalKey = mContext.getPackageName() + "_preferences_camera";
         mGlobalSettings = mContext.getSharedPreferences(
             globalKey, Context.MODE_PRIVATE);
-        mGlobalSettings.registerOnSharedPreferenceChangeListener(listener);
     }
 
     /**
@@ -80,9 +77,7 @@ public class SettingsManager {
         mSettingsCache.setCapabilities(mCapabilities);
 
         if (cameraId == mCameraId) {
-            if (mCameraSettings != null) {
-                mCameraSettings.registerOnSharedPreferenceChangeListener(mListener);
-            }
+            removeOnSettingChangedListener();
             return;
         }
 
@@ -97,29 +92,39 @@ public class SettingsManager {
         String cameraKey = mContext.getPackageName() + "_preferences_" + cameraId;
         mCameraSettings = mContext.getSharedPreferences(
             cameraKey, Context.MODE_PRIVATE);
-        mCameraSettings.registerOnSharedPreferenceChangeListener(mListener);
     }
 
     /**
      * Interface with Camera Parameters and Modules.
      */
-    public interface SettingsListener {
-        public void onSettingsChanged();
+    public interface OnSettingChangedListener {
+        /**
+         * Called every time a SharedPreference has been changed.
+         */
+        public void onSettingChanged(int setting);
     }
 
     /**
-     * Add a SettingsListener to the SettingsManager, which will execute
+     * Set a OnSettingChangedListener on the SettingsManager, which will execute
      * onSettingsChanged when camera specific SharedPreferences has been updated.
      */
-    public void addListener(final SettingsListener listener) {
+    public void setOnSettingChangedListener(final OnSettingChangedListener listener) {
         mListener =
             new OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(
                         SharedPreferences sharedPreferences, String key) {
-                    listener.onSettingsChanged();
+                    int settingId = mSettingsCache.getId(key);
+                    listener.onSettingChanged(settingId);
                 }
             };
+
+        if (mCameraSettings != null) {
+            mCameraSettings.registerOnSharedPreferenceChangeListener(mListener);
+        }
+        if (mGlobalSettings != null) {
+            mGlobalSettings.registerOnSharedPreferenceChangeListener(mListener);
+        }
     }
 
     /**
@@ -127,9 +132,14 @@ public class SettingsManager {
      *
      * This should be done in onPause if a listener has been set.
      */
-    public void removeListener() {
-        if (mCameraSettings != null && mListener != null) {
-            mCameraSettings.unregisterOnSharedPreferenceChangeListener(mListener);
+    public void removeOnSettingChangedListener() {
+        if (mListener != null) {
+            if (mCameraSettings != null) {
+                mCameraSettings.unregisterOnSharedPreferenceChangeListener(mListener);
+            }
+            if (mGlobalSettings != null) {
+                mGlobalSettings.unregisterOnSharedPreferenceChangeListener(mListener);
+            }
             mListener = null;
         }
     }
