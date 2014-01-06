@@ -195,9 +195,6 @@ public class FaceView extends View
                 rh = temp;
             }
             CameraUtil.prepareMatrix(mMatrix, mMirror, mDisplayOrientation, rw, rh);
-            int dx = (getWidth() - rw) / 2;
-            int dy = (getHeight() - rh) / 2;
-
             // Focus indicator is directional. Rotate the matrix and the canvas
             // so it looks correctly in all orientations.
             canvas.save();
@@ -213,7 +210,6 @@ public class FaceView extends View
                 mMatrix.mapRect(mRect);
                 if (LOGV) CameraUtil.dumpRect(mRect, "Transformed rect");
                 mPaint.setColor(mColor);
-                mRect.offset(dx, dy);
                 canvas.drawOval(mRect, mPaint);
             }
             canvas.restore();
