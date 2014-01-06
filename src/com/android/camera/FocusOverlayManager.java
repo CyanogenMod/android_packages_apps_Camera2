@@ -90,6 +90,7 @@ public class FocusOverlayManager {
     private boolean mPreviousMoving;
     private boolean mFocusDefault;
     private boolean mZslEnabled = false;  //QCom Parameter to disable focus for ZSL
+    private boolean mIsAFRunning = false;
 
     private FocusUI mUI;
     private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
@@ -318,6 +319,10 @@ public class FocusOverlayManager {
         // Ignore if the camera has detected some faces.
         if (mUI.hasFaces()) {
             mUI.clearFocus();
+            if (mIsAFRunning) {
+                mUI.onFocusSucceeded(true);
+                mIsAFRunning = false;
+            }
             return;
         }
 
@@ -328,8 +333,10 @@ public class FocusOverlayManager {
         // animate on false->true trasition only b/8219520
         if (moving && !mPreviousMoving) {
             mUI.onFocusStarted();
+            mIsAFRunning = true;
         } else if (!moving) {
             mUI.onFocusSucceeded(true);
+            mIsAFRunning = false;
         }
         mPreviousMoving = moving;
     }
