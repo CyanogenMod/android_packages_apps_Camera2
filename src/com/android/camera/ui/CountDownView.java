@@ -16,8 +16,6 @@
 
 package com.android.camera.ui;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -33,17 +31,19 @@ import android.widget.TextView;
 
 import com.android.camera2.R;
 
+import java.util.Locale;
+
 public class CountDownView extends FrameLayout {
 
-    private static final String TAG = "CAM_CountDownView";
+    private static final String TAG = "CountDownView";
     private static final int SET_TIMER_TEXT = 1;
     private TextView mRemainingSecondsView;
     private int mRemainingSecs = 0;
     private OnCountDownFinishedListener mListener;
-    private Animation mCountDownAnim;
-    private SoundPool mSoundPool;
-    private int mBeepTwice;
-    private int mBeepOnce;
+    private final Animation mCountDownAnim;
+    private final SoundPool mSoundPool;
+    private final int mBeepTwice;
+    private final int mBeepOnce;
     private boolean mPlaySound;
     private final Handler mHandler = new MainHandler();
 

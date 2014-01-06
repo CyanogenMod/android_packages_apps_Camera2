@@ -116,7 +116,7 @@ public class CameraActivity extends Activity
         ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
-    private static final String TAG = "CAM_Activity";
+    private static final String TAG = "CameraActivity";
 
     private static final String INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE =
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";

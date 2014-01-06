@@ -32,7 +32,7 @@ import com.android.camera.ui.ZoomRenderer;
 public class PreviewGestures
         implements ScaleGestureDetector.OnScaleGestureListener {
 
-    private static final String TAG = "CAM_gestures";
+    private static final String TAG = "PreviewGestures";
 
     private static final int MODE_NONE = 0;
     private static final int MODE_ZOOM = 2;
@@ -42,20 +42,20 @@ public class PreviewGestures
     public static final int DIR_LEFT = 2;
     public static final int DIR_RIGHT = 3;
 
-    private SingleTapListener mTapListener;
+    private final SingleTapListener mTapListener;
     private RenderOverlay mOverlay;
-    private PieRenderer mPie;
-    private ZoomRenderer mZoom;
+    private final PieRenderer mPie;
+    private final ZoomRenderer mZoom;
     private MotionEvent mDown;
     private MotionEvent mCurrent;
-    private ScaleGestureDetector mScale;
+    private final ScaleGestureDetector mScale;
     private int mMode;
     private boolean mZoomEnabled;
     private boolean mEnabled;
     private boolean mZoomOnly;
-    private GestureDetector mGestureDetector;
+    private final GestureDetector mGestureDetector;
 
-    private GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
+    private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public void onLongPress (MotionEvent e) {
             // Open pie

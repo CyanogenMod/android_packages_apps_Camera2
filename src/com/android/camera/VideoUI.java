@@ -32,7 +32,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
@@ -42,7 +41,7 @@ import com.android.camera2.R;
 import java.util.List;
 
 public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
-    private static final String TAG = "CAM_VideoUI";
+    private static final String TAG = "VideoUI";
 
     private final static float UNSET = 0f;
     private final PreviewOverlay mPreviewOverlay;

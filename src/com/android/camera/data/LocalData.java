@@ -33,7 +33,7 @@ import java.util.Comparator;
  * can guarantee thread safety for LocalData.
  */
 public interface LocalData extends ImageData {
-    static final String TAG = "CAM_LocalData";
+    static final String TAG = "LocalData";
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";
 

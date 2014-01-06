@@ -59,7 +59,7 @@ import java.util.List;
  *     to change metering area.
  */
 public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSizeChangedListener {
-    private static final String TAG = "CAM_FocusManager";
+    private static final String TAG = "FocusOverlayManager";
 
     private static final int RESET_TOUCH_FOCUS = 0;
     private static final int RESET_TOUCH_FOCUS_DELAY = 3000;
