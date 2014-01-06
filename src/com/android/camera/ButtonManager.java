@@ -18,14 +18,17 @@ package com.android.camera;
 
 import android.view.View;
 import android.widget.ImageButton;
+import android.util.Log;
 
 import com.android.camera.settings.SettingsManager;
+
+import com.android.camera2.R;
 
 /**
  * A  class for generating pre-initialized
  * {@link #android.widget.ImageButton}s.
  */
-public class ButtonManager {
+public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
     public static final int BUTTON_FLASH = 0;
     public static final int BUTTON_TORCH = 1;
@@ -53,6 +56,55 @@ public class ButtonManager {
     public ButtonManager(CameraActivity activity) {
         mActivity = activity;
         mSettingsManager = activity.getSettingsManager();
+        mSettingsManager.addListener(this);
+    }
+
+    // TODO:
+    // Get references to the buttons in the constructor
+    // to avoid looking up the buttons constantly.
+    // The ButtonManager can know about the particular res id of a button.
+
+    @Override
+    public void onSettingChanged(SettingsManager settingsManager, int id) {
+        MultiToggleImageButton button = null;
+        int index = 0;
+
+        switch (id) {
+            case SettingsManager.SETTING_FLASH_MODE: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_FLASH, R.id.flash_toggle_button);
+                break;
+            }
+            case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_TORCH, R.id.flash_toggle_button);
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_ID: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_CAMERA, R.id.camera_toggle_button);
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_HDR: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_REFOCUS: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_REFOCUS, R.id.refocus_toggle_button);
+                break;
+            }
+            default: {
+                // Do nothing.
+            }
+        }
+
+        // In case SharedPreferences has changed but the button hasn't been toggled,
+        // make sure the toggle state is in sync.
+        if (button != null && button.getState() != index) {
+            button.setState(Math.max(index, 0), false);
+        }
     }
 
     /**

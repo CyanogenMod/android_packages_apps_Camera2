@@ -23,6 +23,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.android.camera2.R;
 import com.android.camera.ToggleImageButton;
@@ -186,7 +187,9 @@ public class BottomBar extends FrameLayout
         // Calculates the width and height needed for the bar.
         int barWidth, barHeight;
         if (mWidth > mHeight) {
-            ((LayoutParams) getLayoutParams()).gravity = Gravity.RIGHT;
+            // TODO: The bottom bar should not need to care about the
+            // the type of its parent.  Handle this in the parent layout.
+            ((LinearLayout.LayoutParams) getLayoutParams()).gravity = Gravity.RIGHT;
             if ((mOffsetLongerEdge == 0 && mOffsetShorterEdge == 0) || mOverLayBottomBar) {
                 barWidth = mOptimalHeight;
                 barHeight = mHeight;
@@ -195,7 +198,7 @@ public class BottomBar extends FrameLayout
                 barHeight = mHeight;
             }
         } else {
-            ((LayoutParams) getLayoutParams()).gravity = Gravity.BOTTOM;
+            ((LinearLayout.LayoutParams) getLayoutParams()).gravity = Gravity.BOTTOM;
             if ((mOffsetLongerEdge == 0 && mOffsetShorterEdge == 0) || mOverLayBottomBar) {
                 barWidth = mWidth;
                 barHeight = mOptimalHeight;

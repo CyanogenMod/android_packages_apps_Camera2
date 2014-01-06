@@ -366,6 +366,7 @@ public class CameraActivity extends Activity
             mSettingsManager.changeCamera(camera.getCameraId(), capabilities);
             mCurrentModule.onCameraAvailable(camera);
         }
+        mCameraAppUI.onChangeCamera();
     }
 
     @Override
@@ -1096,7 +1097,6 @@ public class CameraActivity extends Activity
         // Delete photos that are pending deletion
         performDeletion();
         mCurrentModule.pause();
-        mSettingsManager.removeOnSettingChangedListener();
         mOrientationManager.pause();
         // Close the camera and wait for the operation done.
         mCameraController.closeCamera();
@@ -1193,6 +1193,7 @@ public class CameraActivity extends Activity
         if (mSecureCamera) {
             unregisterReceiver(mScreenOffReceiver);
         }
+        mSettingsManager.removeAllListeners();
         getContentResolver().unregisterContentObserver(mLocalImagesObserver);
         getContentResolver().unregisterContentObserver(mLocalVideosObserver);
         super.onDestroy();

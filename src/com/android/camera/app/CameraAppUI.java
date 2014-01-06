@@ -40,6 +40,7 @@ import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.widget.IndicatorOverlay;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
 
@@ -209,6 +210,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
     private BottomBar mBottomBar;
+    private IndicatorOverlay mIndicatorOverlay;
 
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
@@ -460,9 +462,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     /**
      * Sets a {@link com.android.camera.ui.PreviewStatusListener} that
-     * listens to SurfaceTexture changes. In addition, the listener will also provide
-     * a {@link android.view.GestureDetector.OnGestureListener}, which will listen to
-     * gestures that happen on camera preview.
+     * listens to SurfaceTexture changes. In addition, listeners are set on
+     * dependent app ui elements.
      *
      * @param previewStatusListener the listener that gets notified when SurfaceTexture
      *                              changes
@@ -470,17 +471,55 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void setPreviewStatusListener(PreviewStatusListener previewStatusListener) {
         mPreviewStatusListener = previewStatusListener;
         if (mPreviewStatusListener != null) {
-            GestureDetector.OnGestureListener gestureListener
-                    = mPreviewStatusListener.getGestureListener();
-            if (gestureListener != null) {
-                mPreviewOverlay.setGestureListener(gestureListener);
-            }
-            mTextureViewHelper.setAutoAdjustTransform(
-                    mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
-            if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-                mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
-                mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
-            }
+            onPreviewListenerChanged();
+        }
+    }
+
+    /**
+     * When the PreviewStatusListener changes, listeners need to be
+     * set on the following app ui elements:
+     * {@link com.android.camera.ui.PreviewOverlay},
+     * {@link com.android.camera.ui.BottomBar},
+     * {@link com.android.camera.ui.IndicatorOverlay}.
+     */
+    private void onPreviewListenerChanged() {
+        // Set a listener for recognizing preview gestures.
+        GestureDetector.OnGestureListener gestureListener
+            = mPreviewStatusListener.getGestureListener();
+        if (gestureListener != null) {
+            mPreviewOverlay.setGestureListener(gestureListener);
+        }
+
+        // Set a listener for resizing the bottom bar on
+        // preview size changes.
+        mTextureViewHelper.setAutoAdjustTransform(
+            mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
+        if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
+            mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
+            mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
+        }
+
+        // Set a listener for resizing the indicator overlay on
+        // preview size changes.
+        mIndicatorOverlay = (IndicatorOverlay) mAppRootView.findViewById(
+            R.id.indicator_overlay);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mIndicatorOverlay);
+        mController.getSettingsManager().addListener(mIndicatorOverlay);
+        // Sync the settings state with the indicator state.
+        // If camera specific indicators need to be set, and the camera is
+        // not yet opened, we will sync the indicators again when the camera is open.
+        mIndicatorOverlay.syncIndicators(mController.getSettingsManager(),
+            mController.getCurrentModuleIndex());
+    }
+
+    /**
+     * This method should be called in onCameraOpened.  It defines CameraAppUI
+     * specific changes that depend on the camera or camera settings.
+     */
+    public void onChangeCamera() {
+        if (mIndicatorOverlay != null) {
+            mIndicatorOverlay.syncIndicators(mController.getSettingsManager(),
+                mController.getCurrentModuleIndex());
         }
     }
 
@@ -538,6 +577,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureView = null;
         mPreviewOverlay = null;
         mBottomBar = null;
+        mIndicatorOverlay = null;
         setBottomBarShutterListener(null);
     }
 

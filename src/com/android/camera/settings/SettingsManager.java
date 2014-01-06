@@ -21,12 +21,14 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.android.camera.ListPreference;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * SettingsManager class provides an api for getting and setting both
@@ -40,10 +42,13 @@ public class SettingsManager {
     private final SettingsCache mSettingsCache;
     private SharedPreferences mGlobalSettings;
     private SharedPreferences mCameraSettings;
-    private OnSharedPreferenceChangeListener mListener;
     private SettingsCapabilities mCapabilities;
 
     private int mCameraId = -1;
+
+    private final List<OnSharedPreferenceChangeListener>
+        mSharedPreferenceListeners =
+        new ArrayList<OnSharedPreferenceChangeListener>();
 
     public SettingsManager(Context context, int nCameras) {
         mContext = context;
@@ -65,8 +70,7 @@ public class SettingsManager {
      */
     private void initGlobal() {
         String globalKey = mContext.getPackageName() + "_preferences_camera";
-        mGlobalSettings = mContext.getSharedPreferences(
-            globalKey, Context.MODE_PRIVATE);
+        mGlobalSettings = mContext.getSharedPreferences(globalKey, Context.MODE_PRIVATE);
     }
 
     /**
@@ -77,7 +81,6 @@ public class SettingsManager {
         mSettingsCache.setCapabilities(mCapabilities);
 
         if (cameraId == mCameraId) {
-            removeOnSettingChangedListener();
             return;
         }
 
@@ -92,6 +95,9 @@ public class SettingsManager {
         String cameraKey = mContext.getPackageName() + "_preferences_" + cameraId;
         mCameraSettings = mContext.getSharedPreferences(
             cameraKey, Context.MODE_PRIVATE);
+        for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
+            mCameraSettings.registerOnSharedPreferenceChangeListener(listener);
+        }
     }
 
     /**
@@ -101,46 +107,101 @@ public class SettingsManager {
         /**
          * Called every time a SharedPreference has been changed.
          */
-        public void onSettingChanged(int setting);
+        public void onSettingChanged(SettingsManager settingsManager, int setting);
     }
 
-    /**
-     * Set a OnSettingChangedListener on the SettingsManager, which will execute
-     * onSettingsChanged when camera specific SharedPreferences has been updated.
-     */
-    public void setOnSettingChangedListener(final OnSettingChangedListener listener) {
-        mListener =
-            new OnSharedPreferenceChangeListener() {
+    private OnSharedPreferenceChangeListener getSharedPreferenceListener(
+            final OnSettingChangedListener listener) {
+        return new OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(
                         SharedPreferences sharedPreferences, String key) {
                     int settingId = mSettingsCache.getId(key);
-                    listener.onSettingChanged(settingId);
+                    listener.onSettingChanged(SettingsManager.this, settingId);
                 }
             };
+    }
 
-        if (mCameraSettings != null) {
-            mCameraSettings.registerOnSharedPreferenceChangeListener(mListener);
+    /**
+     * Add an OnSettingChangedListener to the SettingsManager, which will execute
+     * onSettingsChanged when any SharedPreference has been updated.
+     */
+    public void addListener(final OnSettingChangedListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("OnSettingChangedListener cannot be null.");
         }
-        if (mGlobalSettings != null) {
-            mGlobalSettings.registerOnSharedPreferenceChangeListener(mListener);
+
+        OnSharedPreferenceChangeListener sharedPreferenceListener =
+            getSharedPreferenceListener(listener);
+
+        if (!mSharedPreferenceListeners.contains(sharedPreferenceListener)) {
+            mSharedPreferenceListeners.add(sharedPreferenceListener);
+
+            if (mGlobalSettings != null) {
+                mGlobalSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
+            }
+
+            if (mCameraSettings != null) {
+                mCameraSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
+            }
+
+            if (mDefaultSettings != null) {
+                mDefaultSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
+            }
         }
     }
 
     /**
-     * Remove a SettingsListener.
-     *
+     * Remove a specific SettingsListener.
      * This should be done in onPause if a listener has been set.
      */
-    public void removeOnSettingChangedListener() {
-        if (mListener != null) {
-            if (mCameraSettings != null) {
-                mCameraSettings.unregisterOnSharedPreferenceChangeListener(mListener);
-            }
+    public void removeListener(OnSettingChangedListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException();
+        }
+
+        OnSharedPreferenceChangeListener sharedPreferenceListener =
+            getSharedPreferenceListener(listener);
+
+        if (mSharedPreferenceListeners.contains(sharedPreferenceListener)) {
+            mSharedPreferenceListeners.remove(sharedPreferenceListener);
+
             if (mGlobalSettings != null) {
-                mGlobalSettings.unregisterOnSharedPreferenceChangeListener(mListener);
+                mGlobalSettings.unregisterOnSharedPreferenceChangeListener(
+                    sharedPreferenceListener);
             }
-            mListener = null;
+
+            if (mCameraSettings != null) {
+                mCameraSettings.unregisterOnSharedPreferenceChangeListener(
+                    sharedPreferenceListener);
+            }
+
+            if (mDefaultSettings != null) {
+                mDefaultSettings.unregisterOnSharedPreferenceChangeListener(
+                    sharedPreferenceListener);
+            }
+        }
+    }
+
+    /**
+     * Remove all OnSharedPreferenceChangedListener's.
+     * This should be done in onDestroy.
+     */
+    public void removeAllListeners() {
+        for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
+            mSharedPreferenceListeners.remove(listener);
+
+            if (mGlobalSettings != null) {
+                mGlobalSettings.unregisterOnSharedPreferenceChangeListener(listener);
+            }
+
+            if (mCameraSettings != null) {
+                mCameraSettings.unregisterOnSharedPreferenceChangeListener(listener);
+            }
+
+            if (mDefaultSettings != null) {
+                mDefaultSettings.unregisterOnSharedPreferenceChangeListener(listener);
+            }
         }
     }
 
@@ -358,10 +419,12 @@ public class SettingsManager {
      * String value in an array of possible String values.
      *
      * If the Setting is not of type String, this returns -1.
+     *
+     * <p>TODO: make this a supported api call for all types.</p>
      */
     public int getStringValueIndex(int id) {
         Setting setting = mSettingsCache.get(id);
-        if (setting == null || setting.getType() != TYPE_STRING) {
+        if (setting == null || !TYPE_STRING.equals(setting.getType())) {
             return -1;
         }
 
@@ -501,6 +564,33 @@ public class SettingsManager {
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
             preferences.edit().putString(setting.getKey(), setting.getDefault());
+        }
+    }
+
+    /**
+     * Check if a Setting is set to its default value.
+     */
+    public boolean isDefault(int id) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(setting);
+        if (preferences != null) {
+            String type = setting.getType();
+            if (TYPE_STRING.equals(type)) {
+                String value = get(id);
+                return (value.equals(setting.getDefault()));
+            } else if (TYPE_BOOLEAN.equals(type)) {
+                boolean value = getBoolean(id);
+                boolean defaultValue = VALUE_ON.equals(setting.getDefault());
+                return (value == defaultValue);
+            } else if (TYPE_INTEGER.equals(type)) {
+                int value = getInt(id);
+                int defaultValue = Integer.parseInt(setting.getDefault());
+                return (value == defaultValue);
+            } else {
+                throw new IllegalArgumentException("Type " + type + " is not known.");
+            }
+        } else {
+            return false;
         }
     }
 
