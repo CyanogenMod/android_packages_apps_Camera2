@@ -52,6 +52,10 @@ import com.android.camera2.R;
 public class BottomBar extends FrameLayout
     implements PreviewStatusListener.PreviewAreaSizeChangedListener {
 
+    public interface AdjustPreviewAreaListener {
+        public abstract void centerPreviewAreaInRect(RectF rect);
+    }
+
     private static final String TAG = "BottomBar";
 
     private static final int CIRCLE_ANIM_DURATION_MS = 300;
@@ -66,6 +70,8 @@ public class BottomBar extends FrameLayout
     private float mOffsetShorterEdge;
     private float mOffsetLongerEdge;
 
+    private final int mMinimumHeight;
+    private final int mMaximumHeight;
     private final int mOptimalHeight;
     private boolean mOverLayBottomBar;
 
@@ -86,8 +92,16 @@ public class BottomBar extends FrameLayout
 
     private final RectF mRect = new RectF();
 
+    private AdjustPreviewAreaListener mAdjustPreviewAreaListener;
+
+    public void setAdjustPreviewAreaListener(AdjustPreviewAreaListener listener) {
+        mAdjustPreviewAreaListener = listener;
+    }
+
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mMinimumHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_min);
+        mMaximumHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_max);
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
         mCircleRadius = getResources()
             .getDimensionPixelSize(R.dimen.video_capture_circle_diameter) / 2;
@@ -232,6 +246,25 @@ public class BottomBar extends FrameLayout
                 barWidth = mOptimalHeight;
             } else {
                 barWidth = (int) (mWidth - mOffsetLongerEdge);
+                if (barWidth < mMinimumHeight) {
+                    barWidth = mOptimalHeight;
+                    mOverLayBottomBar = true;
+                    setAlpha(0.5f);
+                    if (mAdjustPreviewAreaListener != null) {
+                        mAdjustPreviewAreaListener.centerPreviewAreaInRect(
+                            new RectF(0.0f, 0.0f, (float)mWidth, (float)mHeight));
+                    }
+                } else if (barWidth > mMaximumHeight) {
+                    barWidth = mOptimalHeight;
+
+                    mOverLayBottomBar = true;
+                    setAlpha(0.5f);
+
+                    if (mAdjustPreviewAreaListener != null) {
+                        mAdjustPreviewAreaListener.centerPreviewAreaInRect(
+                            new RectF(0.0f, 0.0f, (float)mWidth - mOptimalHeight, (float)mHeight));
+                    }
+                }
             }
         } else {
             layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
@@ -240,6 +273,21 @@ public class BottomBar extends FrameLayout
                 barHeight = mOptimalHeight;
             } else {
                 barHeight = (int) (mHeight - mOffsetLongerEdge);
+                if (barHeight < mMinimumHeight) {
+                    barHeight = mOptimalHeight;
+                    mOverLayBottomBar = true;
+                    setAlpha(0.5f);
+                    if (mAdjustPreviewAreaListener != null) {
+                        mAdjustPreviewAreaListener.centerPreviewAreaInRect(
+                            new RectF(0.0f, 0.0f, (float)mWidth, (float)mHeight));
+                    }
+                } else if (barHeight > mMaximumHeight) {
+                    barHeight = mOptimalHeight;
+                    if (mAdjustPreviewAreaListener != null) {
+                        mAdjustPreviewAreaListener.centerPreviewAreaInRect(
+                            new RectF(0.0f, 0.0f, (float)mWidth, (float)mHeight - mOptimalHeight));
+                    }
+                }
             }
         }
 

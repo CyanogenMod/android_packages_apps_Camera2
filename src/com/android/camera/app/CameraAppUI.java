@@ -834,6 +834,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mTextureViewHelper.setAutoAdjustTransform(
             mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
+
+        if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
+            mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
+
+            mBottomBar.setAdjustPreviewAreaListener(new BottomBar.AdjustPreviewAreaListener() {
+                @Override
+                public void centerPreviewAreaInRect(RectF rect) {
+                    mTextureViewHelper.centerPreviewInRect(rect);
+                }
+            });
+        }
     }
 
     /**
