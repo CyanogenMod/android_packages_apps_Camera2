@@ -37,7 +37,7 @@ import java.io.IOException;
  * data from jpeg file. Note that only {@link PhotoData}  can be rotated.
  */
 public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
-    private static final String TAG = "CAM_RotationTask";
+    private static final String TAG = "RotationTask";
     private final Context mContext;
     private final LocalDataAdapter mAdapter;
     private final int mCurrentDataId;

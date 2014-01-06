@@ -189,7 +189,7 @@ public class PreviewOverlay extends View {
      * of any change in scale, and draw the zoom UI on screen.
      */
     private class ZoomProcessor implements ScaleGestureDetector.OnScaleGestureListener {
-        private static final String TAG = "CAM_Zoom";
+        private static final String TAG = "ZoomProcessor";
 
         // Diameter of Zoom UI as fraction of maximum possible without clipping.
         private static final float ZOOM_UI_SIZE = 0.8f;
@@ -203,12 +203,12 @@ public class PreviewOverlay extends View {
         // Continuous Zoom level [0,1].
         private float mCurrentFraction;
         private double mFingerAngle;  // in radians.
-        private Paint mPaint;
+        private final Paint mPaint;
         private int mCenterX;
         private int mCenterY;
         private float mOuterRadius;
         private float mInnerRadius;
-        private int mZoomStroke;
+        private final int mZoomStroke;
         private boolean mVisible = false;
         private List<Integer> mZoomRatios;
 
@@ -281,8 +281,8 @@ public class PreviewOverlay extends View {
             mCurrentFraction = (0.33f + mCurrentFraction) * sf * sf - 0.33f;
             if (mCurrentFraction < 0.0f) mCurrentFraction = 0.0f;
             if (mCurrentFraction > 1.0f) mCurrentFraction = 1.0f;
-            int newIndex = mMinIndex + (int) (mCurrentFraction * (float) (mMaxIndex - mMinIndex));
-            if (mZoomListener != null && (int) newIndex != mCurrentIndex) {
+            int newIndex = mMinIndex + (int) (mCurrentFraction * (mMaxIndex - mMinIndex));
+            if (mZoomListener != null && newIndex != mCurrentIndex) {
                 mZoomListener.onZoomValueChanged(newIndex);
                 mCurrentIndex = newIndex;
             }

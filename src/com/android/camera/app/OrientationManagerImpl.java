@@ -38,13 +38,13 @@ import java.util.List;
  * TODO: make this class package-private
  */
 public class OrientationManagerImpl implements OrientationManager {
-    private static final String TAG = "CAM_OrientationManager";
+    private static final String TAG = "OrientationManagerImpl";
 
     // Orientation hysteresis amount used in rounding, in degrees
     private static final int ORIENTATION_HYSTERESIS = 5;
 
-    private Activity mActivity;
-    private MyOrientationEventListener mOrientationListener;
+    private final Activity mActivity;
+    private final MyOrientationEventListener mOrientationListener;
     // If the framework orientation is locked.
     private boolean mOrientationLocked = false;
 

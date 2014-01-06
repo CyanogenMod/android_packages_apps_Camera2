@@ -33,7 +33,7 @@ public class SurfaceTextureRenderer {
         public void onDrawFrame(GL10 gl);
     }
 
-    private static final String TAG = "CAM_" + SurfaceTextureRenderer.class.getSimpleName();
+    private static final String TAG = "SurfaceTextureRenderer";
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private EGLConfig mEglConfig;
@@ -43,11 +43,11 @@ public class SurfaceTextureRenderer {
     private EGL10 mEgl;
     private GL10 mGl;
 
-    private Handler mEglHandler;
-    private FrameDrawer mFrameDrawer;
+    private final Handler mEglHandler;
+    private final FrameDrawer mFrameDrawer;
 
-    private Object mRenderLock = new Object();
-    private Runnable mRenderTask = new Runnable() {
+    private final Object mRenderLock = new Object();
+    private final Runnable mRenderTask = new Runnable() {
         @Override
         public void run() {
             synchronized (mRenderLock) {

@@ -30,7 +30,7 @@ import com.android.camera2.R;
 public class ZoomRenderer extends OverlayRenderer
         implements ScaleGestureDetector.OnScaleGestureListener {
 
-    private static final String TAG = "CAM_Zoom";
+    private static final String TAG = "ZoomRenderer";
 
     final private int mMinIndex = 0;
     private int mMaxIndex;
@@ -40,13 +40,13 @@ public class ZoomRenderer extends OverlayRenderer
     private float mCurrentFraction;
     private double mFingerRadians;
     private OnZoomChangedListener mListener;
-    private ScaleGestureDetector mDetector;
-    private Paint mPaint;
+    private final ScaleGestureDetector mDetector;
+    private final Paint mPaint;
     private int mCenterX;
     private int mCenterY;
     private float mOuterRadius;
     private float mInnerRadius;
-    private int mZoomStroke;
+    private final int mZoomStroke;
 
     public interface OnZoomChangedListener {
         void onZoomStart();
@@ -133,14 +133,14 @@ public class ZoomRenderer extends OverlayRenderer
         mCurrentFraction = (0.33f + mCurrentFraction) * sf * sf - 0.33f;
         if (mCurrentFraction < 0.0f) mCurrentFraction = 0.0f;
         if (mCurrentFraction > 1.0f) mCurrentFraction = 1.0f;
-        int newIndex = mMinIndex + (int) (mCurrentFraction * (float) (mMaxIndex - mMinIndex));
-        if (mListener != null && (int) newIndex != mCurrentIndex) {
+        int newIndex = mMinIndex + (int) (mCurrentFraction * (mMaxIndex - mMinIndex));
+        if (mListener != null && newIndex != mCurrentIndex) {
             mListener.onZoomValueChanged(newIndex);
             mCurrentIndex = newIndex;
         }
         // mFingerRadians is currently constrained to [0,Pi/2].
         // TODO: Get actual touch coordinates to enable full [0,Pi] range.
-        mFingerRadians = Math.atan2((double) detector.getCurrentSpanY(),(double) detector.getCurrentSpanX());
+        mFingerRadians = Math.atan2(detector.getCurrentSpanY(),detector.getCurrentSpanX());
         return true;
     }
 

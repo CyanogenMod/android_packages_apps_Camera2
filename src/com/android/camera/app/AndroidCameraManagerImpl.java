@@ -18,8 +18,6 @@ package com.android.camera.app;
 
 import static com.android.camera.util.CameraUtil.Assert;
 
-import java.io.IOException;
-
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -40,12 +38,13 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import java.io.IOException;
+
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.
  */
 class AndroidCameraManagerImpl implements CameraManager {
-    private static final String TAG = "CAM_" +
-            AndroidCameraManagerImpl.class.getSimpleName();
+    private static final String TAG = "AndroidCameraManagerImpl";
 
     private Parameters mParameters;
     private boolean mParametersIsDirty;
@@ -91,7 +90,7 @@ class AndroidCameraManagerImpl implements CameraManager {
     // Capture
     private static final int CAPTURE_PHOTO = 601;
 
-    private CameraHandler mCameraHandler;
+    private final CameraHandler mCameraHandler;
     private android.hardware.Camera mCamera;
 
     // Used to retain a copy of Parameters for setting parameters.
@@ -623,6 +622,7 @@ class AndroidCameraManagerImpl implements CameraManager {
             mCameraHandler.obtainMessage(SET_ZOOM_CHANGE_LISTENER, listener).sendToTarget();
         }
 
+        @Override
         public void setFaceDetectionCallback(
                 Handler handler, CameraFaceDetectionCallback cb) {
             mCameraHandler.obtainMessage(

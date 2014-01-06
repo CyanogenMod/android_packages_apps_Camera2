@@ -272,7 +272,7 @@ public abstract class LocalMediaData implements LocalData {
             ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession);
 
     public static final class PhotoData extends LocalMediaData {
-        private static final String TAG = "CAM_PhotoData";
+        private static final String TAG = "PhotoData";
 
         public static final int COL_ID = 0;
         public static final int COL_TITLE = 1;
@@ -449,7 +449,7 @@ public abstract class LocalMediaData implements LocalData {
             // This will call PhotoBitmapLoadTask.
             fillImageView(context, (ImageView) v, w, h, null, adapter, false);
         }
-        
+
         @Override
         protected BitmapLoadTask getBitmapLoadTask(Context context, ImageView v, int decodeWidth,
                 int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter,

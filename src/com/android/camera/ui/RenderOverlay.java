@@ -30,7 +30,7 @@ import java.util.List;
 
 public class RenderOverlay extends FrameLayout {
 
-    private static final String TAG = "CAM_Overlay";
+    private static final String TAG = "RenderOverlay";
     private PreviewGestures.SingleTapListener mTapListener;
 
     interface Renderer {

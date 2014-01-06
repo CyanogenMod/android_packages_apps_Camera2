@@ -19,7 +19,6 @@ package com.android.camera;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.android.camera.CameraActivity;
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.drawable.TextDrawable;
 import com.android.camera.settings.SettingsManager;
@@ -34,7 +33,7 @@ import java.util.Map;
 
 public class PieController {
 
-    private static String TAG = "CAM_piecontrol";
+    private static String TAG = "PieController";
 
     protected static final int MODE_PHOTO = 0;
     protected static final int MODE_VIDEO = 1;
@@ -46,9 +45,9 @@ public class PieController {
     protected PreferenceGroup mPreferenceGroup;
     protected OnPreferenceChangedListener mListener;
     protected PieRenderer mRenderer;
-    private List<IconListPreference> mPreferences;
-    private Map<IconListPreference, PieItem> mPreferenceMap;
-    private Map<IconListPreference, String> mOverrides;
+    private final List<IconListPreference> mPreferences;
+    private final Map<IconListPreference, PieItem> mPreferenceMap;
+    private final Map<IconListPreference, String> mOverrides;
 
     public void setListener(OnPreferenceChangedListener listener) {
         mListener = listener;
@@ -179,7 +178,7 @@ public class PieController {
                     settingsManager.setValueIndexFromPreference(pref, index);
                     fitem.setLabel(pref.getLabels()[index]);
                     fitem.setImageResource(mActivity,
-                            ((IconListPreference) pref).getLargeIconIds()[index]);
+                            pref.getLargeIconIds()[index]);
                     reloadPreference(pref);
                     onSettingChanged(pref);
                 }
@@ -209,7 +208,7 @@ public class PieController {
 
             item.setLabel(pref.getLabels()[index]);
             item.setImageResource(mActivity,
-                    ((IconListPreference) pref).getLargeIconIds()[index]);
+                    pref.getLargeIconIds()[index]);
         }
     }
 

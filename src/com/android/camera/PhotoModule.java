@@ -91,7 +91,7 @@ public class PhotoModule
         SensorEventListener,
         SettingsManager.OnSettingChangedListener {
 
-    private static final String TAG = "CAM_PhotoModule";
+    private static final String TAG = "PhotoModule";
 
     // We number the request code from 1000 to avoid collision with Gallery.
     private static final int REQUEST_CROP = 1000;
