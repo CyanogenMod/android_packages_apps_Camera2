@@ -65,4 +65,9 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
      * @return whether bottom bar should be automatically adjusted
      */
     public boolean shouldAutoAdjustBottomBar();
+
+    /**
+     * Gets called when the preview is flipped (i.e. 180-degree rotated).
+     */
+    public void onPreviewFlipped();
 }

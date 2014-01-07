@@ -143,6 +143,11 @@ public class PhotoUI implements PreviewStatusListener,
         return true;
     }
 
+    @Override
+    public void onPreviewFlipped() {
+        mController.updateCameraOrientation();
+    }
+
     private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
         private final byte [] mData;
         private int mOrientation;

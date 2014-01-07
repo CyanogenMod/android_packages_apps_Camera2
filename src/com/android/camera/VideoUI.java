@@ -111,6 +111,11 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         return true;
     }
 
+    @Override
+    public void onPreviewFlipped() {
+        mController.updateCameraOrientation();
+    }
+
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
         @Override
