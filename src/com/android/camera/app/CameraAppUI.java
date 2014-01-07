@@ -550,11 +550,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             R.id.indicator_overlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mIndicatorOverlay);
         mController.getSettingsManager().addListener(mIndicatorOverlay);
-        // Sync the settings state with the indicator state.
-        // If camera specific indicators need to be set, and the camera is
-        // not yet opened, we will sync the indicators again when the camera is open.
-        mIndicatorOverlay.syncIndicators(mController.getSettingsManager(),
-            mController.getCurrentModuleIndex());
     }
 
     /**
@@ -563,8 +558,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void onChangeCamera() {
         if (mIndicatorOverlay != null) {
-            mIndicatorOverlay.syncIndicators(mController.getSettingsManager(),
-                mController.getCurrentModuleIndex());
+            // Sync the settings state with the indicator state.
+            mIndicatorOverlay.syncIndicators(mController);
         }
     }
 
@@ -612,6 +607,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setupToggle(mIsCaptureIntent);
+
+        mIndicatorOverlay = (IndicatorOverlay) mAppRootView.findViewById(
+            R.id.indicator_overlay);
+        mIndicatorOverlay.setController(mController);
+        mController.getButtonManager().setListener(mIndicatorOverlay);
     }
 
     // TODO: Remove this when refactor is done.

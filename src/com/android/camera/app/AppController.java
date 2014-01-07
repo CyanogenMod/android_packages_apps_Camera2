@@ -24,6 +24,7 @@ import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.widget.FrameLayout;
 
+import com.android.camera.ButtonManager;
 import com.android.camera.app.LocationManager;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.SettingsController;
@@ -270,4 +271,9 @@ public interface AppController {
      * @return {@code null} if not available yet.
      */
     public CameraAppUI getCameraAppUI();
+
+    /**
+     * Returns the {@link com.android.camera.ButtonManager}.
+     */
+    public ButtonManager getButtonManager();
 }

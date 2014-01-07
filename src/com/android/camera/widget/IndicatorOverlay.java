@@ -29,6 +29,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.android.camera.ButtonManager;
+import com.android.camera.app.AppController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
@@ -46,7 +48,8 @@ import com.android.camera2.R;
  */
 public class IndicatorOverlay extends RelativeLayout
     implements PreviewStatusListener.PreviewAreaSizeChangedListener,
-               SettingsManager.OnSettingChangedListener {
+               SettingsManager.OnSettingChangedListener,
+               ButtonManager.ButtonStatusListener {
     private final static String TAG = "IndicatorOverlay";
 
     private int mPreviewWidth;
@@ -59,6 +62,8 @@ public class IndicatorOverlay extends RelativeLayout
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrIndicatorIcons;
 
+    private AppController mController;
+
     public IndicatorOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
         mFlashIndicatorPhotoIcons
@@ -69,29 +74,111 @@ public class IndicatorOverlay extends RelativeLayout
             = context.getResources().obtainTypedArray(R.array.pref_camera_hdr_plus_icons);
     }
 
+    /**
+     * Sets a reference to the AppController so that indicators
+     * can be synced from listeners that have no knowledge of the app.
+     */
+    public void setController(AppController controller) {
+        mController = controller;
+    }
+
     @Override
     public void onFinishInflate() {
         mFlashIndicator = (ImageView) findViewById(R.id.flash_indicator);
         mHdrIndicator = (ImageView) findViewById(R.id.hdr_indicator);
     }
 
+    @Override
+    public void onButtonVisibilityChanged(ButtonManager buttonManager, int buttonId) {
+        syncIndicatorWithButton(buttonId);
+    }
+
+    @Override
+    public void onButtonEnabledChanged(ButtonManager buttonManager, int buttonId) {
+        syncIndicatorWithButton(buttonId);
+    }
+
+    /**
+     * Syncs a specific indicator's icon and visibility
+     * based on the enabled state and visibility of a button.
+     */
+    private void syncIndicatorWithButton(int buttonId) {
+        switch (buttonId) {
+        case ButtonManager.BUTTON_FLASH: {
+            if (mController != null) {
+                syncFlashIndicator(mController);
+            }
+        }
+        case ButtonManager.BUTTON_TORCH: {
+            if (mController != null) {
+                syncFlashIndicator(mController);
+            }
+        }
+        case ButtonManager.BUTTON_HDRPLUS: {
+            if (mController != null) {
+                syncHdrIndicator(mController);
+            }
+        }
+        default:
+            // Do nothing.  The indicator doesn't care
+            // about button that don't correspond to indicators.
+        }
+    }
+
     /**
      * Sets all indicators to the correct resource and visibility
      * based on the current settings.
      */
-    public void syncIndicators(SettingsManager settingsManager, int modeIndex) {
-        // Sync the flash indicator.
-        if (modeIndex == ModulesInfo.MODULE_VIDEO) {
-            setIndicatorState(settingsManager, SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE,
-                              mFlashIndicator, mFlashIndicatorVideoIcons);
-        } else {
-            setIndicatorState(settingsManager, SettingsManager.SETTING_FLASH_MODE,
-                              mFlashIndicator, mFlashIndicatorPhotoIcons);
+    public void syncIndicators(AppController controller) {
+        if (mController == null) {
+            mController = controller;
         }
+        syncFlashIndicator(mController);
+        syncHdrIndicator(mController);
+    }
 
+    /**
+     * Sync the icon and visibility of the flash indicator.
+     */
+    private void syncFlashIndicator(AppController controller) {
+        ButtonManager buttonManager = controller.getButtonManager();
+        // Sync the flash indicator.
+        // If flash isn't an enabled and visible option,
+        // do not show the indicator.
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_FLASH)
+                && buttonManager.isVisible(ButtonManager.BUTTON_FLASH)) {
+
+            int modeIndex = controller.getCurrentModuleIndex();
+            if (modeIndex == ModulesInfo.MODULE_VIDEO) {
+                setIndicatorState(controller.getSettingsManager(),
+                                  SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE,
+                                  mFlashIndicator, mFlashIndicatorVideoIcons);
+            } else {
+                setIndicatorState(controller.getSettingsManager(),
+                                  SettingsManager.SETTING_FLASH_MODE,
+                                  mFlashIndicator, mFlashIndicatorPhotoIcons);
+            }
+        } else {
+            mFlashIndicator.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Sync the icon and the visibility of the hdr indicator.
+     */
+    private void syncHdrIndicator(AppController controller) {
+        ButtonManager buttonManager = controller.getButtonManager();
         // Sync the hdr indicator.
-        setIndicatorState(settingsManager, SettingsManager.SETTING_CAMERA_HDR,
-                          mHdrIndicator, mHdrIndicatorIcons);
+        // If hdr isn't an enabled and visible option,
+        // do not show the indicator.
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_HDRPLUS)
+                && buttonManager.isVisible(ButtonManager.BUTTON_HDRPLUS)) {
+            setIndicatorState(controller.getSettingsManager(),
+                              SettingsManager.SETTING_CAMERA_HDR,
+                              mHdrIndicator, mHdrIndicatorIcons);
+        } else {
+            mHdrIndicator.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
