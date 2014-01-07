@@ -563,8 +563,7 @@ public class CameraActivity extends Activity
         mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
 
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
-        int newSystemUIVisibility = (visible ? View.SYSTEM_UI_FLAG_VISIBLE :
-                        View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        int newSystemUIVisibility = (visible ? View.SYSTEM_UI_FLAG_VISIBLE : View.SYSTEM_UI_FLAG_FULLSCREEN);
         if (newSystemUIVisibility != currentSystemUIVisibility) {
             mAboveFilmstripControlLayout.setSystemUiVisibility(newSystemUIVisibility);
         }
@@ -1165,6 +1164,9 @@ public class CameraActivity extends Activity
         mLocalVideosObserver.setActivityPaused(false);
 
         keepScreenOnForAWhile();
+
+        // Lights-out mode at all times.
+        findViewById(R.id.activity_root_view).setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
     }
 
     @Override
