@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -37,6 +38,7 @@ import com.android.camera.ToggleImageButton;
  */
 public class BottomBar extends FrameLayout
         implements PreviewStatusListener.PreviewAreaSizeChangedListener {
+
     private static final String TAG = "BottomBar";
     private int mWidth;
     private int mHeight;
@@ -78,22 +80,22 @@ public class BottomBar extends FrameLayout
         ToggleImageButton toggle = (ToggleImageButton) findViewById(R.id.bottombar_settings_toggle);
         toggle.setState(0, false);
         toggle.setOnStateChangeListener(new ToggleImageButton.OnStateChangeListener() {
-                @Override
-                public void stateChanged(View view, boolean toSettings) {
-                    if (toSettings) {
-                        if (isCaptureIntent) {
-                            hideIntentLayout();
-                        }
-                        transitionToSettings();
+            @Override
+            public void stateChanged(View view, boolean toSettings) {
+                if (toSettings) {
+                    if (isCaptureIntent) {
+                        hideIntentLayout();
+                    }
+                    transitionToSettings();
+                } else {
+                    if (isCaptureIntent) {
+                        transitionToIntentLayout();
                     } else {
-                        if (isCaptureIntent) {
-                            transitionToIntentLayout();
-                        } else {
-                            transitionToCapture();
-                        }
+                        transitionToCapture();
                     }
                 }
-            });
+            }
+        });
         mSettingsOverlay.setReferenceViewParent(mSettingsLayout);
     }
 
@@ -119,8 +121,8 @@ public class BottomBar extends FrameLayout
      * bottom bar capture layout.
      */
     private void transitionToSettings() {
-        mCaptureLayout.setVisibility(View.INVISIBLE);
         mSettingsLayout.setVisibility(View.VISIBLE);
+        mCaptureLayout.setVisibility(View.INVISIBLE);
     }
 
     /**
