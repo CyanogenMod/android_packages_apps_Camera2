@@ -898,8 +898,6 @@ public class PhotoModule
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
             overrideCameraSettings(mParameters.getFlashMode(),
                     mParameters.getWhiteBalance(), mParameters.getFocusMode());
-        } else {
-            overrideCameraSettings(null, null, null);
         }
     }
 
