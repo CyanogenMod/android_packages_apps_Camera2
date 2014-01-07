@@ -189,8 +189,6 @@ public class SettingsManager {
      */
     public void removeAllListeners() {
         for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
-            mSharedPreferenceListeners.remove(listener);
-
             if (mGlobalSettings != null) {
                 mGlobalSettings.unregisterOnSharedPreferenceChangeListener(listener);
             }
@@ -203,6 +201,7 @@ public class SettingsManager {
                 mDefaultSettings.unregisterOnSharedPreferenceChangeListener(listener);
             }
         }
+        mSharedPreferenceListeners.clear();
     }
 
     /**
