@@ -20,6 +20,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.camera.MediaSaverImpl;
+import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.PlaceholderManager;
@@ -45,6 +46,8 @@ public class CameraApp extends Application implements CameraServices {
         CameraUtil.initialize(this);
 
         Context context = getApplicationContext();
+        ProcessingServiceManager.initSingleton(context);
+
         mMediaSaver = new MediaSaverImpl();
         mNotificationManager = new ProcessingNotificationManager(this);
         mPlaceHolderManager = new PlaceholderManager(context);
