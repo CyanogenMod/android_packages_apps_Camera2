@@ -1333,6 +1333,25 @@ public class CameraActivity extends Activity
         CameraHolder.instance().keep();
         closeModule(mCurrentModule);
         int oldModuleIndex = mCurrentModeIndex;
+
+        // Refocus and Gcam are modes that cannot be selected
+        // from the mode list view, because they are not list items.
+        // Check whether we should interpret MODULE_CRAFT as either.
+        if (modeIndex == ModulesInfo.MODULE_CRAFT) {
+            boolean refocusOn = mSettingsManager.isRefocusOn();
+            boolean hdrPlusOn = mSettingsManager.isHdrPlusOn();
+            if (refocusOn && hdrPlusOn) {
+                throw new IllegalStateException("Refocus and hdr plus cannot be on together.");
+            }
+            if (refocusOn) {
+                modeIndex = ModulesInfo.MODULE_REFOCUS;
+            } else if (hdrPlusOn) {
+                modeIndex = ModulesInfo.MODULE_GCAM;
+            } else {
+                // Do nothing, keep MODULE_CRAFT.
+            }
+        }
+
         setModuleFromModeIndex(modeIndex);
 
         // TODO: The following check is temporary for modules attached to the
