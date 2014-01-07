@@ -951,7 +951,7 @@ public class PhotoModule
         // Set a listener which updates camera parameters based
         // on changed settings.
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.setOnSettingChangedListener(this);
+        settingsManager.addListener(this);
         mCameraPreviewParamsReady = true;
 
         startPreview();
@@ -1240,6 +1240,9 @@ public class PhotoModule
         }
         getServices().getMemoryManager().removeListener(this);
         mAppController.removePreviewAreaSizeChangedListener(mFocusManager);
+
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.removeListener(this);
     }
 
     @Override
@@ -1473,7 +1476,7 @@ public class PhotoModule
     }
 
     @Override
-    public void onSettingChanged(int id) {
+    public void onSettingChanged(SettingsManager settingsManager, int id) {
         switch (id) {
             case SettingsManager.SETTING_FLASH_MODE: {
                 updateParametersFlashMode();
@@ -1492,7 +1495,10 @@ public class PhotoModule
                 // Do nothing.
             }
         }
-        mCameraDevice.setParameters(mParameters);
+
+        if (mCameraDevice != null) {
+            mCameraDevice.setParameters(mParameters);
+        }
     }
 
     private void updateCameraParametersInitialize() {
