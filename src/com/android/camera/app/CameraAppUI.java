@@ -16,9 +16,11 @@
 
 package com.android.camera.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.hardware.display.DisplayManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -41,6 +43,8 @@ import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.widget.IndicatorOverlay;
+import com.android.camera.util.ApiHelper;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
 
@@ -214,6 +218,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
+    private DisplayManager.DisplayListener mDisplayListener;
+    private int mLastRotation;
     private int mSwipeState = IDLE;
     private PreviewOverlay mPreviewOverlay;
     private CaptureAnimationOverlay mCaptureOverlay;
@@ -341,6 +347,45 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
         mAnimationManager = new AnimationManager();
+        initDisplayListener();
+    }
+
+    /**
+     * Initializes the display listener to listen to display changes such as
+     * 180-degree rotation change, which will not have an onConfigurationChanged
+     * callback.
+     */
+    private void initDisplayListener() {
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            mLastRotation = CameraUtil.getDisplayRotation(
+                    (Activity) mController.getAndroidContext());
+
+            mDisplayListener = new DisplayManager.DisplayListener() {
+                @Override
+                public void onDisplayAdded(int arg0) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onDisplayChanged(int displayId) {
+                    int rotation = CameraUtil.getDisplayRotation(
+                            (Activity) mController.getAndroidContext());
+                    if ((rotation - mLastRotation + 360) % 360 == 180) {
+                        mPreviewStatusListener.onPreviewFlipped();
+                    }
+                    mLastRotation = rotation;
+                }
+
+                @Override
+                public void onDisplayRemoved(int arg0) {
+                    // Do nothing.
+                }
+            };
+
+            ((DisplayManager) mController.getAndroidContext()
+                    .getSystemService(Context.DISPLAY_SERVICE))
+                    .registerDisplayListener(mDisplayListener, null);
+        }
     }
 
     /**
