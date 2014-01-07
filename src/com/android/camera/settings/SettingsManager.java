@@ -778,6 +778,22 @@ public class SettingsManager {
         return (cameraFacingIndex == Integer.parseInt(backFacingIndex));
     }
 
+    /**
+     * Returns whether refocus mode is set on.
+     */
+    public boolean isRefocusOn() {
+        String refocusOn = get(SettingsManager.SETTING_CAMERA_REFOCUS);
+        return refocusOn.equals(SettingsManager.VALUE_ON);
+    }
+
+    /**
+     * Returns whether hdr plus mode is set on.
+     */
+    public boolean isHdrPlusOn() {
+        String hdrOn = get(SettingsManager.SETTING_CAMERA_HDR);
+        return hdrOn.equals(SettingsManager.VALUE_ON);
+    }
+
     //TODO: refactor this into a separate utils module.
 
     /**
