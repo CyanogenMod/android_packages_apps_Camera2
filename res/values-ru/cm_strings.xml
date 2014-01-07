@@ -212,7 +212,7 @@
     <string name="pref_camera_antibanding_title">Устран. мерцания</string>
     <string name="pref_camera_antibanding_entry_0">Выкл.</string>
     <string name="pref_camera_antibanding_entry_1">50 Гц</string>
-    <string name="pref_camera_antibanding_entry_2">60 ГЦ</string>
+    <string name="pref_camera_antibanding_entry_2">60 Гц</string>
     <string name="pref_camera_antibanding_entry_3">Авто</string>
 
     <string name="pref_camera_sharpness_title">Резкость</string>
