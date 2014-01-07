@@ -372,7 +372,7 @@ public class PhotoModule
             return;
         }
         // Check if the back camera exists
-        int backCameraId = CameraHolder.instance().getBackCameraId();
+        int backCameraId = mAppController.getCameraProvider().getFirstBackCameraId();
         if (backCameraId == -1) {
             // If there is no back camera, do not show the prompt.
             return;
@@ -569,7 +569,7 @@ public class PhotoModule
         }
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = true;
-            CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+            CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
             mUI.onStartFaceDetection(mDisplayOrientation,
                     (info.facing == CameraInfo.CAMERA_FACING_FRONT));
             mCameraDevice.setFaceDetectionCallback(mHandler, mUI);
@@ -1149,7 +1149,7 @@ public class PhotoModule
         if (mFocusManager != null) {
             mFocusManager.removeMessages();
         } else {
-            CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+            CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
             mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);

@@ -16,11 +16,10 @@
 
 package com.android.camera.activity;
 
-import android.hardware.Camera.Parameters;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.android.camera.CameraActivity;
-import com.android.camera.CameraHolder;
+import com.android.camera.CameraTestDevice;
 import com.android.gallery3d.R;
 
 import static com.google.testing.littlemock.LittleMock.doReturn;
@@ -37,7 +36,7 @@ public class CameraActivityTest extends CameraTestCase <CameraActivity> {
 
     @LargeTest
     public void testTakePicture() throws Exception {
-        CameraHolder.injectMockCamera(mCameraInfo, mOneMockCamera);
+        CameraTestDevice.injectMockCamera(mCameraInfo, mOneMockCamera);
 
         getActivity();
         getInstrumentation().waitForIdleSync();

@@ -27,6 +27,7 @@ import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.util.Log;
 
+import com.android.camera.app.AppController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -79,19 +80,21 @@ public class CameraSettings {
 
     private static final String TAG = "CameraSettings";
 
+    private final AppController mActivityController;
     private final Context mContext;
     private final Parameters mParameters;
     private final CameraInfo[] mCameraInfo;
     private final int mCameraId;
     private final SettingsManager mSettingsManager;
 
-    public CameraSettings(CameraActivity activity, Parameters parameters,
+    public CameraSettings(AppController app, Parameters parameters,
                           int cameraId, CameraInfo[] cameraInfo) {
-        mContext = (Context) activity;
+        mActivityController = app;
+        mContext = app.getAndroidContext();
         mParameters = parameters;
         mCameraId = cameraId;
         mCameraInfo = cameraInfo;
-        mSettingsManager = activity.getSettingsManager();
+        mSettingsManager = mActivityController.getSettingsManager();
     }
 
     public PreferenceGroup getPreferenceGroup(int preferenceRes) {
@@ -229,7 +232,7 @@ public class CameraSettings {
             removePreference(group, cameraHdr.getKey());
         }
 
-        int frontCameraId = CameraHolder.instance().getFrontCameraId();
+        int frontCameraId = mActivityController.getCameraProvider().getFirstFrontCameraId();
         boolean isFrontCamera = (frontCameraId == mCameraId);
         if (cameraHdrPlus != null && (!ApiHelper.HAS_CAMERA_HDR_PLUS ||
                 !GcamHelper.hasGcamCapture() || isFrontCamera)) {

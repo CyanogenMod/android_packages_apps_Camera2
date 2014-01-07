@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2009 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 
 package com.android.camera;
 
-import android.app.backup.BackupAgentHelper;
-import android.app.backup.SharedPreferencesBackupHelper;
-import android.content.Context;
+import android.hardware.Camera.CameraInfo;
 
-public class CameraBackupAgent extends BackupAgentHelper {
-    private static final String CAMERA_BACKUP_KEY = "camera_prefs";
+import com.android.camera.app.CameraManager.CameraProxy;
 
-    public void onCreate () {
-        Context context = getApplicationContext();
-        String prefNames[] = ComboPreferences.getSharedPreferencesNames(context);
+/**
+ * The class is kept to make sure the tests can build.
+ */
+@Deprecated
+public class CameraTestDevice {
 
-        addHelper(CAMERA_BACKUP_KEY, new SharedPreferencesBackupHelper(context, prefNames));
+    public static void injectMockCamera(CameraInfo[] info, CameraProxy[] camera) {
+    }
+
+    private CameraTestDevice() {
     }
 }
