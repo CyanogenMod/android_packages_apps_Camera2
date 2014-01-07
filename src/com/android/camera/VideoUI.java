@@ -150,22 +150,22 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
 
     private void setupToggleButtons() {
         ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
+        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
             mCameraCallback, R.array.camera_id_icons);
-        buttonManager.enableButton(ButtonManager.BUTTON_TORCH, R.id.flash_toggle_button,
+        buttonManager.enableButton(ButtonManager.BUTTON_TORCH,
             mFlashCallback, R.array.video_flashmode_icons);
-        buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
-        buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS, R.id.refocus_toggle_button);
+        buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+        buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
     }
 
     private void setupIntentToggleButtons() {
         setupToggleButtons();
         ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
+        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
                 mCancelCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE, R.id.done_button,
+        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
                 mDoneCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW, R.id.retake_button,
+        buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW,
                 mReviewCallback, R.drawable.ic_play);
     }
 

@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.util.Log;
@@ -40,29 +41,80 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_RETAKE = 7;
     public static final int BUTTON_REVIEW = 8;
 
-    /** For two state MultiStateToggleButtons, the off index. */
+    /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
-    /** For two state MultiStateToggleButtons, the on index. */
+    /** For two state MultiToggleImageButtons, the on index. */
     public static final int ON = 1;
 
-    /** A reference to the activity for finding button views on demand. */
-    private final CameraActivity mActivity;
     /** A reference to the application's settings manager. */
     private final SettingsManager mSettingsManager;
+
+    /** Bottom bar options buttons. */
+    private MultiToggleImageButton mButtonFlash; // same as torch.
+    private MultiToggleImageButton mButtonCamera;
+    private MultiToggleImageButton mButtonHdrPlus;
+    private MultiToggleImageButton mButtonRefocus;
+
+    /** Intent UI buttons. */
+    private ImageButton mButtonCancel;
+    private ImageButton mButtonDone;
+    private ImageButton mButtonRetake; // same as review.
+
+    /** A listener for button enabled and visibility
+        state changes. */
+    private ButtonStatusListener mListener;
 
     /**
      * Get a new global ButtonManager.
      */
     public ButtonManager(CameraActivity activity) {
-        mActivity = activity;
+        getButtonsReferences(activity);
         mSettingsManager = activity.getSettingsManager();
         mSettingsManager.addListener(this);
     }
 
-    // TODO:
-    // Get references to the buttons in the constructor
-    // to avoid looking up the buttons constantly.
-    // The ButtonManager can know about the particular res id of a button.
+    /**
+     * ButtonStatusListener provides callbacks for when button's
+     * visibility changes and enabled status changes.
+     */
+    public interface ButtonStatusListener {
+        /**
+         * A button's visibility has changed.
+         */
+        public void onButtonVisibilityChanged(ButtonManager buttonManager, int buttonId);
+
+        /**
+         * A button's enabled state has changed.
+         */
+        public void onButtonEnabledChanged(ButtonManager buttonManager, int buttonId);
+    }
+
+    /**
+     * Sets the ButtonStatusListener.
+     */
+    public void setListener(ButtonStatusListener listener) {
+        mListener = listener;
+    }
+
+    /**
+     * Gets references to all known buttons.
+     */
+    private void getButtonsReferences(Activity activity) {
+        mButtonFlash
+            = (MultiToggleImageButton) activity.findViewById(R.id.flash_toggle_button);
+        mButtonCamera
+            = (MultiToggleImageButton) activity.findViewById(R.id.camera_toggle_button);
+        mButtonHdrPlus
+            = (MultiToggleImageButton) activity.findViewById(R.id.hdr_plus_toggle_button);
+        mButtonRefocus
+            = (MultiToggleImageButton) activity.findViewById(R.id.refocus_toggle_button);
+        mButtonCancel
+            = (ImageButton) activity.findViewById(R.id.cancel_button);
+        mButtonDone
+            = (ImageButton) activity.findViewById(R.id.done_button);
+        mButtonRetake
+            = (ImageButton) activity.findViewById(R.id.retake_button);
+    }
 
     @Override
     public void onSettingChanged(SettingsManager settingsManager, int id) {
@@ -72,27 +124,27 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         switch (id) {
             case SettingsManager.SETTING_FLASH_MODE: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_FLASH, R.id.flash_toggle_button);
+                button = getButtonOrError(BUTTON_FLASH);
                 break;
             }
             case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_TORCH, R.id.flash_toggle_button);
+                button = getButtonOrError(BUTTON_TORCH);
                 break;
             }
             case SettingsManager.SETTING_CAMERA_ID: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_CAMERA, R.id.camera_toggle_button);
+                button = getButtonOrError(BUTTON_CAMERA);
                 break;
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
+                button = getButtonOrError(BUTTON_HDRPLUS);
                 break;
             }
             case SettingsManager.SETTING_CAMERA_REFOCUS: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_REFOCUS, R.id.refocus_toggle_button);
+                button = getButtonOrError(BUTTON_REFOCUS);
                 break;
             }
             default: {
@@ -109,6 +161,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
     /**
      * A callback executed in the state listener of a button.
+
      * Used by a module to set specific behavior when a button's
      * state changes.
      */
@@ -116,57 +169,95 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         public void onStateChanged(int state);
     }
 
-    private MultiToggleImageButton getButtonOrError(int buttonId, int resId) {
-        MultiToggleImageButton button
-            = (MultiToggleImageButton) mActivity.findViewById(resId);
-        if (button == null) {
-            switch (buttonId) {
-                case BUTTON_FLASH:
+    /**
+     * Returns the appropriate {@link com.android.camera.MultiToggleImageButton}
+     * based on button id.  An IllegalStateException will be throw if the
+     * button could not be found in the view hierarchy.
+     */
+    private MultiToggleImageButton getButtonOrError(int buttonId) {
+        switch (buttonId) {
+            case BUTTON_FLASH:
+                if (mButtonFlash == null) {
                     throw new IllegalStateException("Flash button could not be found.");
-                case BUTTON_TORCH:
+                }
+                return mButtonFlash;
+            case BUTTON_TORCH:
+                if (mButtonFlash == null) {
                     throw new IllegalStateException("Torch button could not be found.");
-                case BUTTON_CAMERA:
+                }
+                return mButtonFlash;
+            case BUTTON_CAMERA:
+                if (mButtonCamera == null) {
                     throw new IllegalStateException("Camera button could not be found.");
-                case BUTTON_HDRPLUS:
+                }
+                return mButtonCamera;
+            case BUTTON_HDRPLUS:
+                if (mButtonHdrPlus == null) {
                     throw new IllegalStateException("Hdr button could not be found.");
-                case BUTTON_REFOCUS:
+                }
+                return mButtonHdrPlus;
+            case BUTTON_REFOCUS:
+                if (mButtonRefocus == null) {
                     throw new IllegalStateException("Refocus button could not be found.");
-                default:
-                    throw new IllegalArgumentException("button not known by id=" + buttonId);
-            }
+                }
+                return mButtonRefocus;
+            default:
+                throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
-        return button;
     }
 
-    private ImageButton getImageButtonOrError(int buttonId, int resId) {
-        ImageButton button = (ImageButton) mActivity.findViewById(resId);
-        if (button == null) {
-            switch (buttonId) {
-                case BUTTON_CANCEL:
+    /**
+     * Returns the appropriate {@link android.widget.ImageButton}
+     * based on button id.  An IllegalStateException will be throw if the
+     * button could not be found in the view hierarchy.
+     */
+    private ImageButton getImageButtonOrError(int buttonId) {
+        switch (buttonId) {
+            case BUTTON_CANCEL:
+                if (mButtonCancel == null) {
                     throw new IllegalStateException("Cancel button could not be found.");
-                case BUTTON_DONE:
+                }
+                return mButtonCancel;
+            case BUTTON_DONE:
+                if (mButtonDone == null) {
                     throw new IllegalStateException("Done button could not be found.");
-                case BUTTON_RETAKE:
+                }
+                return mButtonDone;
+            case BUTTON_RETAKE:
+                if (mButtonRetake == null) {
                     throw new IllegalStateException("Retake button could not be found.");
-                case BUTTON_REVIEW:
+                }
+                return mButtonRetake;
+            case BUTTON_REVIEW:
+                if (mButtonRetake == null) {
                     throw new IllegalStateException("Review button could not be found.");
-
-                default:
-                    throw new IllegalArgumentException("button not known by id=" + buttonId);
-            }
+                }
+                return mButtonRetake;
+            default:
+                throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
-        return button;
     }
 
     /**
      * Enable a known button by id, with a state change callback and
      * a resource id that points to an array of drawables.
      */
-    public void enableButton(int buttonId, int resId, ButtonCallback cb, int resIdImages) {
-        MultiToggleImageButton button = getButtonOrError(buttonId, resId);
+    public void enableButton(int buttonId, ButtonCallback cb, int resIdImages) {
+        MultiToggleImageButton button = getButtonOrError(buttonId);
         switch (buttonId) {
             case BUTTON_FLASH:
+                if (!mSettingsManager.isCameraBackFacing()) {
+                    disableButton(BUTTON_FLASH);
+                    return;
+                }
                 enableFlashButton(button, cb, resIdImages);
+                break;
+            case BUTTON_TORCH:
+                if (!mSettingsManager.isCameraBackFacing()) {
+                    disableButton(BUTTON_TORCH);
+                    return;
+                }
+                enableTorchButton(button, cb, resIdImages);
                 break;
             case BUTTON_CAMERA:
                 enableCameraButton(button, cb, resIdImages);
@@ -174,58 +265,108 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case BUTTON_HDRPLUS:
                 enableHdrPlusButton(button, cb, resIdImages);
                 break;
-            case BUTTON_TORCH:
-                enableTorchButton(button, cb, resIdImages);
-                break;
             case BUTTON_REFOCUS:
                 enableRefocusButton(button, cb, resIdImages);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
-        button.setVisibility(View.VISIBLE);
+
+        if (!button.isEnabled()) {
+            button.setEnabled(true);
+            if (mListener != null) {
+                mListener.onButtonEnabledChanged(this, buttonId);
+            }
+        }
+
+        if (button.getVisibility() != View.VISIBLE) {
+            button.setVisibility(View.VISIBLE);
+            if (mListener != null) {
+                mListener.onButtonVisibilityChanged(this, buttonId);
+            }
+        }
     }
 
     /**
      * Enable a known button with a click listener and a resource id.
      * Sets the button visible.
      */
-    public void enablePushButton(int buttonId, int resId, View.OnClickListener cb,
+    public void enablePushButton(int buttonId, View.OnClickListener cb,
             int imageId) {
-        ImageButton button = getImageButtonOrError(buttonId, resId);
+        ImageButton button = getImageButtonOrError(buttonId);
         button.setOnClickListener(cb);
-        button.setEnabled(true);
         button.setImageResource(imageId);
+
+        if (!button.isEnabled()) {
+            button.setEnabled(true);
+            if (mListener != null) {
+                mListener.onButtonEnabledChanged(this, buttonId);
+            }
+        }
     }
 
     /**
      * Enable a known button with a click listener. Sets the button visible.
      */
-    public void enablePushButton(int buttonId, int resId, View.OnClickListener cb) {
-        ImageButton button = getImageButtonOrError(buttonId, resId);
+    public void enablePushButton(int buttonId, View.OnClickListener cb) {
+        ImageButton button = getImageButtonOrError(buttonId);
         button.setOnClickListener(cb);
-        button.setEnabled(true);
+
+        if (!button.isEnabled()) {
+            button.setEnabled(true);
+            if (mListener != null) {
+                mListener.onButtonEnabledChanged(this, buttonId);
+            }
+        }
     }
 
     /**
      * Sets a button in its disabled (greyed out) state.
      */
-    public void disableButton(int buttonId, int resId) {
-        MultiToggleImageButton button = getButtonOrError(buttonId, resId);
-        disableButton(button);
-    }
+    public void disableButton(int buttonId) {
+        MultiToggleImageButton button = getButtonOrError(buttonId);
+        if (button.isEnabled()) {
+            button.setEnabled(false);
+            if (mListener != null) {
+                mListener.onButtonEnabledChanged(this, buttonId);
+            }
+        }
 
-    private void disableButton(MultiToggleImageButton button) {
-        button.setEnabled(false);
-        button.setVisibility(View.VISIBLE);
+        if (button.getVisibility() != View.VISIBLE) {
+            button.setVisibility(View.VISIBLE);
+            if (mListener != null) {
+                mListener.onButtonVisibilityChanged(this, buttonId);
+            }
+        }
     }
 
     /**
      * Hide a button by id.
      */
-    public void hideButton(int buttonId, int resId) {
-        MultiToggleImageButton button = getButtonOrError(buttonId, resId);
-        button.setVisibility(View.INVISIBLE);
+    public void hideButton(int buttonId) {
+        MultiToggleImageButton button = getButtonOrError(buttonId);
+        if (button.getVisibility() == View.VISIBLE) {
+            button.setVisibility(View.INVISIBLE);
+            if (mListener != null) {
+                mListener.onButtonVisibilityChanged(this, buttonId);
+            }
+        }
+    }
+
+    /**
+     * Check if a button is enabled.
+     */
+    public boolean isEnabled(int buttonId) {
+        MultiToggleImageButton button = getButtonOrError(buttonId);
+        return button.isEnabled();
+    }
+
+    /**
+     * Check if a button is visible.
+     */
+    public boolean isVisible(int buttonId) {
+        MultiToggleImageButton button = getButtonOrError(buttonId);
+        return (button.getVisibility() == View.VISIBLE);
     }
 
     /**
@@ -233,11 +374,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      */
     private void enableFlashButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
-
-        if (!mSettingsManager.isCameraBackFacing()) {
-            disableButton(button);
-            return;
-        }
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
@@ -254,8 +390,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     }
                 }
             });
-
-        button.setEnabled(true);
     }
 
     /**
@@ -263,11 +397,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      */
     private void enableTorchButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
-
-        if (!mSettingsManager.isCameraBackFacing()) {
-            disableButton(button);
-            return;
-        }
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
@@ -286,8 +415,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     }
                 }
             });
-
-        button.setEnabled(true);
     }
 
     /**
@@ -314,8 +441,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     }
                 }
             });
-
-        button.setEnabled(true);
     }
 
     /**
@@ -340,8 +465,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     }
                 }
             });
-
-        button.setEnabled(true);
     }
 
     /**
@@ -366,8 +489,5 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     }
                 }
             });
-
-        button.setEnabled(true);
     }
-
 }

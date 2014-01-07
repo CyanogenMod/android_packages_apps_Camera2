@@ -1434,6 +1434,7 @@ public class CameraActivity extends Activity
         return mSettingsController;
     }
 
+    @Override
     public ButtonManager getButtonManager() {
         if (mButtonManager == null) {
             mButtonManager = new ButtonManager(this);

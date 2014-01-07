@@ -312,20 +312,20 @@ public class PhotoUI implements PreviewStatusListener,
 
     private void setupToggleButtons() {
         ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA, R.id.camera_toggle_button,
+        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
             mCameraCallback, R.array.camera_id_icons);
-        buttonManager.enableButton(ButtonManager.BUTTON_FLASH, R.id.flash_toggle_button,
+        buttonManager.enableButton(ButtonManager.BUTTON_FLASH,
             null, R.array.camera_flashmode_icons);
 
         if (mActivity.getCurrentModuleIndex() == ModeListView.MODE_PHOTO) {
             // Simple photo mode.
-            buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button);
-            buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS, R.id.refocus_toggle_button);
+            buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+            buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
         } else {
             // Advanced photo mode.
-            buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS, R.id.hdr_plus_toggle_button,
+            buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS,
                 mHdrCallback, R.array.pref_camera_hdr_plus_icons);
-            buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS, R.id.refocus_toggle_button,
+            buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS,
                 mRefocusCallback, R.array.refocus_icons);
         }
     }
@@ -333,11 +333,11 @@ public class PhotoUI implements PreviewStatusListener,
     private void setupIntentToggleButtons() {
         setupToggleButtons();
         ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL, R.id.cancel_button,
+        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
                 mCancelCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE, R.id.done_button,
+        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
                 mDoneCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE, R.id.retake_button,
+        buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
                 mRetakeCallback);
     }
 
