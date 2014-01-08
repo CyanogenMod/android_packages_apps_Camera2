@@ -43,6 +43,7 @@ import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.widget.IndicatorOverlay;
+import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.widget.FilmstripLayout;
@@ -206,6 +207,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private BottomBar mBottomBar;
     private IndicatorOverlay mIndicatorOverlay;
     private boolean mShouldShowShimmy = false;
+    private IndicatorIconController mIndicatorIconController;
 
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
@@ -534,7 +536,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * set on the following app ui elements:
      * {@link com.android.camera.ui.PreviewOverlay},
      * {@link com.android.camera.ui.BottomBar},
-     * {@link com.android.camera.ui.IndicatorOverlay}.
+     * {@link com.android.camera.ui.IndicatorOverlay},
+     * {@link com.android.camera.ui.IndicatorIconController}.
      */
     private void onPreviewListenerChanged() {
         // Set a listener for recognizing preview gestures.
@@ -558,7 +561,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mIndicatorOverlay = (IndicatorOverlay) mAppRootView.findViewById(
             R.id.indicator_overlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mIndicatorOverlay);
-        mController.getSettingsManager().addListener(mIndicatorOverlay);
+
+        if (mIndicatorIconController == null) {
+            mIndicatorIconController =
+                new IndicatorIconController(mController, mAppRootView);
+        }
+        mController.getSettingsManager().addListener(mIndicatorIconController);
     }
 
     /**
@@ -566,9 +574,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * specific changes that depend on the camera or camera settings.
      */
     public void onChangeCamera() {
-        if (mIndicatorOverlay != null) {
+        if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
-            mIndicatorOverlay.syncIndicators(mController);
+            mIndicatorIconController.syncIndicators(mController);
         }
     }
 
@@ -617,10 +625,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setupToggle(mIsCaptureIntent);
 
-        mIndicatorOverlay = (IndicatorOverlay) mAppRootView.findViewById(
-            R.id.indicator_overlay);
-        mIndicatorOverlay.setController(mController);
-        mController.getButtonManager().setListener(mIndicatorOverlay);
+        if (mIndicatorIconController == null) {
+            mIndicatorIconController =
+                new IndicatorIconController(mController, mAppRootView);
+        }
+        mController.getButtonManager().setListener(mIndicatorIconController);
     }
 
     // TODO: Remove this when refactor is done.
@@ -632,6 +641,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay = null;
         mBottomBar = null;
         mIndicatorOverlay = null;
+        mIndicatorIconController = null;
         setBottomBarShutterListener(null);
     }
 

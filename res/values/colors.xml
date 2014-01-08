@@ -87,4 +87,6 @@
 
     <color name="filmstrip_background">#000000</color>
 
+    <color name="indicators_background_color">#19000000</color>
+
 </resources>

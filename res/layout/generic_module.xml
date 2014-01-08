@@ -48,24 +48,28 @@
           android:layout_width="match_parent"
           android:layout_height="0px"
           android:layout_weight="1"
-          android:layout_gravity="top|center_horizontal"
-          android:padding="50px">
-        <ImageView
-            android:id="@+id/flash_indicator"
+          android:padding="100px"
+          android:layout_gravity="top|center_horizontal" >
+        <LinearLayout
+            android:id="@+id/indicator_overlay_icons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_flash_on"
-            android:background="@null"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true" />
-        <ImageView
-            android:id="@+id/hdr_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_hdr_plus_on"
-            android:background="@null"
-            android:layout_above="@+id/flash_indicator"
-            android:layout_alignParentRight="true" />
+            android:orientation="vertical"
+            android:background="@drawable/bg_indicators"
+            android:layout_gravity="bottom|right" >
+          <ImageView
+              android:id="@+id/hdr_indicator"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="5px"
+              android:background="@null" />
+          <ImageView
+              android:id="@+id/flash_indicator"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="5px"
+              android:background="@null" />
+        </LinearLayout>
       </com.android.camera.widget.IndicatorOverlay>
 
       <include layout="@layout/bottom_bar" />
