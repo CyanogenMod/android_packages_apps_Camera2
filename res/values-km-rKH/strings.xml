@@ -178,8 +178,8 @@
     <string name="pref_camera_countdown_label_ten" msgid="4372650985906500604">"១០ វិនាទី"</string>
     <string name="pref_camera_countdown_label_fifteen" msgid="8469955900530268867">"១៥ វិនាទី"</string>
     <string name="not_selectable_in_scene_mode" msgid="3260801086980522611">"មិន​អាច​ជ្រើស​បាន​ក្នុង​របៀប​រូបភាព។"</string>
-    <string name="pref_exposure_title" msgid="7525751789152582800">"បង្ហាញ"</string>
-    <string name="pref_exposure_label" msgid="2604738602400261218">"បង្ហាញ"</string>
+    <string name="pref_exposure_title" msgid="7525751789152582800">"ពន្លឺ"</string>
+    <string name="pref_exposure_label" msgid="2604738602400261218">"ពន្លឺ"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
     <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
