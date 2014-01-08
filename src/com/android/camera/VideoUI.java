@@ -136,10 +136,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
 
-        // Customize the bottom bar.
-        activity.getCameraAppUI().setBottomBarColor(
-            activity.getResources().getColor(R.color.video_mode_color));
-
         mSurfaceTexture = mTextureView.getSurfaceTexture();
 
         initializeMiscControls();

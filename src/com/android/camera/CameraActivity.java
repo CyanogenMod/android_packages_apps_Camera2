@@ -1009,6 +1009,8 @@ public class CameraActivity extends Activity
                 || modeIndex == ModulesInfo.MODULE_REFOCUS) {
             mCameraAppUI.prepareModuleUI();
         }
+
+        syncBottomBarColor();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
         if (!mSecureCamera) {
@@ -1488,15 +1490,18 @@ public class CameraActivity extends Activity
         fragment.show(getFragmentManager(), "tiny_planet");
     }
 
-    private void openModule(CameraModule module) {
+    private void syncBottomBarColor() {
         // Currently not all modules use the generic_module UI.
-        // TODO: once all modules have a bottom bar, move this
-        // logic into the app.
-        if (module.isUsingBottomBar()) {
-            int color = mModeListView.getModeThemeColor(mCurrentModeIndex);
-            mCameraAppUI.setBottomBarColor(color);
+        // TODO: once all modules have a bottom bar, remove
+        // isUsingBottomBar check.
+        if (mCurrentModule.isUsingBottomBar()) {
+            int colorResId = mModeListView.getModeThemeColor(mCurrentModeIndex);
+            mCameraAppUI.setBottomBarColor(getResources().getColor(colorResId));
         }
+    }
 
+    private void openModule(CameraModule module) {
+        syncBottomBarColor();
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
         module.onPreviewVisibilityChanged(!mFilmstripVisible);

@@ -205,17 +205,6 @@ public class PhotoUI implements PreviewStatusListener,
 
         mSurfaceTexture = mTextureView.getSurfaceTexture();
 
-        // Customize the bottom bar.
-        if (mActivity.getCurrentModuleIndex() == ModeListView.MODE_PHOTO) {
-            // Simple photo mode.
-            activity.getCameraAppUI().setBottomBarColor(
-                activity.getResources().getColor(R.color.camera_mode_color));
-        } else {
-            // Advanced photo mode.
-            activity.getCameraAppUI().setBottomBarColor(
-                activity.getResources().getColor(R.color.craft_mode_color));
-        }
-
         ViewStub faceViewStub = (ViewStub) mRootView
                 .findViewById(R.id.face_view_stub);
         if (faceViewStub != null) {
