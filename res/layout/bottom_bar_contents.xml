@@ -89,7 +89,7 @@
       <com.android.camera.ToggleImageButton
           android:id="@+id/bottombar_settings_toggle"
           android:layout_width="wrap_content"
-          android:layout_height="match_parent"
+          android:layout_height="wrap_content"
           android:layout_gravity="center_vertical"
           android:background="@null"
           camera:imageIds="@array/settings_toggle_icons"/>
