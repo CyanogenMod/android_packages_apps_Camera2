@@ -29,7 +29,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.android.camera.CameraHolder;
+import com.android.camera.CameraTestDevice;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.util.CameraUtil;
 import com.android.gallery3d.R;
@@ -169,11 +169,11 @@ public class CameraTestCase<T extends Activity> extends ActivityInstrumentationT
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        CameraHolder.injectMockCamera(null,  null);
+        CameraTestDevice.injectMockCamera(null, null);
     }
 
     protected void internalTestFailToConnect() throws Exception {
-        CameraHolder.injectMockCamera(mCameraInfo, null);
+        CameraTestDevice.injectMockCamera(mCameraInfo, null);
 
         getActivity();
         Instrumentation inst = getInstrumentation();

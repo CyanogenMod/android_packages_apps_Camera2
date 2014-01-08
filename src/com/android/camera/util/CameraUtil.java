@@ -37,7 +37,6 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -54,9 +53,6 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
-import com.android.camera.CameraHolder;
-import com.android.camera.app.CameraManager;
-import com.android.camera.app.CameraManagerFactory;
 import com.android.camera2.R;
 
 import java.io.Closeable;
@@ -325,23 +321,6 @@ public class CameraUtil {
         if (dpm.getCameraDisabled(null)) {
             throw new CameraDisabledException();
         }
-    }
-
-    public static CameraManager.CameraProxy openCamera(
-            Activity activity, final int cameraId,
-            Handler handler, final CameraManager.CameraOpenCallback cb) {
-        try {
-            throwIfCameraDisabled(activity);
-            return CameraHolder.instance().open(handler, cameraId, cb);
-        } catch (CameraDisabledException ex) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    cb.onCameraDisabled(cameraId);
-                }
-            });
-        }
-        return null;
     }
 
     public static void showErrorAndFinish(final Activity activity, int msgId) {

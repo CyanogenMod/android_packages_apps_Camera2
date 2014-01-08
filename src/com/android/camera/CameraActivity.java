@@ -1334,7 +1334,6 @@ public class CameraActivity extends Activity
             return;
         }
 
-        CameraHolder.instance().keep();
         closeModule(mCurrentModule);
         int oldModuleIndex = mCurrentModeIndex;
 

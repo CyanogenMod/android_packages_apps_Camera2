@@ -22,12 +22,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 
+import com.android.camera.app.AppController;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.android.camera.util.UsageStatistics;
 
 public class ComboPreferences implements
         SharedPreferences,
@@ -107,12 +107,12 @@ public class ComboPreferences implements
         movePrefFrom(prefMap, CameraSettings.KEY_VIDEO_EFFECT, src);
     }
 
-    public static String[] getSharedPreferencesNames(Context context) {
-        int numOfCameras = CameraHolder.instance().getNumberOfCameras();
+    public static String[] getSharedPreferencesNames(AppController app) {
+        int numOfCameras = app.getCameraProvider().getNumberOfCameras();
         String prefNames[] = new String[numOfCameras + 1];
-        prefNames[0] = getGlobalSharedPreferencesName(context);
+        prefNames[0] = getGlobalSharedPreferencesName(app.getAndroidContext());
         for (int i = 0; i < numOfCameras; i++) {
-            prefNames[i + 1] = getLocalSharedPreferencesName(context, i);
+            prefNames[i + 1] = getLocalSharedPreferencesName(app.getAndroidContext(), i);
         }
         return prefNames;
     }
