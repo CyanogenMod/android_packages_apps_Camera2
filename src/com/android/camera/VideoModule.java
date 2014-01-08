@@ -704,7 +704,8 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onShutterButtonClick() {
-        if (mUI.collapseCameraControls() || mSwitchingCamera) return;
+        if (mPaused || mUI.collapseCameraControls() ||
+                mSwitchingCamera) return;
 
         boolean stop = mMediaRecorderRecording;
 
@@ -1733,6 +1734,12 @@ public class VideoModule implements CameraModule,
                 fail = true;
             }
             mMediaRecorderRecording = false;
+
+            //If recording stops while snapshot is in progress, we might not get jpeg callback
+            //because cameraservice will disable picture related messages. Hence reset the
+            //flag here so that we can take liveshots in the next recording session.
+            mSnapshotInProgress = false;
+
             mOrientationManager.unlockOrientation();
 
             // If the activity is paused, this means activity is interrupted
@@ -2342,6 +2349,7 @@ public class VideoModule implements CameraModule,
         @Override
         public void onPictureTaken(byte [] jpegData, CameraProxy camera) {
             Log.v(TAG, "onPictureTaken");
+            if(!mSnapshotInProgress || mPaused || mCameraDevice == null) return;
             mSnapshotInProgress = false;
             showVideoSnapshotUI(false);
             storeImage(jpegData, mLocation);
