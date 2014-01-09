@@ -29,6 +29,10 @@ public class RotatableLinearLayout extends LinearLayout {
 
     public RotatableLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        if (getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE) {
+            setOrientation(LinearLayout.HORIZONTAL);
+        }
     }
 
     @Override
