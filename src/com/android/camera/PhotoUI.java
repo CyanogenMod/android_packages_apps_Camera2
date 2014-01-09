@@ -306,6 +306,7 @@ public class PhotoUI implements PreviewStatusListener,
 
     private void setupToggleButtons() {
         ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.setShutterButtonIcon(ButtonManager.CAMERA_SHUTTER_ICON);
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
             mCameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_FLASH,

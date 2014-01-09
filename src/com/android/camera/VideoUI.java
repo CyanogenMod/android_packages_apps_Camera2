@@ -151,6 +151,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
 
     private void setupToggleButtons() {
         ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.setShutterButtonIcon(ButtonManager.VIDEO_SHUTTER_ICON);
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
             mCameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_TORCH,

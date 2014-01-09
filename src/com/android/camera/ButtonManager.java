@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.util.Log;
 
+import com.android.camera.ShutterButton;
 import com.android.camera.settings.SettingsManager;
 
 import com.android.camera2.R;
@@ -40,6 +41,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_DONE = 6;
     public static final int BUTTON_RETAKE = 7;
     public static final int BUTTON_REVIEW = 8;
+
+    public static final int CAMERA_SHUTTER_ICON = 0;
+    public static final int VIDEO_SHUTTER_ICON = 1;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -64,6 +68,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         state changes. */
     private ButtonStatusListener mListener;
 
+    private ShutterButton mShutterButton;
+
     /**
      * Get a new global ButtonManager.
      */
@@ -71,6 +77,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         getButtonsReferences(activity);
         mSettingsManager = activity.getSettingsManager();
         mSettingsManager.addListener(this);
+        mShutterButton
+            = (ShutterButton) activity.findViewById(R.id.shutter_button);
     }
 
     /**
@@ -382,14 +390,14 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-                @Override
-                public void stateChanged(View view, int state) {
-                    mSettingsManager.setStringValueIndex(SettingsManager.SETTING_FLASH_MODE, state);
-                    if (cb != null) {
-                        cb.onStateChanged(state);
-                    }
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_FLASH_MODE, state);
+                if (cb != null) {
+                    cb.onStateChanged(state);
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -406,15 +414,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-                @Override
-                public void stateChanged(View view, int state) {
-                    mSettingsManager.setStringValueIndex(
-                            SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE, state);
-                    if(cb != null) {
-                        cb.onStateChanged(state);
-                    }
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(
+                        SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE, state);
+                if(cb != null) {
+                    cb.onStateChanged(state);
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -431,16 +439,16 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-                @Override
-                public void stateChanged(View view, int state) {
-                    mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_ID, state);
-                    int cameraId = Integer.parseInt(mSettingsManager.get(
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_ID, state);
+                int cameraId = Integer.parseInt(mSettingsManager.get(
                         SettingsManager.SETTING_CAMERA_ID));
-                    if (cb != null) {
-                        cb.onStateChanged(cameraId);
-                    }
+                if (cb != null) {
+                    cb.onStateChanged(cameraId);
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -457,14 +465,14 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-                @Override
-                public void stateChanged(View view, int state) {
-                    mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
-                    if (cb != null) {
-                        cb.onStateChanged(state);
-                    }
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
+                if (cb != null) {
+                    cb.onStateChanged(state);
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -481,13 +489,25 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-                @Override
-                public void stateChanged(View view, int state) {
-                    mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_REFOCUS, state);
-                    if (cb != null) {
-                        cb.onStateChanged(state);
-                    }
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_REFOCUS, state);
+                if (cb != null) {
+                    cb.onStateChanged(state);
                 }
-            });
+            }
+        });
     }
+
+     public void setShutterButtonIcon(int w) {
+        switch(w) {
+            case VIDEO_SHUTTER_ICON:
+                mShutterButton.setImageResource(R.drawable.ic_video_normal);
+                break;
+            case CAMERA_SHUTTER_ICON:
+            default:
+                mShutterButton.setImageResource(R.drawable.ic_camera_normal);
+        }
+    }
+
 }
