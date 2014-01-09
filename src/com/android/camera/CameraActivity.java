@@ -733,6 +733,23 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public boolean shouldShowShimmy() {
+        int remainingTimes = mSettingsManager.getInt(
+                SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX);
+        return remainingTimes > 0;
+    }
+
+    @Override
+    public void decrementShimmyPlayTimes() {
+        int remainingTimes = mSettingsManager.getInt(
+                SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX) - 1;
+        if (remainingTimes >= 0) {
+            mSettingsManager.setInt(SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX,
+                    remainingTimes);
+        }
+     }
+
+    @Override
     public void updatePreviewTransform(Matrix matrix) {
         mCameraAppUI.updatePreviewTransform(matrix);
     }

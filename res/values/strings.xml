@@ -722,6 +722,9 @@ CHAR LIMIT=NONE] -->
     <!-- Default for camera startup module index -->
     <string name="pref_camera_startup_index_default" translatable="false">0</string>
 
+    <!-- Default number of times to play shimmy. -->
+    <string name="pref_shimmy_play_times" translatable="false">10</string>
+
     <!-- A message shown to the user, indicating that an HDR+ photo is being processed. [CHAR LIMIT=25] -->
     <string name="processing_hdr_plus">Processing HDR+ &#8230;</string>
  </resources>

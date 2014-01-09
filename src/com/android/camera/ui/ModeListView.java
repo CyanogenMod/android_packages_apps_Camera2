@@ -143,6 +143,7 @@ public class ModeListView extends ScrollView {
     private AnimatorSet mAnimatorSet;
     private int mFocusItem = NO_ITEM_SELECTED;
     private AnimationEffects mCurrentEffect;
+    private ModeListOpenListener mModeListOpenListener;
 
     // Width and height of this view. They get updated in onLayout()
     // Unit for width and height are pixels.
@@ -150,7 +151,7 @@ public class ModeListView extends ScrollView {
     private int mHeight;
     private float mScrollTrendX = 0f;
     private float mScrollTrendY = 0f;
-    private ModeSwitchListener mListener = null;
+    private ModeSwitchListener mModeSwitchListener = null;
     private int[] mSupportedModes;
     private final LinkedList<TimeBasedPosition> mPositionHistory
             = new LinkedList<TimeBasedPosition>();
@@ -158,6 +159,10 @@ public class ModeListView extends ScrollView {
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
+    }
+
+    public interface ModeListOpenListener {
+        public void onOpenFullScreen();
     }
 
     /**
@@ -398,8 +403,8 @@ public class ModeListView extends ScrollView {
 
     /** Notify ModeSwitchListener, if any, of the mode change. */
     private void onModeSelected(int modeIndex) {
-        if (mListener != null) {
-            mListener.onModeSelected(modeIndex);
+        if (mModeSwitchListener != null) {
+            mModeSwitchListener.onModeSelected(modeIndex);
         }
     }
 
@@ -409,7 +414,16 @@ public class ModeListView extends ScrollView {
      * @param listener a listener that gets notified when mode changes.
      */
     public void setModeSwitchListener(ModeSwitchListener listener) {
-        mListener = listener;
+        mModeSwitchListener = listener;
+    }
+
+    /**
+     * Sets a listener that gets notified when the mode list is open full screen.
+     *
+     * @param listener a listener that listens to mode list open events
+     */
+    public void setModeListOpenListener(ModeListOpenListener listener) {
+        mModeListOpenListener = listener;
     }
 
     @Override
@@ -772,6 +786,9 @@ public class ModeListView extends ScrollView {
     private void snapToFullScreen() {
         animateListToWidth(mWidth);
         mState = FULLY_SHOWN;
+        if (mModeListOpenListener != null) {
+            mModeListOpenListener.onOpenFullScreen();
+        }
     }
 
     /**

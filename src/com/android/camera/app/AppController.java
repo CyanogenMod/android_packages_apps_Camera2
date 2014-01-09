@@ -129,6 +129,17 @@ public interface AppController {
     public void updatePreviewAspectRatio(float aspectRatio);
 
     /**
+     * Returns whether shimmy should be shown based on the times remaining in
+     * the preference.
+     */
+    public boolean shouldShowShimmy();
+
+    /**
+     * Decrement the times shimmy should play.
+     */
+    public void decrementShimmyPlayTimes();
+
+    /**
      * Gets called from module when the module needs to change the transform matrix
      * of the preview TextureView. It is encouraged to use
      * {@link #updatePreviewAspectRatio(float)} over this function, unless the module
