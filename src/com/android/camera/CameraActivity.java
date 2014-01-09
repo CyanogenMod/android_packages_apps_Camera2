@@ -877,6 +877,9 @@ public class CameraActivity extends Activity
             // no need to show undo bar.
             mPendingDeletion = true;
             performDeletion();
+            if (mFilmstripVisible) {
+                mCameraAppUI.getFilmstripContentPanel().animateHide();
+            }
         }
     }
 

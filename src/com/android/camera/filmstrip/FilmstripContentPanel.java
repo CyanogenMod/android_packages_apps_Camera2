@@ -43,6 +43,13 @@ public interface FilmstripContentPanel {
     /** Sets the listener. */
     void setFilmstripListener(FilmstripLayout.Listener listener);
 
+    /**
+     * Hides this panel with animation.
+     *
+     * @return {@code false} if already hidden.
+     */
+    boolean animateHide();
+
     /** Hides this panel */
     void hide();
 

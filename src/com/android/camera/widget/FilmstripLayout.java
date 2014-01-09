@@ -233,6 +233,11 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
     @Override
     public boolean onBackPressed() {
+        return animateHide();
+    }
+
+    @Override
+    public boolean animateHide() {
         if (getVisibility() == VISIBLE) {
             if (!mFilmstripAnimator.isRunning()) {
                 hideFilmstrip();
