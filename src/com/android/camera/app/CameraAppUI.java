@@ -61,7 +61,7 @@ import com.android.camera2.R;
  * events to appropriate recipient views.
  */
 public class CameraAppUI implements ModeListView.ModeSwitchListener,
-        TextureView.SurfaceTextureListener {
+        TextureView.SurfaceTextureListener, ModeListView.ModeListOpenListener {
 
     /**
      * The bottom controls on the filmstrip.
@@ -215,6 +215,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private FrameLayout mModuleUI;
     private BottomBar mBottomBar;
     private IndicatorOverlay mIndicatorOverlay;
+    private boolean mShouldShowShimmy = false;
 
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
@@ -343,6 +344,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeListView = (ModeListView) appRootView.findViewById(R.id.mode_list_layout);
         if (mModeListView != null) {
             mModeListView.setModeSwitchListener(this);
+            mModeListView.setModeListOpenListener(this);
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
@@ -444,7 +446,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void resume() {
         if (mTextureView == null || mTextureView.getSurfaceTexture() != null) {
             if (!mIsCaptureIntent) {
-                mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+                showShimmyDelayed();
             }
         } else {
             // Show mode theme cover until preview is ready
@@ -472,10 +474,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     @Override
                     public void onAnimationFinished(boolean success) {
                         if (success) {
-                            // Show shimmy in SHIMMY_DELAY_MS
-                            if (!mIsCaptureIntent) {
-                                mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
-                            }
+                            showShimmyDelayed();
                         }
                     }
                 });
@@ -484,12 +483,32 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeCoverState = COVER_SHOWN;
     }
 
+    private void showShimmyDelayed() {
+        if (!mIsCaptureIntent) {
+            // Show shimmy in SHIMMY_DELAY_MS
+            mShouldShowShimmy = mController.shouldShowShimmy();
+            if (mShouldShowShimmy) {
+                mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+            }
+        }
+    }
+
     private void hideModeCover() {
         if (mHideCoverRunnable != null) {
             mAppRootView.post(mHideCoverRunnable);
             mHideCoverRunnable = null;
         }
         mModeCoverState = COVER_HIDDEN;
+    }
+
+    @Override
+    public void onOpenFullScreen() {
+        if (mShouldShowShimmy) {
+            mController.decrementShimmyPlayTimes();
+            // Sets should show shimmy flag to false for this session (i.e. until
+            // next onResume)
+            mShouldShowShimmy = false;
+        }
     }
 
     /**
