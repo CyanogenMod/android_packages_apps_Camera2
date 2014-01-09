@@ -47,10 +47,12 @@ public class IndicatorIconController
 
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;
+    private ImageView mRefocusIndicator;
 
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrIndicatorIcons;
+    private TypedArray mRefocusIndicatorIcons;
 
     private AppController mController;
 
@@ -60,6 +62,7 @@ public class IndicatorIconController
 
         mFlashIndicator = (ImageView) root.findViewById(R.id.flash_indicator);
         mHdrIndicator = (ImageView) root.findViewById(R.id.hdr_indicator);
+        mRefocusIndicator = (ImageView) root.findViewById(R.id.refocus_indicator);
 
         mFlashIndicatorPhotoIcons = context.getResources().obtainTypedArray(
             R.array.camera_flashmode_indicator_icons);
@@ -67,6 +70,8 @@ public class IndicatorIconController
             R.array.video_flashmode_indicator_icons);
         mHdrIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_plus_indicator_icons);
+        mRefocusIndicatorIcons = context.getResources().obtainTypedArray(
+            R.array.refocus_indicator_icons);
     }
 
     @Override
@@ -85,21 +90,22 @@ public class IndicatorIconController
      */
     private void syncIndicatorWithButton(int buttonId) {
         switch (buttonId) {
-        case ButtonManager.BUTTON_FLASH: {
-            if (mController != null) {
-                syncFlashIndicator(mController);
+            case ButtonManager.BUTTON_FLASH: {
+                syncFlashIndicator();
+                break;
             }
-        }
-        case ButtonManager.BUTTON_TORCH: {
-            if (mController != null) {
-                syncFlashIndicator(mController);
+            case ButtonManager.BUTTON_TORCH: {
+                syncFlashIndicator();
+                break;
             }
-        }
-        case ButtonManager.BUTTON_HDRPLUS: {
-            if (mController != null) {
-                syncHdrIndicator(mController);
+            case ButtonManager.BUTTON_HDRPLUS: {
+                syncHdrIndicator();
+                break;
             }
-        }
+            case ButtonManager.BUTTON_REFOCUS: {
+                syncRefocusIndicator();
+                break;
+            }
         default:
             // Do nothing.  The indicator doesn't care
             // about button that don't correspond to indicators.
@@ -110,33 +116,30 @@ public class IndicatorIconController
      * Sets all indicators to the correct resource and visibility
      * based on the current settings.
      */
-    public void syncIndicators(AppController controller) {
-        if (mController == null) {
-            mController = controller;
-        }
-        syncFlashIndicator(mController);
-        syncHdrIndicator(mController);
+    public void syncIndicators() {
+        syncFlashIndicator();
+        syncHdrIndicator();
+        syncRefocusIndicator();
     }
 
     /**
      * Sync the icon and visibility of the flash indicator.
      */
-    private void syncFlashIndicator(AppController controller) {
-        ButtonManager buttonManager = controller.getButtonManager();
-        // Sync the flash indicator.
+    private void syncFlashIndicator() {
+        ButtonManager buttonManager = mController.getButtonManager();
         // If flash isn't an enabled and visible option,
         // do not show the indicator.
         if (buttonManager.isEnabled(ButtonManager.BUTTON_FLASH)
                 && buttonManager.isVisible(ButtonManager.BUTTON_FLASH)) {
 
-            int modeIndex = controller.getCurrentModuleIndex();
-            if (modeIndex == controller.getAndroidContext().getResources()
+            int modeIndex = mController.getCurrentModuleIndex();
+            if (modeIndex == mController.getAndroidContext().getResources()
                     .getInteger(R.integer.camera_mode_video)) {
-                setIndicatorState(controller.getSettingsManager(),
+                setIndicatorState(mController.getSettingsManager(),
                                   SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE,
                                   mFlashIndicator, mFlashIndicatorVideoIcons);
             } else {
-                setIndicatorState(controller.getSettingsManager(),
+                setIndicatorState(mController.getSettingsManager(),
                                   SettingsManager.SETTING_FLASH_MODE,
                                   mFlashIndicator, mFlashIndicatorPhotoIcons);
             }
@@ -148,18 +151,34 @@ public class IndicatorIconController
     /**
      * Sync the icon and the visibility of the hdr indicator.
      */
-    private void syncHdrIndicator(AppController controller) {
-        ButtonManager buttonManager = controller.getButtonManager();
-        // Sync the hdr indicator.
+    private void syncHdrIndicator() {
+        ButtonManager buttonManager = mController.getButtonManager();
         // If hdr isn't an enabled and visible option,
         // do not show the indicator.
         if (buttonManager.isEnabled(ButtonManager.BUTTON_HDRPLUS)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDRPLUS)) {
-            setIndicatorState(controller.getSettingsManager(),
+            setIndicatorState(mController.getSettingsManager(),
                               SettingsManager.SETTING_CAMERA_HDR,
                               mHdrIndicator, mHdrIndicatorIcons);
         } else {
             mHdrIndicator.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Sync the icon and the visibility of the refocus indicator.
+     */
+    private void syncRefocusIndicator() {
+        ButtonManager buttonManager = mController.getButtonManager();
+        // If refocus isn't an enabled and visible option,
+        // do not show the indicator.
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_REFOCUS)
+                && buttonManager.isVisible(ButtonManager.BUTTON_REFOCUS)) {
+            setIndicatorState(mController.getSettingsManager(),
+                              SettingsManager.SETTING_CAMERA_REFOCUS,
+                              mRefocusIndicator, mRefocusIndicatorIcons);
+        } else {
+            mRefocusIndicator.setVisibility(View.GONE);
         }
     }
 

@@ -577,7 +577,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onChangeCamera() {
         if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
-            mIndicatorIconController.syncIndicators(mController);
+            mIndicatorIconController.syncIndicators();
         }
     }
 
