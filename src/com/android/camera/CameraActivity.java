@@ -87,6 +87,7 @@ import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
+import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
@@ -695,6 +696,11 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public ModuleController getCurrentModuleController() {
+        return (ModuleController) mCurrentModule;
+    }
+
+    @Override
     public int getQuickSwitchToModuleId(int currentModuleIndex) {
         return mModuleManager.getQuickSwitchToModuleId(currentModuleIndex, mSettingsManager, this);
     }
@@ -1037,6 +1043,7 @@ public class CameraActivity extends Activity
 
         syncBottomBarColor();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
+        mCurrentModule.customizeButtons(getButtonManager());
 
         if (!mSecureCamera) {
             mFilmstripController.setDataAdapter(mDataAdapter);
@@ -1549,6 +1556,7 @@ public class CameraActivity extends Activity
     private void openModule(CameraModule module) {
         syncBottomBarColor();
         module.init(this, isSecureCamera(), isCaptureIntent());
+        module.customizeButtons(getButtonManager());
         module.resume();
         module.onPreviewVisibilityChanged(!mFilmstripVisible);
     }

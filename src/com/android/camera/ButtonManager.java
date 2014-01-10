@@ -16,12 +16,13 @@
 
 package com.android.camera;
 
-import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
-import android.util.Log;
 
 import com.android.camera.ShutterButton;
+import com.android.camera.app.AppController;
+import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 
 import com.android.camera2.R;
@@ -68,17 +69,26 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         state changes. */
     private ButtonStatusListener mListener;
 
+    /** An reference to the gcam mode index. */
+    private static int sGcamIndex;
+
     private ShutterButton mShutterButton;
+    private AppController mAppController;
 
     /**
      * Get a new global ButtonManager.
      */
-    public ButtonManager(CameraActivity activity) {
-        getButtonsReferences(activity);
-        mSettingsManager = activity.getSettingsManager();
+    public ButtonManager(AppController app) {
+        mAppController = app;
+
+        Context context = app.getAndroidContext();
+        sGcamIndex = context.getResources().getInteger(R.integer.camera_mode_gcam);
+
+        View root = app.getCameraAppUI().getModuleRootView();
+        getButtonsReferences(root);
+
+        mSettingsManager = app.getSettingsManager();
         mSettingsManager.addListener(this);
-        mShutterButton
-            = (ShutterButton) activity.findViewById(R.id.shutter_button);
     }
 
     /**
@@ -107,21 +117,23 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     /**
      * Gets references to all known buttons.
      */
-    private void getButtonsReferences(Activity activity) {
+    private void getButtonsReferences(View root) {
         mButtonFlash
-            = (MultiToggleImageButton) activity.findViewById(R.id.flash_toggle_button);
+            = (MultiToggleImageButton) root.findViewById(R.id.flash_toggle_button);
         mButtonCamera
-            = (MultiToggleImageButton) activity.findViewById(R.id.camera_toggle_button);
+            = (MultiToggleImageButton) root.findViewById(R.id.camera_toggle_button);
         mButtonHdrPlus
-            = (MultiToggleImageButton) activity.findViewById(R.id.hdr_plus_toggle_button);
+            = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
         mButtonRefocus
-            = (MultiToggleImageButton) activity.findViewById(R.id.refocus_toggle_button);
+            = (MultiToggleImageButton) root.findViewById(R.id.refocus_toggle_button);
         mButtonCancel
-            = (ImageButton) activity.findViewById(R.id.cancel_button);
+            = (ImageButton) root.findViewById(R.id.cancel_button);
         mButtonDone
-            = (ImageButton) activity.findViewById(R.id.done_button);
+            = (ImageButton) root.findViewById(R.id.done_button);
         mButtonRetake
-            = (ImageButton) activity.findViewById(R.id.retake_button);
+            = (ImageButton) root.findViewById(R.id.retake_button);
+        mShutterButton
+            = (ShutterButton) root.findViewById(R.id.shutter_button);
     }
 
     @Override
@@ -268,9 +280,18 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 enableTorchButton(button, cb, resIdImages);
                 break;
             case BUTTON_CAMERA:
+                int modeIndex = mAppController.getCurrentModuleIndex();
+                if (modeIndex == sGcamIndex && mSettingsManager.isHdrPlusOn()) {
+                    disableButton(BUTTON_CAMERA);
+                    return;
+                }
                 enableCameraButton(button, cb, resIdImages);
                 break;
             case BUTTON_HDRPLUS:
+                if (!mSettingsManager.isCameraBackFacing()) {
+                    disableButton(BUTTON_HDRPLUS);
+                    return;
+                }
                 enableHdrPlusButton(button, cb, resIdImages);
                 break;
             case BUTTON_REFOCUS:
@@ -447,8 +468,19 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 if (cb != null) {
                     cb.onStateChanged(cameraId);
                 }
+                onCameraChanged();
             }
         });
+    }
+
+    /**
+     * Re-sync the bottom bar buttons with the current module.
+     */
+    private void onCameraChanged() {
+        ModuleController moduleController = mAppController.getCurrentModuleController();
+        if (moduleController != null) {
+            moduleController.customizeButtons(this);
+        }
     }
 
     /**

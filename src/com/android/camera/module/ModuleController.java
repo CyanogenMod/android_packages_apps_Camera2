@@ -18,6 +18,7 @@ package com.android.camera.module;
 
 import android.content.res.Configuration;
 
+import com.android.camera.ButtonManager;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraManager;
 
@@ -103,6 +104,12 @@ public interface ModuleController {
      * @param cameraProxy The camera device proxy.
      */
     public void onCameraAvailable(CameraManager.CameraProxy cameraProxy);
+
+    /**
+     * Called when the module needs to customize global buttons according
+     * to its supported feature set.
+     */
+    public void customizeButtons(ButtonManager buttonManager);
 
     /**
      * Used by the app on configuring the bottom bar color and visibility.

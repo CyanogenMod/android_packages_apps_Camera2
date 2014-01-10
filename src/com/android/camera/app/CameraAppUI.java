@@ -553,7 +553,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.setAutoAdjustTransform(
             mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
         if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-            mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
+            mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
             mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
         }
 
@@ -616,7 +616,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.setSurfaceTextureListener(this);
         mTextureViewHelper.setOnLayoutChangeListener(mPreviewLayoutChangeListener);
 
-        mBottomBar = (BottomBar) mAppRootView.findViewById(R.id.bottom_bar);
+        mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
         mBottomBar.setupToggle(mIsCaptureIntent);
 
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);

@@ -87,7 +87,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private final OnClickListener mReviewCallback = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setupIntentToggleButtons();
+            customizeButtons(mActivity.getButtonManager(), mFlashCallback, mCameraCallback);
             mActivity.getCameraAppUI().transitionToIntentLayout();
             mController.onReviewPlayClicked(v);
         }
@@ -149,31 +149,35 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mSurfaceView.getHolder().addCallback(this);
     }
 
-    private void setupToggleButtons() {
-        ButtonManager buttonManager = mActivity.getButtonManager();
+    /**
+     * Customize the mode options such that flash and camera
+     * switching are enabled.
+     */
+    public void customizeButtons(ButtonManager buttonManager,
+                                   ButtonManager.ButtonCallback flashCallback,
+                                   ButtonManager.ButtonCallback cameraCallback) {
+
         buttonManager.setShutterButtonIcon(ButtonManager.VIDEO_SHUTTER_ICON);
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
-            mCameraCallback, R.array.camera_id_icons);
+            cameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_TORCH,
-            mFlashCallback, R.array.video_flashmode_icons);
+            flashCallback, R.array.video_flashmode_icons);
         buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
         buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
-    }
 
-    private void setupIntentToggleButtons() {
-        setupToggleButtons();
-        ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
+        if (mController.isVideoCaptureIntent()) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
                 mCancelCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
+            buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
                 mDoneCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW,
+            buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW,
                 mReviewCallback, R.drawable.ic_play);
+        }
     }
 
     private void initializeControlByIntent() {
         if (mController.isVideoCaptureIntent()) {
-            setupIntentToggleButtons();
+            customizeButtons(mActivity.getButtonManager(), mFlashCallback, mCameraCallback);
             mActivity.getCameraAppUI().transitionToIntentLayout();
         }
     }
@@ -260,13 +264,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
             ButtonManager.ButtonCallback cameraCallback) {
         mFlashCallback = flashCallback;
         mCameraCallback = cameraCallback;
-
-        if (mController.isVideoCaptureIntent()) {
-            setupIntentToggleButtons();
-            mActivity.getCameraAppUI().transitionToIntentLayout();
-        } else {
-            setupToggleButtons();
-        }
     }
 
     private void initializeMiscControls() {
@@ -327,7 +324,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     }
 
     public void showReviewControls() {
-        setupIntentToggleButtons();
+        customizeButtons(mActivity.getButtonManager(), mFlashCallback, mCameraCallback);
         mActivity.getCameraAppUI().transitionToIntentReviewLayout();
         mReviewImage.setVisibility(View.VISIBLE);
     }
