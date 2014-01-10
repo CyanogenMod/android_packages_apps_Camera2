@@ -216,6 +216,9 @@ class AndroidCameraManagerImpl implements CameraManager {
                         return;
 
                     case RELEASE:
+                        if (mCamera == null) {
+                            return;
+                        }
                         mCamera.release();
                         mCamera = null;
                         return;
