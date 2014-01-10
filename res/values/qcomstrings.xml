@@ -51,7 +51,7 @@
     <!-- Default auto exposure setting. Do not translate. -->
     <string name="pref_camera_autoexposure_default" translatable="false">frame-average</string>
     <!-- Settings screen, Select auto exposure title -->
-    <string name="pref_camera_autoexposure_title">Select Auto Exposure Mode</string>
+    <string name="pref_camera_autoexposure_title">Auto Exposure Mode</string>
 
     <!-- Settings screen, auto exposure dialog radio button choices -->
     <string name="pref_camera_autoexposure_entry_frameaverage">Frame Average</string>
@@ -119,7 +119,7 @@
     <string name="pref_camera_selectablezoneaf_default" translatable="false">auto</string>
 
     <!-- Settings screen, Selectable zone af title -->
-    <string name="pref_camera_selectablezoneaf_title"> Selectable Zone Auto Focus</string>
+    <string name="pref_camera_selectablezoneaf_title">Selectable Zone Auto Focus</string>
 
     <!-- Settings screen, Selectable Zone Af dialog radio button choices -->
     <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>
@@ -388,7 +388,7 @@
     <string name="pref_camera_picture_format_default" translatable="false">jpeg</string>
 
     <!-- Settings screen, Select Picture format title -->
-    <string name="pref_camera_picture_format_title">Select Picture Format</string>
+    <string name="pref_camera_picture_format_title">Picture Format</string>
 
     <!-- Settings screen, picture format dialog radio button choices -->
     <string name="pref_camera_picture_format_entry_jpeg">Jpeg</string>
