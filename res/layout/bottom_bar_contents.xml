@@ -36,7 +36,7 @@
   </FrameLayout>
 
   <com.android.camera.ui.TopRightWeightedLayout
-      android:id="@+id/bottombar_settings"
+      android:id="@+id/bottombar_options"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="horizontal"
@@ -82,12 +82,12 @@
   </com.android.camera.ui.TopRightWeightedLayout>
 
   <com.android.camera.ui.TopRightMostOverlay
-      android:id="@+id/bottombar_settings_overlay"
+      android:id="@+id/bottombar_options_overlay"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@null" >
       <com.android.camera.ToggleImageButton
-          android:id="@+id/bottombar_settings_toggle"
+          android:id="@+id/bottombar_options_toggle"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical"

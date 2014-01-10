@@ -30,6 +30,7 @@ import android.view.View;
 import com.android.camera2.R;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * PreviewOverlay is a view that sits on top of the preview. It serves to disambiguate
@@ -54,6 +55,7 @@ public class PreviewOverlay extends View
     private final ZoomProcessor mZoomProcessor = new ZoomProcessor();
     private GestureDetector mGestureDetector = null;
     private OnZoomChangedListener mZoomListener = null;
+    private OnPreviewTouchedListener mOnPreviewTouchedListener;
 
     public interface OnZoomChangedListener {
         /**
@@ -72,6 +74,13 @@ public class PreviewOverlay extends View
          * @param index index of the list of supported zoom ratios
          */
         void onZoomValueChanged(int index);  // only for immediate zoom
+    }
+
+    public interface OnPreviewTouchedListener {
+        /**
+         * This gets called on any preview touch event.
+         */
+        public void onPreviewTouched(MotionEvent ev);
     }
 
     public PreviewOverlay(Context context, AttributeSet attrs) {
@@ -114,7 +123,18 @@ public class PreviewOverlay extends View
             mGestureDetector.onTouchEvent(m);
         }
         mScaleDetector.onTouchEvent(m);
+        if (mOnPreviewTouchedListener != null) {
+            mOnPreviewTouchedListener.onPreviewTouched(m);
+        }
         return true;
+    }
+
+    /**
+     * Set an {@link OnPreviewTouchedListener} to be executed on any preview
+     * touch event.
+     */
+    public void setOnPreviewTouchedListener(OnPreviewTouchedListener listener) {
+        mOnPreviewTouchedListener = listener;
     }
 
     @Override
