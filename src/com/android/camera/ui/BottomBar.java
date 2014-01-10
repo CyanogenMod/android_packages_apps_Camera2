@@ -242,10 +242,10 @@ public class BottomBar extends FrameLayout
             }
             if (previewAspectRatio >= screenAspectRatio) {
                 mOverLayBottomBar = true;
-                setAlpha(0.5f);
+                getBackground().setAlpha(128);
             } else {
                 mOverLayBottomBar = false;
-                setAlpha(1.0f);
+                getBackground().setAlpha(255);
             }
         }
 
