@@ -48,7 +48,7 @@
           android:layout_width="match_parent"
           android:layout_height="0px"
           android:layout_weight="1"
-          android:padding="100px"
+          android:padding="@dimen/indicator_overlay_padding"
           android:layout_gravity="top|center_horizontal" >
         <LinearLayout
             android:id="@+id/indicator_overlay_icons"
@@ -59,22 +59,13 @@
             android:layout_gravity="bottom|right" >
           <ImageView
               android:id="@+id/refocus_indicator"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:padding="5px"
-              android:background="@null" />
+              style="@style/IndicatorIcon" />
           <ImageView
               android:id="@+id/hdr_indicator"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:padding="5px"
-              android:background="@null" />
+              style="@style/IndicatorIcon" />
           <ImageView
               android:id="@+id/flash_indicator"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:padding="5px"
-              android:background="@null" />
+              style="@style/IndicatorIcon" />
         </LinearLayout>
       </com.android.camera.widget.IndicatorOverlay>
 
