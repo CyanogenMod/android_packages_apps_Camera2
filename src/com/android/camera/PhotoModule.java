@@ -439,9 +439,11 @@ public class PhotoModule
 
                 case CONFIGURE_SKIN_TONE_FACTOR: {
                      if ((mCameraDevice != null) && isCameraIdle()) {
-                         mParameters = mCameraDevice.getParameters();
-                         mParameters.set("skinToneEnhancement", String.valueOf(msg.arg1));
-                         mCameraDevice.setParameters(mParameters);
+                         synchronized (mCameraDevice) {
+                             mParameters = mCameraDevice.getParameters();
+                             mParameters.set("skinToneEnhancement", String.valueOf(msg.arg1));
+                             mCameraDevice.setParameters(mParameters);
+                         }
                     }
                     break;
                 }
@@ -1999,7 +2001,6 @@ public class PhotoModule
                     onShutterButtonClick();
                 }
                 return true;
-
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 // If we get a dpad center event without any focused view, move
                 // the focus to the shutter button and press it.
@@ -2666,30 +2667,31 @@ public class PhotoModule
     // the subsets actually need updating. The PREFERENCE set needs extra
     // locking because the preference can be changed from GLThread as well.
     private void setCameraParameters(int updateSet) {
-        boolean doModeSwitch = false;
+        synchronized (mCameraDevice) {
+            boolean doModeSwitch = false;
 
-        if ((updateSet & UPDATE_PARAM_INITIALIZE) != 0) {
-            updateCameraParametersInitialize();
+            if ((updateSet & UPDATE_PARAM_INITIALIZE) != 0) {
+                updateCameraParametersInitialize();
+                // Set camera mode
+                CameraSettings.setVideoMode(mParameters, false);
+            }
 
-            // Set camera mode
-            CameraSettings.setVideoMode(mParameters, false);
-        }
+            if ((updateSet & UPDATE_PARAM_ZOOM) != 0) {
+                updateCameraParametersZoom();
+            }
 
-        if ((updateSet & UPDATE_PARAM_ZOOM) != 0) {
-            updateCameraParametersZoom();
-        }
+            if ((updateSet & UPDATE_PARAM_PREFERENCE) != 0) {
+                doModeSwitch = updateCameraParametersPreference();
+            }
 
-        if ((updateSet & UPDATE_PARAM_PREFERENCE) != 0) {
-            doModeSwitch = updateCameraParametersPreference();
-        }
+            CameraUtil.dumpParameters(mParameters);
 
-        CameraUtil.dumpParameters(mParameters);
+            mCameraDevice.setParameters(mParameters);
 
-        mCameraDevice.setParameters(mParameters);
-
-        // Switch to gcam module if HDR+ was selected
-        if (doModeSwitch && !mIsImageCaptureIntent) {
-            mHandler.sendEmptyMessage(SWITCH_TO_GCAM_MODULE);
+            // Switch to gcam module if HDR+ was selected
+            if (doModeSwitch && !mIsImageCaptureIntent) {
+                mHandler.sendEmptyMessage(SWITCH_TO_GCAM_MODULE);
+            }
         }
     }
 
