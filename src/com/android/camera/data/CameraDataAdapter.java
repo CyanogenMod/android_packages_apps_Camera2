@@ -244,7 +244,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void refresh(Uri contentUri, boolean isInProgressSession) {
-        int pos = findDataByContentUri(contentUri);
+        final int pos = findDataByContentUri(contentUri);
         if (pos == -1) {
             return;
         }
@@ -252,14 +252,18 @@ public class CameraDataAdapter implements LocalDataAdapter {
         LocalData data = mImages.get(pos);
         LocalData refreshedData = data.refresh(mContext);
 
+        // Refresh failed. Probably removed already.
+        if (refreshedData == null && mListener != null) {
+            mListener.onDataRemoved(pos, data);
+            return;
+        }
+
         // Wrap the data item if this represents a session that is in progress.
         if (isInProgressSession) {
             refreshedData = new InProgressDataWrapper(refreshedData);
         }
 
-        if (refreshedData != null) {
-            updateData(pos, refreshedData);
-        }
+        updateData(pos, refreshedData);
     }
 
     @Override

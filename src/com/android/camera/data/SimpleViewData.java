@@ -103,7 +103,7 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public LocalData refresh(Context context) {
-        return null;
+        return this;
     }
 
     @Override

@@ -1169,6 +1169,11 @@ public class CameraActivity extends Activity
 
         if (mResetToPreviewOnResume) {
             mCameraAppUI.resume();
+        } else {
+            LocalData data =  mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
+            if (data != null) {
+                mDataAdapter.refresh(data.getContentUri(), false);
+            }
         }
         // The share button might be disabled to avoid double tapping.
         mCameraAppUI.getFilmstripBottomControls().setShareEnabled(true);
