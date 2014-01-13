@@ -90,7 +90,7 @@
           android:id="@+id/bottombar_options_toggle"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical"
+          android:scaleType="center"
           android:background="@null"
           camera:imageIds="@array/settings_toggle_icons"/>
   </com.android.camera.ui.TopRightMostOverlay>
