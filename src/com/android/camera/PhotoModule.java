@@ -1210,7 +1210,16 @@ public class PhotoModule
 
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
             Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
-            if (mCameraState != PhotoController.LONGSHOT) setCameraState(IDLE);
+            //don't reset the camera state while capture is in progress
+            //otherwise, it might result in another takepicture
+            switch (mCameraState) {
+                case PhotoController.LONGSHOT:
+                case SNAPSHOT_IN_PROGRESS:
+                    break;
+                default:
+                    setCameraState(IDLE);
+                    break;
+            }
             mFocusManager.onAutoFocus(focused, mUI.isShutterPressed());
         }
     }
