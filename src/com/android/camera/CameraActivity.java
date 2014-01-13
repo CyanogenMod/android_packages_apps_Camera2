@@ -468,14 +468,26 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onEnterFullScreen(int dataId) {
+                public void onEnterFullScreenUiShown(int dataId) {
+                    if (mFilmstripVisible) {
+                        CameraActivity.this.setFilmstripUiVisibility(true);
+                    }
+                }
+
+                @Override
+                public void onLeaveFullScreenUiShown(int dataId) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onEnterFullScreenUiHidden(int dataId) {
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(false);
                     }
                 }
 
                 @Override
-                public void onLeaveFullScreen(int dataId) {
+                public void onLeaveFullScreenUiHidden(int dataId) {
                     // Do nothing.
                 }
 

@@ -183,7 +183,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         if (controller.inFilmstrip()) {
             mListener.onEnterFilmstrip(currentId);
         } else if (controller.inFullScreen()) {
-            mListener.onEnterFullScreen(currentId);
+            mListener.onEnterFullScreenUiShown(currentId);
         }
     }
 

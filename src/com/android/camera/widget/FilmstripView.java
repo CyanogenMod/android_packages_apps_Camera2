@@ -89,6 +89,8 @@ public class FilmstripView extends ViewGroup {
     private int mDataIdOnUserScrolling;
     private float mOverScaleFactor = 1f;
 
+    private boolean mFullScreenUIHidden = false;
+
     /**
      * A helper class to tract and calculate the view coordination.
      */
@@ -984,7 +986,7 @@ public class FilmstripView extends ViewGroup {
                     mCenterX - mViewItem[mCurrentItem].getMeasuredWidth() / 2);
         }
 
-        if (mController.isZoomStarted()) {
+        if (inZoomView()) {
             return;
         }
         /**
@@ -1151,7 +1153,7 @@ public class FilmstripView extends ViewGroup {
         // TODO: Need a more robust solution to decide when to re-layout
         // If in the middle of zooming, only re-layout when the layout has
         // changed.
-        if (!mController.isZoomStarted() || changed) {
+        if (!inZoomView() || changed) {
             resetZoomView();
             layoutViewItems(changed);
         }
@@ -1164,7 +1166,7 @@ public class FilmstripView extends ViewGroup {
      * app, or rotate the device, etc).
      */
     private void resetZoomView() {
-        if (!mController.isZoomStarted()) {
+        if (!inZoomView()) {
             return;
         }
         ViewItem current = mViewItem[mCurrentItem];
@@ -1181,7 +1183,7 @@ public class FilmstripView extends ViewGroup {
     }
 
     private void hideZoomView() {
-        if (mController.isZoomStarted()) {
+        if (inZoomView()) {
             mController.cancelLoadingZoomedImage();
             mZoomView.setVisibility(GONE);
         }
@@ -1447,6 +1449,10 @@ public class FilmstripView extends ViewGroup {
         return (mScale == FULL_SCREEN_SCALE);
     }
 
+    private boolean inZoomView() {
+        return (mScale > FULL_SCREEN_SCALE);
+    }
+
     private boolean isCameraPreview() {
         return isViewTypeSticky(mViewItem[mCurrentItem]);
     }
@@ -1681,14 +1687,29 @@ public class FilmstripView extends ViewGroup {
     }
 
     private void onEnterFullScreen() {
+        mFullScreenUIHidden = false;
         if (mListener != null) {
-            mListener.onEnterFullScreen(getCurrentId());
+            mListener.onEnterFullScreenUiShown(getCurrentId());
         }
     }
 
     private void onLeaveFullScreen() {
         if (mListener != null) {
-            mListener.onLeaveFullScreen(getCurrentId());
+            mListener.onLeaveFullScreenUiShown(getCurrentId());
+        }
+    }
+
+    private void onEnterFullScreenUiHidden() {
+        mFullScreenUIHidden = true;
+        if (mListener != null) {
+            mListener.onEnterFullScreenUiHidden(getCurrentId());
+        }
+    }
+
+    private void onLeaveFullScreenUiHidden() {
+        mFullScreenUIHidden = false;
+        if (mListener != null) {
+            mListener.onLeaveFullScreenUiHidden(getCurrentId());
         }
     }
 
@@ -1696,6 +1717,10 @@ public class FilmstripView extends ViewGroup {
         if (mListener != null) {
             mListener.onEnterZoomView(getCurrentId());
         }
+    }
+
+    private void onLeaveZoomView() {
+        mController.setSurroundingViewsVisible(true);
     }
 
     /**
@@ -1875,8 +1900,14 @@ public class FilmstripView extends ViewGroup {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     if (mScale == FULL_SCREEN_SCALE) {
-                        onEnterFullScreen();
+                        if (mFullScreenUIHidden) {
+                            onLeaveFullScreenUiHidden();
+                        } else {
+                            onLeaveFullScreen();
+                        }
                         setSurroundingViewsVisible(false);
+                    } else if (inZoomView()) {
+                        onLeaveZoomView();
                     }
                     cancelLoadingZoomedImage();
                 }
@@ -1891,11 +1922,11 @@ public class FilmstripView extends ViewGroup {
                         mScale = endScale;
                     }
 
-                    if (mScale == FULL_SCREEN_SCALE) {
+                    if (inFullScreen()) {
                         setSurroundingViewsVisible(true);
                         mZoomView.setVisibility(GONE);
                         current.resetTransform();
-                        onEnterFullScreen();
+                        onEnterFullScreenUiHidden();
                     } else {
                         mController.loadZoomedImage();
                         onEnterZoomView();
@@ -1969,7 +2000,7 @@ public class FilmstripView extends ViewGroup {
         }
 
         void flingInsideZoomView(float velocityX, float velocityY) {
-            if (!isZoomStarted()) {
+            if (!inZoomView()) {
                 return;
             }
 
@@ -2134,9 +2165,6 @@ public class FilmstripView extends ViewGroup {
                 return;
             }
             scaleTo(FULL_SCREEN_SCALE, GEOMETRY_ADJUST_TIME_MS);
-            if (mScale == FULL_SCREEN_SCALE) {
-                onLeaveFullScreen();
-            }
         }
 
         private void cancelFlingAnimation() {
@@ -2200,7 +2228,7 @@ public class FilmstripView extends ViewGroup {
         }
 
         private void loadZoomedImage() {
-            if (!isZoomStarted()) {
+            if (!inZoomView()) {
                 return;
             }
             ViewItem curr = mViewItem[mCurrentItem];
@@ -2235,8 +2263,8 @@ public class FilmstripView extends ViewGroup {
             reload();
         }
 
-        public boolean isZoomStarted() {
-            return mScale > FULL_SCREEN_SCALE;
+        public boolean inZoomView() {
+            return FilmstripView.this.inZoomView();
         }
 
         public boolean isFlingAnimationRunning() {
@@ -2383,7 +2411,13 @@ public class FilmstripView extends ViewGroup {
                     return true;
                 }
             } else if (inFullScreen()) {
-                mController.goToFilmstrip();
+                if (mFullScreenUIHidden) {
+                    onLeaveFullScreenUiHidden();
+                    onEnterFullScreen();
+                } else {
+                    onLeaveFullScreen();
+                    onEnterFullScreenUiHidden();
+                }
                 return true;
             }
             return false;
@@ -2392,21 +2426,27 @@ public class FilmstripView extends ViewGroup {
         @Override
         public boolean onDoubleTap(float x, float y) {
             ViewItem current = mViewItem[mCurrentItem];
-            if (inFilmstrip() && current != null) {
+            if (current == null) {
+                return false;
+            }
+            if (inFilmstrip()) {
                 mController.goToFullScreen();
                 return true;
             } else if (mScale < FULL_SCREEN_SCALE || inCameraFullscreen()) {
                 return false;
             }
-            if (current == null) {
-                return false;
-            }
             if (!mController.stopScrolling(false)) {
                 return false;
             }
-            mController.zoomAt(current, x, y);
-            checkItemAtMaxSize();
-            return true;
+            if (inFullScreen()) {
+                mController.zoomAt(current, x, y);
+                checkItemAtMaxSize();
+                return true;
+            } else if (mScale > FULL_SCREEN_SCALE) {
+                // In zoom view.
+                mController.zoomAt(current, x, y);
+            }
+            return false;
         }
 
         @Override
@@ -2428,7 +2468,7 @@ public class FilmstripView extends ViewGroup {
             if (mController.isZoomAnimationRunning() || mController.isFlingAnimationRunning()) {
                 return false;
             }
-            if (mController.isZoomStarted()) {
+            if (inZoomView()) {
                 mController.loadZoomedImage();
                 return true;
             }
@@ -2506,7 +2546,7 @@ public class FilmstripView extends ViewGroup {
             }
             hideZoomView();
             // When image is zoomed in to be bigger than the screen
-            if (mController.isZoomStarted()) {
+            if (inZoomView()) {
                 ViewItem curr = mViewItem[mCurrentItem];
                 float transX = curr.getTranslationX() * mScale - dx;
                 float transY = curr.getTranslationY() * mScale - dy;
@@ -2587,7 +2627,7 @@ public class FilmstripView extends ViewGroup {
             if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
                 return false;
             }
-            if (mController.isZoomStarted()) {
+            if (inZoomView()) {
                 // Fling within the zoomed image
                 mController.flingInsideZoomView(velocityX, velocityY);
                 return true;
@@ -2690,21 +2730,27 @@ public class FilmstripView extends ViewGroup {
                 }
                 mScale = FULL_SCREEN_SCALE;
                 onEnterFullScreen();
-                invalidate();
                 mController.setSurroundingViewsVisible(false);
+                invalidate();
             } else if (mScale >= FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
                 // Going from bigger than or equal to screen size to smaller
                 // than screen size
-                if (mScale == FULL_SCREEN_SCALE) {
-                    onLeaveFullScreen();
+                if (inFullScreen()) {
+                    if (mFullScreenUIHidden) {
+                        onLeaveFullScreenUiHidden();
+                    } else {
+                        onLeaveFullScreen();
+                    }
+                } else {
+                    onLeaveZoomView();
                 }
                 mScale = newScale;
+                onEnterFilmstrip();
                 invalidate();
-                mController.setSurroundingViewsVisible(true);
             } else {
                 // Scaled view bigger than or equal to screen size both before
                 // and after scaling
-                if (!mController.isZoomStarted()) {
+                if (!inZoomView()) {
                     mController.setSurroundingViewsVisible(false);
                 }
                 ViewItem curr = mViewItem[mCurrentItem];
@@ -2718,6 +2764,8 @@ public class FilmstripView extends ViewGroup {
                 mScale = newScale;
                 if (mScale == FULL_SCREEN_SCALE) {
                     onEnterFullScreen();
+                } else {
+                    onEnterZoomView();
                 }
                 checkItemAtMaxSize();
             }
@@ -2733,7 +2781,7 @@ public class FilmstripView extends ViewGroup {
             if (mScale <= FILM_STRIP_SCALE + TOLERANCE) {
                 mController.goToFilmstrip();
             } else if (mScaleTrend > 1f || mScale > FULL_SCREEN_SCALE - TOLERANCE) {
-                if (mController.isZoomStarted()) {
+                if (inZoomView()) {
                     mScale = FULL_SCREEN_SCALE;
                     resetZoomView();
                 }

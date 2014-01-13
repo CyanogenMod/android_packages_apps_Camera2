@@ -187,18 +187,32 @@ public interface FilmstripController {
         public void onDataUpdated(int dataId);
 
         /**
-         * The callback when the item enters full-screen state.
+         * The callback when the item enters augmented full-screen state.
          *
          * @param dataId The ID of the current focused image data.
          */
-        public void onEnterFullScreen(int dataId);
+        public void onEnterFullScreenUiShown(int dataId);
 
         /**
-         * The callback when the item leaves full-screen.
+         * The callback when the item leaves augmented full-screen.
          *
          * @param dataId The ID of the current focused image data.
          */
-        public void onLeaveFullScreen(int dataId);
+        public void onLeaveFullScreenUiShown(int dataId);
+
+        /**
+         * The callback when the filmstrip enters no UI full-screen.
+         *
+         * @param dataId The ID of the current focused image data.
+         */
+        public void onEnterFullScreenUiHidden(int dataId);
+
+        /**
+         * The callback when the filmstrip leaves no UI full-screen.
+         *
+         * @param dataId The ID of the current focused image data.
+         */
+        public void onLeaveFullScreenUiHidden(int dataId);
 
         /**
          * The callback when the item enters filmstrip.
