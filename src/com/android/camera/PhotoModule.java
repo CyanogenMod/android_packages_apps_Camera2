@@ -417,6 +417,7 @@ public class PhotoModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
+        closeCamera();
         mCameraId = mPendingSwitchCameraId;
         mPendingSwitchCameraId = -1;
         settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
