@@ -926,7 +926,7 @@ public class CameraActivity extends Activity
         mPreferences = new ComboPreferences(getAndroidContext());
         mContentResolver = this.getContentResolver();
 
-        mSettingsManager = new SettingsManager(this, mCameraController.getNumberOfCameras());
+        mSettingsManager = new SettingsManager(this, this, mCameraController.getNumberOfCameras());
 
         // Remove this after we get rid of ComboPreferences.
         int cameraId = Integer.parseInt(mSettingsManager.get(SettingsManager.SETTING_CAMERA_ID));

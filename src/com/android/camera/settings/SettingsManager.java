@@ -21,9 +21,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.util.SparseArray;
 
 import com.android.camera.ListPreference;
+import com.android.camera.app.AppController;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
@@ -42,27 +43,26 @@ public class SettingsManager {
     private final SettingsCache mSettingsCache;
     private SharedPreferences mGlobalSettings;
     private SharedPreferences mCameraSettings;
+    private final SparseArray<SharedPreferences> mModuleSettings
+        = new SparseArray<SharedPreferences>();
     private SettingsCapabilities mCapabilities;
 
     private int mCameraId = -1;
+    private AppController mAppController;
 
     private final List<OnSharedPreferenceChangeListener>
         mSharedPreferenceListeners =
         new ArrayList<OnSharedPreferenceChangeListener>();
 
-    public SettingsManager(Context context, int nCameras) {
+    public SettingsManager(Context context, AppController app, int nCameras) {
         mContext = context;
+        mAppController = app;
 
         SettingsCache.ExtraSettings extraSettings = new SettingsHelper();
         mSettingsCache = new SettingsCache(mContext, extraSettings);
 
         mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
         initGlobal();
-
-        int cameraId = Integer.parseInt(get(SETTING_CAMERA_ID));
-        if (cameraId < 0 || cameraId >= nCameras) {
-            setDefault(SETTING_CAMERA_ID);
-        }
     }
 
     /**
@@ -71,6 +71,19 @@ public class SettingsManager {
     private void initGlobal() {
         String globalKey = mContext.getPackageName() + "_preferences_camera";
         mGlobalSettings = mContext.getSharedPreferences(globalKey, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * Load and cache a module specific SharedPreferences.
+     */
+    public SharedPreferences getModulePreferences(int modeIndex) {
+        SharedPreferences sharedPreferences = mModuleSettings.get(modeIndex);
+        if (sharedPreferences == null) {
+            String moduleKey = mContext.getPackageName() + "_preferences_module_" + modeIndex;
+            sharedPreferences = mContext.getSharedPreferences(moduleKey, Context.MODE_PRIVATE);
+            mModuleSettings.put(modeIndex, sharedPreferences);
+        }
+        return sharedPreferences;
     }
 
     /**
@@ -262,6 +275,7 @@ public class SettingsManager {
     public static final String SOURCE_DEFAULT = "default";
     public static final String SOURCE_GLOBAL = "global";
     public static final String SOURCE_CAMERA = "camera";
+    public static final String SOURCE_MODULE = "module";
 
     public static final boolean FLUSH_ON = true;
     public static final boolean FLUSH_OFF = false;
@@ -412,6 +426,10 @@ public class SettingsManager {
         }
         if (source.equals(SOURCE_CAMERA)) {
             return mCameraSettings;
+        }
+        if (source.equals(SOURCE_MODULE)) {
+            int modeIndex = mAppController.getCurrentModuleIndex();
+            return getModulePreferences(modeIndex);
         }
         return null;
     }
@@ -619,7 +637,7 @@ public class SettingsManager {
         if (capabilities != null) {
             values = capabilities.getSupportedCameraIds();
         }
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_CAMERA_ID,
+        return new Setting(SOURCE_MODULE, TYPE_STRING, defaultValue, KEY_CAMERA_ID,
             values, FLUSH_ON);
     }
 
@@ -781,9 +799,9 @@ public class SettingsManager {
      * in settings.
      */
     public boolean isCameraBackFacing() {
-        int cameraFacingIndex = getStringValueIndex(SETTING_CAMERA_ID);
-        String backFacingIndex = mContext.getString(R.string.pref_camera_id_index_back);
-        return (cameraFacingIndex == Integer.parseInt(backFacingIndex));
+        String cameraFacing = get(SETTING_CAMERA_ID);
+        String backFacing = mContext.getString(R.string.pref_camera_id_default);
+        return (Integer.parseInt(cameraFacing) == Integer.parseInt(backFacing));
     }
 
     /**
