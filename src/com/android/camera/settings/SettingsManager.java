@@ -129,8 +129,10 @@ public class SettingsManager {
                 @Override
                 public void onSharedPreferenceChanged(
                         SharedPreferences sharedPreferences, String key) {
-                    int settingId = mSettingsCache.getId(key);
-                    listener.onSettingChanged(SettingsManager.this, settingId);
+                    Integer settingId = mSettingsCache.getId(key);
+                    if (settingId != null) {
+                        listener.onSettingChanged(SettingsManager.this, settingId);
+                    }
                 }
             };
     }
