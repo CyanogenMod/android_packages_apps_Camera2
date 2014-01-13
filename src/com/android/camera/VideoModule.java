@@ -52,6 +52,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.camera.app.AppController;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
 import com.android.camera.app.CameraManager.CameraProxy;
 import com.android.camera.app.LocationManager;
@@ -331,7 +332,6 @@ public class VideoModule extends CameraModule
     @Override
     public void onSingleTapUp(View view, int x, int y) {
         // TODO: Add touch to focus.
-        onShutterButtonClick();
     }
 
     private void takeASnapshot() {
@@ -497,10 +497,12 @@ public class VideoModule extends CameraModule
 
         if (stop) {
             onStopVideoRecording();
-            mActivity.getCameraAppUI().setBottomBarVisible(true);
+            mAppController.getCameraAppUI().animateBottomBarToFullSize(
+                    CameraAppUI.VIDEO_SHUTTER_ICON);
         } else {
             startVideoRecording();
-            mActivity.getCameraAppUI().setBottomBarVisible(false);
+            mAppController.getCameraAppUI().animateBottomBarToCircle(
+                    CameraAppUI.STOP_SHUTTER_ICON);
         }
         mUI.enableShutter(false);
 

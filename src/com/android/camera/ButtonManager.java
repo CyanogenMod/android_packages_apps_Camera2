@@ -25,6 +25,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 
+
 import com.android.camera2.R;
 
 /**
@@ -42,9 +43,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_DONE = 6;
     public static final int BUTTON_RETAKE = 7;
     public static final int BUTTON_REVIEW = 8;
-
-    public static final int CAMERA_SHUTTER_ICON = 0;
-    public static final int VIDEO_SHUTTER_ICON = 1;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -530,16 +528,4 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
         });
     }
-
-     public void setShutterButtonIcon(int w) {
-        switch(w) {
-            case VIDEO_SHUTTER_ICON:
-                mShutterButton.setImageResource(R.drawable.ic_video_normal);
-                break;
-            case CAMERA_SHUTTER_ICON:
-            default:
-                mShutterButton.setImageResource(R.drawable.ic_camera_normal);
-        }
-    }
-
 }

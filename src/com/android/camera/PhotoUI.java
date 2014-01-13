@@ -34,6 +34,7 @@ import android.view.ViewStub;
 import android.widget.Toast;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraManager;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.FaceView;
@@ -303,7 +304,6 @@ public class PhotoUI implements PreviewStatusListener,
             ButtonManager.ButtonCallback hdrCallback,
             ButtonManager.ButtonCallback refocusCallback) {
 
-        buttonManager.setShutterButtonIcon(ButtonManager.CAMERA_SHUTTER_ICON);
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
             cameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_FLASH,
@@ -321,6 +321,8 @@ public class PhotoUI implements PreviewStatusListener,
             buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS,
                 refocusCallback, R.array.refocus_icons);
         }
+
+        mActivity.getCameraAppUI().setBottomBarShutterIcon(CameraAppUI.CAMERA_SHUTTER_ICON);
 
         if (mController.isImageCaptureIntent()) {
             buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,

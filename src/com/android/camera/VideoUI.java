@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
@@ -157,13 +158,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
                                    ButtonManager.ButtonCallback flashCallback,
                                    ButtonManager.ButtonCallback cameraCallback) {
 
-        buttonManager.setShutterButtonIcon(ButtonManager.VIDEO_SHUTTER_ICON);
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
             cameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_TORCH,
             flashCallback, R.array.video_flashmode_icons);
         buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
         buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
+
+        mActivity.getCameraAppUI().setBottomBarShutterIcon(CameraAppUI.VIDEO_SHUTTER_ICON);
 
         if (mController.isVideoCaptureIntent()) {
             buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,

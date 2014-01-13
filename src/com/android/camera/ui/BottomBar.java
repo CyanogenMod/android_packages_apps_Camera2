@@ -16,7 +16,10 @@
 
 package com.android.camera.ui;
 
-import android.app.Activity;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Handler;
@@ -30,8 +33,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.android.camera2.R;
+import com.android.camera.ShutterButton;
 import com.android.camera.ToggleImageButton;
+import com.android.camera.util.Gusterpolator;
+import com.android.camera2.R;
+
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 
 /**
  * BottomBar swaps its width and height on rotation. In addition, it also changes
@@ -39,13 +50,17 @@ import com.android.camera.ToggleImageButton;
  * landscape it aligns to the right side of its parent and lays out its children
  * vertically, whereas in portrait, it stays at the bottom of the parent and has
  * a horizontal layout orientation.
- */
+*/
 public class BottomBar extends FrameLayout
     implements PreviewStatusListener.PreviewAreaSizeChangedListener,
                PreviewOverlay.OnPreviewTouchedListener {
 
     private static final String TAG = "BottomBar";
+
     private static final int BOTTOMBAR_OPTIONS_TIMEOUT_MS = 2000;
+
+    private static final float CIRCLE_RADIUS = 64.0f;
+    private static final int CIRCLE_ANIM_DURATION_MS = 450;
 
     private int mWidth;
     private int mHeight;
@@ -78,6 +93,12 @@ public class BottomBar extends FrameLayout
             }
         };
 
+    private ShutterButton mShutterButton;
+
+    private int mBackgroundColor;
+    private Paint mCirclePaint = new Paint();
+    private Path mCirclePath = new Path();
+
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
@@ -93,18 +114,20 @@ public class BottomBar extends FrameLayout
             = (FrameLayout) findViewById(R.id.bottombar_capture);
         mIntentLayout
             = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent);
+        mShutterButton
+            = (ShutterButton) findViewById(R.id.shutter_button);
 
         mOptionsOverlay.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                        // close options immediately.
-                        closeModeOptionsDelayed(BOTTOMBAR_OPTIONS_TIMEOUT_MS);
-                    }
-                    // Let touch event reach mode options or shutter.
-                    return false;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    // close options immediately.
+                    closeModeOptionsDelayed(BOTTOMBAR_OPTIONS_TIMEOUT_MS);
                 }
-            });
+                // Let touch event reach mode options or shutter.
+                return false;
+            }
+        });
     }
 
     @Override
@@ -242,10 +265,10 @@ public class BottomBar extends FrameLayout
             }
             if (previewAspectRatio >= screenAspectRatio) {
                 mOverLayBottomBar = true;
-                getBackground().setAlpha(128);
+                setBackgroundAlpha(128);
             } else {
                 mOverLayBottomBar = false;
-                getBackground().setAlpha(255);
+                setBackgroundAlpha(255);
             }
         }
 
@@ -272,6 +295,13 @@ public class BottomBar extends FrameLayout
                 barHeight = (int) (mHeight - mOffsetLongerEdge);
             }
         }
+
+        mCirclePath.addCircle(
+            barWidth/2,
+            barHeight/2,
+            (int)(diagonalLength(barWidth, barHeight)/2),
+            Path.Direction.CW);
+
         super.onMeasure(MeasureSpec.makeMeasureSpec(barWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY));
     }
@@ -313,5 +343,121 @@ public class BottomBar extends FrameLayout
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return true;
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        canvas.drawPath(mCirclePath, mCirclePaint);
+
+        super.onDraw(canvas);
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+        mBackgroundColor = color;
+        mCirclePaint.setColor(mBackgroundColor);
+    }
+
+    public void setBackgroundAlpha(int alpha) {
+        setBackgroundColor((alpha << 24) | (mBackgroundColor & 0x00FFFFFF));
+    }
+
+    private double diagonalLength(double w, double h) {
+        return Math.sqrt((w*w) + (h*h));
+    }
+    private double diagonalLength() {
+        return diagonalLength(getWidth(), getHeight());
+    }
+
+    private TransitionDrawable crossfadeDrawable(Drawable from, Drawable to) {
+        Drawable [] arrayDrawable = new Drawable[2];
+        arrayDrawable[0] = from;
+        arrayDrawable[1] = to;
+        TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
+        transitionDrawable.setCrossFadeEnabled(true);
+        return transitionDrawable;
+    }
+
+    /**
+     * Set the shutter button's icon resource
+     */
+    public void setShutterButtonIcon(int resId) {
+        mShutterButton.setImageResource(resId);
+    }
+
+    /**
+     * Animates bar to a single stop button
+     */
+    public void animateToCircle(int resId) {
+        final ValueAnimator radiusAnimator = ValueAnimator.ofFloat(
+                                                 (float) diagonalLength()/2,
+                                                 CIRCLE_RADIUS);
+        radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
+        radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
+
+        radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCirclePath.reset();
+                mCirclePath.addCircle(
+                    getWidth()/2,
+                    getHeight()/2,
+                    (Float) animation.getAnimatedValue(),
+                    Path.Direction.CW);
+
+                invalidate();
+            }
+        });
+
+        TransitionDrawable transitionDrawable = crossfadeDrawable(
+                mShutterButton.getDrawable(),
+                getResources().getDrawable(resId));
+        mShutterButton.setImageDrawable(transitionDrawable);
+
+        View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
+        optionsOverlay.setVisibility(View.INVISIBLE);
+
+
+        transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
+        radiusAnimator.start();
+    }
+
+    /**
+     * Animates bar to full width / length with video capture icon
+     */
+    public void animateToFullSize(int resId) {
+        final ValueAnimator radiusAnimator = ValueAnimator.ofFloat(
+                                                 CIRCLE_RADIUS,
+                                                 (float) diagonalLength()/2);
+        radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
+        radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
+        radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCirclePath.reset();
+                mCirclePath.addCircle(
+                    getWidth()/2,
+                    getHeight()/2,
+                    (Float) animation.getAnimatedValue(),
+                    Path.Direction.CW);
+
+                invalidate();
+            }
+        });
+        radiusAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
+                optionsOverlay.setVisibility(View.VISIBLE);
+            }
+        });
+
+        TransitionDrawable transitionDrawable = crossfadeDrawable(
+                mShutterButton.getDrawable(),
+                getResources().getDrawable(resId));
+        mShutterButton.setImageDrawable(transitionDrawable);
+
+        transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
+        radiusAnimator.start();
     }
 }
