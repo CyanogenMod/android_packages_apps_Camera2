@@ -85,6 +85,14 @@
     <color name="panorama_mode_color">#f1c938</color>
     <color name="settings_mode_color">#58595b</color>
 
+    <color name="camera_mode_pressed_color">#9ec0fa</color>
+    <color name="video_mode_pressed_color">#e5948c</color>
+    <color name="craft_mode_pressed_color">#a1c493</color>
+    <color name="photosphere_mode_pressed_color">#9b7baa</color>
+    <color name="timelapse_mode_pressed_color">#88695e</color>
+    <color name="panorama_mode_pressed_color">#fbd569</color>
+    <color name="settings_mode_pressed_color">#58595b</color>
+
     <color name="filmstrip_background">#000000</color>
 
     <color name="indicators_background_color">#4c000000</color>

@@ -96,12 +96,19 @@ public class BottomBar extends FrameLayout
     private ShutterButton mShutterButton;
 
     private int mBackgroundColor;
+    private int mBackgroundPressedColor;
+    private int mBackgroundAlpha = 0xff;
+
     private Paint mCirclePaint = new Paint();
     private Path mCirclePath = new Path();
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
+    }
+
+    private void setPaintColor(int alpha, int color) {
+        mCirclePaint.setColor((alpha << 24) | (color & 0x00ffffff));
     }
 
     @Override
@@ -114,8 +121,23 @@ public class BottomBar extends FrameLayout
             = (FrameLayout) findViewById(R.id.bottombar_capture);
         mIntentLayout
             = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent);
+
         mShutterButton
             = (ShutterButton) findViewById(R.id.shutter_button);
+        mShutterButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
+                    setPaintColor(mBackgroundAlpha, mBackgroundPressedColor);
+                    invalidate();
+                } else if (MotionEvent.ACTION_UP == event.getActionMasked()) {
+                    setPaintColor(mBackgroundAlpha, mBackgroundColor);
+                    invalidate();
+                }
+
+                return false;
+            }
+        });
 
         mOptionsOverlay.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -355,11 +377,16 @@ public class BottomBar extends FrameLayout
     @Override
     public void setBackgroundColor(int color) {
         mBackgroundColor = color;
-        mCirclePaint.setColor(mBackgroundColor);
+        setPaintColor(mBackgroundAlpha, mBackgroundColor);
+    }
+
+    public void setBackgroundPressedColor(int color) {
+        mBackgroundPressedColor = color;
     }
 
     public void setBackgroundAlpha(int alpha) {
-        setBackgroundColor((alpha << 24) | (mBackgroundColor & 0x00FFFFFF));
+        mBackgroundAlpha = alpha;
+        setPaintColor(mBackgroundAlpha, mBackgroundColor);
     }
 
     private double diagonalLength(double w, double h) {

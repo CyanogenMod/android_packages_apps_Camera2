@@ -601,6 +601,18 @@
         <item>@color/craft_mode_color</item>
     </array>
 
+    <array name="camera_mode_theme_pressed_color">
+        <item>@color/camera_mode_pressed_color</item>
+        <item>@color/video_mode_pressed_color</item>
+        <item>@color/craft_mode_pressed_color</item>
+        <item>@color/photosphere_mode_pressed_color</item>
+        <item>@color/panorama_mode_pressed_color</item>
+        <item>@color/timelapse_mode_pressed_color</item>
+        <item>@color/settings_mode_pressed_color</item>
+        <item>@color/craft_mode_pressed_color</item>
+        <item>@color/craft_mode_pressed_color</item>
+    </array>
+
     <string-array name="camera_mode_text">
         <item>@string/mode_camera</item>
         <item>@string/mode_video</item>

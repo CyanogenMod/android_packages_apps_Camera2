@@ -818,6 +818,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
+     * Sets the pressed color of the bottom bar.
+     */
+    public void setBottomBarPressedColor(int colorId) {
+        mBottomBar.setBackgroundPressedColor(colorId);
+    }
+
+    /**
      * converts a icon enum to a resource id
      */
     private int shutterIconId(int w) {

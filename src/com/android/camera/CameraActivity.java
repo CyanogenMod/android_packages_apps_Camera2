@@ -1550,6 +1550,10 @@ public class CameraActivity extends Activity
             int color = getResources().getColor(
                     CameraUtil.getCameraThemeColorId(mCurrentModeIndex, this));
             mCameraAppUI.setBottomBarColor(color);
+
+            int pressedColor = getResources().getColor(
+                    CameraUtil.getCameraThemePressedColorId(mCurrentModeIndex, this));
+            mCameraAppUI.setBottomBarPressedColor(pressedColor);
         }
     }
 
