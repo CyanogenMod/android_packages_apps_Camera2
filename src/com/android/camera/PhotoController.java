@@ -53,8 +53,6 @@ public interface PhotoController extends OnShutterButtonListener {
 
     public void onSingleTapUp(View view, int x, int y);
 
-    public void onPreviewRectChanged(Rect previewRect);
-
     public void updatePreviewAspectRatio(float aspectRatio);
 
     public void updateCameraOrientation();

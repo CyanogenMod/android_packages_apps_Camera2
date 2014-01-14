@@ -19,17 +19,13 @@ package com.android.camera.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -334,9 +330,8 @@ public class BottomBar extends FrameLayout
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(float scaledTextureWidth,
-                                         float scaledTextureHeight) {
-        adjustBottomBar(scaledTextureWidth, scaledTextureHeight);
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        adjustBottomBar(previewArea.width(), previewArea.height());
     }
 
     private void setOffset(float scaledTextureWidth, float scaledTextureHeight) {

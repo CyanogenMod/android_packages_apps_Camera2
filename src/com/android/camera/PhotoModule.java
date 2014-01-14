@@ -64,7 +64,6 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -495,12 +494,6 @@ public class PhotoModule
             settingsManager.setDefault(SettingsManager.SETTING_CAMERA_HDR_PLUS);
         }
         updateSceneMode();
-    }
-
-    @Override
-    public void onPreviewRectChanged(Rect previewRect) {
-        if (mFocusManager != null)
-            mFocusManager.setPreviewRect(previewRect);
     }
 
     @Override

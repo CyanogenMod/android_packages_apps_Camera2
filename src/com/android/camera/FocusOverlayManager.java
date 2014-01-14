@@ -168,8 +168,8 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
-        setPreviewRect(new Rect(0, 0, (int) previewWidth, (int) previewHeight));
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        setPreviewRect(CameraUtil.rectFToRect(previewArea));
     }
 
     /** Returns a copy of mPreviewRect so that outside class cannot modify preview
@@ -454,7 +454,6 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         } else {
             // The default is continuous autofocus.
             mFocusMode = mSettingsManager.get(SettingsManager.SETTING_FOCUS_MODE);
-
             // Try to find a supported focus mode from the default list.
             if (mFocusMode == null) {
                 for (int i = 0; i < mDefaultFocusModes.length; i++) {

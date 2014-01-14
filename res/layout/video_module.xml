@@ -21,6 +21,10 @@
             style="@style/ViewfinderLabelLayout">
         <include layout="@layout/viewfinder_labels_video" android:id="@+id/labels" />
     </com.android.camera.ui.RotateLayout>
+    <com.android.camera.ui.FocusOverlay
+        android:id="@+id/focus_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <ImageView android:id="@+id/review_image"
             android:layout_height="match_parent"
             android:layout_width="match_parent"

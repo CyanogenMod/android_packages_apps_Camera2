@@ -23,10 +23,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.android.camera.TextureViewHelper;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
@@ -160,8 +160,8 @@ public class CaptureAnimationOverlay extends View
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
-        mWidth = (int) previewWidth;
-        mHeight = (int) previewHeight;
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        mWidth = (int) previewArea.width();
+        mHeight = (int) previewArea.height();
     }
 }

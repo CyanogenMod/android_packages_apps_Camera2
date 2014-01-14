@@ -18,13 +18,12 @@ package com.android.camera.widget;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera.ui.PreviewStatusListener;
-
-import com.android.camera2.R;
 
 /**
  * IndicatorOverlay is a FrameLayout which positions indicator icons in
@@ -45,10 +44,9 @@ public class IndicatorOverlay extends FrameLayout
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(float scaledWidth,
-                                         float scaledHeight) {
-        mPreviewWidth = (int) scaledWidth;
-        mPreviewHeight = (int) scaledHeight;
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        mPreviewWidth = (int) previewArea.width();
+        mPreviewHeight = (int) previewArea.height();
         setLayoutDimensions();
     }
 

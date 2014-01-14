@@ -21,12 +21,14 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.List;
@@ -138,8 +140,9 @@ public class PreviewOverlay extends View
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight) {
-        mZoomProcessor.layout(0, 0, (int) previewWidth, (int) previewHeight);
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        mZoomProcessor.layout((int) previewArea.left, (int) previewArea.top,
+                (int) previewArea.right, (int) previewArea.bottom);
     }
 
     @Override

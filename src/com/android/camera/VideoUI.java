@@ -50,6 +50,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private final CameraActivity mActivity;
     private final View mRootView;
     private final TextureView mTextureView;
+    private final FocusOverlayManager.FocusUI mFocusUI;
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
@@ -142,6 +143,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         initializeMiscControls();
         initializeControlByIntent();
         mAnimationManager = new AnimationManager();
+        mFocusUI = (FocusOverlayManager.FocusUI) mRootView.findViewById(R.id.focus_overlay);
     }
 
     public void initializeSurfaceView() {
@@ -196,6 +198,10 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
             aspectRatio = (float) height / width;
         }
         setAspectRatio(aspectRatio);
+    }
+
+    public FocusOverlayManager.FocusUI getFocusUI() {
+        return mFocusUI;
     }
 
     /**

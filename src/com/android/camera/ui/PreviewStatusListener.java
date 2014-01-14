@@ -16,6 +16,7 @@
 
 package com.android.camera.ui;
 
+import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.TextureView;
 import android.view.View;
@@ -45,7 +46,7 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
      * to a transform matrix being applied to the TextureView
      */
     public interface PreviewAreaSizeChangedListener {
-        public void onPreviewAreaSizeChanged(float previewWidth, float previewHeight);
+        public void onPreviewAreaSizeChanged(RectF previewArea);
     }
 
     /**

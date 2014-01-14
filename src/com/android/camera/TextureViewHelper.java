@@ -40,6 +40,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private TextureView mPreview;
     private int mWidth = 0;
     private int mHeight = 0;
+    private RectF mPreviewArea = new RectF();
     private float mAspectRatio = UNSET;
     private boolean mAutoAdjustTransform = true;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
@@ -107,8 +108,16 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             return;
         }
         mPreview.setTransform(matrix);
+        updatePreviewArea(matrix);
+    }
 
-        onPreviewSizeChanged(previewWidth, previewHeight);
+    /**
+     * Calculates and updates the preview area rect using the latest transform matrix.
+     */
+    private void updatePreviewArea(Matrix matrix) {
+        mPreviewArea.set(0, 0, mWidth, mHeight);
+        matrix.mapRect(mPreviewArea);
+        onPreviewSizeChanged(mPreviewArea);
     }
 
     public void setOnLayoutChangeListener(OnLayoutChangeListener listener) {
@@ -152,14 +161,14 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             matrix.setScale(scaleX, scaleY, (float) mWidth / 2, 0.0f);
         }
         mPreview.setTransform(matrix);
-        onPreviewSizeChanged(scaledTextureWidth, scaledTextureHeight);
+        updatePreviewArea(matrix);
     }
 
-    private void onPreviewSizeChanged(float scaledTextureWidth, float scaledTextureHeight) {
+    private void onPreviewSizeChanged(final RectF previewArea) {
         // Notify listeners of preview size change
         for (PreviewStatusListener.PreviewAreaSizeChangedListener listener
                 : mPreviewSizeChangedListeners) {
-            listener.onPreviewAreaSizeChanged(scaledTextureWidth, scaledTextureHeight);
+            listener.onPreviewAreaSizeChanged(previewArea);
         }
     }
 
@@ -180,7 +189,11 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
         if (listener != null && !mPreviewSizeChangedListeners.contains(listener)) {
             mPreviewSizeChangedListeners.add(listener);
-            listener.onPreviewAreaSizeChanged(mWidth, mHeight);
+            if (mPreviewArea.width() == 0 || mPreviewArea.height() == 0) {
+                listener.onPreviewAreaSizeChanged(new RectF(0, 0, mWidth, mHeight));
+            } else {
+                listener.onPreviewAreaSizeChanged(new RectF(mPreviewArea));
+            }
         }
     }
 
