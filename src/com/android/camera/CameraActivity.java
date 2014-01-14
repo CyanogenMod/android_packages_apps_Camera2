@@ -197,6 +197,7 @@ public class CameraActivity extends Activity
 
     private CameraController mCameraController;
     private boolean mPaused;
+    private boolean mUpAsGallery;
     private CameraAppUI mCameraAppUI;
 
     private FeedbackHelper mFeedbackHelper;
@@ -493,6 +494,8 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onEnterFilmstrip(int dataId) {
+                    mActionBar.setDisplayUseLogoEnabled(true);
+                    mUpAsGallery = true;
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(true);
                     }
@@ -500,7 +503,8 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onLeaveFilmstrip(int dataId) {
-                    // Do nothing.
+                    mActionBar.setDisplayUseLogoEnabled(false);
+                    mUpAsGallery = false;
                 }
 
                 @Override
@@ -907,7 +911,8 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mFilmstripVisible && IntentHelper.shouldLaunchGalleryOnUpAction()) {
+                if (mFilmstripVisible && IntentHelper.shouldLaunchGalleryOnUpAction() &&
+                        mUpAsGallery) {
                     startGallery();
                 } else {
                     onBackPressed();
