@@ -82,11 +82,17 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         Context context = app.getAndroidContext();
         sGcamIndex = context.getResources().getInteger(R.integer.camera_mode_gcam);
 
-        View root = app.getCameraAppUI().getModuleRootView();
-        getButtonsReferences(root);
-
         mSettingsManager = app.getSettingsManager();
         mSettingsManager.addListener(this);
+    }
+
+    /**
+     * Load references to buttons under a root View.
+     * Call this after the root clears/reloads all of its children
+     * to prevent stale references button views.
+     */
+    public void load(View root) {
+        getButtonsReferences(root);
     }
 
     /**
