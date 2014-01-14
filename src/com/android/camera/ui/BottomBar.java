@@ -105,6 +105,7 @@ public class BottomBar extends FrameLayout
 
     private void setPaintColor(int alpha, int color) {
         mCirclePaint.setColor((alpha << 24) | (color & 0x00ffffff));
+        invalidate();
     }
 
     @Override
