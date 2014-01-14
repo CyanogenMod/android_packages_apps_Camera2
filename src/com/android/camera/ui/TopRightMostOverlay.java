@@ -71,15 +71,9 @@ public class TopRightMostOverlay extends FrameLayout {
         super.onLayout(changed, left, top, right, bottom);
         if (mReferenceView != null && getChildCount() > 0) {
             View child = getChildAt(0);
-
-            int centerX = (mReferenceView.getRight() + mReferenceView.getLeft()) / 2;
-            int centerY = (mReferenceView.getBottom() + mReferenceView.getTop()) / 2;
-
-            int childWidth = child.getMeasuredWidth();
-            int childHeight = child.getMeasuredHeight();
-
-            child.layout(centerX - childWidth / 2, centerY - childHeight / 2,
-                centerX + childWidth / 2, centerY + childHeight / 2);
+            // Match the reference view dimensions exactly.
+            child.layout(mReferenceView.getLeft(), mReferenceView.getTop(),
+                         mReferenceView.getRight(), mReferenceView.getBottom());
         }
     }
 }
