@@ -61,6 +61,8 @@ import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.hardware.HardwareSpec;
+import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.AccessibilityUtils;
@@ -355,6 +357,12 @@ public class VideoModule extends CameraModule
         return true;
     }
 
+    private void initializeControlByIntent() {
+        if (isVideoCaptureIntent()) {
+            mActivity.getCameraAppUI().transitionToIntentLayout();
+        }
+    }
+
     @Override
     public void onSingleTapUp(View view, int x, int y) {
         if (mPaused || mCameraDevice == null) {
@@ -467,9 +475,53 @@ public class VideoModule extends CameraModule
             }
         };
 
+    private final View.OnClickListener mCancelCallback = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onReviewCancelClicked(v);
+        }
+    };
+
+    private final View.OnClickListener mDoneCallback = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onReviewDoneClicked(v);
+        }
+    };
+    private final View.OnClickListener mReviewCallback = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mActivity.getCameraAppUI().transitionToIntentLayout();
+            onReviewPlayClicked(v);
+        }
+    };
+
     @Override
-    public void customizeButtons(ButtonManager buttonManager) {
-        mUI.customizeButtons(buttonManager, mFlashCallback, mCameraCallback);
+    public HardwareSpec getHardwareSpec() {
+        return new HardwareSpecImpl(mParameters);
+    }
+
+    @Override
+    public CameraAppUI.BottomBarUISpec getBottomBarSpec() {
+        CameraAppUI.BottomBarUISpec bottomBarSpec = new CameraAppUI.BottomBarUISpec();
+
+        bottomBarSpec.enableCamera = true;
+        bottomBarSpec.cameraCallback = mCameraCallback;
+        bottomBarSpec.enableTorchFlash = true;
+        bottomBarSpec.flashCallback = mFlashCallback;
+        bottomBarSpec.hideHdr = true;
+        bottomBarSpec.hideRefocus = true;
+
+        if (isVideoCaptureIntent()) {
+            bottomBarSpec.showCancel = true;
+            bottomBarSpec.cancelCallback = mCancelCallback;
+            bottomBarSpec.showDone = true;
+            bottomBarSpec.doneCallback = mDoneCallback;
+            bottomBarSpec.showReview = true;
+            bottomBarSpec.reviewCallback = mReviewCallback;
+        }
+
+        return bottomBarSpec;
     }
 
     @Override
@@ -484,7 +536,7 @@ public class VideoModule extends CameraModule
         startPreview();
         initializeVideoSnapshot();
         mUI.initializeZoom(mParameters);
-        mUI.onCameraOpened(mFlashCallback, mCameraCallback);
+        initializeControlByIntent();
     }
 
     private void startPlayVideoActivity() {

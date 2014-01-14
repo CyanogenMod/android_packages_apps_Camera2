@@ -32,9 +32,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera.AnimationManager;
-import com.android.camera.ShutterButton;
+import com.android.camera.ButtonManager;
 import com.android.camera.TextureViewHelper;
+import com.android.camera.ShutterButton;
+import com.android.camera.app.CameraProvider;
 import com.android.camera.filmstrip.FilmstripContentPanel;
+import com.android.camera.hardware.HardwareSpec;
+import com.android.camera.module.ModuleController;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.MainActivityLayout;
@@ -170,6 +175,157 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             public void onShare();
         }
     }
+
+    /**
+     * BottomBarUISpec provides a structure for modules
+     * to specify their ideal bottom bar mode options layout.
+     *
+     * Once constructed by a module, this class should be
+     * treated as read only.
+     *
+     * The application then edits this spec according to
+     * hardware limitations and displays the final bottom
+     * bar ui.
+     */
+    public static class BottomBarUISpec {
+        /** Mode options UI */
+
+        /**
+         * Set true if the camera option should be enabled.
+         * If not set or false, and multiple cameras are supported,
+         * the camera option will be disabled.
+         *
+         * If multiple cameras are not supported, this preference
+         * is ignored and the camera option will not be visible.
+         */
+        public boolean enableCamera;
+
+        /**
+         * Set true if the photo flash option should be enabled.
+         * If not set or false, the photo flash option will be
+         * disabled.
+         *
+         * If the hardware does not support multiple flash values,
+         * this preference is ignored and the flash option will
+         * be disabled.  It will not be made invisible in order to
+         * preserve a consistent experience across devices and between
+         * front and back cameras.
+         */
+        public boolean enableFlash;
+
+        /**
+         * Set true if the video flash option should be enabled.
+         * Same disable rules apply as the photo flash option.
+         */
+        public boolean enableTorchFlash;
+
+        /**
+         * Set true if the hdr/hdr+ option should be enabled.
+         * If not set or false, the hdr/hdr+ option will be disabled.
+         *
+         * Hdr or hdr+ will be chosen based on hardware limitations,
+         * with hdr+ prefered.
+         *
+         * If hardware supports neither hdr nor hdr+, then the hdr/hdr+
+         * will not be visible.
+         */
+        public boolean enableHdr;
+
+        /**
+         * Set true if hdr/hdr+ should not be visible, regardless of
+         * hardware limitations.
+         */
+        public boolean hideHdr;
+
+        /**
+         * Set true if the refocus option should be enabled.
+         * If not set or false, the refocus option will be disabled.
+         *
+         * This option is not constrained by hardware limitations.
+         */
+        public boolean enableRefocus;
+
+        /**
+         * Set true if refocus should not be visible.
+         */
+        public boolean hideRefocus;
+
+        /** Intent UI */
+
+        /**
+         * Set true if the intent ui cancel option should be visible.
+         */
+        public boolean showCancel;
+        /**
+         * Set true if the intent ui done option should be visible.
+         */
+        public boolean showDone;
+        /**
+         * Set true if the intent ui retake option should be visible.
+         */
+        public boolean showRetake;
+        /**
+         * Set true if the intent ui review option should be visible.
+         */
+        public boolean showReview;
+
+        /** Mode options callbacks */
+
+        /**
+         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * that will be executed when the camera option is pressed. This
+         * callback can be null.
+         */
+        public ButtonManager.ButtonCallback cameraCallback;
+
+        /**
+         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * that will be executed when the flash option is pressed. This
+         * callback can be null.
+         */
+        public ButtonManager.ButtonCallback flashCallback;
+
+        /**
+         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * that will be executed when the hdr/hdr+ option is pressed. This
+         * callback can be null.
+         */
+        public ButtonManager.ButtonCallback hdrCallback;
+
+        /**
+         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * that will be executed when the refocus option is pressed. This
+         * callback can be null.
+         */
+        public ButtonManager.ButtonCallback refocusCallback;
+
+        /** Intent UI callbacks */
+
+        /**
+         * A {@link android.view.View.OnClickListener} that will execute
+         * when the cancel option is pressed. This callback can be null.
+         */
+        public View.OnClickListener cancelCallback;
+
+        /**
+         * A {@link android.view.View.OnClickListener} that will execute
+         * when the done option is pressed. This callback can be null.
+         */
+        public View.OnClickListener doneCallback;
+
+        /**
+         * A {@link android.view.View.OnClickListener} that will execute
+         * when the retake option is pressed. This callback can be null.
+         */
+        public View.OnClickListener retakeCallback;
+
+        /**
+         * A {@link android.view.View.OnClickListener} that will execute
+         * when the review option is pressed. This callback can be null.
+         */
+        public View.OnClickListener reviewCallback;
+    }
+
 
     private final static String TAG = "CameraAppUI";
 
@@ -594,6 +750,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * specific changes that depend on the camera or camera settings.
      */
     public void onChangeCamera() {
+        ModuleController moduleController = mController.getCurrentModuleController();
+        if (moduleController.isUsingBottomBar()) {
+            applyModuleSpecs(moduleController.getHardwareSpec(),
+                moduleController.getBottomBarSpec());
+        }
+
         if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
             mIndicatorIconController.syncIndicators();
@@ -840,6 +1002,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.setBackgroundPressedColor(colorId);
     }
 
+    // TODO: refactor this out so it can controlled by the app.
     /**
      * Sets the shutter button icon on the bottom bar
      */
@@ -881,13 +1044,123 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Performs a transition to the global intent layout.
      */
     public void transitionToIntentLayout() {
-        mBottomBar.transitionToIntentLayout();
+        ModuleController moduleController = mController.getCurrentModuleController();
+        if (moduleController.isUsingBottomBar()) {
+            applyModuleSpecs(moduleController.getHardwareSpec(),
+                moduleController.getBottomBarSpec());
+            mBottomBar.transitionToIntentLayout();
+        }
     }
 
     /**
      * Performs a transition to the global intent review layout.
      */
     public void transitionToIntentReviewLayout() {
-        mBottomBar.transitionToIntentReviewLayout();
+        ModuleController moduleController = mController.getCurrentModuleController();
+        if (moduleController.isUsingBottomBar()) {
+            applyModuleSpecs(moduleController.getHardwareSpec(),
+                moduleController.getBottomBarSpec());
+            mBottomBar.transitionToIntentReviewLayout();
+        }
+    }
+
+    /**
+     * Applies a {@link com.android.camera.CameraAppUI.BottomBarUISpec}
+     * to the bottom bar mode options based on limitations from a
+     * {@link com.android.camera.hardware.HardwareSpec}.
+     *
+     * Options not supported by the hardware are either hidden
+     * or disabled, depending on the option.
+     *
+     * Otherwise, the option is fully enabled and clickable.
+     */
+    public void applyModuleSpecs(final HardwareSpec hardwareSpec,
+           final BottomBarUISpec bottomBarSpec) {
+        if (hardwareSpec == null) {
+            throw new IllegalArgumentException();
+        }
+        if (bottomBarSpec == null) {
+            throw new IllegalArgumentException();
+        }
+
+        ButtonManager buttonManager = mController.getButtonManager();
+        SettingsManager settingsManager = mController.getSettingsManager();
+
+        /** Standard mode options */
+        if (hardwareSpec.isFrontCameraSupported()) {
+            if (bottomBarSpec.enableCamera) {
+                buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
+                    bottomBarSpec.cameraCallback);
+            } else {
+                buttonManager.disableButton(ButtonManager.BUTTON_CAMERA);
+            }
+        } else {
+            // Hide camera icon if front camera not available.
+            buttonManager.hideButton(ButtonManager.BUTTON_CAMERA);
+        }
+
+        if (hardwareSpec.isFlashSupported()) {
+            if (bottomBarSpec.enableFlash && settingsManager.isCameraBackFacing()) {
+                buttonManager.enableButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
+            } else if (bottomBarSpec.enableTorchFlash && settingsManager.isCameraBackFacing()) {
+                buttonManager.enableButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
+            } else {
+                buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+            }
+        } else {
+            // Disable flash icon if not supported by the hardware.
+            buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+        }
+
+        if (bottomBarSpec.hideHdr) {
+            // Force hide hdr or hdr plus icon.
+            buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+        } else {
+            if (hardwareSpec.isHdrPlusSupported()) {
+                if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
+                    buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS,
+                        bottomBarSpec.hdrCallback);
+                } else {
+                    buttonManager.disableButton(ButtonManager.BUTTON_HDRPLUS);
+                }
+            } else if (hardwareSpec.isHdrSupported()) {
+                if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
+                    buttonManager.enableButton(ButtonManager.BUTTON_HDR,
+                        bottomBarSpec.hdrCallback);
+                } else {
+                    buttonManager.disableButton(ButtonManager.BUTTON_HDR);
+                }
+            } else {
+                // Hide hdr plus or hdr icon if neither are supported.
+                buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+            }
+        }
+
+        if (bottomBarSpec.hideRefocus) {
+            buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
+        } else {
+            if (bottomBarSpec.enableRefocus) {
+                buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS,
+                    bottomBarSpec.refocusCallback);
+            } else {
+                // Disable refocus icon when not enabled, not dependent
+                // on hardware spec.
+                buttonManager.disableButton(ButtonManager.BUTTON_REFOCUS);
+            }
+        }
+
+        /** Intent UI */
+        if (bottomBarSpec.showCancel) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
+                bottomBarSpec.cancelCallback);
+        }
+        if (bottomBarSpec.showDone) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
+                bottomBarSpec.doneCallback);
+        }
+        if (bottomBarSpec.showRetake) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
+                bottomBarSpec.retakeCallback);
+        }
     }
 }

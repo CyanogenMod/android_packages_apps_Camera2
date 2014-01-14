@@ -20,7 +20,9 @@ import android.content.res.Configuration;
 
 import com.android.camera.ButtonManager;
 import com.android.camera.app.AppController;
+import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.CameraManager;
+import com.android.camera.hardware.HardwareSpec;
 
 /**
  * The controller at app level.
@@ -106,10 +108,18 @@ public interface ModuleController {
     public void onCameraAvailable(CameraManager.CameraProxy cameraProxy);
 
     /**
-     * Called when the module needs to customize global buttons according
-     * to its supported feature set.
+     * Returns a {@link com.android.camera.hardware.HardwareSpec}
+     * based on the module's open camera device.
      */
-    public void customizeButtons(ButtonManager buttonManager);
+    public HardwareSpec getHardwareSpec();
+
+    /**
+     * Returns a {@link com.android.camera.app.CameraAppUI.BottomBarUISpec}
+     * which represents the module's ideal bottom bar layout of the
+     * mode options.  The app edits the final layout based on the
+     * {@link com.android.camera.hardware.HardwareSpec}.
+     */
+    public BottomBarUISpec getBottomBarSpec();
 
     /**
      * Used by the app on configuring the bottom bar color and visibility.

@@ -26,7 +26,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -72,29 +71,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
 
-    private ButtonManager.ButtonCallback mFlashCallback;
-    private ButtonManager.ButtonCallback mCameraCallback;
-
-    private final OnClickListener mCancelCallback = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mController.onReviewCancelClicked(v);
-        }
-    };
-    private final OnClickListener mDoneCallback = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mController.onReviewDoneClicked(v);
-        }
-    };
-    private final OnClickListener mReviewCallback = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            customizeButtons(mActivity.getButtonManager(), mFlashCallback, mCameraCallback);
-            mActivity.getCameraAppUI().transitionToIntentLayout();
-            mController.onReviewPlayClicked(v);
-        }
-    };
 
     private float mAspectRatio = UNSET;
     private final AnimationManager mAnimationManager;
@@ -142,7 +118,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mSurfaceTexture = mTextureView.getSurfaceTexture();
 
         initializeMiscControls();
-        initializeControlByIntent();
         mAnimationManager = new AnimationManager();
         mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
     }
@@ -151,38 +126,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mSurfaceView = new SurfaceView(mActivity);
         ((ViewGroup) mRootView).addView(mSurfaceView, 0);
         mSurfaceView.getHolder().addCallback(this);
-    }
-
-    /**
-     * Customize the mode options such that flash and camera
-     * switching are enabled.
-     */
-    public void customizeButtons(ButtonManager buttonManager,
-                                   ButtonManager.ButtonCallback flashCallback,
-                                   ButtonManager.ButtonCallback cameraCallback) {
-
-        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
-            cameraCallback, R.array.camera_id_icons);
-        buttonManager.enableButton(ButtonManager.BUTTON_TORCH,
-            flashCallback, R.array.video_flashmode_icons);
-        buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
-        buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
-
-        if (mController.isVideoCaptureIntent()) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
-                mCancelCallback);
-            buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
-                mDoneCallback);
-            buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW,
-                mReviewCallback, R.drawable.ic_play);
-        }
-    }
-
-    private void initializeControlByIntent() {
-        if (mController.isVideoCaptureIntent()) {
-            customizeButtons(mActivity.getButtonManager(), mFlashCallback, mCameraCallback);
-            mActivity.getCameraAppUI().transitionToIntentLayout();
-        }
     }
 
     public void setPreviewSize(int width, int height) {
@@ -267,12 +210,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         mTextureView.setVisibility(View.GONE);
     }
 
-    public void onCameraOpened(ButtonManager.ButtonCallback flashCallback,
-            ButtonManager.ButtonCallback cameraCallback) {
-        mFlashCallback = flashCallback;
-        mCameraCallback = cameraCallback;
-    }
-
     private void initializeMiscControls() {
         mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
         mRecordingTimeView = (TextView) mRootView.findViewById(R.id.recording_time);
@@ -331,7 +268,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     }
 
     public void showReviewControls() {
-        customizeButtons(mActivity.getButtonManager(), mFlashCallback, mCameraCallback);
         mActivity.getCameraAppUI().transitionToIntentReviewLayout();
         mReviewImage.setVisibility(View.VISIBLE);
     }

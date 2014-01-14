@@ -28,7 +28,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 
@@ -69,32 +68,6 @@ public class PhotoUI implements PreviewStatusListener,
     private TextureView mTextureView;
     private float mAspectRatio = UNSET;
     private final Object mSurfaceTextureLock = new Object();
-
-    private ButtonManager.ButtonCallback mCameraCallback;
-    private ButtonManager.ButtonCallback mHdrCallback;
-    private ButtonManager.ButtonCallback mRefocusCallback;
-
-    private final OnClickListener mCancelCallback = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mController.onCaptureCancelled();
-        }
-    };
-    private final OnClickListener mDoneCallback = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mController.onCaptureDone();
-        }
-    };
-    private final OnClickListener mRetakeCallback = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            customizeButtons(mActivity.getButtonManager(), mCameraCallback, mHdrCallback,
-                mRefocusCallback);
-            mActivity.getCameraAppUI().transitionToIntentLayout();
-            mController.onCaptureRetake();
-        }
-    };
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
@@ -263,68 +236,14 @@ public class PhotoUI implements PreviewStatusListener,
         // TODO init toggle buttons on bottom bar here
     }
 
-    public void onCameraOpened(Camera.Parameters params,
-            ButtonManager.ButtonCallback cameraCallback,
-            ButtonManager.ButtonCallback hdrCallback,
-            ButtonManager.ButtonCallback refocusCallback) {
-
-        mCameraCallback = cameraCallback;
-        mHdrCallback = hdrCallback;
-        mRefocusCallback = refocusCallback;
-
+    public void onCameraOpened(Camera.Parameters params) {
         initializeZoom(params);
-    }
-
-    /**
-     * Customize the mode options such that flash and camera
-     * switching are enabled in simple photo mode, and flash, camera, refocus,
-     * and hdr are enabled in advanced photo mode.
-     */
-    public void customizeButtons(ButtonManager buttonManager,
-            ButtonManager.ButtonCallback cameraCallback,
-            ButtonManager.ButtonCallback hdrCallback,
-            ButtonManager.ButtonCallback refocusCallback) {
-
-        buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
-            cameraCallback, R.array.camera_id_icons);
-        buttonManager.enableButton(ButtonManager.BUTTON_FLASH,
-            null, R.array.camera_flashmode_icons);
-
-        if (mActivity.getCurrentModuleIndex() ==
-                mActivity.getResources().getInteger(R.integer.camera_mode_photo)) {
-            // Simple photo mode.
-            buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
-            buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
-        } else {
-            // Advanced photo mode.
-            buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS,
-                hdrCallback, R.array.pref_camera_hdr_plus_icons);
-            buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS,
-                refocusCallback, R.array.refocus_icons);
-        }
-
-        if (mController.isImageCaptureIntent()) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
-                mCancelCallback);
-            buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
-                mDoneCallback);
-            buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
-                mRetakeCallback);
-        }
     }
 
     public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
         // Decode jpeg byte array and then animate the jpeg
         DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
         task.execute();
-    }
-
-    public void initializeControlByIntent() {
-        if (mController.isImageCaptureIntent()) {
-            customizeButtons(mActivity.getButtonManager(), mCameraCallback, mHdrCallback,
-                mRefocusCallback);
-            mActivity.getCameraAppUI().transitionToIntentLayout();
-        }
     }
 
     // called from onResume but only the first time
@@ -379,10 +298,7 @@ public class PhotoUI implements PreviewStatusListener,
         mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
         mDecodeTaskForReview.execute();
 
-        customizeButtons(mActivity.getButtonManager(), mCameraCallback, mHdrCallback,
-            mRefocusCallback);
         mActivity.getCameraAppUI().transitionToIntentReviewLayout();
-
         pauseFaceDetection();
     }
 

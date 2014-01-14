@@ -50,6 +50,7 @@ import android.view.ViewGroup;
 
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraManager.CameraAFCallback;
 import com.android.camera.app.CameraManager.CameraAFMoveCallback;
 import com.android.camera.app.CameraManager.CameraPictureCallback;
@@ -62,6 +63,8 @@ import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
+import com.android.camera.hardware.HardwareSpec;
+import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.RotateTextToast;
@@ -340,7 +343,6 @@ public class PhotoModule
 
         mActivity.getCameraProvider().requestCamera(mCameraId);
 
-        initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
@@ -353,8 +355,8 @@ public class PhotoModule
     }
 
     private void initializeControlByIntent() {
-        mUI.initializeControlByIntent();
         if (mIsImageCaptureIntent) {
+            mActivity.getCameraAppUI().transitionToIntentLayout();
             setupCaptureParams();
         }
     }
@@ -407,6 +409,7 @@ public class PhotoModule
 
     private void onCameraOpened() {
         openCameraCommon();
+        initializeControlByIntent();
     }
 
     private void switchCamera() {
@@ -479,15 +482,67 @@ public class PhotoModule
             }
         };
 
+    private final View.OnClickListener mCancelCallback = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onCaptureCancelled();
+        }
+    };
+
+    private final View.OnClickListener mDoneCallback = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onCaptureDone();
+        }
+    };
+
+    private final View.OnClickListener mRetakeCallback = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mActivity.getCameraAppUI().transitionToIntentLayout();
+            onCaptureRetake();
+        }
+    };
+
     @Override
-    public void customizeButtons(ButtonManager buttonManager) {
-        mUI.customizeButtons(buttonManager, mCameraCallback, mHdrPlusCallback,
-            mRefocusCallback);
+    public HardwareSpec getHardwareSpec() {
+        return new HardwareSpecImpl(mParameters);
+    }
+
+    @Override
+    public CameraAppUI.BottomBarUISpec getBottomBarSpec() {
+        CameraAppUI.BottomBarUISpec bottomBarSpec = new CameraAppUI.BottomBarUISpec();
+
+        bottomBarSpec.enableCamera = true;
+        bottomBarSpec.cameraCallback = mCameraCallback;
+        bottomBarSpec.enableFlash = true;
+
+        if (mActivity.getCurrentModuleIndex() ==
+                mActivity.getResources().getInteger(R.integer.camera_mode_photo)) {
+            bottomBarSpec.hideHdr= true;
+            bottomBarSpec.hideRefocus = true;
+        } else {
+            bottomBarSpec.enableHdr = true;
+            bottomBarSpec.hdrCallback = mHdrPlusCallback;
+            bottomBarSpec.enableRefocus = true;
+            bottomBarSpec.refocusCallback = mRefocusCallback;
+        }
+
+        if (isImageCaptureIntent()) {
+            bottomBarSpec.showCancel = true;
+            bottomBarSpec.cancelCallback = mCancelCallback;
+            bottomBarSpec.showDone = true;
+            bottomBarSpec.doneCallback = mDoneCallback;
+            bottomBarSpec.showRetake = true;
+            bottomBarSpec.retakeCallback = mRetakeCallback;
+        }
+
+        return bottomBarSpec;
     }
 
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        mUI.onCameraOpened(mParameters, mCameraCallback, mHdrPlusCallback, mRefocusCallback);
+        mUI.onCameraOpened(mParameters);
         if (mIsImageCaptureIntent) {
             // Set hdr plus to default: off.
             SettingsManager settingsManager = mActivity.getSettingsManager();

@@ -38,11 +38,12 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_TORCH = 1;
     public static final int BUTTON_CAMERA = 2;
     public static final int BUTTON_HDRPLUS = 3;
-    public static final int BUTTON_REFOCUS = 4;
-    public static final int BUTTON_CANCEL = 5;
-    public static final int BUTTON_DONE = 6;
-    public static final int BUTTON_RETAKE = 7;
-    public static final int BUTTON_REVIEW = 8;
+    public static final int BUTTON_HDR = 4;
+    public static final int BUTTON_REFOCUS = 5;
+    public static final int BUTTON_CANCEL = 6;
+    public static final int BUTTON_DONE = 7;
+    public static final int BUTTON_RETAKE = 8;
+    public static final int BUTTON_REVIEW = 9;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -55,7 +56,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     /** Bottom bar options buttons. */
     private MultiToggleImageButton mButtonFlash; // same as torch.
     private MultiToggleImageButton mButtonCamera;
-    private MultiToggleImageButton mButtonHdrPlus;
+    private MultiToggleImageButton mButtonHdr; // same as hdr plus.
     private MultiToggleImageButton mButtonRefocus;
 
     /** Intent UI buttons. */
@@ -126,7 +127,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (MultiToggleImageButton) root.findViewById(R.id.flash_toggle_button);
         mButtonCamera
             = (MultiToggleImageButton) root.findViewById(R.id.camera_toggle_button);
-        mButtonHdrPlus
+        mButtonHdr
             = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
         mButtonRefocus
             = (MultiToggleImageButton) root.findViewById(R.id.refocus_toggle_button);
@@ -216,10 +217,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 }
                 return mButtonCamera;
             case BUTTON_HDRPLUS:
-                if (mButtonHdrPlus == null) {
+                if (mButtonHdr == null) {
                     throw new IllegalStateException("Hdr button could not be found.");
                 }
-                return mButtonHdrPlus;
+                return mButtonHdr;
+            case BUTTON_HDR:
+                if (mButtonHdr == null) {
+                    throw new IllegalStateException("Hdr button could not be found.");
+                }
+                return mButtonHdr;
             case BUTTON_REFOCUS:
                 if (mButtonRefocus == null) {
                     throw new IllegalStateException("Refocus button could not be found.");
@@ -266,40 +272,27 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Enable a known button by id, with a state change callback and
      * a resource id that points to an array of drawables.
      */
-    public void enableButton(int buttonId, ButtonCallback cb, int resIdImages) {
+    public void enableButton(int buttonId, ButtonCallback cb) {
         MultiToggleImageButton button = getButtonOrError(buttonId);
         switch (buttonId) {
             case BUTTON_FLASH:
-                if (!mSettingsManager.isCameraBackFacing()) {
-                    disableButton(BUTTON_FLASH);
-                    return;
-                }
-                enableFlashButton(button, cb, resIdImages);
+                enableFlashButton(button, cb, R.array.camera_flashmode_icons);
                 break;
             case BUTTON_TORCH:
-                if (!mSettingsManager.isCameraBackFacing()) {
-                    disableButton(BUTTON_TORCH);
-                    return;
-                }
-                enableTorchButton(button, cb, resIdImages);
+                enableTorchButton(button, cb, R.array.video_flashmode_icons);
                 break;
             case BUTTON_CAMERA:
-                int modeIndex = mAppController.getCurrentModuleIndex();
-                if (modeIndex == sGcamIndex && mSettingsManager.isHdrPlusOn()) {
-                    disableButton(BUTTON_CAMERA);
-                    return;
-                }
-                enableCameraButton(button, cb, resIdImages);
+                enableCameraButton(button, cb, R.array.camera_id_icons);
                 break;
             case BUTTON_HDRPLUS:
-                if (!mSettingsManager.isCameraBackFacing()) {
-                    disableButton(BUTTON_HDRPLUS);
-                    return;
-                }
-                enableHdrPlusButton(button, cb, resIdImages);
+                enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
+                break;
+            case BUTTON_HDR:
+                // TODO: enableHdrButton
+                enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
                 break;
             case BUTTON_REFOCUS:
-                enableRefocusButton(button, cb, resIdImages);
+                enableRefocusButton(button, cb, R.array.refocus_icons);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -472,19 +465,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 if (cb != null) {
                     cb.onStateChanged(cameraId);
                 }
-                onCameraChanged();
+                mAppController.getCameraAppUI().onChangeCamera();
             }
         });
-    }
-
-    /**
-     * Re-sync the bottom bar buttons with the current module.
-     */
-    private void onCameraChanged() {
-        ModuleController moduleController = mAppController.getCurrentModuleController();
-        if (moduleController != null) {
-            moduleController.customizeButtons(this);
-        }
     }
 
     /**

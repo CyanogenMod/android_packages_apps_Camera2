@@ -1027,10 +1027,11 @@ public class CameraActivity extends Activity
 
         int modeIndex = -1;
         int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
+        int videoIndex = getResources().getInteger(R.integer.camera_mode_video);
         int gcamIndex = getResources().getInteger(R.integer.camera_mode_gcam);
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            modeIndex = photoIndex;
+            modeIndex = videoIndex;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
@@ -1068,7 +1069,6 @@ public class CameraActivity extends Activity
         syncBottomBarColor();
         syncBottomBarShutterIcon();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
-        mCurrentModule.customizeButtons(getButtonManager());
 
         if (!mSecureCamera) {
             mFilmstripController.setDataAdapter(mDataAdapter);
@@ -1619,7 +1619,6 @@ public class CameraActivity extends Activity
         syncBottomBarColor();
         syncBottomBarShutterIcon();
         module.init(this, isSecureCamera(), isCaptureIntent());
-        module.customizeButtons(getButtonManager());
         module.resume();
         module.onPreviewVisibilityChanged(!mFilmstripVisible);
     }
