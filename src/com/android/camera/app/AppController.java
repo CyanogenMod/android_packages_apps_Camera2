@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
 import com.android.camera.app.LocationManager;
+import com.android.camera.module.ModuleController;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.SettingsController;
 import com.android.camera.settings.SettingsManager;
@@ -79,9 +80,14 @@ public interface AppController {
     public boolean isPaused();
 
     /**
-     * Returns current running module index.
+     * Returns the current running module index.
      */
     public int getCurrentModuleIndex();
+
+    /**
+     * Returns the current module controller.
+     */
+    public ModuleController getCurrentModuleController();
 
     /**
      * Gets the mode that can be switched to from the given mode id through

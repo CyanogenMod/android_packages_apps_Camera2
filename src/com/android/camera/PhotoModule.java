@@ -435,7 +435,7 @@ public class PhotoModule
         // onFrameAvailable from the old camera may already exist.
     }
 
-    private final ButtonManager.ButtonCallback mCameraButtonCallback =
+    private final ButtonManager.ButtonCallback mCameraCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -452,7 +452,7 @@ public class PhotoModule
             }
         };
 
-    private final ButtonManager.ButtonCallback mHdrPlusButtonCallback =
+    private final ButtonManager.ButtonCallback mHdrPlusCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -468,7 +468,7 @@ public class PhotoModule
             }
         };
 
-    private final ButtonManager.ButtonCallback mRefocusButtonCallback =
+    private final ButtonManager.ButtonCallback mRefocusCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -480,10 +480,15 @@ public class PhotoModule
             }
         };
 
+    @Override
+    public void customizeButtons(ButtonManager buttonManager) {
+        mUI.customizeButtons(buttonManager, mCameraCallback, mHdrPlusCallback,
+            mRefocusCallback);
+    }
+
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        mUI.onCameraOpened(mParameters, mCameraButtonCallback, mHdrPlusButtonCallback,
-            mRefocusButtonCallback);
+        mUI.onCameraOpened(mParameters, mCameraCallback, mHdrPlusCallback, mRefocusCallback);
         if (mIsImageCaptureIntent) {
             // Set hdr plus to default: off.
             SettingsManager settingsManager = mActivity.getSettingsManager();

@@ -98,7 +98,8 @@ public class PhotoUI implements PreviewStatusListener,
     private final OnClickListener mRetakeCallback = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setupIntentToggleButtons();
+            customizeButtons(mActivity.getButtonManager(), mCameraCallback, mHdrCallback,
+                mRefocusCallback);
             mActivity.getCameraAppUI().transitionToIntentLayout();
             mController.onCaptureRetake();
         }
@@ -284,31 +285,27 @@ public class PhotoUI implements PreviewStatusListener,
             ButtonManager.ButtonCallback cameraCallback,
             ButtonManager.ButtonCallback hdrCallback,
             ButtonManager.ButtonCallback refocusCallback) {
+
         mCameraCallback = cameraCallback;
         mHdrCallback = hdrCallback;
         mRefocusCallback = refocusCallback;
 
-        if (mController.isImageCaptureIntent()) {
-            setupIntentToggleButtons();
-            mActivity.getCameraAppUI().transitionToIntentLayout();
-        } else {
-            setupToggleButtons();
-        }
-
         initializeZoom(params);
     }
 
-    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
-        // Decode jpeg byte array and then animate the jpeg
-        DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
-        task.execute();
-    }
+    /**
+     * Customize the mode options such that flash and camera
+     * switching are enabled in simple photo mode, and flash, camera, refocus,
+     * and hdr are enabled in advanced photo mode.
+     */
+    public void customizeButtons(ButtonManager buttonManager,
+            ButtonManager.ButtonCallback cameraCallback,
+            ButtonManager.ButtonCallback hdrCallback,
+            ButtonManager.ButtonCallback refocusCallback) {
 
-    private void setupToggleButtons() {
-        ButtonManager buttonManager = mActivity.getButtonManager();
         buttonManager.setShutterButtonIcon(ButtonManager.CAMERA_SHUTTER_ICON);
         buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
-            mCameraCallback, R.array.camera_id_icons);
+            cameraCallback, R.array.camera_id_icons);
         buttonManager.enableButton(ButtonManager.BUTTON_FLASH,
             null, R.array.camera_flashmode_icons);
 
@@ -320,26 +317,31 @@ public class PhotoUI implements PreviewStatusListener,
         } else {
             // Advanced photo mode.
             buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS,
-                mHdrCallback, R.array.pref_camera_hdr_plus_icons);
+                hdrCallback, R.array.pref_camera_hdr_plus_icons);
             buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS,
-                mRefocusCallback, R.array.refocus_icons);
+                refocusCallback, R.array.refocus_icons);
+        }
+
+        if (mController.isImageCaptureIntent()) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
+                mCancelCallback);
+            buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
+                mDoneCallback);
+            buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
+                mRetakeCallback);
         }
     }
 
-    private void setupIntentToggleButtons() {
-        setupToggleButtons();
-        ButtonManager buttonManager = mActivity.getButtonManager();
-        buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
-                mCancelCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
-                mDoneCallback);
-        buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
-                mRetakeCallback);
+    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
+        // Decode jpeg byte array and then animate the jpeg
+        DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
+        task.execute();
     }
 
     public void initializeControlByIntent() {
         if (mController.isImageCaptureIntent()) {
-            setupIntentToggleButtons();
+            customizeButtons(mActivity.getButtonManager(), mCameraCallback, mHdrCallback,
+                mRefocusCallback);
             mActivity.getCameraAppUI().transitionToIntentLayout();
         }
     }
@@ -396,7 +398,8 @@ public class PhotoUI implements PreviewStatusListener,
         mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
         mDecodeTaskForReview.execute();
 
-        setupIntentToggleButtons();
+        customizeButtons(mActivity.getButtonManager(), mCameraCallback, mHdrCallback,
+            mRefocusCallback);
         mActivity.getCameraAppUI().transitionToIntentReviewLayout();
 
         pauseFaceDetection();

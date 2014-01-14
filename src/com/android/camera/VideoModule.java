@@ -372,7 +372,7 @@ public class VideoModule extends CameraModule
 
     }
 
-    private final ButtonManager.ButtonCallback mFlashButtonCallback =
+    private final ButtonManager.ButtonCallback mFlashCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -381,7 +381,7 @@ public class VideoModule extends CameraModule
             }
         };
 
-    private final ButtonManager.ButtonCallback mCameraButtonCallback =
+    private final ButtonManager.ButtonCallback mCameraCallback =
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
@@ -398,6 +398,11 @@ public class VideoModule extends CameraModule
         };
 
     @Override
+    public void customizeButtons(ButtonManager buttonManager) {
+        mUI.customizeButtons(buttonManager, mFlashCallback, mCameraCallback);
+    }
+
+    @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
         mCameraDevice = cameraProxy;
         readVideoPreferences();
@@ -405,7 +410,7 @@ public class VideoModule extends CameraModule
         startPreview();
         initializeVideoSnapshot();
         mUI.initializeZoom(mParameters);
-        mUI.onCameraOpened(mFlashButtonCallback, mCameraButtonCallback);
+        mUI.onCameraOpened(mFlashCallback, mCameraCallback);
     }
 
     private void startPlayVideoActivity() {
