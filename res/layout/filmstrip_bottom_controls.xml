@@ -33,23 +33,20 @@
         android:visibility="invisible" />
 
     <FrameLayout
-        style="@style/FilmstripBottomControlButton" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/filmstrip_bottom_control_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@drawable/transparent_button_background"
+            style="@style/FilmstripBottomControlButton"
+            android:layout_gravity="center"
             android:src="@drawable/ic_view_photosphere"
             android:visibility="invisible" />
 
         <ImageButton
             android:id="@+id/filmstrip_bottom_control_tiny_planet"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom|right"
-            android:background="@drawable/photopage_bottom_button_background"
+            style="@style/FilmstripBottomControlButton"
+            android:layout_gravity="center"
             android:src="@drawable/ic_menu_tiny_planet"
             android:visibility="invisible" />
     </FrameLayout>
