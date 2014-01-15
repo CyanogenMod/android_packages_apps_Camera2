@@ -56,7 +56,7 @@ public class BottomBar extends FrameLayout
     private static final int BOTTOMBAR_OPTIONS_TIMEOUT_MS = 2000;
 
     private static final float CIRCLE_RADIUS = 64.0f;
-    private static final int CIRCLE_ANIM_DURATION_MS = 450;
+    private static final int CIRCLE_ANIM_DURATION_MS = 300;
 
     private int mWidth;
     private int mHeight;
