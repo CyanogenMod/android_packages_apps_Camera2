@@ -103,9 +103,17 @@ public class BottomBar extends FrameLayout
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
     }
 
-    private void setPaintColor(int alpha, int color) {
-        mCirclePaint.setColor((alpha << 24) | (color & 0x00ffffff));
+    private void setPaintColor(int alpha, int color, boolean isCaptureChange) {
+        int computedColor = (alpha << 24) | (color & 0x00ffffff);
+        mCirclePaint.setColor(computedColor);
+        if (!isCaptureChange) {
+            mOptionsToggle.setBackgroundColor(computedColor);
+        }
         invalidate();
+    }
+
+    private void setPaintColor(int alpha, int color) {
+        setPaintColor(alpha, color, false);
     }
 
     @Override
@@ -125,10 +133,10 @@ public class BottomBar extends FrameLayout
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
-                    setPaintColor(mBackgroundAlpha, mBackgroundPressedColor);
+                    setPaintColor(mBackgroundAlpha, mBackgroundPressedColor, true);
                     invalidate();
                 } else if (MotionEvent.ACTION_UP == event.getActionMasked()) {
-                    setPaintColor(mBackgroundAlpha, mBackgroundColor);
+                    setPaintColor(mBackgroundAlpha, mBackgroundColor, true);
                     invalidate();
                 }
 
