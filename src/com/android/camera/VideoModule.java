@@ -1470,17 +1470,10 @@ public class VideoModule extends CameraModule
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
 
-        boolean flag = false;
-        if (mPreviewing) {
-            stopPreview();
-            flag = true;
-        }
         mCameraDevice.setParameters(mParameters);
-        if (flag) {
-            startPreview();
-        }
-        // Keep preview size up to date.
-        mParameters = mCameraDevice.getParameters();
+        // Nexus 5 through KitKat 4.4.2 requires a second call to
+        // .setParameters() for frame rate settings to take effect.
+        mCameraDevice.setParameters(mParameters);
 
         // Update UI based on the new parameters.
         mUI.updateOnScreenIndicators(mParameters);
@@ -1603,30 +1596,7 @@ public class VideoModule extends CameraModule
 
     // TODO: integrate this into the SettingsManager listeners.
     public void onSharedPreferenceChanged() {
-        // ignore the events after "onPause()" or preview has not started yet
-        if (mPaused) {
-            return;
-        }
 
-        if (mCameraDevice == null) return;
-
-        SettingsController settingsController = mActivity.getSettingsController();
-        settingsController.syncLocationManager();
-
-        readVideoPreferences();
-        mUI.showTimeLapseUI(mCaptureTimeLapse);
-        // We need to restart the preview if preview size is changed.
-        Size size = mParameters.getPreviewSize();
-        if (size.width != mDesiredPreviewWidth
-            || size.height != mDesiredPreviewHeight) {
-
-            stopPreview();
-            resizeForPreviewAspectRatio();
-            startPreview(); // Parameters will be set in startPreview().
-        } else {
-            setCameraParameters();
-        }
-        mUI.updateOnScreenIndicators(mParameters);
     }
 
     private void switchCamera() {
