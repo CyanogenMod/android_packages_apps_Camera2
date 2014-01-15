@@ -77,6 +77,9 @@ public class ModeListView extends ScrollView {
 
     // Scrolling delay between non-focused item and focused item
     private static final int DELAY_MS = 25;
+    // If the fling velocity exceeds this threshold, snap to full screen at a constant
+    // speed. Unit: pixel/ms.
+    private static final float VELOCITY_THRESHOLD = 2f;
 
     private final GestureDetector mGestureDetector;
     private final int mIconBlockWidth;
@@ -102,6 +105,34 @@ public class ModeListView extends ScrollView {
     private final LinkedList<TimeBasedPosition> mPositionHistory
             = new LinkedList<TimeBasedPosition>();
     private long mCurrentTime;
+    private float mVelocityX; // Unit: pixel/ms.
+    private final Animator.AnimatorListener mModeListAnimatorListener =
+            new Animator.AnimatorListener() {
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            setVisibility(VISIBLE);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            mAnimatorSet = null;
+            if (mState == ACCORDION_ANIMATION || mState == IDLE) {
+                resetModeSelectors();
+                setVisibility(INVISIBLE);
+                mState = IDLE;
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
+    };
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
@@ -231,6 +262,13 @@ public class ModeListView extends ScrollView {
 
                 onModeSelected(modeId);
             }
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            // Cache velocity in the unit pixel/ms.
+            mVelocityX = velocityX / 1000f;
             return true;
         }
     };
@@ -376,6 +414,7 @@ public class ModeListView extends ScrollView {
 
         super.onTouchEvent(ev);
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mVelocityX = 0;
             if  (mState == ACCORDION_ANIMATION) {
                 // Let taps go through to take a capture during the accordion
                 return false;
@@ -726,7 +765,13 @@ public class ModeListView extends ScrollView {
     }
 
     private void snapToFullScreen() {
-        animateListToWidth(mWidth);
+        if (mVelocityX <= VELOCITY_THRESHOLD) {
+            animateListToWidth(mWidth);
+        } else {
+            // If the fling velocity exceeds this threshold, snap to full screen
+            // at a constant speed.
+            animateListToWidthAtVelocity(mVelocityX, mWidth);
+        }
         mState = FULLY_SHOWN;
         if (mModeListOpenListener != null) {
             mModeListOpenListener.onOpenFullScreen();
@@ -779,32 +824,43 @@ public class ModeListView extends ScrollView {
         mAnimatorSet = new AnimatorSet();
         mAnimatorSet.playTogether(animators);
         mAnimatorSet.setInterpolator(interpolator);
-        mAnimatorSet.addListener(new Animator.AnimatorListener() {
+        mAnimatorSet.addListener(mModeListAnimatorListener);
+        mAnimatorSet.start();
+    }
 
-            @Override
-            public void onAnimationStart(Animator animation) {
-                setVisibility(VISIBLE);
+    /**
+     * Animate the mode list to the given width at a constant velocity.
+     *
+     * @param velocity the velocity that animation will be at
+     * @param width final width of the list
+     */
+    private void animateListToWidthAtVelocity(float velocity, int width) {
+        if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
+            mAnimatorSet.end();
+        }
+
+        ArrayList<Animator> animators = new ArrayList<Animator>();
+        int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
+        for (int i = 0; i < mTotalModes; i++) {
+            ObjectAnimator animator = ObjectAnimator.ofInt(mModeSelectorItems[i],
+                    "visibleWidth", width);
+            int duration = (int) ((float) width / velocity);
+            animator.setDuration(duration);
+            animators.add(animator);
+            if (i == focusItem) {
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        onVisibleWidthChanged((Integer) animation.getAnimatedValue());
+                    }
+                });
             }
+        }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mAnimatorSet = null;
-                if (mState == ACCORDION_ANIMATION || mState == IDLE) {
-                    resetModeSelectors();
-                    setVisibility(INVISIBLE);
-                    mState = IDLE;
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
+        mAnimatorSet = new AnimatorSet();
+        mAnimatorSet.playTogether(animators);
+        mAnimatorSet.setInterpolator(null);
+        mAnimatorSet.addListener(mModeListAnimatorListener);
         mAnimatorSet.start();
     }
 
