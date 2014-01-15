@@ -16,11 +16,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
           android:constantSize="true">
-    <item android:state_enabled="false">
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/ic_cancel_disabled" />
-    </item>
     <item android:state_pressed="true">
         <level-list>
             <item android:maxLevel="0">
@@ -29,7 +24,7 @@
                    <item>
                        <bitmap
                             android:gravity="center"
-                            android:src="@drawable/ic_cancel_normal" />
+                            android:src="@drawable/ic_capture_options" />
                    </item>
                 </layer-list>
             </item>
@@ -39,7 +34,7 @@
                    <item>
                        <bitmap
                             android:gravity="center"
-                            android:src="@drawable/ic_cancel_normal" />
+                            android:src="@drawable/ic_capture_options" />
                    </item>
                 </layer-list>
             </item>
@@ -48,6 +43,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_cancel_normal" />
+            android:src="@drawable/ic_capture_options" />
     </item>
 </selector>
