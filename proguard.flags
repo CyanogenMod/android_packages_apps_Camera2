@@ -14,6 +14,7 @@
   public long getPictureDisplayedToJpegCallbackTime();
   public long getJpegCallbackFinishTime();
   public long getCaptureStartTime();
+  public long getFirstPreviewTime();
 }
 
 -keep class com.android.camera.VideoModule {

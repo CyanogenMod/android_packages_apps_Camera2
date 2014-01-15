@@ -234,6 +234,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
 
+    private long mCoverHiddenTime = -1; // System time when preview cover was hidden.
+
+    public long getCoverHiddenTime() {
+        return mCoverHiddenTime;
+    }
+
     public void updatePreviewAspectRatio(float aspectRatio) {
         mTextureViewHelper.updateAspectRatio(aspectRatio);
     }
@@ -502,6 +508,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mHideCoverRunnable = null;
         }
         mModeCoverState = COVER_HIDDEN;
+        if (mCoverHiddenTime < 0) {
+            mCoverHiddenTime = System.currentTimeMillis();
+        }
     }
 
     @Override
