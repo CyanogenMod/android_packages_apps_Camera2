@@ -31,15 +31,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.Toast;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraManager;
-import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.FaceView;
-import com.android.camera.ui.FocusIndicator;
-import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
@@ -64,19 +60,13 @@ public class PhotoUI implements PreviewStatusListener,
 
     private FaceView mFaceView;
     private DecodeImageForReview mDecodeTaskForReview = null;
-    private Toast mNotSelectableToast;
 
     private int mZoomMax;
     private List<Integer> mZoomRatios;
 
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
-    private float mSurfaceTextureUncroppedWidth;
-    private float mSurfaceTextureUncroppedHeight;
-
-    private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
     private TextureView mTextureView;
-    private Matrix mMatrix = null;
     private float mAspectRatio = UNSET;
     private final Object mSurfaceTextureLock = new Object();
 
@@ -118,10 +108,6 @@ public class PhotoUI implements PreviewStatusListener,
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
         return mPreviewGestureListener;
-    }
-
-    public interface SurfaceTextureSizeChangedListener {
-        public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
     }
 
     @Override
@@ -212,7 +198,6 @@ public class PhotoUI implements PreviewStatusListener,
         if (faceViewStub != null) {
             faceViewStub.inflate();
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
-            setSurfaceTextureSizeChangedListener(mFaceView);
         }
         mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
@@ -220,10 +205,6 @@ public class PhotoUI implements PreviewStatusListener,
 
     public FocusUI getFocusUI() {
         return mFocusUI;
-    }
-
-    public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
-        mSurfaceTextureSizeListener = listener;
     }
 
     public void updatePreviewAspectRatio(float aspectRatio) {
@@ -489,6 +470,14 @@ public class PhotoUI implements PreviewStatusListener,
     @Override
     public void onFaceDetection(Face[] faces, CameraManager.CameraProxy camera) {
         mFaceView.setFaces(faces);
+    }
+
+    /**
+     * Returns a {@link com.android.camera.ui.PreviewStatusListener.PreviewAreaSizeChangedListener}
+     * that should be registered to listen to preview area change.
+     */
+    public PreviewAreaSizeChangedListener getPreviewAreaSizeChangedListener() {
+        return mFaceView;
     }
 
 }

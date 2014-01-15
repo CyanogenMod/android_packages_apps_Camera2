@@ -1176,6 +1176,12 @@ public class PhotoModule
             // preview area size change later in the initialization.
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
+
+        if (mUI.getPreviewAreaSizeChangedListener() != null) {
+            mAppController.addPreviewAreaSizeChangedListener(
+                    mUI.getPreviewAreaSizeChangedListener());
+        }
+
         // Add delay on resume from lock screen only, in order to to speed up
         // the onResume --> onPause --> onResume cycle from lock screen.
         // Don't do always because letting go of thread can cause delay.
@@ -1244,6 +1250,10 @@ public class PhotoModule
         }
         getServices().getMemoryManager().removeListener(this);
         mAppController.removePreviewAreaSizeChangedListener(mFocusManager);
+        if (mUI.getPreviewAreaSizeChangedListener() != null) {
+            mAppController.removePreviewAreaSizeChangedListener(
+                    mUI.getPreviewAreaSizeChangedListener());
+        }
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         settingsManager.removeListener(this);

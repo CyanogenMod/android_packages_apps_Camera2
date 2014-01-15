@@ -36,7 +36,7 @@ import com.android.camera2.R;
 
 public class FaceView extends View
     implements FocusIndicator, Rotatable,
-    PhotoUI.SurfaceTextureSizeChangedListener {
+    PreviewStatusListener.PreviewAreaSizeChangedListener {
     private static final String TAG = "CAM FaceView";
     private final boolean LOGV = false;
     // The value for android.hardware.Camera.setDisplayOrientation.
@@ -61,8 +61,6 @@ public class FaceView extends View
     private Paint mPaint;
     private volatile boolean mBlocked;
 
-    private int mUncroppedWidth;
-    private int mUncroppedHeight;
     private static final int MSG_SWITCH_FACES = 1;
     private static final int SWITCH_DELAY = 70;
     private boolean mStateSwitchPending = false;
@@ -78,6 +76,7 @@ public class FaceView extends View
             }
         }
     };
+    private final RectF mPreviewArea = new RectF();
 
     public FaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -90,12 +89,6 @@ public class FaceView extends View
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Style.STROKE);
         mPaint.setStrokeWidth(res.getDimension(R.dimen.face_circle_stroke));
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight) {
-        mUncroppedWidth = uncroppedWidth;
-        mUncroppedHeight = uncroppedHeight;
     }
 
     public void setFaces(Face[] faces) {
@@ -185,8 +178,8 @@ public class FaceView extends View
     protected void onDraw(Canvas canvas) {
         if (!mBlocked && (mFaces != null) && (mFaces.length > 0)) {
             int rw, rh;
-            rw = mUncroppedWidth;
-            rh = mUncroppedHeight;
+            rw = (int) mPreviewArea.width();
+            rh = (int) mPreviewArea.height();
             // Prepare the matrix.
             if (((rh > rw) && ((mDisplayOrientation == 0) || (mDisplayOrientation == 180)))
                     || ((rw > rh) && ((mDisplayOrientation == 90) || (mDisplayOrientation == 270)))) {
@@ -210,10 +203,16 @@ public class FaceView extends View
                 mMatrix.mapRect(mRect);
                 if (LOGV) CameraUtil.dumpRect(mRect, "Transformed rect");
                 mPaint.setColor(mColor);
+                mRect.offset(mPreviewArea.left, mPreviewArea.top);
                 canvas.drawOval(mRect, mPaint);
             }
             canvas.restore();
         }
         super.onDraw(canvas);
+    }
+
+    @Override
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        mPreviewArea.set(previewArea);
     }
 }
