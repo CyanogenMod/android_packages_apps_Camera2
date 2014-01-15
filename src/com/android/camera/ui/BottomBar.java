@@ -95,8 +95,10 @@ public class BottomBar extends FrameLayout
     private int mBackgroundPressedColor;
     private int mBackgroundAlpha = 0xff;
 
-    private Paint mCirclePaint = new Paint();
-    private Path mCirclePath = new Path();
+    private final Paint mCirclePaint = new Paint();
+    private final Path mCirclePath = new Path();
+    private boolean mDrawCircle;
+    private final Path mRectPath = new Path();
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -323,14 +325,46 @@ public class BottomBar extends FrameLayout
             }
         }
 
-        mCirclePath.addCircle(
-            barWidth/2,
-            barHeight/2,
-            (int)(diagonalLength(barWidth, barHeight)/2),
-            Path.Direction.CW);
-
         super.onMeasure(MeasureSpec.makeMeasureSpec(barWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY));
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        int width = right - left;
+        int height = bottom - top;
+
+        if (changed) {
+            mCirclePath.reset();
+            mCirclePath.addCircle(
+                width/2,
+                height/2,
+                (int)(diagonalLength(width, height)/2),
+                Path.Direction.CW);
+
+            int shortEdge = mOptionsToggle.getWidth();
+            if (mOptionsToggle.getHeight() < shortEdge) {
+                shortEdge = mOptionsToggle.getHeight();
+            }
+            mRectPath.reset();
+            if (width > height) {
+                mRectPath.addRect(
+                    0.0f,
+                    0.0f,
+                    (float) width - shortEdge,
+                    (float) height,
+                    Path.Direction.CW);
+            } else {
+                mRectPath.addRect(
+                    0.0f,
+                    (float) shortEdge,
+                    (float) width,
+                    (float) height,
+                    Path.Direction.CW);
+            }
+        }
     }
 
     private void adjustBottomBar(float scaledTextureWidth,
@@ -373,7 +407,11 @@ public class BottomBar extends FrameLayout
 
     @Override
     public void onDraw(Canvas canvas) {
-        canvas.drawPath(mCirclePath, mCirclePaint);
+        if (mDrawCircle) {
+            canvas.drawPath(mCirclePath, mCirclePaint);
+        } else {
+            canvas.drawPath(mRectPath, mCirclePaint);
+        }
 
         super.onDraw(canvas);
     }
@@ -448,7 +486,7 @@ public class BottomBar extends FrameLayout
         View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
         optionsOverlay.setVisibility(View.INVISIBLE);
 
-
+        mDrawCircle = true;
         transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
         radiusAnimator.start();
     }
@@ -479,6 +517,7 @@ public class BottomBar extends FrameLayout
             @Override
             public void onAnimationEnd(Animator animation) {
                 View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
+                mDrawCircle = false;
                 optionsOverlay.setVisibility(View.VISIBLE);
             }
         });
