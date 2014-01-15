@@ -143,11 +143,7 @@ public class InProgressDataWrapper implements LocalData {
 
     @Override
     public LocalData refresh(Context context) {
-        LocalData data = mLocalData.refresh(context);
-        if (data != null) {
-            return new InProgressDataWrapper(data, mHasProgressBar);
-        }
-        return null;
+        return mLocalData.refresh(context);
     }
 
     @Override
