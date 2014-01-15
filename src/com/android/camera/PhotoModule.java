@@ -669,9 +669,11 @@ public class PhotoModule
     @Override
     public void resizeForPreviewAspectRatio() {
         setPreviewFrameLayoutCameraOrientation();
-        Size size = mParameters.getPictureSize();
-        Log.e(TAG,"Width = "+ size.width+ "Height = "+size.height);
-        mUI.setAspectRatio((float) size.width / size.height);
+        if (mParameters != null) {
+            Size size = mParameters.getPictureSize();
+            Log.e(TAG,"Width = "+ size.width+ "Height = "+size.height);
+            mUI.setAspectRatio((float) size.width / size.height);
+        }
     }
 
 
