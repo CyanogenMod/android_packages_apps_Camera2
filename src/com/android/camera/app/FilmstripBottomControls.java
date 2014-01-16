@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.android.camera.util.IntentHelper;
 import com.android.camera2.R;
 
 /**
@@ -71,8 +70,8 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     }
 
     @Override
-    public void setViewButtonVisibility(int state) {
-        if (state == VIEW_NONE) {
+    public void setViewerButtonVisibility(int state) {
+        if (state == VIEWER_NONE) {
             setVisibility(mViewButton, false);
             return;
         }
@@ -125,9 +124,9 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
 
     private int getViewButtonResource(int state) {
         switch (state) {
-            case VIEW_RGBZ:
-                return R.drawable.ic_view_rgbz;
-            case VIEW_PHOTO_SPHERE:
+            case VIEWER_REFOCUS:
+                return R.drawable.ic_refocus_normal;
+            case VIEWER_PHOTO_SPHERE:
                 return R.drawable.ic_view_photosphere;
             default:
                 return R.drawable.ic_control_play;

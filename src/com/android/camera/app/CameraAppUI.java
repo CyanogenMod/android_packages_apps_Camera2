@@ -69,9 +69,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public static interface BottomControls {
         /** Values for the view state of the button. */
-        public final int VIEW_NONE = 0;
-        public final int VIEW_PHOTO_SPHERE = 1;
-        public final int VIEW_RGBZ = 2;
+        public final int VIEWER_NONE = 0;
+        public final int VIEWER_PHOTO_SPHERE = 1;
+        public final int VIEWER_REFOCUS = 2;
+        public final int VIEWER_OTHER = 3;
 
         /**
          * Sets a new or replaces an existing listener for bottom control events.
@@ -97,10 +98,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         /**
          * Sets the visibility of the view-photosphere button.
          *
-         * @param state one of {@link #VIEW_NONE}, {@link #VIEW_PHOTO_SPHERE},
-         *            {@link #VIEW_RGBZ}.
+         * @param state one of {@link #VIEWER_NONE}, {@link #VIEWER_PHOTO_SPHERE},
+         *            {@link #VIEWER_REFOCUS}.
          */
-        void setViewButtonVisibility(int state);
+        void setViewerButtonVisibility(int state);
 
         /**
          * @param enabled Whether the button is enabled.

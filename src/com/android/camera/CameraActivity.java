@@ -1872,15 +1872,15 @@ public class CameraActivity extends Activity
         // We need to add this to a separate DB.
         final int viewButtonVisibility;
         if (PanoramaMetadataLoader.isPanorama(currentData)) {
-            viewButtonVisibility = CameraAppUI.BottomControls.VIEW_PHOTO_SPHERE;
+            viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_PHOTO_SPHERE;
         } else if (RgbzMetadataLoader.hasRGBZData(currentData)) {
-            viewButtonVisibility = CameraAppUI.BottomControls.VIEW_RGBZ;
+            viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_REFOCUS;
         } else {
-            viewButtonVisibility = CameraAppUI.BottomControls.VIEW_NONE;
+            viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_NONE;
         }
 
         filmstripBottomControls.setTinyPlanetButtonVisibility(
                 PanoramaMetadataLoader.isPanorama360(currentData));
-        filmstripBottomControls.setViewButtonVisibility(viewButtonVisibility);
+        filmstripBottomControls.setViewerButtonVisibility(viewButtonVisibility);
     }
 }
