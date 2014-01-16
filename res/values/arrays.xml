@@ -639,4 +639,16 @@
         <item>@drawable/ic_craft_normal</item>
     </array>
 
+    <array name="camera_mode_shutter_icon">
+        <item>@drawable/ic_camera_normal</item>
+        <item>@drawable/ic_video_normal</item>
+        <item>@drawable/ic_camera_normal</item>
+        <item>@drawable/ic_camera_normal</item>
+        <item>@drawable/ic_camera_normal</item>
+        <item>@null</item>
+        <item>@null</item>
+        <item>@drawable/ic_craft_normal</item>
+        <item>@drawable/ic_craft_normal</item>
+    </array>
+
 </resources>

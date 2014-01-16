@@ -1063,6 +1063,7 @@ public class CameraActivity extends Activity
         }
 
         syncBottomBarColor();
+        syncBottomBarShutterIcon();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
         mCurrentModule.customizeButtons(getButtonManager());
 
@@ -1601,8 +1602,19 @@ public class CameraActivity extends Activity
         }
     }
 
+    private void syncBottomBarShutterIcon() {
+        // Currently not all modules use the generic_module UI.
+        // TODO: once all modules have a bottom bar, remove
+        // isUsingBottomBar check.
+        if (mCurrentModule.isUsingBottomBar()) {
+            int shutterIconId = CameraUtil.getCameraShutterIconId(mCurrentModeIndex, this);
+            mCameraAppUI.setBottomBarShutterIcon(shutterIconId);
+        }
+    }
+
     private void openModule(CameraModule module) {
         syncBottomBarColor();
+        syncBottomBarShutterIcon();
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.customizeButtons(getButtonManager());
         module.resume();

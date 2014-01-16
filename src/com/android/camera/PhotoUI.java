@@ -303,8 +303,6 @@ public class PhotoUI implements PreviewStatusListener,
                 refocusCallback, R.array.refocus_icons);
         }
 
-        mActivity.getCameraAppUI().setBottomBarShutterIcon(CameraAppUI.CAMERA_SHUTTER_ICON);
-
         if (mController.isImageCaptureIntent()) {
             buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
                 mCancelCallback);

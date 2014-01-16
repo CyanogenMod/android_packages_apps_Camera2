@@ -197,11 +197,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final static int COVER_WILL_HIDE_AT_NEXT_FRAME = 2;
     private static final int COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE = 3;
 
-    // Bottom bar capture icons
-    public static final int CAMERA_SHUTTER_ICON = 0;
-    public static final int VIDEO_SHUTTER_ICON = 1;
-    public static final int STOP_SHUTTER_ICON = 2;
-
     // App level views:
     private final FrameLayout mCameraRootView;
     private final ModeTransitionView mModeTransitionView;
@@ -837,37 +832,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * converts a icon enum to a resource id
-     */
-    private int shutterIconId(int w) {
-        int resId = 0;
-        switch(w) {
-            case VIDEO_SHUTTER_ICON:
-                resId = R.drawable.ic_video_normal;
-                break;
-            case STOP_SHUTTER_ICON:
-                resId = R.drawable.ic_stop_normal;
-                break;
-            case CAMERA_SHUTTER_ICON:
-            default:
-                resId = R.drawable.ic_camera_normal;
-        }
-        return resId;
-    }
-
-    /**
      * Sets the shutter button icon on the bottom bar
      */
-    public void setBottomBarShutterIcon(int w) {
-        mBottomBar.setShutterButtonIcon(shutterIconId(w));
+    public void setBottomBarShutterIcon(int shutterIconId) {
+        mBottomBar.setShutterButtonIcon(shutterIconId);
     }
 
-    public void animateBottomBarToCircle(int w) {
-        mBottomBar.animateToCircle(shutterIconId(w));
+    public void animateBottomBarToCircle(int shutterIconId) {
+        mBottomBar.animateToCircle(shutterIconId);
     }
 
-    public void animateBottomBarToFullSize(int w) {
-        mBottomBar.animateToFullSize(shutterIconId(w));
+    public void animateBottomBarToFullSize(int shutterIconId) {
+        mBottomBar.animateToFullSize(shutterIconId);
     }
 
     /**
