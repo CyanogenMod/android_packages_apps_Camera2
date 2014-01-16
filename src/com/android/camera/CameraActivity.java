@@ -1410,6 +1410,13 @@ public class CameraActivity extends Activity
             return;
         }
 
+        // Record last used camera mode for quick switching
+        if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
+                || modeIndex == getResources().getInteger(R.integer.camera_mode_craft)) {
+            mSettingsManager.setInt(SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX,
+                    modeIndex);
+        }
+
         closeModule(mCurrentModule);
         int oldModuleIndex = mCurrentModeIndex;
 

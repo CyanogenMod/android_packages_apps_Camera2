@@ -115,11 +115,18 @@ public class ModuleManagerImpl implements ModuleManager {
 
         int quickSwitchTo = moduleId;
         if (moduleId == photoModuleId) {
+            // Quick switch from simple camera to video.
             quickSwitchTo = videoModuleId;
         } else if (moduleId == videoModuleId) {
-            // TODO: Get the last used camera module id from settings manager and switch
-            // to it.
-            quickSwitchTo = photoModuleId;
+            // Quick switch from video to last used camera (i.e. simple camera or
+            // advanced camera).
+            quickSwitchTo = settingsManager.getInt(
+                    SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
+        } else if (moduleId == context.getResources().getInteger(R.integer.camera_mode_craft)
+                || moduleId == context.getResources().getInteger(R.integer.camera_mode_gcam)
+                || moduleId == context.getResources().getInteger(R.integer.camera_mode_refocus)) {
+            // Quick switch from advanced camera to video.
+            quickSwitchTo = videoModuleId;
         }
 
         if (mRegisteredModuleAgents.get(quickSwitchTo) != null) {
