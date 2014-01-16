@@ -18,6 +18,7 @@ package com.android.camera;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
 import android.view.View;
@@ -49,6 +50,7 @@ public class MultiToggleImageButton extends ImageButton {
     private OnStateChangeListener mOnStateChangeListener;
     private int mState;
     private int[] mImageIds;
+    private int mLevel;
 
     public MultiToggleImageButton(Context context) {
         super(context);
@@ -105,6 +107,7 @@ public class MultiToggleImageButton extends ImageButton {
     public void setState(int state, boolean callListener) {
         mState = state;
         setImageResource(mImageIds[mState]);
+        super.setImageLevel(mLevel);
         if (callListener && mOnStateChangeListener != null) {
             mOnStateChangeListener.stateChanged(this, getState());
         }
@@ -153,5 +156,11 @@ public class MultiToggleImageButton extends ImageButton {
                 ids.recycle();
             }
         }
+    }
+
+    @Override
+    public void setImageLevel(int level) {
+        super.setImageLevel(level);
+        mLevel = level;
     }
 }

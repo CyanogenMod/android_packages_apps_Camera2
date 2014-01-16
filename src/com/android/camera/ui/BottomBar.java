@@ -27,9 +27,11 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.android.camera.ShutterButton;
+import com.android.camera.MultiToggleImageButton;
 import com.android.camera.ToggleImageButton;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
@@ -274,6 +276,17 @@ public class BottomBar extends FrameLayout
         mIntentLayout.setVisibility(View.VISIBLE);
     }
 
+    private void setButtonImageLevels(int level) {
+        ((MultiToggleImageButton) findViewById(R.id.flash_toggle_button)).setImageLevel(level);
+        ((MultiToggleImageButton) findViewById(R.id.camera_toggle_button)).setImageLevel(level);
+        ((MultiToggleImageButton) findViewById(R.id.hdr_plus_toggle_button)).setImageLevel(level);
+        ((MultiToggleImageButton) findViewById(R.id.refocus_toggle_button)).setImageLevel(level);
+        ((ImageButton) findViewById(R.id.cancel_button)).setImageLevel(level);
+        ((ImageButton) findViewById(R.id.done_button)).setImageLevel(level);
+        ((ImageButton) findViewById(R.id.retake_button)).setImageLevel(level);
+        mOptionsToggle.setImageLevel(level);
+    }
+
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         mWidth = MeasureSpec.getSize(widthMeasureSpec);
@@ -295,9 +308,12 @@ public class BottomBar extends FrameLayout
             if (previewAspectRatio >= screenAspectRatio) {
                 mOverLayBottomBar = true;
                 setBackgroundAlpha(128);
+                AppController controller = (AppController) getContext();
+                setButtonImageLevels(1);
             } else {
                 mOverLayBottomBar = false;
                 setBackgroundAlpha(255);
+                setButtonImageLevels(0);
             }
         }
 
@@ -517,8 +533,8 @@ public class BottomBar extends FrameLayout
             @Override
             public void onAnimationEnd(Animator animation) {
                 View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
-                mDrawCircle = false;
                 optionsOverlay.setVisibility(View.VISIBLE);
+                mDrawCircle = false;
             }
         });
 

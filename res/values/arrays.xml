@@ -558,8 +558,8 @@
     </array>
 
     <array name="settings_toggle_icons" translatable="false">
-      <item>@drawable/ic_capture_options</item>
-      <item>@drawable/ic_capture_options</item>
+      <item>@drawable/ic_options</item>
+      <item>@drawable/ic_options</item>
     </array>
 
     <!--Index of camera modes. -->
