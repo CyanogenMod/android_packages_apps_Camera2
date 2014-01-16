@@ -573,12 +573,12 @@ public class VideoModule extends CameraModule
 
         if (stop) {
             onStopVideoRecording();
-            mAppController.getCameraAppUI().animateBottomBarToFullSize(
-                    CameraAppUI.VIDEO_SHUTTER_ICON);
+            int shutterIconId = CameraUtil.getCameraShutterIconId(
+                mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
+            mAppController.getCameraAppUI().animateBottomBarToFullSize(shutterIconId);
         } else {
             startVideoRecording();
-            mAppController.getCameraAppUI().animateBottomBarToCircle(
-                    CameraAppUI.STOP_SHUTTER_ICON);
+            mAppController.getCameraAppUI().animateBottomBarToCircle(R.drawable.ic_stop_normal);
         }
         mUI.enableShutter(false);
         mFocusManager.onShutterUp();

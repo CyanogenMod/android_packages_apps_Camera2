@@ -1051,4 +1051,22 @@ public class CameraUtil {
         }
         return cameraModesText[modeIndex];
     }
+
+    /**
+     * Gets the shutter icon res id for a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return mode shutter icon id if the index is valid, otherwise 0.
+     */
+    public static int getCameraShutterIconId(int modeIndex, Context context) {
+        // Find the camera mode icon using id
+        TypedArray shutterIcons = context.getResources()
+              .obtainTypedArray(R.array.camera_mode_shutter_icon);
+        if (modeIndex < 0 || modeIndex >= shutterIcons.length()) {
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return 0;
+        }
+        return shutterIcons.getResourceId(modeIndex, 0);
+    }
 }

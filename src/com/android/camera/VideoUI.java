@@ -167,8 +167,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
         buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
 
-        mActivity.getCameraAppUI().setBottomBarShutterIcon(CameraAppUI.VIDEO_SHUTTER_ICON);
-
         if (mController.isVideoCaptureIntent()) {
             buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
                 mCancelCallback);
