@@ -305,6 +305,7 @@ public class SettingsManager {
     public static final int SETTING_STARTUP_MODULE_INDEX = 19;
     public static final int SETTING_CAMERA_REFOCUS = 20;
     public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 21;
+    public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 22;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -333,6 +334,8 @@ public class SettingsManager {
     public static final String KEY_CAMERA_REFOCUS = "pref_camera_refocus";
     public static final String KEY_SHIMMY_REMAINING_PLAY_TIMES =
             "pref_shimmy_remaining_play_times";
+    public static final String KEY_CAMERA_MODULE_LAST_USED =
+            "pref_camera_module_last_used_index";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -784,6 +787,13 @@ public class SettingsManager {
         String defaultValue = context.getString(R.string.pref_shimmy_play_times);
         return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
                 KEY_SHIMMY_REMAINING_PLAY_TIMES, null, FLUSH_OFF);
+    }
+
+    public static Setting getLastUsedCameraModule(Context context) {
+        String defaultValue = Integer.toString(context.getResources()
+                .getInteger(R.integer.camera_mode_photo));
+        return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
+                KEY_CAMERA_MODULE_LAST_USED, null, FLUSH_OFF);
     }
 
     public static Setting getRefocusSetting(Context context) {

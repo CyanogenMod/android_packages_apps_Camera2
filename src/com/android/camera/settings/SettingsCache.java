@@ -123,6 +123,8 @@ public class SettingsCache {
         mKeyMap.put(SettingsManager.KEY_CAMERA_REFOCUS, SettingsManager.SETTING_CAMERA_REFOCUS);
         mKeyMap.put(SettingsManager.KEY_SHIMMY_REMAINING_PLAY_TIMES,
                 SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX);
+        mKeyMap.put(SettingsManager.KEY_CAMERA_MODULE_LAST_USED,
+                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
     }
 
     /**
@@ -197,6 +199,8 @@ public class SettingsCache {
             return SettingsManager.getRefocusSetting(mContext);
         case SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX:
             return SettingsManager.getShimmyRemainingTimesSetting(mContext);
+        case SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX:
+            return SettingsManager.getLastUsedCameraModule(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }
