@@ -321,7 +321,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         // animate on false->true trasition only b/8219520
         if (moving && !mPreviousMoving) {
             // Auto focus at the center of the preview.
-            mUI.setFocusPosition(mPreviewRect.width() / 2, mPreviewRect.height() / 2);
+            mUI.setFocusPosition(mPreviewRect.centerX(), mPreviewRect.centerY());
             mUI.onFocusStarted();
         } else if (!moving) {
             mUI.onFocusSucceeded(true);
