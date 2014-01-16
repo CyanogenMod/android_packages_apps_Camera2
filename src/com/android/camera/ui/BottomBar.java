@@ -21,8 +21,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,11 +40,6 @@ import com.android.camera.ToggleImageButton;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 
 /**
  * BottomBar swaps its width and height on rotation. In addition, it also changes
@@ -55,7 +56,6 @@ public class BottomBar extends FrameLayout
 
     private static final int BOTTOMBAR_OPTIONS_TIMEOUT_MS = 2000;
 
-    private static final float CIRCLE_RADIUS = 64.0f;
     private static final int CIRCLE_ANIM_DURATION_MS = 300;
 
     private int mWidth;
@@ -98,11 +98,16 @@ public class BottomBar extends FrameLayout
     private final Paint mCirclePaint = new Paint();
     private final Path mCirclePath = new Path();
     private boolean mDrawCircle;
+    private final float mCircleRadius;
+
     private final Path mRectPath = new Path();
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
+        mCircleRadius = getResources()
+            .getDimensionPixelSize(R.dimen.video_capture_circle_diameter) / 2;
+        mCirclePaint.setAntiAlias(true);
     }
 
     private void setPaintColor(int alpha, int color, boolean isCaptureChange) {
@@ -460,7 +465,7 @@ public class BottomBar extends FrameLayout
     public void animateToCircle(int resId) {
         final ValueAnimator radiusAnimator = ValueAnimator.ofFloat(
                                                  (float) diagonalLength()/2,
-                                                 CIRCLE_RADIUS);
+                                                 mCircleRadius);
         radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
         radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
 
@@ -496,7 +501,7 @@ public class BottomBar extends FrameLayout
      */
     public void animateToFullSize(int resId) {
         final ValueAnimator radiusAnimator = ValueAnimator.ofFloat(
-                                                 CIRCLE_RADIUS,
+                                                 mCircleRadius,
                                                  (float) diagonalLength()/2);
         radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
         radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
