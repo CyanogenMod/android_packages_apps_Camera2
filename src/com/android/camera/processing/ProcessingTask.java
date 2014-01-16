@@ -18,6 +18,7 @@ package com.android.camera.processing;
 
 import android.content.Context;
 
+import com.android.camera.app.CameraServices;
 import com.android.camera.session.CaptureSession;
 
 /**
@@ -58,10 +59,12 @@ public interface ProcessingTask {
      * Processes the given task. This will be usually called by a service.
      *
      * @param context the caller {@code Context}
+     * @param services the available {@code CameraServices}
      * @param session the {@code CaptureSession}
      * @return the {@code ProcessResult} with the result of the processing
      */
-    public ProcessingResult process(Context context, CaptureSession session);
+    public ProcessingResult process(Context context, CameraServices services,
+        CaptureSession session);
 
     /**
      * @return the name of the task. It can be null to indicate that the task
