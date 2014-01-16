@@ -30,8 +30,6 @@ import android.widget.FrameLayout;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
 
-import android.util.Log;
-
 public class MainActivityLayout extends FrameLayout {
 
     // Only check for intercepting touch events within first 500ms
@@ -45,7 +43,11 @@ public class MainActivityLayout extends FrameLayout {
     private final String TAG = "MainActivityLayout";
     private boolean mRequestToInterceptTouchEvents = false;
     private View mTouchReceiver = null;
-    private boolean mIsCaptureIntent;
+    private final boolean mIsCaptureIntent;
+
+    // TODO: This can be removed once all modules use the new swipe logic.
+    @Deprecated
+    private boolean mSwipeEnabled = true;
 
     public MainActivityLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -57,6 +59,15 @@ public class MainActivityLayout extends FrameLayout {
         mIsCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action)
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(action));
+    }
+
+    /**
+     * Enables or disables the swipe for modules not supporting the new swipe
+     * logic yet.
+     */
+    @Deprecated
+    public void setSwipeEnabled(boolean enabled) {
+        mSwipeEnabled = enabled;
     }
 
     @Override
@@ -76,13 +87,14 @@ public class MainActivityLayout extends FrameLayout {
             mCheckToIntercept = false;
             return false;
         } else {
+            // TODO: Remove this else block once all modules are converted.
             if (!mCheckToIntercept) {
                 return false;
             }
             if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT) {
                 return false;
             }
-            if (mIsCaptureIntent) {
+            if (mIsCaptureIntent || !mSwipeEnabled) {
                 return false;
             }
             int deltaX = (int) (ev.getX() - mDown.getX());
@@ -96,7 +108,7 @@ public class MainActivityLayout extends FrameLayout {
                     return true;
                 }
                 // Intercept left swipe
-                else if (deltaX < - Math.abs(deltaY) * 2) {
+                else if (deltaX < -Math.abs(deltaY) * 2) {
                     mTouchReceiver = mFilmstripLayout;
                     onTouchEvent(mDown);
                     return true;

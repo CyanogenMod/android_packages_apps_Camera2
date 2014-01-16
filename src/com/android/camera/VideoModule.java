@@ -394,6 +394,10 @@ public class VideoModule extends CameraModule
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
      private void updateAutoFocusMoveCallback() {
+        if (mPaused) {
+            return;
+        }
+
         if (mParameters.getFocusMode().equals(CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE)) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,
                     (CameraManager.CameraAFMoveCallback) mAutoFocusMoveCallback);
@@ -527,6 +531,7 @@ public class VideoModule extends CameraModule
     }
 
     private void onStopVideoRecording() {
+        mAppController.getCameraAppUI().setSwipeEnabled(true);
         boolean recordFail = stopVideoRecording();
         if (mIsVideoCaptureIntent) {
             if (mQuickCapture) {
@@ -561,8 +566,9 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onShutterButtonClick() {
-        if (mSwitchingCamera) return;
-
+        if (mSwitchingCamera) {
+            return;
+        }
         boolean stop = mMediaRecorderRecording;
 
         if (stop) {
@@ -1162,6 +1168,7 @@ public class VideoModule extends CameraModule
             mCameraDevice.lock();
             return;
         }
+        mAppController.getCameraAppUI().setSwipeEnabled(false);
 
         // Make sure the video recording has started before announcing
         // this in accessibility.
