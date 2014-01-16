@@ -308,7 +308,6 @@ public class BottomBar extends FrameLayout
             if (previewAspectRatio >= screenAspectRatio) {
                 mOverLayBottomBar = true;
                 setBackgroundAlpha(128);
-                AppController controller = (AppController) getContext();
                 setButtonImageLevels(1);
             } else {
                 mOverLayBottomBar = false;
