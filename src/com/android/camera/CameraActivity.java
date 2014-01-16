@@ -112,8 +112,8 @@ import com.android.camera.widget.FilmstripView;
 import com.android.camera2.R;
 
 import java.io.File;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -720,7 +720,7 @@ public class CameraActivity extends Activity
 
     @Override
     public ModuleController getCurrentModuleController() {
-        return (ModuleController) mCurrentModule;
+        return mCurrentModule;
     }
 
     @Override
@@ -995,8 +995,7 @@ public class CameraActivity extends Activity
             registerReceiver(mScreenOffReceiver, filter);
         }
         mCameraAppUI = new CameraAppUI(this,
-                (MainActivityLayout) findViewById(R.id.activity_root_view),
-                isSecureCamera(), isCaptureIntent());
+                (MainActivityLayout) findViewById(R.id.activity_root_view), isCaptureIntent());
 
         mCameraAppUI.setFilmstripBottomControlsListener(mMyFilmstripBottomControlListener);
 

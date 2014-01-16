@@ -32,8 +32,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera.AnimationManager;
-import com.android.camera.TextureViewHelper;
 import com.android.camera.ShutterButton;
+import com.android.camera.TextureViewHelper;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
@@ -42,11 +42,11 @@ import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
-import com.android.camera.widget.IndicatorOverlay;
-import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.widget.FilmstripLayout;
+import com.android.camera.widget.IndicatorIconController;
+import com.android.camera.widget.IndicatorOverlay;
 import com.android.camera2.R;
 
 /**
@@ -174,7 +174,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     private final AppController mController;
     private final boolean mIsCaptureIntent;
-    private final boolean mIsSecureCamera;
     private final AnimationManager mAnimationManager;
 
     // Swipe states:
@@ -183,6 +182,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final static int SWIPE_DOWN = 2;
     private final static int SWIPE_LEFT = 3;
     private final static int SWIPE_RIGHT = 4;
+    private boolean mSwipeEnabled = true;
 
     // Touch related measures:
     private final int mSlop;
@@ -280,7 +280,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean onScroll(MotionEvent e1, MotionEvent ev, float distanceX, float distanceY) {
             if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT_MS
                     || mSwipeState != IDLE
-                    || mIsCaptureIntent) {
+                    || mIsCaptureIntent
+                    || !mSwipeEnabled) {
                 return false;
             }
 
@@ -322,10 +323,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     public CameraAppUI(AppController controller, MainActivityLayout appRootView,
-                       boolean isSecureCamera, boolean isCaptureIntent) {
+            boolean isCaptureIntent) {
         mSlop = ViewConfiguration.get(controller.getAndroidContext()).getScaledTouchSlop();
         mController = controller;
-        mIsSecureCamera = isSecureCamera;
         mIsCaptureIntent = isCaptureIntent;
 
         mAppRootView = appRootView;
@@ -347,6 +347,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
         mAnimationManager = new AnimationManager();
         initDisplayListener();
+    }
+
+    /**
+     * Enable or disable swipe gestures. We want to disable them e.g. while we
+     * record a video.
+     */
+    public void setSwipeEnabled(boolean enabled) {
+        mAppRootView.setSwipeEnabled(enabled);
+        mSwipeEnabled = enabled;
     }
 
     /**
