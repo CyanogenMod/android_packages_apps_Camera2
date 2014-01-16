@@ -29,12 +29,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
@@ -201,6 +203,7 @@ public class CameraActivity extends Activity
     private CameraAppUI mCameraAppUI;
 
     private FeedbackHelper mFeedbackHelper;
+    private Intent mGalleryIntent;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -494,8 +497,10 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onEnterFilmstrip(int dataId) {
-                    mActionBar.setDisplayUseLogoEnabled(true);
-                    mUpAsGallery = true;
+                    if (mGalleryIntent != null) {
+                        mActionBar.setDisplayUseLogoEnabled(true);
+                        mUpAsGallery = true;
+                    }
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(true);
                     }
@@ -503,8 +508,10 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onLeaveFilmstrip(int dataId) {
-                    mActionBar.setDisplayUseLogoEnabled(false);
-                    mUpAsGallery = false;
+                    if (mGalleryIntent != null) {
+                        mActionBar.setDisplayUseLogoEnabled(false);
+                        mUpAsGallery = false;
+                    }
                 }
 
                 @Override
@@ -911,12 +918,10 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mFilmstripVisible && IntentHelper.shouldLaunchGalleryOnUpAction() &&
-                        mUpAsGallery) {
-                    startGallery();
-                } else {
-                    onBackPressed();
+                if (mFilmstripVisible && mUpAsGallery && startGallery()) {
+                    return true;
                 }
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1186,6 +1191,22 @@ public class CameraActivity extends Activity
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
+        Drawable galleryLogo;
+        if (mSecureCamera) {
+            mGalleryIntent = null;
+            galleryLogo = null;
+        } else {
+            mGalleryIntent = IntentHelper.getDefaultGalleryIntent(this);
+            galleryLogo = IntentHelper.getGalleryIcon(this, mGalleryIntent);
+        }
+        if (galleryLogo == null) {
+            try {
+                galleryLogo = getPackageManager().getActivityLogo(getComponentName());
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e(TAG, "Can't get the activity logo");
+            }
+        }
+        mActionBar.setLogo(galleryLogo);
         mOrientationManager.resume();
         super.onResume();
         mCurrentModule.resume();
@@ -1756,14 +1777,22 @@ public class CameraActivity extends Activity
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    private void startGallery() {
+    /**
+     * @return {@code true} if the Gallery is launched successfully.
+     */
+    private boolean startGallery() {
+        if (mGalleryIntent == null) {
+            return false;
+        }
         try {
             UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                     UsageStatistics.ACTION_GALLERY, null);
-            launchActivityByIntent(IntentHelper.getGalleryIntent(CameraActivity.this));
+            launchActivityByIntent(new Intent(mGalleryIntent));
+            return true;
         } catch (ActivityNotFoundException e) {
             Log.w(TAG, "Failed to launch gallery activity, closing");
         }
+        return false;
     }
 
     private void setNfcBeamPushUriFromData(LocalData data) {

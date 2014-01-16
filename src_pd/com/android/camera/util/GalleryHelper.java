@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,29 @@ package com.android.camera.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 
-public class IntentHelper {
-
+/**
+ * A helper class to provide Gallery related info.
+ */
+public class GalleryHelper {
     private static final String GALLERY_PACKAGE_NAME = "com.android.gallery3d";
     private static final String GALLERY_ACTIVITY_CLASS =
-        "com.android.gallery3d.app.GalleryActivity";
+            "com.android.gallery3d.app.GalleryActivity";
 
-    public static boolean shouldLaunchGalleryOnUpAction() {
-        return false;
+    public static void setGalleryIntentClassName(Intent intent) {
+        intent.setClassName(GALLERY_PACKAGE_NAME, GALLERY_ACTIVITY_CLASS);
     }
 
-    public static Intent getGalleryIntent(Context context) {
-        return new Intent(Intent.ACTION_MAIN)
-            .setClassName(GALLERY_PACKAGE_NAME, GALLERY_ACTIVITY_CLASS);
-    }
-
-    public static Intent getVideoPlayerIntent(Context context, Uri uri) {
-        return new Intent(Intent.ACTION_VIEW)
-            .setDataAndType(uri, "video/*");
+    public static Drawable getGalleryIcon(Context context, Intent galleryIntent) {
+        if (galleryIntent != null) {
+            try {
+                return context.getPackageManager().getActivityIcon(galleryIntent);
+            } catch (PackageManager.NameNotFoundException e) {
+                // Do nothing.
+            }
+        }
+        return null;
     }
 }
