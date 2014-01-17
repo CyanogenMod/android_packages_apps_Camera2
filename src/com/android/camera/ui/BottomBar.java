@@ -60,6 +60,12 @@ public class BottomBar extends FrameLayout
 
     private static final int CIRCLE_ANIM_DURATION_MS = 300;
 
+    private static final int MODE_CAPTURE = 0;
+    private static final int MODE_OPTIONS = 1;
+    private static final int MODE_INTENT = 2;
+    private static final int MODE_INTENT_REVIEW = 3;
+    private int mMode;
+
     private int mWidth;
     private int mHeight;
     private float mOffsetShorterEdge;
@@ -101,7 +107,6 @@ public class BottomBar extends FrameLayout
     private final Path mCirclePath = new Path();
     private boolean mDrawCircle;
     private final float mCircleRadius;
-
     private final Path mRectPath = new Path();
 
     public BottomBar(Context context, AttributeSet attrs) {
@@ -236,6 +241,8 @@ public class BottomBar extends FrameLayout
     private void transitionToCapture() {
         mOptionsLayout.setVisibility(View.INVISIBLE);
         mCaptureLayout.setVisibility(View.VISIBLE);
+
+        mMode = MODE_CAPTURE;
     }
 
     /**
@@ -245,6 +252,8 @@ public class BottomBar extends FrameLayout
     private void transitionToOptions() {
         mCaptureLayout.setVisibility(View.INVISIBLE);
         mOptionsLayout.setVisibility(View.VISIBLE);
+
+        mMode = MODE_OPTIONS;
     }
 
     /**
@@ -262,6 +271,8 @@ public class BottomBar extends FrameLayout
         button.setVisibility(View.INVISIBLE);
         button = mIntentLayout.findViewById(R.id.retake_button);
         button.setVisibility(View.INVISIBLE);
+
+        mMode = MODE_INTENT;
     }
 
     /**
@@ -279,6 +290,8 @@ public class BottomBar extends FrameLayout
         button = mIntentLayout.findViewById(R.id.retake_button);
         button.setVisibility(View.VISIBLE);
         mIntentLayout.setVisibility(View.VISIBLE);
+
+        mMode = MODE_INTENT_REVIEW;
     }
 
     private void setButtonImageLevels(int level) {
@@ -427,10 +440,21 @@ public class BottomBar extends FrameLayout
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (mDrawCircle) {
-            canvas.drawPath(mCirclePath, mCirclePaint);
-        } else {
-            canvas.drawPath(mRectPath, mCirclePaint);
+        switch (mMode) {
+            case MODE_CAPTURE: // intentional fallthrough
+            case MODE_OPTIONS:
+                if (mDrawCircle) {
+                    canvas.drawPath(mCirclePath, mCirclePaint);
+                } else {
+                    canvas.drawPath(mRectPath, mCirclePaint);
+                }
+                break;
+            case MODE_INTENT:
+                canvas.drawPaint(mCirclePaint); // TODO make this case handle capture button
+                                                // highlighting correctly
+                break;
+            case MODE_INTENT_REVIEW:
+                canvas.drawPaint(mCirclePaint);
         }
 
         super.onDraw(canvas);
