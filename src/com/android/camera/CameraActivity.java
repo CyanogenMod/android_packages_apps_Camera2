@@ -203,7 +203,9 @@ public class CameraActivity extends Activity
     private CameraAppUI mCameraAppUI;
 
     private FeedbackHelper mFeedbackHelper;
+
     private Intent mGalleryIntent;
+    private long mOnCreateTime;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -941,6 +943,7 @@ public class CameraActivity extends Activity
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        mOnCreateTime = System.currentTimeMillis();
         GcamHelper.init(getContentResolver());
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
@@ -1736,6 +1739,16 @@ public class CameraActivity extends Activity
     }
 
     // Accessor methods for getting latency times used in performance testing
+    public long getFirstPreviewTime() {
+        if (mCurrentModule instanceof PhotoModule) {
+            long coverHiddenTime = getCameraAppUI().getCoverHiddenTime();
+            if (coverHiddenTime != -1) {
+                return coverHiddenTime - mOnCreateTime;
+            }
+        }
+        return -1;
+    }
+
     public long getAutoFocusTime() {
         return (mCurrentModule instanceof PhotoModule) ?
                 ((PhotoModule) mCurrentModule).mAutoFocusTime : -1;
