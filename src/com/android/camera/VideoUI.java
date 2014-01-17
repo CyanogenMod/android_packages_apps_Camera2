@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.ui.FocusOverlay;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
@@ -50,7 +51,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private final CameraActivity mActivity;
     private final View mRootView;
     private final TextureView mTextureView;
-    private final FocusOverlayManager.FocusUI mFocusUI;
+    private final FocusOverlay mFocusUI;
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
@@ -143,7 +144,7 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         initializeMiscControls();
         initializeControlByIntent();
         mAnimationManager = new AnimationManager();
-        mFocusUI = (FocusOverlayManager.FocusUI) mRootView.findViewById(R.id.focus_overlay);
+        mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
     }
 
     public void initializeSurfaceView() {
@@ -377,6 +378,17 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
         return mPreviewGestureListener;
+    }
+
+    /**
+     * Shows or hides focus UI.
+     *
+     * @param show shows focus UI when true, hides it otherwise
+     */
+    public void showFocusUI(boolean show) {
+        if (mFocusUI != null) {
+            mFocusUI.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {

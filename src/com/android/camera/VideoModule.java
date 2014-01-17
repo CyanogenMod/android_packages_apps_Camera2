@@ -1140,6 +1140,7 @@ public class VideoModule extends CameraModule
         Log.v(TAG, "startVideoRecording");
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
+        mUI.showFocusUI(false);
 
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
@@ -1235,6 +1236,7 @@ public class VideoModule extends CameraModule
     private boolean stopVideoRecording() {
         Log.v(TAG, "stopVideoRecording");
         mUI.setSwipingEnabled(true);
+        mUI.showFocusUI(true);
 
         boolean fail = false;
         if (mMediaRecorderRecording) {
