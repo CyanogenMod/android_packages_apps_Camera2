@@ -579,8 +579,8 @@
         <item>@integer/camera_mode_photo</item>
         <item>@integer/camera_mode_video</item>
         <item>@integer/camera_mode_craft</item>
-        <item>@integer/camera_mode_photosphere</item>
         <item>@integer/camera_mode_panorama</item>
+        <item>@integer/camera_mode_photosphere</item>
         <item>@integer/camera_mode_timelapse</item>
         <item>@integer/camera_mode_setting</item>
     </integer-array>

@@ -22,7 +22,6 @@ import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
 import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
-import com.android.camera.ui.ModeListView;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
@@ -168,7 +167,6 @@ public class ModulesInfo {
 
             @Override
             public ModuleController createModule(AppController app) {
-                // TODO: remove the type casting.
                 return RefocusHelper.createRefocusModule(app);
             }
         });
