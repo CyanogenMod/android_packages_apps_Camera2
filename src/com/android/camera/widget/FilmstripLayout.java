@@ -25,6 +25,8 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.MotionEvent;
@@ -59,6 +61,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private int mSwipeTrend;
     private MyBackgroundDrawable mBackgroundDrawable;
     private int mAnimationDirection;
+    private Handler mHandler;
     // There are two versions of background. The hiding background is simply a
     // solid black rectangle, the other is the quantum paper version.
     private boolean mDrawHidingBackground;
@@ -103,9 +106,9 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                     if (mAnimationDirection == ANIM_DIRECTION_IN && !mDrawHidingBackground) {
                         mBackgroundDrawable.setFraction(valueAnimator.getAnimatedFraction());
                     }
-                    mFilmstripContentLayout.setTranslationX((Float) valueAnimator.getAnimatedValue());
+                    mFilmstripContentLayout.setTranslationX(
+                            (Float) valueAnimator.getAnimatedValue());
                     mBackgroundDrawable.invalidateSelf();
-                    invalidate();
                 }
             };
     private Listener mListener;
@@ -130,6 +133,25 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         mFilmstripAnimator.setDuration(DEFAULT_DURATION_MS);
         mFilmstripAnimator.addUpdateListener(mFilmstripAnimatorUpdateListener);
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
+        mHandler = new Handler(Looper.getMainLooper());
+        mBackgroundDrawable = new MyBackgroundDrawable();
+        mBackgroundDrawable.setCallback(new Drawable.Callback() {
+            @Override
+            public void invalidateDrawable(Drawable drawable) {
+                FilmstripLayout.this.invalidate();
+            }
+
+            @Override
+            public void scheduleDrawable(Drawable drawable, Runnable runnable, long l) {
+                mHandler.postAtTime(runnable, drawable, l);
+            }
+
+            @Override
+            public void unscheduleDrawable(Drawable drawable, Runnable runnable) {
+                mHandler.removeCallbacks(runnable, drawable);
+            }
+        });
+        setBackground(mBackgroundDrawable);
     }
 
     @Override
@@ -138,7 +160,9 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         if (getVisibility() == VISIBLE && getFilmstripTranslationX() == 0) {
             notifyShown();
         } else {
-            notifyHidden(getVisibility());
+            if (getVisibility() != VISIBLE) {
+                notifyHidden();
+            }
         }
         mFilmstripView.getController().setListener(listener);
     }
@@ -162,16 +186,16 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     @Override
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
-        notifyHidden(visibility);
+        if (visibility != VISIBLE) {
+            notifyHidden();
+        }
     }
 
-    private void notifyHidden(int visibility) {
+    private void notifyHidden() {
         if (mListener == null) {
             return;
         }
-        if (visibility != VISIBLE) {
-            mListener.onFilmstripHidden();
-        }
+        mListener.onFilmstripHidden();
     }
 
     private void notifyShown() {
@@ -213,8 +237,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
     @Override
     public void onFinishInflate() {
-        mBackgroundDrawable = new MyBackgroundDrawable();
-        setBackground(mBackgroundDrawable);
         mFilmstripView = (FilmstripView) findViewById(R.id.filmstrip_view);
         mFilmstripView.setOnTouchListener(new OnTouchListener() {
 
@@ -307,7 +329,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             }
             mFilmstripContentLayout.setTranslationX(translate);
             mBackgroundDrawable.invalidateSelf();
-            invalidate();
             return true;
         }
 
@@ -457,4 +478,5 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                     FloatMath.sqrt((x - refX) * (x - refX) + (y - refY) * (y - refY)), mPaint);
         }
     }
+
 }

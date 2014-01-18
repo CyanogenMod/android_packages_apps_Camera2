@@ -43,6 +43,7 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -82,6 +83,7 @@ import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.InProgressDataWrapper;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
+import com.android.camera.data.LocalDataUtil;
 import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.PanoramaMetadataLoader;
 import com.android.camera.data.RgbzMetadataLoader;
@@ -92,7 +94,6 @@ import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
-import com.android.camera.session.PlaceholderManager;
 import com.android.camera.settings.CameraSettingsActivity;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
@@ -117,6 +118,8 @@ import com.google.common.logging.eventprotos.CameraEvent.InteractionCause;
 import com.google.common.logging.eventprotos.NavigationChange;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,9 +150,9 @@ public class CameraActivity extends Activity
 
     public static final int REQ_CODE_GCAM_DEBUG_POSTCAPTURE = 999;
 
-    private static final int MSG_HIDE_ACTION_BAR = 1;
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000; // 2 mins.
+    private static final int MAX_PEEK_BITMAP_PIXELS = 1600000; // 1.6 * 4 MBs.
 
     /** Should be used wherever a context is needed. */
     private Context mAppContext;
@@ -206,6 +209,9 @@ public class CameraActivity extends Activity
     private boolean mPaused;
     private boolean mUpAsGallery;
     private CameraAppUI mCameraAppUI;
+
+    private PeekAnimationHandler mPeekAnimationHandler;
+    private HandlerThread mPeekAnimationThread;
 
     private FeedbackHelper mFeedbackHelper;
 
@@ -412,11 +418,6 @@ public class CameraActivity extends Activity
                 return;
             }
             switch (msg.what) {
-                case MSG_HIDE_ACTION_BAR: {
-                    removeMessages(MSG_HIDE_ACTION_BAR);
-                    activity.setFilmstripUiVisibility(false);
-                    break;
-                }
 
                 case MSG_CLEAR_SCREEN_ON_FLAG: {
                     if (!activity.mPaused) {
@@ -582,6 +583,11 @@ public class CameraActivity extends Activity
                         }
                     }
                 }
+
+                @Override
+                public void onNewDataAdded(LocalData data) {
+                    startPeekAnimation(data);
+                }
             };
 
     public void gotoGallery() {
@@ -600,8 +606,6 @@ public class CameraActivity extends Activity
      */
     // TODO: This should not be called outside of the activity.
     public void setFilmstripUiVisibility(boolean visible) {
-        mMainHandler.removeMessages(MSG_HIDE_ACTION_BAR);
-
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
         int newSystemUIVisibility = (visible ? View.SYSTEM_UI_FLAG_VISIBLE
                 : View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -890,17 +894,44 @@ public class CameraActivity extends Activity
         mOrientationManager.unlockOrientation();
     }
 
+    /**
+     * Starts the filmstrip peek animation if the filmstrip is not visible.
+     * Only {@link LocalData#LOCAL_IMAGE}, {@link
+     * LocalData#LOCAL_IN_PROGRESS_DATA} and {@link
+     * LocalData#LOCAL_VIDEO} are supported.
+     *
+     * @param data The data to peek.
+     */
+    private void startPeekAnimation(final LocalData data) {
+        if (mFilmstripVisible || mPeekAnimationHandler == null) {
+            return;
+        }
+
+        int dataType = data.getLocalDataType();
+        if (dataType != LocalData.LOCAL_IMAGE && dataType != LocalData.LOCAL_IN_PROGRESS_DATA &&
+                dataType != LocalData.LOCAL_VIDEO) {
+            return;
+        }
+
+        mPeekAnimationHandler.startAnimationJob(data, new Callback<Bitmap>() {
+            @Override
+            public void onCallback(Bitmap result) {
+                mCameraAppUI.startPeekAnimation(result, true);
+            }
+        });
+    }
+
     @Override
     public void notifyNewMedia(Uri uri) {
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
-        if (mimeType.startsWith("video/")) {
+        if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
             sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
             mDataAdapter.addNewVideo(uri);
-        } else if (mimeType.startsWith("image/")) {
+        } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
             CameraUtil.broadcastNewPicture(mAppContext, uri);
             mDataAdapter.addNewPhoto(uri);
-        } else if (mimeType.startsWith(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
+        } else if (LocalDataUtil.isMimeTypePlaceHolder(mimeType)) {
             mDataAdapter.addNewPhoto(uri);
         } else {
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
@@ -1182,6 +1213,9 @@ public class CameraActivity extends Activity
     @Override
     public void onPause() {
         mPaused = true;
+        mPeekAnimationHandler = null;
+        mPeekAnimationThread.quitSafely();
+        mPeekAnimationThread = null;
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
 
         // Delete photos that are pending deletion
@@ -1253,6 +1287,9 @@ public class CameraActivity extends Activity
         mActionBar.setLogo(galleryLogo);
         mOrientationManager.resume();
         super.onResume();
+        mPeekAnimationThread = new HandlerThread("Peek animation");
+        mPeekAnimationThread.start();
+        mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper());
         mCurrentModule.resume();
         setSwipingEnabled(true);
 
@@ -1924,5 +1961,85 @@ public class CameraActivity extends Activity
         filmstripBottomControls.setTinyPlanetEnabled(
                 PanoramaMetadataLoader.isPanorama360(currentData));
         filmstripBottomControls.setViewerButtonVisibility(viewButtonVisibility);
+    }
+
+    private class PeekAnimationHandler extends Handler {
+        private class DataAndCallback {
+            LocalData mData;
+            com.android.camera.util.Callback<Bitmap> mCallback;
+
+            public DataAndCallback(LocalData data, com.android.camera.util.Callback<Bitmap>
+                    callback) {
+                mData = data;
+                mCallback = callback;
+            }
+        }
+
+        public PeekAnimationHandler(Looper looper) {
+            super(looper);
+        }
+
+        /**
+         * Starts the animation decoding job and posts a {@code Runnable} back
+         * when when the decoding is done.
+         *
+         * @param data The data item to decode the thumbnail for.
+         * @param callback {@link com.android.camera.util.Callback} after the
+         *                 decoding is done.
+         */
+        public void startAnimationJob(final LocalData data,
+                final com.android.camera.util.Callback<Bitmap>
+                callback) {
+            PeekAnimationHandler.this.obtainMessage(0 /** dummy integer **/,
+                    new DataAndCallback(data, callback)).sendToTarget();
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            final LocalData data = ((DataAndCallback) msg.obj).mData;
+            final com.android.camera.util.Callback<Bitmap> callback =
+                    ((DataAndCallback) msg.obj).mCallback;
+            if (data == null || callback == null) {
+                return;
+            }
+
+            final Bitmap bitmap;
+            switch (data.getLocalDataType()) {
+                case LocalData.LOCAL_IMAGE:
+                case LocalData.LOCAL_IN_PROGRESS_DATA:
+                    FileInputStream stream;
+                    try {
+                        stream = new FileInputStream(data.getPath());
+                    } catch (FileNotFoundException e) {
+                        Log.e(TAG, "File not found:" + data.getPath());
+                        return;
+                    }
+                    bitmap = LocalDataUtil
+                            .loadImageThumbnailFromStream(stream, data.getWidth(), data.getHeight(),
+                                    data.getWidth() / 4, data.getHeight() / 4,
+                                    data.getOrientation(), MAX_PEEK_BITMAP_PIXELS);
+                    break;
+
+                case LocalData.LOCAL_VIDEO:
+                    bitmap = LocalDataUtil.loadVideoThumbnail(data.getPath());
+                    break;
+
+                default:
+                    bitmap = null;
+                    break;
+            }
+
+            if (bitmap == null) {
+                return;
+            }
+
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onCallback(bitmap);
+                    mCameraAppUI.startPeekAnimation(bitmap, true);
+                }
+            });
+        }
     }
 }

@@ -24,6 +24,7 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
+import android.util.CameraPerformanceTracker;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -51,7 +52,6 @@ import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
-import android.util.CameraPerformanceTracker;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.util.PhotoSphereHelper;
@@ -59,6 +59,7 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.ModeOptionsOverlay;
+import com.android.camera.widget.PeekView;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 
@@ -468,6 +469,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         }
     };
+    private PeekView mPeekView;
 
     /**
      * Provides current preview frame and the controls/overlay from the module that
@@ -658,6 +660,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mUncoverPreviewAreaChangedListener =
                 mModeListView.getUncoveredPreviewAreaSizeChangedListener();
         mAnimationManager = new AnimationManager();
+        mPeekView = (PeekView) appRootView.findViewById(R.id.peek_view);
         initDisplayListener();
     }
 
@@ -922,8 +925,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void onChangeCamera() {
         ModuleController moduleController = mController.getCurrentModuleController();
-        applyModuleSpecs(moduleController.getHardwareSpec(),
-                moduleController.getBottomBarSpec());
+        applyModuleSpecs(moduleController.getHardwareSpec(), moduleController.getBottomBarSpec());
 
         if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
@@ -1114,6 +1116,20 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
        flash animation and post capture animation, consider designating a parameter
        for specifying the type of animation, as well as an animation finished listener
        so that modules can have more knowledge of the status of the animation. */
+
+    /**
+     * Starts the filmstrip peek animation.
+     *
+     * @param bitmap The bitmap to show.
+     * @param strong Whether the animation shows more portion of the bitmap or
+     *               not.
+     */
+    public void startPeekAnimation(Bitmap bitmap, boolean strong) {
+        if (mFilmstripLayout.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        mPeekView.startPeekAnimation(bitmap, strong);
+    }
 
     /**
      * Starts the pre-capture animation.
