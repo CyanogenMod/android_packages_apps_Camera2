@@ -244,7 +244,7 @@ public class ModeListView extends ScrollView {
             int index = getFocusItem(ev.getX(), ev.getY());
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
-                int modeId = getModeIndex(index);
+                final int modeId = getModeIndex(index);
                 mModeSelectorItems[index].highlight();
                 mState = MODE_SELECTED;
                 PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
@@ -260,7 +260,15 @@ public class ModeListView extends ScrollView {
                 effect.setAnimationStartingPosition((int) ev.getX(), (int) ev.getY());
                 mCurrentEffect = effect;
 
-                onModeSelected(modeId);
+                // Post mode selection runnable to the end of the message queue
+                // so that current UI changes can finish before mode initialization
+                // clogs up UI thread.
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onModeSelected(modeId);
+                    }
+                });
             }
             return true;
         }
