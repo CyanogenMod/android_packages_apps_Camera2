@@ -28,41 +28,69 @@
     <!-- A filler view -->
     <View
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="1dp"
         android:layout_weight="1"
         android:visibility="invisible" />
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/filmstrip_bottom_control_view"
-            style="@style/FilmstripBottomControlButton"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_view_photosphere"
-            android:visibility="invisible" />
-
-        <ImageButton
-            android:id="@+id/filmstrip_bottom_control_tiny_planet"
-            style="@style/FilmstripBottomControlButton"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_menu_tiny_planet"
-            android:visibility="invisible" />
-    </FrameLayout>
-
-    <ImageButton
-        android:id="@+id/filmstrip_bottom_control_edit"
-        style="@style/FilmstripBottomControlButton"
-        android:src="@drawable/ic_menu_edit_holo_dark"
-        android:visibility="invisible" />
-
 
     <ImageButton
         android:id="@+id/filmstrip_bottom_control_share"
         style="@style/FilmstripBottomControlButton"
         android:src="@drawable/ic_menu_share_holo_light"
         android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="144dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:id="@+id/filmstrip_bottom_control_viewer_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/filmstrip_bottom_control_view"
+                style="@style/FilmstripBottomControlButton"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_view_photosphere"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/filmstrip_bottom_control_tiny_planet"
+                style="@style/FilmstripBottomControlButton"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_menu_tiny_planet"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/filmstrip_bottom_control_middle_filler"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_edit"
+            style="@style/FilmstripBottomControlButton"
+            android:src="@drawable/ic_menu_edit_holo_dark"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/filmstrip_bottom_control_delete"
@@ -73,7 +101,7 @@
     <!-- A filler view -->
     <View
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="1dp"
         android:layout_weight="1"
         android:visibility="invisible" />
 
