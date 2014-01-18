@@ -1519,6 +1519,11 @@ public class PhotoModule
         // Let UI set its expected aspect ratio
         mCameraDevice.setPreviewTexture(mUI.getSurfaceTexture());
 
+        // This is to notify app controller that preview will start next, so app
+        // controller can set preview callbacks if needed. This has to happen before
+        // preview is started as a workaround of the framework bug related to preview
+        // callbacks at b/12591410.
+        mAppController.onPreviewReadyToStart();
         Log.v(TAG, "startPreview");
         mCameraDevice.startPreview();
 
