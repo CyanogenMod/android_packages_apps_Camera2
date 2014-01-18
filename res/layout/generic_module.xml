@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The Android Open Source Project
+<!--
+     Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,11 +16,16 @@
 -->
 <!-- This layout is shared by phone and tablet in landscape orientation. -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <TextureView
         android:id="@+id/preview_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.android.camera.ui.FocusOverlay
+        android:id="@+id/focus_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -33,6 +39,7 @@
         android:id="@+id/preview_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <FrameLayout
         android:id="@+id/module_layout"
         android:layout_width="match_parent"

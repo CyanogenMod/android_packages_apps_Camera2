@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
-import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraManager;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
@@ -51,10 +50,10 @@ public class PhotoUI implements PreviewStatusListener,
 
     private final PreviewOverlay mPreviewOverlay;
     private final FocusUI mFocusUI;
-    private CameraActivity mActivity;
-    private PhotoController mController;
+    private final CameraActivity mActivity;
+    private final PhotoController mController;
 
-    private View mRootView;
+    private final View mRootView;
     private SurfaceTexture mSurfaceTexture;
 
     private FaceView mFaceView;
@@ -65,7 +64,7 @@ public class PhotoUI implements PreviewStatusListener,
 
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
-    private TextureView mTextureView;
+    private final TextureView mTextureView;
     private float mAspectRatio = UNSET;
     private final Object mSurfaceTextureLock = new Object();
 
@@ -111,8 +110,8 @@ public class PhotoUI implements PreviewStatusListener,
 
     private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
         private final byte [] mData;
-        private int mOrientation;
-        private boolean mMirror;
+        private final int mOrientation;
+        private final boolean mMirror;
 
         public DecodeTask(byte[] data, int orientation, boolean mirror) {
             mData = data;
@@ -159,7 +158,7 @@ public class PhotoUI implements PreviewStatusListener,
 
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
-                 (ViewGroup) moduleRoot, true);
+                 moduleRoot, true);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         initIndicators();

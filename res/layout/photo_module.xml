@@ -24,10 +24,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center">
-    <com.android.camera.ui.FocusOverlay
-        android:id="@+id/focus_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     <ImageView
         android:id="@+id/review_image"
         android:layout_width="match_parent"

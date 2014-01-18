@@ -43,7 +43,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     private int mPositionY;
     private int mAngle;
     // TODO: make this dp in dimens.xml when UI has a spec
-    private int mFocusIndicatorSize = 200;
+    private final int mFocusIndicatorSize = 200;
     private boolean mShowIndicator;
 
     public FocusOverlay(Context context, AttributeSet attrs) {
@@ -87,14 +87,14 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     }
 
     @Override
-    public void onFocusSucceeded(boolean timeOut) {
+    public void onFocusSucceeded() {
         mFocusAnimation.cancel();
         mShowIndicator = false;
         invalidate();
     }
 
     @Override
-    public void onFocusFailed(boolean timeOut) {
+    public void onFocusFailed() {
         mFocusAnimation.cancel();
         mShowIndicator = false;
         invalidate();
@@ -110,6 +110,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         // TODO: Add face detection support.
     }
 
+    @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 

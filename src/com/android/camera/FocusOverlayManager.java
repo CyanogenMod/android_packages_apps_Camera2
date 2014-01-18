@@ -100,8 +100,8 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         public void clearFocus();
         public void setFocusPosition(int x, int y);
         public void onFocusStarted();
-        public void onFocusSucceeded(boolean timeOut);
-        public void onFocusFailed(boolean timeOut);
+        public void onFocusSucceeded();
+        public void onFocusFailed();
         public void pauseFaceDetection();
         public void resumeFaceDetection();
     }
@@ -324,7 +324,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
             mUI.setFocusPosition(mPreviewRect.centerX(), mPreviewRect.centerY());
             mUI.onFocusStarted();
         } else if (!moving) {
-            mUI.onFocusSucceeded(true);
+            mUI.onFocusSucceeded();
         }
         mPreviousMoving = moving;
     }
@@ -351,10 +351,6 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
         calculateTapArea(x, y, 1.5f, mMeteringArea.get(0).rect);
-    }
-
-    private void resetMeteringAreas() {
-        mMeteringArea = null;
     }
 
     public void onSingleTapUp(int x, int y) {
@@ -504,11 +500,11 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         } else {
             if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)) {
                 // TODO: check HAL behavior and decide if this can be removed.
-                mUI.onFocusSucceeded(false);
+                mUI.onFocusSucceeded();
             } else if (mState == STATE_SUCCESS) {
-                mUI.onFocusSucceeded(false);
+                mUI.onFocusSucceeded();
             } else if (mState == STATE_FAIL) {
-                mUI.onFocusFailed(false);
+                mUI.onFocusFailed();
             }
         }
     }
