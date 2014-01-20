@@ -87,7 +87,7 @@ public class VideoMenu extends PieController
         }
         // color effect
         final ListPreference colorPref =
-                group.findPreference(CameraSettings.KEY_COLOR_EFFECT);
+                group.findPreference(CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT);
         if (colorPref != null) {
             item = makeItem(R.drawable.ic_tint);
             item.setLabel(res.getString(
