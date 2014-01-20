@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2013 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +75,7 @@ public class CameraSettings {
     public static final String KEY_PHOTOSPHERE_PICTURESIZE = "pref_photosphere_picturesize_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
 
+    public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
     public static final String KEY_VIDEO_ENCODER = "pref_camera_videoencoder_key";
     public static final String KEY_AUDIO_ENCODER = "pref_camera_audioencoder_key";
     public static final String KEY_VIDEO_DURATION = "pref_camera_video_duration_key";
@@ -133,6 +135,8 @@ public class CameraSettings {
     public static final String KEY_ASD = "pref_camera_asd";
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
+    public static final String VALUE_ON = "on";
+    public static final String VALUE_OFF = "off";
 
     public static final int CURRENT_VERSION = 5;
     public static final int CURRENT_LOCAL_VERSION = 2;
