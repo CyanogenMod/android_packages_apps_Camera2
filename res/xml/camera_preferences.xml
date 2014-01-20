@@ -237,6 +237,12 @@
             camera:title="@string/pref_camera_focustime_title"
             camera:entries="@array/pref_camera_focustime_duration_entries"
             camera:entryValues="@array/pref_camera_focustime_duration_values" />
+    <ListPreference
+            camera:key="pref_camera_burst_key"
+            camera:defaultValue="@string/pref_camera_burst_default"
+            camera:title="@string/pref_camera_burst_title"
+            camera:entries="@array/pref_camera_burst_mode_entries"
+            camera:entryValues="@array/pref_camera_burst_mode_values" />
     <IconListPreference
             camera:key="pref_camera_beauty_mode"
             camera:defaultValue="@string/pref_camera_beauty_mode_default"
