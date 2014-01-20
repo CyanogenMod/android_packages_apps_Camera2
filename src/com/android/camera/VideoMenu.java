@@ -192,6 +192,7 @@ public class VideoMenu extends PieController
         // extra settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_STORAGE,
+                CameraSettings.KEY_POWER_SHUTTER,
                 CameraSettings.KEY_VIDEO_ENCODER,
                 CameraSettings.KEY_AUDIO_ENCODER,
                 CameraSettings.KEY_FOCUS_TIME,
