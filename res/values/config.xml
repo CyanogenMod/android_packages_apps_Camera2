@@ -25,4 +25,6 @@
     <bool name="useContinuosFocusForTouch">false</bool>
     <!-- Decode YV16 format on Samsung HDR hardware -->
     <bool name="needsSamsungHDRFormat">false</bool>
+    <!-- Ignore bogus preferred preview size -->
+    <bool name="ignorePreferredPreviewSizeForVideo">false</bool>
 </resources>
