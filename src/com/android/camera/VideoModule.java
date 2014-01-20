@@ -1832,7 +1832,7 @@ public class VideoModule implements CameraModule,
         // add QCOM Parameters here
         // Set color effect parameter.
         String colorEffect = mPreferences.getString(
-            CameraSettings.KEY_COLOR_EFFECT,
+            CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT,
             mActivity.getString(R.string.pref_camera_coloreffect_default));
         Log.v(TAG, "Color effect value =" + colorEffect);
         if (isSupported(colorEffect, mParameters.getSupportedColorEffects())) {
