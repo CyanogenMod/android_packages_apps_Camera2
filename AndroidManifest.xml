@@ -59,6 +59,7 @@
             android:logo="@mipmap/ic_launcher_gallery"
             android:taskAffinity="com.android.camera.CameraActivity"
             android:theme="@style/Theme.Camera"
+            android:permission="android.permission.PREVENT_POWER_KEY"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
