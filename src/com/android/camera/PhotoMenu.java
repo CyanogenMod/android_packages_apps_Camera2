@@ -240,6 +240,7 @@ public class PhotoMenu extends PieController
         // extra settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_STORAGE,
+                CameraSettings.KEY_POWER_SHUTTER,
                 CameraSettings.KEY_FOCUS_MODE,
                 CameraSettings.KEY_FOCUS_TIME,
                 CameraSettings.KEY_ISO,
