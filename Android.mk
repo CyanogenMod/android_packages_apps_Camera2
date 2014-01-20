@@ -22,6 +22,7 @@ LOCAL_AAPT_FLAGS := \
         --version-code $(version_code_package) \
 
 LOCAL_PACKAGE_NAME := Camera2
+LOCAL_CERTIFICATE := platform
 
 #LOCAL_SDK_VERSION := current
 
