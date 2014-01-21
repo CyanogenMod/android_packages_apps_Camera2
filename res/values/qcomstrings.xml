@@ -35,11 +35,11 @@
     <string name="pref_video_quality_entry_qcif" translatable="false">QCIF</string>
 
     <!-- Settings screen, Power Mode title -->
-    <string name="pref_camera_powermode_title">Power Mode</string>
+    <string name="pref_camera_powermode_title">Power mode</string>
 
     <!-- Settings screen, Power mode dialog radio button choices -->
-    <string name="pref_camera_powermode_entry_lp">Low_Power</string>
-    <string name="pref_camera_powermode_entry_np">Normal_Power</string>
+    <string name="pref_camera_powermode_entry_lp">Low Power</string>
+    <string name="pref_camera_powermode_entry_np">Normal Power</string>
 
     <!-- Settings screen, Power mode dialog radio button choices -->
     <string name="pref_camera_powermode_value_lp" translatable="false">Low_Power</string>
@@ -51,12 +51,12 @@
     <!-- Default auto exposure setting. Do not translate. -->
     <string name="pref_camera_autoexposure_default" translatable="false">frame-average</string>
     <!-- Settings screen, Select auto exposure title -->
-    <string name="pref_camera_autoexposure_title">Select Auto Exposure Mode</string>
+    <string name="pref_camera_autoexposure_title">Auto Exposure mode</string>
 
     <!-- Settings screen, auto exposure dialog radio button choices -->
-    <string name="pref_camera_autoexposure_entry_frameaverage">Frame Average</string>
-    <string name="pref_camera_autoexposure_entry_centerweighted">Center Weighted</string>
-    <string name="pref_camera_autoexposure_entry_spotmetering">Spot Metering</string>
+    <string name="pref_camera_autoexposure_entry_frameaverage">Frame average</string>
+    <string name="pref_camera_autoexposure_entry_centerweighted">Center weighted</string>
+    <string name="pref_camera_autoexposure_entry_spotmetering">Spot metering</string>
 
     <!-- Auto exposure entry values. Do not translate. -->
     <string name="pref_camera_autoexposure_value_frameaverage" translatable="false">frame-average</string>
@@ -64,28 +64,29 @@
     <string name="pref_camera_autoexposure_value_spotmetering" translatable="false">spot-metering</string>
 
     <!-- Settings screen, Video encoder title -->
-    <string name="pref_camera_videoencoder_title">Video Encoder</string>
+    <string name="pref_camera_videoencoder_title">Video encoder</string>
 
     <!-- Settings screen, Video encoder dialog radio button choices -->
-    <string name="pref_camera_videoencoder_entry_0">MPEG4</string>
-    <string name="pref_camera_videoencoder_entry_1">H263</string>
-    <string name="pref_camera_videoencoder_entry_2">H264</string>
+    <string name="pref_camera_videoencoder_entry_0" translatable="false">MPEG4</string>
+    <string name="pref_camera_videoencoder_entry_1" translatable="false">H263</string>
+    <string name="pref_camera_videoencoder_entry_2" translatable="false">H264</string>
 
     <!-- Default video encoder setting. A numerical value. -->
     <string name="pref_camera_videoencoder_default" translatable="false">h264</string>
 
     <!-- Settings screen, Video encoder dialog title -->
-    <string name="pref_camera_videoencoder_dialogtitle">Video Encoder</string>
+    <string name="pref_camera_videoencoder_dialogtitle">Video encoder</string>
 
     <!-- Default audio encoder setting. A numerical value. -->
     <string name="pref_camera_audioencoder_default" translatable="false">aac</string>
 
     <!-- Settings screen, Audio encoder title -->
-    <string name="pref_camera_audioencoder_title">Audio Encoder</string>
+    <string name="pref_camera_audioencoder_title">Audio encoder</string>
 
     <!-- Settings screen, Audio encoder dialog radio button choices -->
-    <string name="pref_camera_audioencoder_entry_0">AMRNB</string>
-    <string name="pref_camera_audioencoder_entry_1">AAC</string>
+    <string name="pref_camera_audioencoder_entry_0" translatable="false">AMRNB</string>
+    <string name="pref_camera_audioencoder_entry_1" translatable="false">AAC</string>
+
     <!-- Default video duration setting. A numerical value.-->
     <string name="pref_camera_video_duration_default" translatable="false">10</string>
 
@@ -93,7 +94,7 @@
     <string name="pref_camera_video_duration_title">Video duration</string>
 
     <!-- Settings screen, Video duration dialog radio button choices -->
-    <string name="pref_camera_video_duration_entry_mms">30 seconds(MMS)</string>
+    <string name="pref_camera_video_duration_entry_mms">30 seconds (MMS)</string>
     <string name="pref_camera_video_duration_entry_10">10 minutes</string>
     <string name="pref_camera_video_duration_entry_30">30 minutes</string>
 
@@ -101,7 +102,7 @@
     <string name="pref_camera_skinToneEnhancement_default" translatable="false">disable</string>
 
     <!-- Settings screen, Select Skin Tone Enhancement title -->
-    <string name="pref_camera_skinToneEnhancement_title">Skin Tone Enhancement</string>
+    <string name="pref_camera_skinToneEnhancement_title">Skin tone enhancement</string>
 
     <!-- Settings screen, Skin Tone Enhancement radio button choices -->
     <string name="pref_camera_skinToneEnhancement_entry_enable">Enable</string>
@@ -110,22 +111,22 @@
     <!-- Skin Tone Enhancement entry values. Do not translate. -->
     <string name="pref_camera_skinToneEnhancement_value_enable" translatable="false">enable</string>
     <string name="pref_camera_skinToneEnhancement_value_disable" translatable="false">disable</string>
-    <!-- Settings screen, setting title text for ZSL-->
-    <string name="pref_camera_zsl_title">ZSL</string>
 
+    <!-- Settings screen, setting title text for ZSL-->
+    <string name="pref_camera_zsl_title">Zero Shutter Lag (ZSL)</string>
     <string name="pref_camera_zsl_default" translatable="false">off</string>
 
     <!-- Default selectable zone af setting. Do not translate. -->
     <string name="pref_camera_selectablezoneaf_default" translatable="false">auto</string>
 
     <!-- Settings screen, Selectable zone af title -->
-    <string name="pref_camera_selectablezoneaf_title"> Selectable Zone Auto Focus</string>
+    <string name="pref_camera_selectablezoneaf_title">Autofocus zone</string>
 
     <!-- Settings screen, Selectable Zone Af dialog radio button choices -->
     <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>
-    <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spot Metering</string>
-    <string name="pref_camera_selectablezoneaf_entry_centerweighted">Center Weighted</string>
-    <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame Average</string>
+    <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spot metering</string>
+    <string name="pref_camera_selectablezoneaf_entry_centerweighted">Center weighted</string>
+    <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame average</string>
 
     <!-- Auto exposure entry values. Do not translate. -->
     <string name="pref_camera_selectablezoneaf_value_auto" translatable="false">auto</string>
@@ -156,7 +157,7 @@
     <string name="pref_camera_facedetection_default" translatable="false">on</string>
 
     <!-- Settings screen, Select Face Detection -->
-    <string name="pref_camera_facedetection_title">Face Detection</string>
+    <string name="pref_camera_facedetection_title">Face detection</string>
 
     <!-- Settings menu, Face Detection choices -->
     <string name="pref_camera_facedetection_entry_off">Off</string>
@@ -166,11 +167,12 @@
     <string name="pref_camera_redeyereduction_default" translatable="false">disable</string>
 
     <!-- Settings screen, Select Redeye Reduction -->
-    <string name="pref_camera_redeyereduction_title">Redeye Reduction</string>
+    <string name="pref_camera_redeyereduction_title">Red eye reduction</string>
 
     <!-- Settings menu, redeye reduction choices -->
     <string name="pref_camera_redeyereduction_entry_enable">Enable</string>
     <string name="pref_camera_redeyereduction_entry_disable">Disable</string>
+
     <!-- Default mce setting. Do not translate. -->
     <string name="pref_camera_mce_default" translatable="false">enable</string>
 
@@ -184,48 +186,42 @@
      <string name="error_app_unsupported">Unsupported video resolution for this encoder type</string>
 
     <!--The message is shown in dialog when the raw snapshot is selected in zsl mode-->
-    <string name="error_app_unsupported_raw">Raw picture format is not supported
-        in zsl mode
-    </string>
+    <string name="error_app_unsupported_raw">Raw picture format is not supported in ZSL mode</string>
 
-    <string name="error_app_unsupported_hdr_zsl">HDR is not supported in zsl
-        mode</string>
+    <string name="error_app_unsupported_hdr_zsl">HDR is not supported in ZSL mode</string>
 
     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
     <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
     <string name="pref_camera_ae_bracket_hdr_value_ae_bracket" translatable="false">AE-Bracket</string>
 
-    <string name="pref_camera_ae_bracket_hdr_title" translatable="false">AE-Bracket</string>
+    <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
     <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
 
     <string name="pref_camera_ae_bracket_hdr_entry_on">On</string>
     <string name="pref_camera_ae_bracket_hdr_entry_off">Off</string>
 
-    <string name="err_app_unsupport_ae_bracket_code">no ae bracket support by Apps now</string>
+    <string name="err_app_unsupport_ae_bracket_code">AE Bracketing is not supported yet</string>
 
     <!-- The messsage shown if user selects a snapshot resolution lower than the current video size. -->
-    <string name="snapshot_lower_than_video">Video snapshot size lower than video size. Capping to Video size. Please select a resolution higher or equal to the current video size.</string>
+    <string name="snapshot_lower_than_video">Video snapshot size is lower than video size, capping to video size. Please select a resolution higher or equal to the current video size.</string>
 
     <!-- The messsage shown if user selects a snapshot resolution in low power mode. -->
-    <string name="snapshotsize_low_powermode">We do not support picture
-        resolution in Low Power Mode. Video size snapshot will be taken. Please
-        select High power mode for picture size.
-    </string>
+    <string name="snapshotsize_low_powermode">Changing picture size is not supported in Low Power mode, video size snapshot will be taken. Please select Normal Power mode to allow changing picture size.</string>
 
     <!-- The messsage shown if user tries to take snapshot during D1/QCIF resolution. -->
-    <string name="snapshot_qcif_and_d1">Only Video size snapshot supported for this resolution.</string>
+    <string name="snapshot_qcif_and_d1">Only video size snapshot is supported for this resolution.</string>
 
     <!-- Default hfr setting. Do not translate. -->
     <string name="pref_camera_hfr_default" translatable="false">off</string>
 
     <!-- Settings screen, Select hfr title -->
-    <string name="pref_camera_hfr_title">Video High FrameRate</string>
+    <string name="pref_camera_hfr_title">High FrameRate video</string>
 
     <!-- Settings screen, hfr radio button choices -->
     <string name="pref_camera_hfr_entry_off">Off</string>
-    <string name="pref_camera_hfr_entry_2x">60</string>
-    <string name="pref_camera_hfr_entry_3x">90</string>
-    <string name="pref_camera_hfr_entry_4x">120</string>
+    <string name="pref_camera_hfr_entry_2x" translatable="false">60</string>
+    <string name="pref_camera_hfr_entry_3x" translatable="false">90</string>
+    <string name="pref_camera_hfr_entry_4x" translatable="false">120</string>
 
     <!-- HFR entry values. Do not translate. -->
     <string name="pref_camera_hfr_value_off" translatable="false">off</string>
@@ -234,7 +230,7 @@
     <string name="pref_camera_hfr_value_4x" translatable="false">120</string>
 
     <!-- Denoise Settings screen, setting title text -->
-    <string name="pref_camera_denoise_title">Wavelet Denoise Mode</string>
+    <string name="pref_camera_denoise_title">Wavelet Denoise mode</string>
     <string name="pref_camera_denoise_default" translatable="false">denoise-off</string>
 
     <!-- Denoise Settings screen, Record location dialog choices -->
@@ -245,11 +241,11 @@
     <string name="pref_camera_iso_default" translatable="false">auto</string>
 
     <!-- Settings screen, Select Iso title -->
-    <string name="pref_camera_iso_title">Select ISO</string>
+    <string name="pref_camera_iso_title">ISO</string>
 
     <!-- Settings screen, ISO dialog radio button choices -->
     <string name="pref_camera_iso_entry_auto">Auto</string>
-    <string name="pref_camera_iso_entry_isodeblur">ISO Auto(HJR)</string>
+    <string name="pref_camera_iso_entry_isodeblur">Auto (HJR)</string>
     <string name="pref_camera_iso_entry_iso100">ISO100</string>
     <string name="pref_camera_iso_entry_iso200">ISO200</string>
     <string name="pref_camera_iso_entry_iso400">ISO400</string>
@@ -266,7 +262,7 @@
     <string name="pref_camera_iso_value_iso1600" translatable="false">ISO1600</string>
 
     <!-- Settings screen, Anti Banding title -->
-    <string name="pref_camera_antibanding_title">Anti Banding</string>
+    <string name="pref_camera_antibanding_title">Antibanding</string>
 
     <!-- Default Anti Banding setting. -->
     <string name="pref_camera_antibanding_default" translatable="false">auto</string>
@@ -312,7 +308,7 @@
     <string name="pref_camera_touchafaec_entry_on">On</string>
 
     <!-- Select DIS title -->
-    <string name="pref_camera_dis_title">DIS</string>
+    <string name="pref_camera_dis_title">Digital Image Stabilization</string>
     <string name="pref_camera_dis_default" translatable="false">disable</string>
 
     <!-- DIS choices -->
@@ -320,7 +316,7 @@
     <string name="pref_camera_dis_entry_on">On</string>
 
     <!-- Select Face Recognition title -->
-    <string name="pref_camera_facerc_title">Face Recognition</string>
+    <string name="pref_camera_facerc_title">Face recognition</string>
     <string name="pref_camera_facerc_default" translatable="false">off</string>
 
     <!-- Face Recognition choices -->
@@ -330,7 +326,7 @@
     <!-- Settings screen, Multiple levels entries -->
     <string name="pref_camera_sharpness_entry_level0">Level 0</string>
     <string name="pref_camera_sharpness_entry_level1">Level 1</string>
-    <string name="pref_camera_sharpness_entry_level2">Level 2(Default)</string>
+    <string name="pref_camera_sharpness_entry_level2">Level 2 (Default)</string>
     <string name="pref_camera_sharpness_entry_level3">Level 3</string>
     <string name="pref_camera_sharpness_entry_level4">Level 4</string>
     <string name="pref_camera_sharpness_entry_level5">Level 5</string>
@@ -342,7 +338,7 @@
     <string name="pref_camera_contrast_entry_level2">Level 2</string>
     <string name="pref_camera_contrast_entry_level3">Level 3</string>
     <string name="pref_camera_contrast_entry_level4">Level 4</string>
-    <string name="pref_camera_contrast_entry_level5">Level 5(Default)</string>
+    <string name="pref_camera_contrast_entry_level5">Level 5 (Default)</string>
     <string name="pref_camera_contrast_entry_level6">Level 6</string>
     <string name="pref_camera_contrast_entry_level7">Level 7</string>
     <string name="pref_camera_contrast_entry_level8">Level 8</string>
@@ -355,7 +351,7 @@
     <string name="pref_camera_saturation_entry_level2">Level 2</string>
     <string name="pref_camera_saturation_entry_level3">Level 3</string>
     <string name="pref_camera_saturation_entry_level4">Level 4</string>
-    <string name="pref_camera_saturation_entry_level5">Level 5(Default)</string>
+    <string name="pref_camera_saturation_entry_level5">Level 5 (Default)</string>
     <string name="pref_camera_saturation_entry_level6">Level 6</string>
     <string name="pref_camera_saturation_entry_level7">Level 7</string>
     <string name="pref_camera_saturation_entry_level8">Level 8</string>
@@ -388,80 +384,80 @@
     <string name="pref_camera_picture_format_default" translatable="false">jpeg</string>
 
     <!-- Settings screen, Select Picture format title -->
-    <string name="pref_camera_picture_format_title">Select Picture Format</string>
+    <string name="pref_camera_picture_format_title">Picture format</string>
 
     <!-- Settings screen, picture format dialog radio button choices -->
-    <string name="pref_camera_picture_format_entry_jpeg">Jpeg</string>
-    <string name="pref_camera_picture_format_entry_raw">Raw</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_422_sp">YUV422SP</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yuyv">YUVRaw8YUYV</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yvyu">YUVRaw8YVYU</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_uyvy">YUVRaw8UYVY</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_vyuy">YUVRaw8VYUY</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8gbrg">BayerQ8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8grbg">BayerQ8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8rggb">BayerQ8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8bggr">BayerQ8BGRR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10gbrg">BayerQ10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10grbg">BayerQ10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10rggb">BayerQ10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10bggr">BayerQ10BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12gbrg">BayerQ12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12grbg">BayerQ12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12rggb">BayerQ12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12bggr">BayerQ12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8gbrg">BayerM8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8grbg">BayerM8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8rggb">BayerM8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8bggr">BayerM8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10gbrg">BayerM10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10grbg">BayerM10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10rggb">BayerM10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10bggr">BayerM10BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12gbrg">BayerM12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12grbg">BayerM12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12rggb">BayerM12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12bggr">BayerM12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8gbrg">BayerIQ8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8grbg">BayerIQ8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8rggb">BayerIQ8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8bggr">BayerIQ8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10gbrg">BayerIQ10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10grbg">BayerIQ10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10rggb">BayerIQ10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10bggr">BayerIQ10BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12gbrg">BayerIQ12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12grbg">BayerIQ12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12rggb">BayerIQ12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12bggr">BayerIQ12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8gbrg">BayerIM8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8grbg">BayerIM8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8rggb">BayerIM8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8bggr">BayerIM8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10gbrg">BayerIM10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10grbg">BayerIM10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10rggb">BayerIM10rggb</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10bggr">BayerIM8bggr</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12gbrg">BayerIM12gbrg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12grbg">BayerIM12grbg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12rggb">BayerIM12rggb</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12bggr">BayerIM12bggr</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8gbrg">BayerIP88gbrg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8grbg">BayerIP88grbg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8rggb">BayerIP88rggb</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8bggr">BayerIP88bggr</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8gbrg">BayerIP168gbrg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8grbg">BayerIP168grbg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8rggb">BayerIP168rggb</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8bggr">BayerIP168bggr</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10gbrg">BayerIP1610gbrg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10grbg">BayerIP1610grbg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10rggb">BayerIP1610rggb</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10bggr">BayerIP1610bggr</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12gbrg">BayerIP1612gbrg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12grbg">BayerIP1612grbg</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb">BayerIP1612rggb</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr">BayerIP1612bggr</string>
+    <string name="pref_camera_picture_format_entry_jpeg" translatable="false">JPEG</string>
+    <string name="pref_camera_picture_format_entry_raw" translatable="false">Raw</string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_422_sp" translatable="false">YUV422SP</string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yuyv" translatable="false">YUVRaw8YUYV</string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yvyu" translatable="false">YUVRaw8YVYU</string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_uyvy" translatable="false">YUVRaw8UYVY</string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_vyuy" translatable="false">YUVRaw8VYUY</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8gbrg" translatable="false">BayerQ8GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8grbg" translatable="false">BayerQ8GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8rggb" translatable="false">BayerQ8RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8bggr" translatable="false">BayerQ8BGRR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10gbrg" translatable="false">BayerQ10GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10grbg" translatable="false">BayerQ10GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10rggb" translatable="false">BayerQ10RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10bggr" translatable="false">BayerQ10BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12gbrg" translatable="false">BayerQ12GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12grbg" translatable="false">BayerQ12GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12rggb" translatable="false">BayerQ12RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12bggr" translatable="false">BayerQ12BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8gbrg" translatable="false">BayerM8GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8grbg" translatable="false">BayerM8GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8rggb" translatable="false">BayerM8RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8bggr" translatable="false">BayerM8BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10gbrg" translatable="false">BayerM10GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10grbg" translatable="false">BayerM10GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10rggb" translatable="false">BayerM10RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10bggr" translatable="false">BayerM10BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12gbrg" translatable="false">BayerM12GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12grbg" translatable="false">BayerM12GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12rggb" translatable="false">BayerM12RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12bggr" translatable="false">BayerM12BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8gbrg" translatable="false">BayerIQ8GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8grbg" translatable="false">BayerIQ8GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8rggb" translatable="false">BayerIQ8RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8bggr" translatable="false">BayerIQ8BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10gbrg" translatable="false">BayerIQ10GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10grbg" translatable="false">BayerIQ10GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10rggb" translatable="false">BayerIQ10RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10bggr" translatable="false">BayerIQ10BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12gbrg" translatable="false">BayerIQ12GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12grbg" translatable="false">BayerIQ12GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12rggb" translatable="false">BayerIQ12RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12bggr" translatable="false">BayerIQ12BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8gbrg" translatable="false">BayerIM8GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8grbg" translatable="false">BayerIM8GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8rggb" translatable="false">BayerIM8RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8bggr" translatable="false">BayerIM8BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10gbrg" translatable="false">BayerIM10GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10grbg" translatable="false">BayerIM10GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10rggb" translatable="false">BayerIM10RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10bggr" translatable="false">BayerIM8BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12gbrg" translatable="false">BayerIM12GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12grbg" translatable="false">BayerIM12GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12rggb" translatable="false">BayerIM12RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12bggr" translatable="false">BayerIM12BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8gbrg" translatable="false">BayerIP88GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8grbg" translatable="false">BayerIP88GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8rggb" translatable="false">BayerIP88RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8bggr" translatable="false">BayerIP88BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8gbrg" translatable="false">BayerIP168GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8grbg" translatable="false">BayerIP168GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8rggb" translatable="false">BayerIP168RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8bggr" translatable="false">BayerIP168BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10gbrg" translatable="false">BayerIP1610GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10grbg" translatable="false">BayerIP1610GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10rggb" translatable="false">BayerIP1610RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10bggr" translatable="false">BayerIP1610BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12gbrg" translatable="false">BayerIP1612GBRG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12grbg" translatable="false">BayerIP1612GRBG</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb" translatable="false">BayerIP1612RGGB</string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr" translatable="false">BayerIP1612BGGR</string>
 
     <!-- Picture format entry values. Do not translate. -->
     <string name="pref_camera_picture_format_value_jpeg" translatable="false">jpeg</string>
@@ -542,12 +538,12 @@
     <string name="pref_camera_jpegquality_entry_superfine">Super fine</string>
     <string name="pref_camera_jpegquality_entry_fine">Fine</string>
     <string name="pref_camera_jpegquality_entry_normal">Normal</string>
-    <string name="pref_camera_jpegquality_entry_0">Jpeg 55%</string>
-    <string name="pref_camera_jpegquality_entry_1">Jpeg 65%</string>
-    <string name="pref_camera_jpegquality_entry_2">Jpeg 75%</string>
-    <string name="pref_camera_jpegquality_entry_3">Jpeg 85%</string>
-    <string name="pref_camera_jpegquality_entry_4">Jpeg 95%</string>
-    <string name="pref_camera_jpegquality_entry_5">Jpeg 100%</string>
+    <string name="pref_camera_jpegquality_entry_0">55%</string>
+    <string name="pref_camera_jpegquality_entry_1">65%</string>
+    <string name="pref_camera_jpegquality_entry_2">75%</string>
+    <string name="pref_camera_jpegquality_entry_3">85%</string>
+    <string name="pref_camera_jpegquality_entry_4">95%</string>
+    <string name="pref_camera_jpegquality_entry_5">100%</string>
 
     <!-- Default auto histogram setting. Do not translate. -->
     <string name="pref_camera_histogram_default" translatable="false">disable</string>
@@ -563,16 +559,16 @@
     <string name="pref_camera_histogram_value_enable" translatable="false">enable</string>
     <string name="pref_camera_histogram_value_disable" translatable="false">disable</string>
 
-    <string name="pref_camera_picturesize_entry_1920x1080">HD1080</string>
-    <string name="pref_camera_picturesize_entry_1280x768">WXGA</string>
-    <string name="pref_camera_picturesize_entry_1280x720">HD720</string>
-    <string name="pref_camera_picturesize_entry_800x600">SVGA</string>
-    <string name="pref_camera_picturesize_entry_800x480">WVGA</string>
-    <string name="pref_camera_picturesize_entry_352x288">CIF</string>
-    <string name="pref_camera_picturesize_entry_176x144">QCIF</string>
+    <string name="pref_camera_picturesize_entry_1920x1080">1080p</string>
+    <string name="pref_camera_picturesize_entry_1280x768" translatable="false">WXGA</string>
+    <string name="pref_camera_picturesize_entry_1280x720">720p</string>
+    <string name="pref_camera_picturesize_entry_800x600" translatable="false">SVGA</string>
+    <string name="pref_camera_picturesize_entry_800x480" translatable="false">WVGA</string>
+    <string name="pref_camera_picturesize_entry_352x288" translatable="false">CIF</string>
+    <string name="pref_camera_picturesize_entry_176x144" translatable="false">QCIF</string>
 
     <string name="pref_camera_focusmode_entry_normal">Normal</string>
-    <string name="pref_camera_focusmode_entry_continuous">CAF</string>
+    <string name="pref_camera_focusmode_entry_continuous">Continuous</string>
 
     <!-- Default auto scene detection setting. -->
     <string name="pref_camera_scenedetect_default" translatable="false">off</string>
