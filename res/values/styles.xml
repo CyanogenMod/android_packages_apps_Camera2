@@ -277,7 +277,6 @@
         <item name="android:alpha">1.0</item>
     </style>
     <style name="FilmstripBottomControlButton">
-        <item name="android:layout_margin">@dimen/filmstrip_bottom_control_spacing</item>
         <item name="android:layout_width">@dimen/filmstrip_bottom_control_size</item>
         <item name="android:layout_height">@dimen/filmstrip_bottom_control_size</item>
         <item name="android:background">@drawable/transparent_button_background</item>
