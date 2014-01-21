@@ -300,8 +300,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
                 break;
             case BUTTON_HDR:
-                // TODO: enableHdrButton
-                enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
+                enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_icons);
                 break;
             case BUTTON_REFOCUS:
                 enableRefocusButton(button, cb, R.array.refocus_icons);
