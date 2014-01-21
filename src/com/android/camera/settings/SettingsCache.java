@@ -125,6 +125,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX);
         mKeyMap.put(SettingsManager.KEY_CAMERA_MODULE_LAST_USED,
                 SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
+        mKeyMap.put(SettingsManager.KEY_CAMERA_PANO_ORIENTATION,
+                SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
     }
 
     /**
@@ -201,6 +203,8 @@ public class SettingsCache {
             return SettingsManager.getShimmyRemainingTimesSetting(mContext);
         case SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX:
             return SettingsManager.getLastUsedCameraModule(mContext);
+        case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION:
+            return SettingsManager.getPanoOrientationSetting(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }

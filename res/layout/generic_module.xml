@@ -38,37 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.android.camera.ui.RotatableLinearLayout
-        android:id="@+id/indicator_bottombar_wrapper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-      <com.android.camera.widget.IndicatorOverlay
-          android:id="@+id/indicator_overlay"
-          android:layout_width="match_parent"
-          android:layout_height="0px"
-          android:layout_weight="1"
-          android:padding="@dimen/indicator_overlay_padding"
-          android:layout_gravity="top|center_horizontal" >
-        <LinearLayout
-            android:id="@+id/indicator_overlay_icons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_indicators"
-            android:layout_gravity="bottom|right" >
-          <ImageView
-              android:id="@+id/refocus_indicator"
-              style="@style/IndicatorIcon" />
-          <ImageView
-              android:id="@+id/hdr_indicator"
-              style="@style/IndicatorIcon" />
-          <ImageView
-              android:id="@+id/flash_indicator"
-              style="@style/IndicatorIcon" />
-        </LinearLayout>
-      </com.android.camera.widget.IndicatorOverlay>
+    <include layout="@layout/indicator_bottombar" />
 
-      <include layout="@layout/bottom_bar" />
-    </com.android.camera.ui.RotatableLinearLayout>
 </merge>

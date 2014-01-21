@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.android.camera.ListPreference;
@@ -132,6 +133,8 @@ public class SettingsManager {
                     Integer settingId = mSettingsCache.getId(key);
                     if (settingId != null) {
                         listener.onSettingChanged(SettingsManager.this, settingId);
+                    } else {
+                        Log.w(TAG, "Setting id from key=" + key + " is null");
                     }
                 }
             };
@@ -306,6 +309,7 @@ public class SettingsManager {
     public static final int SETTING_CAMERA_REFOCUS = 20;
     public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 21;
     public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 22;
+    public static final int SETTING_CAMERA_PANO_ORIENTATION = 23;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -336,6 +340,7 @@ public class SettingsManager {
             "pref_shimmy_remaining_play_times";
     public static final String KEY_CAMERA_MODULE_LAST_USED =
             "pref_camera_module_last_used_index";
+    public static final String KEY_CAMERA_PANO_ORIENTATION = "pref_camera_pano_orientation";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -802,6 +807,14 @@ public class SettingsManager {
             R.array.pref_camera_refocus_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
             KEY_CAMERA_REFOCUS, values, FLUSH_OFF);
+    }
+
+    public static Setting getPanoOrientationSetting(Context context) {
+        String defaultValue = context.getString(R.string.pano_orientation_horizontal);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_pano_orientation_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
+            KEY_CAMERA_PANO_ORIENTATION, values, FLUSH_OFF);
     }
 
     // Utilities.

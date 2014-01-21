@@ -120,6 +120,9 @@ public class BottomBar extends FrameLayout
     private void setPaintColor(int alpha, int color, boolean isCaptureChange) {
         int computedColor = (alpha << 24) | (color & 0x00ffffff);
         mCirclePaint.setColor(computedColor);
+        if (mOptionsToggle == null) {
+            mOptionsToggle = (ToggleImageButton) findViewById(R.id.bottombar_options_toggle);
+        }
         if (!isCaptureChange) {
             mOptionsToggle.setBackgroundColor(computedColor);
         }
@@ -238,9 +241,13 @@ public class BottomBar extends FrameLayout
      * Perform a transition from the bottom bar options layout to the
      * bottom bar capture layout.
      */
-    private void transitionToCapture() {
+    public void transitionToCapture() {
+        mOptionsOverlay.setVisibility(View.VISIBLE);
         mOptionsLayout.setVisibility(View.INVISIBLE);
         mCaptureLayout.setVisibility(View.VISIBLE);
+        if (mMode == MODE_INTENT || mMode == MODE_INTENT_REVIEW) {
+            mIntentLayout.setVisibility(View.INVISIBLE);
+        }
 
         mMode = MODE_CAPTURE;
     }
@@ -249,7 +256,7 @@ public class BottomBar extends FrameLayout
      * Perform a transition from the bottom bar capture layout to the
      * bottom bar options layout.
      */
-    private void transitionToOptions() {
+    public void transitionToOptions() {
         mCaptureLayout.setVisibility(View.INVISIBLE);
         mOptionsLayout.setVisibility(View.VISIBLE);
 

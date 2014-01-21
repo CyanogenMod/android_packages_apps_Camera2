@@ -250,6 +250,20 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          */
         public boolean hideRefocus;
 
+        /**
+         * Set true if the panorama horizontal option should be visible.
+         *
+         * This option is not constrained by hardware limitations.
+         */
+        public boolean enablePanoHorizontal;
+
+        /**
+         * Set true if the panorama vertical option should be visible.
+         *
+         * This option is not constrained by hardware limitations.
+         */
+        public boolean enablePanoVertical;
+
         /** Intent UI */
 
         /**
@@ -298,6 +312,20 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * callback can be null.
          */
         public ButtonManager.ButtonCallback refocusCallback;
+
+        /**
+         * A {@link android.view.View.OnClickListener} that will execute
+         * when the panorama horizontal option is pressed.
+         * This callback can be null.
+         */
+        public View.OnClickListener panoHorizontalCallback;
+
+        /**
+         * A {@link android.view.View.OnClickListener} that will execute
+         * when the panorama vertical option is pressed.
+         * This callback can be null.
+         */
+        public View.OnClickListener panoVerticalCallback;
 
         /** Intent UI callbacks */
 
@@ -1147,6 +1175,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 // on hardware spec.
                 buttonManager.disableButton(ButtonManager.BUTTON_REFOCUS);
             }
+        }
+
+        if (bottomBarSpec.enablePanoHorizontal) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_HORIZONTAL,
+                bottomBarSpec.panoHorizontalCallback, R.drawable.ic_pano_horizontal);
+        }
+
+        if (bottomBarSpec.enablePanoVertical) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_VERTICAL,
+                bottomBarSpec.panoVerticalCallback, R.drawable.ic_pano_vertical);
         }
 
         /** Intent UI */

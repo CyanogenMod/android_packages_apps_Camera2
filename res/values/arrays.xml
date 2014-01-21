@@ -557,6 +557,16 @@
       <item>@drawable/ic_refocus_on_indicator</item>
     </array>
 
+    <string-array name="pref_camera_pano_orientation_entryvalues">
+      <item>@string/pano_orientation_horizontal</item>
+      <item>@string/pano_orientation_vertical</item>
+    </string-array>
+
+    <array name="panorama_indicator_icons" translatable="false">
+      <item>@drawable/ic_pano_horizontal</item>
+      <item>@drawable/ic_pano_vertical</item>
+    </array>
+
     <array name="settings_toggle_icons" translatable="false">
       <item>@drawable/ic_options</item>
       <item>@drawable/ic_options_active</item>
@@ -643,8 +653,8 @@
         <item>@drawable/ic_camera_normal</item>
         <item>@drawable/ic_video_normal</item>
         <item>@drawable/ic_camera_normal</item>
-        <item>@drawable/ic_camera_normal</item>
-        <item>@drawable/ic_camera_normal</item>
+        <item>@null</item>
+        <item>@drawable/ic_panorama_normal</item>
         <item>@null</item>
         <item>@null</item>
         <item>@drawable/ic_craft_normal</item>

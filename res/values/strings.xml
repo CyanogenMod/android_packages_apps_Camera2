@@ -729,4 +729,10 @@ CHAR LIMIT=NONE] -->
 
     <!-- A message shown to the user, indicating that an HDR+ photo is being processed. [CHAR LIMIT=25] -->
     <string name="processing_hdr_plus">Processing HDR+ &#8230;</string>
+
+    <string name="pano_orientation_horizontal" translatable="false">pano_horizontal</string>
+    <string name="pano_orientation_vertical" translatable="false">pano_vertical</string>
+
+    <string name="tag_enabled_id" translatable="false">enabled_id</string>
+
  </resources>
