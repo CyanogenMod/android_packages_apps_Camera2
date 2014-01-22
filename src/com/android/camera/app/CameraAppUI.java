@@ -33,9 +33,8 @@ import android.widget.FrameLayout;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.ButtonManager;
-import com.android.camera.TextureViewHelper;
 import com.android.camera.ShutterButton;
-import com.android.camera.app.CameraProvider;
+import com.android.camera.TextureViewHelper;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
