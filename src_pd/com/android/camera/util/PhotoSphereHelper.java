@@ -101,4 +101,25 @@ public class PhotoSphereHelper {
     public static long getModifiedTimeFromURI(ContentResolver contentResolver, Uri contentUri) {
         return 0;
     }
+
+    /**
+     * Get the resource id of the panorama horizontal icon.
+     */
+    public static int getPanoramaHorizontalDrawableId() {
+        return 0;
+    }
+
+    /**
+     * Get the resource id of the panorama vertical icon.
+     */
+    public static int getPanoramaVerticalDrawableId() {
+        return 0;
+    }
+
+    /**
+     * Get the resource id of the panorama indicator icon array.
+     */
+    public static int getPanoramaIndicatorArrayId() {
+        return 0;
+    }
 }
