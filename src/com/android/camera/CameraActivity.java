@@ -1434,7 +1434,7 @@ public class CameraActivity extends Activity
             }
             if (refocusOn) {
                 modeIndex = getResources().getInteger(R.integer.camera_mode_refocus);
-            } else if (hdrPlusOn) {
+            } else if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
                 modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
             } else {
                 // Do nothing, keep MODULE_CRAFT.
