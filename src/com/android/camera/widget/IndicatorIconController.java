@@ -29,6 +29,7 @@ import com.android.camera.ButtonManager;
 import com.android.camera.app.AppController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.util.PhotoSphereHelper;
 
 import com.android.camera2.R;
 
@@ -75,8 +76,10 @@ public class IndicatorIconController
             R.array.pref_camera_hdr_plus_indicator_icons);
         mRefocusIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.refocus_indicator_icons);
-        mPanoramaIndicatorIcons = context.getResources().obtainTypedArray(
-            R.array.panorama_indicator_icons);
+        if (PhotoSphereHelper.getPanoramaIndicatorArrayId() > 0) {
+            mPanoramaIndicatorIcons = context.getResources().obtainTypedArray(
+                PhotoSphereHelper.getPanoramaIndicatorArrayId());
+        }
     }
 
     @Override
@@ -207,7 +210,7 @@ public class IndicatorIconController
             && buttonManager.isEnabled(ButtonManager.BUTTON_PANO_VERTICAL));
         boolean panoVisible = (buttonManager.isVisible(ButtonManager.BUTTON_PANO_HORIZONTAL)
             && buttonManager.isVisible(ButtonManager.BUTTON_PANO_VERTICAL));
-        if (panoEnabled && panoVisible) {
+        if (panoEnabled && panoVisible && mPanoramaIndicatorIcons != null) {
             setIndicatorState(mController.getSettingsManager(),
                               SettingsManager.SETTING_CAMERA_PANO_ORIENTATION,
                               mPanoramaIndicator, mPanoramaIndicatorIcons, true);

@@ -49,6 +49,7 @@ import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.IndicatorOverlay;
@@ -1177,14 +1178,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         }
 
-        if (bottomBarSpec.enablePanoHorizontal) {
+        if (bottomBarSpec.enablePanoHorizontal
+                && PhotoSphereHelper.getPanoramaHorizontalDrawableId() > 0) {
             buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_HORIZONTAL,
-                bottomBarSpec.panoHorizontalCallback, R.drawable.ic_pano_horizontal);
+                bottomBarSpec.panoHorizontalCallback,
+                PhotoSphereHelper.getPanoramaHorizontalDrawableId());
         }
 
-        if (bottomBarSpec.enablePanoVertical) {
+        if (bottomBarSpec.enablePanoVertical
+                && PhotoSphereHelper.getPanoramaVerticalDrawableId() > 0) {
             buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_VERTICAL,
-                bottomBarSpec.panoVerticalCallback, R.drawable.ic_pano_vertical);
+                bottomBarSpec.panoVerticalCallback,
+                PhotoSphereHelper.getPanoramaVerticalDrawableId());
         }
 
         /** Intent UI */
