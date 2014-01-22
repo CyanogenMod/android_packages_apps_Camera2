@@ -53,6 +53,7 @@ public class IndicatorIconController
 
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
+    private TypedArray mHdrPlusIndicatorIcons;
     private TypedArray mHdrIndicatorIcons;
     private TypedArray mRefocusIndicatorIcons;
     private TypedArray mPanoramaIndicatorIcons;
@@ -72,8 +73,10 @@ public class IndicatorIconController
             R.array.camera_flashmode_indicator_icons);
         mFlashIndicatorVideoIcons = context.getResources().obtainTypedArray(
             R.array.video_flashmode_indicator_icons);
-        mHdrIndicatorIcons = context.getResources().obtainTypedArray(
+        mHdrPlusIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_plus_indicator_icons);
+        mHdrIndicatorIcons = context.getResources().obtainTypedArray(
+            R.array.pref_camera_hdr_indicator_icons);
         mRefocusIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.refocus_indicator_icons);
         if (PhotoSphereHelper.getPanoramaIndicatorArrayId() > 0) {
@@ -107,6 +110,10 @@ public class IndicatorIconController
                 break;
             }
             case ButtonManager.BUTTON_HDRPLUS: {
+                syncHdrIndicator();
+                break;
+            }
+            case ButtonManager.BUTTON_HDR: {
                 syncHdrIndicator();
                 break;
             }
@@ -166,7 +173,7 @@ public class IndicatorIconController
     }
 
     /**
-     * Sync the icon and the visibility of the hdr indicator.
+     * Sync the icon and the visibility of the hdr/hdrplus indicator.
      */
     private void syncHdrIndicator() {
         ButtonManager buttonManager = mController.getButtonManager();
@@ -174,6 +181,11 @@ public class IndicatorIconController
         // do not show the indicator.
         if (buttonManager.isEnabled(ButtonManager.BUTTON_HDRPLUS)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDRPLUS)) {
+            setIndicatorState(mController.getSettingsManager(),
+                              SettingsManager.SETTING_CAMERA_HDR,
+                              mHdrIndicator, mHdrPlusIndicatorIcons, false);
+        } else if (buttonManager.isEnabled(ButtonManager.BUTTON_HDR)
+                && buttonManager.isVisible(ButtonManager.BUTTON_HDR)) {
             setIndicatorState(mController.getSettingsManager(),
                               SettingsManager.SETTING_CAMERA_HDR,
                               mHdrIndicator, mHdrIndicatorIcons, false);
