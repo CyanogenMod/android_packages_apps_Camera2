@@ -2065,6 +2065,30 @@ public class VideoModule implements CameraModule,
                 Log.e(TAG, "supported hfr sizes is null");
             }
 
+            int hfrFps = Integer.parseInt(highFrameRate);
+            int inputBitrate = videoWidth*videoHeight*hfrFps;
+
+            //check if codec supports the resolution, otherwise throw toast
+            List<VideoEncoderCap> videoEncoders = EncoderCapabilities.getVideoEncoders();
+            for (VideoEncoderCap videoEncoder: videoEncoders) {
+                if (videoEncoder.mCodec == mVideoEncoder){
+                    int maxBitrate = (videoEncoder.mMaxHFRFrameWidth *
+                                     videoEncoder.mMaxHFRFrameHeight *
+                                     videoEncoder.mMaxHFRMode);
+                    if (inputBitrate > maxBitrate ){
+                            Log.e(TAG,"Selected codec "+mVideoEncoder+
+                                " does not support HFR " + highFrameRate + " with "+ videoWidth
+                                + "x" + videoHeight +" resolution");
+                            Log.e(TAG, "Codec capabilities: " +
+                                "mMaxHFRFrameWidth = " + videoEncoder.mMaxHFRFrameWidth + " , "+
+                                "mMaxHFRFrameHeight = " + videoEncoder.mMaxHFRFrameHeight + " , "+
+                                "mMaxHFRMode = " + videoEncoder.mMaxHFRMode);
+                            mUnsupportedHFRVideoSize = true;
+                    }
+                    break;
+                }
+            }
+
             if(mUnsupportedHFRVideoSize)
                 Log.v(TAG,"Unsupported hfr resolution");
 
