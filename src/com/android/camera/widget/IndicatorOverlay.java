@@ -21,6 +21,7 @@ import android.content.res.Configuration;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -47,6 +48,34 @@ public class IndicatorOverlay extends FrameLayout
 
     private LinearLayout mIndicatorOverlayIcons;
 
+    /**
+     * A listener for setting a {@link android.view.ViewGroup} invisible
+     * once all of its children are gone.
+     *
+     * This is necessary if the group has a background with a minimum height
+     * and width greater than zero. Otherwise, the background would show
+     * despite an empty group.
+     */
+    private View.OnLayoutChangeListener mLayoutChangeListener =
+        new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                ViewGroup group = (ViewGroup) v;
+                if (group.getChildCount() > 0) {
+                    int visibility = View.INVISIBLE;
+                    for (int i = 0; i < group.getChildCount(); i++) {
+                        View child = group.getChildAt(i);
+                        if (child != null && child.getVisibility() != View.GONE) {
+                            visibility = View.VISIBLE;
+                            break;
+                        }
+                    }
+                    v.setVisibility(visibility);
+                }
+            }
+        };
+
     public IndicatorOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -54,6 +83,7 @@ public class IndicatorOverlay extends FrameLayout
     @Override
     public void onFinishInflate() {
         mIndicatorOverlayIcons = (LinearLayout) findViewById(R.id.indicator_overlay_icons);
+        mIndicatorOverlayIcons.addOnLayoutChangeListener(mLayoutChangeListener);
         Configuration configuration = getContext().getResources().getConfiguration();
         checkOrientation(configuration.orientation);
     }
