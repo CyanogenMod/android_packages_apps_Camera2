@@ -284,9 +284,8 @@
         <item name="android:layout_gravity">center_vertical</item>
     </style>
     <style name="IndicatorIcon">
-        <item name="android:layout_width">@dimen/indicator_icon_radius</item>
-        <item name="android:layout_height">@dimen/indicator_icon_radius</item>
-        <item name="android:scaleType">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@null</item>
     </style>
 </resources>
