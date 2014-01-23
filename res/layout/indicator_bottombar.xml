@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_indicators"
+            android:background="@drawable/bg_options_indicator"
             android:layout_gravity="bottom|right" >
           <ImageView
               android:id="@+id/panorama_indicator"
