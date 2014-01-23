@@ -116,6 +116,7 @@
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"캠코더 설정"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"사진 크기"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"1300만 화소"</string>
+    <string name="pref_camera_picturesize_entry_10mp" msgid="2768659791396478466">"1천만 픽셀"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"800만 화소"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"500만 화소"</string>
     <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4백만 화소(16:9)"</string>
