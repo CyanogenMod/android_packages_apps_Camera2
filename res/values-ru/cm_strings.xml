@@ -201,6 +201,7 @@
     <string name="pref_camera_scenedetect_entry_off">Выкл.</string>
     <string name="pref_camera_scenedetect_entry_on">Вкл.</string>
 
+    <string name="pref_camera_ae_bracket_hdr_title">Автобрекетинг</string>
     <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">Автобрекетинг</string>
     <string name="pref_camera_ae_bracket_hdr_entry_off">Выкл.</string>
     <string name="pref_camera_ae_bracket_hdr_entry_on">Вкл.</string>
@@ -251,8 +252,6 @@
     <string name="pref_camera_saturation_entry_level10">Уровень 10</string>
 
     <string name="pref_camera_picture_format_title">Формат изображения</string>
-    <string name="pref_camera_picture_format_entry_jpeg">JPEG</string>
-    <string name="pref_camera_picture_format_entry_raw">RAW</string>
 
     <string name="pref_camera_jpegquality_title">Качество изображения</string>
     <string name="pref_camera_jpegquality_entry_superfine">Наилучшее</string>
@@ -267,9 +266,6 @@
 
     <string name="pref_camera_hfr_title">Ускоренная съёмка</string>
     <string name="pref_camera_hfr_entry_off">Выкл.</string>
-    <string name="pref_camera_hfr_entry_2x">60 кадр/с</string>
-    <string name="pref_camera_hfr_entry_3x">90 кадр/с</string>
-    <string name="pref_camera_hfr_entry_4x">120 кадр/с</string>
 
     <string name="pref_camera_iso_title">Значение ISO</string>
     <string name="pref_camera_iso_entry_auto">Авто</string>
