@@ -28,6 +28,8 @@ import com.android.camera.crop.ImageLoader;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -182,6 +184,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     private final MediaSaver mMediaSaver;
     private final ProcessingNotificationManager mNotificationManager;
     private final PlaceholderManager mPlaceholderManager;
+    private final SessionStorageManager mSessionStorageManager;
     private final ContentResolver mContentResolver;
 
     /**
@@ -204,15 +207,18 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
      *            progress
      * @param placeholderManager used to manage placeholders in the filmstrip
      *            before the final result is ready
+     * @param sessionStorageManager used to tell modules where to store
+     *            temporary session data
      */
     public CaptureSessionManagerImpl(MediaSaver mediaSaver,
             ContentResolver contentResolver, ProcessingNotificationManager notificationManager,
-            PlaceholderManager placeholderManager) {
+            PlaceholderManager placeholderManager, SessionStorageManager sessionStorageManager) {
         mSessions = new HashMap<String, CaptureSession>();
         mMediaSaver = mediaSaver;
         mContentResolver = contentResolver;
         mNotificationManager = notificationManager;
         mPlaceholderManager = placeholderManager;
+        mSessionStorageManager = sessionStorageManager;
     }
 
     @Override
@@ -265,6 +271,11 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             throw new IllegalArgumentException("Session with given URI does not exist: " + uri);
         }
         return session.getProgressMessage();
+    }
+
+    @Override
+    public File getSessionDirectory(String subDirectory) throws IOException {
+      return mSessionStorageManager.getSessionDirectory(subDirectory);
     }
 
     private void removeSession(String sessionUri) {

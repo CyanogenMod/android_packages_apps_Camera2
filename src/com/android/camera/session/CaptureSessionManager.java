@@ -22,6 +22,9 @@ import android.net.Uri;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.exif.ExifInterface;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Modules use this manager to store capture results.
  */
@@ -109,4 +112,11 @@ public interface CaptureSessionManager {
      * @return The current progress message.
      */
     public CharSequence getSessionProgressMessage(Uri uri);
+
+    /**
+     * Gets the directory to be used for temporary data.
+     *
+     * See {@link SessionStorageManager#getSessionDirectory(String)}
+     */
+    public File getSessionDirectory(String subDirectory) throws IOException;
 }
