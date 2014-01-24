@@ -21,6 +21,7 @@ import android.content.Context;
 
 import com.android.camera.MediaSaverImpl;
 import com.android.camera.processing.ProcessingServiceManager;
+import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.PlaceholderManager;
@@ -41,6 +42,7 @@ public class CameraApp extends Application implements CameraServices {
     private MemoryManagerImpl mMemoryManager;
     private ProcessingNotificationManager mNotificationManager;
     private PlaceholderManager mPlaceHolderManager;
+    private RemoteShutterListener mRemoteShutterListener;
 
     @Override
     public void onCreate() {
@@ -58,6 +60,8 @@ public class CameraApp extends Application implements CameraServices {
         mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
                 mNotificationManager, mPlaceHolderManager, mSessionStorageManager);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
+
+        // TODO... Add a remote shutter listener here.
     }
 
     @Override
@@ -74,5 +78,11 @@ public class CameraApp extends Application implements CameraServices {
     @Deprecated
     public MediaSaver getMediaSaver() {
         return mMediaSaver;
+    }
+
+    @Override
+    public RemoteShutterListener getRemoteShutterListener() {
+        return mRemoteShutterListener != null ? mRemoteShutterListener
+                : RemoteShutterListener.NOOP;
     }
 }

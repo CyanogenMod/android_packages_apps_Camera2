@@ -22,7 +22,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -66,6 +65,7 @@ import com.android.camera.exif.Rational;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
+import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
@@ -91,7 +91,8 @@ public class PhotoModule
         FocusOverlayManager.Listener,
         ShutterButton.OnShutterButtonListener,
         SensorEventListener,
-        SettingsManager.OnSettingChangedListener {
+        SettingsManager.OnSettingChangedListener,
+        RemoteCameraModule {
 
     private static final String TAG = "PhotoModule";
 
@@ -773,9 +774,10 @@ public class PhotoModule
                 if (title == null) {
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
-                    if (date == -1)
+                    if (date == -1) {
                         date = mCaptureStartTime;
-                    if (mHeading >= 0) {
+                    }
+             if (mHeading >= 0) {
                         // heading direction has been updated by the sensor.
                         ExifTag directionRefTag = exif.buildTag(
                                 ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
@@ -801,6 +803,9 @@ public class PhotoModule
                     onCaptureDone();
                 }
             }
+
+            // Send the taken photo to remote shutter listeners, if any are registered.
+            getServices().getRemoteShutterListener().onPictureTaken(jpegData);
 
             // Check this in advance of each shot so we don't add to shutter
             // latency. It's true that someone else could write to the SD card
@@ -1026,8 +1031,9 @@ public class PhotoModule
 
     @Override
     public void onCaptureRetake() {
-        if (mPaused)
-            return;
+        if (mPaused) {
+			return;
+		}
         mUI.hidePostCaptureAlert();
         setupPreview();
     }
@@ -1256,10 +1262,12 @@ public class PhotoModule
             Log.v(TAG, "On resume.");
             onResumeTasks();
         }
+        getServices().getRemoteShutterListener().onModuleReady(this);
     }
 
     @Override
     public void pause() {
+        getServices().getRemoteShutterListener().onModuleExit();
         mPaused = true;
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
@@ -1964,5 +1972,10 @@ public class PhotoModule
                 CameraUtil.closeSilently(outputStream);
             }
         }
+    }
+
+    @Override
+    public void onRemoteShutterPress() {
+        capture();
     }
 }

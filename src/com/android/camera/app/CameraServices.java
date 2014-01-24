@@ -16,6 +16,7 @@
 
 package com.android.camera.app;
 
+import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
 
 /**
@@ -43,4 +44,10 @@ public interface CameraServices {
      */
     @Deprecated
     public MediaSaver getMediaSaver();
+
+    /**
+     * @return A listener to be informed by events interesting for remote
+     *         capture apps. Will never return null.
+     */
+    public RemoteShutterListener getRemoteShutterListener();
 }
