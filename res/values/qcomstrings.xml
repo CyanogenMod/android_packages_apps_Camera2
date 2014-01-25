@@ -219,9 +219,9 @@
 
     <!-- Settings screen, hfr radio button choices -->
     <string name="pref_camera_hfr_entry_off">Off</string>
-    <string name="pref_camera_hfr_entry_2x" translatable="false">60</string>
-    <string name="pref_camera_hfr_entry_3x" translatable="false">90</string>
-    <string name="pref_camera_hfr_entry_4x" translatable="false">120</string>
+    <string name="pref_camera_hfr_entry_2x">60 fps</string>
+    <string name="pref_camera_hfr_entry_3x">90 fps</string>
+    <string name="pref_camera_hfr_entry_4x">120 fps</string>
 
     <!-- HFR entry values. Do not translate. -->
     <string name="pref_camera_hfr_value_off" translatable="false">off</string>
