@@ -1336,8 +1336,8 @@ public class VideoModule extends CameraModule
         }
         // release media recorder
         releaseMediaRecorder();
-        setFocusParameters();
         if (!mPaused) {
+            setFocusParameters();
             mCameraDevice.lock();
             if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
                 stopPreview();
