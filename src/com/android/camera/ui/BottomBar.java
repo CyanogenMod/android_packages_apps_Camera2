@@ -42,7 +42,6 @@ import com.android.camera.ToggleImageButton;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
-
 /**
  * BottomBar swaps its width and height on rotation. In addition, it also changes
  * gravity and layout orientation based on the new orientation. Specifically, in
@@ -109,6 +108,8 @@ public class BottomBar extends FrameLayout
     private final float mCircleRadius;
     private final Path mRectPath = new Path();
 
+    private final RectF mRect = new RectF();
+
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
@@ -133,6 +134,16 @@ public class BottomBar extends FrameLayout
         setPaintColor(alpha, color, false);
     }
 
+    private void setCaptureButtonUp() {
+        setPaintColor(mBackgroundAlpha, mBackgroundColor, true);
+        invalidate();
+    }
+
+    private void setCaptureButtonDown() {
+        setPaintColor(mBackgroundAlpha, mBackgroundPressedColor, true);
+        invalidate();
+    }
+
     @Override
     public void onFinishInflate() {
         mOptionsOverlay
@@ -150,13 +161,15 @@ public class BottomBar extends FrameLayout
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
-                    setPaintColor(mBackgroundAlpha, mBackgroundPressedColor, true);
-                    invalidate();
-                } else if (MotionEvent.ACTION_UP == event.getActionMasked()) {
-                    setPaintColor(mBackgroundAlpha, mBackgroundColor, true);
-                    invalidate();
+                    setCaptureButtonDown();
+                } else if (MotionEvent.ACTION_UP == event.getActionMasked()
+                           || MotionEvent.ACTION_CANCEL == event.getActionMasked()) {
+                    setCaptureButtonUp();
+                } else if (MotionEvent.ACTION_MOVE == event.getActionMasked()) {
+                    if (!mRect.contains(event.getX(), event.getY())) {
+                        setCaptureButtonUp();
+                    }
                 }
-
                 return false;
             }
         });
@@ -388,22 +401,21 @@ public class BottomBar extends FrameLayout
             if (mOptionsToggle.getHeight() < shortEdge) {
                 shortEdge = mOptionsToggle.getHeight();
             }
-            mRectPath.reset();
             if (width > height) {
-                mRectPath.addRect(
+                mRect.set(
                     0.0f,
                     0.0f,
                     (float) width - shortEdge,
-                    (float) height,
-                    Path.Direction.CW);
+                    (float) height);
             } else {
-                mRectPath.addRect(
+                mRect.set(
                     0.0f,
                     (float) shortEdge,
                     (float) width,
-                    (float) height,
-                    Path.Direction.CW);
+                    (float) height);
             }
+            mRectPath.reset();
+            mRectPath.addRect(mRect, Path.Direction.CW);
         }
     }
 
