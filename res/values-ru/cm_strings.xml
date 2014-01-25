@@ -32,6 +32,8 @@
     <string name="pref_camera_picturesize_entry_2_1mp">2,1 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_1_9mp">1,9 Мпикс.</string>
 
+    <string name="pref_camera_storage_title">Хранилище</string>
+
     <string name="pref_camera_scenemode_entry_antimotionblur">Устранение разм. движения</string>
     <string name="pref_camera_scenemode_entry_aqua">Вода</string>
     <string name="pref_camera_scenemode_entry_ar">Дополненная реальность</string>
@@ -266,6 +268,9 @@
 
     <string name="pref_camera_hfr_title">Ускоренная съёмка</string>
     <string name="pref_camera_hfr_entry_off">Выкл.</string>
+    <string name="pref_camera_hfr_entry_2x">60 кадр/с</string>
+    <string name="pref_camera_hfr_entry_3x">90 кадр/с</string>
+    <string name="pref_camera_hfr_entry_4x">120 кадр/с</string>
 
     <string name="pref_camera_iso_title">Значение ISO</string>
     <string name="pref_camera_iso_entry_auto">Авто</string>
@@ -284,4 +289,8 @@
     <string name="error_app_unsupported_raw">Съёмка в формате RAW не поддерживается при включённом ZSL</string>
     <string name="error_app_unsupported_hdr_zsl">Режим HDR не поддерживается при включённом ZSL</string>
     <string name="err_app_unsupport_ae_bracket_code">Автобрекетинг не поддерживается</string>
+    <string name="snapshot_lower_than_video">Разрешение фотоснимка меньше, чем разрешение видеосъёмки. Выберите разрешение выше или равное разрешению видеосъёмки.</string>
+    <string name="snapshotsize_low_powermode">Изменение разрешения изображения невозможно в режиме пониженного энергопотребления. Переключитесь в режим обычного энергопотребления для использования этой функции.</string>
+    <string name="snapshot_qcif_and_d1">Для этого разрешения поддерживается только снимок с текущим разрешением видеосъёмки.</string>
+    <string name="time_lapse_error">Неверное разрешение видео для замедленной съёмки.</string>
 </resources>
