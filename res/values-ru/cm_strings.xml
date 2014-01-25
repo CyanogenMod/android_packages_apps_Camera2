@@ -21,6 +21,7 @@
     <string name="pref_camera_picturesize_entry_12mp">12 Мпикс. (4:3)</string>
     <string name="pref_camera_picturesize_entry_11_5mp">11,5 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_10_4mp">10,4 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_10mp">10 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_9mp">9 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_8_2mp">8,2 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_7_7mp">7,7 Мпикс. (4:3)</string>
@@ -31,6 +32,17 @@
     <string name="pref_camera_picturesize_entry_2_5mp">2,5 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_2_1mp">2,1 Мпикс.</string>
     <string name="pref_camera_picturesize_entry_1_9mp">1,9 Мпикс.</string>
+    <string name="pref_camera_picturesize_entry_1920x1080">1080p</string>
+    <string name="pref_camera_picturesize_entry_1280x720">720p</string>
+    <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
+    <string name="pref_camera_picturesize_entry_xga">XGA</string>
+    <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+    <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+    <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
+    <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
+
+    <string name="pref_camera_storage_title">Хранилище</string>
+    <string name="pref_camera_power_shutter_title">Съёмка кн. питания</string>
 
     <string name="pref_camera_scenemode_entry_antimotionblur">Устранение разм. движения</string>
     <string name="pref_camera_scenemode_entry_aqua">Вода</string>
@@ -210,7 +222,7 @@
     <string name="pref_camera_powermode_entry_lp">Пониженное</string>
     <string name="pref_camera_powermode_entry_np">Обычное</string>
 
-    <string name="pref_camera_antibanding_title">Устран. мерцания</string>
+    <string name="pref_camera_antibanding_title">Устранение мерцания</string>
     <string name="pref_camera_antibanding_entry_0">Выкл.</string>
     <string name="pref_camera_antibanding_entry_1">50 Гц</string>
     <string name="pref_camera_antibanding_entry_2">60 Гц</string>
@@ -266,10 +278,18 @@
 
     <string name="pref_camera_hfr_title">Ускоренная съёмка</string>
     <string name="pref_camera_hfr_entry_off">Выкл.</string>
+    <string name="pref_camera_hfr_entry_2x">60 кадр/с</string>
+    <string name="pref_camera_hfr_entry_3x">90 кадр/с</string>
+    <string name="pref_camera_hfr_entry_4x">120 кадр/с</string>
 
     <string name="pref_camera_iso_title">Значение ISO</string>
     <string name="pref_camera_iso_entry_auto">Авто</string>
     <string name="pref_camera_iso_entry_isodeblur">Aвто (уменьш. размытия)</string>
+    <string name="pref_camera_iso_entry_iso100">ISO 100</string>
+    <string name="pref_camera_iso_entry_iso200">ISO 200</string>
+    <string name="pref_camera_iso_entry_iso400">ISO 400</string>
+    <string name="pref_camera_iso_entry_iso800">ISO 800</string>
+    <string name="pref_camera_iso_entry_iso1600">ISO 1600</string>
 
     <string name="camera_menu_enhance_label">УЛУЧШЕНИЕ</string>
     <string name="camera_menu_slow_shutter_label">ДЛИТ. ВЫДЕРЖКА</string>
@@ -284,4 +304,8 @@
     <string name="error_app_unsupported_raw">Съёмка в формате RAW не поддерживается при включённом ZSL</string>
     <string name="error_app_unsupported_hdr_zsl">Режим HDR не поддерживается при включённом ZSL</string>
     <string name="err_app_unsupport_ae_bracket_code">Автобрекетинг не поддерживается</string>
+    <string name="snapshot_lower_than_video">Разрешение фотоснимка меньше, чем разрешение видеосъёмки. Выберите разрешение выше или равное разрешению видеосъёмки.</string>
+    <string name="snapshotsize_low_powermode">Изменение разрешения изображения невозможно в режиме пониженного энергопотребления. Переключитесь в режим обычного энергопотребления для использования этой функции.</string>
+    <string name="snapshot_qcif_and_d1">Для этого разрешения поддерживается только снимок с текущим разрешением видеосъёмки.</string>
+    <string name="time_lapse_error">Неверное разрешение видео для замедленной съёмки.</string>
 </resources>
