@@ -296,6 +296,9 @@ public class VideoModule extends CameraModule
         }
     }
 
+    private int mShutterIconId;
+
+
     /**
      * Construct a new video module.
      */
@@ -350,6 +353,10 @@ public class VideoModule extends CameraModule
         mUI.showTimeLapseUI(mCaptureTimeLapse);
         mPendingSwitchCameraId = -1;
         mAppController = app;
+
+        mShutterIconId = CameraUtil.getCameraShutterIconId(
+                mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
+
     }
 
     @Override
@@ -625,12 +632,8 @@ public class VideoModule extends CameraModule
 
         if (stop) {
             onStopVideoRecording();
-            int shutterIconId = CameraUtil.getCameraShutterIconId(
-                mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
-            mAppController.getCameraAppUI().animateBottomBarToFullSize(shutterIconId);
         } else {
             startVideoRecording();
-            mAppController.getCameraAppUI().animateBottomBarToCircle(R.drawable.ic_stop_normal);
         }
         mUI.enableShutter(false);
         mFocusManager.onShutterUp();
@@ -1194,6 +1197,8 @@ public class VideoModule extends CameraModule
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
 
+        mAppController.getCameraAppUI().animateBottomBarToCircle(R.drawable.ic_stop_normal);
+
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             Log.v(TAG, "Storage issue, ignore the start request");
@@ -1289,6 +1294,8 @@ public class VideoModule extends CameraModule
         Log.v(TAG, "stopVideoRecording");
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
+
+        mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
 
         boolean fail = false;
         if (mMediaRecorderRecording) {
