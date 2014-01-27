@@ -52,7 +52,7 @@
         <!-- The integer value of CamcorderProfile.QUALITY_WQVGA -->
         <item>11</item>
         <!-- The integer value of CamcorderProfile.QUALITY_CIF -->
-        <item>@string/pref_video_quality_default</item>
+        <item>3</item>
         <!-- The integer value of CamcorderProfile.QUALITY_QVGA -->
         <item>7</item>
         <!-- The integer value of CamcorderProfile.QUALITY_QCIF -->
