@@ -1110,6 +1110,14 @@ public class WideAnglePanoramaModule
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // Do not handle any key if the activity is paused
+        // or not in active camera/video mode
+        if (mPaused) {
+            return true;
+        } else if (!mActivity.isInCameraApp()) {
+            return false;
+        }
+
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
