@@ -164,6 +164,7 @@ public class CameraActivity extends Activity
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
+    private boolean mInCameraApp = true;
     // Keep track of powershutter state
     public static boolean mPowerShutter = false;
     // This is a hack to speed up the start of SecureCamera.
@@ -1399,7 +1400,7 @@ public class CameraActivity extends Activity
         if (!CameraUtil.hasCameraKey()) {
             mPowerShutter = val.equals(CameraSettings.VALUE_ON);
         }
-        if (mPowerShutter /*TODO: && mShowCameraAppView*/) {
+        if (mPowerShutter && mInCameraApp) {
             getWindow().addFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
@@ -1427,6 +1428,10 @@ public class CameraActivity extends Activity
 
     public boolean isSecureCamera() {
         return mSecureCamera;
+    }
+
+    public boolean isInCameraApp() {
+        return mInCameraApp;
     }
 
     @Override
@@ -1657,6 +1662,10 @@ public class CameraActivity extends Activity
      */
     private void setPreviewControlsVisibility(boolean showControls) {
         mCurrentModule.onPreviewFocusChanged(showControls);
+
+        // controls are only shown when the camera app is active
+        // so we can assume to fetch this information from here
+        mInCameraApp = showControls;
     }
 
     // Accessor methods for getting latency times used in performance testing
