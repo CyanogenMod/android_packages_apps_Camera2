@@ -74,6 +74,7 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.SmartCameraHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+import com.google.common.logging.eventprotos;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -942,9 +943,9 @@ public class PhotoModule
 
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_CAPTURE_DONE, "Photo", 0,
-                UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"));
+        UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"),
+                mParameters);
         return true;
     }
 
@@ -1185,8 +1186,8 @@ public class PhotoModule
             initializeSecondTime();
         }
 
-        UsageStatistics.onContentViewChanged(
-                UsageStatistics.COMPONENT_CAMERA, "PhotoModule");
+        UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                eventprotos.CameraEvent.InteractionCause.BUTTON);
 
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {

@@ -356,8 +356,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
     public void onSingleTapUp(int x, int y) {
         if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) return;
 
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_TOUCH_FOCUS, x + "," + y);
+        UsageStatistics.tapToFocus();
 
         // Let users be able to cancel previous touch focus.
         if ((mFocusArea != null) && (mState == STATE_FOCUSING ||

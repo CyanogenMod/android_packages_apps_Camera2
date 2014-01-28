@@ -110,6 +110,9 @@ import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera2.R;
+import com.google.common.logging.eventprotos;
+import com.google.common.logging.eventprotos.NavigationChange;
+import com.google.common.logging.eventprotos.CameraEvent.InteractionCause;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -269,18 +272,16 @@ public class CameraActivity extends Activity
                         return;
                     }
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_EDIT, null, 0,
-                            UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
                     launchTinyPlanetEditor(data);
                 }
 
                 @Override
                 public void onDelete() {
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_DELETE, null, 0,
-                            UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
+                    UsageStatistics.photoInteraction(
+                            UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)),
+                            eventprotos.CameraEvent.InteractionType.DELETE,
+                            InteractionCause.BUTTON);
                     removeData(currentDataId);
                 }
 
@@ -374,24 +375,21 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCameraDisabled(int cameraId) {
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_OPEN_FAIL,
-                "security");
+        UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.SECURITY);
 
         CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
     }
 
     @Override
     public void onDeviceOpenFailure(int cameraId) {
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_OPEN_FAIL, "open");
+        UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.OPEN_FAILURE);
 
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
     @Override
     public void onReconnectionFailure(CameraManager mgr) {
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_OPEN_FAIL, "reconnect");
+        UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE);
 
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
@@ -457,18 +455,20 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onDataPromoted(int dataID) {
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_DELETE, "promoted", 0,
-                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)));
+                    UsageStatistics.photoInteraction(
+                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
+                            eventprotos.CameraEvent.InteractionType.DELETE,
+                            InteractionCause.SWIPE_UP);
 
                     removeData(dataID);
                 }
 
                 @Override
                 public void onDataDemoted(int dataID) {
-                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                            UsageStatistics.ACTION_DELETE, "demoted", 0,
-                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)));
+                    UsageStatistics.photoInteraction(
+                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
+                            eventprotos.CameraEvent.InteractionType.DELETE,
+                            InteractionCause.SWIPE_DOWN);
 
                     removeData(dataID);
                 }
@@ -570,8 +570,8 @@ public class CameraActivity extends Activity
             };
 
     public void gotoGallery() {
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_FILMSTRIP,
-                "thumbnailTap");
+        UsageStatistics.changeScreen(NavigationChange.Mode.FILMSTRIP,
+                InteractionCause.BUTTON);
 
         mFilmstripController.goToNextItem();
     }
@@ -648,9 +648,11 @@ public class CameraActivity extends Activity
         if (currentDataId < 0) {
             return false;
         }
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA, UsageStatistics.ACTION_SHARE,
-                intent.getComponent().getPackageName(), 0,
-                UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)));
+        UsageStatistics.photoInteraction(
+                UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)),
+                eventprotos.CameraEvent.InteractionType.SHARE,
+                InteractionCause.BUTTON);
+        //TODO add intent.getComponent().getPackageName()
         return true;
     }
 
@@ -1083,6 +1085,8 @@ public class CameraActivity extends Activity
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    UsageStatistics.changeScreen(NavigationChange.Mode.GALLERY,
+                            InteractionCause.BUTTON);
                     startGallery();
                     finish();
                 }
@@ -1191,8 +1195,8 @@ public class CameraActivity extends Activity
             mAutoRotateScreen = true;
         }
 
-        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
+        // TODO: set source appropriately
+        UsageStatistics.foregrounded(eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
 
         Drawable galleryLogo;
         if (mSecureCamera) {
@@ -1815,10 +1819,8 @@ public class CameraActivity extends Activity
             return false;
         }
         try {
-            UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
-                    UsageStatistics.ACTION_GALLERY, null);
+            UsageStatistics.changeScreen(NavigationChange.Mode.GALLERY, InteractionCause.BUTTON);
             launchActivityByIntent(new Intent(mGalleryIntent));
-            return true;
         } catch (ActivityNotFoundException e) {
             Log.w(TAG, "Failed to launch gallery activity, closing");
         }
