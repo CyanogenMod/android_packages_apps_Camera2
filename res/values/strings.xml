@@ -701,6 +701,63 @@ CHAR LIMIT=NONE] -->
     <!-- Text shown in the camera mode options list for putting camera in panorama mode [CHAR LIMIT=25] -->
     <string name="mode_panorama">Panorama</string>
 
+    <!-- Accessibility text for switching to camera settings [CHAR_LIMIT=NONE] -->
+    <string name="mode_settings_desc">Open Settings</string>
+    <!-- Accessibility text for switching to normal camera mode [CHAR_LIMIT=NONE] -->
+    <string name="mode_camera_desc">Switch to Camera Mode</string>
+    <!-- Accessibility text for switching to video mode [CHAR_LIMIT=NONE] -->
+    <string name="mode_video_desc">Switch to Video Camera</string>
+    <!-- Accessibility text for switching to photo sphere mode. 'Photo sphere' is a product name. [CHAR_LIMIT=NONE] -->
+    <string name="mode_photosphere_desc">Switch to Photo Sphere Mode</string>
+    <!-- Accessibility text for switching to craft mode. Craft mode contains more advanced features such as capability to refocus and recognize barcode/QR code. [CHAR_LIMIT=NONE] -->
+    <string name="mode_craft_desc">Switch to Advanced Camera Mode</string>
+    <!-- Accessibility text for switching to advanced camera mode. It contains more advanced features such as capability to refocus and recognize barcode/QR code. [CHAR_LIMIT=NONE] -->
+    <string name="mode_advanced_camera_desc">Switch to Advanced Camera Mode</string>
+    <!-- Accessibility text for switching to timelapse mode [CHAR_LIMIT=NONE] -->
+    <string name="mode_timelapse_desc">Switch to Timelapse Mode</string>
+    <!-- Accessibility text for switching to wideangle mode [CHAR_LIMIT=NONE] -->
+    <string name="mode_wideangle_desc">Switch to Wideangle Mode</string>
+    <!-- Accessibility text for switching to panorama mode [CHAR_LIMIT=NONE] -->
+    <string name="mode_panorama_desc">Switch to Panorama Mode</string>
+
+
+    <!-- Accessibility text for refocus toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="refocus_off_desc">Foreground Focus off</string>
+    <string name="refocus_on_desc">Foreground Focus on</string>
+
+    <!-- Accessibility text for settings toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="settings_open_desc">Open settings</string>
+    <string name="settings_close_desc">Close settings</string>
+
+    <!-- Accessibility text for HDR+ toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="hdr_plus_off_desc">HDR Plus off</string>
+    <string name="hdr_plus_on_desc">HDR Plus on</string>
+
+    <!-- Accessibility text for HDR toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="hdr_off_desc">HDR off</string>
+    <string name="hdr_on_desc">HDR on</string>
+
+    <!-- Accessibility text for camera flash toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="flash_off_desc">Flash off</string>
+    <string name="flash_auto_desc">Flash auto</string>
+    <string name="flash_on_desc">Flash on</string>
+
+    <!-- Accessibility text for vide torch (flash) toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="torch_on_desc">Torch on</string>
+    <string name="torch_off_desc">Torch off</string>
+
+    <!-- Accessibility text for camera switch toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="camera_id_back_desc">Back camera</string>
+    <string name="camera_id_front_desc">Front camera</string>
+
+    <!-- Accessibility text for cancel button [CHAR_LIMIT=NONE] -->
+    <string name="cancel_button_description">Cancel</string>
+    <!-- Accessibility text for done button [CHAR_LIMIT=NONE] -->
+    <string name="done_button_description">Done</string>
+    <!-- Accessibility text for retake button [CHAR_LIMIT=NONE] -->
+    <string name="retake_button_description">Retake</string>
+
+
     <!-- Text shown in camera settings list for toggling photo location on or off [CHAR LIMIT=25] -->
     <string name="setting_location">Location</string>
     <!-- Text shown in camera settings list for selecting the size of photos that will be captured [CHAR LIMIT=25] -->

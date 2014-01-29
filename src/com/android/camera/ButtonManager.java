@@ -454,6 +454,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
+        button.overrideContentDescriptions(R.array.camera_flash_descriptions);
+
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
 
@@ -477,6 +479,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
+        button.overrideContentDescriptions(R.array.video_flash_descriptions);
+
         int index = mSettingsManager.getStringValueIndex(
                 SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
@@ -529,6 +533,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
+        button.overrideContentDescriptions(R.array.hdr_plus_descriptions);
 
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
         button.setState(index >= 0 ? index : 0, false);
