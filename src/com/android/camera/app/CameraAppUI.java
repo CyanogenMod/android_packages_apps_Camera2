@@ -1122,11 +1122,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void applyModuleSpecs(final HardwareSpec hardwareSpec,
            final BottomBarUISpec bottomBarSpec) {
-        if (hardwareSpec == null) {
-            throw new IllegalArgumentException();
-        }
-        if (bottomBarSpec == null) {
-            throw new IllegalArgumentException();
+        if (hardwareSpec == null || bottomBarSpec == null) {
+            return;
         }
 
         ButtonManager buttonManager = mController.getButtonManager();
