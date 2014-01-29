@@ -506,7 +506,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return new HardwareSpecImpl(mParameters);
+        return (mParameters != null ? new HardwareSpecImpl(mParameters) : null);
     }
 
     @Override
