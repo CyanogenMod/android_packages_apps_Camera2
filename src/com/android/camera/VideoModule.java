@@ -541,6 +541,7 @@ public class VideoModule extends CameraModule
         readVideoPreferences();
         resizeForPreviewAspectRatio();
         initializeFocusManager();
+
         startPreview();
         initializeVideoSnapshot();
         mUI.initializeZoom(mParameters);
@@ -806,6 +807,13 @@ public class VideoModule extends CameraModule
                 mCameraDevice.cancelAutoFocus();
             }
         }
+
+        // This is to notify app controller that preview will start next, so app
+        // controller can set preview callbacks if needed. This has to happen before
+        // preview is started as a workaround of the framework issue related to preview
+        // callbacks that causes preview stretch and crash. (More details see b/12210027
+        // and b/12591410
+        mAppController.onPreviewReadyToStart();
         try {
             mCameraDevice.setPreviewTexture(surfaceTexture);
             mCameraDevice.startPreview();

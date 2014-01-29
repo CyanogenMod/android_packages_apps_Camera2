@@ -739,6 +739,11 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public void onPreviewReadyToStart() {
+        mCameraAppUI.onPreviewReadyToStart();
+    }
+
+    @Override
     public void onPreviewStarted() {
         mCameraAppUI.onPreviewStarted();
     }
