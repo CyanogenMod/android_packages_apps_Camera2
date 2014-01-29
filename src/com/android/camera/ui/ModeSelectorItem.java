@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -147,12 +148,21 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     /**
-     * Sets image resource as the icon for the mode.
+     * Sets image resource as the icon for the mode. By default, all drawables instances
+     * loaded from the same resource share a common state; if you modify the state
+     * of one instance, all the other instances will receive the same modification.
+     * In order to modify properties of this icon drawable without affecting other
+     * drawables, here we use a mutable drawable which is guaranteed to not share
+     * states with other drawables.
      *
      * @param resource resource id of the asset to be used as icon
      */
     public void setImageResource(int resource) {
-        mIcon.setImageResource(resource);
+        Drawable drawableIcon = getResources().getDrawable(resource);
+        if (drawableIcon != null) {
+            drawableIcon = drawableIcon.mutate();
+        }
+        mIcon.setImageDrawable(drawableIcon);
     }
 
     /**
