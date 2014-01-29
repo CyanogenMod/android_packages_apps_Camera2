@@ -603,8 +603,10 @@ public class FocusOverlayManager {
     }
 
     private boolean needAutoFocusCall() {
-        return getFocusMode().equals(Parameters.FOCUS_MODE_AUTO) &&
-            !(mZslEnabled && (mHandler.hasMessages(RESET_TOUCH_FOCUS)));
+        return (getFocusMode().equals(Parameters.FOCUS_MODE_AUTO) ||
+            (CameraUtil.noFocusModeChangeForTouch() &&
+            getFocusMode().equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)))
+            && !(mZslEnabled && (mHandler.hasMessages(RESET_TOUCH_FOCUS)));
     }
 
     public void setZslEnable(boolean value) {
