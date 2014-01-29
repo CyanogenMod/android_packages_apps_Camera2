@@ -511,10 +511,19 @@ public class BottomBar extends FrameLayout
     }
 
     /**
-     * Set the shutter button's icon resource
+     * Sets the shutter button's icon resource. By default, all drawables instances
+     * loaded from the same resource share a common state; if you modify the state
+     * of one instance, all the other instances will receive the same modification.
+     * In order to modify properties of this icon drawable without affecting other
+     * drawables, here we use a mutable drawable which is guaranteed to not share
+     * states with other drawables.
      */
     public void setShutterButtonIcon(int resId) {
-        mShutterButton.setImageResource(resId);
+        Drawable iconDrawable = getResources().getDrawable(resId);
+        if (iconDrawable != null) {
+            iconDrawable = iconDrawable.mutate();
+        }
+        mShutterButton.setImageDrawable(iconDrawable);
     }
 
     /**
