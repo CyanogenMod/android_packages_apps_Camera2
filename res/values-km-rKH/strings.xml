@@ -116,6 +116,7 @@
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"ការ​កំណត់​ម៉ាស៊ីន​ថត​វីដេអូ"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"ទំហំ​រូបភាព"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"១៣ មេហ្គាភីកសែល"</string>
+    <string name="pref_camera_picturesize_entry_10mp" msgid="2768659791396478466">"១០ មេហ្គា​ភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"៨ មេហ្គា​ភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"៥ មេហ្គា​ភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"៤ មេហ្គា​ភីកសែល (16:9)"</string>
