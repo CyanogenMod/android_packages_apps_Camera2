@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2013-2014 The CyanogenMod Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <string name="pref_camera_powermode_title">Λειτουργία ισχύος</string>
+    <string name="pref_camera_powermode_entry_lp">Χαμηλή ισχύς</string>
+    <string name="pref_camera_powermode_entry_np">Κανονική ισχύς</string>
+    <string name="pref_camera_autoexposure_title">Λειτουργία αυτόματης έκθεσης</string>
+    <string name="pref_camera_autoexposure_entry_frameaverage">Μέσος όρος κάδρου</string>
+    <string name="pref_camera_autoexposure_entry_centerweighted">Βάρος προς το κέντρο</string>
+    <string name="pref_camera_autoexposure_entry_spotmetering">Σημειακή μέτρηση</string>
+    <string name="pref_camera_videoencoder_title">Κωδικοποιητής βίντεο</string>
+    <string name="pref_camera_videoencoder_dialogtitle">Κωδικοποιητής βίντεο</string>
+    <string name="pref_camera_audioencoder_title">Κωδικοποιητής ήχου</string>
+    <string name="pref_camera_video_duration_title">Διάρκεια βίντεο</string>
+    <string name="pref_camera_video_duration_entry_mms">30 δευτερόλεπτα (MMS)</string>
+    <string name="pref_camera_video_duration_entry_10">10 λεπτά</string>
+    <string name="pref_camera_video_duration_entry_30">30 λεπτά</string>
+    <string name="pref_camera_skinToneEnhancement_title">Βελτίωση τόνου δέρματος</string>
+    <string name="pref_camera_skinToneEnhancement_entry_enable">Ενεργοποίηση</string>
+    <string name="pref_camera_skinToneEnhancement_entry_disable">Απενεργοποίηση</string>
+    <string name="pref_camera_zsl_title">Μηδενική καθυστέρηση κλείστρου (ZSL)</string>
+    <string name="pref_camera_selectablezoneaf_title">Ζώνη αυτόματης εστίασης</string>
+    <string name="pref_camera_selectablezoneaf_entry_auto">Αυτόματη</string>
+    <string name="pref_camera_selectablezoneaf_entry_spotmetering">Σημειακή μέτρηση</string>
+    <string name="pref_camera_selectablezoneaf_entry_centerweighted">Βάρος προς το κέντρο</string>
+    <string name="pref_camera_selectablezoneaf_entry_frameaverage">Μέσος όρος κάδρου</string>
+    <string name="pref_camera_zsl_entry_off">Ανενεργή</string>
+    <string name="pref_camera_zsl_entry_on">Ενεργή</string>
+    <string name="pref_camera_video_hdr_entry_off">Ανενεργό</string>
+    <string name="pref_camera_video_hdr_entry_on">Ενεργό</string>
+    <string name="pref_camera_video_hdr_title">Video HDR</string>
+    <string name="pref_camera_facedetection_title">Εντοπισμός προσώπου</string>
+    <string name="pref_camera_facedetection_entry_off">Ανενεργός</string>
+    <string name="pref_camera_facedetection_entry_on">Ενεργός</string>
+    <string name="pref_camera_redeyereduction_title">Μείωση κόκκινων ματιών</string>
+    <string name="pref_camera_redeyereduction_entry_enable">Ενεργοποίηση</string>
+    <string name="pref_camera_redeyereduction_entry_disable">Απενεργοποίηση</string>
+    <string name="error_app_unsupported_hfr">Δεν υποστηρίζεται βίντεο υψηλού ρυθμού καρέ στην επιλεγμένη ανάλυση</string>
+    <string name="error_app_unsupported_hfr_codec">Υποστηρίζεται μόνο η κωδικοποίηση H.264 κατά τη λήψη βίντεο υψηλού ρυθμού καρέ</string>
+    <string name="error_app_unsupported">Μη υποστηριζόμενη ανάλυση βίντεο για αυτόν τον τύπο κωδικοποιητή</string>
+    <string name="error_app_unsupported_raw">Δεν υποστηρίζεται Raw τύπος εικόνας κατά την λειτουργία ZSL</string>
+    <string name="error_app_unsupported_hdr_zsl">Δεν υποστηρίζεται το HDR κατά την λειτουργία ZSL</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">Bracket ΑΕ</string>
+    <string name="pref_camera_ae_bracket_hdr_title">Bracketing αυτόματης έκθεσης</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_on">Ενεργό</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_off">Ανενεργό</string>
+    <string name="err_app_unsupport_ae_bracket_code">Το Bracketing ΑΕ δεν υποστηρίζεται ακόμη</string>
+    <string name="snapshot_lower_than_video">Το μέγεθος στιγμιότυπου βίντεο είναι μικρότερο από το μέγεθος βίντεο, κλείδωμα στο μέγεθος βίντεο. Παρακαλώ επιλέξτε ένα μέγεθος μεγαλύτερο ή ίσο με το τρέχον μέγεθος βίντεο.</string>
+    <string name="snapshotsize_low_powermode">Δεν υποστηρίζεται η αλλαγή μεγέθους φωτογραφίας κατά την λειτουργία Χαμηλής ισχύος, θα ληφθεί στιγμιότυπο στο μέγεθος του βίντεο. Παρακαλώ επιλέξτε την λειτουργία Κανονικής ισχύος για να μπορείτε να αλλάξετε το μέγεθος της εικόνας.</string>
+    <string name="snapshot_qcif_and_d1">Υποστηρίζεται μόνο στιγμιότυπο στο μέγεθος του βίντεο για αυτή την ανάλυση.</string>
+    <string name="pref_camera_hfr_title">Βίντεο υψηλού ρυθμού καρέ</string>
+    <string name="pref_camera_hfr_entry_off">Ανενεργό</string>
+    <string name="pref_camera_hfr_entry_2x">60 fps</string>
+    <string name="pref_camera_hfr_entry_3x">90 fps</string>
+    <string name="pref_camera_hfr_entry_4x">120 fps</string>
+    <string name="pref_camera_denoise_title">Λειτουργία Wavelet Denoise</string>
+    <string name="pref_camera_denoise_entry_off">Ανενεργή</string>
+    <string name="pref_camera_denoise_entry_on">Ενεργή</string>
+    <string name="pref_camera_iso_title">ISO</string>
+    <string name="pref_camera_iso_entry_auto">Αυτόματο</string>
+    <string name="pref_camera_iso_entry_isodeblur">Αυτόματο (HJR)</string>
+    <string name="pref_camera_iso_entry_iso100">100 ISO</string>
+    <string name="pref_camera_iso_entry_iso200">200 ISO</string>
+    <string name="pref_camera_iso_entry_iso400">400 ISO</string>
+    <string name="pref_camera_iso_entry_iso800">800 ISO</string>
+    <string name="pref_camera_iso_entry_iso1600">1600 ISO</string>
+    <string name="pref_camera_antibanding_title">Antibanding</string>
+    <string name="pref_camera_antibanding_entry_0">Ανενεργό</string>
+    <string name="pref_camera_antibanding_entry_1">50 Hz</string>
+    <string name="pref_camera_antibanding_entry_2">60 Hz</string>
+    <string name="pref_camera_antibanding_entry_3">Αυτόματο</string>
+    <string name="pref_camera_coloreffect_title">Εφέ χρώματος</string>
+    <string name="pref_camera_coloreffect_entry_none">Κανένα</string>
+    <string name="pref_camera_coloreffect_entry_mono">Μονόχρωμο</string>
+    <string name="pref_camera_coloreffect_entry_sepia">Σέπια</string>
+    <string name="pref_camera_coloreffect_entry_negative">Αρνητικό</string>
+    <string name="pref_camera_coloreffect_entry_solarize">Υπερφωτισμός</string>
+    <string name="pref_camera_coloreffect_entry_posterize">Ποστεροποίηση</string>
+    <string name="pref_camera_coloreffect_entry_aqua">Νερό</string>
+    <string name="pref_camera_coloreffect_entry_emboss">Ξεθώριασμα</string>
+    <string name="pref_camera_coloreffect_entry_sketch">Σκίτσο</string>
+    <string name="pref_camera_coloreffect_entry_neon">Neon</string>
+    <string name="pref_camera_coloreffect_entry_pastel">Παστέλ</string>
+    <string name="pref_camera_coloreffect_entry_mosaic">Μωσαϊκό</string>
+    <string name="pref_camera_coloreffect_entry_redtint">Κόκκινη απόχρωση</string>
+    <string name="pref_camera_coloreffect_entry_bluetint">Μπλε απόχρωση</string>
+    <string name="pref_camera_coloreffect_entry_greentint">Πράσινη απόχρωση</string>
+    <string name="pref_camera_touchafaec_title">Αυτόματη έκθεση/εστίαση με άγγιγμα</string>
+    <string name="pref_camera_touchafaec_entry_off">Ανενεργό</string>
+    <string name="pref_camera_touchafaec_entry_on">Ενεργό</string>
+    <string name="pref_camera_dis_title">Ψηφιακή σταθεροποίηση εικόνας</string>
+    <string name="pref_camera_dis_entry_off">Ανενεργή</string>
+    <string name="pref_camera_dis_entry_on">Ενεργή</string>
+    <string name="pref_camera_facerc_title">Εντοπισμός προσώπου</string>
+    <string name="pref_camera_facerc_entry_off">Ανενεργός</string>
+    <string name="pref_camera_facerc_entry_on">Ενεργός</string>
+    <string name="pref_camera_sharpness_entry_level0">Επίπεδο 0</string>
+    <string name="pref_camera_sharpness_entry_level1">Επίπεδο 1</string>
+    <string name="pref_camera_sharpness_entry_level2">Επίπεδο 2 (Προεπιλογή)</string>
+    <string name="pref_camera_sharpness_entry_level3">Επίπεδο 3</string>
+    <string name="pref_camera_sharpness_entry_level4">Επίπεδο 4</string>
+    <string name="pref_camera_sharpness_entry_level5">Επίπεδο 5</string>
+    <string name="pref_camera_sharpness_entry_level6">Επίπεδο 6</string>
+    <string name="pref_camera_contrast_entry_level0">Επίπεδο 0</string>
+    <string name="pref_camera_contrast_entry_level1">Επίπεδο 1</string>
+    <string name="pref_camera_contrast_entry_level2">Επίπεδο 2</string>
+    <string name="pref_camera_contrast_entry_level3">Επίπεδο 3</string>
+    <string name="pref_camera_contrast_entry_level4">Επίπεδο 4</string>
+    <string name="pref_camera_contrast_entry_level5">Επίπεδο 5 (Προεπιλογή)</string>
+    <string name="pref_camera_contrast_entry_level6">Επίπεδο 6</string>
+    <string name="pref_camera_contrast_entry_level7">Επίπεδο 7</string>
+    <string name="pref_camera_contrast_entry_level8">Επίπεδο 8</string>
+    <string name="pref_camera_contrast_entry_level9">Επίπεδο 9</string>
+    <string name="pref_camera_contrast_entry_level10">Επίπεδο 10</string>
+    <string name="pref_camera_saturation_entry_level0">Επίπεδο 0</string>
+    <string name="pref_camera_saturation_entry_level1">Επίπεδο 1</string>
+    <string name="pref_camera_saturation_entry_level2">Επίπεδο 2</string>
+    <string name="pref_camera_saturation_entry_level3">Επίπεδο 3</string>
+    <string name="pref_camera_saturation_entry_level4">Επίπεδο 4</string>
+    <string name="pref_camera_saturation_entry_level5">Επίπεδο 5 (Προεπιλογή)</string>
+    <string name="pref_camera_saturation_entry_level6">Επίπεδο 6</string>
+    <string name="pref_camera_saturation_entry_level7">Επίπεδο 7</string>
+    <string name="pref_camera_saturation_entry_level8">Επίπεδο 8</string>
+    <string name="pref_camera_saturation_entry_level9">Επίπεδο 9</string>
+    <string name="pref_camera_saturation_entry_level10">Επίπεδο 10</string>
+    <string name="pref_camera_sharpness_title">Οξύτητα</string>
+    <string name="pref_camera_contrast_title">Αντίθεση</string>
+    <string name="pref_camera_saturation_title">Κορεσμός</string>
+    <string name="pref_camera_picture_format_title">Τύπος εικόνας</string>
+    <string name="pref_camera_jpegquality_title">Ποιότητα εικόνας</string>
+    <string name="pref_camera_jpegquality_entry_superfine">Τέλεια</string>
+    <string name="pref_camera_jpegquality_entry_fine">Καλή</string>
+    <string name="pref_camera_jpegquality_entry_normal">Κανονική</string>
+    <string name="pref_camera_jpegquality_entry_0">55%</string>
+    <string name="pref_camera_jpegquality_entry_1">65%</string>
+    <string name="pref_camera_jpegquality_entry_2">75%</string>
+    <string name="pref_camera_jpegquality_entry_3">85%</string>
+    <string name="pref_camera_jpegquality_entry_4">95%</string>
+    <string name="pref_camera_jpegquality_entry_5">100%</string>
+    <string name="pref_camera_histogram_title">Ιστόγραμμα</string>
+    <string name="pref_camera_histogram_entry_enable">Ενεργοποίηση</string>
+    <string name="pref_camera_histogram_entry_disable">Απενεργοποίηση</string>
+    <string name="pref_camera_picturesize_entry_1920x1080">1080p</string>
+    <string name="pref_camera_picturesize_entry_1280x720">720p</string>
+    <string name="pref_camera_focusmode_entry_normal">Κανονική</string>
+    <string name="pref_camera_focusmode_entry_continuous">Συνεχής</string>
+    <string name="pref_camera_scenedetect_title">Αυτόματος εντοπισμός σκηνής</string>
+    <string name="pref_camera_scenedetect_entry_off">Ανενεργός</string>
+    <string name="pref_camera_scenedetect_entry_on">Ενεργός</string>
+    <string name="time_lapse_error">Μη έγκυρο μέγεθος βίντεο για καταγραφή time-lapse.</string>
+</resources>
