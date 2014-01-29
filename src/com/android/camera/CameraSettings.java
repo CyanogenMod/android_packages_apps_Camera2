@@ -101,7 +101,9 @@ public class CameraSettings {
         PreferenceInflater inflater = new PreferenceInflater(mContext);
         PreferenceGroup group =
                 (PreferenceGroup) inflater.inflate(preferenceRes);
-        if (mParameters != null) initPreference(group);
+        if (mParameters != null) {
+            initPreference(group);
+        }
         return group;
     }
 
@@ -117,42 +119,9 @@ public class CameraSettings {
         return supported.get(0);
     }
 
-    // TODO: move this logic into the settings manager utilities.
-    public static void initialCameraPictureSize(
-            Context context, Parameters parameters, SettingsManager settingsManager) {
-        // When launching the camera app first time, we will set the picture
-        // size to the first one in the list defined in "arrays.xml" and is also
-        // supported by the driver.
-        List<Size> supported = parameters.getSupportedPictureSizes();
-        if (supported == null) return;
-        for (String candidate : context.getResources().getStringArray(
-                R.array.pref_camera_picturesize_entryvalues)) {
-            if (setCameraPictureSize(candidate, supported, parameters)) {
-                settingsManager.set(SettingsManager.SETTING_PICTURE_SIZE, candidate);
-                return;
-            }
-        }
-        Log.e(TAG, "No supported picture size found");
-    }
-
     public static void removePreferenceFromScreen(
             PreferenceGroup group, String key) {
         removePreference(group, key);
-    }
-
-    public static boolean setCameraPictureSize(
-            String candidate, List<Size> supported, Parameters parameters) {
-        int index = candidate.indexOf('x');
-        if (index == NOT_FOUND) return false;
-        int width = Integer.parseInt(candidate.substring(0, index));
-        int height = Integer.parseInt(candidate.substring(index + 1));
-        for (Size size : supported) {
-            if (size.width == width && size.height == height) {
-                parameters.setPictureSize(width, height);
-                return true;
-            }
-        }
-        return false;
     }
 
     public static int getMaxVideoDuration(Context context) {
@@ -218,8 +187,12 @@ public class CameraSettings {
             filterUnsupportedOptions(group,
                     videoFlashMode, mParameters.getSupportedFlashModes());
         }
-        if (exposure != null) buildExposureCompensation(group, exposure);
-        if (cameraIdPref != null) buildCameraId(group, cameraIdPref);
+        if (exposure != null) {
+            buildExposureCompensation(group, exposure);
+        }
+        if (cameraIdPref != null) {
+            buildCameraId(group, cameraIdPref);
+        }
 
         if (timeLapseInterval != null) {
             resetIfInvalid(timeLapseInterval);
@@ -263,7 +236,9 @@ public class CameraSettings {
         for (int i = minValue; i <= maxValue; ++i) {
             entryValues[i - minValue] = Integer.toString(Math.round(i / step));
             StringBuilder builder = new StringBuilder();
-            if (i > 0) builder.append('+');
+            if (i > 0) {
+                builder.append('+');
+            }
             entries[i - minValue] = builder.append(i).toString();
             labels[i - minValue] = explabel + " " + builder.toString();
             icons[i - minValue] = iconIds.getResourceId(3 + i, 0);
@@ -374,7 +349,9 @@ public class CameraSettings {
         } catch (Exception ex) {
             version = 0;
         }
-        if (version == CURRENT_VERSION) return;
+        if (version == CURRENT_VERSION) {
+            return;
+        }
 
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(KEY_VERSION, CURRENT_VERSION);
@@ -395,7 +372,9 @@ public class CameraSettings {
         // Note: This method accesses the global preferences directly, not the
         // combo preferences.
         int cameraId = readPreferredCameraId(pref);
-        if (cameraId == 0) return;  // fast path
+        if (cameraId == 0) {
+            return; // fast path
+        }
 
         if (cameraId < 0 || cameraId >= numberOfCameras) {
             writePreferredCameraId(pref, 0);

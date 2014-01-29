@@ -18,7 +18,6 @@ package com.android.camera;
 
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 
 import com.android.camera.app.CameraManager;
@@ -60,36 +59,6 @@ public class SettingsController implements SettingsView.SettingsViewController {
     }
 
     @Override
-    public String[] getSupportedPictureSizeEntries() {
-        ArrayList<String> supported = new ArrayList<String>();
-        List<Size> sizes = mSettingsManager.getSupportedPictureSizes();
-        String[] entries = mActivity.getResources().getStringArray(
-            R.array.pref_camera_picturesize_entries);
-        String[] values = mActivity.getResources().getStringArray(
-            R.array.pref_camera_picturesize_entryvalues);
-
-        if (entries.length != values.length) {
-            return supported.toArray(new String[0]);
-        }
-
-        int i = 0;
-        for (String value : values) {
-            int index = value.indexOf('x');
-            if (index >= 0) {
-                int width = Integer.parseInt(value.substring(0, index));
-                int height = Integer.parseInt(value.substring(index + 1));
-                for (Size size : sizes) {
-                    if (size.width == width && size.height == height) {
-                        supported.add(entries[i]);
-                    }
-                }
-            }
-            i++;
-        }
-        return supported.toArray(new String[supported.size()]);
-    }
-
-    @Override
     public void setPictureSize(String size) {
         if (!mActivity.isPaused()) {
             mSettingsManager.set(SettingsManager.SETTING_PICTURE_SIZE, size);
@@ -98,7 +67,7 @@ public class SettingsController implements SettingsView.SettingsViewController {
 
     @Override
     public String[] getSupportedVideoQualityEntries() {
-        ArrayList<String> supported = new ArrayList();
+        ArrayList<String> supported = new ArrayList<String>();
         int cameraId = mSettingsManager.getRegisteredCameraId();
 
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
@@ -138,11 +107,6 @@ public class SettingsController implements SettingsView.SettingsViewController {
             getSettingsCapabilities(CameraManager.CameraProxy camera) {
         final Parameters parameters = camera.getParameters();
         return (new SettingsCapabilities() {
-                @Override
-                public List<Size> getSupportedPictureSizes() {
-                    return parameters.getSupportedPictureSizes();
-                }
-
                 @Override
                 public String[] getSupportedExposureValues() {
                     int max = parameters.getMaxExposureCompensation();

@@ -261,32 +261,12 @@
     <!-- Settings screen, Picture size title -->
     <string name="pref_camera_picturesize_title">Picture size</string>
 
-    <!-- Settings screen, dialog choice for 13 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_13mp">13M pixels</string>
-    <!-- Settings screen, dialog choice for 10 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
-    <!-- Settings screen, dialog choice for 8 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_8mp">8M pixels</string>
-    <!-- Settings screen, dialog choice for 5 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_5mp">5M pixels</string>
-    <!-- Settings screen, dialog choice for 4 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_4mp_wide">4M pixels (16:9)</string>
-    <!-- Settings screen, dialog choice for 3 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_3mp">3M pixels</string>
-    <!-- Settings screen, dialog choice for 2 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_2mp">2M pixels</string>
-    <!-- Settings screen, dialog choice for 2 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_2mp_wide">2M pixels (16:9)</string>
-    <!-- Settings screen, dialog choice for 1.5 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_1_5mp">1.5M pixels</string>
-    <!-- Settings screen, dialog choice for 1.3 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_1_3mp">1.3M pixels</string>
-    <!-- Settings screen, dialog choice for 1 megapixels picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_1mp">1M pixels</string>
-    <!-- Settings screen, dialog choice for VGA picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_vga">VGA</string>
-    <!-- Settings screen, dialog choice for QVGA picture size [CHAR LIMIT=20] -->
-    <string name="pref_camera_picturesize_entry_qvga">QVGA</string>
+    <!-- Settings screen, dialog choice for "large" picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_large">Large</string>
+    <!-- Settings screen, dialog choice for "medium" picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_medium">Medium</string>
+    <!-- Settings screen, dialog choice for "small" picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_small">Small</string>
 
     <!-- Settings screen, Focus mode title -->
     <string name="pref_camera_focusmode_title">Focus mode</string>

@@ -19,7 +19,6 @@ package com.android.camera.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
@@ -29,8 +28,8 @@ import com.android.camera.app.AppController;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SettingsManager class provides an api for getting and setting both
@@ -230,12 +229,6 @@ public class SettingsManager {
      */
     public interface SettingsCapabilities {
         /**
-         * Returns a list of the picture sizes currently
-         * supported by the camera device.
-         */
-        public List<Size> getSupportedPictureSizes();
-
-        /**
          * Returns a dynamically calculated list of
          * exposure values, based on the min and max
          * exposure compensation supported by the camera device.
@@ -247,17 +240,6 @@ public class SettingsManager {
          * of cameras available on the device.
          */
         public String[] getSupportedCameraIds();
-    }
-
-    /**
-     * Exposes SettingsCapabilities functionality.
-     */
-    public List<Size> getSupportedPictureSizes() {
-        if (mCapabilities != null) {
-            return mCapabilities.getSupportedPictureSizes();
-        } else {
-            return null;
-        }
     }
 
     /**

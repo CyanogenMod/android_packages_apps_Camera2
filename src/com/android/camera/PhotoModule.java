@@ -22,7 +22,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -67,6 +66,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -774,8 +774,9 @@ public class PhotoModule
                 if (title == null) {
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
-                    if (date == -1)
+                    if (date == -1) {
                         date = mCaptureStartTime;
+                    }
                     if (mHeading >= 0) {
                         // heading direction has been updated by the sensor.
                         ExifTag directionRefTag = exif.buildTag(
@@ -1027,8 +1028,9 @@ public class PhotoModule
 
     @Override
     public void onCaptureRetake() {
-        if (mPaused)
+        if (mPaused) {
             return;
+        }
         mUI.hidePostCaptureAlert();
         setupPreview();
     }
@@ -1630,8 +1632,6 @@ public class PhotoModule
     }
 
     private void updateCameraParametersPreference() {
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-
         setAutoExposureLockIfSupported();
         setAutoWhiteBalanceLockIfSupported();
         setFocusAreasIfSupported();
@@ -1663,17 +1663,10 @@ public class PhotoModule
 
     private void updateParametersPictureSize() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-
         String pictureSize = settingsManager.get(SettingsManager.SETTING_PICTURE_SIZE);
-        if (pictureSize == null) {
-            //TODO: deprecate CameraSettings.
-            CameraSettings.initialCameraPictureSize(
-                    mActivity, mParameters, settingsManager);
-        } else {
-            List<Size> supported = mParameters.getSupportedPictureSizes();
-            CameraSettings.setCameraPictureSize(
-                    pictureSize, supported, mParameters);
-        }
+
+        List<Size> supported = mParameters.getSupportedPictureSizes();
+        SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters);
         Size size = mParameters.getPictureSize();
 
         // Set a preview size that is closest to the viewfinder height and has
