@@ -25,9 +25,7 @@ import android.net.Uri;
 import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
-import com.android.camera.app.LocationManager;
 import com.android.camera.module.ModuleController;
-import com.android.camera.ui.ModeListView;
 import com.android.camera.SettingsController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
@@ -113,6 +111,11 @@ public interface AppController {
      * UI.
      */
     public SurfaceTexture getPreviewBuffer();
+
+    /**
+     * Gets called from module when preview is ready to start.
+     */
+    public void onPreviewReadyToStart();
 
     /**
      * Gets called from module when preview is started.

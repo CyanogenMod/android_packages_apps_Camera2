@@ -884,6 +884,24 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
+     * Gets called when preview is ready to start. It sets up one shot preview callback
+     * in order to receive a callback when the preview frame is available, so that
+     * the preview cover can be hidden to reveal preview.
+     *
+     * An alternative for getting the timing to hide preview cover is through
+     * {@link CameraAppUI#onSurfaceTextureUpdated(android.graphics.SurfaceTexture)},
+     * which is less accurate but therefore is the fallback for modules that manage
+     * their own preview callbacks (as setting one preview callback will override
+     * any other installed preview callbacks), or use camera2 API.
+     */
+    public void onPreviewReadyToStart() {
+        if (mModeCoverState == COVER_SHOWN) {
+            mModeCoverState = COVER_WILL_HIDE_AT_NEXT_FRAME;
+            mController.setupOneShotPreviewListener();
+        }
+    }
+
+    /**
      * Gets called when preview is started.
      */
     public void onPreviewStarted() {
