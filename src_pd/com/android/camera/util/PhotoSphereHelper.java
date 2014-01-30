@@ -52,6 +52,14 @@ public class PhotoSphereHelper {
             /* Do nothing */
         }
 
+        public void onResume() {
+            /* Do nothing */
+        }
+
+        public void onPause() {
+            /* Do nothing */
+        }
+
         public void onStop() {
             /* Do nothing */
         }
