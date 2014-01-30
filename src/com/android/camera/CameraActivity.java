@@ -1167,6 +1167,7 @@ public class CameraActivity extends Activity
         mOrientationManager.pause();
         // Close the camera and wait for the operation done.
         mCameraController.closeCamera();
+        mPanoramaViewHelper.onPause();
 
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
@@ -1256,6 +1257,7 @@ public class CameraActivity extends Activity
 
         // Lights-out mode at all times.
         findViewById(R.id.activity_root_view).setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+        mPanoramaViewHelper.onResume();
     }
 
     @Override
