@@ -564,7 +564,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 public void onDisplayChanged(int displayId) {
                     int rotation = CameraUtil.getDisplayRotation(
                             (Activity) mController.getAndroidContext());
-                    if ((rotation - mLastRotation + 360) % 360 == 180) {
+                    if ((rotation - mLastRotation + 360) % 360 == 180
+                            && mPreviewStatusListener != null) {
                         mPreviewStatusListener.onPreviewFlipped();
                     }
                     mLastRotation = rotation;
