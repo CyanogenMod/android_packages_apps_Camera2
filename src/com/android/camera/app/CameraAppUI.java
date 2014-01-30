@@ -49,10 +49,13 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.IndicatorOverlay;
 import com.android.camera2.R;
+
+import com.google.common.logging.eventprotos;
 
 /**
  * CameraAppUI centralizes control of views shared across modules. Whereas module
@@ -627,6 +630,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         } else if (swipeState == SWIPE_LEFT) {
             // Pass the touch sequence to filmstrip layout.
+            UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.FILMSTRIP,
+                eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
             mAppRootView.redirectTouchEventsTo(mFilmstripLayout);
         } else if (swipeState == SWIPE_RIGHT) {
             // Pass the touch to mode switcher

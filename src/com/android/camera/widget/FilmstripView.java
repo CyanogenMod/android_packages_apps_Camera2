@@ -41,9 +41,7 @@ import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.ui.FilmstripGestureRecognizer;
 import com.android.camera.ui.ZoomView;
-import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
-import com.google.common.logging.eventprotos;
 
 import java.util.Arrays;
 
@@ -1495,8 +1493,6 @@ public class FilmstripView extends ViewGroup {
                     && deltaX < mSlop * (-1)) {
                 // intercept left swipe
                 if (Math.abs(deltaX) >= Math.abs(deltaY) * 2) {
-                    UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.FILMSTRIP,
-                            eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
                     return true;
                 }
             }
