@@ -268,24 +268,6 @@ public class PhotoUI implements PieListener,
         mSurfaceTextureSizeListener = listener;
     }
 
-    public void updatePreviewAspectRatio(float aspectRatio) {
-        if (aspectRatio <= 0) {
-            Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
-            return;
-        }
-        if (mOrientationResize && CameraUtil.isScreenRotated(mActivity)) {
-            aspectRatio = 1f / aspectRatio;
-        }
-
-        if (mAspectRatio != aspectRatio) {
-            mAspectRatio = aspectRatio;
-            // Update transform matrix with the new aspect ratio.
-            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-                setTransformMatrix(mPreviewWidth, mPreviewHeight);
-            }
-        }
-    }
-
     private void setTransformMatrix(int width, int height) {
         mMatrix = mTextureView.getTransform(mMatrix);
         float scaleX = 1f, scaleY = 1f;
