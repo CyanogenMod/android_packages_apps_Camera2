@@ -50,19 +50,15 @@ import com.android.camera2.R;
  * a horizontal layout orientation.
 */
 public class BottomBar extends FrameLayout
-    implements PreviewStatusListener.PreviewAreaSizeChangedListener,
-               PreviewOverlay.OnPreviewTouchedListener {
+    implements PreviewStatusListener.PreviewAreaSizeChangedListener {
 
     private static final String TAG = "BottomBar";
-
-    private static final int BOTTOMBAR_OPTIONS_TIMEOUT_MS = 2000;
 
     private static final int CIRCLE_ANIM_DURATION_MS = 300;
 
     private static final int MODE_CAPTURE = 0;
-    private static final int MODE_OPTIONS = 1;
-    private static final int MODE_INTENT = 2;
-    private static final int MODE_INTENT_REVIEW = 3;
+    private static final int MODE_INTENT = 1;
+    private static final int MODE_INTENT_REVIEW = 2;
     private int mMode;
 
     private int mWidth;
@@ -73,28 +69,8 @@ public class BottomBar extends FrameLayout
     private final int mOptimalHeight;
     private boolean mOverLayBottomBar;
 
-    private ToggleImageButton mOptionsToggle;
-
-    private TopRightMostOverlay mOptionsOverlay;
-    private TopRightWeightedLayout mOptionsLayout;
     private FrameLayout mCaptureLayout;
     private TopRightWeightedLayout mIntentLayout;
-    private boolean mIsCaptureIntent = false;
-
-    /**
-     * A generic Runnable for setting the options toggle
-     * to the capture layout state and performing the state
-     * transition.
-     */
-    private final Runnable mCloseOptionsRunnable =
-        new Runnable() {
-            @Override
-            public void run() {
-                if (mOptionsToggle != null) {
-                    mOptionsToggle.setState(0, true);
-                }
-            }
-        };
 
     private ShutterButton mShutterButton;
 
@@ -121,12 +97,6 @@ public class BottomBar extends FrameLayout
     private void setPaintColor(int alpha, int color, boolean isCaptureChange) {
         int computedColor = (alpha << 24) | (color & 0x00ffffff);
         mCirclePaint.setColor(computedColor);
-        if (mOptionsToggle == null) {
-            mOptionsToggle = (ToggleImageButton) findViewById(R.id.bottombar_options_toggle);
-        }
-        if (!isCaptureChange) {
-            mOptionsToggle.setBackgroundColor(computedColor);
-        }
         invalidate();
     }
 
@@ -146,10 +116,6 @@ public class BottomBar extends FrameLayout
 
     @Override
     public void onFinishInflate() {
-        mOptionsOverlay
-            = (TopRightMostOverlay) findViewById(R.id.bottombar_options_overlay);
-        mOptionsLayout
-            = (TopRightWeightedLayout) findViewById(R.id.bottombar_options);
         mCaptureLayout
             = (FrameLayout) findViewById(R.id.bottombar_capture);
         mIntentLayout
@@ -173,73 +139,6 @@ public class BottomBar extends FrameLayout
                 return false;
             }
         });
-
-        mOptionsOverlay.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    // close options immediately.
-                    closeModeOptionsDelayed(BOTTOMBAR_OPTIONS_TIMEOUT_MS);
-                }
-                // Let touch event reach mode options or shutter.
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public void onPreviewTouched(MotionEvent ev) {
-        // close options immediately.
-        closeModeOptionsDelayed(0);
-    }
-
-    /**
-     * Schedule (or re-schedule) the options menu to be closed
-     * after a number of milliseconds.  If the options menu
-     * is already closed, nothing is scheduled.
-     */
-    private void closeModeOptionsDelayed(int milliseconds) {
-        // Check that the bottom bar options are visible.
-        if (mOptionsLayout.getVisibility() != View.VISIBLE) {
-            return;
-        }
-
-        // Remove queued callbacks.
-        removeCallbacks(mCloseOptionsRunnable);
-
-        // Close the bottom bar options view in n milliseconds.
-        postDelayed(mCloseOptionsRunnable, milliseconds);
-    }
-
-    /**
-     * Initializes the bottom bar toggle for switching between
-     * capture and the bottom bar options.
-     */
-    public void setupToggle(boolean isCaptureIntent) {
-        mIsCaptureIntent = isCaptureIntent;
-
-        // Of type ToggleImageButton because ToggleButton
-        // has a non-removable spacing for text on the right-hand side.
-        mOptionsToggle = (ToggleImageButton) findViewById(R.id.bottombar_options_toggle);
-        mOptionsToggle.setState(0, false);
-        mOptionsToggle.setOnStateChangeListener(new ToggleImageButton.OnStateChangeListener() {
-            @Override
-            public void stateChanged(View view, boolean toOptions) {
-                if (toOptions) {
-                    if (mIsCaptureIntent) {
-                        hideIntentLayout();
-                    }
-                    transitionToOptions();
-                } else {
-                    if (mIsCaptureIntent) {
-                        transitionToIntentLayout();
-                    } else {
-                        transitionToCapture();
-                    }
-                }
-            }
-        });
-        mOptionsOverlay.setReferenceViewParent(mOptionsLayout);
     }
 
     /**
@@ -255,8 +154,6 @@ public class BottomBar extends FrameLayout
      * bottom bar capture layout.
      */
     public void transitionToCapture() {
-        mOptionsOverlay.setVisibility(View.VISIBLE);
-        mOptionsLayout.setVisibility(View.INVISIBLE);
         mCaptureLayout.setVisibility(View.VISIBLE);
         if (mMode == MODE_INTENT || mMode == MODE_INTENT_REVIEW) {
             mIntentLayout.setVisibility(View.INVISIBLE);
@@ -266,24 +163,11 @@ public class BottomBar extends FrameLayout
     }
 
     /**
-     * Perform a transition from the bottom bar capture layout to the
-     * bottom bar options layout.
-     */
-    public void transitionToOptions() {
-        mCaptureLayout.setVisibility(View.INVISIBLE);
-        mOptionsLayout.setVisibility(View.VISIBLE);
-
-        mMode = MODE_OPTIONS;
-    }
-
-    /**
      * Perform a transition to the global intent layout.  The current
      * layout state of the bottom bar is irrelevant.
      */
     public void transitionToIntentLayout() {
         mCaptureLayout.setVisibility(View.VISIBLE);
-        mOptionsLayout.setVisibility(View.INVISIBLE);
-        mOptionsOverlay.setVisibility(View.VISIBLE);
         mIntentLayout.setVisibility(View.VISIBLE);
 
         View button;
@@ -301,8 +185,6 @@ public class BottomBar extends FrameLayout
      */
     public void transitionToIntentReviewLayout() {
         mCaptureLayout.setVisibility(View.INVISIBLE);
-        mOptionsLayout.setVisibility(View.INVISIBLE);
-        mOptionsOverlay.setVisibility(View.INVISIBLE);
 
         View button;
         button = mIntentLayout.findViewById(R.id.done_button);
@@ -315,14 +197,9 @@ public class BottomBar extends FrameLayout
     }
 
     private void setButtonImageLevels(int level) {
-        ((MultiToggleImageButton) findViewById(R.id.flash_toggle_button)).setImageLevel(level);
-        ((MultiToggleImageButton) findViewById(R.id.camera_toggle_button)).setImageLevel(level);
-        ((MultiToggleImageButton) findViewById(R.id.hdr_plus_toggle_button)).setImageLevel(level);
-        ((MultiToggleImageButton) findViewById(R.id.refocus_toggle_button)).setImageLevel(level);
         ((ImageButton) findViewById(R.id.cancel_button)).setImageLevel(level);
         ((ImageButton) findViewById(R.id.done_button)).setImageLevel(level);
         ((ImageButton) findViewById(R.id.retake_button)).setImageLevel(level);
-        mOptionsToggle.setImageLevel(level);
     }
 
     @Override
@@ -397,23 +274,11 @@ public class BottomBar extends FrameLayout
                 (int)(diagonalLength(width, height)/2),
                 Path.Direction.CW);
 
-            int shortEdge = mOptionsToggle.getWidth();
-            if (mOptionsToggle.getHeight() < shortEdge) {
-                shortEdge = mOptionsToggle.getHeight();
-            }
-            if (width > height) {
-                mRect.set(
-                    0.0f,
-                    0.0f,
-                    (float) width - shortEdge,
-                    (float) height);
-            } else {
-                mRect.set(
-                    0.0f,
-                    (float) shortEdge,
-                    (float) width,
-                    (float) height);
-            }
+            mRect.set(
+                0.0f,
+                0.0f,
+                (float) width,
+                (float) height);
             mRectPath.reset();
             mRectPath.addRect(mRect, Path.Direction.CW);
         }
@@ -460,8 +325,7 @@ public class BottomBar extends FrameLayout
     @Override
     public void onDraw(Canvas canvas) {
         switch (mMode) {
-            case MODE_CAPTURE: // intentional fallthrough
-            case MODE_OPTIONS:
+            case MODE_CAPTURE:
                 if (mDrawCircle) {
                     canvas.drawPath(mCirclePath, mCirclePaint);
                 } else {
@@ -555,9 +419,6 @@ public class BottomBar extends FrameLayout
                 getResources().getDrawable(resId));
         mShutterButton.setImageDrawable(transitionDrawable);
 
-        View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
-        optionsOverlay.setVisibility(View.INVISIBLE);
-
         mDrawCircle = true;
         transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
         radiusAnimator.start();
@@ -588,8 +449,6 @@ public class BottomBar extends FrameLayout
         radiusAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                View optionsOverlay = findViewById(R.id.bottombar_options_overlay);
-                optionsOverlay.setVisibility(View.VISIBLE);
                 mDrawCircle = false;
             }
         });

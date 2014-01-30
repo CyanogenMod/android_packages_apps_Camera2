@@ -54,6 +54,7 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.IndicatorOverlay;
+import com.android.camera.widget.ModeOptionsOverlay;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 
@@ -388,6 +389,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
     private BottomBar mBottomBar;
+    private ModeOptionsOverlay mModeOptionsOverlay;
     private IndicatorOverlay mIndicatorOverlay;
     private boolean mShouldShowShimmy = false;
     private IndicatorIconController mIndicatorIconController;
@@ -757,8 +759,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.setAutoAdjustTransform(
             mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
         if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-            mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
             mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
+            mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeOptionsOverlay);
         }
 
         // Set a listener for resizing the indicator overlay on
@@ -827,11 +829,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.setOnLayoutChangeListener(mPreviewLayoutChangeListener);
 
         mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
-        mBottomBar.setupToggle(mIsCaptureIntent);
+        mModeOptionsOverlay
+            = (ModeOptionsOverlay) mCameraRootView.findViewById(R.id.mode_options_overlay);
 
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
-        mPreviewOverlay.setOnPreviewTouchedListener(mBottomBar);
+        mPreviewOverlay.setOnPreviewTouchedListener(mModeOptionsOverlay);
 
         mCaptureOverlay = (CaptureAnimationOverlay)
                 mCameraRootView.findViewById(R.id.capture_overlay);
@@ -855,6 +858,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureView = null;
         mPreviewOverlay = null;
         mBottomBar = null;
+        mModeOptionsOverlay = null;
         mIndicatorOverlay = null;
         mIndicatorIconController = null;
         setBottomBarShutterListener(null);

@@ -31,10 +31,6 @@ import java.util.List;
  * TopRightWeightedLayout is a LinearLayout that reorders its
  * children such that the right most child is the top most child
  * on an orientation change.
- *
- * This container also evenly spaces it's children by maintaining
- * a layout weight of 1, and centers the children in the opposite
- * direction of the layout orientation.
  */
 public class TopRightWeightedLayout extends LinearLayout {
 
@@ -66,22 +62,12 @@ public class TopRightWeightedLayout extends LinearLayout {
             // and reversing children
             setOrientation(LinearLayout.HORIZONTAL);
             reverseChildren();
-            for (int i = 0; i < getChildCount(); i++) {
-                ViewGroup.LayoutParams params = getChildAt(i).getLayoutParams();
-                params.width = 0;
-                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            }
             requestLayout();
         } else if (!isPortrait && isHorizontal) {
             // Landscape orientation is out of sync, setting to vertical
             // and reversing children
             setOrientation(LinearLayout.VERTICAL);
             reverseChildren();
-            for (int i = 0; i < getChildCount(); i++) {
-                ViewGroup.LayoutParams params = getChildAt(i).getLayoutParams();
-                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                params.height = 0;
-            }
             requestLayout();
         }
     }
