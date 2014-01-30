@@ -50,9 +50,21 @@ public class SettingsManager {
     private int mCameraId = -1;
     private AppController mAppController;
 
+    /**
+     * A List of OnSettingChangedListener's, maintained
+     * to compare to new listeners and prevent duplicate
+     * registering.
+     */
+    private final List<OnSettingChangedListener>
+        mListeners = new ArrayList<OnSettingChangedListener>();
+
+    /**
+     * A List of OnSharedPreferenceChangeListener's, maintained
+     * to hold pointers to actually registered listeners,
+     * so they can be unregistered.
+     */
     private final List<OnSharedPreferenceChangeListener>
-        mSharedPreferenceListeners =
-        new ArrayList<OnSharedPreferenceChangeListener>();
+        mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
 
     public SettingsManager(Context context, AppController app, int nCameras) {
         mContext = context;
@@ -108,6 +120,7 @@ public class SettingsManager {
         String cameraKey = mContext.getPackageName() + "_preferences_" + cameraId;
         mCameraSettings = mContext.getSharedPreferences(
             cameraKey, Context.MODE_PRIVATE);
+
         for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
             mCameraSettings.registerOnSharedPreferenceChangeListener(listener);
         }
@@ -148,23 +161,25 @@ public class SettingsManager {
             throw new IllegalArgumentException("OnSettingChangedListener cannot be null.");
         }
 
+        if (mListeners.contains(listener)) {
+            return;
+        }
+
+        mListeners.add(listener);
         OnSharedPreferenceChangeListener sharedPreferenceListener =
             getSharedPreferenceListener(listener);
+        mSharedPreferenceListeners.add(sharedPreferenceListener);
 
-        if (!mSharedPreferenceListeners.contains(sharedPreferenceListener)) {
-            mSharedPreferenceListeners.add(sharedPreferenceListener);
+        if (mGlobalSettings != null) {
+            mGlobalSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
+        }
 
-            if (mGlobalSettings != null) {
-                mGlobalSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
-            }
+        if (mCameraSettings != null) {
+            mCameraSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
+        }
 
-            if (mCameraSettings != null) {
-                mCameraSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
-            }
-
-            if (mDefaultSettings != null) {
-                mDefaultSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
-            }
+        if (mDefaultSettings != null) {
+            mDefaultSettings.registerOnSharedPreferenceChangeListener(sharedPreferenceListener);
         }
     }
 
@@ -177,26 +192,32 @@ public class SettingsManager {
             throw new IllegalArgumentException();
         }
 
+        if (!mListeners.contains(listener)) {
+            return;
+        }
+
+        int index = mListeners.indexOf(listener);
+        mListeners.remove(listener);
+
+        // Get the reference to the actual OnSharedPreferenceChangeListener
+        // that was registered.
         OnSharedPreferenceChangeListener sharedPreferenceListener =
-            getSharedPreferenceListener(listener);
+            mSharedPreferenceListeners.get(index);
+        mSharedPreferenceListeners.remove(index);
 
-        if (mSharedPreferenceListeners.contains(sharedPreferenceListener)) {
-            mSharedPreferenceListeners.remove(sharedPreferenceListener);
+        if (mGlobalSettings != null) {
+            mGlobalSettings.unregisterOnSharedPreferenceChangeListener(
+                sharedPreferenceListener);
+        }
 
-            if (mGlobalSettings != null) {
-                mGlobalSettings.unregisterOnSharedPreferenceChangeListener(
-                    sharedPreferenceListener);
-            }
+        if (mCameraSettings != null) {
+            mCameraSettings.unregisterOnSharedPreferenceChangeListener(
+                sharedPreferenceListener);
+        }
 
-            if (mCameraSettings != null) {
-                mCameraSettings.unregisterOnSharedPreferenceChangeListener(
-                    sharedPreferenceListener);
-            }
-
-            if (mDefaultSettings != null) {
-                mDefaultSettings.unregisterOnSharedPreferenceChangeListener(
-                    sharedPreferenceListener);
-            }
+        if (mDefaultSettings != null) {
+            mDefaultSettings.unregisterOnSharedPreferenceChangeListener(
+                sharedPreferenceListener);
         }
     }
 
@@ -219,6 +240,7 @@ public class SettingsManager {
             }
         }
         mSharedPreferenceListeners.clear();
+        mListeners.clear();
     }
 
     /**
