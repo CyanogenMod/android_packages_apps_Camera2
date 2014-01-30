@@ -364,6 +364,9 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             }
             if (mSwipeTrend < 0) {
                 hideFilmstrip();
+                if (mListener != null) {
+                    mListener.onSwipeOut();
+                }
             } else if (mSwipeTrend > 0) {
                 showFilmstrip();
             } else {
