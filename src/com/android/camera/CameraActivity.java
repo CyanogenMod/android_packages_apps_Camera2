@@ -49,6 +49,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.CameraPerformanceTracker;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -950,6 +951,7 @@ public class CameraActivity extends Activity
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
         mOnCreateTime = System.currentTimeMillis();
         GcamHelper.init(getContentResolver());
 
@@ -1160,6 +1162,7 @@ public class CameraActivity extends Activity
     @Override
     public void onPause() {
         mPaused = true;
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
 
         // Delete photos that are pending deletion
         performDeletion();
@@ -1187,6 +1190,7 @@ public class CameraActivity extends Activity
     @Override
     public void onResume() {
         mPaused = false;
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
 
         mLastLayoutOrientation = getResources().getConfiguration().orientation;
 
@@ -1424,6 +1428,7 @@ public class CameraActivity extends Activity
             return;
         }
 
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.MODE_SWITCH_START);
         // Record last used camera mode for quick switching
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
                 || modeIndex == getResources().getInteger(R.integer.camera_mode_craft)) {

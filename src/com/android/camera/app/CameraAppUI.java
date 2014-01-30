@@ -47,6 +47,7 @@ import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
+import android.util.CameraPerformanceTracker;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
@@ -920,6 +921,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Gets notified when next preview frame comes in.
      */
     public void onNewPreviewFrame() {
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
         hideModeCover();
         mModeCoverState = COVER_HIDDEN;
     }
@@ -1032,6 +1034,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
+            CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
             hideModeCover();
             mModeCoverState = COVER_HIDDEN;
         }
