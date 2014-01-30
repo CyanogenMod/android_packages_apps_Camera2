@@ -17,27 +17,19 @@
 package com.android.camera.ui;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.Camera.Size;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.camera2.R;
 import com.android.camera.util.FeedbackHelper;
+import com.android.camera2.R;
 
-import java.lang.Integer;
 import java.util.ArrayList;
 
 
@@ -52,11 +44,11 @@ public class SettingsView extends ListView {
     private final int mHeadingTextResId = R.string.mode_settings;
     private final int mHeadingIconBlockColor = R.color.settings_mode_color;
 
-    private Context mContext;
+    private final Context mContext;
     private SettingsViewController mController;
     private AlertDialog.Builder mDialogBuilder;
 
-    private SettingsAdapter mAdapter;
+    private final SettingsAdapter mAdapter;
 
     private FeedbackHelper mFeedbackHelper;
 
@@ -156,7 +148,6 @@ public class SettingsView extends ListView {
     public interface SettingsViewController {
         public void setLocation(boolean on);
 
-        public String[] getSupportedPictureSizeEntries();
         public void setPictureSize(String size);
 
         public String[] getSupportedVideoQualityEntries();
@@ -260,20 +251,17 @@ public class SettingsView extends ListView {
             return null;
         }
 
-        final String[] supported = mController.getSupportedPictureSizeEntries();
         final String[] entries = context.getResources().getStringArray(
             R.array.pref_camera_picturesize_entries);
         final String[] values = context.getResources().getStringArray(
             R.array.pref_camera_picturesize_entryvalues);
 
         builder.setTitle(R.string.setting_picture_size)
-       .setItems(supported, new DialogInterface.OnClickListener() {
+       .setItems(entries, new DialogInterface.OnClickListener() {
                @Override
                public void onClick(DialogInterface dialog, int which) {
-                   int index = getIndex(entries, supported[which]);
-                   if (index > 0) {
+                   int index = getIndex(entries, entries[which]);
                        mController.setPictureSize(values[index]);
-                   }
                }
            });
 
@@ -297,15 +285,13 @@ public class SettingsView extends ListView {
             R.array.pref_video_quality_entryvalues);
 
         builder.setTitle(R.string.setting_video_resolution)
-        .setItems(supported, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    int index = getIndex(entries, supported[which]);
-                    if (index > 0) {
+                .setItems(supported, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int index = getIndex(entries, supported[which]);
                         mController.setVideoQuality(values[index]);
                     }
-                }
-            });
+                });
 
         return builder;
     }
