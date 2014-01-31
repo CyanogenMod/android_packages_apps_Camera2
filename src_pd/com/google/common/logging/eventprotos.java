@@ -30,6 +30,7 @@ public class eventprotos {
             public static final int SWIPE_LEFT = 0;
             public static final int SWIPE_UP = 0;
             public static final int SWIPE_DOWN = 0;
+            public static final int SWIPE_RIGHT = 0;
         }
     }
 

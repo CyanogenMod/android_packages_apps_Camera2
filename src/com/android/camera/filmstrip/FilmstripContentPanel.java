@@ -30,6 +30,11 @@ public interface FilmstripContentPanel {
     interface Listener extends FilmstripController.FilmstripListener {
 
         /**
+         * Callback on a swipe out of filmstrip.
+         */
+        public void onSwipeOut();
+
+        /**
          * Callback when the filmstrip becomes invisible or gone.
          */
         public void onFilmstripHidden();
