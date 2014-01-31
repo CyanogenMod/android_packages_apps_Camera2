@@ -43,8 +43,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.camera.CameraActivity;
 import com.android.camera.app.CameraApp;
-import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.tinyplanet.TinyPlanetPreview.PreviewSizeListener;
 import com.android.camera.util.XmpUtil;
@@ -100,7 +100,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
      * Lock for the result preview bitmap. We can't change it while we're trying
      * to draw it.
      */
-    private Lock mResultLock = new ReentrantLock();
+    private final Lock mResultLock = new ReentrantLock();
 
     /** The title of the original panoramic image. */
     private String mOriginalTitle = "";
@@ -111,7 +111,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
     private Bitmap mResultBitmap;
 
     /** Used to delay-post a tiny planet rendering task. */
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     /** Whether rendering is in progress right now. */
     private Boolean mRendering = false;
     /**
@@ -155,18 +155,17 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                         if (mSourceBitmap == null || mResultBitmap == null) {
                             return null;
                         }
-
                         int width = mSourceBitmap.getWidth();
                         int height = mSourceBitmap.getHeight();
                         TinyPlanetNative.process(mSourceBitmap, width, height, mResultBitmap,
-                                mPreviewSizePx,
-                                mCurrentZoom, mCurrentAngle);
+                                mPreviewSizePx, mCurrentZoom, mCurrentAngle);
                     } finally {
                         mResultLock.unlock();
                     }
                     return null;
                 }
 
+                @Override
                 protected void onPostExecute(Void result) {
                     mPreview.setBitmap(mResultBitmap, mResultLock);
                     synchronized (mRendering) {
@@ -298,7 +297,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
 
             @Override
             protected TinyPlanetImage doInBackground(Void... params) {
-                return createTinyPlanet();
+                return createFinalTinyPlanet();
             }
 
             @Override
@@ -330,7 +329,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
      * Creates the high quality tiny planet file and adds it to the media
      * service. Don't call this on the UI thread.
      */
-    private TinyPlanetImage createTinyPlanet() {
+    private TinyPlanetImage createFinalTinyPlanet() {
         // Free some memory we don't need anymore as we're going to dimiss the
         // fragment after the tiny planet creation.
         mResultLock.lock();
@@ -408,9 +407,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
         } finally {
             mResultLock.unlock();
         }
-
-        // Run directly and on this thread directly.
-        mCreateTinyPlanetRunnable.run();
+        scheduleUpdate();
     }
 
     private void onZoomChange(int zoom) {
