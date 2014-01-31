@@ -173,29 +173,49 @@ public class ListPreference extends CameraPreference {
     public void filterUnsupported(List<String> supported) {
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
         ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+        ArrayList<CharSequence> labels = null;
+        if (mLabels.length > 0) {
+            labels = new ArrayList<CharSequence>();
+        }
         for (int i = 0, len = mEntryValues.length; i < len; i++) {
             if (supported.indexOf(mEntryValues[i].toString()) >= 0) {
                 entries.add(mEntries[i]);
                 entryValues.add(mEntryValues[i]);
+                if (labels != null) {
+                    labels.add(mLabels[i]);
+                }
             }
         }
         int size = entries.size();
         mEntries = entries.toArray(new CharSequence[size]);
         mEntryValues = entryValues.toArray(new CharSequence[size]);
+        if (labels != null) {
+            mLabels = labels.toArray(new CharSequence[size]);
+        }
     }
 
     public void filterDuplicated() {
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
         ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+        ArrayList<CharSequence> labels = null;
+        if (mLabels.length > 0) {
+            labels = new ArrayList<CharSequence>();
+        }
         for (int i = 0, len = mEntryValues.length; i < len; i++) {
             if (!entries.contains(mEntries[i])) {
                 entries.add(mEntries[i]);
                 entryValues.add(mEntryValues[i]);
+                if (labels != null) {
+                    labels.add(mLabels[i]);
+                }
             }
         }
         int size = entries.size();
         mEntries = entries.toArray(new CharSequence[size]);
         mEntryValues = entryValues.toArray(new CharSequence[size]);
+        if (labels != null) {
+            mLabels = labels.toArray(new CharSequence[size]);
+        }
     }
 
     public void print() {
