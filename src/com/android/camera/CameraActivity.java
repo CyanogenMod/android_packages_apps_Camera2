@@ -433,6 +433,12 @@ public class CameraActivity extends Activity
             new FilmstripContentPanel.Listener() {
 
                 @Override
+                public void onSwipeOut() {
+                    UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                        eventprotos.CameraEvent.InteractionCause.SWIPE_RIGHT);
+                }
+
+                @Override
                 public void onFilmstripHidden() {
                     mFilmstripVisible = false;
                     CameraActivity.this.setFilmstripUiVisibility(false);
