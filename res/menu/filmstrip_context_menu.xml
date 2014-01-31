@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tiny_planet_editor" android:title="@string/create_tiny_planet"/>
+    <item android:id="@+id/photo_editor" android:title="@string/photo_editor"/>
+</menu>
