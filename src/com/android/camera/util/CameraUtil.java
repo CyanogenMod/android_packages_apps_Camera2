@@ -1051,6 +1051,23 @@ public class CameraUtil {
     }
 
     /**
+     * Gets the mode content description of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return mode content description if the index is valid, otherwise a new empty string
+     */
+    public static String getCameraModeContentDescription(int modeIndex, Context context) {
+        String[] cameraModesDesc = context.getResources()
+                .getStringArray(R.array.camera_mode_content_description);
+        if (modeIndex < 0 || modeIndex >= cameraModesDesc.length) {
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return new String();
+        }
+        return cameraModesDesc[modeIndex];
+    }
+
+    /**
      * Gets the shutter icon res id for a specific mode.
      *
      * @param modeIndex index of the mode
