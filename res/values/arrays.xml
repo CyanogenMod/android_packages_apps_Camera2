@@ -212,6 +212,12 @@
         <item>@drawable/ic_flash_on</item>
     </array>
 
+    <array name="camera_flash_descriptions" translatable="false">
+      <item>@string/flash_off_desc</item>
+      <item>@string/flash_auto_desc</item>
+      <item>@string/flash_on_desc</item>
+    </array>
+
     <array name="camera_flashmode_largeicons" translatable="false">
         <item>@drawable/ic_flash_off</item>
         <item>@drawable/ic_flash_auto</item>
@@ -248,6 +254,11 @@
     <array name="video_flashmode_largeicons" translatable="false">
         <item>@drawable/ic_flash_on</item>
         <item>@drawable/ic_flash_off</item>
+    </array>
+
+    <array name="video_flash_descriptions" translatable="false">
+      <item>@string/torch_on_desc</item>
+      <item>@string/torch_off_desc</item>
     </array>
 
     <array name="video_flashmode_indicator_icons" translatable="false">
@@ -377,6 +388,12 @@
         <item>@drawable/ic_switch_camera_front</item>
     </array>
 
+    <array name="camera_id_descriptions" translatable="false">
+      <item>@string/camera_id_back_desc</item>
+      <item>@string/camera_id_front_desc</item>
+    </array>
+
+
     <array name="camera_id_largeicons" translatable="false">
         <item>@drawable/ic_switch_camera_back</item>
         <item>@drawable/ic_switch_camera_front</item>
@@ -436,9 +453,19 @@
         <item>@drawable/ic_hdr_plus_on</item>
     </array>
 
+    <array name="hdr_plus_descriptions" translatable="false">
+      <item>@string/hdr_plus_off_desc</item>
+      <item>@string/hdr_plus_on_desc</item>
+    </array>
+
     <array name="pref_camera_hdr_icons" translatable="false">
         <item>@drawable/ic_hdr_off</item>
         <item>@drawable/ic_hdr_on</item>
+    </array>
+
+    <array name="hdr_descriptions" translatable="false">
+      <item>@string/hdr_off_desc</item>
+      <item>@string/hdr_on_desc</item>
     </array>
 
     <array name="pref_camera_hdr_plus_indicator_icons" translatable="false">
@@ -523,6 +550,11 @@
       <item>@drawable/ic_refocus</item>
     </array>
 
+    <array name="refocus_descriptions" translatable="false">
+      <item>@string/refocus_off_desc</item>
+      <item>@string/refocus_on_desc</item>
+    </array>
+
     <array name="refocus_indicator_icons" translatable="false">
       <item>@drawable/ic_refocus_off_indicator</item>
       <item>@drawable/ic_refocus_on_indicator</item>
@@ -537,6 +569,12 @@
       <item>@drawable/ic_options</item>
       <item>@drawable/ic_options_active</item>
     </array>
+
+    <array name="settings_toggle_descriptions" translatable="false">
+      <item>@string/settings_open_desc</item>
+      <item>@string/settings_close_desc</item>
+    </array>
+
 
     <!--Index of camera modes. -->
     <integer name="camera_mode_photo">0</integer>
@@ -599,6 +637,18 @@
         <item>@string/mode_panorama</item>
         <item>@string/mode_timelapse</item>
         <item>@string/mode_settings</item>
+        <item>""</item>
+        <item>""</item>
+    </string-array>
+
+    <string-array name="camera_mode_content_description">
+        <item>@string/mode_camera_desc</item>
+        <item>@string/mode_video_desc</item>
+        <item>@string/mode_advanced_camera_desc</item>
+        <item>@string/mode_photosphere_desc</item>
+        <item>@string/mode_panorama_desc</item>
+        <item>@string/mode_timelapse_desc</item>
+        <item>@string/mode_settings_desc</item>
         <item>""</item>
         <item>""</item>
     </string-array>

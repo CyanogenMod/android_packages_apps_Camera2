@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.android.camera2.R;
 
@@ -50,6 +51,7 @@ public class MultiToggleImageButton extends ImageButton {
     private OnStateChangeListener mOnStateChangeListener;
     private int mState;
     private int[] mImageIds;
+    private int[] mDescIds;
     private int mLevel;
 
     public MultiToggleImageButton(Context context) {
@@ -107,6 +109,9 @@ public class MultiToggleImageButton extends ImageButton {
     public void setState(int state, boolean callListener) {
         mState = state;
         setImageResource(mImageIds[mState]);
+        setContentDescription(getResources().getString(mDescIds[mState]));
+        // TODO get talkback to announce the current button state
+        //sendAccessibilityEvent(AccessibilityEvent.CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION);
         super.setImageLevel(mLevel);
         if (callListener && mOnStateChangeListener != null) {
             mOnStateChangeListener.stateChanged(this, getState());
@@ -135,8 +140,12 @@ public class MultiToggleImageButton extends ImageButton {
             attrs,
             R.styleable.MultiToggleImageButton,
             0, 0);
-        int resId = a.getResourceId(R.styleable.MultiToggleImageButton_imageIds, 0);
-        overrideImageIds(resId);
+        int imageIds = a.getResourceId(R.styleable.MultiToggleImageButton_imageIds, 0);
+        overrideImageIds(imageIds);
+
+        int descIds = a.getResourceId(R.styleable.MultiToggleImageButton_contentDescriptionIds, 0);
+        overrideContentDescriptions(descIds);
+
         a.recycle();
     }
 
@@ -150,6 +159,24 @@ public class MultiToggleImageButton extends ImageButton {
             mImageIds = new int[ids.length()];
             for (int i = 0; i < ids.length(); i++) {
                 mImageIds[i] = ids.getResourceId(i, 0);
+            }
+        } finally {
+            if (ids != null) {
+                ids.recycle();
+            }
+        }
+    }
+
+    /**
+     * Override the content descriptions of this button.
+     */
+    public void overrideContentDescriptions(int resId) {
+        TypedArray ids = null;
+        try {
+            ids = getResources().obtainTypedArray(resId);
+            mDescIds = new int[ids.length()];
+            for (int i = 0; i < ids.length(); i++) {
+                mDescIds[i] = ids.getResourceId(i, 0);
             }
         } finally {
             if (ids != null) {

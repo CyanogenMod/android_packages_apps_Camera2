@@ -368,6 +368,11 @@ public class ModeListView extends ScrollView {
 
             // Set text
             selectorItem.setText(CameraUtil.getCameraModeText(modeId, getContext()));
+
+            // Set content description (for a11y)
+            selectorItem.setContentDescription(CameraUtil
+                    .getCameraModeContentDescription(modeId, getContext()));
+
             mModeSelectorItems[i] = selectorItem;
         }
 
