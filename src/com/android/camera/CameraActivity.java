@@ -50,9 +50,12 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -111,8 +114,8 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
-import com.google.common.logging.eventprotos.NavigationChange;
 import com.google.common.logging.eventprotos.CameraEvent.InteractionCause;
+import com.google.common.logging.eventprotos.NavigationChange;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -271,7 +274,6 @@ public class CameraActivity extends Activity
                     if (data == null) {
                         return;
                     }
-                    final int currentDataId = getCurrentDataId();
                     launchTinyPlanetEditor(data);
                 }
 
@@ -1572,7 +1574,11 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * Launches an ACTION_EDIT intent for the given local data item.
+     * Launches an ACTION_EDIT intent for the given local data item. If
+     * 'withTinyPlanet' is set, this will show a disambig dialog first to let
+     * the user start either the tiny planet editor or another photo edior.
+     *
+     * @param data The data item to edit.
      */
     public void launchEditor(LocalData data) {
         Intent intent = new Intent(Intent.ACTION_EDIT)
@@ -1583,6 +1589,27 @@ public class CameraActivity extends Activity
         } catch (ActivityNotFoundException e) {
             launchActivityByIntent(Intent.createChooser(intent, null));
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.filmstrip_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.tiny_planet_editor:
+                mMyFilmstripBottomControlListener.onTinyPlanet();
+                return true;
+            case R.id.photo_editor:
+                mMyFilmstripBottomControlListener.onEdit();
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -1912,7 +1939,7 @@ public class CameraActivity extends Activity
             viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_NONE;
         }
 
-        filmstripBottomControls.setTinyPlanetButtonVisibility(
+        filmstripBottomControls.setTinyPlanetEnabled(
                 PanoramaMetadataLoader.isPanorama360(currentData));
         filmstripBottomControls.setViewerButtonVisibility(viewButtonVisibility);
     }

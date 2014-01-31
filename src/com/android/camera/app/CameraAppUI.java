@@ -54,7 +54,6 @@ import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.IndicatorOverlay;
 import com.android.camera2.R;
-
 import com.google.common.logging.eventprotos;
 
 /**
@@ -115,11 +114,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * @param enabled Whether the button is enabled.
          */
         void setViewEnabled(boolean enabled);
-
-        /**
-         * @param visible Whether the button is visible.
-         */
-        void setTinyPlanetButtonVisibility(boolean visible);
 
         /**
          * @param enabled Whether the button is enabled.
@@ -522,7 +516,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mCameraRootView = (FrameLayout) appRootView.findViewById(R.id.camera_app_root);
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
-        mFilmstripBottomControls = new FilmstripBottomControls(
+        mFilmstripBottomControls = new FilmstripBottomControls(controller,
                 (ViewGroup) mAppRootView.findViewById(R.id.filmstrip_bottom_controls));
         mFilmstripPanel = (FilmstripContentPanel) mAppRootView.findViewById(R.id.filmstrip_layout);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),

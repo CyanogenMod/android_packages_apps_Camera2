@@ -16,17 +16,19 @@
 
 package com.android.camera.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
-import com.android.camera.module.ModuleController;
 import com.android.camera.SettingsController;
+import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 
@@ -71,6 +73,16 @@ public interface AppController {
      * @param intent Used to start the activity.
      */
     public void launchActivityByIntent(Intent intent);
+
+    /**
+     * See {@link Activity#openContextMenu(View)}
+     */
+    public void openContextMenu(View view);
+
+    /**
+     * See {@link Activity#registerForContextMenu(View)}
+     */
+    public void registerForContextMenu(View view);
 
     /**
      * Returns whether the app is currently paused.

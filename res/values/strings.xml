@@ -650,6 +650,8 @@ CHAR LIMIT=NONE] -->
     <string name="tiny_planet_zoom">Zoom</string>
     <!-- Label above a slider that let's the user set the rotation of a tiny planet image. [CHAR LIMIT=15] -->
     <string name="tiny_planet_rotate">Rotate</string>
+    <!-- Label for menu item that starts a photo editor. [CHAR LIMIT=30] -->
+    <string name="photo_editor">Photo Editor</string>
 
     <!-- Crop -->
     <!-- Label for the save button in the crop activity action bar [CHAR LIMIT=20] -->

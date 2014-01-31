@@ -28,22 +28,22 @@ import com.android.camera2.R;
  */
 class FilmstripBottomControls implements CameraAppUI.BottomControls {
 
+    private final AppController mController;
+    private final ViewGroup mLayout;
     private Listener mListener;
-    private ViewGroup mLayout;
     private ImageButton mEditButton;
     private ImageButton mViewButton;
-    private View  mViewerWrapperLayout;
-    private ImageButton mTinyPlanetButton;
     private ImageButton mDeleteButton;
     private ImageButton mShareButton;
-    private View mMiddleFiller;
+    private final View mMiddleFiller;
+    private boolean mTinyPlanetEnabled;
 
-    public FilmstripBottomControls(ViewGroup bottomControlsLayout) {
+    public FilmstripBottomControls(AppController controller, ViewGroup bottomControlsLayout) {
+        mController = controller;
         mLayout = bottomControlsLayout;
         mMiddleFiller = mLayout.findViewById(R.id.filmstrip_bottom_control_middle_filler);
         setupEditButton();
         setupViewButton();
-        setupTinyPlanetButton();
         setupDeleteButton();
         setupShareButton();
     }
@@ -90,14 +90,8 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     }
 
     @Override
-    public void setTinyPlanetButtonVisibility(final boolean visible) {
-        mTinyPlanetButton.setVisibility(visible ? View.VISIBLE : View.GONE);
-        updateMiddleFillerLayoutVisibility();
-    }
-
-    @Override
     public void setTinyPlanetEnabled(boolean enabled) {
-        mTinyPlanetButton.setEnabled(enabled);
+        mTinyPlanetEnabled = enabled;
     }
 
     @Override
@@ -136,34 +130,24 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mListener != null) {
+                if (mTinyPlanetEnabled) {
+                    mController.openContextMenu(mEditButton);
+                } else if (mListener != null) {
                     mListener.onEdit();
                 }
             }
         });
+        mController.registerForContextMenu(mEditButton);
+        mEditButton.setLongClickable(false);
     }
 
     private void setupViewButton() {
-        mViewerWrapperLayout = mLayout.findViewById(R.id.filmstrip_bottom_control_viewer_wrapper);
         mViewButton = (ImageButton) mLayout.findViewById(R.id.filmstrip_bottom_control_view);
         mViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
                     mListener.onExternalViewer();
-                }
-            }
-        });
-    }
-
-    private void setupTinyPlanetButton() {
-        mTinyPlanetButton =
-                (ImageButton) mLayout.findViewById(R.id.filmstrip_bottom_control_tiny_planet);
-        mTinyPlanetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null) {
-                    mListener.onTinyPlanet();
                 }
             }
         });
@@ -194,23 +178,13 @@ class FilmstripBottomControls implements CameraAppUI.BottomControls {
     }
 
     /**
-     * Updates the visibility of the middle filler view in the center and the
-     * visibility of wrapper layout of viewer buttons and the tinyplanet button.
-     * The middle filler view should be visible when edit button and viewer
-     * buttons are both visible. The wrapper layout of viewer buttons and
-     * tinyplanet should be gone if no viewer button is shown and the
-     * tinyplanet button is invisible.
+     * Updates the visibility of the middle filler view in the center. The
+     * middle filler view should be visible when edit button and viewer buttons
+     * are both visible.
      */
     private void updateMiddleFillerLayoutVisibility() {
-        if (mViewButton.getVisibility() == View.VISIBLE ||
-                mTinyPlanetButton.getVisibility() == View.VISIBLE) {
-            mViewerWrapperLayout.setVisibility(View.VISIBLE);
-        } else {
-            mViewerWrapperLayout.setVisibility(View.GONE);
-        }
-
         if (mEditButton.getVisibility() == View.VISIBLE &&
-                mViewerWrapperLayout.getVisibility() == View.VISIBLE) {
+                mViewButton.getVisibility() == View.VISIBLE) {
             mMiddleFiller.setVisibility(View.INVISIBLE);
         } else {
             mMiddleFiller.setVisibility(View.GONE);

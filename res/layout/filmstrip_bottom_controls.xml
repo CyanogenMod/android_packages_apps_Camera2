@@ -50,26 +50,12 @@
             android:layout_weight="1"
             android:visibility="invisible" />
 
-        <FrameLayout
-            android:id="@+id/filmstrip_bottom_control_viewer_wrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-
-            <ImageButton
-                android:id="@+id/filmstrip_bottom_control_view"
-                style="@style/FilmstripBottomControlButton"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_view_photosphere"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/filmstrip_bottom_control_tiny_planet"
-                style="@style/FilmstripBottomControlButton"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_menu_tiny_planet"
-                android:visibility="gone" />
-        </FrameLayout>
+        <ImageButton
+            android:id="@+id/filmstrip_bottom_control_view"
+            style="@style/FilmstripBottomControlButton"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_view_photosphere"
+            android:visibility="gone" />
 
         <View
             android:id="@+id/filmstrip_bottom_control_middle_filler"
