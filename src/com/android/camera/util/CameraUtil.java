@@ -123,6 +123,7 @@ public class CameraUtil {
     // Do not change the focus mode when TTF is used
     private static boolean sNoFocusModeChangeForTouch;
 
+    private static boolean sCancelAutoFocusOnPreviewStopped;
 
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
@@ -133,6 +134,10 @@ public class CameraUtil {
 
     public static boolean isZSLEnabled() {
         return sEnableZSL;
+    }
+
+    public static boolean cancelAutoFocusOnPreviewStopped() {
+        return sCancelAutoFocusOnPreviewStopped;
     }
 
     public static boolean isSupported(String value, List<String> supported) {
@@ -210,6 +215,8 @@ public class CameraUtil {
         sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
         sNoFocusModeChangeForTouch = context.getResources().getBoolean(
                 R.bool.useContinuosFocusForTouch);
+        sCancelAutoFocusOnPreviewStopped =
+                context.getResources().getBoolean(R.bool.cancelAutoFocusOnPreviewStopped);
         sSamsungHDRFormat = context.getResources().getBoolean(R.bool.needsSamsungHDRFormat);
     }
 
