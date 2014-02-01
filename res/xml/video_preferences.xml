@@ -19,7 +19,6 @@
         camera:title="@string/pref_camcorder_settings_category">
     <ListPreference
             camera:key="pref_video_quality_key"
-            camera:defaultValue="@string/pref_video_quality_default"
             camera:title="@string/pref_video_quality_title"
             camera:entries="@array/pref_video_quality_entries"
             camera:entryValues="@array/pref_video_quality_entryvalues"/>
@@ -41,6 +40,9 @@
             camera:title="@string/pref_camera_video_duration_title"
             camera:entries="@array/pref_camera_video_duration_entries"
             camera:entryValues="@array/pref_camera_video_duration_entryvalues" />
+    <ListPreference
+            camera:key="pref_camera_storage_key"
+            camera:title="@string/pref_camera_storage_title" />
     <IconListPreference
             camera:key="pref_video_time_lapse_frame_interval_key"
             camera:defaultValue="@string/pref_video_time_lapse_frame_interval_default"
@@ -57,6 +59,11 @@
             camera:entries="@array/pref_camera_video_flashmode_entries"
             camera:labelList="@array/pref_camera_video_flashmode_labels"
             camera:entryValues="@array/pref_camera_video_flashmode_entryvalues"/>
+    <IconListPreference
+            camera:key="pref_camera_exposure_key"
+            camera:defaultValue="@string/pref_exposure_default"
+            camera:title="@string/pref_exposure_title"
+            camera:singleIcon="@drawable/ic_exposure_holo_light" />
     <IconListPreference
             camera:key="pref_camera_whitebalance_key"
             camera:defaultValue="@string/pref_camera_whitebalance_default"
@@ -103,7 +110,7 @@
             camera:entries="@array/pref_camera_dis_entries"
             camera:entryValues="@array/pref_camera_dis_entryvalues" />
     <ListPreference
-            camera:key="pref_camera_coloreffect_key"
+            camera:key="pref_camera_video_coloreffect_key"
             camera:defaultValue="@string/pref_camera_coloreffect_default"
             camera:title="@string/pref_camera_coloreffect_title"
             camera:entries="@array/pref_camera_coloreffect_entries"

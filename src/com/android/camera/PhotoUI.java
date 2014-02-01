@@ -43,6 +43,8 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
+import android.os.SystemProperties;
+import android.graphics.Canvas;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
@@ -71,6 +73,7 @@ public class PhotoUI implements PieListener,
     CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "CAM_UI";
+    private static final String PERSIST_LONG_ENABLE = "persist.camera.longshot.enable";
     private static final int DOWN_SAMPLE_FACTOR = 4;
     private final AnimationManager mAnimationManager;
     private CameraActivity mActivity;
@@ -500,7 +503,8 @@ public class PhotoUI implements PieListener,
     public  void initializeFirstTime() {
         // Initialize shutter button.
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
-        mShutterButton.setOnShutterButtonListener(mController);
+        mShutterButton.setOnShutterButtonListener(mController,
+                SystemProperties.getBoolean(PERSIST_LONG_ENABLE, false));
         mShutterButton.setVisibility(View.VISIBLE);
     }
 
@@ -934,6 +938,22 @@ public class PhotoUI implements PieListener,
     @Override
     public void onFaceDetection(Face[] faces, CameraManager.CameraProxy camera) {
         mFaceView.setFaces(faces);
+    }
+
+
+    public boolean onScaleStepResize(boolean direction)
+    {
+        if(mGestures != null){
+            return mGestures.onScaleStepResize(direction);
+        }
+        return false;
+    }
+
+    public void onScaleChangeDraw(Canvas canvas)
+    {
+        if(mGestures != null){
+            mGestures.onScaleChangeDraw(canvas);
+        }
     }
 
     @Override

@@ -54,6 +54,8 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+import android.media.EncoderCapabilities;
+import android.media.EncoderCapabilities.VideoEncoderCap;
 
 import com.android.camera.CameraManager.CameraAFCallback;
 import com.android.camera.CameraManager.CameraPictureCallback;
@@ -235,16 +237,7 @@ public class VideoModule implements CameraModule,
             return;
         }
         mParameters = mCameraDevice.getParameters();
-
         initializeCapabilities();
-
-        String sceneMode = mParameters.getSceneMode();
-        if ((null != sceneMode) && (!sceneMode.equals(Parameters.SCENE_MODE_AUTO))){
-            if (CameraUtil.isSupported(Parameters.SCENE_MODE_AUTO,
-                                           mParameters.getSupportedSceneModes())){
-                mParameters.setSceneMode(Parameters.SCENE_MODE_AUTO);
-            }
-        }
     }
 
     //QCOM data Members Starts here
@@ -432,8 +425,15 @@ public class VideoModule implements CameraModule,
 
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
+        // we need to reset exposure for the preview
+        resetExposureCompensation();
 
         mOrientationManager = new OrientationManager(mActivity);
+
+        // Force a re-check of the storage path
+        if (mActivity.setStoragePath(mPreferences)) {
+            mActivity.updateStorageSpaceAndHint();
+        }
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -591,10 +591,9 @@ public class VideoModule implements CameraModule,
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
             Log.v(TAG, "onOrientationChanged, update parameters");
-            if ((mParameters != null) && (true == mPreviewing)){
+            if ((mParameters != null) && (true == mPreviewing) && !mMediaRecorderRecording){
                 setCameraParameters();
             }
-
         }
 
         // Show the toast after getting the first orientation changed.
@@ -849,6 +848,10 @@ public class VideoModule implements CameraModule,
         } else { // Driver supports separates outputs for preview and video.
             List<Size> sizes = mParameters.getSupportedPreviewSizes();
             Size preferred = mParameters.getPreferredPreviewSizeForVideo();
+            if (mActivity.getResources().getBoolean(R.bool.ignorePreferredPreviewSizeForVideo)
+                    || preferred == null) {
+                preferred = sizes.get(0);
+            }
             int product = preferred.width * preferred.height;
             Iterator<Size> it = sizes.iterator();
             // Remove the preview sizes that are not preferred.
@@ -866,6 +869,16 @@ public class VideoModule implements CameraModule,
         mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
         Log.v(TAG, "mDesiredPreviewWidth=" + mDesiredPreviewWidth +
                 ". mDesiredPreviewHeight=" + mDesiredPreviewHeight);
+    }
+
+    private void resetExposureCompensation() {
+        String value = mPreferences.getString(CameraSettings.KEY_EXPOSURE,
+                CameraSettings.EXPOSURE_DEFAULT_VALUE);
+        if (!CameraSettings.EXPOSURE_DEFAULT_VALUE.equals(value)) {
+            Editor editor = mPreferences.edit();
+            editor.putString(CameraSettings.KEY_EXPOSURE, "0");
+            editor.apply();
+        }
     }
 
     void setPreviewFrameLayoutCameraOrientation(){
@@ -905,6 +918,7 @@ public class VideoModule implements CameraModule,
     public void onResumeAfterSuper() {
         mUI.enableShutter(false);
         mZoomValue = 0;
+        resetExposureCompensation();
 
         showVideoSnapshotUI(false);
 
@@ -1148,6 +1162,12 @@ public class VideoModule implements CameraModule,
         }
 
         switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                mUI.onScaleStepResize(true);
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                mUI.onScaleStepResize(false);
+                return true;
             case KeyEvent.KEYCODE_CAMERA:
                 if (event.getRepeatCount() == 0) {
                     mUI.clickShutter();
@@ -1170,6 +1190,9 @@ public class VideoModule implements CameraModule,
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
             case KeyEvent.KEYCODE_CAMERA:
                 mUI.pressShutter(false);
                 return true;
@@ -1250,12 +1273,28 @@ public class VideoModule implements CameraModule,
         videoHeight = mProfile.videoFrameHeight;
         mUnsupportedResolution = false;
 
-        if (mVideoEncoder == MediaRecorder.VideoEncoder.H263) {
-            if (videoWidth >= 1280 && videoHeight >= 720) {
-                    mUnsupportedResolution = true;
-                    Toast.makeText(mActivity, R.string.error_app_unsupported,
-                    Toast.LENGTH_LONG).show();
-                    return;
+        //check if codec supports the resolution, otherwise throw toast
+        List<VideoEncoderCap> videoEncoders = EncoderCapabilities.getVideoEncoders();
+        for (VideoEncoderCap videoEncoder: videoEncoders) {
+            if (videoEncoder.mCodec == mVideoEncoder){
+                if (videoWidth > videoEncoder.mMaxFrameWidth ||
+                    videoWidth < videoEncoder.mMinFrameWidth ||
+                    videoHeight > videoEncoder.mMaxFrameHeight ||
+                    videoHeight < videoEncoder.mMinFrameHeight){
+                        Log.e(TAG,"Selected codec "+mVideoEncoder+
+                          " does not support "+ videoWidth + "x" + videoHeight
+                          +" resolution");
+                        Log.e(TAG, "Codec capabilities: " +
+                          "mMinFrameWidth = " + videoEncoder.mMinFrameWidth + " , "+
+                          "mMinFrameHeight = " + videoEncoder.mMinFrameHeight + " , "+
+                          "mMaxFrameWidth = " + videoEncoder.mMaxFrameWidth + " , "+
+                          "mMaxFrameHeight = " + videoEncoder.mMaxFrameHeight);
+                        mUnsupportedResolution = true;
+                        Toast.makeText(mActivity, R.string.error_app_unsupported,
+                          Toast.LENGTH_LONG).show();
+                        return;
+                }
+                break;
             }
         }
 
@@ -1386,7 +1425,7 @@ public class VideoModule implements CameraModule,
         // Used when emailing.
         String filename = title + convertOutputFormatToFileExt(outputFileFormat);
         String mime = convertOutputFormatToMimeType(outputFileFormat);
-        String path = Storage.DIRECTORY + '/' + filename;
+        String path = Storage.getInstance().generateDirectory() + '/' + filename;
         String tmpPath = path + ".tmp";
         mCurrentVideoValues = new ContentValues(9);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
@@ -1820,7 +1859,7 @@ public class VideoModule implements CameraModule,
         // add QCOM Parameters here
         // Set color effect parameter.
         String colorEffect = mPreferences.getString(
-            CameraSettings.KEY_COLOR_EFFECT,
+            CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT,
             mActivity.getString(R.string.pref_camera_coloreffect_default));
         Log.v(TAG, "Color effect value =" + colorEffect);
         if (isSupported(colorEffect, mParameters.getSupportedColorEffects())) {
@@ -1955,6 +1994,15 @@ public class VideoModule implements CameraModule,
         if (CameraUtil.isSupported(mParameters, "video-size")) {
             mParameters.set("video-size", recordSize);
         }
+        // Set exposure compensation
+        int value = CameraSettings.readExposure(mPreferences);
+        int max = mParameters.getMaxExposureCompensation();
+        int min = mParameters.getMinExposureCompensation();
+        if (value >= min && value <= max) {
+            mParameters.setExposureCompensation(value);
+        } else {
+            Log.w(TAG, "invalid exposure range: " + value);
+        }
         // Set white balance parameter.
         String whiteBalance = mPreferences.getString(
                 CameraSettings.KEY_WHITE_BALANCE,
@@ -2068,6 +2116,10 @@ public class VideoModule implements CameraModule,
             boolean recordLocation = RecordLocationPreference.get(
                     mPreferences, mContentResolver);
             mLocationManager.recordLocation(recordLocation);
+
+            if (mActivity.setStoragePath(mPreferences)) {
+                mActivity.updateStorageSpaceAndHint();
+            }
 
             readVideoPreferences();
             mUI.showTimeLapseUI(mCaptureTimeLapse);
