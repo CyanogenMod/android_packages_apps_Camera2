@@ -27,4 +27,7 @@
     <bool name="needsSamsungHDRFormat">false</bool>
     <!-- Ignore bogus preferred preview size -->
     <bool name="ignorePreferredPreviewSizeForVideo">false</bool>
+    <!-- Cancel autofocus if preview stopped. If camera HAL does not support
+        it set this value to false -->
+    <bool name="cancelAutoFocusOnPreviewStopped">true</bool>
 </resources>
