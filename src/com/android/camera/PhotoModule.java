@@ -548,8 +548,8 @@ public class PhotoModule
         if (mCameraDevice == null) {
             return;
         }
-        mCameraDevice.setPreviewTexture(null);
         stopPreview();
+        mCameraDevice.setPreviewTexture(null);
     }
 
     private void setLocationPreference(String value) {
