@@ -39,7 +39,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_CAMERA = 2;
     public static final int BUTTON_HDRPLUS = 3;
     public static final int BUTTON_HDR = 4;
-    public static final int BUTTON_REFOCUS = 5;
     public static final int BUTTON_CANCEL = 6;
     public static final int BUTTON_DONE = 7;
     public static final int BUTTON_RETAKE = 8;
@@ -131,8 +130,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (MultiToggleImageButton) root.findViewById(R.id.flash_toggle_button);
         mButtonPos3
             = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
-        mButtonPos4
-            = (MultiToggleImageButton) root.findViewById(R.id.refocus_toggle_button);
         mButtonCancel
             = (ImageButton) root.findViewById(R.id.cancel_button);
         mButtonDone
@@ -167,11 +164,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case SettingsManager.SETTING_CAMERA_HDR: {
                 index = mSettingsManager.getStringValueIndex(id);
                 button = getButtonOrError(BUTTON_HDRPLUS);
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_REFOCUS: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_REFOCUS);
                 break;
             }
             default: {
@@ -228,11 +220,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Hdr button could not be found.");
                 }
                 return mButtonPos3;
-            case BUTTON_REFOCUS:
-                if (mButtonPos4 == null) {
-                    throw new IllegalStateException("Refocus button could not be found.");
-                }
-                return mButtonPos4;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -301,9 +288,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 break;
             case BUTTON_HDR:
                 enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_icons);
-                break;
-            case BUTTON_REFOCUS:
-                enableRefocusButton(button, cb, R.array.refocus_icons);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -542,30 +526,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             @Override
             public void stateChanged(View view, int state) {
                 mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
-                if (cb != null) {
-                    cb.onStateChanged(state);
-                }
-            }
-        });
-    }
-
-    /**
-     * Enable a refocus button.
-     */
-    private void enableRefocusButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
-
-        if (resIdImages > 0) {
-            button.overrideImageIds(resIdImages);
-        }
-
-        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_REFOCUS);
-        button.setState(index >= 0 ? index : 0, false);
-
-        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-            @Override
-            public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_REFOCUS, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }

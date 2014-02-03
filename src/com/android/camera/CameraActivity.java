@@ -1107,7 +1107,6 @@ public class CameraActivity extends Activity
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
                 || modeIndex == getResources().getInteger(R.integer.camera_mode_video)
                 || modeIndex == getResources().getInteger(R.integer.camera_mode_gcam)
-                || modeIndex == getResources().getInteger(R.integer.camera_mode_craft)
                 || modeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
             mCameraAppUI.prepareModuleUI();
         }
@@ -1487,7 +1486,7 @@ public class CameraActivity extends Activity
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.MODE_SWITCH_START);
         // Record last used camera mode for quick switching
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
-                || modeIndex == getResources().getInteger(R.integer.camera_mode_craft)) {
+                || modeIndex == getResources().getInteger(R.integer.camera_mode_gcam)) {
             mSettingsManager.setInt(SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX,
                     modeIndex);
         }
@@ -1498,18 +1497,10 @@ public class CameraActivity extends Activity
         // Refocus and Gcam are modes that cannot be selected
         // from the mode list view, because they are not list items.
         // Check whether we should interpret MODULE_CRAFT as either.
-        if (modeIndex == getResources().getInteger(R.integer.camera_mode_craft)) {
-            boolean refocusOn = mSettingsManager.isRefocusOn();
+        if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
             boolean hdrPlusOn = mSettingsManager.isHdrPlusOn();
-            if (refocusOn && hdrPlusOn) {
-                throw new IllegalStateException("Refocus and hdr plus cannot be on together.");
-            }
-            if (refocusOn) {
-                modeIndex = getResources().getInteger(R.integer.camera_mode_refocus);
-            } else if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
+            if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
                 modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
-            } else {
-                // Do nothing, keep MODULE_CRAFT.
             }
         }
 
@@ -1521,12 +1512,10 @@ public class CameraActivity extends Activity
         if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_photo)
                 || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_video)
                 || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_gcam)
-                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_craft)
                 || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
             if (oldModuleIndex != getResources().getInteger(R.integer.camera_mode_photo)
                     && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_video)
                     && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_gcam)
-                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_craft)
                     && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_refocus)) {
                 mCameraAppUI.prepareModuleUI();
             } else {

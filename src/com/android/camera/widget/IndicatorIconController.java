@@ -48,14 +48,12 @@ public class IndicatorIconController
 
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;
-    private ImageView mRefocusIndicator;
     private ImageView mPanoramaIndicator;
 
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrPlusIndicatorIcons;
     private TypedArray mHdrIndicatorIcons;
-    private TypedArray mRefocusIndicatorIcons;
     private TypedArray mPanoramaIndicatorIcons;
 
     private AppController mController;
@@ -66,7 +64,6 @@ public class IndicatorIconController
 
         mFlashIndicator = (ImageView) root.findViewById(R.id.flash_indicator);
         mHdrIndicator = (ImageView) root.findViewById(R.id.hdr_indicator);
-        mRefocusIndicator = (ImageView) root.findViewById(R.id.refocus_indicator);
         mPanoramaIndicator = (ImageView) root.findViewById(R.id.panorama_indicator);
 
         mFlashIndicatorPhotoIcons = context.getResources().obtainTypedArray(
@@ -77,8 +74,6 @@ public class IndicatorIconController
             R.array.pref_camera_hdr_plus_indicator_icons);
         mHdrIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_indicator_icons);
-        mRefocusIndicatorIcons = context.getResources().obtainTypedArray(
-            R.array.refocus_indicator_icons);
         if (PhotoSphereHelper.getPanoramaIndicatorArrayId() > 0) {
             mPanoramaIndicatorIcons = context.getResources().obtainTypedArray(
                 PhotoSphereHelper.getPanoramaIndicatorArrayId());
@@ -117,10 +112,6 @@ public class IndicatorIconController
                 syncHdrIndicator();
                 break;
             }
-            case ButtonManager.BUTTON_REFOCUS: {
-                syncRefocusIndicator();
-                break;
-            }
             case ButtonManager.BUTTON_PANO_HORIZONTAL: {
                 syncPanoramaIndicator();
                 break;
@@ -142,7 +133,6 @@ public class IndicatorIconController
     public void syncIndicators() {
         syncFlashIndicator();
         syncHdrIndicator();
-        syncRefocusIndicator();
         syncPanoramaIndicator();
     }
 
@@ -191,23 +181,6 @@ public class IndicatorIconController
                               mHdrIndicator, mHdrIndicatorIcons, false);
         } else {
             mHdrIndicator.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Sync the icon and the visibility of the refocus indicator.
-     */
-    private void syncRefocusIndicator() {
-        ButtonManager buttonManager = mController.getButtonManager();
-        // If refocus isn't an enabled and visible option,
-        // do not show the indicator.
-        if (buttonManager.isEnabled(ButtonManager.BUTTON_REFOCUS)
-                && buttonManager.isVisible(ButtonManager.BUTTON_REFOCUS)) {
-            setIndicatorState(mController.getSettingsManager(),
-                              SettingsManager.SETTING_CAMERA_REFOCUS,
-                              mRefocusIndicator, mRefocusIndicatorIcons, false);
-        } else {
-            mRefocusIndicator.setVisibility(View.GONE);
         }
     }
 
@@ -276,10 +249,6 @@ public class IndicatorIconController
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
                 syncHdrIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_REFOCUS: {
-                syncRefocusIndicator();
                 break;
             }
             case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {

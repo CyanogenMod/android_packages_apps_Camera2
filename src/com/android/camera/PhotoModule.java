@@ -232,7 +232,6 @@ public class PhotoModule
     private FocusOverlayManager mFocusManager;
 
     private final int mGcamModeIndex;
-    private final int mRefocusModeIndex;
 
     private String mSceneMode;
 
@@ -328,8 +327,6 @@ public class PhotoModule
         super(app);
         mGcamModeIndex = app.getAndroidContext().getResources()
                 .getInteger(R.integer.camera_mode_gcam);
-        mRefocusModeIndex = app.getAndroidContext().getResources()
-                .getInteger(R.integer.camera_mode_refocus);
     }
 
     @Override
@@ -480,18 +477,6 @@ public class PhotoModule
             }
         };
 
-    private final ButtonManager.ButtonCallback mRefocusCallback =
-        new ButtonManager.ButtonCallback() {
-            @Override
-            public void onStateChanged(int state) {
-                if (state == ButtonManager.OFF) {
-                    throw new IllegalStateException(
-                        "Can't switch refocus off because it should already be off.");
-                }
-                mActivity.onModeSelected(mRefocusModeIndex);
-            }
-        };
-
     private final View.OnClickListener mCancelCallback = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -526,17 +511,8 @@ public class PhotoModule
         bottomBarSpec.enableCamera = true;
         bottomBarSpec.cameraCallback = mCameraCallback;
         bottomBarSpec.enableFlash = true;
-
-        if (mActivity.getCurrentModuleIndex() == mActivity.getResources()
-                .getInteger(R.integer.camera_mode_photo)) {
-            bottomBarSpec.hideHdr = true;
-            bottomBarSpec.hideRefocus = true;
-        } else {
-            bottomBarSpec.enableHdr = true;
-            bottomBarSpec.hdrCallback = mHdrPlusCallback;
-            bottomBarSpec.enableRefocus = true;
-            bottomBarSpec.refocusCallback = mRefocusCallback;
-        }
+        bottomBarSpec.enableHdr = true;
+        bottomBarSpec.hdrCallback = mHdrPlusCallback;
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
