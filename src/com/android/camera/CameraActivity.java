@@ -1083,8 +1083,8 @@ public class CameraActivity extends Activity
             mCameraAppUI.prepareModuleUI();
         }
 
-        syncBottomBarColor();
-        syncBottomBarShutterIcon();
+        setBottomBarColor();
+        setBottomBarShutterIcon();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
         if (!mSecureCamera) {
@@ -1639,22 +1639,20 @@ public class CameraActivity extends Activity
         fragment.show(getFragmentManager(), "tiny_planet");
     }
 
-    private void syncBottomBarColor() {
+    private void setBottomBarColor() {
         // Currently not all modules use the generic_module UI.
         // TODO: once all modules have a bottom bar, remove
         // isUsingBottomBar check.
         if (mCurrentModule.isUsingBottomBar()) {
-            int color = getResources().getColor(
-                    CameraUtil.getCameraThemeColorId(mCurrentModeIndex, this));
+            int color = getResources().getColor(R.color.bottombar_unpressed);
             mCameraAppUI.setBottomBarColor(color);
 
-            int pressedColor = getResources().getColor(
-                    CameraUtil.getCameraThemePressedColorId(mCurrentModeIndex, this));
+            int pressedColor = getResources().getColor(R.color.bottombar_pressed);
             mCameraAppUI.setBottomBarPressedColor(pressedColor);
         }
     }
 
-    private void syncBottomBarShutterIcon() {
+    private void setBottomBarShutterIcon() {
         // Currently not all modules use the generic_module UI.
         // TODO: once all modules have a bottom bar, remove
         // isUsingBottomBar check.
@@ -1665,8 +1663,9 @@ public class CameraActivity extends Activity
     }
 
     private void openModule(CameraModule module) {
-        syncBottomBarColor();
-        syncBottomBarShutterIcon();
+        // TODO: Remove setting color here when all modules use CameraAppUI.
+        setBottomBarColor();
+        setBottomBarShutterIcon();
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
         module.onPreviewVisibilityChanged(!mFilmstripVisible);
