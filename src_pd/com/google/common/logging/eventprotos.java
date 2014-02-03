@@ -55,6 +55,8 @@ public class eventprotos {
     public class ForegroundEvent {
         public class ForegroundSource {
             public static final int ICON_LAUNCHER = 0;
+            public static final int LOCK_SCREEN = 0;
+            public static final int INTENT_PICKER = 0;
         }
     }
 }
