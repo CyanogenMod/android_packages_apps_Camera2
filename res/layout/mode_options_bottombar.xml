@@ -32,7 +32,7 @@
           android:layout_weight="1"
           android:layout_gravity="center">
         <com.android.camera.ui.TopRightWeightedLayout
-            android:id="@+id/bottombar_options"
+            android:id="@+id/mode_options"
             android:layout_width="match_parent"
             android:layout_height="@dimen/mode_options_height"
             android:orientation="horizontal"
@@ -57,45 +57,22 @@
               camera:contentDescriptionIds="@array/camera_id_descriptions" />
         </com.android.camera.ui.TopRightWeightedLayout>
 
-        <ImageButton
-            android:id="@+id/bottombar_options_toggle"
+        <FrameLayout
+            android:id="@+id/mode_options_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:padding="20dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_options_active"
-            android:background="@null"
-            android:contentDescription="@string/more_options_desc" />
-      </com.android.camera.widget.ModeOptionsOverlay>
-
-      <!-- TODO: integrate into the mode options overlay -->
-      <com.android.camera.widget.IndicatorOverlay
-          android:id="@+id/indicator_overlay"
-          android:layout_width="match_parent"
-          android:layout_height="0px"
-          android:layout_weight="1"
-          android:visibility="gone"
-          android:padding="@dimen/indicator_overlay_padding"
-          android:layout_gravity="top|center_horizontal" >
-        <LinearLayout
-            android:id="@+id/indicator_overlay_icons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_options_indicator"
+            android:padding="12dp"
             android:layout_gravity="bottom|right" >
           <ImageView
-              android:id="@+id/panorama_indicator"
-              style="@style/IndicatorIcon" />
-          <ImageView
-              android:id="@+id/hdr_indicator"
-              style="@style/IndicatorIcon" />
-          <ImageView
-              android:id="@+id/flash_indicator"
-              style="@style/IndicatorIcon" />
-        </LinearLayout>
-      </com.android.camera.widget.IndicatorOverlay>
+              android:id="@+id/three_dots"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:scaleType="center"
+              android:src="@drawable/ic_options_active"
+              android:background="@null" />
+          <include layout="@layout/indicators" />
+        </FrameLayout>
+      </com.android.camera.widget.ModeOptionsOverlay>
 
       <include layout="@layout/bottom_bar" />
     </com.android.camera.ui.RotatableLinearLayout>

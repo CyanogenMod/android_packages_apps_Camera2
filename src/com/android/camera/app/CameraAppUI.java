@@ -53,7 +53,6 @@ import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
-import com.android.camera.widget.IndicatorOverlay;
 import com.android.camera.widget.ModeOptionsOverlay;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -383,7 +382,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private FrameLayout mModuleUI;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
-    private IndicatorOverlay mIndicatorOverlay;
     private boolean mShouldShowShimmy = false;
     private IndicatorIconController mIndicatorIconController;
 
@@ -742,7 +740,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * set on the following app ui elements:
      * {@link com.android.camera.ui.PreviewOverlay},
      * {@link com.android.camera.ui.BottomBar},
-     * {@link com.android.camera.ui.IndicatorOverlay},
      * {@link com.android.camera.ui.IndicatorIconController}.
      */
     private void onPreviewListenerChanged() {
@@ -761,18 +758,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
             mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeOptionsOverlay);
         }
-
-        // Set a listener for resizing the indicator overlay on
-        // preview size changes.
-        mIndicatorOverlay = (IndicatorOverlay) mAppRootView.findViewById(
-            R.id.indicator_overlay);
-        mTextureViewHelper.addPreviewAreaSizeChangedListener(mIndicatorOverlay);
-
-        if (mIndicatorIconController == null) {
-            mIndicatorIconController =
-                new IndicatorIconController(mController, mAppRootView);
-        }
-        mController.getSettingsManager().addListener(mIndicatorIconController);
     }
 
     /**
@@ -847,14 +832,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mIndicatorIconController =
                 new IndicatorIconController(mController, mAppRootView);
         }
+        mIndicatorIconController.setListener(mModeOptionsOverlay);
 
         mController.getButtonManager().load(mCameraRootView);
         mController.getButtonManager().setListener(mIndicatorIconController);
+        mController.getSettingsManager().addListener(mIndicatorIconController);
     }
 
     // TODO: Remove this when refactor is done.
     // This is here to ensure refactored modules can work with not-yet-refactored ones.
     public void clearCameraUI() {
+        mController.getSettingsManager().removeListener(mIndicatorIconController);
         mCameraRootView.removeAllViews();
         mModuleUI = null;
         mTextureView = null;
@@ -862,7 +850,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay = null;
         mBottomBar = null;
         mModeOptionsOverlay = null;
-        mIndicatorOverlay = null;
         mIndicatorIconController = null;
         setBottomBarShutterListener(null);
     }
