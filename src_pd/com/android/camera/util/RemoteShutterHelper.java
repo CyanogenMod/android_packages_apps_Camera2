@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package com.android.camera.remote;
+package com.android.camera.util;
 
-/**
- * Classes implementing this interface can be informed when events relevant to
- * remote shutter apps are occurring.
- */
-public interface RemoteShutterListener {
-    /**
-     * Called when the module is active and ready for shutter presses.
-     */
-    void onModuleReady(RemoteCameraModule module);
+import android.content.Context;
 
-    /**
-     * Called when module is no longer ready for shutter presses.
-     */
-    void onModuleExit();
+import com.android.camera.remote.RemoteCameraModule;
+import com.android.camera.remote.RemoteShutterListener;
 
-    /**
-     * Called when a picture is taken.
-     */
-    void onPictureTaken(byte[] photoData);
+public class RemoteShutterHelper {
+    public static RemoteShutterListener create(Context context) {
+        return new RemoteShutterListener() {
+            @Override
+            public void onPictureTaken(byte[] photoData) {
+            }
+
+            @Override
+            public void onModuleReady(RemoteCameraModule module) {
+            }
+
+            @Override
+            public void onModuleExit() {
+            }
+        };
+    }
 }
