@@ -108,6 +108,7 @@ import com.android.camera.ui.SettingsView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.FeedbackHelper;
+import com.android.camera.util.GalleryHelper;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
@@ -1878,7 +1879,13 @@ public class CameraActivity extends Activity
         }
         try {
             UsageStatistics.changeScreen(NavigationChange.Mode.GALLERY, InteractionCause.BUTTON);
-            launchActivityByIntent(new Intent(mGalleryIntent));
+            Intent startGalleryIntent = new Intent(mGalleryIntent);
+            int currentDataId = mFilmstripController.getCurrentId();
+            LocalData currentLocalData = mDataAdapter.getLocalData(currentDataId);
+            if (currentLocalData != null) {
+                GalleryHelper.setContentUri(startGalleryIntent, currentLocalData.getContentUri());
+            }
+            launchActivityByIntent(startGalleryIntent);
         } catch (ActivityNotFoundException e) {
             Log.w(TAG, "Failed to launch gallery activity, closing");
         }
