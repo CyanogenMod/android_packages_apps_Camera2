@@ -14,7 +14,6 @@
      limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:camera="http://schemas.android.com/apk/res/com.android.camera2"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -34,71 +33,6 @@
         android:focusable="true"
         android:src="@drawable/ic_camera_normal" />
   </FrameLayout>
-
-  <com.android.camera.ui.TopRightWeightedLayout
-      android:id="@+id/bottombar_options"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="horizontal"
-      android:gravity="center"
-      android:visibility="invisible"
-      android:background="@null" >
-    <com.android.camera.MultiToggleImageButton
-        android:id="@+id/refocus_toggle_button"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@null"
-        camera:imageIds="@array/refocus_icons"
-        camera:contentDescriptionIds="@array/refocus_descriptions" />
-    <com.android.camera.MultiToggleImageButton
-        android:id="@+id/hdr_plus_toggle_button"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:background="@null"
-        android:layout_weight="1"
-        camera:imageIds="@array/pref_camera_hdr_plus_icons"
-        camera:contentDescriptionIds="@array/hdr_plus_descriptions" />
-    <com.android.camera.MultiToggleImageButton
-        android:id="@+id/flash_toggle_button"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@null"
-        camera:imageIds="@array/camera_flashmode_icons"
-        camera:contentDescriptionIds="@array/camera_flash_descriptions" />
-    <com.android.camera.MultiToggleImageButton
-        android:id="@+id/camera_toggle_button"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@null"
-        camera:imageIds="@array/camera_id_icons"
-        camera:contentDescriptionIds="@array/camera_id_descriptions" />
-    <ImageButton
-        android:id="@+id/reference_toggle"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:src="@drawable/ic_capture_options"
-        android:visibility="invisible"
-        android:layout_weight="1"
-        android:background="@null" />
-  </com.android.camera.ui.TopRightWeightedLayout>
-
-  <com.android.camera.ui.TopRightMostOverlay
-      android:id="@+id/bottombar_options_overlay"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="@null" >
-      <com.android.camera.ToggleImageButton
-          android:id="@+id/bottombar_options_toggle"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:scaleType="center"
-          android:background="@null"
-          camera:imageIds="@array/settings_toggle_icons"
-          camera:contentDescriptionIds="@array/settings_toggle_descriptions" />
-  </com.android.camera.ui.TopRightMostOverlay>
 
   <com.android.camera.ui.TopRightWeightedLayout
       android:id="@+id/bottombar_intent"
