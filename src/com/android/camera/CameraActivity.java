@@ -1003,6 +1003,12 @@ public class CameraActivity extends Activity
         }
 
         if (mSecureCamera) {
+            // Foreground event caused by lock screen startup.
+            // It is necessary to log this in onCreate, to avoid the
+            // onResume->onPause->onResume sequence.
+            UsageStatistics.foregrounded(
+                eventprotos.ForegroundEvent.ForegroundSource.LOCK_SCREEN);
+
             // Change the window flags so that secure camera can show when locked
             Window win = getWindow();
             WindowManager.LayoutParams params = win.getAttributes();
@@ -1213,8 +1219,15 @@ public class CameraActivity extends Activity
             mAutoRotateScreen = true;
         }
 
-        // TODO: set source appropriately
-        UsageStatistics.foregrounded(eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
+        if (isCaptureIntent()) {
+            // Foreground event caused by photo or video capure intent.
+            UsageStatistics.foregrounded(
+                eventprotos.ForegroundEvent.ForegroundSource.INTENT_PICKER);
+        } else if (!mSecureCamera) {
+            // Foreground event that is not caused by an intent.
+            UsageStatistics.foregrounded(
+                eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
+        }
 
         Drawable galleryLogo;
         if (mSecureCamera) {
