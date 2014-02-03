@@ -406,7 +406,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             button = (View) getImageButtonOrError(buttonId);
         }
         if (button.getVisibility() == View.VISIBLE) {
-            button.setVisibility(View.INVISIBLE);
+            button.setVisibility(View.GONE);
             if (mListener != null) {
                 mListener.onButtonVisibilityChanged(this, buttonId);
             }
