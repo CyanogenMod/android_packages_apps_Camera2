@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 /**
  * A helper class to provide Gallery related info.
@@ -41,5 +42,9 @@ public class GalleryHelper {
             }
         }
         return null;
+    }
+
+    public static void setContentUri(Intent intent, Uri uri) {
+        // Do nothing.
     }
 }
