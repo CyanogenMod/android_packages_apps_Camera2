@@ -36,6 +36,14 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
     public GestureDetector.OnGestureListener getGestureListener();
 
     /**
+     * An {@link android.view.View.OnTouchListener} can be provided in addition to
+     * or instead of a {@link android.view.GestureDetector.OnGestureListener}
+     * for listening to touch events on the preview.  The listener is called whenever
+     * there is a touch event on the {@link com.android.camera.ui.PreviewOverlay}.
+     */
+    public View.OnTouchListener getTouchListener();
+
+    /**
      * Gets called when preview TextureView gets a layout change call.
      */
     public void onPreviewLayoutChanged(View v, int left, int top, int right,

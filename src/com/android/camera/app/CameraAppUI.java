@@ -360,6 +360,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final static int SWIPE_RIGHT = 4;
     private boolean mSwipeEnabled = true;
 
+    // Shared Surface Texture properities.
+    private SurfaceTexture mSurface;
+    private int mSurfaceWidth;
+    private int mSurfaceHeight;
+
     // Touch related measures:
     private final int mSlop;
     private final static int SWIPE_TIME_OUT_MS = 500;
@@ -414,6 +419,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     public long getCoverHiddenTime() {
         return mCoverHiddenTime;
+    }
+
+    /**
+     * This resets the preview to have no applied transform matrix.
+     */
+    public void clearPreviewTransform() {
+        mTextureViewHelper.clearTransform();
     }
 
     public void updatePreviewAspectRatio(float aspectRatio) {
@@ -749,15 +761,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (gestureListener != null) {
             mPreviewOverlay.setGestureListener(gestureListener);
         }
+        View.OnTouchListener touchListener = mPreviewStatusListener.getTouchListener();
+        if (touchListener != null) {
+            mPreviewOverlay.setTouchListener(touchListener);
+        }
 
-        // Set a listener for resizing the bottom bar on
-        // preview size changes.
         mTextureViewHelper.setAutoAdjustTransform(
             mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
-        if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-            mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
-            mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeOptionsOverlay);
-        }
     }
 
     /**
@@ -766,10 +776,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void onChangeCamera() {
         ModuleController moduleController = mController.getCurrentModuleController();
-        if (moduleController.isUsingBottomBar()) {
-            applyModuleSpecs(moduleController.getHardwareSpec(),
-                moduleController.getBottomBarSpec());
-        }
+        applyModuleSpecs(moduleController.getHardwareSpec(),
+            moduleController.getBottomBarSpec());
 
         if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
@@ -813,8 +821,26 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.setOnLayoutChangeListener(mPreviewLayoutChangeListener);
 
         mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
+        int unpressedColor = mController.getAndroidContext().getResources()
+            .getColor(R.color.bottombar_unpressed);
+        setBottomBarColor(unpressedColor);
+        int pressedColor = mController.getAndroidContext().getResources()
+            .getColor(R.color.bottombar_pressed);
+        setBottomBarPressedColor(pressedColor);
+
+        // Auto adjust the bottom bar for every module, so that panorama
+        // and photosphere can get a transparent bottom bar without any extra work.
+        // TODO: add and remove the bottom bar listener in onPreviewListenerChanged,
+        // based on whether the module needs to adjust the size of the bottom bar.
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
+
         mModeOptionsOverlay
             = (ModeOptionsOverlay) mCameraRootView.findViewById(R.id.mode_options_overlay);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeOptionsOverlay);
+
+        // Sets the visibility of the bottom bar and the mode options.
+        resetBottomControls(mController.getCurrentModuleController(),
+            mController.getCurrentModuleIndex());
 
         mGridLines = (GridLines) mCameraRootView.findViewById(R.id.grid_lines);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mGridLines);
@@ -837,23 +863,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mController.getButtonManager().load(mCameraRootView);
         mController.getButtonManager().setListener(mIndicatorIconController);
         mController.getSettingsManager().addListener(mIndicatorIconController);
-    }
-
-    // TODO: Remove this when refactor is done.
-    // This is here to ensure refactored modules can work with not-yet-refactored ones.
-    public void clearCameraUI() {
-        if (mIndicatorIconController != null) {
-            mController.getSettingsManager().removeListener(mIndicatorIconController);
-        }
-        mCameraRootView.removeAllViews();
-        mModuleUI = null;
-        mTextureView = null;
-        mGridLines = null;
-        mPreviewOverlay = null;
-        mBottomBar = null;
-        mModeOptionsOverlay = null;
-        mIndicatorIconController = null;
-        setBottomBarShutterListener(null);
     }
 
     /**
@@ -935,16 +944,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mController.onModeSelected(modeIndex);
         int currentIndex = mController.getCurrentModuleIndex();
 
-        if (mTextureView == null) {
-            // TODO: Remove this when all the modules use TextureView
-            int temporaryDelay = 600; // ms
-            mModeListView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideModeCover();
-                }
-            }, temporaryDelay);
-        } else if (lastIndex == currentIndex) {
+        if (lastIndex == currentIndex) {
             hideModeCover();
         }
     }
@@ -995,10 +995,34 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mFilmstripBottomControls.setListener(listener);
     }
 
-    /***************************SurfaceTexture Listener*********************************/
+    /***************************SurfaceTexture Api and Listener*********************************/
+
+    /**
+     * Return the shared surface texture.
+     */
+    public SurfaceTexture getSurfaceTexture() {
+        return mSurface;
+    }
+
+    /**
+     * Return the shared {@link android.graphics.SurfaceTexture}'s width.
+     */
+    public int getSurfaceWidth() {
+        return mSurfaceWidth;
+    }
+
+    /**
+     * Return the shared {@link android.graphics.SurfaceTexture}'s height.
+     */
+    public int getSurfaceHeight() {
+        return mSurfaceHeight;
+    }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        mSurface = surface;
+        mSurfaceWidth = width;
+        mSurfaceHeight = height;
         Log.v(TAG, "SurfaceTexture is available");
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureAvailable(surface, width, height);
@@ -1007,6 +1031,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        mSurface = surface;
+        mSurfaceWidth = width;
+        mSurfaceHeight = height;
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureSizeChanged(surface, width, height);
         }
@@ -1014,6 +1041,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        mSurface = null;
         Log.v(TAG, "SurfaceTexture is destroyed");
         if (mPreviewStatusListener != null) {
             return mPreviewStatusListener.onSurfaceTextureDestroyed(surface);
@@ -1023,6 +1051,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        mSurface = surface;
         if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
             CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
             hideModeCover();
@@ -1055,8 +1084,65 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     }
 
+    /***************************Mode options api *****************************/
+
+    /**
+     * Set the mode options visible.
+     */
+    public void showModeOptions() {
+        mModeOptionsOverlay.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Set the mode options invisible.  This is necessary for modes
+     * that don't show a bottom bar for the capture UI.
+     */
+    public void hideModeOptions() {
+        mModeOptionsOverlay.setVisibility(View.INVISIBLE);
+    }
 
     /****************************Bottom bar api ******************************/
+
+    /**
+     * Sets up the bottom bar and mode options with the correct
+     * shutter button and visibility based on the current module.
+     */
+    public void resetBottomControls(ModuleController module, int moduleIndex) {
+        if (areBottomControlsUsed(module)) {
+            setBottomBarShutterIcon(moduleIndex);
+        }
+    }
+
+    /**
+     * Show or hide the mode options and bottom bar, based on
+     * whether the current module is using the bottom bar.  Returns
+     * whether the mode options and bottom bar are used.
+     */
+    private boolean areBottomControlsUsed(ModuleController module) {
+        if (module.isUsingBottomBar()) {
+            showBottomBar();
+            showModeOptions();
+            return true;
+        } else {
+            hideBottomBar();
+            hideModeOptions();
+            return false;
+        }
+    }
+
+    /**
+     * Set the bottom bar visible.
+     */
+    public void showBottomBar() {
+        mBottomBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Set the bottom bar invisible.
+     */
+    public void hideBottomBar() {
+        mBottomBar.setVisibility(View.INVISIBLE);
+    }
 
     /**
      * Sets the color of the bottom bar.
@@ -1072,11 +1158,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.setBackgroundPressedColor(colorId);
     }
 
-    // TODO: refactor this out so it can controlled by the app.
     /**
-     * Sets the shutter button icon on the bottom bar
+     * Sets the shutter button icon on the bottom bar, based on
+     * the mode index.
      */
-    public void setBottomBarShutterIcon(int shutterIconId) {
+    public void setBottomBarShutterIcon(int modeIndex) {
+        int shutterIconId = CameraUtil.getCameraShutterIconId(modeIndex,
+            mController.getAndroidContext());
         mBottomBar.setShutterButtonIcon(shutterIconId);
     }
 
@@ -1111,15 +1199,23 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
+     * Performs a transition to the capture layout of the bottom bar.
+     */
+    public void transitionToCapture() {
+        ModuleController moduleController = mController.getCurrentModuleController();
+        applyModuleSpecs(moduleController.getHardwareSpec(),
+            moduleController.getBottomBarSpec());
+        mBottomBar.transitionToCapture();
+    }
+
+    /**
      * Performs a transition to the global intent layout.
      */
     public void transitionToIntentLayout() {
         ModuleController moduleController = mController.getCurrentModuleController();
-        if (moduleController.isUsingBottomBar()) {
-            applyModuleSpecs(moduleController.getHardwareSpec(),
-                moduleController.getBottomBarSpec());
-            mBottomBar.transitionToIntentLayout();
-        }
+        applyModuleSpecs(moduleController.getHardwareSpec(),
+            moduleController.getBottomBarSpec());
+        mBottomBar.transitionToIntentLayout();
     }
 
     /**
@@ -1127,11 +1223,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void transitionToIntentReviewLayout() {
         ModuleController moduleController = mController.getCurrentModuleController();
-        if (moduleController.isUsingBottomBar()) {
-            applyModuleSpecs(moduleController.getHardwareSpec(),
-                moduleController.getBottomBarSpec());
-            mBottomBar.transitionToIntentReviewLayout();
-        }
+        applyModuleSpecs(moduleController.getHardwareSpec(),
+            moduleController.getBottomBarSpec());
+        mBottomBar.transitionToIntentReviewLayout();
     }
 
     /**

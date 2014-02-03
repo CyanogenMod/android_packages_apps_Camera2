@@ -220,9 +220,10 @@ public class BottomBar extends FrameLayout
             if (screenAspectRatio < 1.0) {
                 screenAspectRatio = 1.0f/screenAspectRatio;
             }
+            // TODO: background alphas should be set by xml references to colors.
             if (previewAspectRatio >= screenAspectRatio) {
                 mOverLayBottomBar = true;
-                setBackgroundAlpha(128);
+                setBackgroundAlpha(153);
                 setButtonImageLevels(1);
             } else {
                 mOverLayBottomBar = false;

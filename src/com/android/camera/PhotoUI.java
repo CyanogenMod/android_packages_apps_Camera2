@@ -54,7 +54,6 @@ public class PhotoUI implements PreviewStatusListener,
     private final PhotoController mController;
 
     private final View mRootView;
-    private SurfaceTexture mSurfaceTexture;
 
     private FaceView mFaceView;
     private DecodeImageForReview mDecodeTaskForReview = null;
@@ -64,9 +63,7 @@ public class PhotoUI implements PreviewStatusListener,
 
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
-    private final TextureView mTextureView;
     private float mAspectRatio = UNSET;
-    private final Object mSurfaceTextureLock = new Object();
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
@@ -80,6 +77,11 @@ public class PhotoUI implements PreviewStatusListener,
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
         return mPreviewGestureListener;
+    }
+
+    @Override
+    public View.OnTouchListener getTouchListener() {
+        return null;
     }
 
     @Override
@@ -159,11 +161,7 @@ public class PhotoUI implements PreviewStatusListener,
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                  moduleRoot, true);
-        // display the view
-        mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         initIndicators();
-
-        mSurfaceTexture = mTextureView.getSurfaceTexture();
 
         ViewStub faceViewStub = (ViewStub) mRootView
                 .findViewById(R.id.face_view_stub);
@@ -195,17 +193,9 @@ public class PhotoUI implements PreviewStatusListener,
         }
     }
 
-    protected Object getSurfaceTextureLock() {
-        return mSurfaceTextureLock;
-    }
-
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        synchronized (mSurfaceTextureLock) {
-            Log.v(TAG, "SurfaceTexture ready.");
-            mSurfaceTexture = surface;
-            mController.onPreviewUIReady();
-        }
+        mController.onPreviewUIReady();
     }
 
     @Override
@@ -215,12 +205,8 @@ public class PhotoUI implements PreviewStatusListener,
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        synchronized (mSurfaceTextureLock) {
-            mSurfaceTexture = null;
-            mController.onPreviewUIDestroyed();
-            Log.w(TAG, "SurfaceTexture destroyed");
-            return true;
-        }
+        mController.onPreviewUIDestroyed();
+        return true;
     }
 
     @Override
@@ -348,10 +334,6 @@ public class PhotoUI implements PreviewStatusListener,
 
     public void setSwipingEnabled(boolean enable) {
         mActivity.setSwipingEnabled(enable);
-    }
-
-    public SurfaceTexture getSurfaceTexture() {
-        return mSurfaceTexture;
     }
 
     public void onPause() {

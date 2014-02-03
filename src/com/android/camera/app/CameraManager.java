@@ -222,6 +222,14 @@ public interface CameraManager {
         public void setPreviewTexture(final SurfaceTexture surfaceTexture);
 
         /**
+         * Blocks until a {@link android.graphics.SurfaceTexture} has been set
+         * for preview.
+         *
+         * @param surfaceTexture The {@link SurfaceTexture} for preview.
+         */
+        public void setPreviewTextureSync(final SurfaceTexture surfaceTexture);
+
+        /**
          * Sets the {@link android.view.SurfaceHolder} for preview.
          *
          * @param surfaceHolder The {@link SurfaceHolder} for preview.

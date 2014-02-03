@@ -315,13 +315,6 @@ public class VideoModule extends CameraModule
         return dateFormat.format(date);
     }
 
-    private void initializeSurfaceView() {
-        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {  // API level < 16
-            mUI.initializeSurfaceView();
-        }
-    }
-
-
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = activity;
@@ -346,7 +339,6 @@ public class VideoModule extends CameraModule
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
         mIsVideoCaptureIntent = isVideoCaptureIntent();
-        initializeSurfaceView();
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = mActivity.getLocationManager();
@@ -613,7 +605,6 @@ public class VideoModule extends CameraModule
                 // will not be continuous for a short period of time.
 
                 mUI.animateFlash();
-                mUI.animateCapture();
             }
         }
     }
@@ -802,7 +793,7 @@ public class VideoModule extends CameraModule
     private void startPreview() {
         Log.v(TAG, "startPreview");
 
-        SurfaceTexture surfaceTexture = mUI.getSurfaceTexture();
+        SurfaceTexture surfaceTexture = mActivity.getCameraAppUI().getSurfaceTexture();
         if (!mPreferenceRead || surfaceTexture == null || mPaused == true ||
                 mCameraDevice == null) {
             return;
@@ -877,12 +868,6 @@ public class VideoModule extends CameraModule
         mSnapshotInProgress = false;
         if (mFocusManager != null) {
             mFocusManager.onCameraReleased();
-        }
-    }
-
-    private void releasePreviewResources() {
-        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
-            mUI.hideSurfaceView();
         }
     }
 
@@ -967,42 +952,12 @@ public class VideoModule extends CameraModule
         }
     }
 
-    private void setupMediaRecorderPreviewDisplay() {
-        // Nothing to do here if using SurfaceTexture.
-        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
-            // We stop the preview here before unlocking the device because we
-            // need to change the SurfaceTexture to SurfaceView for preview.
-            stopPreview();
-            mCameraDevice.setPreviewDisplay(mUI.getSurfaceHolder());
-            // The orientation for SurfaceTexture is different from that for
-            // SurfaceView. For SurfaceTexture we don't need to consider the
-            // display rotation. Just consider the sensor's orientation and we
-            // will set the orientation correctly when showing the texture.
-            // Gallery will handle the orientation for the preview. For
-            // SurfaceView we will have to take everything into account so the
-            // display rotation is considered.
-            mCameraDevice.setDisplayOrientation(
-                    CameraUtil.getDisplayOrientation(mDisplayRotation, mCameraId));
-            mCameraDevice.startPreview();
-            mPreviewing = true;
-            mMediaRecorder.setPreviewDisplay(mUI.getSurfaceHolder().getSurface());
-        }
-    }
-
     // Prepares media recorder.
     private void initializeRecorder() {
         Log.v(TAG, "initializeRecorder");
         // If the mCameraDevice is null, then this activity is going to finish
         if (mCameraDevice == null) {
             return;
-        }
-
-        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
-            // Set the SurfaceView to visible so the surface gets created.
-            // surfaceCreated() is called immediately when the visibility is
-            // changed to visible. Thus, mSurfaceViewReady should become true
-            // right after calling setVisibility().
-            mUI.showSurfaceView();
         }
 
         Intent intent = mActivity.getIntent();
@@ -1084,7 +1039,6 @@ public class VideoModule extends CameraModule
             }
         }
         mMediaRecorder.setOrientationHint(rotation);
-        setupMediaRecorderPreviewDisplay();
 
         try {
             mMediaRecorder.prepare();
@@ -1390,7 +1344,6 @@ public class VideoModule extends CameraModule
             mCameraDevice.lock();
             if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
                 stopPreview();
-                mUI.hideSurfaceView();
                 // Switch back to use SurfaceTexture for preview.
                 startPreview();
             }
@@ -1661,7 +1614,6 @@ public class VideoModule extends CameraModule
         }
 
         closeVideoFileDescriptor();
-        releasePreviewResources();
 
         if (mReceiver != null) {
             mActivity.unregisterReceiver(mReceiver);
@@ -1742,7 +1694,6 @@ public class VideoModule extends CameraModule
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (enabled) {
                 mUI.animateFlash();
-                mUI.animateCapture();
             } else {
                 mUI.showPreviewBorder(enabled);
             }

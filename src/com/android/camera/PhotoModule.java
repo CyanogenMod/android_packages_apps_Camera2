@@ -1459,7 +1459,7 @@ public class PhotoModule
             return false;
         }
 
-        SurfaceTexture st = mUI.getSurfaceTexture();
+        SurfaceTexture st = mActivity.getCameraAppUI().getSurfaceTexture();
         if (st == null) {
             Log.w(TAG, "startPreview: surfaceTexture is not ready.");
             return false;
@@ -1501,7 +1501,7 @@ public class PhotoModule
         }
         setCameraParameters(UPDATE_PARAM_ALL);
         // Let UI set its expected aspect ratio
-        mCameraDevice.setPreviewTexture(mUI.getSurfaceTexture());
+        mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
         // This is to notify app controller that preview will start next, so app
         // controller can set preview callbacks if needed. This has to happen
