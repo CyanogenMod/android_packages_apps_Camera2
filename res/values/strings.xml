@@ -748,6 +748,9 @@ CHAR LIMIT=NONE] -->
     <!-- Accessibility text for filmstrip delete button [CHAR_LIMIT=NONE] -->
     <string name="delete_button_description">Delete</string>
 
+    <!-- Accessibility announcement when option button changes on screen after tap, e.g. from flash auto to flash off [CHAR_LIMIT=NONE] -->
+    <string name="button_change_announcement">Button is now %s</string>
+
     <!-- Text shown in camera settings list for toggling photo location on or off [CHAR LIMIT=25] -->
     <string name="setting_location">Location</string>
     <!-- Text shown in camera settings list for selecting the size of photos that will be captured [CHAR LIMIT=25] -->
