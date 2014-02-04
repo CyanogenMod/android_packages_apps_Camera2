@@ -994,26 +994,6 @@ public class CameraUtil {
     }
 
     /**
-     * Gets the theme pressed color of a specific mode.
-     *
-     * @param modeIndex index of the mode
-     * @param context current context
-     * @return theme pressed color of the mode if input index is valid, otherwise 0
-     */
-    public static int getCameraThemePressedColorId(int modeIndex, Context context) {
-
-        // Find the theme color using id from the color array
-        TypedArray colorRes = context.getResources()
-                .obtainTypedArray(R.array.camera_mode_theme_pressed_color);
-        if (modeIndex >= colorRes.length() || modeIndex < 0) {
-            // Mode index not found
-            Log.e(TAG, "Invalid mode index: " + modeIndex);
-            return 0;
-        }
-        return colorRes.getResourceId(modeIndex, 0);
-    }
-
-    /**
      * Gets the mode icon resource id of a specific mode.
      *
      * @param modeIndex index of the mode
