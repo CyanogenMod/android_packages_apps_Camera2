@@ -109,9 +109,15 @@ public class MultiToggleImageButton extends ImageButton {
     public void setState(int state, boolean callListener) {
         mState = state;
         setImageResource(mImageIds[mState]);
-        setContentDescription(getResources().getString(mDescIds[mState]));
-        // TODO get talkback to announce the current button state
-        //sendAccessibilityEvent(AccessibilityEvent.CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION);
+        String oldContentDescription = String.valueOf(getContentDescription());
+        String newContentDescription = getResources().getString(mDescIds[mState]);
+        if (oldContentDescription != null && !oldContentDescription.isEmpty()
+                && !oldContentDescription.equals(newContentDescription)) {
+            setContentDescription(newContentDescription);
+            String announceChange = getResources().getString(
+                    R.string.button_change_announcement, newContentDescription);
+            announceForAccessibility(announceChange);
+        }
         super.setImageLevel(mLevel);
         if (callListener && mOnStateChangeListener != null) {
             mOnStateChangeListener.stateChanged(this, getState());
