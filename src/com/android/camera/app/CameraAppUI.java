@@ -41,6 +41,7 @@ import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
+import com.android.camera.ui.GridLines;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
@@ -400,6 +401,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private int mLastRotation;
     private int mSwipeState = IDLE;
     private PreviewOverlay mPreviewOverlay;
+    private GridLines mGridLines;
     private CaptureAnimationOverlay mCaptureOverlay;
     private PreviewStatusListener mPreviewStatusListener;
     private int mModeCoverState = COVER_HIDDEN;
@@ -832,6 +834,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeOptionsOverlay
             = (ModeOptionsOverlay) mCameraRootView.findViewById(R.id.mode_options_overlay);
 
+        mGridLines = (GridLines) mCameraRootView.findViewById(R.id.grid_lines);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mGridLines);
+
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mPreviewOverlay.setOnPreviewTouchedListener(mModeOptionsOverlay);
@@ -856,6 +861,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mCameraRootView.removeAllViews();
         mModuleUI = null;
         mTextureView = null;
+        mGridLines = null;
         mPreviewOverlay = null;
         mBottomBar = null;
         mModeOptionsOverlay = null;
@@ -1040,6 +1046,31 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mPreviewStatusListener.onSurfaceTextureUpdated(surface);
         }
     }
+
+    /****************************Grid lines api ******************************/
+
+    /**
+     * Show a set of evenly spaced lines over the preview.  The number
+     * of lines horizontally and vertically is determined by
+     * {@link com.android.camera.ui.GridLines}.
+     */
+    public void showGridLines() {
+        if (mGridLines != null) {
+            mGridLines.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Hide the set of evenly spaced grid lines overlaying the preview.
+     */
+    public void hideGridLines() {
+        if (mGridLines != null) {
+            mGridLines.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    /****************************Bottom bar api ******************************/
 
     /**
      * Sets the color of the bottom bar.

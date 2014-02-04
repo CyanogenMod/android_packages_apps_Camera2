@@ -40,6 +40,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.android.camera.ui.GridLines
+        android:id="@+id/grid_lines"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
     <FrameLayout
         android:id="@+id/module_layout"
         android:layout_width="match_parent"

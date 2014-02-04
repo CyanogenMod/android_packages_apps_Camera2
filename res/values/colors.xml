@@ -92,4 +92,5 @@
 
     <color name="indicators_background_color">#4c000000</color>
 
+    <color name="grid_line">#99ffffff</color>
 </resources>
