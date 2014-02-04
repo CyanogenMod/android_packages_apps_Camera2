@@ -115,19 +115,9 @@
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Kameran asetukset"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Videokameran asetukset"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"Kuvan koko"</string>
-    <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_10mp" msgid="2768659791396478466">"10 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 megapiks. (16:9)"</string>
-    <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 megap. (16:9)"</string>
-    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1,5 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1,3 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1 megapikseli"</string>
-    <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
-    <string name="pref_camera_picturesize_entry_qvga" msgid="6134562622041084167">"QVGA"</string>
+    <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"Suuri"</string>
+    <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"Keskikokoinen"</string>
+    <string name="pref_camera_picturesize_entry_small" msgid="2991239656622539068">"Pieni"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"Tarkennustila"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"Auto"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3887667853236656322">"Loputon"</string>
@@ -290,6 +280,8 @@
     <string name="saving_tiny_planet" msgid="8828265180177375494">"Tallennetaan Tiny Planet…"</string>
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoomaa"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Kierrä"</string>
+    <!-- no translation found for photo_editor (1521994560971367225) -->
+    <skip />
     <string name="crop_save" msgid="2841974981340098579">"Tallenna"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Kuvaa ei voi ladata."</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Filminauhanäkymä"</string>
@@ -303,6 +295,60 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervallikuvaus"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Laajakulma"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoraama"</string>
+    <!-- no translation found for mode_settings_desc (1189966170303887131) -->
+    <skip />
+    <!-- no translation found for mode_camera_desc (3670807361165657278) -->
+    <skip />
+    <!-- no translation found for mode_video_desc (4058407412929464689) -->
+    <skip />
+    <!-- no translation found for mode_photosphere_desc (2403816283825579161) -->
+    <skip />
+    <!-- no translation found for mode_craft_desc (8411543408424448562) -->
+    <skip />
+    <!-- no translation found for mode_advanced_camera_desc (6960004655720210841) -->
+    <skip />
+    <!-- no translation found for mode_timelapse_desc (6713275294166788276) -->
+    <skip />
+    <!-- no translation found for mode_wideangle_desc (5924237384871288501) -->
+    <skip />
+    <!-- no translation found for mode_panorama_desc (6023020404237519590) -->
+    <skip />
+    <!-- no translation found for refocus_off_desc (4043473941193970147) -->
+    <skip />
+    <!-- no translation found for refocus_on_desc (2549978881191009668) -->
+    <skip />
+    <!-- no translation found for settings_open_desc (6914471293841793766) -->
+    <skip />
+    <!-- no translation found for settings_close_desc (3095831199632813127) -->
+    <skip />
+    <!-- no translation found for hdr_plus_off_desc (5301287296717144319) -->
+    <skip />
+    <!-- no translation found for hdr_plus_on_desc (8204780034508139909) -->
+    <skip />
+    <!-- no translation found for hdr_off_desc (7921924739852874675) -->
+    <skip />
+    <!-- no translation found for hdr_on_desc (4591284110249047558) -->
+    <skip />
+    <!-- no translation found for flash_off_desc (7151559466286106797) -->
+    <skip />
+    <!-- no translation found for flash_auto_desc (3009043125539675717) -->
+    <skip />
+    <!-- no translation found for flash_on_desc (930372145324854699) -->
+    <skip />
+    <!-- no translation found for torch_on_desc (3069836196559213365) -->
+    <skip />
+    <!-- no translation found for torch_off_desc (8304675202998742618) -->
+    <skip />
+    <!-- no translation found for camera_id_back_desc (3566327490758890635) -->
+    <skip />
+    <!-- no translation found for camera_id_front_desc (7497517948130254220) -->
+    <skip />
+    <!-- no translation found for cancel_button_description (3801167024006905033) -->
+    <skip />
+    <!-- no translation found for done_button_description (1334963435441544592) -->
+    <skip />
+    <!-- no translation found for retake_button_description (4234613030674787714) -->
+    <skip />
     <string name="setting_location" msgid="4459859689227893838">"Sijainti"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Kuvan koko"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Videon resoluutio"</string>
