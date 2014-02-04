@@ -16,13 +16,9 @@
 
 package com.android.camera.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
-import android.os.Bundle;
 import android.util.Log;
-
-import com.android.camera.app.LegacyLocationProvider;
 
 /**
  * A class to select the best available location provider (fused location
@@ -34,9 +30,9 @@ public class LocationManager {
     LocationProvider mLocationProvider;
     private boolean mRecordLocation;
 
-    public LocationManager(Activity activity) {
+    public LocationManager(Context context) {
         Log.d(TAG, "Using legacy location provider.");
-        LegacyLocationProvider llp = new LegacyLocationProvider(activity);
+        LegacyLocationProvider llp = new LegacyLocationProvider(context);
         mLocationProvider = llp;
     }
 

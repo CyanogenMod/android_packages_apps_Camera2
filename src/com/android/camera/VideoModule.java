@@ -323,11 +323,14 @@ public class VideoModule extends CameraModule
 
 
     @Override
-    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
-        mActivity = (CameraActivity) app.getAndroidContext();
-        mUI = new VideoUI(mActivity, this,  app.getModuleLayoutRoot());
-        app.setPreviewStatusListener(mUI);
-        app.getCameraAppUI().setBottomBarShutterListener(this);
+    public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
+        mActivity = activity;
+        // TODO: Need to look at the controller interface to see if we can get
+        // rid of passing in the activity directly.
+        mAppController = mActivity;
+        mUI = new VideoUI(mActivity, this,  mActivity.getModuleLayoutRoot());
+        mActivity.setPreviewStatusListener(mUI);
+        mActivity.getCameraAppUI().setBottomBarShutterListener(this);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
@@ -353,7 +356,6 @@ public class VideoModule extends CameraModule
 
         mUI.showTimeLapseUI(mCaptureTimeLapse);
         mPendingSwitchCameraId = -1;
-        mAppController = app;
 
         mShutterIconId = CameraUtil.getCameraShutterIconId(
                 mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
@@ -449,7 +451,9 @@ public class VideoModule extends CameraModule
         // We keep the last known orientation. So if the user first orient
         // the camera then point the camera to floor or sky, we still have
         // the correct orientation.
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) return;
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            return;
+        }
         int newOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
 
         if (mOrientation != newOrientation) {
@@ -691,7 +695,9 @@ public class VideoModule extends CameraModule
         mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
         mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
         // TODO: This should be checked instead directly +1000.
-        if (mCaptureTimeLapse) quality += 1000;
+        if (mCaptureTimeLapse) {
+            quality += 1000;
+        }
 
         // If quality is not supported, request QUALITY_HIGH which is always supported.
         if (CamcorderProfile.hasProfile(mCameraId, quality) == false) {
@@ -761,7 +767,9 @@ public class VideoModule extends CameraModule
 
     @Override
     public void updateCameraOrientation() {
-        if (mMediaRecorderRecording) return;
+        if (mMediaRecorderRecording) {
+            return;
+        }
         if (mDisplayRotation != CameraUtil.getDisplayRotation(mActivity)) {
             setDisplayOrientation();
         }
@@ -775,14 +783,20 @@ public class VideoModule extends CameraModule
     @Override
     public int onZoomChanged(int index) {
         // Not useful to change zoom value when the activity is paused.
-        if (mPaused) return index;
+        if (mPaused) {
+            return index;
+        }
         mZoomValue = index;
-        if (mParameters == null || mCameraDevice == null) return index;
+        if (mParameters == null || mCameraDevice == null) {
+            return index;
+        }
         // Set zoom parameters asynchronously
         mParameters.setZoom(mZoomValue);
         mCameraDevice.setParameters(mParameters);
         Parameters p = mCameraDevice.getParameters();
-        if (p != null) return p.getZoom();
+        if (p != null) {
+            return p.getZoom();
+        }
         return index;
     }
 
@@ -840,7 +854,9 @@ public class VideoModule extends CameraModule
 
     @Override
     public void stopPreview() {
-        if (!mPreviewing) return;
+        if (!mPreviewing) {
+            return;
+        }
         mCameraDevice.stopPreview();
         if (mFocusManager != null) {
             mFocusManager.onPreviewStopped();
@@ -873,7 +889,9 @@ public class VideoModule extends CameraModule
 
     @Override
     public boolean onBackPressed() {
-        if (mPaused) return true;
+        if (mPaused) {
+            return true;
+        }
         if (mMediaRecorderRecording) {
             onStopVideoRecording();
             return true;
@@ -903,7 +921,9 @@ public class VideoModule extends CameraModule
                 }
                 break;
             case KeyEvent.KEYCODE_MENU:
-                if (mMediaRecorderRecording) return true;
+                if (mMediaRecorderRecording) {
+                    return true;
+                }
                 break;
         }
         return false;
@@ -974,7 +994,9 @@ public class VideoModule extends CameraModule
     private void initializeRecorder() {
         Log.v(TAG, "initializeRecorder");
         // If the mCameraDevice is null, then this activity is going to finish
-        if (mCameraDevice == null) return;
+        if (mCameraDevice == null) {
+            return;
+        }
 
         if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
             // Set the SurfaceView to visible so the surface gets created.
@@ -1181,9 +1203,13 @@ public class VideoModule extends CameraModule
     @Override
     public void onInfo(MediaRecorder mr, int what, int extra) {
         if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
-            if (mMediaRecorderRecording) onStopVideoRecording();
+            if (mMediaRecorderRecording) {
+                onStopVideoRecording();
+            }
         } else if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
-            if (mMediaRecorderRecording) onStopVideoRecording();
+            if (mMediaRecorderRecording) {
+                onStopVideoRecording();
+            }
 
             // Show the toast.
             Toast.makeText(mActivity, R.string.video_reach_size_limit,
@@ -1329,7 +1355,9 @@ public class VideoModule extends CameraModule
                                 .video_recording_stopped));
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
-                if (mVideoFilename != null) deleteVideoFile(mVideoFilename);
+                if (mVideoFilename != null) {
+                    deleteVideoFile(mVideoFilename);
+                }
                 fail = true;
             }
             mMediaRecorderRecording = false;
@@ -1370,7 +1398,9 @@ public class VideoModule extends CameraModule
         }
         // Update the parameters here because the parameters might have been altered
         // by MediaRecorder.
-        if (!mPaused) mParameters = mCameraDevice.getParameters();
+        if (!mPaused) {
+            mParameters = mCameraDevice.getParameters();
+        }
         return fail;
     }
 
@@ -1639,7 +1669,9 @@ public class VideoModule extends CameraModule
             mReceiver = null;
         }
 
-        if (mLocationManager != null) mLocationManager.recordLocation(false);
+        if (mLocationManager != null) {
+            mLocationManager.recordLocation(false);
+        }
 
         mHandler.removeMessages(MSG_CHECK_DISPLAY_ROTATION);
         mHandler.removeMessages(MSG_SWITCH_CAMERA);
@@ -1704,11 +1736,15 @@ public class VideoModule extends CameraModule
     }
 
     private void initializeVideoSnapshot() {
-        if (mParameters == null) return;
+        if (mParameters == null) {
+            return;
+        }
     }
 
     void showVideoSnapshotUI(boolean enabled) {
-        if (mParameters == null) return;
+        if (mParameters == null) {
+            return;
+        }
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (enabled) {
                 mUI.animateFlash();

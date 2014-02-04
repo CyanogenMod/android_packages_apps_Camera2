@@ -31,9 +31,9 @@ import com.android.camera.util.CameraUtil;
  */
 public class CameraController implements CameraManager.CameraOpenCallback, CameraProvider {
     private final String TAG = "CameraController";
-    private Context mContext;
+    private final Context mContext;
     private CameraManager.CameraOpenCallback mCallbackReceiver;
-    private Handler mCallbackHandler;
+    private final Handler mCallbackHandler;
     private final CameraManager mCameraManager;
     private final Camera.CameraInfo[] mCameraInfos;
     private final int mNumberOfCameras;
@@ -171,6 +171,10 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         if (mRequestingCameraId != -1) {
             mRequestingCameraId = -1;
         }
+    }
+
+    public void removeCallbackReceiver() {
+        mCallbackReceiver = null;
     }
 
     /**

@@ -301,7 +301,9 @@ public class CameraUtil {
     }
 
     public static void closeSilently(Closeable c) {
-        if (c == null) return;
+        if (c == null) {
+            return;
+        }
         try {
             c.close();
         } catch (Throwable t) {
@@ -344,7 +346,9 @@ public class CameraUtil {
     }
 
     public static <T> T checkNotNull(T object) {
-        if (object == null) throw new NullPointerException();
+        if (object == null) {
+            throw new NullPointerException();
+        }
         return object;
     }
 
@@ -369,19 +373,29 @@ public class CameraUtil {
     }
 
     public static int clamp(int x, int min, int max) {
-        if (x > max) return max;
-        if (x < min) return min;
+        if (x > max) {
+            return max;
+        }
+        if (x < min) {
+            return min;
+        }
         return x;
     }
 
     public static float clamp(float x, float min, float max) {
-        if (x > max) return max;
-        if (x < min) return min;
+        if (x > max) {
+            return max;
+        }
+        if (x < min) {
+            return min;
+        }
         return x;
     }
 
-    public static int getDisplayRotation(Activity activity) {
-        int rotation = activity.getWindowManager().getDefaultDisplay()
+    public static int getDisplayRotation(Context context) {
+        WindowManager windowManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        int rotation = windowManager.getDefaultDisplay()
                 .getRotation();
         switch (rotation) {
             case Surface.ROTATION_0: return 0;
@@ -450,8 +464,10 @@ public class CameraUtil {
         return orientationHistory;
     }
 
-    private static Point getDefaultDisplaySize(Activity activity, Point size) {
-        activity.getWindowManager().getDefaultDisplay().getSize(size);
+    private static Point getDefaultDisplaySize(Context context, Point size) {
+        WindowManager windowManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getSize(size);
         return size;
     }
 
@@ -469,11 +485,13 @@ public class CameraUtil {
         return (optimalPickIndex == -1) ? null : sizes.get(optimalPickIndex);
     }
 
-    public static int getOptimalPreviewSize(Activity currentActivity,
+    public static int getOptimalPreviewSize(Context context,
             Point[] sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.01;
-        if (sizes == null) return -1;
+        if (sizes == null) {
+            return -1;
+        }
 
         int optimalSizeIndex = -1;
         double minDiff = Double.MAX_VALUE;
@@ -483,13 +501,15 @@ public class CameraUtil {
         // wrong size of preview surface. When we change the preview size, the
         // new overlay will be created before the old one closed, which causes
         // an exception. For now, just get the screen size.
-        Point point = getDefaultDisplaySize(currentActivity, new Point());
+        Point point = getDefaultDisplaySize(context, new Point());
         int targetHeight = Math.min(point.x, point.y);
         // Try to find an size match aspect ratio and size
         for (int i = 0; i < sizes.length; i++) {
             Point size = sizes[i];
             double ratio = (double) size.x / size.y;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
+                continue;
+            }
             if (Math.abs(size.y - targetHeight) < minDiff) {
                 optimalSizeIndex = i;
                 minDiff = Math.abs(size.y - targetHeight);
@@ -516,14 +536,18 @@ public class CameraUtil {
             List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.001;
-        if (sizes == null) return null;
+        if (sizes == null) {
+            return null;
+        }
 
         Size optimalSize = null;
 
         // Try to find a size matches aspect ratio and has the largest width
         for (Size size : sizes) {
             double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
+                continue;
+            }
             if (optimalSize == null || size.width > optimalSize.width) {
                 optimalSize = size;
             }
@@ -633,7 +657,9 @@ public class CameraUtil {
     }
 
     public static boolean isUriValid(Uri uri, ContentResolver resolver) {
-        if (uri == null) return false;
+        if (uri == null) {
+            return false;
+        }
 
         try {
             ParcelFileDescriptor pfd = resolver.openFileDescriptor(uri, "r");
@@ -710,7 +736,9 @@ public class CameraUtil {
     }
 
     public static void fadeIn(View view, float startAlpha, float endAlpha, long duration) {
-        if (view.getVisibility() == View.VISIBLE) return;
+        if (view.getVisibility() == View.VISIBLE) {
+            return;
+        }
 
         view.setVisibility(View.VISIBLE);
         Animation animation = new AlphaAnimation(startAlpha, endAlpha);
@@ -726,7 +754,9 @@ public class CameraUtil {
     }
 
     public static void fadeOut(View view) {
-        if (view.getVisibility() != View.VISIBLE) return;
+        if (view.getVisibility() != View.VISIBLE) {
+            return;
+        }
 
         // Since the button is still clickable before fade-out animation
         // ends, we disable the button first to block click.
