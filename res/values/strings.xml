@@ -739,6 +739,14 @@ CHAR LIMIT=NONE] -->
     <!-- Accessibility text for retake button [CHAR_LIMIT=NONE] -->
     <string name="retake_button_description">Retake</string>
 
+    <!-- Accessibility text for filmstrip share button [CHAR_LIMIT=NONE] -->
+    <string name="share_button_description">Share</string>
+    <!-- Accessibility text for filmstrip view button used to open special image viewers, like 3d photosphere [CHAR_LIMIT=NONE] -->
+    <string name="view_button_description">View</string>
+    <!-- Accessibility text for filmstrip edit button [CHAR_LIMIT=NONE] -->
+    <string name="edit_button_description">Edit</string>
+    <!-- Accessibility text for filmstrip delete button [CHAR_LIMIT=NONE] -->
+    <string name="delete_button_description">Delete</string>
 
     <!-- Text shown in camera settings list for toggling photo location on or off [CHAR LIMIT=25] -->
     <string name="setting_location">Location</string>
