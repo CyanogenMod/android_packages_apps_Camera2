@@ -692,6 +692,11 @@ public class VideoModule extends CameraModule
         mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
         // TODO: This should be checked instead directly +1000.
         if (mCaptureTimeLapse) quality += 1000;
+
+        // If quality is not supported, request QUALITY_HIGH which is always supported.
+        if (CamcorderProfile.hasProfile(mCameraId, quality) == false) {
+            quality = CamcorderProfile.QUALITY_HIGH;
+        }
         mProfile = CamcorderProfile.get(mCameraId, quality);
         getDesiredPreviewSize();
         mPreferenceRead = true;
