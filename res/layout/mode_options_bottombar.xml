@@ -70,7 +70,8 @@
             android:padding="20dp"
             android:scaleType="center"
             android:src="@drawable/ic_options_active"
-            android:background="@null" />
+            android:background="@null"
+            android:contentDescription="@string/more_options_desc" />
       </com.android.camera.widget.ModeOptionsOverlay>
 
       <!-- TODO: integrate into the mode options overlay -->

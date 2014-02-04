@@ -732,6 +732,9 @@ CHAR LIMIT=NONE] -->
     <string name="camera_id_back_desc">Back camera</string>
     <string name="camera_id_front_desc">Front camera</string>
 
+    <!-- Accessibility text for More Options button [CHAR_LIMIT=NONE] -->
+    <string name="more_options_desc">More Options</string>
+
     <!-- Accessibility text for cancel button [CHAR_LIMIT=NONE] -->
     <string name="cancel_button_description">Cancel</string>
     <!-- Accessibility text for done button [CHAR_LIMIT=NONE] -->
