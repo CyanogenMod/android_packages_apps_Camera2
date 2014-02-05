@@ -842,7 +842,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     // TODO: Remove this when refactor is done.
     // This is here to ensure refactored modules can work with not-yet-refactored ones.
     public void clearCameraUI() {
-        mController.getSettingsManager().removeListener(mIndicatorIconController);
+        if (mIndicatorIconController != null) {
+            mController.getSettingsManager().removeListener(mIndicatorIconController);
+        }
         mCameraRootView.removeAllViews();
         mModuleUI = null;
         mTextureView = null;
