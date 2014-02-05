@@ -1466,12 +1466,6 @@ public class CameraActivity extends Activity
             return;
         }
 
-        int settingsIndex = getResources().getInteger(R.integer.camera_mode_setting);
-        if (modeIndex == settingsIndex) {
-            onSettingsSelected();
-            return;
-        }
-
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.MODE_SWITCH_START);
         // Record last used camera mode for quick switching
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)

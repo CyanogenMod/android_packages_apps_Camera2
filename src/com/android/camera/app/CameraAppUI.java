@@ -17,7 +17,10 @@
 package com.android.camera.app;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.util.Log;
@@ -427,6 +430,56 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
 
+    /**
+     * Provides current preview frame and the controls/overlay from the module that
+     * are shown on top of the preview.
+     */
+    public interface CameraModuleScreenShotProvider {
+        /**
+         * Returns the current preview frame down-sampled using the given down-sample
+         * factor.
+         *
+         * @param downSampleFactor the down sample factor for down sampling the
+         *                         preview frame. (e.g. a down sample factor of
+         *                         2 means to scale down the preview frame to 1/2
+         *                         the width and height.)
+         * @return down-sampled preview frame
+         */
+        public Bitmap getPreviewFrame(int downSampleFactor);
+
+        /**
+         * @return the controls and overlays that are currently showing on top of
+         *         the preview drawn into a bitmap with no scaling applied.
+         */
+        public Bitmap getPreviewOverlayAndControls();
+    }
+
+    private final CameraModuleScreenShotProvider mCameraModuleScreenShotProvider =
+            new CameraModuleScreenShotProvider() {
+                @Override
+                public Bitmap getPreviewFrame(int downSampleFactor) {
+                    if (mCameraRootView == null || mTextureView == null) {
+                        return null;
+                    }
+
+                    RectF previewArea = mTextureViewHelper.getPreviewArea();
+                    // Gets the bitmap from the preview TextureView.
+                    Bitmap preview = mTextureView.getBitmap(
+                            (int) previewArea.width() / downSampleFactor,
+                            (int) previewArea.height() / downSampleFactor);
+                    return preview;
+                }
+
+                @Override
+                public Bitmap getPreviewOverlayAndControls() {
+                    Bitmap overlays = Bitmap.createBitmap(mCameraRootView.getWidth(),
+                            mCameraRootView.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(overlays);
+                    mCameraRootView.draw(canvas);
+                    return overlays;
+                }
+            };
+
     private long mCoverHiddenTime = -1; // System time when preview cover was hidden.
 
     public long getCoverHiddenTime() {
@@ -544,6 +597,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModeListView != null) {
             mModeListView.setModeSwitchListener(this);
             mModeListView.setModeListOpenListener(this);
+            mModeListView.setCameraModuleScreenShotProvider(mCameraModuleScreenShotProvider);
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
@@ -865,6 +919,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 mCameraRootView.findViewById(R.id.capture_overlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mPreviewOverlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mCaptureOverlay);
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeListView);
 
         if (mIndicatorIconController == null) {
             mIndicatorIconController =
@@ -959,6 +1014,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (lastIndex == currentIndex) {
             hideModeCover();
         }
+    }
+
+    @Override
+    public int getCurrentModeIndex() {
+        return mController.getCurrentModuleIndex();
     }
 
     /********************** Capture animation **********************/

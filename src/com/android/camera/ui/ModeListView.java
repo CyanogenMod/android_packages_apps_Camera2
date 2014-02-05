@@ -23,10 +23,13 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -34,9 +37,11 @@ import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.widget.AnimationEffects;
@@ -52,7 +57,8 @@ import java.util.List;
  * any of the items in the list will take the user to that corresponding mode
  * with an animation. To dismiss this list, simply swipe left or select a mode.
  */
-public class ModeListView extends ScrollView {
+public class ModeListView extends FrameLayout
+        implements PreviewStatusListener.PreviewAreaSizeChangedListener {
 
     private static final String TAG = "ModeListView";
 
@@ -76,13 +82,25 @@ public class ModeListView extends ScrollView {
     private static final int MODE_SELECTED = 4;
 
     // Scrolling delay between non-focused item and focused item
-    private static final int DELAY_MS = 25;
+    private static final int DELAY_MS = 30;
     // If the fling velocity exceeds this threshold, snap to full screen at a constant
     // speed. Unit: pixel/ms.
     private static final float VELOCITY_THRESHOLD = 2f;
 
+    /**
+     * A factor to change the UI responsiveness on a scroll.
+     * e.g. A scroll factor of 0.5 means UI will move half as fast as the finger.
+     */
+    private static final float SCROLL_FACTOR = 0.5f;
+    // 30% transparent black background.
+    private static final int BACKGROUND_TRANSPARENTCY = (int) (0.3f * 255);
+    private static final int PREVIEW_DOWN_SAMPLE_FACTOR = 4;
+    // Threshold, below which snap back will happen.
+    private static final float SNAP_BACK_THRESHOLD_RATIO = 0.33f;
+
     private final GestureDetector mGestureDetector;
     private final int mIconBlockWidth;
+    private final RectF mPreviewArea = new RectF();
 
     private int mListBackgroundColor;
     private LinearLayout mListView;
@@ -93,6 +111,9 @@ public class ModeListView extends ScrollView {
     private int mFocusItem = NO_ITEM_SELECTED;
     private AnimationEffects mCurrentEffect;
     private ModeListOpenListener mModeListOpenListener;
+    private CameraAppUI.CameraModuleScreenShotProvider mScreenShotProvider = null;
+    private int[] mInputPixels;
+    private int[] mOutputPixels;
 
     // Width and height of this view. They get updated in onLayout()
     // Unit for width and height are pixels.
@@ -134,8 +155,14 @@ public class ModeListView extends ScrollView {
         }
     };
 
+    @Override
+    public void onPreviewAreaSizeChanged(RectF previewArea) {
+        mPreviewArea.set(previewArea);
+    }
+
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
+        public int getCurrentModeIndex();
     }
 
     public interface ModeListOpenListener {
@@ -231,7 +258,7 @@ public class ModeListView extends ScrollView {
             mState = SCROLLING;
             // Scroll based on the scrolling distance on the currently focused
             // item.
-            scroll(mFocusItem, distanceX, distanceY);
+            scroll(mFocusItem, distanceX * SCROLL_FACTOR, distanceY * SCROLL_FACTOR);
             return true;
         }
 
@@ -241,11 +268,24 @@ public class ModeListView extends ScrollView {
                 // Only allows tap to choose mode when the list is fully shown
                 return false;
             }
+
+            // Ignore the tap if it happens outside of the mode list linear layout.
+            int x = (int) ev.getX() - mListView.getLeft();
+            int y = (int) ev.getY() - mListView.getTop();
+            if (x < 0 || x > mListView.getWidth() || y < 0 || y > mListView.getHeight()) {
+                return false;
+            }
+
             int index = getFocusItem(ev.getX(), ev.getY());
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
                 final int modeId = getModeIndex(index);
-                mModeSelectorItems[index].highlight();
+                // Select the focused item.
+                mModeSelectorItems[index].setSelected(true);
+                // Un-highlight all the modes.
+                for (int i = 0; i < mModeSelectorItems.length; i++) {
+                    mModeSelectorItems[i].setHighlighted(false);
+                }
                 mState = MODE_SELECTED;
                 PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
                 effect.setSize(mWidth, mHeight);
@@ -257,8 +297,28 @@ public class ModeListView extends ScrollView {
                         snapBack(false);
                     }
                 });
-                effect.setAnimationStartingPosition((int) ev.getX(), (int) ev.getY());
+
+                // Calculate the position of the icon in the selected item, and
+                // start animation from that position.
+                int[] location = new int[2];
+                // Gets icon's center position in relative to the window.
+                mModeSelectorItems[index].getIconCenterLocationInWindow(location);
+                int iconX = location[0];
+                int iconY = location[1];
+                // Gets current view's top left position relative to the window.
+                getLocationInWindow(location);
+                // Calculate icon location relative to this view
+                iconX -= location[0];
+                iconY -= location[1];
+
+                effect.setAnimationStartingPosition(iconX, iconY);
+                if (mScreenShotProvider != null) {
+                    effect.setBackground(mScreenShotProvider
+                            .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR), mPreviewArea);
+                    effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
+                }
                 mCurrentEffect = effect;
+                invalidate();
 
                 // Post mode selection runnable to the end of the message queue
                 // so that current UI changes can finish before mode initialization
@@ -276,7 +336,7 @@ public class ModeListView extends ScrollView {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             // Cache velocity in the unit pixel/ms.
-            mVelocityX = velocityX / 1000f;
+            mVelocityX = velocityX / 1000f * SCROLL_FACTOR;
             return true;
         }
     };
@@ -302,7 +362,7 @@ public class ModeListView extends ScrollView {
         mListBackgroundColor = mListBackgroundColor & 0xFFFFFF;
         mListBackgroundColor = mListBackgroundColor | (alpha << 24);
         // Set new color to list background.
-        mListView.setBackgroundColor(mListBackgroundColor);
+        setBackgroundColor(mListBackgroundColor);
     }
 
     /**
@@ -341,6 +401,15 @@ public class ModeListView extends ScrollView {
         initializeModeSelectorItems();
     }
 
+    /**
+     * Sets the screen shot provider for getting a preview frame and a bitmap
+     * of the controls and overlay.
+     */
+    public void setCameraModuleScreenShotProvider(
+            CameraAppUI.CameraModuleScreenShotProvider provider) {
+        mScreenShotProvider = provider;
+    }
+
     private void initializeModeSelectorItems() {
         mModeSelectorItems = new ModeSelectorItem[mTotalModes];
         // Inflate the mode selector items and add them to a linear layout
@@ -351,16 +420,9 @@ public class ModeListView extends ScrollView {
             ModeSelectorItem selectorItem =
                     (ModeSelectorItem) inflater.inflate(R.layout.mode_selector, null);
             mListView.addView(selectorItem);
-            // Set alternating background color for each mode selector in the list
-            if (i % 2 == 0) {
-                selectorItem.setDefaultBackgroundColor(getResources()
-                        .getColor(R.color.mode_selector_background_light));
-            } else {
-                selectorItem.setDefaultBackgroundColor(getResources()
-                        .getColor(R.color.mode_selector_background_dark));
-            }
+
             int modeId = getModeIndex(i);
-            selectorItem.setIconBackgroundColor(getResources()
+            selectorItem.setHighlightColor(getResources()
                     .getColor(CameraUtil.getCameraThemeColorId(modeId, getContext())));
 
             // Set image
@@ -491,26 +553,8 @@ public class ModeListView extends ScrollView {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        float height = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop()
-                - getPaddingBottom();
-
-        Configuration config = getResources().getConfiguration();
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            height = height / ROWS_TO_SHOW_IN_LANDSCAPE;
-            setVerticalScrollBarEnabled(true);
-        } else {
-            height = height / mTotalModes;
-            setVerticalScrollBarEnabled(false);
-        }
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mWidth, 0);
-        lp.width = LayoutParams.MATCH_PARENT;
-        for (int i = 0; i < mTotalModes; i++) {
-            // This is to avoid rounding that would cause the total height of the
-            // list a few pixels off the height of the screen.
-            int itemHeight = (int) (height * (i + 1)) - (int) (height * i);
-            lp.height = itemHeight;
-            mModeSelectorItems[i].setLayoutParams(lp);
-        }
+        centerModeDrawerInPreview(MeasureSpec.getSize(widthMeasureSpec),
+                MeasureSpec.getSize(heightMeasureSpec));
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
@@ -562,7 +606,6 @@ public class ModeListView extends ScrollView {
     private void resetModeSelectors() {
         for (int i = 0; i < mModeSelectorItems.length; i++) {
             mModeSelectorItems[i].setVisibleWidth(0);
-            mModeSelectorItems[i].unHighlight();
         }
         // Visible width has been changed to 0
         onVisibleWidthChanged(0);
@@ -574,22 +617,68 @@ public class ModeListView extends ScrollView {
 
     /**
      * Calculate the mode selector item in the list that is at position (x, y).
+     * If the position is above the top item or below the bottom item, return
+     * the top item or bottom item respectively.
      *
      * @param x horizontal position
      * @param y vertical position
      * @return index of the item that is at position (x, y)
      */
     private int getFocusItem(float x, float y) {
-        // Take into account the scrolling offset
-        x += getScrollX();
-        y += getScrollY();
+        // Convert coordinates into child view's coordinates.
+        x -= mListView.getLeft();
+        y -= mListView.getTop();
 
         for (int i = 0; i < mModeSelectorItems.length; i++) {
-            if (mModeSelectorItems[i].getTop() <= y && mModeSelectorItems[i].getBottom() >= y) {
+            if (y <= mModeSelectorItems[i].getBottom()) {
                 return i;
             }
         }
-        return NO_ITEM_SELECTED;
+        return mModeSelectorItems.length - 1;
+    }
+
+    @Override
+    public void onVisibilityChanged(View v, int visibility) {
+        super.onVisibilityChanged(v, visibility);
+        if (visibility == VISIBLE) {
+            centerModeDrawerInPreview(getMeasuredWidth(), getMeasuredHeight());
+            // Highlight current module
+            if (mModeSwitchListener != null) {
+                int modeId = mModeSwitchListener.getCurrentModeIndex();
+                int parentMode = CameraUtil.getCameraModeParentModeId(modeId, getContext());
+                // Find parent mode in the nav drawer.
+                for (int i = 0; i < mSupportedModes.size(); i++) {
+                    if (mSupportedModes.get(i) == parentMode) {
+                        mModeSelectorItems[i].setHighlighted(true);
+                    }
+                }
+            }
+        } else if (mModeSelectorItems != null) {
+            // When becoming invisible/gone after initializing mode selector items.
+            for (int i = 0; i < mModeSelectorItems.length; i++) {
+                mModeSelectorItems[i].setHighlighted(false);
+                mModeSelectorItems[i].setSelected(false);
+            }
+        }
+    }
+
+    /**
+     * Center mode drawer in camera preview.
+     */
+    private void centerModeDrawerInPreview(int measuredWidth, int measuredHeight) {
+
+        // Assuming the preview is centered in the space aside from bottom bar.
+        float previewAreaWidth = mPreviewArea.right + mPreviewArea.left;
+        float previewAreaHeight = mPreviewArea.top + mPreviewArea.bottom;
+        if (measuredWidth > measuredHeight) {
+            // Landscape.
+            int previewWidth = (int) Math.max(previewAreaHeight, previewAreaWidth);
+            setPadding(0, 0, measuredWidth - previewWidth, 0);
+        } else {
+            // Portrait.
+            int previewHeight = (int) Math.max(previewAreaHeight, previewAreaWidth);
+            setPadding(0, 0, 0, measuredHeight - previewHeight);
+        }
     }
 
     private void scroll(int itemId, float deltaX, float deltaY) {
@@ -712,17 +801,11 @@ public class ModeListView extends ScrollView {
      * to darken/lighten correspondingly.
      */
     private void onVisibleWidthChanged(int focusItemWidth) {
-        // Background alpha should be 0 before the icon block is entirely visible,
-        // and when the longest mode item is entirely shown (across the screen), the
+        // When the longest mode item is entirely shown (across the screen), the
         // background should be 50% transparent.
-        if (focusItemWidth <= mIconBlockWidth) {
-            setBackgroundAlpha(0);
-        } else {
-            // Alpha should increase linearly when mode item goes beyond the icon block
-            // till it reaches its max width
-            int alpha = 127 * (focusItemWidth - mIconBlockWidth) / (mWidth - mIconBlockWidth);
-            setBackgroundAlpha(alpha);
-        }
+        int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+        focusItemWidth = Math.min(maxVisibleWidth, focusItemWidth);
+        setBackgroundAlpha(BACKGROUND_TRANSPARENTCY * focusItemWidth / maxVisibleWidth);
     }
 
     @Override
@@ -744,7 +827,8 @@ public class ModeListView extends ScrollView {
     private void snap() {
         if (mState == SCROLLING) {
             int itemId = Math.max(0, mFocusItem);
-            if (mModeSelectorItems[itemId].getVisibleWidth() < mIconBlockWidth) {
+            if (mModeSelectorItems[itemId].getVisibleWidth()
+                    < mModeSelectorItems[itemId].getMaxVisibleWidth() * SNAP_BACK_THRESHOLD_RATIO) {
                 snapBack();
             } else if (Math.abs(mScrollTrendX) > Math.abs(mScrollTrendY) && mScrollTrendX > 0) {
                 snapBack();
@@ -761,7 +845,11 @@ public class ModeListView extends ScrollView {
      */
     public void snapBack(boolean withAnimation) {
         if (withAnimation) {
-            animateListToWidth(0);
+            if (mVelocityX > -VELOCITY_THRESHOLD * SCROLL_FACTOR) {
+                animateListToWidth(0);
+            } else {
+                animateListToWidthAtVelocity(mVelocityX, 0);
+            }
             mState = IDLE;
         } else {
             setVisibility(INVISIBLE);
@@ -778,12 +866,14 @@ public class ModeListView extends ScrollView {
     }
 
     private void snapToFullScreen() {
-        if (mVelocityX <= VELOCITY_THRESHOLD) {
-            animateListToWidth(mWidth);
+        int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
+        int fullWidth = mModeSelectorItems[focusItem].getMaxVisibleWidth();
+        if (mVelocityX <= VELOCITY_THRESHOLD * SCROLL_FACTOR) {
+            animateListToWidth(fullWidth);
         } else {
             // If the fling velocity exceeds this threshold, snap to full screen
             // at a constant speed.
-            animateListToWidthAtVelocity(mVelocityX, mWidth);
+            animateListToWidthAtVelocity(mVelocityX, fullWidth);
         }
         mState = FULLY_SHOWN;
         if (mModeListOpenListener != null) {
@@ -905,17 +995,22 @@ public class ModeListView extends ScrollView {
     private class PeepholeAnimationEffect extends AnimationEffects {
 
         private final static int UNSET = -1;
-        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 650;
+        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
+
+        private final Paint mMaskPaint = new Paint();
+        private final Paint mBackgroundPaint = new Paint();
+        private final RectF mBackgroundDrawArea = new RectF();
 
         private int mWidth;
         private int mHeight;
-
         private int mPeepHoleCenterX = UNSET;
         private int mPeepHoleCenterY = UNSET;
         private float mRadius = 0f;
         private ValueAnimator mPeepHoleAnimator;
         private Runnable mEndAction;
-        private final Paint mMaskPaint = new Paint();
+        private Bitmap mBackground;
+        private Bitmap mBlurredBackground;
+        private Bitmap mBackgroundOverlay;
 
         public PeepholeAnimationEffect() {
             mMaskPaint.setAlpha(0);
@@ -942,6 +1037,62 @@ public class ModeListView extends ScrollView {
             mPeepHoleCenterY = y;
         }
 
+        /**
+         * Sets the bitmap to be drawn in the background and the drawArea to draw
+         * the bitmap. In the meantime, start processing the image in a background
+         * thread to get a blurred background image.
+         *
+         * @param background image to be drawn in the background
+         * @param drawArea area to draw the background image
+         */
+        public void setBackground(Bitmap background, RectF drawArea) {
+            mBackground = background;
+            mBackgroundDrawArea.set(drawArea);
+            new BlurTask().execute(Bitmap.createScaledBitmap(background, background.getWidth(),
+                    background.getHeight(), true));
+        }
+
+        /**
+         * Sets the overlay image to be drawn on top of the background.
+         */
+        public void setBackgroundOverlay(Bitmap overlay) {
+            mBackgroundOverlay = overlay;
+        }
+
+        /**
+         * This gets called when a blurred image of the background is generated.
+         * Start an animation to fade in the blur.
+         *
+         * @param blur blurred image of the background.
+         */
+        public void setBlurredBackground(Bitmap blur) {
+            mBlurredBackground = blur;
+            // Start fade in.
+            ObjectAnimator alpha = ObjectAnimator.ofInt(mBackgroundPaint, "alpha", 80, 255);
+            alpha.setDuration(250);
+            alpha.setInterpolator(Gusterpolator.INSTANCE);
+            alpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    invalidate();
+                }
+            });
+            alpha.start();
+            invalidate();
+        }
+
+        @Override
+        public void drawBackground(Canvas canvas) {
+            if (mBackground != null && mBackgroundOverlay != null) {
+                canvas.drawARGB(255, 0, 0, 0);
+                canvas.drawBitmap(mBackground, null, mBackgroundDrawArea, null);
+                if (mBlurredBackground != null) {
+                    canvas.drawBitmap(mBlurredBackground, null, mBackgroundDrawArea, mBackgroundPaint);
+                }
+                canvas.drawBitmap(mBackgroundOverlay, 0, 0, null);
+            }
+        }
+
         @Override
         public void startAnimation() {
             if (mPeepHoleAnimator != null && mPeepHoleAnimator.isRunning()) {
@@ -956,6 +1107,8 @@ public class ModeListView extends ScrollView {
             int verticalDistanceToFarEdge = Math.max(mPeepHoleCenterY, mHeight - mPeepHoleCenterY);
             int endRadius = (int) (Math.sqrt(horizontalDistanceToFarEdge * horizontalDistanceToFarEdge
                     + verticalDistanceToFarEdge * verticalDistanceToFarEdge));
+            int startRadius = getResources().getDimensionPixelSize(
+                    R.dimen.mode_selector_icon_block_width) / 2;
 
             mPeepHoleAnimator = ValueAnimator.ofFloat(0, endRadius);
             mPeepHoleAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
@@ -1013,5 +1166,40 @@ public class ModeListView extends ScrollView {
         public void setAnimationEndAction(Runnable runnable) {
             mEndAction = runnable;
         }
+
+        private class BlurTask extends AsyncTask<Bitmap, Integer, Bitmap> {
+
+            // Gaussian blur mask size.
+            private static final int MASK_SIZE = 7;
+            @Override
+            protected Bitmap doInBackground(Bitmap... params) {
+
+                Bitmap intermediateBitmap = params[0];
+                int factor = 4;
+                Bitmap lowResPreview = Bitmap.createScaledBitmap(intermediateBitmap,
+                        intermediateBitmap.getWidth() / factor,
+                        intermediateBitmap.getHeight() / factor, true);
+
+                int width = lowResPreview.getWidth();
+                int height = lowResPreview.getHeight();
+
+                if (mInputPixels == null || mInputPixels.length < width * height) {
+                    mInputPixels = new int[width * height];
+                    mOutputPixels = new int[width * height];
+                }
+                lowResPreview.getPixels(mInputPixels, 0, width, 0, 0, width, height);
+                CameraUtil.blur(mInputPixels, mOutputPixels, width, height, MASK_SIZE);
+                lowResPreview.setPixels(mOutputPixels, 0, width, 0, 0, width, height);
+
+                intermediateBitmap.recycle();
+                return Bitmap.createScaledBitmap(lowResPreview, width * factor,
+                        height * factor, true);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                setBlurredBackground(bitmap);
+            }
+        };
     }
 }

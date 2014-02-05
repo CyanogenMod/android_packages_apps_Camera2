@@ -46,7 +46,7 @@ import com.android.camera2.R;
 public class ModeTransitionView extends View {
     private static final String TAG = "ModeTransitionView";
 
-    private static final int PEEP_HOLE_ANIMATION_DURATION_MS = 550;
+    private static final int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
     private static final int ICON_FADE_OUT_DURATION_MS = 850;
     private static final int FADE_OUT_DURATION_MS = 100;
 

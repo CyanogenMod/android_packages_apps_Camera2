@@ -583,25 +583,32 @@
     <integer name="camera_mode_photosphere">3</integer>
     <integer name="camera_mode_panorama">4</integer>
     <integer name="camera_mode_timelapse">5</integer>
-    <integer name="camera_mode_setting">6</integer>
-    <integer name="camera_mode_gcam">7</integer>
+    <integer name="camera_mode_gcam">6</integer>
 
     <!-- An array of camera mode indices in the sequence of their appearance
     in the mode drawer. -->
     <integer-array name="camera_modes_in_nav_drawer_if_supported">
+        <item>@integer/camera_mode_panorama</item>
+        <item>@integer/camera_mode_photosphere</item>
+        <item>@integer/camera_mode_refocus</item>
+        <item>@integer/camera_mode_photo</item>
+        <item>@integer/camera_mode_video</item>
+    </integer-array>
+
+    <!-- Camera modes that each supported mode is nested in in nav drawer. -->
+    <integer-array name="camera_mode_nested_in_nav_drawer">
         <item>@integer/camera_mode_photo</item>
         <item>@integer/camera_mode_video</item>
         <item>@integer/camera_mode_refocus</item>
-        <item>@integer/camera_mode_panorama</item>
         <item>@integer/camera_mode_photosphere</item>
-        <item>@integer/camera_mode_timelapse</item>
-        <item>@integer/camera_mode_setting</item>
+        <item>@integer/camera_mode_panorama</item>
+        <item>@integer/camera_mode_photo</item>
+        <item>@integer/camera_mode_photo</item>
     </integer-array>
 
     <!-- An array of camera mode indices that should always be visible in mode drawer. -->
     <integer-array name="camera_modes_always_visible">
         <item>@integer/camera_mode_photo</item>
-        <item>@integer/camera_mode_setting</item>
     </integer-array>
 
     <array name="camera_mode_theme_color">
@@ -611,7 +618,6 @@
         <item>@color/photosphere_mode_color</item>
         <item>@color/panorama_mode_color</item>
         <item>@color/timelapse_mode_color</item>
-        <item>@color/settings_mode_color</item>
         <item>@color/camera_mode_color</item>
     </array>
 
@@ -622,7 +628,6 @@
         <item>@string/mode_photosphere</item>
         <item>@string/mode_panorama</item>
         <item>@string/mode_timelapse</item>
-        <item>@string/mode_settings</item>
         <item>""</item>
     </string-array>
 
@@ -633,7 +638,6 @@
         <item>@string/mode_photosphere_desc</item>
         <item>@string/mode_panorama_desc</item>
         <item>@string/mode_timelapse_desc</item>
-        <item>@string/mode_settings_desc</item>
         <item>""</item>
     </string-array>
 
@@ -644,7 +648,6 @@
         <item>@drawable/ic_photo_sphere_normal</item>
         <item>@drawable/ic_panorama_normal</item>
         <item>@drawable/ic_timelapse_normal</item>
-        <item>@drawable/ic_settings_normal</item>
         <item>@drawable/ic_camera_normal</item>
     </array>
 
@@ -654,7 +657,6 @@
         <item>@drawable/ic_refocus_normal</item>
         <item>@null</item>
         <item>@drawable/ic_panorama_normal</item>
-        <item>@null</item>
         <item>@null</item>
         <item>@drawable/ic_camera_normal</item>
     </array>

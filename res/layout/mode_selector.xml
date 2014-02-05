@@ -17,21 +17,23 @@
 <com.android.camera.ui.ModeSelectorItem
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="@dimen/mode_selector_item_height"
+    android:paddingLeft="16dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
     <TextView
         android:id="@+id/selector_text"
-        android:layout_gravity="left"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
+        android:layout_gravity="left|center_vertical"
+        android:paddingLeft="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:textSize="21sp"
+        android:textSize="14sp"
         android:textColor="@color/mode_selector_text_color"
         android:layout_marginLeft="@dimen/mode_selector_icon_block_width" />
-    <ImageView
+    <com.android.camera.ui.ModeIconView
         android:id="@+id/selector_icon"
         android:scaleType="centerInside"
         android:layout_width="@dimen/mode_selector_icon_block_width"
-        android:layout_height="match_parent" />
+        android:layout_height="@dimen/mode_selector_icon_block_width" />
 </com.android.camera.ui.ModeSelectorItem>

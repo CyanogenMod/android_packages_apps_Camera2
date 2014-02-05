@@ -197,6 +197,14 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     }
 
     /**
+     * Returns a new copy of the preview area, to avoid internal data being modified
+     * from outside of the class.
+     */
+    public RectF getPreviewArea() {
+        return new RectF(mPreviewArea);
+    }
+
+    /**
      * Adds a listener that will get notified when the preview size changed. This
      * can be useful for UI elements or focus overlay to adjust themselves according
      * to the preview size change.

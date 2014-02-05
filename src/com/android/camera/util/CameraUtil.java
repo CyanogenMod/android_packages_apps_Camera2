@@ -41,6 +41,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.util.FloatMath;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -903,6 +904,104 @@ public class CameraUtil {
         }
     }
 
+    /**
+     * Generates a 1d Gaussian mask of the input array size, and store the mask
+     * in the input array.
+     *
+     * @param mask empty array of size n, where n will be used as the size of the
+     *             Gaussian mask, and the array will be populated with the values
+     *             of the mask.
+     */
+    private static void getGaussianMask(float[] mask) {
+        int len = mask.length;
+        int mid = len / 2;
+        float sigma = len;
+        float sum = 0;
+        for (int i = 0; i <= mid; i++) {
+            float ex = FloatMath.exp(-(i - mid) * (i - mid) / (mid * mid))
+                    / (2 * sigma * sigma);
+            int symmetricIndex = len - 1 - i;
+            mask[i] = ex;
+            mask[symmetricIndex] = ex;
+            sum += mask[i];
+            if (i != symmetricIndex) {
+                sum += mask[symmetricIndex];
+            }
+        }
+
+        for (int i = 0; i < mask.length; i++) {
+            mask[i] /= sum;
+        }
+
+    }
+
+    /**
+     * Add two pixels together where the second pixel will be applied with a weight.
+     *
+     * @param pixel pixel color value of weight 1
+     * @param newPixel second pixel color value where the weight will be applied
+     * @param weight a float weight that will be applied to the second pixel color
+     * @return the weighted addition of the two pixels
+     */
+    public static int addPixel(int pixel, int newPixel, float weight) {
+        // TODO: scale weight to [0, 1024] to avoid casting to float and back to int.
+        int r = ((pixel & 0x00ff0000) + (int) (((float) (newPixel & 0x00ff0000)) * weight)) & 0x00ff0000;
+        int g = ((pixel & 0x0000ff00) + (int) (((float) (newPixel & 0x0000ff00)) * weight)) & 0x0000ff00;
+        int b = ((pixel & 0x000000ff) + (int) (((float) (newPixel & 0x000000ff)) * weight)) & 0x000000ff;
+        return 0xff000000 | r | g | b;
+    }
+
+    /**
+     * Apply blur to the input image represented in an array of colors and put the
+     * output image, in the form of an array of colors, into the output array.
+     *
+     * @param src source array of colors
+     * @param out output array of colors after the blur
+     * @param w width of the image
+     * @param h height of the image
+     * @param size size of the Gaussian blur mask
+     */
+    public static void blur(int[] src, int[] out, int w, int h, int size) {
+        float[] k = new float[size];
+        int off = size / 2;
+
+        getGaussianMask(k);
+
+        int[] tmp = new int[src.length];
+
+        // Apply the 1d Gaussian mask horizontally to the image and put the intermediate
+        // results in a temporary array.
+        int rowPointer = 0;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int sum = 0;
+                for (int i = 0; i < k.length; i++) {
+                    int dx = x + i - off;
+                    dx = clamp(dx, 0,  w - 1);
+                    sum = addPixel(sum, src[rowPointer + dx], k[i]);
+                }
+                tmp[x + rowPointer] = sum;
+            }
+            rowPointer += w;
+        }
+
+        // Apply the 1d Gaussian mask vertically to the intermediate array, and
+        // the final results will be stored in the output array.
+        for (int x = 0; x < w; x++) {
+            rowPointer = 0;
+            for (int y = 0; y < h; y++) {
+                int sum = 0;
+                for (int i = 0; i < k.length; i++) {
+                    int dy = y + i - off;
+                    dy = clamp(dy, 0, h - 1);
+                    sum = addPixel(sum, tmp[dy * w + x], k[i]);
+                }
+                out[x + rowPointer] = sum;
+                rowPointer += w;
+            }
+        }
+    }
+
     private static class ImageFileNamer {
         private final SimpleDateFormat mFormat;
 
@@ -1093,5 +1192,23 @@ public class CameraUtil {
             return 0;
         }
         return shutterIcons.getResourceId(modeIndex, 0);
+    }
+
+    /**
+     * Gets the parent mode that hosts a specific mode in nav drawer.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return mode id if the index is valid, otherwise 0
+     */
+    public static int getCameraModeParentModeId(int modeIndex, Context context) {
+        // Find the camera mode icon using id
+        int[] cameraModeParent = context.getResources()
+                .getIntArray(R.array.camera_mode_nested_in_nav_drawer);
+        if (modeIndex < 0 || modeIndex >= cameraModeParent.length) {
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return 0;
+        }
+        return cameraModeParent[modeIndex];
     }
 }

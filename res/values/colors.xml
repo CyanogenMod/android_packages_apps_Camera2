@@ -71,10 +71,11 @@
     <color name="gray">#FFAAAAAA</color>
 
     <!-- Camera mode switcher -->
-    <color name="mode_selector_text_color">#6d6d6d</color>
+    <color name="mode_selector_text_color">#fff</color>
     <color name="mode_selector_background_light">#f5f5f5</color>
     <color name="mode_selector_background_dark">#e7e7e7</color>
     <color name="mode_selector_text_highlight_color">#ffffffff</color>
+    <color name="mode_selector_icon_background">#4c000000</color>
     <color name="mode_list_background">#00000000</color>
 
     <color name="camera_mode_color">#76a7fa</color>

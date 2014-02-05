@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The Android Open Source Project
+<!-- Copyright (C) 2014 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,19 +14,14 @@
      limitations under the License.
 -->
 
-<com.android.camera.ui.ModeListView
+<shape
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mode_list_layout"
-    android:fillViewport="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layerType="hardware"
-    android:background="@null"
-    android:visibility="invisible" >
-    <LinearLayout
-        android:id="@+id/mode_list"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</com.android.camera.ui.ModeListView>
+    android:shape="oval">
+
+    <solid
+        android:color="@color/mode_selector_icon_background"/>
+
+    <size
+        android:width="@dimen/mode_selector_icon_block_width"
+        android:height="@dimen/mode_selector_icon_block_width"/>
+</shape>
