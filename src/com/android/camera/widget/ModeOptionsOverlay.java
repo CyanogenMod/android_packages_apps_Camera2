@@ -26,7 +26,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -40,7 +41,8 @@ import com.android.camera2.R;
  */
 public class ModeOptionsOverlay extends FrameLayout
     implements PreviewStatusListener.PreviewAreaSizeChangedListener,
-               PreviewOverlay.OnPreviewTouchedListener {
+               PreviewOverlay.OnPreviewTouchedListener,
+               IndicatorIconController.OnIndicatorVisibilityChangedListener {
 
     private final static String TAG = "ModeOptionsOverlay";
 
@@ -52,7 +54,14 @@ public class ModeOptionsOverlay extends FrameLayout
     private int mPreviewHeight;
 
     private TopRightWeightedLayout mModeOptions;
-    private ImageButton mModeOptionsToggle;
+
+    // The mode options toggle can be either a default image, or a
+    // group of on screen indicators.
+    private FrameLayout mModeOptionsToggle;
+    // Default image for mode options toggle.
+    private ImageView mThreeDots;
+    // Group of on screen indicators for mode options toggle.
+    private LinearLayout mIndicators;
 
     /**
      * A generic Runnable for setting the options toggle to the capture
@@ -62,10 +71,8 @@ public class ModeOptionsOverlay extends FrameLayout
         new Runnable() {
             @Override
             public void run() {
-                if (mModeOptions != null && mModeOptionsToggle != null) {
-                    mModeOptions.setVisibility(View.INVISIBLE);
-                    mModeOptionsToggle.setVisibility(View.VISIBLE);
-                }
+                mModeOptions.setVisibility(View.INVISIBLE);
+                mModeOptionsToggle.setVisibility(View.VISIBLE);
             }
         };
 
@@ -75,7 +82,7 @@ public class ModeOptionsOverlay extends FrameLayout
 
     @Override
     public void onFinishInflate() {
-        mModeOptions = (TopRightWeightedLayout) findViewById(R.id.bottombar_options);
+        mModeOptions = (TopRightWeightedLayout) findViewById(R.id.mode_options);
         mModeOptions.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -88,7 +95,7 @@ public class ModeOptionsOverlay extends FrameLayout
             }
         });
 
-        mModeOptionsToggle = (ImageButton) findViewById(R.id.bottombar_options_toggle);
+        mModeOptionsToggle = (FrameLayout) findViewById(R.id.mode_options_toggle);
         mModeOptionsToggle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -96,12 +103,21 @@ public class ModeOptionsOverlay extends FrameLayout
                     mModeOptions.setVisibility(View.VISIBLE);
                 }
             });
+
+        mThreeDots = (ImageView) findViewById(R.id.three_dots);
+        mIndicators = (LinearLayout) findViewById(R.id.indicator_icons);
+        showCorrectToggleView(mThreeDots, mIndicators);
     }
 
     @Override
     public void onPreviewTouched(MotionEvent ev) {
         // close options immediately.
         closeModeOptionsDelayed(0);
+    }
+
+    @Override
+    public void onIndicatorVisibilityChanged(View indicator) {
+        showCorrectToggleView(mThreeDots, mIndicators);
     }
 
     /**
@@ -195,5 +211,33 @@ public class ModeOptionsOverlay extends FrameLayout
         }
 
         requestLayout();
+    }
+
+    /**
+     * Show the correct toggle view: the default view if the group has
+     * no visible children, otherwise the default view.
+     */
+    private void showCorrectToggleView(View defaultView, ViewGroup group) {
+        if (getVisibleChildCount(group) > 0) {
+            defaultView.setVisibility(View.GONE);
+            group.setVisibility(View.VISIBLE);
+        } else {
+            group.setVisibility(View.GONE);
+            defaultView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Get the number of a ViewGroup's visible children.
+     */
+    private int getVisibleChildCount(ViewGroup group) {
+        int visible = 0;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            if (child != null && child.getVisibility() == View.VISIBLE) {
+                visible++;
+            }
+        }
+        return visible;
     }
 }

@@ -48,13 +48,13 @@ public class IndicatorIconController
 
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;
-    private ImageView mPanoramaIndicator;
 
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrPlusIndicatorIcons;
     private TypedArray mHdrIndicatorIcons;
-    private TypedArray mPanoramaIndicatorIcons;
+
+    private OnIndicatorVisibilityChangedListener mListener;
 
     private AppController mController;
 
@@ -64,7 +64,6 @@ public class IndicatorIconController
 
         mFlashIndicator = (ImageView) root.findViewById(R.id.flash_indicator);
         mHdrIndicator = (ImageView) root.findViewById(R.id.hdr_indicator);
-        mPanoramaIndicator = (ImageView) root.findViewById(R.id.panorama_indicator);
 
         mFlashIndicatorPhotoIcons = context.getResources().obtainTypedArray(
             R.array.camera_flashmode_indicator_icons);
@@ -74,10 +73,22 @@ public class IndicatorIconController
             R.array.pref_camera_hdr_plus_indicator_icons);
         mHdrIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_indicator_icons);
-        if (PhotoSphereHelper.getPanoramaIndicatorArrayId() > 0) {
-            mPanoramaIndicatorIcons = context.getResources().obtainTypedArray(
-                PhotoSphereHelper.getPanoramaIndicatorArrayId());
-        }
+    }
+
+    /**
+     * A listener for responding to changes in indicator visibility.
+     */
+    public interface OnIndicatorVisibilityChangedListener {
+        public void onIndicatorVisibilityChanged(View indicator);
+    }
+
+    /**
+     * Set an {@link OnIndicatorVisibilityChangedListener} which will be
+     * called whenever an indicator changes visibility, caused by this
+     * controller.
+     */
+    public void setListener(OnIndicatorVisibilityChangedListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -112,14 +123,6 @@ public class IndicatorIconController
                 syncHdrIndicator();
                 break;
             }
-            case ButtonManager.BUTTON_PANO_HORIZONTAL: {
-                syncPanoramaIndicator();
-                break;
-            }
-            case ButtonManager.BUTTON_PANO_VERTICAL: {
-                syncPanoramaIndicator();
-                break;
-            }
             default:
                 // Do nothing.  The indicator doesn't care
                 // about button that don't correspond to indicators.
@@ -133,7 +136,6 @@ public class IndicatorIconController
     public void syncIndicators() {
         syncFlashIndicator();
         syncHdrIndicator();
-        syncPanoramaIndicator();
     }
 
     /**
@@ -158,7 +160,12 @@ public class IndicatorIconController
                                   mFlashIndicator, mFlashIndicatorPhotoIcons, false);
             }
         } else {
-            mFlashIndicator.setVisibility(View.GONE);
+            if (mFlashIndicator.getVisibility() != View.GONE) {
+                mFlashIndicator.setVisibility(View.GONE);
+                if (mListener != null) {
+                    mListener.onIndicatorVisibilityChanged(mFlashIndicator);
+                }
+            }
         }
     }
 
@@ -180,27 +187,12 @@ public class IndicatorIconController
                               SettingsManager.SETTING_CAMERA_HDR,
                               mHdrIndicator, mHdrIndicatorIcons, false);
         } else {
-            mHdrIndicator.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Sync the icon and the visibility of the panorama indicator.
-     */
-    private void syncPanoramaIndicator() {
-        ButtonManager buttonManager = mController.getButtonManager();
-        // If refocus isn't an enabled and visible option,
-        // do not show the indicator.
-        boolean panoEnabled = (buttonManager.isEnabled(ButtonManager.BUTTON_PANO_HORIZONTAL)
-            && buttonManager.isEnabled(ButtonManager.BUTTON_PANO_VERTICAL));
-        boolean panoVisible = (buttonManager.isVisible(ButtonManager.BUTTON_PANO_HORIZONTAL)
-            && buttonManager.isVisible(ButtonManager.BUTTON_PANO_VERTICAL));
-        if (panoEnabled && panoVisible && mPanoramaIndicatorIcons != null) {
-            setIndicatorState(mController.getSettingsManager(),
-                              SettingsManager.SETTING_CAMERA_PANO_ORIENTATION,
-                              mPanoramaIndicator, mPanoramaIndicatorIcons, true);
-        } else {
-            mPanoramaIndicator.setVisibility(View.GONE);
+            if (mHdrIndicator.getVisibility() != View.GONE) {
+                mHdrIndicator.setVisibility(View.GONE);
+                if (mListener != null) {
+                    mListener.onIndicatorVisibilityChanged(mHdrIndicator);
+                }
+            }
         }
     }
 
@@ -229,10 +221,21 @@ public class IndicatorIconController
         imageView.setImageDrawable(drawable);
 
         // Set the indicator visible if not in default state.
+        boolean visibilityChanged = false;
         if (!showDefault && settingsManager.isDefault(id)) {
-            imageView.setVisibility(View.GONE);
+            if (imageView.getVisibility() != View.GONE) {
+                imageView.setVisibility(View.GONE);
+                visibilityChanged = true;
+            }
         } else {
-            imageView.setVisibility(View.VISIBLE);
+            if (imageView.getVisibility() != View.VISIBLE) {
+                imageView.setVisibility(View.VISIBLE);
+                visibilityChanged = true;
+            }
+        }
+
+        if (mListener != null && visibilityChanged) {
+            mListener.onIndicatorVisibilityChanged(imageView);
         }
     }
 
@@ -249,10 +252,6 @@ public class IndicatorIconController
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
                 syncHdrIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
-                syncPanoramaIndicator();
                 break;
             }
             default: {
