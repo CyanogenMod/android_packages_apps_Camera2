@@ -41,11 +41,6 @@
             android:visibility="invisible"
             android:background="#4C000000" >
           <com.android.camera.MultiToggleImageButton
-              android:id="@+id/refocus_toggle_button"
-              style="@style/ModeOption"
-              camera:imageIds="@array/refocus_icons"
-              camera:contentDescriptionIds="@array/refocus_descriptions" />
-          <com.android.camera.MultiToggleImageButton
               android:id="@+id/hdr_plus_toggle_button"
               style="@style/ModeOption"
               camera:imageIds="@array/pref_camera_hdr_plus_icons"
@@ -92,9 +87,6 @@
             android:layout_gravity="bottom|right" >
           <ImageView
               android:id="@+id/panorama_indicator"
-              style="@style/IndicatorIcon" />
-          <ImageView
-              android:id="@+id/refocus_indicator"
               style="@style/IndicatorIcon" />
           <ImageView
               android:id="@+id/hdr_indicator"

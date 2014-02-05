@@ -231,23 +231,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean enableHdr;
 
         /**
+         * Set true if flash should not be visible, regardless of
+         * hardware limitations.
+         */
+        public boolean hideFlash;
+
+        /**
          * Set true if hdr/hdr+ should not be visible, regardless of
          * hardware limitations.
          */
         public boolean hideHdr;
-
-        /**
-         * Set true if the refocus option should be enabled.
-         * If not set or false, the refocus option will be disabled.
-         *
-         * This option is not constrained by hardware limitations.
-         */
-        public boolean enableRefocus;
-
-        /**
-         * Set true if refocus should not be visible.
-         */
-        public boolean hideRefocus;
 
         /**
          * Set true if the panorama horizontal option should be visible.
@@ -1184,17 +1177,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_CAMERA);
         }
 
-        if (hardwareSpec.isFlashSupported()) {
-            if (bottomBarSpec.enableFlash && settingsManager.isCameraBackFacing()) {
-                buttonManager.enableButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
-            } else if (bottomBarSpec.enableTorchFlash && settingsManager.isCameraBackFacing()) {
-                buttonManager.enableButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
+        if (bottomBarSpec.hideFlash) {
+            buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
+        } else {
+            if (hardwareSpec.isFlashSupported()) {
+                if (bottomBarSpec.enableFlash && settingsManager.isCameraBackFacing()) {
+                    buttonManager.enableButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
+                } else if (bottomBarSpec.enableTorchFlash && settingsManager.isCameraBackFacing()) {
+                    buttonManager.enableButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
+                } else {
+                    buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                }
             } else {
+                // Disable flash icon if not supported by the hardware.
                 buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
             }
-        } else {
-            // Disable flash icon if not supported by the hardware.
-            buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
         }
 
         if (bottomBarSpec.hideHdr) {
@@ -1218,19 +1215,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             } else {
                 // Hide hdr plus or hdr icon if neither are supported.
                 buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
-            }
-        }
-
-        if (bottomBarSpec.hideRefocus) {
-            buttonManager.hideButton(ButtonManager.BUTTON_REFOCUS);
-        } else {
-            if (bottomBarSpec.enableRefocus) {
-                buttonManager.enableButton(ButtonManager.BUTTON_REFOCUS,
-                    bottomBarSpec.refocusCallback);
-            } else {
-                // Disable refocus icon when not enabled, not dependent
-                // on hardware spec.
-                buttonManager.disableButton(ButtonManager.BUTTON_REFOCUS);
             }
         }
 

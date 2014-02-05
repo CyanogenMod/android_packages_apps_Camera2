@@ -38,8 +38,6 @@ public class ModulesInfo {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
         registerPhotoModule(moduleManager, photoModuleId);
         moduleManager.setDefaultModuleIndex(photoModuleId);
-        registerCraftModule(moduleManager, context.getResources()
-                .getInteger(R.integer.camera_mode_craft));
         registerVideoModule(moduleManager, context.getResources()
                 .getInteger(R.integer.camera_mode_video));
         if (PhotoSphereHelper.hasLightCycleCapture(context)) {
@@ -59,25 +57,6 @@ public class ModulesInfo {
     }
 
     private static void registerPhotoModule(ModuleManager moduleManager, final int moduleId) {
-        moduleManager.registerModule(new ModuleManager.ModuleAgent() {
-            @Override
-            public int getModuleId() {
-                return moduleId;
-            }
-
-            @Override
-            public boolean requestAppForCamera() {
-                return true;
-            }
-
-            @Override
-            public ModuleController createModule(AppController app) {
-                return new PhotoModule(app);
-            }
-        });
-    }
-
-    private static void registerCraftModule(ModuleManager moduleManager, final int moduleId) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {

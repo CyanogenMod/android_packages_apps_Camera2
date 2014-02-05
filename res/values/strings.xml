@@ -682,6 +682,8 @@ CHAR LIMIT=NONE] -->
     <string name="mode_wideangle">Wide Angle</string>
     <!-- Text shown in the camera mode options list for putting camera in panorama mode [CHAR LIMIT=25] -->
     <string name="mode_panorama">Panorama</string>
+    <!-- Text shown in the camera mode options list for putting camera in refocus mode [CHAR LIMIT=25] -->
+    <string name="mode_refocus">Foreground Focus</string>
 
     <!-- Accessibility text for switching to camera settings [CHAR_LIMIT=NONE] -->
     <string name="mode_settings_desc">Open Settings</string>
@@ -701,6 +703,8 @@ CHAR LIMIT=NONE] -->
     <string name="mode_wideangle_desc">Switch to Wideangle Mode</string>
     <!-- Accessibility text for switching to panorama mode [CHAR_LIMIT=NONE] -->
     <string name="mode_panorama_desc">Switch to Panorama Mode</string>
+    <!-- Accessibility text for switching to refocus mode [CHAR_LIMIT=NONE] -->
+    <string name="mode_refocus_desc">Switch to Foreground Focus Mode</string>
 
 
     <!-- Accessibility text for refocus toggle button states [CHAR_LIMIT=NONE] -->
