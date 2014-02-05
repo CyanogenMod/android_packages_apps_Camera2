@@ -420,18 +420,17 @@ public class CameraActivity extends Activity
             switch (msg.what) {
                 case MSG_HIDE_ACTION_BAR: {
                     removeMessages(MSG_HIDE_ACTION_BAR);
-                    mActivity.get().setFilmstripUiVisibility(false);
+                    activity.setFilmstripUiVisibility(false);
                     break;
                 }
 
                 case MSG_CLEAR_SCREEN_ON_FLAG: {
-                    if (!mActivity.get().mPaused) {
-                        mActivity.get().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    if (!activity.mPaused) {
+                        activity.getWindow().clearFlags(
+                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     }
                     break;
                 }
-
-                default:
             }
         }
     }
