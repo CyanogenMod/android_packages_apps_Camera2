@@ -294,39 +294,60 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Уповільнена зйомка"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Ширококутна зйомка"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Відкрити налаштування"</string>
-    <string name="mode_camera_desc" msgid="3670807361165657278">"Перейти в режим камери"</string>
-    <string name="mode_video_desc" msgid="4058407412929464689">"Перейти в режим відеокамери"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Перейти в режим кругової панорами"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Перейти в розширений режим камери"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Перейти в розширений режим камери"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Перейти в режим сповільненої зйомки"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Перейти в режим ширококутної зйомки"</string>
-    <string name="mode_panorama_desc" msgid="6023020404237519590">"Перейти в режим панорами"</string>
-    <string name="refocus_off_desc" msgid="4043473941193970147">"Фокусування на передньому плані вимкнено"</string>
-    <string name="refocus_on_desc" msgid="2549978881191009668">"Фокусування на передньому плані ввімкнено"</string>
-    <string name="settings_open_desc" msgid="6914471293841793766">"Відкрити налаштування"</string>
-    <string name="settings_close_desc" msgid="3095831199632813127">"Закрити налаштування"</string>
-    <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus вимкнено"</string>
-    <string name="hdr_plus_on_desc" msgid="8204780034508139909">"HDR Plus увімкнено"</string>
-    <string name="hdr_off_desc" msgid="7921924739852874675">"HDR вимкнено"</string>
-    <string name="hdr_on_desc" msgid="4591284110249047558">"HDR увімкнено"</string>
-    <string name="flash_off_desc" msgid="7151559466286106797">"Спалах вимкнено"</string>
-    <string name="flash_auto_desc" msgid="3009043125539675717">"Автоматичний спалах"</string>
-    <string name="flash_on_desc" msgid="930372145324854699">"Спалах увімкнено"</string>
-    <string name="torch_on_desc" msgid="3069836196559213365">"Ліхтарик увімкнено"</string>
-    <string name="torch_off_desc" msgid="8304675202998742618">"Ліхтарик вимкнено"</string>
-    <string name="camera_id_back_desc" msgid="3566327490758890635">"Камера на задній панелі"</string>
-    <string name="camera_id_front_desc" msgid="7497517948130254220">"Камера на передній панелі"</string>
-    <string name="more_options_desc" msgid="4628738800610478353">"Інші параметри"</string>
-    <string name="cancel_button_description" msgid="3801167024006905033">"Скасувати"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"Готово"</string>
-    <string name="retake_button_description" msgid="4234613030674787714">"Повторити"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"Надіслати"</string>
-    <string name="view_button_description" msgid="4985768837891362075">"Переглянути"</string>
-    <string name="edit_button_description" msgid="98550816724901925">"Редагувати"</string>
-    <string name="delete_button_description" msgid="2251065309677200911">"Видалити"</string>
-    <string name="button_change_announcement" msgid="3759686152778772111">"Тепер кнопка – %s"</string>
+    <!-- no translation found for mode_settings_desc (1189966170303887131) -->
+    <skip />
+    <!-- no translation found for mode_camera_desc (3670807361165657278) -->
+    <skip />
+    <!-- no translation found for mode_video_desc (4058407412929464689) -->
+    <skip />
+    <!-- no translation found for mode_photosphere_desc (2403816283825579161) -->
+    <skip />
+    <!-- no translation found for mode_craft_desc (8411543408424448562) -->
+    <skip />
+    <!-- no translation found for mode_advanced_camera_desc (6960004655720210841) -->
+    <skip />
+    <!-- no translation found for mode_timelapse_desc (6713275294166788276) -->
+    <skip />
+    <!-- no translation found for mode_wideangle_desc (5924237384871288501) -->
+    <skip />
+    <!-- no translation found for mode_panorama_desc (6023020404237519590) -->
+    <skip />
+    <!-- no translation found for refocus_off_desc (4043473941193970147) -->
+    <skip />
+    <!-- no translation found for refocus_on_desc (2549978881191009668) -->
+    <skip />
+    <!-- no translation found for settings_open_desc (6914471293841793766) -->
+    <skip />
+    <!-- no translation found for settings_close_desc (3095831199632813127) -->
+    <skip />
+    <!-- no translation found for hdr_plus_off_desc (5301287296717144319) -->
+    <skip />
+    <!-- no translation found for hdr_plus_on_desc (8204780034508139909) -->
+    <skip />
+    <!-- no translation found for hdr_off_desc (7921924739852874675) -->
+    <skip />
+    <!-- no translation found for hdr_on_desc (4591284110249047558) -->
+    <skip />
+    <!-- no translation found for flash_off_desc (7151559466286106797) -->
+    <skip />
+    <!-- no translation found for flash_auto_desc (3009043125539675717) -->
+    <skip />
+    <!-- no translation found for flash_on_desc (930372145324854699) -->
+    <skip />
+    <!-- no translation found for torch_on_desc (3069836196559213365) -->
+    <skip />
+    <!-- no translation found for torch_off_desc (8304675202998742618) -->
+    <skip />
+    <!-- no translation found for camera_id_back_desc (3566327490758890635) -->
+    <skip />
+    <!-- no translation found for camera_id_front_desc (7497517948130254220) -->
+    <skip />
+    <!-- no translation found for cancel_button_description (3801167024006905033) -->
+    <skip />
+    <!-- no translation found for done_button_description (1334963435441544592) -->
+    <skip />
+    <!-- no translation found for retake_button_description (4234613030674787714) -->
+    <skip />
     <string name="setting_location" msgid="4459859689227893838">"Місцезнаходження"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Розмір знімка"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Роздільна здатність відео"</string>

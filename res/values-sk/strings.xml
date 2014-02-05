@@ -294,40 +294,59 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Časozberné video"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoráma"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Otvoriť nastavenia"</string>
-    <string name="mode_camera_desc" msgid="3670807361165657278">"Prepnutie na režim fotoaparátu"</string>
-    <string name="mode_video_desc" msgid="4058407412929464689">"Prepnúť na režim videokamery"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prepnúť na panorámu Photo Sphere"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Prepnúť na rozšírený režim fotoaparátu"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Prepnúť na rozšírený režim fotoaparátu"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Prepnúť na režim časozberného snímania"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Prepnúť na širokouhlý režim"</string>
-    <string name="mode_panorama_desc" msgid="6023020404237519590">"Prepnúť na panoramatický režim"</string>
-    <string name="refocus_off_desc" msgid="4043473941193970147">"Zaostrenie na popredie vypnuté"</string>
-    <string name="refocus_on_desc" msgid="2549978881191009668">"Zaostrenie na popredie zapnuté"</string>
-    <string name="settings_open_desc" msgid="6914471293841793766">"Otvoriť nastavenia"</string>
-    <string name="settings_close_desc" msgid="3095831199632813127">"Zavrieť nastavenia"</string>
-    <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus vypnuté"</string>
-    <string name="hdr_plus_on_desc" msgid="8204780034508139909">"HDR Plus zapnuté"</string>
-    <string name="hdr_off_desc" msgid="7921924739852874675">"HDR vypnuté"</string>
-    <string name="hdr_on_desc" msgid="4591284110249047558">"HDR zapnuté"</string>
-    <string name="flash_off_desc" msgid="7151559466286106797">"Blesk vypnutý"</string>
-    <string name="flash_auto_desc" msgid="3009043125539675717">"Automatický blesk"</string>
-    <string name="flash_on_desc" msgid="930372145324854699">"Blesk zapnutý"</string>
-    <string name="torch_on_desc" msgid="3069836196559213365">"Osvetlenie zapnuté"</string>
-    <string name="torch_off_desc" msgid="8304675202998742618">"Osvetlenie vypnuté"</string>
-    <string name="camera_id_back_desc" msgid="3566327490758890635">"Zadný fotoaparát"</string>
-    <string name="camera_id_front_desc" msgid="7497517948130254220">"Predný fotoaparát"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
+    <!-- no translation found for mode_settings_desc (1189966170303887131) -->
     <skip />
-    <string name="cancel_button_description" msgid="3801167024006905033">"Zrušiť"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"Hotovo"</string>
-    <string name="retake_button_description" msgid="4234613030674787714">"Nasnímať znova"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"Zdieľať"</string>
-    <string name="view_button_description" msgid="4985768837891362075">"Zobrazenie"</string>
-    <string name="edit_button_description" msgid="98550816724901925">"Upraviť"</string>
-    <string name="delete_button_description" msgid="2251065309677200911">"Odstrániť"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
+    <!-- no translation found for mode_camera_desc (3670807361165657278) -->
+    <skip />
+    <!-- no translation found for mode_video_desc (4058407412929464689) -->
+    <skip />
+    <!-- no translation found for mode_photosphere_desc (2403816283825579161) -->
+    <skip />
+    <!-- no translation found for mode_craft_desc (8411543408424448562) -->
+    <skip />
+    <!-- no translation found for mode_advanced_camera_desc (6960004655720210841) -->
+    <skip />
+    <!-- no translation found for mode_timelapse_desc (6713275294166788276) -->
+    <skip />
+    <!-- no translation found for mode_wideangle_desc (5924237384871288501) -->
+    <skip />
+    <!-- no translation found for mode_panorama_desc (6023020404237519590) -->
+    <skip />
+    <!-- no translation found for refocus_off_desc (4043473941193970147) -->
+    <skip />
+    <!-- no translation found for refocus_on_desc (2549978881191009668) -->
+    <skip />
+    <!-- no translation found for settings_open_desc (6914471293841793766) -->
+    <skip />
+    <!-- no translation found for settings_close_desc (3095831199632813127) -->
+    <skip />
+    <!-- no translation found for hdr_plus_off_desc (5301287296717144319) -->
+    <skip />
+    <!-- no translation found for hdr_plus_on_desc (8204780034508139909) -->
+    <skip />
+    <!-- no translation found for hdr_off_desc (7921924739852874675) -->
+    <skip />
+    <!-- no translation found for hdr_on_desc (4591284110249047558) -->
+    <skip />
+    <!-- no translation found for flash_off_desc (7151559466286106797) -->
+    <skip />
+    <!-- no translation found for flash_auto_desc (3009043125539675717) -->
+    <skip />
+    <!-- no translation found for flash_on_desc (930372145324854699) -->
+    <skip />
+    <!-- no translation found for torch_on_desc (3069836196559213365) -->
+    <skip />
+    <!-- no translation found for torch_off_desc (8304675202998742618) -->
+    <skip />
+    <!-- no translation found for camera_id_back_desc (3566327490758890635) -->
+    <skip />
+    <!-- no translation found for camera_id_front_desc (7497517948130254220) -->
+    <skip />
+    <!-- no translation found for cancel_button_description (3801167024006905033) -->
+    <skip />
+    <!-- no translation found for done_button_description (1334963435441544592) -->
+    <skip />
+    <!-- no translation found for retake_button_description (4234613030674787714) -->
     <skip />
     <string name="setting_location" msgid="4459859689227893838">"Poloha"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Veľkosť fotografie"</string>
