@@ -16,10 +16,7 @@
 
 package com.android.camera.module;
 
-import android.content.res.Configuration;
-
-import com.android.camera.ButtonManager;
-import com.android.camera.app.AppController;
+import com.android.camera.CameraActivity;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.CameraManager;
 import com.android.camera.hardware.HardwareSpec;
@@ -34,11 +31,11 @@ public interface ModuleController {
     /**
      * Initializes the module.
      *
-     * @param app The app which initializes this module.
+     * @param activity The camera activity.
      * @param isSecureCamera Whether the app is in secure camera mode.
      * @param isCaptureIntent Whether the app is in capture intent mode.
      */
-    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent);
+    public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent);
 
     /**
      * Resumes the module. Always call this method whenever it's being put in

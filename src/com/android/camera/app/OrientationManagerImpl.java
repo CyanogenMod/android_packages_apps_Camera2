@@ -132,7 +132,9 @@ public class OrientationManagerImpl implements OrientationManager {
 
     @Override
     public void lockOrientation() {
-        if (mOrientationLocked || mRotationLockedSetting) return;
+        if (mOrientationLocked || mRotationLockedSetting) {
+            return;
+        }
         mOrientationLocked = true;
         if (ApiHelper.HAS_ORIENTATION_LOCK) {
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
@@ -143,7 +145,9 @@ public class OrientationManagerImpl implements OrientationManager {
 
     @Override
     public void unlockOrientation() {
-        if (!mOrientationLocked || mRotationLockedSetting) return;
+        if (!mOrientationLocked || mRotationLockedSetting) {
+            return;
+        }
         mOrientationLocked = false;
         Log.d(TAG, "unlock orientation");
         mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
@@ -183,7 +187,9 @@ public class OrientationManagerImpl implements OrientationManager {
             // We keep the last known orientation. So if the user first orient
             // the camera then point the camera to floor or sky, we still have
             // the correct orientation.
-            if (orientation == ORIENTATION_UNKNOWN) return;
+            if (orientation == ORIENTATION_UNKNOWN) {
+                return;
+            }
             final int roundedOrientation = roundOrientation(orientation, 0);
 
             for (OrientationChangeCallback l : mListeners) {

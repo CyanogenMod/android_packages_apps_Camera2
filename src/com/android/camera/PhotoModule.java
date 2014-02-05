@@ -82,6 +82,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Vector;
 
@@ -119,7 +120,6 @@ public class PhotoModule
 
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
 
-    // copied from Camera hierarchy
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
     private int mCameraId;
@@ -238,7 +238,7 @@ public class PhotoModule
 
     private String mSceneMode;
 
-    private final Handler mHandler = new MainHandler();
+    private final Handler mHandler = new MainHandler(this);
 
     private boolean mQuickCapture;
     private SensorManager mSensorManager;
@@ -286,31 +286,38 @@ public class PhotoModule
      * This Handler is used to post message back onto the main thread of the
      * application
      */
-    private class MainHandler extends Handler {
-        public MainHandler() {
+    private static class MainHandler extends Handler {
+        private final WeakReference<PhotoModule> mModule;
+
+        public MainHandler(PhotoModule module) {
             super(Looper.getMainLooper());
+            mModule = new WeakReference<PhotoModule>(module);
         }
 
         @Override
         public void handleMessage(Message msg) {
+            PhotoModule module = mModule.get();
+            if (module == null) {
+                return;
+            }
             switch (msg.what) {
                 case MSG_FIRST_TIME_INIT: {
-                    initializeFirstTime();
+                    module.initializeFirstTime();
                     break;
                 }
 
                 case MSG_SET_CAMERA_PARAMETERS_WHEN_IDLE: {
-                    setCameraParametersWhenIdle(0);
+                    module.setCameraParametersWhenIdle(0);
                     break;
                 }
 
                 case MSG_SHOW_TAP_TO_FOCUS_TOAST: {
-                    showTapToFocusToast();
+                    module.showTapToFocusToast();
                     break;
                 }
 
                 case MSG_SWITCH_TO_GCAM_MODULE: {
-                    mActivity.onModeSelected(mGcamModeIndex);
+                    module.mActivity.onModeSelected(module.mGcamModeIndex);
                 }
             }
         }
@@ -327,13 +334,16 @@ public class PhotoModule
                 .getInteger(R.integer.camera_mode_refocus);
     }
 
-
     @Override
-    public void init(AppController app, boolean isSecureCamera, boolean isCaptureIntent) {
-        mActivity = (CameraActivity) app.getAndroidContext();
-        mUI = new PhotoUI(mActivity, this, app.getModuleLayoutRoot());
-        app.setPreviewStatusListener(mUI);
-        app.getCameraAppUI().setBottomBarShutterListener(this);
+    public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
+        mActivity = activity;
+        // TODO: Need to look at the controller interface to see if we can get
+        // rid of passing in the activity directly.
+        mAppController = mActivity;
+
+        mUI = new PhotoUI(mActivity, this, mActivity.getModuleLayoutRoot());
+        mActivity.setPreviewStatusListener(mUI);
+        mActivity.getCameraAppUI().setBottomBarShutterListener(this);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
@@ -349,7 +359,6 @@ public class PhotoModule
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
-        mAppController = app;
     }
 
     @Override
@@ -520,9 +529,9 @@ public class PhotoModule
         bottomBarSpec.cameraCallback = mCameraCallback;
         bottomBarSpec.enableFlash = true;
 
-        if (mActivity.getCurrentModuleIndex() ==
-                mActivity.getResources().getInteger(R.integer.camera_mode_photo)) {
-            bottomBarSpec.hideHdr= true;
+        if (mActivity.getCurrentModuleIndex() == mActivity.getResources()
+                .getInteger(R.integer.camera_mode_photo)) {
+            bottomBarSpec.hideHdr = true;
             bottomBarSpec.hideRefocus = true;
         } else {
             bottomBarSpec.enableHdr = true;
@@ -1208,8 +1217,8 @@ public class PhotoModule
     }
 
     /**
-     * The focus manager is the first UI related element to get initialized,
-     * and it requires the RenderOverlay, so initialize it here
+     * The focus manager is the first UI related element to get initialized, and
+     * it requires the RenderOverlay, so initialize it here
      */
     private void initializeFocusManager() {
         // Create FocusManager object. startPreview needs it.
@@ -1234,7 +1243,8 @@ public class PhotoModule
     public void resume() {
         mPaused = false;
         if (mFocusManager != null) {
-            // If camera is not open when resume is called, focus manager will not
+            // If camera is not open when resume is called, focus manager will
+            // not
             // be initialized yet, in which case it will start listening to
             // preview area size change later in the initialization.
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
@@ -1530,9 +1540,9 @@ public class PhotoModule
         mCameraDevice.setPreviewTexture(mUI.getSurfaceTexture());
 
         // This is to notify app controller that preview will start next, so app
-        // controller can set preview callbacks if needed. This has to happen before
-        // preview is started as a workaround of the framework bug related to preview
-        // callbacks at b/12591410.
+        // controller can set preview callbacks if needed. This has to happen
+        // before preview is started as a workaround of the framework bug related to
+        // preview callbacks at b/12591410.
         mAppController.onPreviewReadyToStart();
         Log.v(TAG, "startPreview");
         mCameraDevice.startPreview();
@@ -1774,7 +1784,7 @@ public class PhotoModule
         // Set white balance parameter.
         String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
         if (CameraUtil.isSupported(whiteBalance,
-            mParameters.getSupportedWhiteBalance())) {
+                mParameters.getSupportedWhiteBalance())) {
             mParameters.setWhiteBalance(whiteBalance);
         }
     }
@@ -1833,14 +1843,14 @@ public class PhotoModule
         return (mCameraState == IDLE) ||
                 (mCameraState == PREVIEW_STOPPED) ||
                 ((mFocusManager != null) && mFocusManager.isFocusCompleted()
-                        && (mCameraState != SWITCHING_CAMERA));
+                && (mCameraState != SWITCHING_CAMERA));
     }
 
     @Override
     public boolean isImageCaptureIntent() {
         String action = mActivity.getIntent().getAction();
         return (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
-                || CameraActivity.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
+        || CameraActivity.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
     }
 
     private void setupCaptureParams() {
@@ -1869,7 +1879,7 @@ public class PhotoModule
         // Clear the preference.
         SettingsManager settingsManager = mActivity.getSettingsManager();
         settingsManager.setBoolean(
-            SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
+                SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
     }
 
     private void initializeCapabilities() {

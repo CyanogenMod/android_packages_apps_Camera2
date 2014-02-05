@@ -16,7 +16,6 @@
 
 package com.android.camera.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -546,6 +545,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mSwipeEnabled = enabled;
     }
 
+    public void onDestroy() {
+        ((DisplayManager) mController.getAndroidContext()
+                .getSystemService(Context.DISPLAY_SERVICE))
+                .unregisterDisplayListener(mDisplayListener);
+    }
+
     /**
      * Initializes the display listener to listen to display changes such as
      * 180-degree rotation change, which will not have an onConfigurationChanged
@@ -553,8 +558,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     private void initDisplayListener() {
         if (ApiHelper.HAS_DISPLAY_LISTENER) {
-            mLastRotation = CameraUtil.getDisplayRotation(
-                    (Activity) mController.getAndroidContext());
+            mLastRotation = CameraUtil.getDisplayRotation(mController.getAndroidContext());
 
             mDisplayListener = new DisplayManager.DisplayListener() {
                 @Override
@@ -565,7 +569,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 @Override
                 public void onDisplayChanged(int displayId) {
                     int rotation = CameraUtil.getDisplayRotation(
-                            (Activity) mController.getAndroidContext());
+                            mController.getAndroidContext());
                     if ((rotation - mLastRotation + 360) % 360 == 180
                             && mPreviewStatusListener != null) {
                         mPreviewStatusListener.onPreviewFlipped();
