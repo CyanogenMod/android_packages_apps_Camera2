@@ -1623,7 +1623,7 @@ public class CameraActivity extends Activity
      * location on the first run of the app.
      */
     public AlertDialog getFirstTimeLocationAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mAppContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder = SettingsView.getFirstTimeLocationAlertBuilder(builder, mSettingsController);
         if (builder != null) {
             return builder.create();
