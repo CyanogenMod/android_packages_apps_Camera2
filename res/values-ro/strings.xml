@@ -280,8 +280,7 @@
     <string name="saving_tiny_planet" msgid="8828265180177375494">"Se salvează miniplaneta"</string>
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Zoom"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Rotație"</string>
-    <!-- no translation found for photo_editor (1521994560971367225) -->
-    <skip />
+    <string name="photo_editor" msgid="1521994560971367225">"Editor foto"</string>
     <string name="crop_save" msgid="2841974981340098579">"Salvați"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Nu se poate încărca imaginea!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Afișare tip peliculă"</string>
@@ -343,11 +342,23 @@
     <skip />
     <!-- no translation found for camera_id_front_desc (7497517948130254220) -->
     <skip />
+    <!-- no translation found for more_options_desc (4628738800610478353) -->
+    <skip />
     <!-- no translation found for cancel_button_description (3801167024006905033) -->
     <skip />
     <!-- no translation found for done_button_description (1334963435441544592) -->
     <skip />
     <!-- no translation found for retake_button_description (4234613030674787714) -->
+    <skip />
+    <!-- no translation found for share_button_description (5108508790540832053) -->
+    <skip />
+    <!-- no translation found for view_button_description (4985768837891362075) -->
+    <skip />
+    <!-- no translation found for edit_button_description (98550816724901925) -->
+    <skip />
+    <!-- no translation found for delete_button_description (2251065309677200911) -->
+    <skip />
+    <!-- no translation found for button_change_announcement (3759686152778772111) -->
     <skip />
     <string name="setting_location" msgid="4459859689227893838">"Locație"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Dimensiunea fotografiei"</string>
