@@ -457,6 +457,7 @@ public abstract class LocalMediaData implements LocalData {
                 return null;
             }
             PhotoData newData = buildFromCursor(c);
+            c.close();
             return newData;
         }
 
@@ -744,6 +745,7 @@ public abstract class LocalMediaData implements LocalData {
                 return null;
             }
             VideoData newData = buildFromCursor(c);
+            c.close();
             return newData;
         }
 

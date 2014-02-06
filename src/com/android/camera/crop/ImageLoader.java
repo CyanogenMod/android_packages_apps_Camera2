@@ -79,7 +79,9 @@ public final class ImageLoader {
         }
         int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        return cursor.getString(index);
+        String path = cursor.getString(index);
+        Utils.closeSilently(cursor);
+        return path;
     }
 
     /**
