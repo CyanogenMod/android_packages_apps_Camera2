@@ -380,17 +380,17 @@ public class CameraSettings {
         }
 
         if (contrast != null && !CameraUtil.isSupported(mParameters, "contrast") &&
-                !CameraUtil.isSupported(mParameters, "contrast-max")) {
+                !CameraUtil.isSupported(mParameters, "max-contrast")) {
             removePreference(group, contrast.getKey());
         }
 
         if (sharpness != null && !CameraUtil.isSupported(mParameters, "sharpness") &&
-                !CameraUtil.isSupported(mParameters, "sharpness-max")) {
+                !CameraUtil.isSupported(mParameters, "max-sharpness")) {
             removePreference(group, sharpness.getKey());
         }
 
         if (saturation != null && !CameraUtil.isSupported(mParameters, "saturation") &&
-                !CameraUtil.isSupported(mParameters, "saturation-max")) {
+                !CameraUtil.isSupported(mParameters, "max-saturation")) {
             removePreference(group, saturation.getKey());
         }
     }
