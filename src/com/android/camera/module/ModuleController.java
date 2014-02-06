@@ -65,6 +65,11 @@ public interface ModuleController {
     public void onPreviewVisibilityChanged(boolean visible);
 
     /**
+     * Called when the first preview data is received.
+     */
+    public void onPreviewInitialDataReceived();
+
+    /**
      * Called when the framework layout orientation changed.
      *
      * @param isLandscape Whether the new orientation is landscape or portrait.
