@@ -1309,11 +1309,6 @@ public class PhotoModule
     }
 
     @Override
-    public void onPreviewSizeChanged(int width, int height) {
-        // TODO: implement this.
-    }
-
-    @Override
     public void onLayoutOrientationChanged(boolean isLandscape) {
         setDisplayOrientation();
     }

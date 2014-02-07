@@ -148,13 +148,7 @@ public class ModeOptionsOverlay extends FrameLayout
     public void onPreviewAreaSizeChanged(RectF previewArea) {
         mPreviewWidth = (int) previewArea.width();
         mPreviewHeight = (int) previewArea.height();
-        // Schedule the layout parameter update after the current layout pass.
-        post(new Runnable() {
-                @Override
-                public void run() {
-                    setLayoutDimensions();
-                }
-            });
+        setLayoutDimensions();
     }
 
     /**
