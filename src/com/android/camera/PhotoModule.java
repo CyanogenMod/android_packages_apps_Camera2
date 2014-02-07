@@ -1944,13 +1944,14 @@ public class PhotoModule
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        /*TODO: if (!mActivity.mShowCameraAppView) {
+        // Do not handle any key if the activity is
+        // not in active camera/video mode
+        if (!mActivity.isInCameraApp()) {
             return false;
-        }*/
+        }
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
-                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized
-                    && (mUI.mMenuInitialized)) {
+                if (mFirstTimeInitialized && (mUI.mMenuInitialized)) {
                     if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
                         onShutterButtonFocus(true);
                     } else {
@@ -1959,8 +1960,7 @@ public class PhotoModule
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized
-                    && (mUI.mMenuInitialized)) {
+                if (mFirstTimeInitialized && (mUI.mMenuInitialized)) {
                    if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
                         onShutterButtonFocus(true);
                     } else {
@@ -1969,7 +1969,7 @@ public class PhotoModule
                 }
                 return true;
             case KeyEvent.KEYCODE_FOCUS:
-                if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized) {
+                if (mFirstTimeInitialized) {
                     if (event.getRepeatCount() == 0) {
                         onShutterButtonFocus(true);
                     }
@@ -2005,9 +2005,6 @@ public class PhotoModule
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        /*TODO: if (!mActivity.mShowCameraAppView) {
-            return false;
-        }*/
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
