@@ -380,8 +380,18 @@ public class PhotoModule
     // camera only
     private void locationFirstRun() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
-            return;
+
+        // Check whether we can parse the value. If not, let the user choose
+        // again.
+        try {
+            if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
+                // This line will throw an exception if the value cannot be
+                // parsed. Otherwise, we will return.
+                settingsManager.getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
+                return;
+            }
+        } catch (Exception ex) {
+            // Fall through and open the dialog.
         }
         if (mActivity.isSecureCamera()) {
             return;
@@ -445,37 +455,38 @@ public class PhotoModule
     }
 
     private final ButtonManager.ButtonCallback mCameraCallback =
-        new ButtonManager.ButtonCallback() {
-            @Override
-            public void onStateChanged(int state) {
-                if (mPaused || mPendingSwitchCameraId != -1) {
-                    return;
-                }
-                mPendingSwitchCameraId = state;
+            new ButtonManager.ButtonCallback() {
+                @Override
+                public void onStateChanged(int state) {
+                    if (mPaused || mPendingSwitchCameraId != -1) {
+                        return;
+                    }
+                    mPendingSwitchCameraId = state;
 
-                Log.v(TAG, "Start to switch camera. cameraId=" + state);
-                // We need to keep a preview frame for the animation before
-                // releasing the camera. This will trigger onPreviewTextureCopied.
-                //TODO: Need to animate the camera switch
-                switchCamera();
-            }
-        };
+                    Log.v(TAG, "Start to switch camera. cameraId=" + state);
+                    // We need to keep a preview frame for the animation before
+                    // releasing the camera. This will trigger
+                    // onPreviewTextureCopied.
+                    // TODO: Need to animate the camera switch
+                    switchCamera();
+                }
+            };
 
     private final ButtonManager.ButtonCallback mHdrPlusCallback =
-        new ButtonManager.ButtonCallback() {
-            @Override
-            public void onStateChanged(int state) {
-                if (GcamHelper.hasGcamCapture()) {
-                    // Set the camera setting to default backfacing.
-                    SettingsManager settingsManager = mActivity.getSettingsManager();
-                    settingsManager.setDefault(SettingsManager.SETTING_CAMERA_ID);
-                    mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
-                } else {
-                    mSceneMode = CameraUtil.SCENE_MODE_HDR;
-                    updateParametersSceneMode();
+            new ButtonManager.ButtonCallback() {
+                @Override
+                public void onStateChanged(int state) {
+                    if (GcamHelper.hasGcamCapture()) {
+                        // Set the camera setting to default backfacing.
+                        SettingsManager settingsManager = mActivity.getSettingsManager();
+                        settingsManager.setDefault(SettingsManager.SETTING_CAMERA_ID);
+                        mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+                    } else {
+                        mSceneMode = CameraUtil.SCENE_MODE_HDR;
+                        updateParametersSceneMode();
+                    }
                 }
-            }
-        };
+            };
 
     private final View.OnClickListener mCancelCallback = new View.OnClickListener() {
         @Override
@@ -561,8 +572,7 @@ public class PhotoModule
         }
 
         // Initialize location service.
-        SettingsController settingsController = mActivity.getSettingsController();
-        settingsController.syncLocationManager();
+        mActivity.syncLocationManagerSetting();
 
         mUI.initializeFirstTime();
 
@@ -582,8 +592,7 @@ public class PhotoModule
     // onResume.
     private void initializeSecondTime() {
         // Start location update if needed.
-        SettingsController settingsController = mActivity.getSettingsController();
-        settingsController.syncLocationManager();
+        mActivity.syncLocationManagerSetting();
 
         getServices().getMemoryManager().addListener(this);
         mNamedImages = new NamedImages();
@@ -1506,7 +1515,8 @@ public class PhotoModule
 
         // This is to notify app controller that preview will start next, so app
         // controller can set preview callbacks if needed. This has to happen
-        // before preview is started as a workaround of the framework bug related to
+        // before preview is started as a workaround of the framework bug
+        // related to
         // preview callbacks at b/12591410.
         mAppController.onPreviewReadyToStart();
         Log.v(TAG, "startPreview");
@@ -1539,15 +1549,6 @@ public class PhotoModule
         switch (id) {
             case SettingsManager.SETTING_FLASH_MODE: {
                 updateParametersFlashMode();
-                break;
-            }
-            case SettingsManager.SETTING_PICTURE_SIZE: {
-                updateParametersPictureSize();
-                break;
-            }
-            case SettingsManager.SETTING_RECORD_LOCATION: {
-                SettingsController settingsController = mActivity.getSettingsController();
-                settingsController.syncLocationManager();
                 break;
             }
             default: {
@@ -1824,18 +1825,6 @@ public class PhotoModule
             mSaveUri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
             mCropValue = myExtras.getString("crop");
         }
-    }
-
-    public void onSharedPreferenceChanged() {
-        // ignore the events after "onPause()"
-        if (mPaused) {
-            return;
-        }
-
-        SettingsController settingsController = mActivity.getSettingsController();
-        settingsController.syncLocationManager();
-
-        setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
     }
 
     private void showTapToFocusToast() {

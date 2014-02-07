@@ -32,7 +32,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
@@ -53,9 +52,7 @@ import android.util.CameraPerformanceTracker;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -64,9 +61,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -98,14 +93,16 @@ import com.android.camera.module.ModulesInfo;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
 import com.android.camera.session.PlaceholderManager;
+import com.android.camera.settings.CameraSettingsActivity;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
+import com.android.camera.settings.SettingsUtil;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.PreviewStatusListener;
-import com.android.camera.ui.SettingsView;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.Callback;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GalleryHelper;
@@ -172,10 +169,6 @@ public class CameraActivity extends Activity
      */
     private SettingsManager mSettingsManager;
 
-    /**
-     * TODO: This should be moved to the app level.
-     */
-    private SettingsController mSettingsController;
     private ModeListView mModeListView;
     private int mCurrentModeIndex;
     private CameraModule mCurrentModule;
@@ -376,7 +369,7 @@ public class CameraActivity extends Activity
         }
         if (mCurrentModule != null) {
             SettingsCapabilities capabilities =
-                    SettingsController.getSettingsCapabilities(camera);
+                    SettingsUtil.getSettingsCapabilities(camera);
             mSettingsManager.changeCamera(camera.getCameraId(), capabilities);
             mCurrentModule.onCameraAvailable(camera);
         }
@@ -406,6 +399,7 @@ public class CameraActivity extends Activity
 
     private static class MainHandler extends Handler {
         final WeakReference<CameraActivity> mActivity;
+
         public MainHandler(CameraActivity activity, Looper looper) {
             super(looper);
             mActivity = new WeakReference<CameraActivity>(activity);
@@ -707,7 +701,7 @@ public class CameraActivity extends Activity
                         hideSessionProgress();
                         updateSessionProgress(0);
                     }
-                    mDataAdapter.refresh(uri, /* isInProgress */ false);
+                    mDataAdapter.refresh(uri, /* isInProgress */false);
                 }
 
                 @Override
@@ -728,7 +722,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSessionUpdated(Uri uri) {
-                    mDataAdapter.refresh(uri, /* isInProgress */ true);
+                    mDataAdapter.refresh(uri, /* isInProgress */true);
                 }
             };
 
@@ -1026,7 +1020,7 @@ public class CameraActivity extends Activity
             // It is necessary to log this in onCreate, to avoid the
             // onResume->onPause->onResume sequence.
             UsageStatistics.foregrounded(
-                eventprotos.ForegroundEvent.ForegroundSource.LOCK_SCREEN);
+                    eventprotos.ForegroundEvent.ForegroundSource.LOCK_SCREEN);
 
             // Change the window flags so that secure camera can show when
             // locked
@@ -1068,7 +1062,6 @@ public class CameraActivity extends Activity
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
         mLocationManager = new LocationManager(mAppContext);
-        mSettingsController = new SettingsController(this);
 
         int modeIndex = -1;
         int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
@@ -1234,11 +1227,11 @@ public class CameraActivity extends Activity
         if (isCaptureIntent()) {
             // Foreground event caused by photo or video capure intent.
             UsageStatistics.foregrounded(
-                eventprotos.ForegroundEvent.ForegroundSource.INTENT_PICKER);
+                    eventprotos.ForegroundEvent.ForegroundSource.INTENT_PICKER);
         } else if (!mSecureCamera) {
             // Foreground event that is not caused by an intent.
             UsageStatistics.foregrounded(
-                eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
+                    eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
         }
 
         Drawable galleryLogo;
@@ -1333,7 +1326,6 @@ public class CameraActivity extends Activity
         mCameraAppUI.onDestroy();
         mCameraController = null;
         mSettingsManager = null;
-        mSettingsController = null;
         mCameraAppUI = null;
         mOrientationManager = null;
         mButtonManager = null;
@@ -1500,23 +1492,12 @@ public class CameraActivity extends Activity
         prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, modeIndex).apply();
     }
 
+    /**
+     * Shows the settings dialog.
+     */
     public void onSettingsSelected() {
-        // Temporary until we finalize the touch flow.
-        LayoutInflater inflater = getLayoutInflater();
-        SettingsView settingsView = (SettingsView) inflater.inflate(R.layout.settings_list_layout,
-                null, false);
-        if (mSettingsController != null) {
-            settingsView.setController(mSettingsController);
-        }
-        if (mFeedbackHelper != null) {
-            settingsView.setFeedbackHelper(mFeedbackHelper);
-        }
-        PopupWindow popup = new PopupWindow(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        popup.setOutsideTouchable(true);
-        popup.setFocusable(true);
-        popup.setContentView(settingsView);
-        popup.showAtLocation(mModeListView.getRootView(), Gravity.CENTER, 0, 0);
+        Intent intent = new Intent(this, CameraSettingsActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -1543,11 +1524,6 @@ public class CameraActivity extends Activity
     @Override
     public CameraServices getServices() {
         return (CameraServices) getApplication();
-    }
-
-    @Override
-    public SettingsController getSettingsController() {
-        return mSettingsController;
     }
 
     public List<String> getSupportedModeNames() {
@@ -1577,7 +1553,12 @@ public class CameraActivity extends Activity
      */
     public AlertDialog getFirstTimeLocationAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder = SettingsView.getFirstTimeLocationAlertBuilder(builder, mSettingsController);
+        builder = SettingsUtil.getFirstTimeLocationAlertBuilder(builder, new Callback<Boolean>() {
+            @Override
+            public void onCallback(Boolean locationOn) {
+                mSettingsManager.setLocation(locationOn, mLocationManager);
+            }
+        });
         if (builder != null) {
             return builder.create();
         } else {
@@ -1813,6 +1794,14 @@ public class CameraActivity extends Activity
     // For debugging purposes only.
     public CameraModule getCurrentModule() {
         return mCurrentModule;
+    }
+
+    /**
+     * Reads the current location recording settings and passes it on to the
+     * location manager.
+     */
+    public void syncLocationManagerSetting() {
+        mSettingsManager.syncLocationManager(mLocationManager);
     }
 
     private void keepScreenOnForAWhile() {

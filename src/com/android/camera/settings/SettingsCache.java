@@ -22,7 +22,6 @@ import android.util.SparseArray;
 import com.android.camera.settings.SettingsManager.Setting;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ import java.util.Map;
  */
 public class SettingsCache {
     /** A mapping of setting id to {@link #SettingsManager.Setting}. */
-    private SparseArray<Setting> mCache = new SparseArray<Setting>();
+    private final SparseArray<Setting> mCache = new SparseArray<Setting>();
 
     /** The max index of a non-null element in the cache. */
     private int mCacheMaxIndex = -1;
@@ -44,12 +43,12 @@ public class SettingsCache {
      *  initialization to the cache.  This is only appropriate
      *  for settings not known to this package.
      */
-    private ExtraSettings mExtraSettings;
+    private final ExtraSettings mExtraSettings;
 
     /** The activity context, used by setting initializers to
      *  to lookup a setting's default values[
      */
-    private Context mContext;
+    private final Context mContext;
 
     /** The interface through which settings can know
      *  limitations set by the camera device.

@@ -65,6 +65,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -656,7 +657,8 @@ public class VideoModule extends CameraModule
             settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY);
         }
         String videoQuality = settingsManager.get(SettingsManager.SETTING_VIDEO_QUALITY);
-        int quality = Integer.valueOf(videoQuality);
+        int quality = SettingsUtil.getVideoQuality(videoQuality, mCameraId);
+        Log.d(TAG, "Selected video quality for '" + videoQuality + "' is " + quality);
 
         // Set video quality.
         Intent intent = mActivity.getIntent();
@@ -1580,9 +1582,9 @@ public class VideoModule extends CameraModule
             // preview area size change later in the initialization.
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
+
         // Initialize location service.
-        SettingsController settingsController = mActivity.getSettingsController();
-        settingsController.syncLocationManager();
+        mActivity.syncLocationManagerSetting();
 
         if (mPreviewing) {
             mOnResumeTime = SystemClock.uptimeMillis();

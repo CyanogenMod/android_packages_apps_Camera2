@@ -18,24 +18,18 @@
 <resources>
     <!-- Camera Preferences Video Quality entries -->
     <string-array name="pref_video_quality_entries" translatable="false">
-        <item>@string/pref_video_quality_entry_1080p</item>
-        <item>@string/pref_video_quality_entry_720p</item>
-        <item>@string/pref_video_quality_entry_480p</item>
-        <item>@string/pref_video_quality_entry_high</item>
-        <item>@string/pref_video_quality_entry_low</item>
+        <item>@string/pref_camera_picturesize_entry_large</item>
+        <item>@string/pref_camera_picturesize_entry_medium</item>
+        <item>@string/pref_camera_picturesize_entry_small</item>
    </string-array>
 
     <string-array name="pref_video_quality_entryvalues" translatable="false">
-        <!-- The integer value of CamcorderProfile.QUALITY_1080P -->
-        <item>6</item>
-        <!-- The integer value of CamcorderProfile.QUALITY_720P -->
+        <!-- Large size is the default. -->
         <item>@string/pref_video_quality_default</item>
-        <!-- The integer value of CamcorderProfile.QUALITY_480P -->
-        <item>4</item>
-        <!-- The integer value of CamcorderProfile.QUALITY_HIGH -->
-        <item>1</item>
-         <!-- The integer value of CamcorderProfile.QUALITY_LOW -->
-        <item>0</item>
+        <!-- A medium size -->
+        <item>medium</item>
+        <!-- Small size. -->
+        <item>small</item>
     </string-array>
 
     <!-- These values correspond to the time interval between frame capture in millseconds
@@ -163,7 +157,7 @@
          size to the first one in the list that is also supported by the
          driver -->
     <string-array name="pref_camera_picturesize_entryvalues" translatable="false">
-        <item>large</item>
+        <item>@string/pref_camera_picturesize_default</item>
         <item>medium</item>
         <item>small</item>
     </string-array>
@@ -264,31 +258,6 @@
     <array name="video_flashmode_indicator_icons" translatable="false">
         <item>@drawable/ic_flash_on_indicator</item>
         <item>@drawable/ic_flash_off_indicator</item>
-    </array>
-
-    <string-array name="pref_camera_recordlocation_entryvalues" translatable="false">
-        <item>off</item>
-        <item>on</item>
-    </string-array>
-
-    <array name="pref_camera_recordlocation_entries" translatable="false">
-        <item>@string/setting_off</item>
-        <item>@string/setting_on</item>
-    </array>
-
-    <array name="pref_camera_recordlocation_labels" translatable="false">
-        <item>@string/pref_camera_location_label</item>
-        <item>@string/pref_camera_location_label</item>
-    </array>
-
-    <array name="camera_recordlocation_icons" translatable="false">
-        <item>@drawable/ic_location_off</item>
-        <item>@drawable/ic_location</item>
-    </array>
-
-    <array name="camera_recordlocation_largeicons" translatable="false">
-        <item>@drawable/ic_location_off</item>
-        <item>@drawable/ic_location</item>
     </array>
 
     <!-- Camera Preferences White Balance dialog box entries -->
