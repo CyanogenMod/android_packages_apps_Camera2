@@ -48,11 +48,13 @@ public class IndicatorIconController
 
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;
+    private ImageView mGridLinesIndicator;
 
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrPlusIndicatorIcons;
     private TypedArray mHdrIndicatorIcons;
+    private TypedArray mGridLinesIndicatorIcons;
 
     private OnIndicatorVisibilityChangedListener mListener;
 
@@ -64,6 +66,7 @@ public class IndicatorIconController
 
         mFlashIndicator = (ImageView) root.findViewById(R.id.flash_indicator);
         mHdrIndicator = (ImageView) root.findViewById(R.id.hdr_indicator);
+        mGridLinesIndicator = (ImageView) root.findViewById(R.id.grid_lines_indicator);
 
         mFlashIndicatorPhotoIcons = context.getResources().obtainTypedArray(
             R.array.camera_flashmode_indicator_icons);
@@ -73,6 +76,8 @@ public class IndicatorIconController
             R.array.pref_camera_hdr_plus_indicator_icons);
         mHdrIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_indicator_icons);
+        mGridLinesIndicatorIcons = context.getResources().obtainTypedArray(
+            R.array.grid_lines_indicator_icons);
     }
 
     /**
@@ -123,6 +128,10 @@ public class IndicatorIconController
                 syncHdrIndicator();
                 break;
             }
+            case ButtonManager.BUTTON_GRID_LINES: {
+                syncGridLinesIndicator();
+                break;
+            }
             default:
                 // Do nothing.  The indicator doesn't care
                 // about button that don't correspond to indicators.
@@ -136,6 +145,7 @@ public class IndicatorIconController
     public void syncIndicators() {
         syncFlashIndicator();
         syncHdrIndicator();
+        syncGridLinesIndicator();
     }
 
     /**
@@ -197,6 +207,28 @@ public class IndicatorIconController
     }
 
     /**
+     * Sync the icon and the visibility of the grid lines indicator.
+     */
+    private void syncGridLinesIndicator() {
+        ButtonManager buttonManager = mController.getButtonManager();
+        // If hdr isn't an enabled and visible option,
+        // do not show the indicator.
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_GRID_LINES)
+                && buttonManager.isVisible(ButtonManager.BUTTON_GRID_LINES)) {
+            setIndicatorState(mController.getSettingsManager(),
+                              SettingsManager.SETTING_CAMERA_GRID_LINES,
+                              mGridLinesIndicator, mGridLinesIndicatorIcons, false);
+        } else {
+            if (mGridLinesIndicator.getVisibility() != View.GONE) {
+                mGridLinesIndicator.setVisibility(View.GONE);
+                if (mListener != null) {
+                    mListener.onIndicatorVisibilityChanged(mGridLinesIndicator);
+                }
+            }
+        }
+    }
+
+    /**
      * Sets the image resource and visibility of the indicator
      * based on the indicator's corresponding setting state.
      */
@@ -252,6 +284,10 @@ public class IndicatorIconController
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
                 syncHdrIndicator();
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_GRID_LINES: {
+                syncGridLinesIndicator();
                 break;
             }
             default: {

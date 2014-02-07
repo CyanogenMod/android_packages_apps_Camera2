@@ -45,6 +45,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_REVIEW = 9;
     public static final int BUTTON_PANO_HORIZONTAL = 10;
     public static final int BUTTON_PANO_VERTICAL = 11;
+    public static final int BUTTON_GRID_LINES = 12;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -130,6 +131,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (MultiToggleImageButton) root.findViewById(R.id.flash_toggle_button);
         mButtonPos3
             = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
+        mButtonPos4
+            = (MultiToggleImageButton) root.findViewById(R.id.grid_lines_toggle_button);
         mButtonCancel
             = (ImageButton) root.findViewById(R.id.cancel_button);
         mButtonDone
@@ -164,6 +167,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case SettingsManager.SETTING_CAMERA_HDR: {
                 index = mSettingsManager.getStringValueIndex(id);
                 button = getButtonOrError(BUTTON_HDRPLUS);
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_GRID_LINES: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_GRID_LINES);
                 break;
             }
             default: {
@@ -220,6 +228,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Hdr button could not be found.");
                 }
                 return mButtonPos3;
+            case BUTTON_GRID_LINES:
+                if (mButtonPos4 == null) {
+                    throw new IllegalStateException("Grid lines button could not be found.");
+                }
+                return mButtonPos4;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -288,6 +301,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 break;
             case BUTTON_HDR:
                 enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_icons);
+                break;
+            case BUTTON_GRID_LINES:
+                enableGridLinesButton(button, cb, R.array.grid_lines_icons);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -531,5 +547,31 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 }
             }
         });
+    }
+
+   /**
+     * Enable a grid lines button.
+     */
+    private void enableGridLinesButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+        button.overrideContentDescriptions(R.array.grid_lines_descriptions);
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(
+                    SettingsManager.SETTING_CAMERA_GRID_LINES, state);
+                if (cb != null) {
+                    cb.onStateChanged(state);
+                }
+            }
+        });
+
+        int index = mSettingsManager.getStringValueIndex(
+            SettingsManager.SETTING_CAMERA_GRID_LINES);
+        button.setState(index >= 0 ? index : 0, true);
     }
 }

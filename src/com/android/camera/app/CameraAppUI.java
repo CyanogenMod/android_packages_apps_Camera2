@@ -218,6 +218,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean enableTorchFlash;
 
         /**
+         * Set true if flash should not be visible, regardless of
+         * hardware limitations.
+         */
+        public boolean hideFlash;
+
+        /**
          * Set true if the hdr/hdr+ option should be enabled.
          * If not set or false, the hdr/hdr+ option will be disabled.
          *
@@ -230,16 +236,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean enableHdr;
 
         /**
-         * Set true if flash should not be visible, regardless of
-         * hardware limitations.
-         */
-        public boolean hideFlash;
-
-        /**
          * Set true if hdr/hdr+ should not be visible, regardless of
          * hardware limitations.
          */
         public boolean hideHdr;
+
+        /**
+         * Set true if grid lines should be visible.  Not setting this
+         * causes grid lines to be disabled.  This option is agnostic to
+         * the hardware.
+         */
+        public boolean enableGridLines;
+
+        /**
+         * Set true if grid lines should not be visible.
+         */
+        public boolean hideGridLines;
 
         /**
          * Set true if the panorama horizontal option should be visible.
@@ -299,10 +311,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         /**
          * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
-         * that will be executed when the refocus option is pressed. This
+         * that will be executed when the grid lines option is pressed. This
          * callback can be null.
          */
-        public ButtonManager.ButtonCallback refocusCallback;
+        public ButtonManager.ButtonCallback gridLinesCallback;
 
         /**
          * A {@link android.view.View.OnClickListener} that will execute
@@ -1084,6 +1096,23 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     }
 
+    /**
+     * Return a callback which shows or hide the preview grid lines
+     * depending on whether the grid lines setting is set on.
+     */
+    public ButtonManager.ButtonCallback getGridLinesCallback() {
+        return new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                if (mController.getSettingsManager().areGridLinesOn()) {
+                    showGridLines();
+                } else {
+                    hideGridLines();
+                }
+            }
+        };
+    }
+
     /***************************Mode options api *****************************/
 
     /**
@@ -1298,6 +1327,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             } else {
                 // Hide hdr plus or hdr icon if neither are supported.
                 buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+            }
+        }
+
+        if (bottomBarSpec.hideGridLines) {
+            // Force hide grid lines icon.
+            buttonManager.hideButton(ButtonManager.BUTTON_GRID_LINES);
+            hideGridLines();
+        } else {
+            if (bottomBarSpec.enableGridLines) {
+                buttonManager.enableButton(ButtonManager.BUTTON_GRID_LINES,
+                    bottomBarSpec.gridLinesCallback != null ?
+                    bottomBarSpec.gridLinesCallback : getGridLinesCallback());
+            } else {
+                buttonManager.disableButton(ButtonManager.BUTTON_GRID_LINES);
+                hideGridLines();
             }
         }
 
