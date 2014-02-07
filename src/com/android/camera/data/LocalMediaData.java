@@ -290,7 +290,7 @@ public abstract class LocalMediaData implements LocalData {
         // GL max texture size: keep bitmaps below this value.
         private static final int MAXIMUM_TEXTURE_SIZE = 2048;
         // Maximum pixel count for Bitmaps.  To limit RAM consumption.
-        private static final int MAXIMUM_DECODE_PIXELS = 3200000;
+        private static final int MAXIMUM_DECODE_PIXELS = 4000000;
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -483,18 +483,26 @@ public abstract class LocalMediaData implements LocalData {
 
             @Override
             protected Bitmap doInBackground(Void... v) {
-                // Generate Bitmap of maximum size that fits
-                // into decodeWidth x decodeHeight
+                // Generate Bitmap of maximum size that fits into decodeWidth x decodeHeight.
+                // Algorithm: start with full size and step down in powers of 2.
                 int targetWidth = mWidth;
                 int targetHeight = mHeight;
                 int sampleSize = 1;
 
                 while (targetHeight > mDecodeHeight || targetWidth > mDecodeWidth ||
                         targetHeight > MAXIMUM_TEXTURE_SIZE || targetWidth > MAXIMUM_TEXTURE_SIZE ||
-                        targetHeight*targetWidth > MAXIMUM_DECODE_PIXELS) {
+                        targetHeight * targetWidth > MAXIMUM_DECODE_PIXELS) {
                     sampleSize *= 2;
                     targetWidth = mWidth / sampleSize;
                     targetHeight = mHeight / sampleSize;
+                }
+
+                // For large (> MAXIMUM_TEXTURE_SIZE) high aspect ratio (panorama) Bitmap requests:
+                //   Step 1: ask for double size.
+                //   Step 2: scale maximum edge down to MAXIMUM_TEXTURE_SIZE.
+                if ((mDecodeHeight > MAXIMUM_TEXTURE_SIZE || mDecodeWidth > MAXIMUM_TEXTURE_SIZE) &&
+                        targetWidth * targetHeight < MAXIMUM_DECODE_PIXELS / 4 && sampleSize > 1) {
+                    sampleSize /= 2;
                 }
 
                 // TODO: Implement image cache, which can verify image dims.
@@ -542,6 +550,14 @@ public abstract class LocalMediaData implements LocalData {
                     Matrix m = new Matrix();
                     m.setRotate(mOrientation);
                     b = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, false);
+                }
+
+                // If Bitmap maximum edge > MAXIMUM_TEXTURE_SIZE, which can happen for panoramas,
+                // scale to fit in MAXIMUM_TEXTURE_SIZE.
+                if (b.getWidth() > MAXIMUM_TEXTURE_SIZE || b.getHeight() > MAXIMUM_TEXTURE_SIZE) {
+                    int maxEdge = Math.max(b.getWidth(), b.getHeight());
+                    b = Bitmap.createScaledBitmap(b, b.getWidth() * MAXIMUM_TEXTURE_SIZE / maxEdge,
+                            b.getHeight() * MAXIMUM_TEXTURE_SIZE / maxEdge, false);
                 }
 
                 return b;
