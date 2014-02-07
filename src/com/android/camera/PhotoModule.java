@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -485,6 +486,9 @@ public class PhotoModule
         if (mActivity.setStoragePath(mPreferences)) {
             mActivity.updateStorageSpaceAndHint();
         }
+
+        // Power shutter
+        mActivity.initPowerShutter(mPreferences);
 
         // we need to reset exposure for the preview
         resetExposureCompensation();
@@ -1809,6 +1813,9 @@ public class PhotoModule
         // (e.g. onResume -> onPause -> onResume).
         stopPreview();
 
+        // Load the power shutter
+        mActivity.initPowerShutter(mPreferences);
+
         mNamedImages = null;
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
@@ -1937,6 +1944,9 @@ public class PhotoModule
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        /*TODO: if (!mActivity.mShowCameraAppView) {
+            return false;
+        }*/
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized
@@ -1975,12 +1985,21 @@ public class PhotoModule
                     mUI.pressShutterButton();
                 }
                 return true;
+            case KeyEvent.KEYCODE_POWER:
+                if (mFirstTimeInitialized && event.getRepeatCount() == 0
+                        && CameraActivity.mPowerShutter) {
+                    onShutterButtonFocus(true);
+                }
+                return true;
         }
         return false;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        /*TODO: if (!mActivity.mShowCameraAppView) {
+            return false;
+        }*/
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -1988,6 +2007,11 @@ public class PhotoModule
             case KeyEvent.KEYCODE_FOCUS:
                 if (mFirstTimeInitialized) {
                     onShutterButtonFocus(false);
+                }
+                return true;
+            case KeyEvent.KEYCODE_POWER:
+                if (CameraActivity.mPowerShutter && mFirstTimeInitialized) {
+                    onShutterButtonClick();
                 }
                 return true;
         }
@@ -2714,6 +2738,7 @@ public class PhotoModule
             setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
             mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
                 mPreferences);
+            mActivity.initPowerShutter(mPreferences);
         } else {
             mHandler.sendEmptyMessage(SET_PHOTO_UI_PARAMS);
         }
