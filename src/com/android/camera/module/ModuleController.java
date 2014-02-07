@@ -65,14 +65,6 @@ public interface ModuleController {
     public void onPreviewVisibilityChanged(boolean visible);
 
     /**
-     * Called by the app when the preview size is changed.
-     *
-     * @param width The new width.
-     * @param height The new height.
-     */
-    public void onPreviewSizeChanged(int width, int height);
-
-    /**
      * Called when the framework layout orientation changed.
      *
      * @param isLandscape Whether the new orientation is landscape or portrait.

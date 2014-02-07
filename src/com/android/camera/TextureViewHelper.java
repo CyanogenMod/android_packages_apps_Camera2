@@ -27,6 +27,7 @@ import android.view.View.OnLayoutChangeListener;
 import com.android.camera.ui.PreviewStatusListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class aims to automate TextureView transform change and notify listeners
@@ -166,10 +167,20 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
     private void onPreviewSizeChanged(final RectF previewArea) {
         // Notify listeners of preview size change
-        for (PreviewStatusListener.PreviewAreaSizeChangedListener listener
-                : mPreviewSizeChangedListeners) {
-            listener.onPreviewAreaSizeChanged(previewArea);
-        }
+        final List<PreviewStatusListener.PreviewAreaSizeChangedListener> listeners =
+                new ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>(
+                        mPreviewSizeChangedListeners);
+        // This method can be called during layout pass. We post a Runnable so
+        // that the callbacks won't happen during the layout pass.
+        mPreview.post(new Runnable() {
+            @Override
+            public void run() {
+                for (PreviewStatusListener.PreviewAreaSizeChangedListener listener
+                        : listeners) {
+                    listener.onPreviewAreaSizeChanged(previewArea);
+                }
+            }
+        });
     }
 
     /**

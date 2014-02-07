@@ -1687,11 +1687,6 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    public void onPreviewSizeChanged(int width, int height) {
-        // TODO: implement this
-    }
-
-    @Override
     public void onLayoutOrientationChanged(boolean isLandscape) {
         setDisplayOrientation();
     }

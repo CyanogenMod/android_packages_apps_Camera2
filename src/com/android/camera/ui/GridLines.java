@@ -67,14 +67,7 @@ public class GridLines extends View
     public void onPreviewAreaSizeChanged(RectF previewArea) {
         mPreviewWidth = previewArea.width();
         mPreviewHeight = previewArea.height();
-        post(new Runnable() {
-                @Override
-                public void run() {
-                    // Causes another layout pass, which will resize this
-                    // view and trigger a redraw of the grid lines.
-                    matchPreviewDimensions();
-                }
-            });
+        matchPreviewDimensions();
     }
 
     /**
