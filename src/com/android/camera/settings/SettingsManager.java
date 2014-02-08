@@ -310,10 +310,10 @@ public class SettingsManager {
     public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 17;
     public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 18;
     public static final int SETTING_STARTUP_MODULE_INDEX = 19;
-    public static final int SETTING_CAMERA_REFOCUS = 20;
-    public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 21;
-    public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 22;
-    public static final int SETTING_CAMERA_PANO_ORIENTATION = 23;
+    public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 20;
+    public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 21;
+    public static final int SETTING_CAMERA_PANO_ORIENTATION = 22;
+    public static final int SETTING_CAMERA_GRID_LINES = 23;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -339,12 +339,12 @@ public class SettingsManager {
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN =
         "pref_video_first_use_hint_shown_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
-    public static final String KEY_CAMERA_REFOCUS = "pref_camera_refocus";
     public static final String KEY_SHIMMY_REMAINING_PLAY_TIMES =
             "pref_shimmy_remaining_play_times";
     public static final String KEY_CAMERA_MODULE_LAST_USED =
             "pref_camera_module_last_used_index";
     public static final String KEY_CAMERA_PANO_ORIENTATION = "pref_camera_pano_orientation";
+    public static final String KEY_CAMERA_GRID_LINES = "pref_camera_grid_lines";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -805,20 +805,20 @@ public class SettingsManager {
                 KEY_CAMERA_MODULE_LAST_USED, null, FLUSH_OFF);
     }
 
-    public static Setting getRefocusSetting(Context context) {
-        String defaultValue = context.getString(R.string.setting_off_value);
-        String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_refocus_entryvalues);
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
-            KEY_CAMERA_REFOCUS, values, FLUSH_OFF);
-    }
-
     public static Setting getPanoOrientationSetting(Context context) {
         String defaultValue = context.getString(R.string.pano_orientation_horizontal);
         String[] values = context.getResources().getStringArray(
             R.array.pref_camera_pano_orientation_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
             KEY_CAMERA_PANO_ORIENTATION, values, FLUSH_OFF);
+    }
+
+    public static Setting getGridLinesSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_off_value);
+        String[] values = context.getResources().getStringArray(
+            R.array.pref_camera_gridlines_entryvalues);
+        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
+            KEY_CAMERA_GRID_LINES, values, FLUSH_OFF);
     }
 
     // Utilities.
@@ -834,19 +834,19 @@ public class SettingsManager {
     }
 
     /**
-     * Returns whether refocus mode is set on.
-     */
-    public boolean isRefocusOn() {
-        String refocusOn = get(SettingsManager.SETTING_CAMERA_REFOCUS);
-        return refocusOn.equals(SettingsManager.VALUE_ON);
-    }
-
-    /**
      * Returns whether hdr plus mode is set on.
      */
     public boolean isHdrPlusOn() {
         String hdrOn = get(SettingsManager.SETTING_CAMERA_HDR);
         return hdrOn.equals(SettingsManager.VALUE_ON);
+    }
+
+    /**
+     * Returns whether grid lines are set on.
+     */
+    public boolean areGridLinesOn() {
+        String gridLinesOn = get(SettingsManager.SETTING_CAMERA_GRID_LINES);
+        return gridLinesOn.equals(SettingsManager.VALUE_ON);
     }
 
     //TODO: refactor this into a separate utils module.

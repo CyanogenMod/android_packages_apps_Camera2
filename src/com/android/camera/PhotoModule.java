@@ -513,6 +513,7 @@ public class PhotoModule
         bottomBarSpec.enableFlash = true;
         bottomBarSpec.enableHdr = true;
         bottomBarSpec.hdrCallback = mHdrPlusCallback;
+        bottomBarSpec.enableGridLines = true;
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
