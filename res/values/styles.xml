@@ -284,14 +284,14 @@
         <item name="android:layout_gravity">center_vertical</item>
     </style>
     <style name="IndicatorIcon">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/indicator_icon_width</item>
+        <item name="android:layout_height">@dimen/indicator_icon_height</item>
         <item name="android:visibility">gone</item>
         <item name="android:background">@null</item>
     </style>
     <style name="ModeOption">
-      <item name="android:layout_width">wrap_content</item>
-      <item name="android:layout_height">wrap_content</item>
+      <item name="android:layout_width">@dimen/mode_option_width</item>
+      <item name="android:layout_height">@dimen/mode_option_height</item>
       <item name="android:padding">6dp</item>
       <item name="android:background">@null</item>
     </style>
