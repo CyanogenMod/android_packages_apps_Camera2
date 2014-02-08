@@ -736,6 +736,10 @@ CHAR LIMIT=NONE] -->
     <string name="camera_id_back_desc">Back camera</string>
     <string name="camera_id_front_desc">Front camera</string>
 
+    <!-- Accessibility text for grid lines toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="grid_lines_off_desc">Grid lines off</string>
+    <string name="grid_lines_on_desc">Grid lines on</string>
+
     <!-- Accessibility text for More Options button [CHAR_LIMIT=NONE] -->
     <string name="more_options_desc">More Options</string>
 

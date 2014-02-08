@@ -17,13 +17,16 @@
 package com.android.camera.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.android.camera2.R;
 
@@ -43,6 +46,21 @@ public class GridLines extends View
         int strokeWidth = getResources().getDimensionPixelSize(R.dimen.grid_line_width);
         mPaint.setStrokeWidth(strokeWidth);
         mPaint.setColor(getResources().getColor(R.color.grid_line));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
+        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (params.gravity != Gravity.CENTER_HORIZONTAL) {
+                params.gravity = Gravity.CENTER_HORIZONTAL;
+            }
+        } else {
+            if (params.gravity != Gravity.CENTER_VERTICAL) {
+                params.gravity = Gravity.CENTER_VERTICAL;
+            }
+        }
     }
 
     @Override

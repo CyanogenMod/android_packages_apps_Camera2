@@ -120,13 +120,14 @@ public class SettingsCache {
                 SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN);
         mKeyMap.put(SettingsManager.KEY_STARTUP_MODULE_INDEX,
                 SettingsManager.SETTING_STARTUP_MODULE_INDEX);
-        mKeyMap.put(SettingsManager.KEY_CAMERA_REFOCUS, SettingsManager.SETTING_CAMERA_REFOCUS);
         mKeyMap.put(SettingsManager.KEY_SHIMMY_REMAINING_PLAY_TIMES,
                 SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX);
         mKeyMap.put(SettingsManager.KEY_CAMERA_MODULE_LAST_USED,
                 SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
         mKeyMap.put(SettingsManager.KEY_CAMERA_PANO_ORIENTATION,
                 SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
+        mKeyMap.put(SettingsManager.KEY_CAMERA_GRID_LINES,
+                SettingsManager.SETTING_CAMERA_GRID_LINES);
     }
 
     /**
@@ -197,14 +198,14 @@ public class SettingsCache {
             return SettingsManager.getHintVideoSetting(mContext);
         case SettingsManager.SETTING_STARTUP_MODULE_INDEX:
             return SettingsManager.getStartupModuleSetting(mContext);
-        case SettingsManager.SETTING_CAMERA_REFOCUS:
-            return SettingsManager.getRefocusSetting(mContext);
         case SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX:
             return SettingsManager.getShimmyRemainingTimesSetting(mContext);
         case SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX:
             return SettingsManager.getLastUsedCameraModule(mContext);
         case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION:
             return SettingsManager.getPanoOrientationSetting(mContext);
+        case SettingsManager.SETTING_CAMERA_GRID_LINES:
+            return SettingsManager.getGridLinesSetting(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }
