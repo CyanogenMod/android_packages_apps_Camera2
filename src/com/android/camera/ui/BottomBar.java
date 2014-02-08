@@ -234,24 +234,23 @@ public class BottomBar extends FrameLayout
 
         // Calculates the width and height needed for the bar.
         int barWidth, barHeight;
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) getLayoutParams();
         if (mWidth > mHeight) {
             // TODO: The bottom bar should not need to care about the
             // the type of its parent.  Handle this in the parent layout.
-            ((LinearLayout.LayoutParams) getLayoutParams()).gravity = Gravity.RIGHT;
+            layoutParams.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+            barHeight = (int) mOffsetShorterEdge;
             if ((mOffsetLongerEdge == 0 && mOffsetShorterEdge == 0) || mOverLayBottomBar) {
                 barWidth = mOptimalHeight;
-                barHeight = mHeight;
             } else {
                 barWidth = (int) (mWidth - mOffsetLongerEdge);
-                barHeight = mHeight;
             }
         } else {
-            ((LinearLayout.LayoutParams) getLayoutParams()).gravity = Gravity.BOTTOM;
+            layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            barWidth = (int) mOffsetShorterEdge;
             if ((mOffsetLongerEdge == 0 && mOffsetShorterEdge == 0) || mOverLayBottomBar) {
-                barWidth = mWidth;
                 barHeight = mOptimalHeight;
             } else {
-                barWidth = mWidth;
                 barHeight = (int) (mHeight - mOffsetLongerEdge);
             }
         }
