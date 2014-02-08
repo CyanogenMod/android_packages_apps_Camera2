@@ -17,14 +17,11 @@
 package com.android.camera.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.camera.util.ApiHelper;
@@ -39,41 +36,39 @@ import com.android.camera2.R;
  * and a GradientDrawable at the end of the TextView.
  *
  * The purpose of this class is to encapsulate different drawing logic into
- * its own class. There are two drawing mode, <code>TRUNCATE_TEXT_END</code>
- * and <code>TRUNCATE_TEXT_FRONT</code>. They define how we draw the view when
+ * its own class. There are two drawing mode, <code>FLY_IN</code>
+ * and <code>FLY_OUT</code>. They define how we draw the view when
  * we display the view partially.
  */
 class ModeSelectorItem extends FrameLayout {
     // Drawing modes that defines how the TextView should be drawn when there
     // is not enough space to draw the whole TextView.
-    public static final int TRUNCATE_TEXT_END = 1;
-    public static final int TRUNCATE_TEXT_FRONT = 2;
+    public static final int FLY_IN = 1;
+    public static final int FLY_OUT = 2;
 
     private static final int SHADE_WIDTH_PIX = 100;
 
     private TextView mText;
-    private ImageView mIcon;
+    private ModeIconView mIcon;
     private int mVisibleWidth;
-    private int mMinVisibleWidth;
-    private GradientDrawable mGradientShade;
+    private final int mMinVisibleWidth;
 
-    private int mDrawingMode = TRUNCATE_TEXT_END;
+    private int mDrawingMode = FLY_IN;
     private int mHeight;
     private int mWidth;
     private int mDefaultBackgroundColor;
     private int mDefaultTextColor;
-    private int mIconBlockColor;
-    private final int mHighlightTextColor;
 
     public ModeSelectorItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mHighlightTextColor = context.getResources()
-                .getColor(R.color.mode_selector_text_highlight_color);
+        setWillNotDraw(false);
+        mMinVisibleWidth = getResources()
+                .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
     }
 
     @Override
     public void onFinishInflate() {
-        mIcon = (ImageView) findViewById(R.id.selector_icon);
+        mIcon = (ModeIconView) findViewById(R.id.selector_icon);
         mText = (TextView) findViewById(R.id.selector_text);
         Typeface typeface;
         if (ApiHelper.HAS_ROBOTO_LIGHT_FONT) {
@@ -84,8 +79,6 @@ class ModeSelectorItem extends FrameLayout {
                     "Roboto-Light.ttf");
         }
         mText.setTypeface(typeface);
-        mMinVisibleWidth = getResources()
-                .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
         mDefaultTextColor = mText.getCurrentTextColor();
     }
 
@@ -94,23 +87,12 @@ class ModeSelectorItem extends FrameLayout {
         setBackgroundColor(color);
     }
 
-    @Override
-    public void setBackgroundColor(int color) {
-        super.setBackgroundColor(color);
-        int startColor = 0x00FFFFFF & color;
-        // Gradient shade will draw at the end of the item
-        mGradientShade = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[] {startColor, color});
+    public void setHighlighted(boolean highlighted) {
+        mIcon.setHighlighted(highlighted);
     }
 
-    public void highlight() {
-        mText.setTextColor(mHighlightTextColor);
-        setBackgroundColor(mIconBlockColor);
-    }
-
-    public void unHighlight() {
-        setBackgroundColor(mDefaultBackgroundColor);
-        mText.setTextColor(mDefaultTextColor);
+    public void setSelected(boolean selected) {
+        mIcon.setSelected(selected);
     }
 
     /**
@@ -122,13 +104,8 @@ class ModeSelectorItem extends FrameLayout {
      *                to right)
      */
     public void onSwipeModeChanged(boolean swipeIn) {
-        mDrawingMode = swipeIn ? TRUNCATE_TEXT_END : TRUNCATE_TEXT_FRONT;
+        mDrawingMode = swipeIn ? FLY_IN : FLY_OUT;
         mText.setTranslationX(0);
-    }
-
-    public void setIconBackgroundColor(int color) {
-        mIconBlockColor = color;
-        mIcon.setBackgroundColor(color);
     }
 
     public void setText(CharSequence text) {
@@ -143,7 +120,7 @@ class ModeSelectorItem extends FrameLayout {
         if (changed && mVisibleWidth > 0) {
             // Reset mode list to full screen
             setVisibleWidth(mWidth);
-            mDrawingMode = TRUNCATE_TEXT_FRONT;
+            mDrawingMode = FLY_OUT;
         }
     }
 
@@ -174,16 +151,34 @@ class ModeSelectorItem extends FrameLayout {
      * @param newWidth new visible width
      */
     public void setVisibleWidth(int newWidth) {
+        int fullyShownIconWidth = getMaxVisibleWidth();
         newWidth = Math.max(newWidth, 0);
         // Visible width should not be greater than view width
-        newWidth = Math.min(newWidth, mWidth);
+        newWidth = Math.min(newWidth, fullyShownIconWidth);
         mVisibleWidth = newWidth;
         float transX = 0f;
         // If the given width is less than the icon width, we need to translate icon
-        if (mVisibleWidth < mMinVisibleWidth) {
-            transX = mMinVisibleWidth - mVisibleWidth;
+        if (mVisibleWidth < mMinVisibleWidth + mIcon.getLeft()) {
+            transX = mMinVisibleWidth + mIcon.getLeft() - mVisibleWidth;
         }
         setTranslationX(-transX);
+
+        if (mDrawingMode == FLY_IN) {
+            // Swipe open.
+            int width = Math.min(mVisibleWidth, fullyShownIconWidth);
+            // Linear interpolate text opacity.
+            float alpha = (float) width / (float) fullyShownIconWidth;
+            mText.setAlpha(alpha);
+        } else {
+            // Swipe back.
+            int width = Math.max(mVisibleWidth, mMinVisibleWidth / 2);
+            width = Math.min(width, fullyShownIconWidth);
+            // Linear interpolate text opacity.
+            float alpha = (float) (width - mMinVisibleWidth / 2)
+                    / (float) (fullyShownIconWidth - mMinVisibleWidth);
+            mText.setAlpha(alpha);
+        }
+
         invalidate();
     }
 
@@ -204,27 +199,34 @@ class ModeSelectorItem extends FrameLayout {
      */
     @Override
     public void draw(Canvas canvas) {
-        int width = Math.max(mVisibleWidth, mMinVisibleWidth);
-        int height = canvas.getHeight();
-        int shadeStart = -1;
-
-        if (mDrawingMode == TRUNCATE_TEXT_END) {
-            if (mVisibleWidth > mMinVisibleWidth) {
-                shadeStart = Math.max(mMinVisibleWidth, mVisibleWidth - SHADE_WIDTH_PIX);
-            }
-        } else {
-            if (mVisibleWidth <= mWidth) {
-                mText.setTranslationX(mVisibleWidth - mWidth);
-            }
-        }
-
-        if (width < mWidth) {
-            canvas.clipRect(0, 0, width, height);
-        }
         super.draw(canvas);
-        if (shadeStart > 0 && width < mWidth) {
-            mGradientShade.setBounds(shadeStart, 0, width, height);
-            mGradientShade.draw(canvas);
-        }
+    }
+
+    /**
+     * Sets the color that will be used in the drawable for highlight state.
+     *
+     * @param highlightColor color for the highlight state
+     */
+    public void setHighlightColor(int highlightColor) {
+        mIcon.setHighlightColor(highlightColor);
+    }
+
+    /**
+     * Gets the maximum visible width of the mode icon. The mode item will be
+     * full shown when the mode icon has max visible width.
+     */
+    public int getMaxVisibleWidth() {
+        return mIcon.getLeft() + mMinVisibleWidth;
+    }
+
+    /**
+     * Gets the position of the icon center relative to the window.
+     *
+     * @param loc integer array of size 2, to hold the position x and y
+     */
+    public void getIconCenterLocationInWindow(int[] loc) {
+        mIcon.getLocationInWindow(loc);
+        loc[0] += mMinVisibleWidth / 2;
+        loc[1] += mMinVisibleWidth / 2;
     }
 }
