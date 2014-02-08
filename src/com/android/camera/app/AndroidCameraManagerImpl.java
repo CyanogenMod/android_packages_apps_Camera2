@@ -534,6 +534,12 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
+        public void setPreviewTextureSync(SurfaceTexture surfaceTexture) {
+            setPreviewTexture(surfaceTexture);
+            mCameraHandler.waitDone();
+        }
+
+        @Override
         public void setPreviewDisplay(SurfaceHolder surfaceHolder) {
             mCameraHandler.obtainMessage(SET_PREVIEW_DISPLAY_ASYNC, surfaceHolder).sendToTarget();
         }

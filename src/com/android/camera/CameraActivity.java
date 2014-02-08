@@ -1102,17 +1102,7 @@ public class CameraActivity extends Activity
         mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
 
         setModuleFromModeIndex(modeIndex);
-        // TODO: Remove this when refactor is done.
-        if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
-                || modeIndex == getResources().getInteger(R.integer.camera_mode_video)
-                || modeIndex == getResources().getInteger(R.integer.camera_mode_gcam)
-                || modeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
-            mCameraAppUI.prepareModuleUI();
-        }
-
-        setBottomBarColor();
-        setBottomBarShutterIcon();
-
+        mCameraAppUI.prepareModuleUI();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
         if (!mSecureCamera) {
@@ -1504,29 +1494,9 @@ public class CameraActivity extends Activity
         }
 
         setModuleFromModeIndex(modeIndex);
+        mCameraAppUI.clearModuleUI();
 
-        // TODO: The following check is temporary for modules attached to the
-        // generic_module layout. When the refactor is done, similar logic will
-        // be applied to all modules.
-        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_photo)
-                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_video)
-                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_gcam)
-                || mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
-            if (oldModuleIndex != getResources().getInteger(R.integer.camera_mode_photo)
-                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_video)
-                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_gcam)
-                    && oldModuleIndex != getResources().getInteger(R.integer.camera_mode_refocus)) {
-                mCameraAppUI.prepareModuleUI();
-            } else {
-                mCameraAppUI.clearModuleUI();
-            }
-        } else {
-            // This is the old way of removing all views in CameraRootView. Will
-            // be deprecated soon. It is here to make sure modules that haven't
-            // been refactored can still function.
-            mCameraAppUI.clearCameraUI();
-        }
-
+        mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera
@@ -1676,33 +1646,7 @@ public class CameraActivity extends Activity
         fragment.show(getFragmentManager(), "tiny_planet");
     }
 
-    private void setBottomBarColor() {
-        // Currently not all modules use the generic_module UI.
-        // TODO: once all modules have a bottom bar, remove
-        // isUsingBottomBar check.
-        if (mCurrentModule.isUsingBottomBar()) {
-            int color = getResources().getColor(R.color.bottombar_unpressed);
-            mCameraAppUI.setBottomBarColor(color);
-
-            int pressedColor = getResources().getColor(R.color.bottombar_pressed);
-            mCameraAppUI.setBottomBarPressedColor(pressedColor);
-        }
-    }
-
-    private void setBottomBarShutterIcon() {
-        // Currently not all modules use the generic_module UI.
-        // TODO: once all modules have a bottom bar, remove
-        // isUsingBottomBar check.
-        if (mCurrentModule.isUsingBottomBar()) {
-            int shutterIconId = CameraUtil.getCameraShutterIconId(mCurrentModeIndex, mAppContext);
-            mCameraAppUI.setBottomBarShutterIcon(shutterIconId);
-        }
-    }
-
     private void openModule(CameraModule module) {
-        // TODO: Remove setting color here when all modules use CameraAppUI.
-        setBottomBarColor();
-        setBottomBarShutterIcon();
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
         module.onPreviewVisibilityChanged(!mFilmstripVisible);

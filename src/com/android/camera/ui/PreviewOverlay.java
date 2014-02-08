@@ -56,6 +56,7 @@ public class PreviewOverlay extends View
     private final ZoomGestureDetector mScaleDetector;
     private final ZoomProcessor mZoomProcessor = new ZoomProcessor();
     private GestureDetector mGestureDetector = null;
+    private View.OnTouchListener mTouchListener = null;
     private OnZoomChangedListener mZoomListener = null;
     private OnPreviewTouchedListener mOnPreviewTouchedListener;
 
@@ -124,6 +125,9 @@ public class PreviewOverlay extends View
         if (mGestureDetector != null) {
             mGestureDetector.onTouchEvent(m);
         }
+        if (mTouchListener != null) {
+            mTouchListener.onTouch(this, m);
+        }
         mScaleDetector.onTouchEvent(m);
         if (mOnPreviewTouchedListener != null) {
             mOnPreviewTouchedListener.onPreviewTouched(m);
@@ -153,7 +157,7 @@ public class PreviewOverlay extends View
 
     /**
      * Each module can pass in their own gesture listener through App UI. When a gesture
-     * is detected, the {#link GestureDetector.OnGestureListener} will be notified of
+     * is detected, the {@link GestureDetector.OnGestureListener} will be notified of
      * the gesture.
      *
      * @param gestureListener a listener from a module that defines how to handle gestures
@@ -165,11 +169,20 @@ public class PreviewOverlay extends View
     }
 
     /**
+     * Set a touch listener on the preview overlay.  When a module doesn't support a
+     * {@link GestureDetector.OnGestureListener}, this can be used instead.
+     */
+    public void setTouchListener(View.OnTouchListener touchListener) {
+        mTouchListener = touchListener;
+    }
+
+    /**
      * During module switch, connections to the previous module should be cleared.
      */
     public void reset() {
         mZoomListener = null;
         mGestureDetector = null;
+        mTouchListener = null;
     }
 
     /**

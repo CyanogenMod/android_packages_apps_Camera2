@@ -22,9 +22,6 @@ import android.hardware.Camera.Parameters;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -40,7 +37,7 @@ import com.android.camera2.R;
 
 import java.util.List;
 
-public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
+public class VideoUI implements PreviewStatusListener {
     private static final String TAG = "VideoUI";
 
     private final static float UNSET = 0f;
@@ -48,7 +45,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     // module fields
     private final CameraActivity mActivity;
     private final View mRootView;
-    private final TextureView mTextureView;
     private final FocusOverlay mFocusUI;
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
@@ -61,15 +57,9 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     private View mTimeLapseLabel;
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
-    private SurfaceTexture mSurfaceTexture;
     private final VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
-
-    private SurfaceView mSurfaceView = null;
-    private float mSurfaceTextureUncroppedWidth;
-    private float mSurfaceTextureUncroppedHeight;
-
 
     private float mAspectRatio = UNSET;
     private final AnimationManager mAnimationManager;
@@ -112,19 +102,10 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
                 moduleRoot, true);
 
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
-        mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
-
-        mSurfaceTexture = mTextureView.getSurfaceTexture();
 
         initializeMiscControls();
         mAnimationManager = new AnimationManager();
         mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
-    }
-
-    public void initializeSurfaceView() {
-        mSurfaceView = new SurfaceView(mActivity);
-        ((ViewGroup) mRootView).addView(mSurfaceView, 0);
-        mSurfaceView.getHolder().addCallback(this);
     }
 
     public void setPreviewSize(int width, int height) {
@@ -153,29 +134,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
     }
 
     /**
-     * Starts a capture animation
-     */
-    public void animateCapture() {
-        Bitmap bitmap = null;
-        if (mTextureView != null) {
-            bitmap = mTextureView.getBitmap((int) mSurfaceTextureUncroppedWidth / 2,
-                    (int) mSurfaceTextureUncroppedHeight / 2);
-        }
-        animateCapture(bitmap);
-    }
-
-    /**
-     * Starts a capture animation
-     * @param bitmap the captured image that we shrink and slide in the animation
-     */
-    public void animateCapture(Bitmap bitmap) {
-        if (bitmap == null) {
-            Log.e(TAG, "No valid bitmap for capture animation.");
-            return;
-        }
-    }
-
-    /**
      * Cancels on-going animations
      */
     public void cancelAnimations() {
@@ -193,20 +151,6 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
             }
         }
         mRecordingTimeRect.setOrientation(0, animation);
-    }
-
-    public SurfaceHolder getSurfaceHolder() {
-        return mSurfaceView.getHolder();
-    }
-
-    public void hideSurfaceView() {
-        mSurfaceView.setVisibility(View.GONE);
-        mTextureView.setVisibility(View.VISIBLE);
-    }
-
-    public void showSurfaceView() {
-        mSurfaceView.setVisibility(View.VISIBLE);
-        mTextureView.setVisibility(View.GONE);
     }
 
     private void initializeMiscControls() {
@@ -315,6 +259,11 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         return mPreviewGestureListener;
     }
 
+    @Override
+    public View.OnTouchListener getTouchListener() {
+        return null;
+    }
+
     /**
      * Shows or hides focus UI.
      *
@@ -341,20 +290,14 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
         }
     }
 
-    public SurfaceTexture getSurfaceTexture() {
-        return mSurfaceTexture;
-    }
-
     // SurfaceTexture callbacks
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        mSurfaceTexture = surface;
         mController.onPreviewUIReady();
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        mSurfaceTexture = null;
         mController.onPreviewUIDestroyed();
         Log.d(TAG, "surfaceTexture is destroyed");
         return true;
@@ -366,22 +309,5 @@ public class VideoUI implements PreviewStatusListener, SurfaceHolder.Callback {
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-    }
-
-    // SurfaceHolder callbacks
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.v(TAG, "Surface changed. width=" + width + ". height=" + height);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.v(TAG, "Surface created");
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.v(TAG, "Surface destroyed");
-        mController.stopPreview();
     }
 }

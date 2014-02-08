@@ -78,12 +78,25 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             mHeight = height;
             if (mAutoAdjustTransform) {
                 updateTransform();
+            } else {
+                clearTransform();
             }
         }
         if (mOnLayoutChangeListener != null) {
             mOnLayoutChangeListener.onLayoutChange(v, left, top, right, bottom, oldLeft, oldTop,
                     oldRight, oldBottom);
         }
+    }
+
+    /**
+     * Transforms the preview with the identity matrix, ensuring there
+     * is no scaling on the preview.  It also calls onPreviewSizeChanged, to
+     * trigger any necessary preview size changing callbacks.
+     */
+    public void clearTransform() {
+        mPreview.setTransform(new Matrix());
+        mPreviewArea.set(0, 0, mWidth, mHeight);
+        onPreviewSizeChanged(mPreviewArea);
     }
 
     public void updateAspectRatio(float aspectRatio) {
