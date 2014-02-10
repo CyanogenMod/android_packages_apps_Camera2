@@ -38,6 +38,7 @@ public class CaptureAnimationOverlay extends View
     implements PreviewStatusListener.PreviewAreaSizeChangedListener {
     private final static String TAG = "CaptureAnimationOverlay";
 
+    private final static int FLASH_ANIMATION_DURATION_MS = 350;
     private final static int FLASH_CIRCLE_SHRINK_DURATION_MS = 200;
     private final static int FLASH_CIRCLE_SLIDE_DURATION_MS = 400;
     private final static int FLASH_CIRCLE_SLIDE_START_DELAY_MS = 0;
@@ -50,7 +51,8 @@ public class CaptureAnimationOverlay extends View
     private int mFlashCircleCenterX;
     private int mFlashCircleCenterY;
     private int mFlashCircleRadius = 0;
-    private AnimatorSet mFlashAnimation;
+    private ValueAnimator mFlashAnimation;
+    private AnimatorSet mFlashCircleAnimation;
     private final Paint mPaint = new Paint();
     private final int mFlashCircleSizeAfterShrink;
 
@@ -62,14 +64,15 @@ public class CaptureAnimationOverlay extends View
     }
 
     /**
-     * Start flash animation with the circle of the flash being at position (x, y).
+     * Start flash circle animation with the circle of the flash being at
+     * position (x, y).
      *
      * @param x position on x axis
      * @param y position on y axis
      */
-    public void startFlashAnimation(int x, int y) {
-        if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
-            mFlashAnimation.cancel();
+    public void startFlashCircleAnimation(int x, int y) {
+        if (mFlashCircleAnimation != null && mFlashCircleAnimation.isRunning()) {
+            mFlashCircleAnimation.cancel();
         }
 
         mFlashCircleCenterX = x;
@@ -112,12 +115,64 @@ public class CaptureAnimationOverlay extends View
             }
         });
 
-        mFlashAnimation = new AnimatorSet();
-        mFlashAnimation.play(alphaAnimator)
+        mFlashCircleAnimation = new AnimatorSet();
+        mFlashCircleAnimation.play(alphaAnimator)
                 .with(radiusAnimator)
                 .with(slideAnimatorX)
                 .with(slideAnimatorY);
+        mFlashCircleAnimation.setInterpolator(Gusterpolator.INSTANCE);
+        mFlashCircleAnimation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                setVisibility(VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mFlashCircleAnimation = null;
+                setVisibility(INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        mFlashCircleAnimation.start();
+    }
+
+    /**
+     * Start flash circle animation in the center of the screen.
+     */
+    public void startFlashCircleAnimation() {
+        int x = mWidth / 2;
+        int y = mHeight / 2;
+        startFlashCircleAnimation(x, y);
+    }
+
+    /**
+     * Start flash animation.
+     */
+    public void startFlashAnimation() {
+        if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
+            mFlashAnimation.cancel();
+        }
+
+        mFlashAnimation = ValueAnimator.ofFloat(0f, .5f, 0f);
+        mFlashAnimation.setDuration(FLASH_ANIMATION_DURATION_MS);
         mFlashAnimation.setInterpolator(Gusterpolator.INSTANCE);
+        mFlashAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                setAlpha((Float) animation.getAnimatedValue());
+                invalidate();
+            }
+        });
         mFlashAnimation.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -143,19 +198,13 @@ public class CaptureAnimationOverlay extends View
         mFlashAnimation.start();
     }
 
-    /**
-     * Start flash animation in the center of the screen.
-     */
-    public void startFlashAnimation() {
-        int x = mWidth / 2;
-        int y = mHeight / 2;
-        startFlashAnimation(x, y);
-    }
-
     @Override
     public void onDraw(Canvas canvas) {
-        if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
+        if (mFlashCircleAnimation != null && mFlashCircleAnimation.isRunning()) {
             canvas.drawCircle(mFlashCircleCenterX, mFlashCircleCenterY, mFlashCircleRadius, mPaint);
+        }
+        if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
+            canvas.drawColor(Color.WHITE);
         }
     }
 
