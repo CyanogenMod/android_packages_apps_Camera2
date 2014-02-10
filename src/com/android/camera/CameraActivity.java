@@ -440,6 +440,11 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public void onDeviceOpenedAlready(int cameraId) {
+        CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+    }
+
+    @Override
     public void onReconnectionFailure(CameraManager mgr) {
         UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE);
 
@@ -1425,7 +1430,6 @@ public class CameraActivity extends Activity
         }
 
         mLocationManager.disconnect();
-        CameraManagerFactory.recycle();
         super.onStop();
     }
 
@@ -1446,6 +1450,7 @@ public class CameraActivity extends Activity
         mCameraAppUI = null;
         mOrientationManager = null;
         mButtonManager = null;
+        CameraManagerFactory.recycle();
         super.onDestroy();
     }
 

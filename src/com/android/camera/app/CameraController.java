@@ -137,6 +137,11 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
+    public void onDeviceOpenedAlready(int cameraId) {
+        mCallbackReceiver.onDeviceOpenedAlready(cameraId);
+    }
+
+    @Override
     public void onReconnectionFailure(CameraManager mgr) {
         mCallbackReceiver.onReconnectionFailure(mgr);
     }

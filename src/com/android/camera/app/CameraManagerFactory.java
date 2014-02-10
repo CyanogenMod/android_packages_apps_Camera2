@@ -43,6 +43,9 @@ public class CameraManagerFactory {
      * stopped.
      */
     public static void recycle() {
-        sAndroidCameraManager = null;
+        if (sAndroidCameraManager != null) {
+            sAndroidCameraManager.recycle();
+            sAndroidCameraManager = null;
+        }
     }
 }

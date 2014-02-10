@@ -1353,10 +1353,8 @@ public class VideoModule extends CameraModule
                 // Switch back to use SurfaceTexture for preview.
                 startPreview();
             }
-        }
-        // Update the parameters here because the parameters might have been altered
-        // by MediaRecorder.
-        if (!mPaused) {
+            // Update the parameters here because the parameters might have been altered
+            // by MediaRecorder.
             mParameters = mCameraDevice.getParameters();
         }
         return fail;
