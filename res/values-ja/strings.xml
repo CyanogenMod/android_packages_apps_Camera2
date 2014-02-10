@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"低速度撮影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"広角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"パノラマ"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"前景フォーカス"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"設定を開く"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"カメラモードに切り替え"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"動画カメラに切り替え"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"低速度撮影モードに切り替え"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"広角モードに切り替え"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"パノラマモードに切り替え"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"前景フォーカスモードに切り替え"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"前景フォーカスOFF"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"前景フォーカスON"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"設定を開く"</string>
@@ -318,8 +320,9 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"フラッシュOFF"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"背面カメラ"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"前面カメラ"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"グリッド線OFF"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"グリッド線ON"</string>
+    <string name="more_options_desc" msgid="4628738800610478353">"その他のオプション"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"キャンセル"</string>
     <string name="done_button_description" msgid="1334963435441544592">"完了"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"撮り直し"</string>
@@ -327,8 +330,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"表示"</string>
     <string name="edit_button_description" msgid="98550816724901925">"編集"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"削除"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"ボタンは現在%sです"</string>
     <string name="setting_location" msgid="4459859689227893838">"場所"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"画像サイズ"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"動画の解像度"</string>

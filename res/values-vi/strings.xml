@@ -294,15 +294,17 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Khoảng thời gian"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Góc nhìn rộng"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Ảnh toàn cảnh"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"Lấy tiêu cự cận cảnh"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Mở Cài đặt"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Chuyển sang Chế độ máy ảnh"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Chuyển sang Máy quay video"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Chuyển sang Chế độ ảnh toàn cảnh 360 độ"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"Chuyển sang Chế độ máy ảnh nâng cao"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Chuyển sang chế độ máy ảnh nâng cao"</string>
+    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Chuyển sang Chế độ máy ảnh nâng cao"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Chuyển sang Chế độ Timelapse"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Chuyển sang Chế độ góc rộng"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Chuyển sang Chế độ chụp ảnh toàn cảnh"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"Chuyển sang chế độ Lấy tiêu cự cận cảnh"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"Tiêu cự trước tắt"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"Tiêu cự trước bật"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Mở cài đặt"</string>
@@ -314,12 +316,15 @@
     <string name="flash_off_desc" msgid="7151559466286106797">"Đèn flash tắt"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"Đèn flash tự động"</string>
     <string name="flash_on_desc" msgid="930372145324854699">"Đèn flash bật"</string>
-    <string name="torch_on_desc" msgid="3069836196559213365">"Đèn flash bật"</string>
-    <string name="torch_off_desc" msgid="8304675202998742618">"Đèn flash tắt"</string>
+    <string name="torch_on_desc" msgid="3069836196559213365">"Đèn pin bật"</string>
+    <string name="torch_off_desc" msgid="8304675202998742618">"Đèn pin tắt"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Máy ảnh mặt sau"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Máy ảnh mặt trước"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
+    <!-- no translation found for grid_lines_off_desc (2022385817190451353) -->
     <skip />
+    <!-- no translation found for grid_lines_on_desc (4601540461914364817) -->
+    <skip />
+    <string name="more_options_desc" msgid="4628738800610478353">"Tùy chọn khác"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Hủy"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Xong"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Chụp lại"</string>
@@ -327,8 +332,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"Xem"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Chỉnh sửa"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Xóa"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"Lúc này, nút ở chế độ %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Vị trí"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Kích thước hình ảnh"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Độ phân giải video"</string>
