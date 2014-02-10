@@ -11,7 +11,9 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd_gcam)
 
-LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res
+LOCAL_RESOURCE_DIR += \
+	$(LOCAL_PATH)/res \
+	$(LOCAL_PATH)/res_p
 
 
 include $(LOCAL_PATH)/version.mk
