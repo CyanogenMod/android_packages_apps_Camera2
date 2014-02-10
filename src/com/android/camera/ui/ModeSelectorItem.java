@@ -71,12 +71,12 @@ class ModeSelectorItem extends FrameLayout {
         mIcon = (ModeIconView) findViewById(R.id.selector_icon);
         mText = (TextView) findViewById(R.id.selector_text);
         Typeface typeface;
-        if (ApiHelper.HAS_ROBOTO_LIGHT_FONT) {
-            typeface = Typeface.create("sans-serif-light", Typeface.NORMAL);
+        if (ApiHelper.HAS_ROBOTO_MEDIUM_FONT) {
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL);
         } else {
             // Load roboto_light typeface from assets.
             typeface = Typeface.createFromAsset(getResources().getAssets(),
-                    "Roboto-Light.ttf");
+                    "Roboto-Medium.ttf");
         }
         mText.setTypeface(typeface);
         mDefaultTextColor = mText.getCurrentTextColor();
@@ -88,7 +88,9 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     public void setHighlighted(boolean highlighted) {
-        mIcon.setHighlighted(highlighted);
+        // TODO: Remove the highlight logic if UX design on selection doesn't change
+        // within a week.
+        mIcon.setSelected(highlighted);
     }
 
     public void setSelected(boolean selected) {
@@ -139,7 +141,7 @@ class ModeSelectorItem extends FrameLayout {
         if (drawableIcon != null) {
             drawableIcon = drawableIcon.mutate();
         }
-        mIcon.setImageDrawable(drawableIcon);
+        mIcon.setIconDrawable(drawableIcon);
     }
 
     /**

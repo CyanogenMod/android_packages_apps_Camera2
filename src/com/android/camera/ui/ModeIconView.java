@@ -18,9 +18,11 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
-import android.widget.ImageView;
+import android.view.View;
 
 import com.android.camera2.R;
 
@@ -32,7 +34,7 @@ import com.android.camera2.R;
  * multiple states can be rendered using the same drawable with some color modification,
  * whereas a state list drawable would require a different drawable for each state.
  */
-public class ModeIconView extends ImageView {
+public class ModeIconView extends View {
 
     private boolean mHighlightIsOn = false;
     private final GradientDrawable mBackground;
@@ -40,6 +42,8 @@ public class ModeIconView extends ImageView {
     private final int mIconBackgroundSize;
     private int mHighlightColor;
     private final int mBackgroundDefaultColor;
+    private final int mIconDrawableSize;
+    private Drawable mIconDrawable = null;
 
     public ModeIconView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,15 +56,38 @@ public class ModeIconView extends ImageView {
         mHighlightDrawable = (GradientDrawable) getResources()
                 .getDrawable(R.drawable.mode_icon_highlight).mutate();
         mHighlightDrawable.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
+        mIconDrawableSize = getResources().getDimensionPixelSize(
+                R.dimen.mode_selector_icon_drawable_size);
+    }
+
+    /**
+     * Sets the drawable that shows the icon of the mode.
+     *
+     * @param drawable drawable of the mode icon
+     */
+    public void setIconDrawable(Drawable drawable) {
+        mIconDrawable = drawable;
+        // Center icon in the background.
+        if (mIconDrawable != null) {
+            mIconDrawable.setBounds(mIconBackgroundSize / 2 - mIconDrawableSize / 2,
+                    mIconBackgroundSize / 2 - mIconDrawableSize / 2,
+                    mIconBackgroundSize / 2 + mIconDrawableSize / 2,
+                    mIconBackgroundSize / 2 + mIconDrawableSize / 2);
+            invalidate();
+        }
     }
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         mBackground.draw(canvas);
         if (mHighlightIsOn) {
             mHighlightDrawable.draw(canvas);
         }
-        super.draw(canvas);
+        if (mIconDrawable != null) {
+            mIconDrawable.draw(canvas);
+        }
+
     }
 
     /**

@@ -85,6 +85,7 @@
     <color name="timelapse_mode_color">#88695e</color>
     <color name="panorama_mode_color">#f1c938</color>
     <color name="settings_mode_color">#58595b</color>
+    <color name="mode_cover_default_color">#191919</color>
 
     <color name="bottombar_unpressed">#191919</color>
     <color name="bottombar_pressed">#262626</color>
