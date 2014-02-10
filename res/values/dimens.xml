@@ -177,7 +177,7 @@
     <dimen name="indicator_overlay_padding">20dp</dimen>
     <dimen name="indicator_icon_radius">48dp</dimen>
 
-    <dimen name="video_capture_circle_diameter">48dp</dimen>
+    <dimen name="video_capture_circle_diameter">64dp</dimen>
 
     <dimen name="grid_line_width">1dp</dimen>
 </resources>
