@@ -363,7 +363,7 @@ public class PhotoModule
 
     private void initializeControlByIntent() {
         if (mIsImageCaptureIntent) {
-            mActivity.getCameraAppUI().transitionToIntentLayout();
+            mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
             setupCaptureParams();
         }
     }
@@ -494,7 +494,7 @@ public class PhotoModule
     private final View.OnClickListener mRetakeCallback = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mActivity.getCameraAppUI().transitionToIntentLayout();
+            mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
             onCaptureRetake();
         }
     };

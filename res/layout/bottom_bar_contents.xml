@@ -35,7 +35,7 @@
   </FrameLayout>
 
   <com.android.camera.ui.TopRightWeightedLayout
-      android:id="@+id/bottombar_intent"
+      android:id="@+id/bottombar_intent_review"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="horizontal"
@@ -43,13 +43,13 @@
       android:visibility="invisible"
       android:background="@null" >
     <ImageButton
-        android:id="@+id/cancel_button"
+        android:id="@+id/retake_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_cancel"
+        android:src="@drawable/ic_back"
         android:layout_weight="1"
         android:background="@null"
-        android:contentDescription="@string/cancel_button_description" />
+        android:contentDescription="@string/retake_button_description" />
     <ImageButton
         android:id="@+id/done_button"
         android:layout_width="wrap_content"
@@ -59,12 +59,12 @@
         android:background="@null"
         android:contentDescription="@string/done_button_description" />
     <ImageButton
-        android:id="@+id/retake_button"
+        android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_cancel"
         android:layout_weight="1"
         android:background="@null"
-        android:contentDescription="@string/retake_button_description" />
+        android:contentDescription="@string/cancel_button_description" />
   </com.android.camera.ui.TopRightWeightedLayout>
 </merge>

@@ -1211,11 +1211,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     /**
      * Performs a transition to the global intent layout.
      */
-    public void transitionToIntentLayout() {
+    public void transitionToIntentCaptureLayout() {
         ModuleController moduleController = mController.getCurrentModuleController();
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
-        mBottomBar.transitionToIntentLayout();
+        mBottomBar.transitionToIntentCaptureLayout();
     }
 
     /**
