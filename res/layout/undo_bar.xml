@@ -18,7 +18,6 @@
         android:id="@+id/camera_undo_deletion_bar"
         android:orientation="horizontal"
         android:visibility="gone"
-        android:layout_gravity="bottom"
         style="@style/UndoBar">
 
     <TextView android:text="@string/deleted"
@@ -26,6 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginRight="16dp"
             android:gravity="left|center_vertical" />
 
     <View style="@style/UndoBarSeparator" />
