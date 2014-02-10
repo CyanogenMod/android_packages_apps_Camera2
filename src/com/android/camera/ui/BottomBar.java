@@ -70,7 +70,7 @@ public class BottomBar extends FrameLayout
     private boolean mOverLayBottomBar;
 
     private FrameLayout mCaptureLayout;
-    private TopRightWeightedLayout mIntentLayout;
+    private TopRightWeightedLayout mIntentReviewLayout;
 
     private ShutterButton mShutterButton;
 
@@ -118,8 +118,8 @@ public class BottomBar extends FrameLayout
     public void onFinishInflate() {
         mCaptureLayout
             = (FrameLayout) findViewById(R.id.bottombar_capture);
-        mIntentLayout
-            = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent);
+        mIntentReviewLayout
+            = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent_review);
 
         mShutterButton
             = (ShutterButton) findViewById(R.id.shutter_button);
@@ -145,8 +145,8 @@ public class BottomBar extends FrameLayout
      * Hide the intent layout.  This is necessary for switching between
      * the intent capture layout and the bottom bar options.
      */
-    private void hideIntentLayout() {
-        mIntentLayout.setVisibility(View.INVISIBLE);
+    private void hideIntentReviewLayout() {
+        mIntentReviewLayout.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -156,7 +156,7 @@ public class BottomBar extends FrameLayout
     public void transitionToCapture() {
         mCaptureLayout.setVisibility(View.VISIBLE);
         if (mMode == MODE_INTENT || mMode == MODE_INTENT_REVIEW) {
-            mIntentLayout.setVisibility(View.INVISIBLE);
+            mIntentReviewLayout.setVisibility(View.INVISIBLE);
         }
 
         mMode = MODE_CAPTURE;
@@ -166,15 +166,9 @@ public class BottomBar extends FrameLayout
      * Perform a transition to the global intent layout.  The current
      * layout state of the bottom bar is irrelevant.
      */
-    public void transitionToIntentLayout() {
+    public void transitionToIntentCaptureLayout() {
+        mIntentReviewLayout.setVisibility(View.INVISIBLE);
         mCaptureLayout.setVisibility(View.VISIBLE);
-        mIntentLayout.setVisibility(View.VISIBLE);
-
-        View button;
-        button = mIntentLayout.findViewById(R.id.done_button);
-        button.setVisibility(View.INVISIBLE);
-        button = mIntentLayout.findViewById(R.id.retake_button);
-        button.setVisibility(View.INVISIBLE);
 
         mMode = MODE_INTENT;
     }
@@ -185,13 +179,7 @@ public class BottomBar extends FrameLayout
      */
     public void transitionToIntentReviewLayout() {
         mCaptureLayout.setVisibility(View.INVISIBLE);
-
-        View button;
-        button = mIntentLayout.findViewById(R.id.done_button);
-        button.setVisibility(View.VISIBLE);
-        button = mIntentLayout.findViewById(R.id.retake_button);
-        button.setVisibility(View.VISIBLE);
-        mIntentLayout.setVisibility(View.VISIBLE);
+        mIntentReviewLayout.setVisibility(View.VISIBLE);
 
         mMode = MODE_INTENT_REVIEW;
     }
