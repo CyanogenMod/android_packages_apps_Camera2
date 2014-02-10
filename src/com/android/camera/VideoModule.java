@@ -361,7 +361,7 @@ public class VideoModule extends CameraModule
 
     private void initializeControlByIntent() {
         if (isVideoCaptureIntent()) {
-            mActivity.getCameraAppUI().transitionToIntentLayout();
+            mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
         }
     }
 
@@ -495,7 +495,7 @@ public class VideoModule extends CameraModule
     private final View.OnClickListener mReviewCallback = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mActivity.getCameraAppUI().transitionToIntentLayout();
+            mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
             onReviewPlayClicked(v);
         }
     };
