@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"فاصله زمانی"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاویه باز"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"پانوراما"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"فوکوس پیش‌زمینه"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"باز کردن تنظیمات"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"تغییر به حالت دوربین"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"تغییر به دوربین فیلمبرداری"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"تغییر به حالت گذر زمان"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"تغییر به حالت زاویه گسترده"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"تغییر به حالت پانوراما"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"تغییر به حالت فوکوس پیش‌زمینه"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"فوکوس پیش‌زمینه خاموش"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"فوکوس پیش‌زمینه روشن"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"باز کردن تنظیمات"</string>
@@ -314,12 +316,13 @@
     <string name="flash_off_desc" msgid="7151559466286106797">"فلاش خاموش"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"فلاش خودکار"</string>
     <string name="flash_on_desc" msgid="930372145324854699">"فلاش روشن"</string>
-    <string name="torch_on_desc" msgid="3069836196559213365">"مشعل روشن"</string>
-    <string name="torch_off_desc" msgid="8304675202998742618">"مشعل خاموش"</string>
-    <string name="camera_id_back_desc" msgid="3566327490758890635">"دوربین عقب"</string>
+    <string name="torch_on_desc" msgid="3069836196559213365">"چراغ‌قوه روشن"</string>
+    <string name="torch_off_desc" msgid="8304675202998742618">"چراغ‌قوه خاموش"</string>
+    <string name="camera_id_back_desc" msgid="3566327490758890635">"دوربین پشت"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"دوربین جلو"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"خطوط شطرنجی خاموش"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"خطوط شطرنجی روشن"</string>
+    <string name="more_options_desc" msgid="4628738800610478353">"گزینه‌های بیشتر"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"لغو"</string>
     <string name="done_button_description" msgid="1334963435441544592">"انجام شد"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"عکس گرفتن مجدد"</string>
@@ -327,8 +330,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"مشاهده"</string>
     <string name="edit_button_description" msgid="98550816724901925">"ویرایش"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"حذف"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"‏اکنون دکمه %s است"</string>
     <string name="setting_location" msgid="4459859689227893838">"مکان"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"اندازه عکس"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"وضوح ویدیو"</string>

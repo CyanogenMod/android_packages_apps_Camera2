@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Zeitraffer"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Weitwinkel"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"Fokus auf Vordergrund"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Einstellungen öffnen"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Zum Kameramodus wechseln"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Zur Videokamera wechseln"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Zum Zeitraffermodus wechseln"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Zum Weitwinkelmodus wechseln"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Zum Panoramamodus wechseln"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"Zum Modus \"Fokus auf Vordergrund\" wechseln"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"Fokus auf Vordergrund aus"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"Fokus auf Vordergrund an"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Einstellungen öffnen"</string>
@@ -318,6 +320,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Taschenlampe aus"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Kamera auf der Rückseite"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Kamera auf der Vorderseite"</string>
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Gitterlinien aus"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Gitterlinien an"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Weitere Optionen"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Abbrechen"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Fertig"</string>
