@@ -17,6 +17,7 @@
 package com.android.camera.app;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -52,6 +53,7 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import android.util.CameraPerformanceTracker;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.Gusterpolator;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
@@ -418,6 +420,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final FilmstripBottomControls mFilmstripBottomControls;
     private final FilmstripContentPanel mFilmstripPanel;
     private Runnable mHideCoverRunnable;
+    private final UncoveredPreviewAreaSizeChangedListener mUncoverPreviewAreaChangedListener;
     private final View.OnLayoutChangeListener mPreviewLayoutChangeListener
             = new View.OnLayoutChangeListener() {
         @Override
@@ -426,6 +429,36 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             if (mPreviewStatusListener != null) {
                 mPreviewStatusListener.onPreviewLayoutChanged(v, left, top, right, bottom, oldLeft,
                         oldTop, oldRight, oldBottom);
+            }
+        }
+    };
+    private View mModeOptionsToggle;
+    private RectF mBottomBarRect = new RectF();
+    private final View.OnLayoutChangeListener mBottomBarLayoutChangeListener
+            = new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (mBottomBar.getVisibility() == View.VISIBLE) {
+                mBottomBarRect.set(left, top, right, bottom);
+            } else {
+                // If bottom bar is not visible, treat it as a 0x0 rect at the
+                // bottom right corner of the screen.
+                mBottomBarRect.set(right, bottom, right, bottom);
+            }
+
+            RectF previewArea = mTextureViewHelper.getPreviewArea();
+            // Use preview area and bottom bar rect to calculate the preview that is
+            // not covered by bottom bar.
+            if (mBottomBar.getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_PORTRAIT) {
+                previewArea.bottom = Math.min(mBottomBarRect.top, previewArea.bottom);
+            } else {
+                previewArea.right = Math.min(mBottomBarRect.left, previewArea.right);
+            }
+
+            if (mUncoverPreviewAreaChangedListener != null) {
+                mUncoverPreviewAreaChangedListener.uncoveredPreviewAreaChanged(previewArea);
             }
         }
     };
@@ -452,6 +485,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          *         the preview drawn into a bitmap with no scaling applied.
          */
         public Bitmap getPreviewOverlayAndControls();
+    }
+
+    /**
+     * Gets notified when the preview area that is not covered by bottom bar is
+     * changed.
+     */
+    public interface UncoveredPreviewAreaSizeChangedListener {
+        /**
+         * Gets called when the preview area that is not covered by bottom bar is
+         * changed.
+         *
+         * @param uncoveredPreviewArea the rect of the preview area that is not
+         *                             under bottom bar
+         */
+        public void uncoveredPreviewAreaChanged(RectF uncoveredPreviewArea);
     }
 
     private final CameraModuleScreenShotProvider mCameraModuleScreenShotProvider =
@@ -601,6 +649,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
+        mUncoverPreviewAreaChangedListener = (UncoveredPreviewAreaSizeChangedListener)
+                mModeListView.findViewById(R.id.settings_button);
         mAnimationManager = new AnimationManager();
         initDisplayListener();
     }
@@ -784,6 +834,20 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     }
 
+    @Override
+    public void onModeListOpenProgress(float progress) {
+        progress = 1 - progress;
+        float interpolatedProgress = Gusterpolator.INSTANCE.getInterpolation(progress);
+        mModeOptionsToggle.setAlpha(interpolatedProgress);
+    }
+
+    @Override
+    public void onModeListClosed() {
+        // Make sure the alpha on mode options ellipse is reset when mode drawer
+        // is closed.
+        mModeOptionsToggle.setAlpha(1f);
+    }
+
     /**
      * Called when the back key is pressed.
      *
@@ -853,7 +917,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onChangeCamera() {
         ModuleController moduleController = mController.getCurrentModuleController();
         applyModuleSpecs(moduleController.getHardwareSpec(),
-            moduleController.getBottomBarSpec());
+                moduleController.getBottomBarSpec());
 
         if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
@@ -940,6 +1004,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mController.getButtonManager().load(mCameraRootView);
         mController.getButtonManager().setListener(mIndicatorIconController);
         mController.getSettingsManager().addListener(mIndicatorIconController);
+
+        mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
+        mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
     }
 
     /**
@@ -1024,6 +1091,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (lastIndex == currentIndex) {
             hideModeCover();
         }
+    }
+
+    @Override
+    public void onSettingsSelected() {
+        mController.onSettingsSelected();
     }
 
     @Override

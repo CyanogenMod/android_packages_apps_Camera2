@@ -104,6 +104,7 @@ public class ModeListView extends FrameLayout
 
     private int mListBackgroundColor;
     private LinearLayout mListView;
+    private View mSettingsButton;
     private int mState = IDLE;
     private int mTotalModes;
     private ModeSelectorItem[] mModeSelectorItems;
@@ -163,10 +164,28 @@ public class ModeListView extends FrameLayout
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
         public int getCurrentModeIndex();
+        public void onSettingsSelected();
     }
 
     public interface ModeListOpenListener {
+        /**
+         * Mode list will open to full screen after current animation.
+         */
         public void onOpenFullScreen();
+
+        /**
+         * Updates the listener with the current progress of mode drawer opening.
+         *
+         * @param progress progress of the mode drawer opening, ranging [0f, 1f]
+         *                 0 means mode drawer is fully closed, 1 indicates a fully
+         *                 open mode drawer.
+         */
+        public void onModeListOpenProgress(float progress);
+
+        /**
+         * Gets called when mode list is completely closed.
+         */
+        public void onModeListClosed();
     }
 
     /**
@@ -399,6 +418,14 @@ public class ModeListView extends FrameLayout
         }
         mTotalModes = mSupportedModes.size();
         initializeModeSelectorItems();
+        mSettingsButton = findViewById(R.id.settings_button);
+        mSettingsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mModeSwitchListener.onSettingsSelected();
+                snapBack(false);
+            }
+        });
     }
 
     /**
@@ -653,11 +680,16 @@ public class ModeListView extends FrameLayout
                     }
                 }
             }
-        } else if (mModeSelectorItems != null) {
-            // When becoming invisible/gone after initializing mode selector items.
-            for (int i = 0; i < mModeSelectorItems.length; i++) {
-                mModeSelectorItems[i].setHighlighted(false);
-                mModeSelectorItems[i].setSelected(false);
+        } else {
+            if (mModeSelectorItems != null) {
+                // When becoming invisible/gone after initializing mode selector items.
+                for (int i = 0; i < mModeSelectorItems.length; i++) {
+                    mModeSelectorItems[i].setHighlighted(false);
+                    mModeSelectorItems[i].setSelected(false);
+                }
+            }
+            if (mModeSwitchListener != null) {
+                mModeListOpenListener.onModeListClosed();
             }
         }
     }
@@ -805,7 +837,14 @@ public class ModeListView extends FrameLayout
         // background should be 50% transparent.
         int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
         focusItemWidth = Math.min(maxVisibleWidth, focusItemWidth);
-        setBackgroundAlpha(BACKGROUND_TRANSPARENTCY * focusItemWidth / maxVisibleWidth);
+        float openRatio = (float) focusItemWidth / maxVisibleWidth;
+        setBackgroundAlpha((int) (BACKGROUND_TRANSPARENTCY * openRatio));
+        if (mModeListOpenListener != null) {
+            mModeListOpenListener.onModeListOpenProgress(openRatio);
+        }
+        if (mSettingsButton != null) {
+            mSettingsButton.setAlpha(openRatio);
+        }
     }
 
     @Override
