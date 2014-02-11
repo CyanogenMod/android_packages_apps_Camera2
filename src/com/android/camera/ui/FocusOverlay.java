@@ -49,9 +49,9 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
 
     public FocusOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mFocusIndicator = getResources().getDrawable(R.drawable.focus);
+        mFocusIndicator = getResources().getDrawable(R.drawable.focus_ring_touch_inner);
         mFocusIndicatorSize = getResources().getDimensionPixelSize(R.dimen.focus_inner_ring_size);
-        mFocusOuterRing = getResources().getDrawable(R.drawable.focus_outer_ring);
+        mFocusOuterRing = getResources().getDrawable(R.drawable.focus_ring_touch_outer);
         mFocusOuterRingSize = getResources().getDimensionPixelSize(R.dimen.focus_outer_ring_size);
     }
 
