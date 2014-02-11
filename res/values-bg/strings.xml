@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Цайтрафер"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Широкоъгълен"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"Фокусиране на преден план"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Отваряне на настройките"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Превключване към режима за фотоапарат"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Превключване към видеокамерата"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Превключване към режима за цайтрафер"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Превключване към широкоъгълния режим"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Превключване към панорамния режим"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"Превключване към режима за фокусиране на преден план"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"Фокусирането на преден план е изключено"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"Фокусирането на преден план е включено"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Отваряне на настройките"</string>
@@ -318,8 +320,11 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Фенерът е изключен"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Задна камера"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Предна камера"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
+    <!-- no translation found for grid_lines_off_desc (2022385817190451353) -->
     <skip />
+    <!-- no translation found for grid_lines_on_desc (4601540461914364817) -->
+    <skip />
+    <string name="more_options_desc" msgid="4628738800610478353">"Още опции"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Отказ"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Готово"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Презаснимане"</string>
@@ -327,8 +332,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"Изглед"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Редактиране"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Изтриване"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"Бутонът вече е %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Местоположение"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Размер на снимката"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Разделителна способност на образа"</string>

@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Fotogr. laiko intervalais"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Plačiakampis fotogr."</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"Židinys priekiniame plane"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Atidarykite nustatymus"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Perjungti į fotoaparato režimą"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Perjungti į vaizdo kameros režimą"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Perjungti į fotografavimo laiko intervalais režimą"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Perjungti į plačiakampį režimą"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Perjungti į panoraminį režimą"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"Perjungti į židinio priekiniame plane režimą"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"Židinys priekiniame plane išjungtas"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"Židinys priekiniame plane įjungtas"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Atidaryti nustatymus"</string>
@@ -318,8 +320,9 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Žibintuvėlis išjungtas"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Užpakalinis fotoaparatas"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Priekinis fotoaparatas"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Išjungti tinklelio linijas"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Įjungti tinklelio linijas"</string>
+    <string name="more_options_desc" msgid="4628738800610478353">"Daugiau parinkčių"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Atšaukti"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Atlikta"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Perfotografuoti"</string>
@@ -327,8 +330,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"Peržiūra"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Redaguoti"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Ištrinti"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"Mygtukas dabar yra „%s“"</string>
     <string name="setting_location" msgid="4459859689227893838">"Vietovė"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Nuotraukos dydis"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Vaizdo skyra"</string>
