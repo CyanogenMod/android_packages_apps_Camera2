@@ -280,12 +280,12 @@ public class ModeListView extends FrameLayout
             // Validate the selection
             if (index != NO_ITEM_SELECTED) {
                 final int modeId = getModeIndex(index);
-                // Select the focused item.
-                mModeSelectorItems[index].setSelected(true);
                 // Un-highlight all the modes.
                 for (int i = 0; i < mModeSelectorItems.length; i++) {
                     mModeSelectorItems[i].setHighlighted(false);
                 }
+                // Select the focused item.
+                mModeSelectorItems[index].setSelected(true);
                 mState = MODE_SELECTED;
                 PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
                 effect.setSize(mWidth, mHeight);
