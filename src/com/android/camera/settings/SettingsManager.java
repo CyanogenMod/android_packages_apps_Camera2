@@ -25,6 +25,7 @@ import android.util.SparseArray;
 
 import com.android.camera.ListPreference;
 import com.android.camera.app.AppController;
+import com.android.camera.app.LocationManager;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
@@ -32,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SettingsManager class provides an api for getting and setting both
- * global and local SharedPreferences.
+ * SettingsManager class provides an api for getting and setting both global and
+ * local SharedPreferences.
  */
 public class SettingsManager {
     private static final String TAG = "SettingsManager";
@@ -43,28 +44,23 @@ public class SettingsManager {
     private final SettingsCache mSettingsCache;
     private SharedPreferences mGlobalSettings;
     private SharedPreferences mCameraSettings;
-    private final SparseArray<SharedPreferences> mModuleSettings
-        = new SparseArray<SharedPreferences>();
+    private final SparseArray<SharedPreferences> mModuleSettings = new SparseArray<SharedPreferences>();
     private SettingsCapabilities mCapabilities;
 
     private int mCameraId = -1;
-    private AppController mAppController;
+    private final AppController mAppController;
 
     /**
-     * A List of OnSettingChangedListener's, maintained
-     * to compare to new listeners and prevent duplicate
-     * registering.
+     * A List of OnSettingChangedListener's, maintained to compare to new
+     * listeners and prevent duplicate registering.
      */
-    private final List<OnSettingChangedListener>
-        mListeners = new ArrayList<OnSettingChangedListener>();
+    private final List<OnSettingChangedListener> mListeners = new ArrayList<OnSettingChangedListener>();
 
     /**
-     * A List of OnSharedPreferenceChangeListener's, maintained
-     * to hold pointers to actually registered listeners,
-     * so they can be unregistered.
+     * A List of OnSharedPreferenceChangeListener's, maintained to hold pointers
+     * to actually registered listeners, so they can be unregistered.
      */
-    private final List<OnSharedPreferenceChangeListener>
-        mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
+    private final List<OnSharedPreferenceChangeListener> mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
 
     public SettingsManager(Context context, AppController app, int nCameras) {
         mContext = context;
@@ -119,7 +115,7 @@ public class SettingsManager {
 
         String cameraKey = mContext.getPackageName() + "_preferences_" + cameraId;
         mCameraSettings = mContext.getSharedPreferences(
-            cameraKey, Context.MODE_PRIVATE);
+                cameraKey, Context.MODE_PRIVATE);
 
         for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
             mCameraSettings.registerOnSharedPreferenceChangeListener(listener);
@@ -139,22 +135,22 @@ public class SettingsManager {
     private OnSharedPreferenceChangeListener getSharedPreferenceListener(
             final OnSettingChangedListener listener) {
         return new OnSharedPreferenceChangeListener() {
-                @Override
-                public void onSharedPreferenceChanged(
-                        SharedPreferences sharedPreferences, String key) {
-                    Integer settingId = mSettingsCache.getId(key);
-                    if (settingId != null) {
-                        listener.onSettingChanged(SettingsManager.this, settingId);
-                    } else {
-                        Log.w(TAG, "Setting id from key=" + key + " is null");
-                    }
+            @Override
+            public void onSharedPreferenceChanged(
+                    SharedPreferences sharedPreferences, String key) {
+                Integer settingId = mSettingsCache.getId(key);
+                if (settingId != null) {
+                    listener.onSettingChanged(SettingsManager.this, settingId);
+                } else {
+                    Log.w(TAG, "Setting id from key=" + key + " is null");
                 }
-            };
+            }
+        };
     }
 
     /**
-     * Add an OnSettingChangedListener to the SettingsManager, which will execute
-     * onSettingsChanged when any SharedPreference has been updated.
+     * Add an OnSettingChangedListener to the SettingsManager, which will
+     * execute onSettingsChanged when any SharedPreference has been updated.
      */
     public void addListener(final OnSettingChangedListener listener) {
         if (listener == null) {
@@ -167,7 +163,7 @@ public class SettingsManager {
 
         mListeners.add(listener);
         OnSharedPreferenceChangeListener sharedPreferenceListener =
-            getSharedPreferenceListener(listener);
+                getSharedPreferenceListener(listener);
         mSharedPreferenceListeners.add(sharedPreferenceListener);
 
         if (mGlobalSettings != null) {
@@ -184,8 +180,8 @@ public class SettingsManager {
     }
 
     /**
-     * Remove a specific SettingsListener.
-     * This should be done in onPause if a listener has been set.
+     * Remove a specific SettingsListener. This should be done in onPause if a
+     * listener has been set.
      */
     public void removeListener(OnSettingChangedListener listener) {
         if (listener == null) {
@@ -202,28 +198,28 @@ public class SettingsManager {
         // Get the reference to the actual OnSharedPreferenceChangeListener
         // that was registered.
         OnSharedPreferenceChangeListener sharedPreferenceListener =
-            mSharedPreferenceListeners.get(index);
+                mSharedPreferenceListeners.get(index);
         mSharedPreferenceListeners.remove(index);
 
         if (mGlobalSettings != null) {
             mGlobalSettings.unregisterOnSharedPreferenceChangeListener(
-                sharedPreferenceListener);
+                    sharedPreferenceListener);
         }
 
         if (mCameraSettings != null) {
             mCameraSettings.unregisterOnSharedPreferenceChangeListener(
-                sharedPreferenceListener);
+                    sharedPreferenceListener);
         }
 
         if (mDefaultSettings != null) {
             mDefaultSettings.unregisterOnSharedPreferenceChangeListener(
-                sharedPreferenceListener);
+                    sharedPreferenceListener);
         }
     }
 
     /**
-     * Remove all OnSharedPreferenceChangedListener's.
-     * This should be done in onDestroy.
+     * Remove all OnSharedPreferenceChangedListener's. This should be done in
+     * onDestroy.
      */
     public void removeAllListeners() {
         for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
@@ -245,21 +241,19 @@ public class SettingsManager {
 
     /**
      * SettingsCapabilities defines constraints around settings that need to be
-     * queried from external sources, like the camera parameters.
-     *
-     * This interface is camera api agnostic.
+     * queried from external sources, like the camera parameters. This interface
+     * is camera api agnostic.
      */
     public interface SettingsCapabilities {
         /**
-         * Returns a dynamically calculated list of
-         * exposure values, based on the min and max
-         * exposure compensation supported by the camera device.
+         * Returns a dynamically calculated list of exposure values, based on
+         * the min and max exposure compensation supported by the camera device.
          */
         public String[] getSupportedExposureValues();
 
         /**
-         * Returns a list of camera ids based on the number
-         * of cameras available on the device.
+         * Returns a list of camera ids based on the number of cameras available
+         * on the device.
          */
         public String[] getSupportedCameraIds();
     }
@@ -319,7 +313,7 @@ public class SettingsManager {
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
     public static final String KEY_VIDEO_QUALITY = "pref_video_quality_key";
     public static final String KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL =
-        "pref_video_time_lapse_frame_interval_key";
+            "pref_video_time_lapse_frame_interval_key";
     public static final String KEY_PICTURE_SIZE = "pref_camera_picturesize_key";
     public static final String KEY_JPEG_QUALITY = "pref_camera_jpegquality_key";
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
@@ -335,9 +329,9 @@ public class SettingsManager {
     public static final String KEY_CAMERA_HDR = "pref_camera_hdr_key";
     public static final String KEY_CAMERA_HDR_PLUS = "pref_camera_hdr_plus_key";
     public static final String KEY_CAMERA_FIRST_USE_HINT_SHOWN =
-        "pref_camera_first_use_hint_shown_key";
+            "pref_camera_first_use_hint_shown_key";
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN =
-        "pref_video_first_use_hint_shown_key";
+            "pref_video_first_use_hint_shown_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
     public static final String KEY_SHIMMY_REMAINING_PLAY_TIMES =
             "pref_shimmy_remaining_play_times";
@@ -348,11 +342,9 @@ public class SettingsManager {
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
-
     /**
-     * Defines a simple class for holding a the spec of a setting.
-     * This spec is used by the generic api methods to query and
-     * update a setting.
+     * Defines a simple class for holding a the spec of a setting. This spec is
+     * used by the generic api methods to query and update a setting.
      */
     public static class Setting {
         private final String mSource;
@@ -376,18 +368,17 @@ public class SettingsManager {
         }
 
         /**
-         * Returns the id of a SharedPreferences instance from which
-         * this Setting may be found.
-         * Possible values are {@link #SOURCE_DEFAULT}, {@link #SOURCE_GLOBAL},
-         * {@link #SOURCE_CAMERA}.
+         * Returns the id of a SharedPreferences instance from which this
+         * Setting may be found. Possible values are {@link #SOURCE_DEFAULT},
+         * {@link #SOURCE_GLOBAL}, {@link #SOURCE_CAMERA}.
          */
         public String getSource() {
             return mSource;
         }
 
         /**
-         * Returns the type of the setting stored in SharedPreferences.
-         * Possible values are {@link #TYPE_STRING}, {@link #TYPE_INTEGER},
+         * Returns the type of the setting stored in SharedPreferences. Possible
+         * values are {@link #TYPE_STRING}, {@link #TYPE_INTEGER},
          * {@link #TYPE_BOOLEAN}.
          */
         public String getType() {
@@ -409,18 +400,17 @@ public class SettingsManager {
         }
 
         /**
-         * Returns an array of possible String values for this setting.
-         * If this setting is not of type {@link #TYPE_STRING}, or
-         * it's not possible to generate the string values, this should
-         * return null;
+         * Returns an array of possible String values for this setting. If this
+         * setting is not of type {@link #TYPE_STRING}, or it's not possible to
+         * generate the string values, this should return null;
          */
         public String[] getStringValues() {
             return mValues;
         }
 
         /**
-         * Returns whether the setting should be flushed from the cache
-         * when the camera device has changed.
+         * Returns whether the setting should be flushed from the cache when the
+         * camera device has changed.
          */
         public boolean isFlushedOnCameraChanged() {
             return mFlushOnCameraChange;
@@ -449,12 +439,12 @@ public class SettingsManager {
     }
 
     /**
-     * Based on Setting id, finds the index of a Setting's
-     * String value in an array of possible String values.
-     *
-     * If the Setting is not of type String, this returns -1.
-     *
-     * <p>TODO: make this a supported api call for all types.</p>
+     * Based on Setting id, finds the index of a Setting's String value in an
+     * array of possible String values. If the Setting is not of type String,
+     * this returns -1.
+     * <p>
+     * TODO: make this a supported api call for all types.
+     * </p>
      */
     public int getStringValueIndex(int id) {
         Setting setting = mSettingsCache.get(id);
@@ -477,11 +467,9 @@ public class SettingsManager {
     }
 
     /**
-     * Based on Setting id, sets a Setting's String value using the
-     * index into an array of possible String values.
-     *
-     * Fails to set a value if the index is out of bounds or the Setting
-     * is not of type String.
+     * Based on Setting id, sets a Setting's String value using the index into
+     * an array of possible String values. Fails to set a value if the index is
+     * out of bounds or the Setting is not of type String.
      *
      * @return Whether the value was set.
      */
@@ -583,11 +571,10 @@ public class SettingsManager {
     public boolean isSet(int id) {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
-        if (preferences != null) {
-            return (preferences.getString(setting.getKey(), null) != null);
-        } else {
+        if (preferences == null) {
             return false;
         }
+        return preferences.contains(setting.getKey());
     }
 
     /**
@@ -630,18 +617,17 @@ public class SettingsManager {
 
     public static Setting getLocationSetting(Context context) {
         String defaultValue = context.getString(R.string.setting_none_value);
-        String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_recordlocation_entryvalues);
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_RECORD_LOCATION,
-            values, FLUSH_OFF);
+        String[] values = null;
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue, KEY_RECORD_LOCATION,
+                values, FLUSH_OFF);
     }
 
     public static Setting getPictureSizeSetting(Context context) {
         String defaultValue = null;
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_picturesize_entryvalues);
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE,
-            values, FLUSH_OFF);
+                R.array.pref_camera_picturesize_entryvalues);
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE,
+                values, FLUSH_OFF);
     }
 
     public static Setting getDefaultCameraIdSetting(Context context,
@@ -652,47 +638,47 @@ public class SettingsManager {
             values = capabilities.getSupportedCameraIds();
         }
         return new Setting(SOURCE_MODULE, TYPE_STRING, defaultValue, KEY_CAMERA_ID,
-            values, FLUSH_ON);
+                values, FLUSH_ON);
     }
 
     public static Setting getWhiteBalanceSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_whitebalance_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_whitebalance_entryvalues);
+                R.array.pref_camera_whitebalance_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_WHITE_BALANCE,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getHdrSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_hdr_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_hdr_entryvalues);
+                R.array.pref_camera_hdr_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_CAMERA_HDR,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getHdrPlusSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_hdr_plus_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_hdr_plus_entryvalues);
+                R.array.pref_camera_hdr_plus_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_CAMERA_HDR_PLUS,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getSceneModeSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_scenemode_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_scenemode_entryvalues);
+                R.array.pref_camera_scenemode_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_SCENE_MODE,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getFlashSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_flashmode_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_flashmode_entryvalues);
+                R.array.pref_camera_flashmode_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_FLASH_MODE,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getExposureSetting(Context context,
@@ -703,93 +689,93 @@ public class SettingsManager {
             values = capabilities.getSupportedExposureValues();
         }
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_EXPOSURE,
-            values, FLUSH_ON);
+                values, FLUSH_ON);
     }
 
     public static Setting getHintSetting(Context context) {
         String defaultValue = context.getString(R.string.setting_on_value);
         String[] values = null;
         return new Setting(SOURCE_GLOBAL, TYPE_BOOLEAN, defaultValue,
-            KEY_CAMERA_FIRST_USE_HINT_SHOWN, values, FLUSH_OFF);
+                KEY_CAMERA_FIRST_USE_HINT_SHOWN, values, FLUSH_OFF);
     }
 
     public static Setting getFocusModeSetting(Context context) {
         String defaultValue = null;
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_focusmode_entryvalues);
+                R.array.pref_camera_focusmode_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_FOCUS_MODE,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getTimerSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_timer_default);
         String[] values = null; // TODO: get the values dynamically.
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_TIMER,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getTimerSoundSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_timer_sound_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_timer_sound_entryvalues);
+                R.array.pref_camera_timer_sound_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_TIMER_SOUND_EFFECTS,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getVideoQualitySetting(Context context) {
         String defaultValue = context.getString(R.string.pref_video_quality_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_video_quality_entryvalues);
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_VIDEO_QUALITY,
-            values, FLUSH_OFF);
+                R.array.pref_video_quality_entryvalues);
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_VIDEO_QUALITY,
+                values, FLUSH_OFF);
     }
 
     public static Setting getTimeLapseFrameIntervalSetting(Context context) {
         String defaultValue = context.getString(
-            R.string.pref_video_time_lapse_frame_interval_default);
+                R.string.pref_video_time_lapse_frame_interval_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_video_time_lapse_frame_interval_entryvalues);
+                R.array.pref_video_time_lapse_frame_interval_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
-            KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, values, FLUSH_OFF);
+                KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL, values, FLUSH_OFF);
     }
 
     public static Setting getJpegQualitySetting(Context context) {
         String defaultValue = context.getString(
-            R.string.pref_camera_jpeg_quality_normal);
+                R.string.pref_camera_jpeg_quality_normal);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_jpeg_quality_entryvalues);
+                R.array.pref_camera_jpeg_quality_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_JPEG_QUALITY,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getVideoFlashSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_video_flashmode_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_video_flashmode_entryvalues);
+                R.array.pref_camera_video_flashmode_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue,
-            KEY_VIDEOCAMERA_FLASH_MODE, values, FLUSH_OFF);
+                KEY_VIDEOCAMERA_FLASH_MODE, values, FLUSH_OFF);
     }
 
     public static Setting getVideoEffectSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_video_effect_default);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_video_effect_entryvalues);
+                R.array.pref_video_effect_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_VIDEO_EFFECT,
-            values, FLUSH_OFF);
+                values, FLUSH_OFF);
     }
 
     public static Setting getHintVideoSetting(Context context) {
         String defaultValue = context.getString(R.string.setting_on_value);
         String[] values = null;
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
-            KEY_VIDEO_FIRST_USE_HINT_SHOWN, values, FLUSH_OFF);
+                KEY_VIDEO_FIRST_USE_HINT_SHOWN, values, FLUSH_OFF);
     }
 
     public static Setting getStartupModuleSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_startup_index_default);
         String[] values = null;
         return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
-            KEY_STARTUP_MODULE_INDEX, values, FLUSH_OFF);
+                KEY_STARTUP_MODULE_INDEX, values, FLUSH_OFF);
     }
 
     public static Setting getShimmyRemainingTimesSetting(Context context) {
@@ -808,24 +794,23 @@ public class SettingsManager {
     public static Setting getPanoOrientationSetting(Context context) {
         String defaultValue = context.getString(R.string.pano_orientation_horizontal);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_pano_orientation_entryvalues);
+                R.array.pref_camera_pano_orientation_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
-            KEY_CAMERA_PANO_ORIENTATION, values, FLUSH_OFF);
+                KEY_CAMERA_PANO_ORIENTATION, values, FLUSH_OFF);
     }
 
     public static Setting getGridLinesSetting(Context context) {
         String defaultValue = context.getString(R.string.setting_off_value);
         String[] values = context.getResources().getStringArray(
-            R.array.pref_camera_gridlines_entryvalues);
+                R.array.pref_camera_gridlines_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
-            KEY_CAMERA_GRID_LINES, values, FLUSH_OFF);
+                KEY_CAMERA_GRID_LINES, values, FLUSH_OFF);
     }
 
     // Utilities.
 
     /**
-     * Returns whether the camera has been set to back facing
-     * in settings.
+     * Returns whether the camera has been set to back facing in settings.
      */
     public boolean isCameraBackFacing() {
         String cameraFacing = get(SETTING_CAMERA_ID);
@@ -849,14 +834,12 @@ public class SettingsManager {
         return gridLinesOn.equals(SettingsManager.VALUE_ON);
     }
 
-    //TODO: refactor this into a separate utils module.
+    // TODO: refactor this into a separate utils module.
 
     /**
-     * Get a String value from first the ListPreference, and if not found
-     * from the SettingsManager.
-     *
-     * This is a wrapper that adds backwards compatibility to views that
-     * rely on PreferenceGroups.
+     * Get a String value from first the ListPreference, and if not found from
+     * the SettingsManager. This is a wrapper that adds backwards compatibility
+     * to views that rely on PreferenceGroups.
      */
     public String getValueFromPreference(ListPreference pref) {
         String value = pref.getValue();
@@ -871,11 +854,9 @@ public class SettingsManager {
     }
 
     /**
-     * Set a String value first from the ListPreference, and if unable
-     * from the SettingsManager.
-     *
-     * This is a wrapper that adds backwards compatibility to views that
-     * rely on PreferenceGroups.
+     * Set a String value first from the ListPreference, and if unable from the
+     * SettingsManager. This is a wrapper that adds backwards compatibility to
+     * views that rely on PreferenceGroups.
      */
     public void setValueFromPreference(ListPreference pref, String value) {
         boolean set = pref.setValue(value);
@@ -889,11 +870,9 @@ public class SettingsManager {
 
     /**
      * Set a String value first from the ListPreference based on a
-     * ListPreference index, and if unable use the ListPreference key
-     * to set the value using the SettingsManager.
-     *
-     * This is a wrapper that adds backwards compatibility to views that
-     * rely on PreferenceGroups.
+     * ListPreference index, and if unable use the ListPreference key to set the
+     * value using the SettingsManager. This is a wrapper that adds backwards
+     * compatibility to views that rely on PreferenceGroups.
      */
     public void setValueIndexFromPreference(ListPreference pref, int index) {
         boolean set = pref.setValueIndex(index);
@@ -904,5 +883,29 @@ public class SettingsManager {
                 set(id, value);
             }
         }
+    }
+
+    /**
+     * Sets the settings for whether location recording should be enabled or
+     * not. Also makes sure to pass on the change to the location manager.
+     */
+    public void setLocation(boolean on, LocationManager locationManager) {
+        setBoolean(SettingsManager.SETTING_RECORD_LOCATION, on);
+        locationManager.recordLocation(on);
+    }
+
+    /**
+     * Reads the current location recording settings and passes it on to the
+     * given location manager.
+     */
+    public void syncLocationManager(LocationManager locationManager) {
+        boolean value = false;
+        try {
+            value = this.getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
+        } catch (Exception ex) {
+            // Keep disabled, if we cannot parse the preference.
+            Log.w(TAG, "Could not parse location value. Defaulting to 'false'.");
+        }
+        locationManager.recordLocation(value);
     }
 }
