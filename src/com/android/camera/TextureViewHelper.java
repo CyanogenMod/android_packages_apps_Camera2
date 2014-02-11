@@ -142,6 +142,23 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         mSurfaceTextureListener = listener;
     }
 
+    public void centerPreviewInRect(final RectF rect) {
+        Matrix matrix = mPreview.getTransform(null);
+        RectF previewRect = new RectF(0, 0, mWidth, mHeight);
+        matrix.mapRect(previewRect);
+        float previewWidth = previewRect.width();
+        float previewHeight = previewRect.height();
+
+        float rectWidth = rect.right - rect.left;
+        float rectHeight = rect.bottom - rect.top;
+
+        float transX = (rectWidth - previewWidth)/2.0f;
+        float transY = (rectHeight - previewHeight)/2.0f;
+
+        matrix.preTranslate(transX, transY);
+        updateTransform(matrix);
+    }
+
     /**
      * Updates the transform matrix based current width and height of TextureView
      * and preview stream aspect ratio.
@@ -153,7 +170,9 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
         Matrix matrix = mPreview.getTransform(null);
         float scaledTextureWidth, scaledTextureHeight;
-        if (mWidth > mHeight) {
+
+        boolean landscape = mWidth > mHeight;
+        if (landscape) {
             scaledTextureWidth = Math.min(mWidth,
                     (int) (mHeight * mAspectRatio));
             scaledTextureHeight = Math.min(mHeight,
@@ -168,7 +187,6 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         float scaleX = scaledTextureWidth / mWidth;
         float scaleY = scaledTextureHeight / mHeight;
 
-        boolean landscape = mWidth > mHeight;
         if (landscape) {
             matrix.setScale(scaleX, scaleY, 0f, (float) mHeight / 2);
         } else {
