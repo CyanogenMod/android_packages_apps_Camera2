@@ -184,5 +184,7 @@
     <dimen name="video_capture_circle_diameter">64dp</dimen>
 
     <dimen name="grid_line_width">1dp</dimen>
+    <dimen name="focus_outer_ring_size">96dp</dimen>
+    <dimen name="focus_inner_ring_size">50dp</dimen>
 
 </resources>

@@ -36,19 +36,23 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     private final static int FOCUS_INDICATOR_ROTATION_DEGREES = 50;
 
     private final Drawable mFocusIndicator;
+    private final Drawable mFocusOuterRing;
     private final Rect mBounds = new Rect();
     private final ValueAnimator mFocusAnimation = new ValueAnimator();
 
     private int mPositionX;
     private int mPositionY;
     private int mAngle;
-    // TODO: make this dp in dimens.xml when UI has a spec
-    private final int mFocusIndicatorSize = 200;
+    private final int mFocusIndicatorSize;
     private boolean mShowIndicator;
+    private final int mFocusOuterRingSize;
 
     public FocusOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
         mFocusIndicator = getResources().getDrawable(R.drawable.focus);
+        mFocusIndicatorSize = getResources().getDimensionPixelSize(R.dimen.focus_inner_ring_size);
+        mFocusOuterRing = getResources().getDrawable(R.drawable.focus_outer_ring);
+        mFocusOuterRingSize = getResources().getDimensionPixelSize(R.dimen.focus_outer_ring_size);
     }
 
     @Override
@@ -69,6 +73,8 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mBounds.set(x - mFocusIndicatorSize / 2, y - mFocusIndicatorSize / 2,
                 x + mFocusIndicatorSize / 2, y + mFocusIndicatorSize / 2);
         mFocusIndicator.setBounds(mBounds);
+        mFocusOuterRing.setBounds(x - mFocusOuterRingSize / 2, y - mFocusOuterRingSize / 2,
+                x + mFocusOuterRingSize / 2, y + mFocusOuterRingSize / 2);
     }
 
     @Override
@@ -115,6 +121,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         super.onDraw(canvas);
 
         if (mShowIndicator) {
+            mFocusOuterRing.draw(canvas);
             canvas.save();
             canvas.rotate(mAngle, mPositionX, mPositionY);
             mFocusIndicator.draw(canvas);
