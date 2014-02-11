@@ -21,30 +21,6 @@
             android:gravity="center"
             android:src="@drawable/ic_stop_disabled" />
     </item>
-    <item android:state_pressed="true">
-        <level-list>
-            <item android:maxLevel="0">
-                <layer-list>
-                   <item android:drawable="@drawable/button_background_pressed_light" />
-                   <item>
-                       <bitmap
-                            android:gravity="center"
-                            android:src="@drawable/ic_stop_normal" />
-                   </item>
-                </layer-list>
-            </item>
-            <item android:maxLevel="1">
-                <layer-list>
-                   <item android:drawable="@drawable/button_background_pressed_dark" />
-                   <item>
-                       <bitmap
-                            android:gravity="center"
-                            android:src="@drawable/ic_stop_normal" />
-                   </item>
-                </layer-list>
-            </item>
-        </level-list>
-    </item>
     <item>
         <bitmap
             android:gravity="center"
