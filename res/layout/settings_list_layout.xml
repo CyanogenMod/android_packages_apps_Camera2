@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<com.android.camera.ui.SettingsView
+<com.android.camera.settings.SettingsView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/settings_list_layout"
     android:fillViewport="true"
@@ -23,4 +23,4 @@
     android:divider="@color/mode_selector_text_color"
     android:dividerHeight="2dp"
     android:background="@color/mode_selector_background_light" >
-</com.android.camera.ui.SettingsView>
+</com.android.camera.settings.SettingsView>

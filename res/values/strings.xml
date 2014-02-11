@@ -199,8 +199,8 @@
     <!-- In select camera setting, front-facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_front">Front</string>
 
-    <!-- Settings screen, setting title text -->
-    <string name="pref_camera_recordlocation_title">Store location</string>
+    <!-- Settings screen, location setting text. [CHAR LIMIT=20]-->
+    <string name="pref_camera_save_location_title">Save location</string>
 
     <string name="pref_camera_recordlocation_default" translatable="false">none</string>
 
@@ -234,18 +234,9 @@
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
-    <!-- The default quality value is 1 (highest available resolution) -->
-    <string name="pref_video_quality_default" translatable="false">1</string>
-    <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_1080p" translatable="false">HD 1080p</string>
-    <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_720p" translatable="false">HD 720p</string>
-    <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_480p" translatable="false">SD 480p</string>
-    <!-- Video quality setting entry. Videos will be recorded in the highest quality available on the device. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_high">High</string>
-    <!-- Video quality setting entry. Videos will be recorded in the lowest quality available on the device. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_low">Low</string>
+
+    <!-- The default quality value is 'large'. -->
+    <string name="pref_video_quality_default" translatable="false">large</string>
 
     <!-- Describes the preference dialog for choosing interval between frame capture for
     time lapse recording. Appears at top of the dialog. [CHAR LIMIT=30] -->
@@ -267,6 +258,9 @@
     <string name="pref_camera_picturesize_entry_medium">Medium</string>
     <!-- Settings screen, dialog choice for "small" picture size [CHAR LIMIT=20] -->
     <string name="pref_camera_picturesize_entry_small">Small</string>
+
+    <!-- The default photo resolution value. -->
+    <string name="pref_camera_picturesize_default" translatable="false">large</string>
 
     <!-- Settings screen, Focus mode title -->
     <string name="pref_camera_focusmode_title">Focus mode</string>

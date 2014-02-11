@@ -16,9 +16,18 @@
 
 package com.android.camera.settings;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.media.CamcorderProfile;
 import android.util.Log;
+
+import com.android.camera.app.CameraManager;
+import com.android.camera.settings.SettingsManager.SettingsCapabilities;
+import com.android.camera.util.Callback;
+import com.android.camera2.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +52,16 @@ public class SettingsUtil {
 
     /** The ideal "small" picture size is 25% of "large". */
     private static final float SMALL_RELATIVE_PICTURE_SIZE = 0.25f;
+
+    /** Video qualities sorted by size. */
+    public static int[] sVideoQualities = new int[] {
+            CamcorderProfile.QUALITY_1080P,
+            CamcorderProfile.QUALITY_720P,
+            CamcorderProfile.QUALITY_480P,
+            CamcorderProfile.QUALITY_CIF,
+            CamcorderProfile.QUALITY_QVGA,
+            CamcorderProfile.QUALITY_QCIF
+    };
 
     /**
      * Based on the selected size, this method selects the matching concrete
@@ -166,6 +185,71 @@ public class SettingsUtil {
     }
 
     /**
+     * Determines the video quality for large/medium/small for the given camera.
+     * Returns the one matching the given setting. Defaults to 'large' of the
+     * qualitySetting does not match either large. medium or small.
+     *
+     * @param qualitySetting One of 'large', 'medium', 'small'.
+     * @param cameraId The ID of the camera for which to get the quality
+     *            setting.
+     * @return The CamcorderProfile quality setting.
+     */
+    public static int getVideoQuality(String qualitySetting, int cameraId) {
+        // Sanitize the value to be either small, medium or large. Default to
+        // the latter.
+        if (!SIZE_SMALL.equals(qualitySetting) && !SIZE_MEDIUM.equals(qualitySetting)) {
+            qualitySetting = SIZE_LARGE;
+        }
+
+        // Go through the sizes in descending order, see if they are supported,
+        // and set large/medium/small accordingly.
+        // If no quality is supported at all, the first call to
+        // getNextSupportedQuality will throw an exception.
+        // If only one quality is supported, then all three selected qualities
+        // will be the same.
+        int largeIndex = getNextSupportedQualityIndex(cameraId, 0);
+        if (SIZE_LARGE.equals(qualitySetting)) {
+            return sVideoQualities[largeIndex];
+        }
+        int mediumIndex = getNextSupportedQualityIndex(cameraId, largeIndex + 1);
+        if (SIZE_MEDIUM.equals(qualitySetting)) {
+            return sVideoQualities[mediumIndex];
+        }
+        int smallIndex = getNextSupportedQualityIndex(cameraId, mediumIndex + 1);
+        // If we didn't return for 'large' or 'medium, size must be 'small'.
+        return sVideoQualities[smallIndex];
+    }
+
+    /**
+     * Starting from 'start' this method returns the next supported video
+     * quality.
+     */
+    private static int getNextSupportedQualityIndex(int cameraId, int start) {
+        int i = start;
+        for (; i < sVideoQualities.length; ++i) {
+            if (CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
+                break;
+            }
+        }
+
+        // Were we not able to find a supported quality?
+        if (i >= sVideoQualities.length) {
+            if (start == 0) {
+                // This means we couldn't find any supported quality.
+                throw new IllegalArgumentException("Could not find supported video qualities.");
+            } else {
+                // We get here if start is larger than zero then we found a
+                // larger size already previously. In this edge case, just
+                // return the same index as the previous size.
+                return start;
+            }
+        }
+
+        // We found a new supported quality.
+        return i;
+    }
+
+    /**
      * Returns the index of the size within the given list that is closest to
      * the given target pixel count.
      */
@@ -182,5 +266,83 @@ public class SettingsUtil {
             }
         }
         return closestMatchIndex;
+    }
+
+    /**
+     * Determines and returns the capabilities of the given camera.
+     */
+    public static SettingsCapabilities
+            getSettingsCapabilities(CameraManager.CameraProxy camera) {
+        final Parameters parameters = camera.getParameters();
+        return (new SettingsCapabilities() {
+            @Override
+            public String[] getSupportedExposureValues() {
+                int max = parameters.getMaxExposureCompensation();
+                int min = parameters.getMinExposureCompensation();
+                float step = parameters.getExposureCompensationStep();
+                int maxValue = Math.min(3, (int) Math.floor(max * step));
+                int minValue = Math.max(-3, (int) Math.ceil(min * step));
+                String[] entryValues = new String[maxValue - minValue + 1];
+                for (int i = minValue; i <= maxValue; ++i) {
+                    entryValues[i - minValue] = Integer.toString(Math.round(i / step));
+                }
+                return entryValues;
+            }
+
+            @Override
+            public String[] getSupportedCameraIds() {
+                int numberOfCameras = Camera.getNumberOfCameras();
+                String[] cameraIds = new String[numberOfCameras];
+                for (int i = 0; i < numberOfCameras; i++) {
+                    cameraIds[i] = "" + i;
+                }
+                return cameraIds;
+            }
+        });
+    }
+
+    /**
+     * Updates an AlertDialog.Builder to explain what it means to enable
+     * location on captures.
+     */
+    public static AlertDialog.Builder getFirstTimeLocationAlertBuilder(
+            AlertDialog.Builder builder, Callback<Boolean> callback) {
+        if (callback == null) {
+            return null;
+        }
+
+        getLocationAlertBuilder(builder, callback)
+                .setMessage(R.string.remember_location_prompt);
+
+        return builder;
+    }
+
+    /**
+     * Updates an AlertDialog.Builder for choosing whether to include location
+     * on captures.
+     */
+    public static AlertDialog.Builder getLocationAlertBuilder(AlertDialog.Builder builder,
+            final Callback<Boolean> callback) {
+        if (callback == null) {
+            return null;
+        }
+
+        builder.setTitle(R.string.remember_location_title)
+                .setPositiveButton(R.string.remember_location_yes,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+                                callback.onCallback(true);
+                            }
+                        })
+                .setNegativeButton(R.string.remember_location_no,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+                                callback.onCallback(false);
+                            }
+                        });
+
+        return builder;
     }
 }
