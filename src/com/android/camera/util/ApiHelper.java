@@ -38,7 +38,7 @@ public class ApiHelper {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     public static final boolean HAS_SURFACE_TEXTURE_RECORDING =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    public static final boolean HAS_ROBOTO_LIGHT_FONT =
+    public static final boolean HAS_ROBOTO_MEDIUM_FONT =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
     public static final boolean HAS_CAMERA_HDR_PLUS = isKitKatOrHigher();
