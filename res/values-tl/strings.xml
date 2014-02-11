@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Lumipas na Oras"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Malawak na Anggulo"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"Foreground Focus"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Buksan ang Mga Setting"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Lumipat sa Camera Mode"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Lumipat sa Video Camera"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Lumipat sa Timelapse Mode"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Lumipat sa Wideangle Mode"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Lumipat sa Panorama Mode"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"Lumipat sa Foreground Focus Mode"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"I-off ang Foreground Focus"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"I-on ang Foreground Focus"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Buksan ang mga setting"</string>
@@ -318,6 +320,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"I-off ang Torch"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Camera sa likod"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Camera sa harap"</string>
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Naka-off ang mga grid line"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Naka-on ang mga grid line"</string>
     <!-- no translation found for more_options_desc (4628738800610478353) -->
     <skip />
     <string name="cancel_button_description" msgid="3801167024006905033">"Kanselahin"</string>

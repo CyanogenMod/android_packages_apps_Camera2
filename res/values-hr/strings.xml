@@ -115,9 +115,9 @@
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Postavke fotoaparata"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Postavke kamere"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"Veličina slike"</string>
-    <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"Velika"</string>
+    <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"Visoka"</string>
     <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"Srednja"</string>
-    <string name="pref_camera_picturesize_entry_small" msgid="2991239656622539068">"Mala"</string>
+    <string name="pref_camera_picturesize_entry_small" msgid="2991239656622539068">"Niska"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"Način fokusa"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"Automatski"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3887667853236656322">"Beskonačno"</string>
@@ -294,6 +294,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Protek vremena"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokokutno"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
+    <string name="mode_refocus" msgid="7436904361494165785">"Fokus na prednji plan"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Otvaranje postavki"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Prelazak na način fotoaparata"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Prelazak na videokameru"</string>
@@ -303,6 +304,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Prelazak na način protoka vremena"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Prelazak na širokokutni način"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Prelazak na panoramski način"</string>
+    <string name="mode_refocus_desc" msgid="8632866513335038216">"Prelazak na način fokusa na prednji plan"</string>
     <string name="refocus_off_desc" msgid="4043473941193970147">"Isključivanje fokusa na prednji plan"</string>
     <string name="refocus_on_desc" msgid="2549978881191009668">"Uključivanje fokusa na prednji plan"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Otvaranje postavki"</string>
@@ -318,8 +320,9 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Isključivanje svjetla"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Stražnji fotoaparat"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Prednji fotoaparat"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Isključivanje linija rešetke"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Uključivanje linija rešetke"</string>
+    <string name="more_options_desc" msgid="4628738800610478353">"Više opcija"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Otkazivanje"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Gotovo"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Ponovno snimanje"</string>
@@ -327,8 +330,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"Prikaz"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Uređivanje"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Brisanje"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"Gumb se promijenio u %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Lokacija"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Veličina slike"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Razlučivost videozapisa"</string>
