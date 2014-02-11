@@ -185,6 +185,6 @@
 
     <dimen name="grid_line_width">1dp</dimen>
     <dimen name="focus_outer_ring_size">96dp</dimen>
-    <dimen name="focus_inner_ring_size">50dp</dimen>
+    <dimen name="focus_inner_ring_size">32dp</dimen>
 
 </resources>
