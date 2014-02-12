@@ -40,6 +40,12 @@
             android:gravity="center"
             android:visibility="invisible"
             android:background="#4C000000" >
+          <ImageButton
+              android:id="@+id/pano_horizontal_button"
+              style="@style/ModeOption" />
+          <ImageButton
+              android:id="@+id/pano_vertical_button"
+              style="@style/ModeOption" />
           <com.android.camera.MultiToggleImageButton
               android:id="@+id/grid_lines_toggle_button"
               style="@style/ModeOption"

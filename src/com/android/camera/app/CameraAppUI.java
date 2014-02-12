@@ -204,6 +204,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean enableCamera;
 
         /**
+         * Set true if the camera option should not be visible, regardless
+         * of hardware limitations.
+         */
+        public boolean hideCamera;
+
+        /**
          * Set true if the photo flash option should be enabled.
          * If not set or false, the photo flash option will be
          * disabled.
@@ -1492,6 +1498,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_HORIZONTAL,
                 bottomBarSpec.panoHorizontalCallback,
                 PhotoSphereHelper.getPanoramaHorizontalDrawableId());
+        } else {
+            buttonManager.hideButton(ButtonManager.BUTTON_PANO_HORIZONTAL);
         }
 
         if (bottomBarSpec.enablePanoVertical
@@ -1499,6 +1507,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_VERTICAL,
                 bottomBarSpec.panoVerticalCallback,
                 PhotoSphereHelper.getPanoramaVerticalDrawableId());
+        } else {
+            buttonManager.hideButton(ButtonManager.BUTTON_PANO_VERTICAL);
         }
 
         /** Intent UI */
