@@ -96,7 +96,8 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"选择摄像头"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"后置"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"前置"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"存储位置信息"</string>
+    <!-- no translation found for pref_camera_save_location_title (2344235620113384017) -->
+    <skip />
     <string name="pref_camera_location_label" msgid="8695441802378057719">"位置信息"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"倒计时器"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +110,6 @@
     <string name="setting_off" msgid="6782191065550276632">"关"</string>
     <string name="setting_on" msgid="9086728135773197891">"开"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"视频画质"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"高"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"低"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"延时"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"相机设置"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"摄像机设置"</string>
@@ -320,10 +319,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"手电筒已关闭"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"后置摄像头"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"前置摄像头"</string>
-    <!-- no translation found for grid_lines_off_desc (2022385817190451353) -->
-    <skip />
-    <!-- no translation found for grid_lines_on_desc (4601540461914364817) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"网格线已关闭"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"网格线已开启"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"更多选项"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"取消"</string>
     <string name="done_button_description" msgid="1334963435441544592">"完成"</string>
@@ -332,7 +329,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"查看"</string>
     <string name="edit_button_description" msgid="98550816724901925">"编辑"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"删除"</string>
-    <string name="button_change_announcement" msgid="3759686152778772111">"按钮目前状态为%s"</string>
+    <string name="button_change_announcement" msgid="3759686152778772111">"按钮现在是%s"</string>
     <string name="setting_location" msgid="4459859689227893838">"位置信息"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"照片尺寸"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"视频分辨率"</string>

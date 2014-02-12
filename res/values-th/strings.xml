@@ -96,7 +96,8 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"เลือกกล้องถ่ายรูป"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"กลับ"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"ด้านหน้า"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"ตำแหน่งจัดเก็บ"</string>
+    <!-- no translation found for pref_camera_save_location_title (2344235620113384017) -->
+    <skip />
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ตำแหน่ง"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"ตัวจับเวลาถอยหลัง"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +110,6 @@
     <string name="setting_off" msgid="6782191065550276632">"ปิด"</string>
     <string name="setting_on" msgid="9086728135773197891">"เปิด"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"คุณภาพวิดีโอ"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"สูง"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ต่ำ"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"ช่วงเวลา"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"การตั้งค่ากล้องถ่ายรูป"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"การตั้งค่ากล้องวิดีโอ"</string>
@@ -330,7 +329,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"ดู"</string>
     <string name="edit_button_description" msgid="98550816724901925">"แก้ไข"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ลบ"</string>
-    <string name="button_change_announcement" msgid="3759686152778772111">"ขณะนี้ปุ่มเป็น %s"</string>
+    <string name="button_change_announcement" msgid="3759686152778772111">"ขณะนี้เป็นปุ่ม%s"</string>
     <string name="setting_location" msgid="4459859689227893838">"ตำแหน่ง"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"ขนาดของภาพ"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"ความละเอียดวิดีโอ"</string>

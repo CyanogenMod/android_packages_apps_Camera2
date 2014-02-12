@@ -96,7 +96,8 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Vybrať fotoaparát"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Späť"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Predný"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Ukladať polohu"</string>
+    <!-- no translation found for pref_camera_save_location_title (2344235620113384017) -->
+    <skip />
     <string name="pref_camera_location_label" msgid="8695441802378057719">"POLOHA"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Časovač odpočítavania"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +110,6 @@
     <string name="setting_off" msgid="6782191065550276632">"Vypnuté"</string>
     <string name="setting_on" msgid="9086728135773197891">"Zapnuté"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Kvalita videa"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Vysoká"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Nízka"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Časozberné video"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Nastavenia fotoaparátu"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Nastavenie videokamery"</string>
@@ -320,10 +319,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Osvetlenie vypnuté"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Zadný fotoaparát"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Predný fotoaparát"</string>
-    <!-- no translation found for grid_lines_off_desc (2022385817190451353) -->
-    <skip />
-    <!-- no translation found for grid_lines_on_desc (4601540461914364817) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Čiary mriežky sú vypnuté"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Čiary mriežky sú zapnuté"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Ďalšie možnosti"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Zrušiť"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Hotovo"</string>
