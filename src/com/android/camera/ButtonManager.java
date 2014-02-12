@@ -56,10 +56,12 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private final SettingsManager mSettingsManager;
 
     /** Bottom bar options toggle buttons. */
-    private MultiToggleImageButton mButtonPos1;
-    private MultiToggleImageButton mButtonPos2;
-    private MultiToggleImageButton mButtonPos3;
-    private MultiToggleImageButton mButtonPos4;
+    private MultiToggleImageButton mButtonCamera;
+    private MultiToggleImageButton mButtonFlash;
+    private MultiToggleImageButton mButtonHdr;
+    private MultiToggleImageButton mButtonGridlines;
+    private ImageButton mButtonPanoVertical;
+    private ImageButton mButtonPanoHorizontal;
 
     /** Intent UI buttons. */
     private ImageButton mButtonCancel;
@@ -125,14 +127,18 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Gets references to all known buttons.
      */
     private void getButtonsReferences(View root) {
-        mButtonPos1
+        mButtonCamera
             = (MultiToggleImageButton) root.findViewById(R.id.camera_toggle_button);
-        mButtonPos2
+        mButtonFlash
             = (MultiToggleImageButton) root.findViewById(R.id.flash_toggle_button);
-        mButtonPos3
+        mButtonHdr
             = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
-        mButtonPos4
+        mButtonGridlines
             = (MultiToggleImageButton) root.findViewById(R.id.grid_lines_toggle_button);
+        mButtonPanoVertical
+            = (ImageButton) root.findViewById(R.id.pano_vertical_button);
+        mButtonPanoHorizontal
+            = (ImageButton) root.findViewById(R.id.pano_horizontal_button);
         mButtonCancel
             = (ImageButton) root.findViewById(R.id.cancel_button);
         mButtonDone
@@ -204,35 +210,35 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private MultiToggleImageButton getButtonOrError(int buttonId) {
         switch (buttonId) {
             case BUTTON_FLASH:
-                if (mButtonPos2 == null) {
+                if (mButtonFlash == null) {
                     throw new IllegalStateException("Flash button could not be found.");
                 }
-                return mButtonPos2;
+                return mButtonFlash;
             case BUTTON_TORCH:
-                if (mButtonPos2 == null) {
+                if (mButtonFlash== null) {
                     throw new IllegalStateException("Torch button could not be found.");
                 }
-                return mButtonPos2;
+                return mButtonFlash;
             case BUTTON_CAMERA:
-                if (mButtonPos1 == null) {
+                if (mButtonCamera == null) {
                     throw new IllegalStateException("Camera button could not be found.");
                 }
-                return mButtonPos1;
+                return mButtonCamera;
             case BUTTON_HDRPLUS:
-                if (mButtonPos3 == null) {
+                if (mButtonHdr == null) {
                     throw new IllegalStateException("Hdr plus button could not be found.");
                 }
-                return mButtonPos3;
+                return mButtonHdr;
             case BUTTON_HDR:
-                if (mButtonPos3 == null) {
+                if (mButtonHdr == null) {
                     throw new IllegalStateException("Hdr button could not be found.");
                 }
-                return mButtonPos3;
+                return mButtonHdr;
             case BUTTON_GRID_LINES:
-                if (mButtonPos4 == null) {
+                if (mButtonGridlines == null) {
                     throw new IllegalStateException("Grid lines button could not be found.");
                 }
-                return mButtonPos4;
+                return mButtonGridlines;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -246,15 +252,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private ImageButton getImageButtonOrError(int buttonId) {
         switch (buttonId) {
             case BUTTON_PANO_VERTICAL:
-                if (mButtonPos1 == null) {
+                if (mButtonPanoVertical == null) {
                     throw new IllegalStateException("Flash button could not be found.");
                 }
-                return (ImageButton) mButtonPos1;
+                return (ImageButton) mButtonPanoVertical;
             case BUTTON_PANO_HORIZONTAL:
-                if (mButtonPos2 == null) {
+                if (mButtonPanoHorizontal == null) {
                     throw new IllegalStateException("Flash button could not be found.");
                 }
-                return (ImageButton) mButtonPos2;
+                return (ImageButton) mButtonPanoHorizontal;
             case BUTTON_CANCEL:
                 if (mButtonCancel == null) {
                     throw new IllegalStateException("Cancel button could not be found.");
