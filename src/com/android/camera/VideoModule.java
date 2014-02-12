@@ -1193,6 +1193,7 @@ public class VideoModule extends CameraModule
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
 
+        mAppController.getCameraAppUI().hideModeOptions();
         mAppController.getCameraAppUI().animateBottomBarToCircle(R.drawable.ic_stop);
 
         mActivity.updateStorageSpaceAndHint();
@@ -1289,6 +1290,7 @@ public class VideoModule extends CameraModule
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
 
+        mAppController.getCameraAppUI().showModeOptions();
         mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
 
         boolean fail = false;
