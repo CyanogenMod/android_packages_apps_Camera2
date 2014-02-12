@@ -158,6 +158,9 @@
     <dimen name="mode_selector_icon_drawable_size">48dp</dimen>
     <dimen name="mode_selector_item_height">60dp</dimen>
 
+    <dimen name="mode_list_settings_icon_size">48dp</dimen>
+    <dimen name="mode_list_settings_icon_margin">12dp</dimen>
+
     <!-- Filmstrip bottom controls -->
     <dimen name="filmstrip_bottom_control_size">48dp</dimen>
     <dimen name="filmstrip_bottom_control_spacing">16dp</dimen>

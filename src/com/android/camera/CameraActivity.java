@@ -1495,6 +1495,7 @@ public class CameraActivity extends Activity
     /**
      * Shows the settings dialog.
      */
+    @Override
     public void onSettingsSelected() {
         Intent intent = new Intent(this, CameraSettingsActivity.class);
         startActivity(intent);

@@ -115,6 +115,11 @@ public interface AppController {
      */
     public void onModeSelected(int moduleIndex);
 
+    /**
+     * This gets called when settings is selected and settings dialog needs to open.
+     */
+    public void onSettingsSelected();
+
     /********************** UI / Camera preview **********************/
 
     /**
