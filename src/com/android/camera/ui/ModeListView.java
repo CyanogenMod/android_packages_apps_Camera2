@@ -22,7 +22,6 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -45,6 +44,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.widget.AnimationEffects;
+import com.android.camera.widget.SettingsButton;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
@@ -101,10 +101,11 @@ public class ModeListView extends FrameLayout
     private final GestureDetector mGestureDetector;
     private final int mIconBlockWidth;
     private final RectF mPreviewArea = new RectF();
+    private final RectF mUncoveredPreviewArea = new RectF();
 
     private int mListBackgroundColor;
     private LinearLayout mListView;
-    private View mSettingsButton;
+    private SettingsButton mSettingsButton;
     private int mState = IDLE;
     private int mTotalModes;
     private ModeSelectorItem[] mModeSelectorItems;
@@ -155,11 +156,27 @@ public class ModeListView extends FrameLayout
 
         }
     };
+    private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
 
     @Override
     public void onPreviewAreaSizeChanged(RectF previewArea) {
         mPreviewArea.set(previewArea);
     }
+
+    private final CameraAppUI.UncoveredPreviewAreaSizeChangedListener
+            mUncoveredPreviewAreaSizeChangedListener =
+            new CameraAppUI.UncoveredPreviewAreaSizeChangedListener() {
+
+                @Override
+                public void uncoveredPreviewAreaChanged(RectF uncoveredPreviewArea) {
+                    mUncoveredPreviewArea.set(uncoveredPreviewArea);
+                    mSettingsButton.uncoveredPreviewAreaChanged(uncoveredPreviewArea);
+                    if (mAdjustPositionWhenUncoveredPreviewAreaChanges) {
+                        mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
+                        centerModeDrawerInUncoveredPreview(getMeasuredWidth(), getMeasuredHeight());
+                    }
+                }
+            };
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
@@ -289,8 +306,8 @@ public class ModeListView extends FrameLayout
             }
 
             // Ignore the tap if it happens outside of the mode list linear layout.
-            int x = (int) ev.getX() - mListView.getLeft();
-            int y = (int) ev.getY() - mListView.getTop();
+            float x = ev.getX() - mListView.getX();
+            float y = ev.getY() - mListView.getY();
             if (x < 0 || x > mListView.getWidth() || y < 0 || y > mListView.getHeight()) {
                 return false;
             }
@@ -368,6 +385,11 @@ public class ModeListView extends FrameLayout
         mListBackgroundColor = getResources().getColor(R.color.mode_list_background);
     }
 
+    public CameraAppUI.UncoveredPreviewAreaSizeChangedListener
+            getUncoveredPreviewAreaSizeChangedListener() {
+        return mUncoveredPreviewAreaSizeChangedListener;
+    }
+
     /**
      * Sets the alpha on the list background. This is called whenever the list
      * is scrolling or animating, so that background can adjust its dimness.
@@ -418,7 +440,7 @@ public class ModeListView extends FrameLayout
         }
         mTotalModes = mSupportedModes.size();
         initializeModeSelectorItems();
-        mSettingsButton = findViewById(R.id.settings_button);
+        mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -447,6 +469,16 @@ public class ModeListView extends FrameLayout
             ModeSelectorItem selectorItem =
                     (ModeSelectorItem) inflater.inflate(R.layout.mode_selector, null);
             mListView.addView(selectorItem);
+            // Sets the top padding of the top item to 0.
+            if (i == 0) {
+                selectorItem.setPadding(selectorItem.getPaddingLeft(), 0,
+                        selectorItem.getPaddingRight(), selectorItem.getPaddingBottom());
+            }
+            // Sets the bottom padding of the bottom item to 0.
+            if (i == mTotalModes - 1) {
+                selectorItem.setPadding(selectorItem.getPaddingLeft(), selectorItem.getPaddingTop(),
+                        selectorItem.getPaddingRight(), 0);
+            }
 
             int modeId = getModeIndex(i);
             selectorItem.setHighlightColor(getResources()
@@ -580,9 +612,9 @@ public class ModeListView extends FrameLayout
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        centerModeDrawerInPreview(MeasureSpec.getSize(widthMeasureSpec),
-                MeasureSpec.getSize(heightMeasureSpec));
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        centerModeDrawerInUncoveredPreview(MeasureSpec.getSize(widthMeasureSpec),
+                MeasureSpec.getSize(heightMeasureSpec));
     }
 
     @Override
@@ -653,8 +685,8 @@ public class ModeListView extends FrameLayout
      */
     private int getFocusItem(float x, float y) {
         // Convert coordinates into child view's coordinates.
-        x -= mListView.getLeft();
-        y -= mListView.getTop();
+        x -= mListView.getX();
+        y -= mListView.getY();
 
         for (int i = 0; i < mModeSelectorItems.length; i++) {
             if (y <= mModeSelectorItems[i].getBottom()) {
@@ -668,7 +700,7 @@ public class ModeListView extends FrameLayout
     public void onVisibilityChanged(View v, int visibility) {
         super.onVisibilityChanged(v, visibility);
         if (visibility == VISIBLE) {
-            centerModeDrawerInPreview(getMeasuredWidth(), getMeasuredHeight());
+            centerModeDrawerInUncoveredPreview(getMeasuredWidth(), getMeasuredHeight());
             // Highlight current module
             if (mModeSwitchListener != null) {
                 int modeId = mModeSwitchListener.getCurrentModeIndex();
@@ -695,21 +727,27 @@ public class ModeListView extends FrameLayout
     }
 
     /**
-     * Center mode drawer in camera preview.
+     * Center mode drawer in the portion of camera preview that is not covered by
+     * bottom bar.
      */
-    private void centerModeDrawerInPreview(int measuredWidth, int measuredHeight) {
+    // TODO: Combine SettingsButton logic into here if UX design does not change
+    // for another week.
+    private void centerModeDrawerInUncoveredPreview(int measuredWidth, int measuredHeight) {
 
         // Assuming the preview is centered in the space aside from bottom bar.
-        float previewAreaWidth = mPreviewArea.right + mPreviewArea.left;
-        float previewAreaHeight = mPreviewArea.top + mPreviewArea.bottom;
-        if (measuredWidth > measuredHeight) {
-            // Landscape.
-            int previewWidth = (int) Math.max(previewAreaHeight, previewAreaWidth);
-            setPadding(0, 0, measuredWidth - previewWidth, 0);
+        float previewAreaWidth = mUncoveredPreviewArea.right + mUncoveredPreviewArea.left;
+        float previewAreaHeight = mUncoveredPreviewArea.top + mUncoveredPreviewArea.bottom;
+        if (measuredWidth > measuredHeight && previewAreaWidth < previewAreaHeight
+                || measuredWidth < measuredHeight && previewAreaWidth > previewAreaHeight) {
+            // Cached preview area is stale, update mode drawer position on next
+            // layout pass.
+            mAdjustPositionWhenUncoveredPreviewAreaChanges = true;
         } else {
-            // Portrait.
-            int previewHeight = (int) Math.max(previewAreaHeight, previewAreaWidth);
-            setPadding(0, 0, 0, measuredHeight - previewHeight);
+            // Align left:
+            mListView.setTranslationX(mUncoveredPreviewArea.left);
+            // Align center vertical:
+            mListView.setTranslationY(mUncoveredPreviewArea.centerY()
+                    - mListView.getMeasuredHeight() / 2);
         }
     }
 
