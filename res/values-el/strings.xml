@@ -96,7 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Επιλογή φωτ. μηχανής"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Πίσω"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Μπροστινή"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Τοποθεσία αποθήκευσης"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Αποθήκ. τοποθεσίας"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ΤΟΠΟΘΕΣΙΑ"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Χρονόμετρο αντίστρ. μέτρησης"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +109,6 @@
     <string name="setting_off" msgid="6782191065550276632">"Ανενεργό"</string>
     <string name="setting_on" msgid="9086728135773197891">"Ενεργό"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Ποιότητα βίντεο"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Υψηλή"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Χαμηλή"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Παρέλευση χρόνου"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Ρυθμίσεις φωτογραφικής μηχανής"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Ρυθμίσεις βιντεοκάμερας"</string>
@@ -330,7 +328,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"Προβολή"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Επεξεργασία"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Διαγραφή"</string>
-    <string name="button_change_announcement" msgid="3759686152778772111">"Το κουμπί είναι τώρα  %s"</string>
+    <string name="button_change_announcement" msgid="3759686152778772111">"Το κουμπί είναι τώρα %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Τοποθεσία"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Μέγεθος εικόνας"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Ανάλυση βίντεο"</string>

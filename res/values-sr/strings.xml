@@ -96,7 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Изаберите камеру"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Задња"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Предња"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Складишти локацију"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Сачувај локацију"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ЛОКАЦИЈА"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Тајмер за одбројавање"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +109,6 @@
     <string name="setting_off" msgid="6782191065550276632">"Искључено"</string>
     <string name="setting_on" msgid="9086728135773197891">"Укључено"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Квалитет видео снимка"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Висок"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Низак"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Снимање у дужем интервалу"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Подешавања камере"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Подешавања камкордера"</string>

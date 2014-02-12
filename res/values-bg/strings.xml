@@ -96,7 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Избиране на камера"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Задна"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Предна"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Място за съхранение"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Местопол.: Запазване"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"МЕСТОПОЛОЖЕНИЕ"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Таймер за обратно отброяване"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +109,6 @@
     <string name="setting_off" msgid="6782191065550276632">"Изключено"</string>
     <string name="setting_on" msgid="9086728135773197891">"Включено"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Видеокачество"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Високо"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ниско"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Цайтрафер"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Настройки на камерата"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Настройки на видеокамерата"</string>
@@ -320,10 +318,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Фенерът е изключен"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Задна камера"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Предна камера"</string>
-    <!-- no translation found for grid_lines_off_desc (2022385817190451353) -->
-    <skip />
-    <!-- no translation found for grid_lines_on_desc (4601540461914364817) -->
-    <skip />
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Помощната мрежа е изключена"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Помощната мрежа е включена"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Още опции"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Отказ"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Готово"</string>
