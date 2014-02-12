@@ -649,8 +649,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
-        mUncoverPreviewAreaChangedListener = (UncoveredPreviewAreaSizeChangedListener)
-                mModeListView.findViewById(R.id.settings_button);
+        mUncoverPreviewAreaChangedListener =
+                mModeListView.getUncoveredPreviewAreaSizeChangedListener();
         mAnimationManager = new AnimationManager();
         initDisplayListener();
     }
