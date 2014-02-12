@@ -372,8 +372,11 @@ public class PhotoModule
         mAppController.onPreviewStarted();
         setCameraState(IDLE);
         startFaceDetection();
-        startSmartCamera();
         locationFirstRun();
+    }
+
+    public void onPreviewInitialDataReceived() {
+        startSmartCamera();
     }
 
     // Prompt the user to pick to record location for the very first run of
