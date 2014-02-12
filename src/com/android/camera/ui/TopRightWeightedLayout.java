@@ -33,7 +33,6 @@ import java.util.List;
  * on an orientation change.
  */
 public class TopRightWeightedLayout extends LinearLayout {
-
     public TopRightWeightedLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -60,12 +59,14 @@ public class TopRightWeightedLayout extends LinearLayout {
         if (isPortrait && !isHorizontal) {
             // Portrait orientation is out of sync, setting to horizontal
             // and reversing children
+            fixGravity(LinearLayout.HORIZONTAL);
             setOrientation(LinearLayout.HORIZONTAL);
             reverseChildren();
             requestLayout();
         } else if (!isPortrait && isHorizontal) {
             // Landscape orientation is out of sync, setting to vertical
             // and reversing children
+            fixGravity(LinearLayout.VERTICAL);
             setOrientation(LinearLayout.VERTICAL);
             reverseChildren();
             requestLayout();
@@ -83,6 +84,62 @@ public class TopRightWeightedLayout extends LinearLayout {
         }
         for (View v : children) {
             bringChildToFront(v);
+        }
+    }
+
+    /**
+     * Swap gravity:
+     * left for bottom
+     * right for top
+     * center horizontal for center vertical
+     * etc
+     */
+    private void fixGravity(int direction) {
+        for (int i = 0; i < getChildCount(); i++) {
+            View v = getChildAt(i);
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) v.getLayoutParams();
+            int gravity = layoutParams.gravity;
+
+            if (direction == LinearLayout.VERTICAL) {
+                if ((gravity & Gravity.LEFT) != 0) {   // if gravity left is set . . .
+                    gravity &= ~Gravity.LEFT;          // unset left
+                    gravity |= Gravity.BOTTOM;         // and set bottom
+                }
+            } else {
+                if ((gravity & Gravity.BOTTOM) != 0) { // etc
+                    gravity &= ~Gravity.BOTTOM;
+                    gravity |= Gravity.LEFT;
+                }
+            }
+
+            if (direction == LinearLayout.VERTICAL) {
+                if ((gravity & Gravity.RIGHT) != 0) {
+                    gravity &= ~Gravity.RIGHT;
+                    gravity |= Gravity.TOP;
+                }
+            } else {
+                if ((gravity & Gravity.TOP) != 0) {
+                    gravity &= ~Gravity.TOP;
+                    gravity |= Gravity.RIGHT;
+                }
+            }
+
+            // don't mess with children that are centered in both directions
+            if ((gravity & Gravity.CENTER) != Gravity.CENTER) {
+                if (direction == LinearLayout.VERTICAL) {
+                    if ((gravity & Gravity.CENTER_VERTICAL) != 0) {
+                        gravity &= ~ Gravity.CENTER_VERTICAL;
+                        gravity |= Gravity.CENTER_HORIZONTAL;
+                    }
+                } else {
+                    if ((gravity & Gravity.CENTER_HORIZONTAL) != 0) {
+                        gravity &= ~ Gravity.CENTER_HORIZONTAL;
+                        gravity |= Gravity.CENTER_VERTICAL;
+                    }
+                }
+            }
+
+            layoutParams.gravity = gravity;
         }
     }
 }
