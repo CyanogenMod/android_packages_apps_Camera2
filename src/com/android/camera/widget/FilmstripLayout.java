@@ -30,7 +30,6 @@ import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
@@ -105,12 +104,11 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                         mBackgroundDrawable.setFraction(valueAnimator.getAnimatedFraction());
                     }
                     mFilmstripContentLayout.setTranslationX((Float) valueAnimator.getAnimatedValue());
-                    mFilmstripLayoutBackgroundView.invalidate();
+                    mBackgroundDrawable.invalidateSelf();
                     invalidate();
                 }
             };
     private Listener mListener;
-    private ImageView mFilmstripLayoutBackgroundView;
 
     public FilmstripLayout(Context context) {
         super(context);
@@ -216,6 +214,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     @Override
     public void onFinishInflate() {
         mBackgroundDrawable = new MyBackgroundDrawable();
+        setBackground(mBackgroundDrawable);
         mFilmstripView = (FilmstripView) findViewById(R.id.filmstrip_view);
         mFilmstripView.setOnTouchListener(new OnTouchListener() {
 
@@ -231,11 +230,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         });
         mFilmstripGestureListener = mFilmstripView.getGestureListener();
         mFilmstripContentLayout = (FrameLayout) findViewById(R.id.camera_filmstrip_content_layout);
-        // Instead of simply use mBackgroundDrawable as the background of this
-        // layout, we use an extra ImageView to serve as the background. This
-        // is a workaround for b/12974357.
-        mFilmstripLayoutBackgroundView = (ImageView) findViewById(R.id.filmstrip_background_view);
-        mFilmstripLayoutBackgroundView.setImageDrawable(mBackgroundDrawable);
     }
 
     @Override
@@ -312,7 +306,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                 }
             }
             mFilmstripContentLayout.setTranslationX(translate);
-            mFilmstripLayoutBackgroundView.invalidate();
+            mBackgroundDrawable.invalidateSelf();
             invalidate();
             return true;
         }
