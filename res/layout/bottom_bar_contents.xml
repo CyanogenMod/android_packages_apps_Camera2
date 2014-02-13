@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
-        android:padding="12dp"
+        android:paddingLeft="24dp"
         android:src="@drawable/ic_back"
         android:background="@null"
         android:contentDescription="@string/retake_button_description" />
@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
-        android:padding="12dp"
+        android:paddingRight="24dp"
         android:src="@drawable/ic_cancel"
         android:background="@null"
         android:contentDescription="@string/cancel_button_description" />
