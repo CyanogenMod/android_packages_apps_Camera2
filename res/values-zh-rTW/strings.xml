@@ -96,7 +96,8 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"選擇相機"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"後置"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"前置"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"儲存地點"</string>
+    <!-- no translation found for pref_camera_save_location_title (2344235620113384017) -->
+    <skip />
     <string name="pref_camera_location_label" msgid="8695441802378057719">"地點"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"倒數計時器"</string>
   <plurals name="pref_camera_timer_entry">
@@ -109,8 +110,6 @@
     <string name="setting_off" msgid="6782191065550276632">"關閉"</string>
     <string name="setting_on" msgid="9086728135773197891">"開啟"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"影片畫質"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"高"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"低"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"延時攝影"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"相機設定"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"攝錄影機設定"</string>
