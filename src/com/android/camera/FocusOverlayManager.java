@@ -98,7 +98,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
     public  interface FocusUI {
         public boolean hasFaces();
         public void clearFocus();
-        public void setFocusPosition(int x, int y);
+        public void setFocusPosition(int x, int y, boolean isAutoFocus);
         public void onFocusStarted();
         public void onFocusSucceeded();
         public void onFocusFailed();
@@ -321,7 +321,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         // animate on false->true trasition only b/8219520
         if (moving && !mPreviousMoving) {
             // Auto focus at the center of the preview.
-            mUI.setFocusPosition(mPreviewRect.centerX(), mPreviewRect.centerY());
+            mUI.setFocusPosition(mPreviewRect.centerX(), mPreviewRect.centerY(), true);
             mUI.onFocusStarted();
         } else if (!moving) {
             mUI.onFocusSucceeded();
@@ -375,7 +375,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         }
 
         // Use margin to set the focus indicator to the touched area.
-        mUI.setFocusPosition(x, y);
+        mUI.setFocusPosition(x, y, false);
 
         // Stop face detection because we want to specify focus and metering area.
         mListener.stopFaceDetection();
