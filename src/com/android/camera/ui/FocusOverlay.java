@@ -46,6 +46,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     private final int mFocusIndicatorSize;
     private boolean mShowIndicator;
     private final int mFocusOuterRingSize;
+    private boolean mCurrentRunIsAutoFocus = true;
 
     public FocusOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -67,7 +68,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     }
 
     @Override
-    public void setFocusPosition(int x, int y) {
+    public void setFocusPosition(int x, int y, boolean isAutoFocus) {
         mPositionX = x;
         mPositionY = y;
         mBounds.set(x - mFocusIndicatorSize / 2, y - mFocusIndicatorSize / 2,
@@ -75,6 +76,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mFocusIndicator.setBounds(mBounds);
         mFocusOuterRing.setBounds(x - mFocusOuterRingSize / 2, y - mFocusOuterRingSize / 2,
                 x + mFocusOuterRingSize / 2, y + mFocusOuterRingSize / 2);
+        mCurrentRunIsAutoFocus = isAutoFocus;
     }
 
     @Override
@@ -120,7 +122,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mShowIndicator) {
+        if (mShowIndicator && !mCurrentRunIsAutoFocus) {
             mFocusOuterRing.draw(canvas);
             canvas.save();
             canvas.rotate(mAngle, mPositionX, mPositionY);
