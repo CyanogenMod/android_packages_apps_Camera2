@@ -81,7 +81,6 @@ import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
-import com.android.camera.data.InProgressDataWrapper;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalDataUtil;
@@ -750,27 +749,12 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSessionQueued(final Uri uri) {
                     notifyNewMedia(uri);
-                    int dataId = mDataAdapter.findDataByContentUri(uri);
-                    if (dataId != -1) {
-                        // Don't allow special UI actions (swipe to
-                        // delete, for example) on in-progress data.
-                        LocalData d = mDataAdapter.getLocalData(dataId);
-                        InProgressDataWrapper newData = new InProgressDataWrapper(d);
-                        mDataAdapter.updateData(dataId, newData);
-                    }
                 }
 
                 @Override
                 public void onSessionDone(final Uri uri) {
                     Log.v(TAG, "onSessionDone:" + uri);
-                    int doneId = mDataAdapter.findDataByContentUri(uri);
-                    int currentDataId = mFilmstripController.getCurrentId();
-
-                    if (currentDataId == doneId) {
-                        hideSessionProgress();
-                        updateSessionProgress(0);
-                    }
-                    mDataAdapter.refresh(uri, /* isInProgress */false);
+                    mDataAdapter.finishSession(uri);
                 }
 
                 @Override
@@ -791,7 +775,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSessionUpdated(Uri uri) {
-                    mDataAdapter.refresh(uri, /* isInProgress */true);
+                    mDataAdapter.refresh(uri);
                 }
 
                 @Override
@@ -805,7 +789,8 @@ public class CameraActivity extends Activity
                         updateSessionProgress(0);
                         showProcessError(reason);
                     }
-                    mDataAdapter.refresh(uri, /* isInProgress */false);
+                    // HERE
+                    mDataAdapter.refresh(uri);
                 }
             };
 
@@ -1025,19 +1010,22 @@ public class CameraActivity extends Activity
 
     @Override
     public void notifyNewMedia(Uri uri) {
-        ContentResolver cr = getContentResolver();
-        String mimeType = cr.getType(uri);
-        if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
-            sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-            mDataAdapter.addNewVideo(uri);
-        } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
-            CameraUtil.broadcastNewPicture(mAppContext, uri);
-            mDataAdapter.addNewPhoto(uri);
-        } else if (LocalDataUtil.isMimeTypePlaceHolder(mimeType)) {
-            mDataAdapter.addNewPhoto(uri);
+        if (Storage.isSessionUri(uri)) {
+            mDataAdapter.addNewSession(uri);
         } else {
-            android.util.Log.w(TAG, "Unknown new media with MIME type:"
-                    + mimeType + ", uri:" + uri);
+
+            ContentResolver cr = getContentResolver();
+            String mimeType = cr.getType(uri);
+            if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
+                sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
+                mDataAdapter.addNewVideo(uri);
+            } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
+                CameraUtil.broadcastNewPicture(mAppContext, uri);
+                mDataAdapter.addNewPhoto(uri);
+            } else {
+                android.util.Log.w(TAG, "Unknown new media with MIME type:"
+                        + mimeType + ", uri:" + uri);
+            }
         }
     }
 
@@ -1423,7 +1411,7 @@ public class CameraActivity extends Activity
         } else {
             LocalData data = mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
             if (data != null) {
-                mDataAdapter.refresh(data.getContentUri(), false);
+                mDataAdapter.refresh(data.getContentUri());
             }
         }
         // The share button might be disabled to avoid double tapping.

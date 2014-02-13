@@ -17,6 +17,8 @@
 package com.android.camera.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Common file operations.
@@ -44,4 +46,29 @@ public class FileUtil {
         }
         return directory.delete();
     }
+
+    /**
+     * Reads the content of a {@code File} as a byte array.
+     *
+     * @param file The file to read
+     * @return  The content of the file
+     * @throws java.io.IOException if the content of the {@code File} could not be read
+     */
+    public static byte[] readFileToByteArray(File file) throws IOException {
+        int length = (int) file.length();
+        byte[] data = new byte[length];
+        FileInputStream stream = new FileInputStream(file);
+        try {
+            int offset = 0;
+            while (offset < length) {
+                offset += stream.read(data, offset, length - offset);
+            }
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            stream.close();
+        }
+        return data;
+    }
+
 }

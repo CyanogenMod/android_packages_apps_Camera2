@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,56 +17,72 @@
 package com.android.camera.data;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 
-import com.android.camera2.R;
+import com.android.camera.Storage;
+
+import java.util.Date;
 
 /**
- * A wrapper class for in-progress data. Data that's still being processed
- * should not supporting any actions. Only methods related to actions like
- * {@link #isDataActionSupported(int)} and
- * {@link #isUIActionSupported(int)} are implemented by this class.
+ * This is used to represent a local data item that is in progress and not
+ * yet in the media store.
  */
-public class InProgressDataWrapper implements LocalData {
+public class LocalSessionData implements LocalData {
 
-    final LocalData mLocalData;
+    private Uri mUri;
+    private long mDateTaken;
+    protected final Bundle mMetaData;
+    private int mWidth;
+    private int mHeight;
 
-    public InProgressDataWrapper(LocalData wrappedData) {
-        mLocalData = wrappedData;
+    public LocalSessionData(Uri uri) {
+        mUri = uri;
+        mMetaData = new Bundle();
+        mDateTaken = new Date().getTime();
+        Point size = Storage.getSizeForSession(uri);
+        mWidth = size.x;
+        mHeight = size.y;
     }
 
     @Override
-    public View getView(
-            Context context, int width, int height,
-            Drawable placeHolder, LocalDataAdapter adapter, boolean isInProgress) {
-
-        return mLocalData.getView(context, width, height, placeHolder, adapter, true);
+    public View getView(Context context, int width, int height, Drawable placeHolder,
+           LocalDataAdapter adapter, boolean isInProgress) {
+        //TODO do this on a background thread
+        byte[] jpegData = Storage.getJpegForSession(mUri);
+        Bitmap bmp = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+        ImageView imageView = new ImageView(context);
+        imageView.setImageBitmap(bmp);
+        return imageView;
     }
 
     @Override
-    public void resizeView(Context context, int w, int h, View v, LocalDataAdapter adapter) {
-        // do nothing.
+    public void resizeView(Context context, int width, int height, View view,
+           LocalDataAdapter adapter) {
+
     }
 
     @Override
     public long getDateTaken() {
-        return mLocalData.getDateTaken();
+        return mDateTaken;
     }
 
     @Override
     public long getDateModified() {
-        return mLocalData.getDateModified();
+        return mDateTaken;
     }
 
     @Override
     public String getTitle() {
-        return mLocalData.getTitle();
+        return mUri.toString();
     }
+
 
     @Override
     public boolean isDataActionSupported(int actions) {
@@ -75,97 +91,92 @@ public class InProgressDataWrapper implements LocalData {
 
     @Override
     public boolean delete(Context c) {
-        // No actions are allowed to modify the wrapped data.
         return false;
     }
 
     @Override
-    public boolean rotate90Degrees(
-            Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise) {
-        // No actions are allowed to modify the wrapped data.
+    public boolean rotate90Degrees(Context context, LocalDataAdapter adapter, int currentDataId, boolean clockwise) {
         return false;
     }
 
     @Override
     public void onFullScreen(boolean fullScreen) {
-        mLocalData.onFullScreen(fullScreen);
+
     }
 
     @Override
     public boolean canSwipeInFullScreen() {
-        return mLocalData.canSwipeInFullScreen();
+        return true;
     }
 
     @Override
     public String getPath() {
-        return mLocalData.getPath();
+        return "";
     }
 
     @Override
     public String getMimeType() {
-        return mLocalData.getMimeType();
+        return null;
     }
 
     @Override
     public MediaDetails getMediaDetails(Context context) {
-        return mLocalData.getMediaDetails(context);
+        return null;
     }
 
     @Override
     public int getLocalDataType() {
-        // Force the data type to be in-progress data.
         return LOCAL_IN_PROGRESS_DATA;
     }
 
     @Override
     public long getSizeInBytes() {
-        return mLocalData.getSizeInBytes();
+        return 0;
     }
 
     @Override
     public LocalData refresh(Context context) {
-        return mLocalData.refresh(context);
+        return this;
     }
 
     @Override
     public long getContentId() {
-        return mLocalData.getContentId();
+        return 0;
     }
 
     @Override
     public Bundle getMetadata() {
-        return mLocalData.getMetadata();
+        return mMetaData;
     }
 
     @Override
     public boolean isMetadataUpdated() {
-        return mLocalData.isMetadataUpdated();
-    }
-
-    @Override
-    public int getWidth() {
-        return mLocalData.getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return mLocalData.getHeight();
+        return true;
     }
 
     @Override
     public int getRotation() {
-        return mLocalData.getRotation();
+        return 0;
+    }
+
+    @Override
+    public int getWidth() {
+        return mWidth;
+    }
+
+    @Override
+    public int getHeight() {
+        return mHeight;
     }
 
     @Override
     public int getViewType() {
-        return mLocalData.getViewType();
+        return VIEW_TYPE_REMOVABLE;
     }
 
     @Override
     public double[] getLatLong() {
-        return mLocalData.getLatLong();
+        return null;
     }
 
     @Override
@@ -175,16 +186,16 @@ public class InProgressDataWrapper implements LocalData {
 
     @Override
     public void prepare() {
-        mLocalData.prepare();
+
     }
 
     @Override
     public void recycle() {
-        mLocalData.recycle();
+
     }
 
     @Override
     public Uri getContentUri() {
-        return mLocalData.getContentUri();
+        return mUri;
     }
 }

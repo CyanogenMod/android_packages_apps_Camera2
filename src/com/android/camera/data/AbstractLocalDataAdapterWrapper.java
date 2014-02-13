@@ -82,6 +82,11 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
+    public void addNewSession(Uri uri) {
+        mAdapter.addNewSession(uri);
+    }
+
+    @Override
     public void insertData(LocalData data) {
         mAdapter.insertData(data);
     }
@@ -102,8 +107,12 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void refresh(Uri uri, boolean isInProgressSession) {
-        mAdapter.refresh(uri, isInProgressSession);
+    public void finishSession(Uri uri) {
+        mAdapter.finishSession(uri);
+    }
+    @Override
+    public void refresh(Uri uri) {
+        mAdapter.refresh(uri);
     }
 
     @Override

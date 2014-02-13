@@ -17,19 +17,28 @@
 package com.android.camera.session;
 
 import android.content.ContentResolver;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
+import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
-import com.android.camera.crop.ImageLoader;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.exif.ExifTag;
+import com.android.camera.exif.Rational;
+import com.android.camera.util.FileUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -38,6 +47,9 @@ import java.util.Map;
  * Implementation for the {@link CaptureSessionManager}.
  */
 public class CaptureSessionManagerImpl implements CaptureSessionManager {
+
+    private static final String TAG = "CaptureSessionManagerImpl";
+    public static final String TEMP_SESSIONS = "TEMP_SESSIONS";
 
     private class CaptureSessionImpl implements CaptureSession {
         /** A URI of the item being processed. */
@@ -151,8 +163,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             }
 
             // TODO: This needs to happen outside the UI thread.
-            mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, mLocation, orientation,
-                    exif, data, width, height, LocalData.MIME_TYPE_JPEG);
+            mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation, orientation, exif,
+                    data, width, height, LocalData.MIME_TYPE_JPEG);
 
             mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
@@ -166,12 +178,43 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                         "Cannot call finish without calling startSession first.");
             }
 
-            // Set final values in media store, such as mime type and size.
-            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, mLocation,
-                    LocalData.MIME_TYPE_JPEG, /* finalImage */ true);
-            mNotificationManager.notifyCompletion(mNotificationId);
-            removeSession(mUri.toString());
-            notifyTaskDone(mPlaceHolderSession.outputUri);
+            final String path = this.getPath();
+
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    byte[] jpegDataTemp;
+                    try {
+                        jpegDataTemp = FileUtil.readFileToByteArray(new File(path));
+                    } catch (IOException e) {
+                        return;
+                    }
+                    final byte[] jpegData = jpegDataTemp;
+
+                    final CaptureSession session = CaptureSessionImpl.this;
+
+                    if (session == null) {
+                        throw new IllegalStateException("No session for captured photo");
+                    }
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length, options);
+                    int width = options.outWidth;
+                    int height = options.outHeight;
+                    int rotation = 0;
+                    ExifInterface exif = null;
+                    try {
+                        exif = new ExifInterface();
+                        exif.readExif(jpegData);
+                    } catch (IOException e) {
+                        Log.w(TAG, "Could not read exif", e);
+                        exif = null;
+                    }
+
+                    session.saveAndFinish(jpegData, width, height, rotation, exif, null);
+                }
+            });
+
         }
 
         @Override
@@ -179,7 +222,26 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             if (mUri == null) {
                 throw new IllegalStateException("Cannot retrieve URI of not started session.");
             }
-            return ImageLoader.getLocalPathFromUri(mContentResolver, mUri);
+
+            File tempDirectory = null;
+            try {
+                tempDirectory = new File(
+                        getSessionDirectory(TEMP_SESSIONS), mTitle);
+            } catch (IOException e) {
+                Log.e(TAG, "Could not get temp session directory", e);
+                throw new RuntimeException("Could not get temp session directory", e);
+            }
+            tempDirectory.mkdirs();
+            File tempFile = new File(tempDirectory, mTitle  + ".jpg");
+            try {
+                if (!tempFile.exists()) {
+                    tempFile.createNewFile();
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Could not create temp session file", e);
+                throw new RuntimeException("Could not create temp session file", e);
+            }
+            return tempFile.getPath();
         }
 
         @Override
@@ -194,9 +256,32 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         @Override
         public void onPreviewChanged() {
-            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, mLocation,
-                    PlaceholderManager.PLACEHOLDER_MIME_TYPE, /* finalImage */ false);
-            notifySessionUpdate(mPlaceHolderSession.outputUri);
+
+            final Location loc = null; // mLocationManager.getCurrentLocation();
+            final int heading = 0; // mHeading;
+            final String path = this.getPath();
+
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    byte[] jpegDataTemp;
+                    try {
+                        jpegDataTemp = FileUtil.readFileToByteArray(new File(path));
+                    } catch (IOException e) {
+                        return;
+                    }
+                    final byte[] jpegData = jpegDataTemp;
+
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length, options);
+                    int width = options.outWidth;
+                    int height = options.outHeight;
+
+                    mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, jpegData, width, height);
+                    notifySessionUpdate(mPlaceHolderSession.outputUri);
+                }
+            });
         }
 
         @Override
@@ -207,9 +292,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             }
             mProgressMessage = reason;
 
-            // Change mime type of session so it's not marked as in progress anymore.
-            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, mLocation,
-                    LocalData.MIME_TYPE_JPEG, /* finalImage */false);
             mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
             mFailedSessionMessages.put(mPlaceHolderSession.outputUri, reason);
