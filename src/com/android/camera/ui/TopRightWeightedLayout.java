@@ -59,14 +59,14 @@ public class TopRightWeightedLayout extends LinearLayout {
         if (isPortrait && !isHorizontal) {
             // Portrait orientation is out of sync, setting to horizontal
             // and reversing children
-            fixGravity(LinearLayout.HORIZONTAL);
+            fixGravityAndPadding(LinearLayout.HORIZONTAL);
             setOrientation(LinearLayout.HORIZONTAL);
             reverseChildren();
             requestLayout();
         } else if (!isPortrait && isHorizontal) {
             // Landscape orientation is out of sync, setting to vertical
             // and reversing children
-            fixGravity(LinearLayout.VERTICAL);
+            fixGravityAndPadding(LinearLayout.VERTICAL);
             setOrientation(LinearLayout.VERTICAL);
             reverseChildren();
             requestLayout();
@@ -93,9 +93,12 @@ public class TopRightWeightedLayout extends LinearLayout {
      * right for top
      * center horizontal for center vertical
      * etc
+     *
+     * also swap left|right padding for bottom|top
      */
-    private void fixGravity(int direction) {
+    private void fixGravityAndPadding(int direction) {
         for (int i = 0; i < getChildCount(); i++) {
+            // gravity swap
             View v = getChildAt(i);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) v.getLayoutParams();
             int gravity = layoutParams.gravity;
@@ -140,6 +143,13 @@ public class TopRightWeightedLayout extends LinearLayout {
             }
 
             layoutParams.gravity = gravity;
+
+            // padding swap
+            int paddingLeft = v.getPaddingLeft();
+            int paddingTop = v.getPaddingTop();
+            int paddingRight = v.getPaddingRight();
+            int paddingBottom = v.getPaddingBottom();
+            v.setPadding(paddingBottom, paddingRight, paddingTop, paddingLeft);
         }
     }
 }
