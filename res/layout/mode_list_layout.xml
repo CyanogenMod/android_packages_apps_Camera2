@@ -35,6 +35,6 @@
         android:layout_height="@dimen/mode_list_settings_icon_size"
         android:scaleType="center"
         android:layout_gravity="top|left"
-        android:background="@drawable/mode_icon_background"
+        android:background="@drawable/settings_gear_background"
         android:src="@drawable/ic_settings_normal" />
 </com.android.camera.ui.ModeListView>
