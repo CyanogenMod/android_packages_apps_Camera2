@@ -142,7 +142,7 @@
 
         <activity
             android:name="com.android.camera.settings.CameraSettingsActivity"
-            android:label="@string/settings"
+            android:label="@string/mode_settings"
             android:theme="@style/Theme.CameraSettings"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
