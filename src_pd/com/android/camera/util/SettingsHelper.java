@@ -30,4 +30,8 @@ public class SettingsHelper implements ExtraSettings {
     public Setting settingFromId(int id) {
         return null;
     }
+
+    public static boolean isOpenSourceLicensesShown() {
+        return false;
+    }
 }
