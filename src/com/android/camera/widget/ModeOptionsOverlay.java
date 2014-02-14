@@ -18,6 +18,7 @@ package com.android.camera.widget;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -182,26 +183,37 @@ public class ModeOptionsOverlay extends FrameLayout
 
         FrameLayout.LayoutParams modeOptionsParams
             = (FrameLayout.LayoutParams) mModeOptions.getLayoutParams();
+        FrameLayout.LayoutParams modeOptionsToggleParams
+            = (FrameLayout.LayoutParams) mModeOptionsToggle.getLayoutParams();
+
         if (isPortrait) {
             modeOptionsParams.height = modeOptionsParams.width;
             modeOptionsParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
             if (modeOptionsParams.gravity != Gravity.BOTTOM) {
                 modeOptionsParams.gravity = Gravity.BOTTOM;
             }
+
+            if (modeOptionsToggleParams.gravity != BOTTOM_RIGHT) {
+                modeOptionsToggleParams.gravity = BOTTOM_RIGHT;
+            }
+
+            // Remove the rotation on the three dots.
+            mThreeDots.setImageMatrix(new Matrix());
         } else if (!isPortrait) {
             modeOptionsParams.width = modeOptionsParams.height;
             modeOptionsParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             if (modeOptionsParams.gravity != Gravity.RIGHT) {
                 modeOptionsParams.gravity = Gravity.RIGHT;
             }
-        }
 
-        FrameLayout.LayoutParams modeOptionsToggleParams
-            = (FrameLayout.LayoutParams) mModeOptionsToggle.getLayoutParams();
-        if (isPortrait && modeOptionsToggleParams.gravity != BOTTOM_RIGHT) {
-            modeOptionsToggleParams.gravity = BOTTOM_RIGHT;
-        } else if (!isPortrait && modeOptionsToggleParams.gravity != TOP_RIGHT) {
-            modeOptionsToggleParams.gravity = TOP_RIGHT;
+            if (modeOptionsToggleParams.gravity != TOP_RIGHT) {
+                modeOptionsToggleParams.gravity = TOP_RIGHT;
+            }
+
+            // Rotate the three dots 90 to match portrait.
+            Matrix matrix = new Matrix();
+            matrix.setRotate(90, mThreeDots.getWidth() / 2 , mThreeDots.getHeight() / 2);
+            mThreeDots.setImageMatrix(matrix);
         }
 
         requestLayout();
