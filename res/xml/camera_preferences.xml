@@ -44,4 +44,13 @@
         android:key="pref_send_feedback"
         android:title="@string/setting_send_feedback" />
 
+    <!-- Open Source Licenses -->
+    <Preference
+        android:key="pref_open_source_licenses"
+        android:title="@string/open_source_licenses" >
+        <intent
+            android:targetClass="com.android.camera.app.LicensesActivity"
+            android:targetPackage="com.google.android.GoogleCamera" />
+    </Preference>
+
 </PreferenceScreen>

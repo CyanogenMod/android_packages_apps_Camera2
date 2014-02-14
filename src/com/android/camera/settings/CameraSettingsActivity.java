@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 
 import com.android.camera.util.FeedbackHelper;
+import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
 /**
@@ -66,6 +67,12 @@ public class CameraSettingsActivity extends FragmentActivity {
             super.onCreate(savedInstanceState);
             mFeedbackHelper = new FeedbackHelper(getActivity());
             addPreferencesFromResource(R.xml.camera_preferences);
+
+            // Only show open source licenses in GoogleCamera build.
+            if (!SettingsHelper.isOpenSourceLicensesShown()) {
+                Preference pref = findPreference("pref_open_source_licenses");
+                getPreferenceScreen().removePreference(pref);
+            }
 
             // Set-Up Feedback entry to launch the feedback flow on click.
             findPreference("pref_send_feedback").setOnPreferenceClickListener(
