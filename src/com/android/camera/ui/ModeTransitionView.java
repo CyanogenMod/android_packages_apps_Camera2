@@ -48,7 +48,7 @@ public class ModeTransitionView extends View {
 
     private static final int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
     private static final int ICON_FADE_OUT_DURATION_MS = 850;
-    private static final int FADE_OUT_DURATION_MS = 100;
+    private static final int FADE_OUT_DURATION_MS = 250;
 
     private static final int IDLE = 0;
     private static final int PULL_UP_SHADE = 1;
