@@ -445,7 +445,6 @@ public class ModeListView extends FrameLayout
             @Override
             public void onClick(View v) {
                 mModeSwitchListener.onSettingsSelected();
-                snapBack(false);
             }
         });
     }
