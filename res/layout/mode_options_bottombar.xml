@@ -78,7 +78,7 @@
               android:id="@+id/three_dots"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:scaleType="center"
+              android:scaleType="matrix"
               android:src="@drawable/ic_options_active"
               android:background="@null" />
           <include layout="@layout/indicators" />
