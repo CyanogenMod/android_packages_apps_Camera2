@@ -16,25 +16,14 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="pref_camera_picturesize_entry_20_7mp">20.7 ล้านพิกเซล</string>
-    <string name="pref_camera_picturesize_entry_18_7mp">18.7 ล้านพิกเซล</string>
-    <string name="pref_camera_picturesize_entry_13_1mp">13.1 ล้านพิกเซล</string>
     <string name="pref_camera_picturesize_entry_12_8mp">12.8 ล้านพิกเซล</string>
     <string name="pref_camera_picturesize_entry_12_7mp">12.7 ล้านพิกเซล</string>
     <string name="pref_camera_picturesize_entry_12mp">12 ล้านพิกเซล</string>
     <string name="pref_camera_picturesize_entry_11_5mp">11.5 ล้านพิกเซล</string>
     <string name="pref_camera_picturesize_entry_10_4mp">10.4 ล้านพิกเซล</string>
-    <string name="pref_camera_picturesize_entry_8_6mp_wide">8.6 ล้านพิกเซล (16:9)</string>
-    <string name="pref_camera_picturesize_entry_8_3mp_wide">8.3 ล้านพิกเซล (16:9)</string>
     <string name="pref_camera_picturesize_entry_7_7mp">7.7 ล้านพิกเซล</string>
-    <string name="pref_camera_picturesize_entry_6_4mp_wide">6.4 ล้านพิกเซล (16:9)</string>
-    <string name="pref_camera_picturesize_entry_6mp_wide">6 ล้านพิกเซล (16:9)</string>
     <string name="pref_camera_picturesize_entry_4_5mp">4.5 ล้านพิกเซล</string>
-    <string name="pref_camera_picturesize_entry_4_1mp_wide">4.1 ล้านพิกเซล (16:9)</string>
-    <string name="pref_camera_picturesize_entry_3_7mp_wide">3.7 ล้านพิกเซล (16:9)</string>
-    <string name="pref_camera_picturesize_entry_2_5mp_wide">2.5 ล้านพิกเซล (16:9)</string>
-    <string name="pref_camera_picturesize_entry_2_1mp_wide">2.1 ล้านพิกเซล (16:9)</string>
     <string name="pref_camera_picturesize_entry_1_9mp">1.9 ล้านพิกเซล</string>
-    <string name="pref_camera_picturesize_entry_1_5mp_wide">1.5 ล้านพิกเซล (16:9)</string>
     <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
     <string name="pref_camera_picturesize_entry_xga">XGA</string>
     <string name="pref_camera_picturesize_entry_svga">SVGA</string>
