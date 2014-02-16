@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2013 The CyanogenMod Project
+     Copyright (C) 2013-2014 The CyanogenMod Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
     <string-array name="pref_switch_entryvalues" translatable="false">
         <item>off</item>
         <item>on</item>
@@ -142,5 +141,4 @@
         <item>@string/setting_off_value</item>
         <item>@string/setting_on_value</item>
     </string-array>
-
 </resources>
