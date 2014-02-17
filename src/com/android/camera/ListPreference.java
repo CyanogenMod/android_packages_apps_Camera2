@@ -42,6 +42,7 @@ public class ListPreference extends CameraPreference {
 
     private CharSequence[] mEntries;
     private CharSequence[] mEntryValues;
+    private CharSequence[] mUnfilteredEntryValues;
     private CharSequence[] mLabels;
     private boolean mLoaded = false;
 
@@ -98,6 +99,7 @@ public class ListPreference extends CameraPreference {
 
     public void setEntryValues(CharSequence values[]) {
         mEntryValues = values == null ? new CharSequence[0] : values;
+        mUnfilteredEntryValues = values == null ? new CharSequence[0] : values;
     }
 
     public void setLabels(CharSequence labels[]) {
@@ -146,8 +148,19 @@ public class ListPreference extends CameraPreference {
         return -1;
     }
 
+    public int findUnfilteredIndexOfValue(String value) {
+        for (int i = 0, n = mUnfilteredEntryValues.length; i < n; ++i) {
+            if (CameraUtil.equals(mUnfilteredEntryValues[i], value)) return i;
+        }
+        return -1;
+    }
+
     public int getCurrentIndex() {
         return findIndexOfValue(getValue());
+    }
+
+    public int getCurrentUnfilteredIndex() {
+        return findUnfilteredIndexOfValue(getValue());
     }
 
     public String getEntry() {
@@ -173,29 +186,49 @@ public class ListPreference extends CameraPreference {
     public void filterUnsupported(List<String> supported) {
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
         ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+        ArrayList<CharSequence> labels = null;
+        if (mLabels.length > 0) {
+            labels = new ArrayList<CharSequence>();
+        }
         for (int i = 0, len = mEntryValues.length; i < len; i++) {
             if (supported.indexOf(mEntryValues[i].toString()) >= 0) {
                 entries.add(mEntries[i]);
                 entryValues.add(mEntryValues[i]);
+                if (labels != null) {
+                    labels.add(mLabels[i]);
+                }
             }
         }
         int size = entries.size();
         mEntries = entries.toArray(new CharSequence[size]);
         mEntryValues = entryValues.toArray(new CharSequence[size]);
+        if (labels != null) {
+            mLabels = labels.toArray(new CharSequence[size]);
+        }
     }
 
     public void filterDuplicated() {
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
         ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+        ArrayList<CharSequence> labels = null;
+        if (mLabels.length > 0) {
+            labels = new ArrayList<CharSequence>();
+        }
         for (int i = 0, len = mEntryValues.length; i < len; i++) {
             if (!entries.contains(mEntries[i])) {
                 entries.add(mEntries[i]);
                 entryValues.add(mEntryValues[i]);
+                if (labels != null) {
+                    labels.add(mLabels[i]);
+                }
             }
         }
         int size = entries.size();
         mEntries = entries.toArray(new CharSequence[size]);
         mEntryValues = entryValues.toArray(new CharSequence[size]);
+        if (labels != null) {
+            mLabels = labels.toArray(new CharSequence[size]);
+        }
     }
 
     public void print() {
