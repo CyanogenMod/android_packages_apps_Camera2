@@ -125,9 +125,16 @@ public class PhotoSphereHelper {
     }
 
     /**
-     * Get the resource id of the panorama indicator icon array.
+     * Get the resource id of the panorama orientation option icon array.
      */
-    public static int getPanoramaIndicatorArrayId() {
+    public static int getPanoramaOrientationOptionArrayId() {
+        return 0;
+    }
+
+    /**
+     * Get the resource id of the panorama orientation descriptions array.
+     */
+    public static int getPanoramaOrientationDescriptions() {
         return 0;
     }
 }
