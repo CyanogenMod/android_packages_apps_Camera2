@@ -265,18 +265,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean hideGridLines;
 
         /**
-         * Set true if the panorama horizontal option should be visible.
+         * Set true if the panorama orientation option should be visible.
          *
          * This option is not constrained by hardware limitations.
          */
-        public boolean enablePanoHorizontal;
-
-        /**
-         * Set true if the panorama vertical option should be visible.
-         *
-         * This option is not constrained by hardware limitations.
-         */
-        public boolean enablePanoVertical;
+        public boolean enablePanoOrientation;
 
         /** Intent UI */
 
@@ -300,46 +293,39 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         /** Mode options callbacks */
 
         /**
-         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * A {@link com.android.camera.ButtonManager.ButtonCallback}
          * that will be executed when the camera option is pressed. This
          * callback can be null.
          */
         public ButtonManager.ButtonCallback cameraCallback;
 
         /**
-         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * A {@link com.android.camera.ButtonManager.ButtonCallback}
          * that will be executed when the flash option is pressed. This
          * callback can be null.
          */
         public ButtonManager.ButtonCallback flashCallback;
 
         /**
-         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * A {@link com.android.camera.ButtonManager.ButtonCallback}
          * that will be executed when the hdr/hdr+ option is pressed. This
          * callback can be null.
          */
         public ButtonManager.ButtonCallback hdrCallback;
 
         /**
-         * A {@link android.com.android.camera.ButtonManager.ButtonCallback}
+         * A {@link com.android.camera.ButtonManager.ButtonCallback}
          * that will be executed when the grid lines option is pressed. This
          * callback can be null.
          */
         public ButtonManager.ButtonCallback gridLinesCallback;
 
         /**
-         * A {@link android.view.View.OnClickListener} that will execute
-         * when the panorama horizontal option is pressed.
+         * A {@link com.android.camera.ButtonManager.ButtonCallback}
+         * that will execute when the panorama orientation option is pressed.
          * This callback can be null.
          */
-        public View.OnClickListener panoHorizontalCallback;
-
-        /**
-         * A {@link android.view.View.OnClickListener} that will execute
-         * when the panorama vertical option is pressed.
-         * This callback can be null.
-         */
-        public View.OnClickListener panoVerticalCallback;
+        public ButtonManager.ButtonCallback panoOrientationCallback;
 
         /** Intent UI callbacks */
 
@@ -1493,22 +1479,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         }
 
-        if (bottomBarSpec.enablePanoHorizontal
-                && PhotoSphereHelper.getPanoramaHorizontalDrawableId() > 0) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_HORIZONTAL,
-                bottomBarSpec.panoHorizontalCallback,
-                PhotoSphereHelper.getPanoramaHorizontalDrawableId());
+        if (bottomBarSpec.enablePanoOrientation
+                && PhotoSphereHelper.getPanoramaOrientationOptionArrayId() > 0) {
+            buttonManager.enableButton(ButtonManager.BUTTON_PANO_ORIENTATION,
+                bottomBarSpec.panoOrientationCallback);
         } else {
-            buttonManager.hideButton(ButtonManager.BUTTON_PANO_HORIZONTAL);
-        }
-
-        if (bottomBarSpec.enablePanoVertical
-                && PhotoSphereHelper.getPanoramaVerticalDrawableId() > 0) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_PANO_VERTICAL,
-                bottomBarSpec.panoVerticalCallback,
-                PhotoSphereHelper.getPanoramaVerticalDrawableId());
-        } else {
-            buttonManager.hideButton(ButtonManager.BUTTON_PANO_VERTICAL);
+            buttonManager.hideButton(ButtonManager.BUTTON_PANO_ORIENTATION);
         }
 
         /** Intent UI */

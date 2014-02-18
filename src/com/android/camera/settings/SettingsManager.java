@@ -834,6 +834,15 @@ public class SettingsManager {
         return gridLinesOn.equals(SettingsManager.VALUE_ON);
     }
 
+    /**
+     * Returns whether pano orientation is horizontal.
+     */
+    public boolean isPanoOrientationHorizontal() {
+        String orientation = get(SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
+        String horizontal = mContext.getString(R.string.pano_orientation_horizontal);
+        return orientation.equals(horizontal);
+    }
+
     // TODO: refactor this into a separate utils module.
 
     /**

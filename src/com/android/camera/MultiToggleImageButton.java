@@ -108,15 +108,19 @@ public class MultiToggleImageButton extends ImageButton {
      */
     public void setState(int state, boolean callListener) {
         mState = state;
-        setImageResource(mImageIds[mState]);
-        String oldContentDescription = String.valueOf(getContentDescription());
-        String newContentDescription = getResources().getString(mDescIds[mState]);
-        if (oldContentDescription != null && !oldContentDescription.isEmpty()
-                && !oldContentDescription.equals(newContentDescription)) {
-            setContentDescription(newContentDescription);
-            String announceChange = getResources().getString(
+        if (mImageIds != null) {
+            setImageResource(mImageIds[mState]);
+        }
+        if (mDescIds != null) {
+            String oldContentDescription = String.valueOf(getContentDescription());
+            String newContentDescription = getResources().getString(mDescIds[mState]);
+            if (oldContentDescription != null && !oldContentDescription.isEmpty()
+                    && !oldContentDescription.equals(newContentDescription)) {
+                setContentDescription(newContentDescription);
+                String announceChange = getResources().getString(
                     R.string.button_change_announcement, newContentDescription);
-            announceForAccessibility(announceChange);
+                announceForAccessibility(announceChange);
+            }
         }
         super.setImageLevel(mLevel);
         if (callListener && mOnStateChangeListener != null) {
@@ -147,11 +151,13 @@ public class MultiToggleImageButton extends ImageButton {
             R.styleable.MultiToggleImageButton,
             0, 0);
         int imageIds = a.getResourceId(R.styleable.MultiToggleImageButton_imageIds, 0);
-        overrideImageIds(imageIds);
-
+        if (imageIds > 0) {
+            overrideImageIds(imageIds);
+        }
         int descIds = a.getResourceId(R.styleable.MultiToggleImageButton_contentDescriptionIds, 0);
-        overrideContentDescriptions(descIds);
-
+        if (descIds > 0) {
+            overrideContentDescriptions(descIds);
+        }
         a.recycle();
     }
 

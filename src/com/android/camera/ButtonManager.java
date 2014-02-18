@@ -24,7 +24,7 @@ import com.android.camera.ShutterButton;
 import com.android.camera.app.AppController;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
-
+import com.android.camera.util.PhotoSphereHelper;
 
 import com.android.camera2.R;
 
@@ -43,9 +43,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_DONE = 7;
     public static final int BUTTON_RETAKE = 8;
     public static final int BUTTON_REVIEW = 9;
-    public static final int BUTTON_PANO_HORIZONTAL = 10;
-    public static final int BUTTON_PANO_VERTICAL = 11;
-    public static final int BUTTON_GRID_LINES = 12;
+    public static final int BUTTON_PANO_ORIENTATION = 10;
+    public static final int BUTTON_GRID_LINES = 11;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -60,8 +59,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private MultiToggleImageButton mButtonFlash;
     private MultiToggleImageButton mButtonHdr;
     private MultiToggleImageButton mButtonGridlines;
-    private ImageButton mButtonPanoVertical;
-    private ImageButton mButtonPanoHorizontal;
+    private MultiToggleImageButton mButtonPanoOrientation;
 
     /** Intent UI buttons. */
     private ImageButton mButtonCancel;
@@ -135,10 +133,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
         mButtonGridlines
             = (MultiToggleImageButton) root.findViewById(R.id.grid_lines_toggle_button);
-        mButtonPanoVertical
-            = (ImageButton) root.findViewById(R.id.pano_vertical_button);
-        mButtonPanoHorizontal
-            = (ImageButton) root.findViewById(R.id.pano_horizontal_button);
+        mButtonPanoOrientation
+            = (MultiToggleImageButton) root.findViewById(R.id.pano_orientation_toggle_button);
         mButtonCancel
             = (ImageButton) root.findViewById(R.id.cancel_button);
         mButtonDone
@@ -178,6 +174,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case SettingsManager.SETTING_CAMERA_GRID_LINES: {
                 index = mSettingsManager.getStringValueIndex(id);
                 button = getButtonOrError(BUTTON_GRID_LINES);
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_PANO_ORIENTATION);
                 break;
             }
             default: {
@@ -239,6 +240,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Grid lines button could not be found.");
                 }
                 return mButtonGridlines;
+            case BUTTON_PANO_ORIENTATION:
+                if (mButtonPanoOrientation == null) {
+                    throw new IllegalStateException("Pano orientation button could not be found.");
+                }
+                return mButtonPanoOrientation;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -251,16 +257,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      */
     private ImageButton getImageButtonOrError(int buttonId) {
         switch (buttonId) {
-            case BUTTON_PANO_VERTICAL:
-                if (mButtonPanoVertical == null) {
-                    throw new IllegalStateException("Flash button could not be found.");
-                }
-                return (ImageButton) mButtonPanoVertical;
-            case BUTTON_PANO_HORIZONTAL:
-                if (mButtonPanoHorizontal == null) {
-                    throw new IllegalStateException("Flash button could not be found.");
-                }
-                return (ImageButton) mButtonPanoHorizontal;
             case BUTTON_CANCEL:
                 if (mButtonCancel == null) {
                     throw new IllegalStateException("Cancel button could not be found.");
@@ -310,6 +306,10 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 break;
             case BUTTON_GRID_LINES:
                 enableGridLinesButton(button, cb, R.array.grid_lines_icons);
+                break;
+            case BUTTON_PANO_ORIENTATION:
+                enablePanoOrientationButton(button, cb,
+                    PhotoSphereHelper.getPanoramaOrientationOptionArrayId());
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -578,6 +578,33 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
         int index = mSettingsManager.getStringValueIndex(
             SettingsManager.SETTING_CAMERA_GRID_LINES);
+        button.setState(index >= 0 ? index : 0, true);
+    }
+
+   /**
+     * Enable a panorama orientation button.
+     */
+    private void enablePanoOrientationButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+        button.overrideContentDescriptions(
+            PhotoSphereHelper.getPanoramaOrientationDescriptions());
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(
+                    SettingsManager.SETTING_CAMERA_PANO_ORIENTATION, state);
+                if (cb != null) {
+                    cb.onStateChanged(state);
+                }
+            }
+        });
+
+        int index = mSettingsManager.getStringValueIndex(
+            SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
         button.setState(index >= 0 ? index : 0, true);
     }
 }
