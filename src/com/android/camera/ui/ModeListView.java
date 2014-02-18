@@ -444,7 +444,17 @@ public class ModeListView extends FrameLayout
         mSettingsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mModeSwitchListener.onSettingsSelected();
+                // Post this callback to make sure current user interaction has
+                // been reflected in the UI. Specifically, the pressed state gets
+                // unset after click happens. In order to ensure the pressed state
+                // gets unset in UI before getting in the low frame rate settings
+                // activity launch stage, the settings selected callback is posted.
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mModeSwitchListener.onSettingsSelected();
+                    }
+                });
             }
         });
     }
