@@ -109,6 +109,11 @@ public class VideoModule extends CameraModule
     // module fields
     private CameraActivity mActivity;
     private boolean mPaused;
+
+    // if, during and intent capture, the activity is paused (e.g. when app switching or reviewing a
+    // shot video), we don't want the bottom bar intent ui to reset to the capture button
+    private boolean mDontResetIntentUiOnResume;
+
     private int mCameraId;
     private Parameters mParameters;
 
@@ -360,7 +365,11 @@ public class VideoModule extends CameraModule
 
     private void initializeControlByIntent() {
         if (isVideoCaptureIntent()) {
-            mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
+            if (!mDontResetIntentUiOnResume) {
+                mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
+            }
+            // reset the flag
+            mDontResetIntentUiOnResume = false;
         }
     }
 
@@ -495,7 +504,6 @@ public class VideoModule extends CameraModule
     private final View.OnClickListener mReviewCallback = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
             onReviewPlayClicked(v);
         }
     };
@@ -1295,8 +1303,11 @@ public class VideoModule extends CameraModule
                 Log.v(TAG, "stopVideoRecording: Setting current video filename: "
                         + mCurrentVideoFilename);
                 float duration = (SystemClock.uptimeMillis() - mRecordingStartTime) / 1000;
+                String statisticFilename = (mCurrentVideoFilename == null
+                        ? "INTENT"
+                        : mCurrentVideoFilename);
                 UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
-                        mCurrentVideoFilename, mParameters, duration);
+                        statisticFilename, mParameters, duration);
                 AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
                         mActivity.getAndroidContext().getString(R.string
                                 .video_recording_stopped));
@@ -1551,6 +1562,10 @@ public class VideoModule extends CameraModule
 
     @Override
     public void resume() {
+        if (isVideoCaptureIntent()) {
+            mDontResetIntentUiOnResume = mPaused;
+        }
+
         mPaused = false;
         installIntentFilter();
         mUI.enableShutter(false);
