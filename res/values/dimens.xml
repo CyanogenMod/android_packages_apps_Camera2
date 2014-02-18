@@ -166,7 +166,7 @@
     <dimen name="filmstrip_bottom_control_spacing">16dp</dimen>
 
     <!-- Bottom bar ui -->
-    <dimen name="bottom_bar_height_min">80dp</dimen>
+    <dimen name="bottom_bar_height_min">84dp</dimen>
     <dimen name="bottom_bar_height_max">120dp</dimen>
     <dimen name="bottom_bar_height_optimal">96dp</dimen>
     <dimen name="bottom_bar_button_spacing">48dp</dimen>
