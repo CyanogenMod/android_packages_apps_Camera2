@@ -318,8 +318,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Svítilna vypnuta"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Zadní fotoaparát"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Přední fotoaparát"</string>
-    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Čáry mřížky vypnuty"</string>
-    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Čáry mřížky zapnuty"</string>
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Mřížka vypnuta"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Mřížka zapnuta"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Další možnosti"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Zrušit"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Hotovo"</string>
@@ -335,4 +335,5 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Výchozí fotoaparát"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Odeslat názor"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Zpracovávání HDR+…"</string>
+    <string name="open_source_licenses" msgid="1767642450539610653">"Licence open source"</string>
 </resources>

@@ -335,4 +335,5 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Kamera Default"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Kirim Masukan"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Memproses HDR+ …"</string>
+    <string name="open_source_licenses" msgid="1767642450539610653">"Lisensi Sumber Terbuka"</string>
 </resources>
