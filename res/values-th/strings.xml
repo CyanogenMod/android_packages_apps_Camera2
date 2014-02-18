@@ -96,8 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"เลือกกล้องถ่ายรูป"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"กลับ"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"ด้านหน้า"</string>
-    <!-- no translation found for pref_camera_save_location_title (2344235620113384017) -->
-    <skip />
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"บันทึกตำแหน่ง"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ตำแหน่ง"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"ตัวจับเวลาถอยหลัง"</string>
   <plurals name="pref_camera_timer_entry">
@@ -336,4 +335,5 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"กล้องถ่ายรูปเริ่มต้น"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"ส่งความคิดเห็น"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"กำลังดำเนินการ HDR+ …"</string>
+    <string name="open_source_licenses" msgid="1767642450539610653">"สัญญาอนุญาตโอเพนซอร์ส"</string>
 </resources>

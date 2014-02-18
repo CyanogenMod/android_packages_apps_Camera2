@@ -96,8 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"選擇相機"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"後置"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"前置"</string>
-    <!-- no translation found for pref_camera_save_location_title (2344235620113384017) -->
-    <skip />
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"儲存位置資訊"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"地點"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"倒數計時器"</string>
   <plurals name="pref_camera_timer_entry">
@@ -336,4 +335,5 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"預設相機"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"意見回饋"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"正在處理 HDR+…"</string>
+    <string name="open_source_licenses" msgid="1767642450539610653">"開放原始碼授權"</string>
 </resources>

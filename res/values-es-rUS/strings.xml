@@ -335,4 +335,6 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Cámara predeterminada"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Enviar comentarios"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Procesando HDR+…"</string>
+    <!-- no translation found for open_source_licenses (1767642450539610653) -->
+    <skip />
 </resources>
