@@ -109,6 +109,7 @@ import com.android.camera.util.GalleryHelper;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.ReleaseDialogHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera2.R;
@@ -1290,6 +1291,7 @@ public class CameraActivity extends Activity
         findViewById(R.id.activity_root_view)
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         mPanoramaViewHelper.onResume();
+        ReleaseDialogHelper.maybeShowDialog(this, mSettingsManager);
     }
 
     @Override

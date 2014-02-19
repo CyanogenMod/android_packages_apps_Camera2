@@ -127,6 +127,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
         mKeyMap.put(SettingsManager.KEY_CAMERA_GRID_LINES,
                 SettingsManager.SETTING_CAMERA_GRID_LINES);
+        mKeyMap.put(SettingsManager.KEY_RELEASE_DIALOG_LAST_SHOWN_VERSION,
+                SettingsManager.SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION);
     }
 
     /**
@@ -205,6 +207,8 @@ public class SettingsCache {
             return SettingsManager.getPanoOrientationSetting(mContext);
         case SettingsManager.SETTING_CAMERA_GRID_LINES:
             return SettingsManager.getGridLinesSetting(mContext);
+        case SettingsManager.SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION:
+            return SettingsManager.getReleaseDialogLastShownVersionSetting(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }

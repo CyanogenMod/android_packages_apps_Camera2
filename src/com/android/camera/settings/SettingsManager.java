@@ -308,6 +308,7 @@ public class SettingsManager {
     public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 21;
     public static final int SETTING_CAMERA_PANO_ORIENTATION = 22;
     public static final int SETTING_CAMERA_GRID_LINES = 23;
+    public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 24;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -339,6 +340,8 @@ public class SettingsManager {
             "pref_camera_module_last_used_index";
     public static final String KEY_CAMERA_PANO_ORIENTATION = "pref_camera_pano_orientation";
     public static final String KEY_CAMERA_GRID_LINES = "pref_camera_grid_lines";
+    public static final String KEY_RELEASE_DIALOG_LAST_SHOWN_VERSION =
+            "pref_release_dialog_last_shown_version";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -805,6 +808,11 @@ public class SettingsManager {
                 R.array.pref_camera_gridlines_entryvalues);
         return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue,
                 KEY_CAMERA_GRID_LINES, values, FLUSH_OFF);
+    }
+
+    public static Setting getReleaseDialogLastShownVersionSetting(Context context) {
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, null,
+                KEY_RELEASE_DIALOG_LAST_SHOWN_VERSION, null, FLUSH_OFF);
     }
 
     // Utilities.
