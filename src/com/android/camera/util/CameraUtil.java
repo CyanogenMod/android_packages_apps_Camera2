@@ -1211,4 +1211,23 @@ public class CameraUtil {
         }
         return cameraModeParent[modeIndex];
     }
+
+    /**
+     * Gets the mode cover icon resource id of a specific mode.
+     *
+     * @param modeIndex index of the mode
+     * @param context current context
+     * @return icon resource id if the index is valid, otherwise 0
+     */
+    public static int getCameraModeCoverIconResId(int modeIndex, Context context) {
+        // Find the camera mode icon using id
+        TypedArray cameraModesIcons = context.getResources()
+                .obtainTypedArray(R.array.camera_mode_cover_icon);
+        if (modeIndex >= cameraModesIcons.length() || modeIndex < 0) {
+            // Mode index not found
+            Log.e(TAG, "Invalid mode index: " + modeIndex);
+            return 0;
+        }
+        return cameraModesIcons.getResourceId(modeIndex, 0);
+    }
 }

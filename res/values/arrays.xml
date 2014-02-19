@@ -610,6 +610,16 @@
         <item>""</item>
     </string-array>
 
+    <array name="camera_mode_cover_icon">
+        <item>@drawable/ic_camera_blanket</item>
+        <item>@drawable/ic_video_blanket</item>
+        <item>@drawable/ic_refocus_blanket</item>
+        <item>@drawable/ic_photo_sphere_blanket</item>
+        <item>@drawable/ic_pano_blanket</item>
+        <item>@drawable/ic_camera_blanket</item>
+        <item>@drawable/ic_camera_blanket</item>
+    </array>
+
     <array name="camera_mode_icon">
         <item>@drawable/ic_camera_normal</item>
         <item>@drawable/ic_video_normal</item>
