@@ -35,7 +35,7 @@
     <ImageButton
         android:id="@+id/filmstrip_bottom_control_share"
         style="@style/FilmstripBottomControlButton"
-        android:src="@drawable/ic_menu_share_holo_light"
+        android:src="@drawable/ic_menu_share"
         android:visibility="invisible"
         android:contentDescription="@string/share_button_description" />
 
@@ -69,7 +69,7 @@
         <ImageButton
             android:id="@+id/filmstrip_bottom_control_edit"
             style="@style/FilmstripBottomControlButton"
-            android:src="@drawable/ic_menu_edit_holo_dark"
+            android:src="@drawable/ic_menu_edit"
             android:visibility="gone"
             android:contentDescription="@string/edit_button_description" />
 
@@ -84,7 +84,7 @@
     <ImageButton
         android:id="@+id/filmstrip_bottom_control_delete"
         style="@style/FilmstripBottomControlButton"
-        android:src="@drawable/ic_menu_trash_holo_light"
+        android:src="@drawable/ic_menu_trash"
         android:visibility="invisible"
         android:contentDescription="@string/delete_button_description" />
 
