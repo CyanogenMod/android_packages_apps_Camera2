@@ -25,6 +25,9 @@
       android:orientation="horizontal"
       android:background="@drawable/bg_options_indicator" >
     <ImageView
+        android:id="@+id/pano_indicator"
+        style="@style/IndicatorIcon" />
+    <ImageView
         android:id="@+id/hdr_indicator"
         style="@style/IndicatorIcon" />
     <ImageView
