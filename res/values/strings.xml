@@ -677,7 +677,7 @@ CHAR LIMIT=NONE] -->
     <!-- Text shown in the camera mode options list for putting camera in panorama mode [CHAR LIMIT=25] -->
     <string name="mode_panorama">Panorama</string>
     <!-- Text shown in the camera mode options list for putting camera in refocus mode [CHAR LIMIT=25] -->
-    <string name="mode_refocus">Foreground Focus</string>
+    <string name="mode_refocus">Lens Blur</string>
 
     <!-- Accessibility text for switching to camera settings [CHAR_LIMIT=NONE] -->
     <string name="mode_settings_desc">Open Settings</string>
@@ -698,12 +698,7 @@ CHAR LIMIT=NONE] -->
     <!-- Accessibility text for switching to panorama mode [CHAR_LIMIT=NONE] -->
     <string name="mode_panorama_desc">Switch to Panorama Mode</string>
     <!-- Accessibility text for switching to refocus mode [CHAR_LIMIT=NONE] -->
-    <string name="mode_refocus_desc">Switch to Foreground Focus Mode</string>
-
-
-    <!-- Accessibility text for refocus toggle button states [CHAR_LIMIT=NONE] -->
-    <string name="refocus_off_desc">Foreground Focus off</string>
-    <string name="refocus_on_desc">Foreground Focus on</string>
+    <string name="mode_refocus_desc">Switch to Lens Blur Mode</string>
 
     <!-- Accessibility text for settings toggle button states [CHAR_LIMIT=NONE] -->
     <string name="settings_open_desc">Open settings</string>
