@@ -137,4 +137,11 @@ public class PhotoSphereHelper {
     public static int getPanoramaOrientationDescriptions() {
         return 0;
     }
+
+    /**
+     * Get the resource id of the panorama orientation indicator array.
+     */
+    public static int getPanoramaOrientationIndicatorArrayId() {
+        return 0;
+    }
 }

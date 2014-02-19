@@ -48,11 +48,13 @@ public class IndicatorIconController
 
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;
+    private ImageView mPanoIndicator;
 
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrPlusIndicatorIcons;
     private TypedArray mHdrIndicatorIcons;
+    private TypedArray mPanoIndicatorIcons;
 
     private OnIndicatorVisibilityChangedListener mListener;
 
@@ -63,16 +65,23 @@ public class IndicatorIconController
         Context context = controller.getAndroidContext();
 
         mFlashIndicator = (ImageView) root.findViewById(R.id.flash_indicator);
-        mHdrIndicator = (ImageView) root.findViewById(R.id.hdr_indicator);
-
         mFlashIndicatorPhotoIcons = context.getResources().obtainTypedArray(
             R.array.camera_flashmode_indicator_icons);
         mFlashIndicatorVideoIcons = context.getResources().obtainTypedArray(
             R.array.video_flashmode_indicator_icons);
+
+        mHdrIndicator = (ImageView) root.findViewById(R.id.hdr_indicator);
         mHdrPlusIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_plus_indicator_icons);
         mHdrIndicatorIcons = context.getResources().obtainTypedArray(
             R.array.pref_camera_hdr_indicator_icons);
+
+        int panoIndicatorArrayId = PhotoSphereHelper.getPanoramaOrientationIndicatorArrayId();
+        if (panoIndicatorArrayId > 0) {
+            mPanoIndicator = (ImageView) root.findViewById(R.id.pano_indicator);
+            mPanoIndicatorIcons =
+                context.getResources().obtainTypedArray(panoIndicatorArrayId);
+        }
     }
 
     /**
@@ -123,6 +132,10 @@ public class IndicatorIconController
                 syncHdrIndicator();
                 break;
             }
+            case ButtonManager.BUTTON_PANO_ORIENTATION: {
+                syncPanoIndicator();
+                break;
+            }
             default:
                 // Do nothing.  The indicator doesn't care
                 // about button that don't correspond to indicators.
@@ -136,6 +149,21 @@ public class IndicatorIconController
     public void syncIndicators() {
         syncFlashIndicator();
         syncHdrIndicator();
+        syncPanoIndicator();
+    }
+
+    /**
+     * If the new visibility is different from the current visibility
+     * on a view, change the visibility and call any registered
+     * {@link OnIndicatorVisibilityChangedListener}.
+     */
+    private void changeVisibility(View view, int visibility) {
+        if (view.getVisibility() != visibility) {
+            view.setVisibility(visibility);
+            if (mListener != null) {
+                mListener.onIndicatorVisibilityChanged(view);
+            }
+        }
     }
 
     /**
@@ -160,12 +188,7 @@ public class IndicatorIconController
                                   mFlashIndicator, mFlashIndicatorPhotoIcons, false);
             }
         } else {
-            if (mFlashIndicator.getVisibility() != View.GONE) {
-                mFlashIndicator.setVisibility(View.GONE);
-                if (mListener != null) {
-                    mListener.onIndicatorVisibilityChanged(mFlashIndicator);
-                }
-            }
+            changeVisibility(mFlashIndicator, View.GONE);
         }
     }
 
@@ -187,12 +210,27 @@ public class IndicatorIconController
                               SettingsManager.SETTING_CAMERA_HDR,
                               mHdrIndicator, mHdrIndicatorIcons, false);
         } else {
-            if (mHdrIndicator.getVisibility() != View.GONE) {
-                mHdrIndicator.setVisibility(View.GONE);
-                if (mListener != null) {
-                    mListener.onIndicatorVisibilityChanged(mHdrIndicator);
-                }
-            }
+            changeVisibility(mHdrIndicator, View.GONE);
+        }
+    }
+
+    /**
+     * Sync the icon and the visibility of the pano indicator.
+     */
+    private void syncPanoIndicator() {
+        if (mPanoIndicator == null) {
+            Log.w(TAG, "Trying to sync a pano indicator that is not initialized.");
+            return;
+        }
+
+        ButtonManager buttonManager = mController.getButtonManager();
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_PANO_ORIENTATION)
+                && buttonManager.isVisible(ButtonManager.BUTTON_PANO_ORIENTATION)) {
+            setIndicatorState(mController.getSettingsManager(),
+                              SettingsManager.SETTING_CAMERA_PANO_ORIENTATION,
+                              mPanoIndicator, mPanoIndicatorIcons, true);
+        } else {
+            changeVisibility(mPanoIndicator, View.GONE);
         }
     }
 
@@ -223,19 +261,9 @@ public class IndicatorIconController
         // Set the indicator visible if not in default state.
         boolean visibilityChanged = false;
         if (!showDefault && settingsManager.isDefault(id)) {
-            if (imageView.getVisibility() != View.GONE) {
-                imageView.setVisibility(View.GONE);
-                visibilityChanged = true;
-            }
+            changeVisibility(imageView, View.GONE);
         } else {
-            if (imageView.getVisibility() != View.VISIBLE) {
-                imageView.setVisibility(View.VISIBLE);
-                visibilityChanged = true;
-            }
-        }
-
-        if (mListener != null && visibilityChanged) {
-            mListener.onIndicatorVisibilityChanged(imageView);
+            changeVisibility(imageView, View.VISIBLE);
         }
     }
 
@@ -252,6 +280,10 @@ public class IndicatorIconController
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
                 syncHdrIndicator();
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
+                syncPanoIndicator();
                 break;
             }
             default: {
