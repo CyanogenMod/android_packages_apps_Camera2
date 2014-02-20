@@ -1423,13 +1423,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_CAMERA);
         }
 
-        if (bottomBarSpec.hideFlash) {
+        boolean flashBackCamera = mController.getSettingsManager().getBoolean(
+            SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA);
+        if (bottomBarSpec.hideFlash || !flashBackCamera) {
             buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
         } else {
             if (hardwareSpec.isFlashSupported()) {
-                if (bottomBarSpec.enableFlash && settingsManager.isCameraBackFacing()) {
+                if (bottomBarSpec.enableFlash) {
                     buttonManager.enableButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
-                } else if (bottomBarSpec.enableTorchFlash && settingsManager.isCameraBackFacing()) {
+                } else if (bottomBarSpec.enableTorchFlash) {
                     buttonManager.enableButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
