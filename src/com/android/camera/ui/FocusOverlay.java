@@ -77,6 +77,9 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mFocusOuterRing.setBounds(x - mFocusOuterRingSize / 2, y - mFocusOuterRingSize / 2,
                 x + mFocusOuterRingSize / 2, y + mFocusOuterRingSize / 2);
         mCurrentRunIsAutoFocus = isAutoFocus;
+        if (getVisibility() != VISIBLE) {
+            setVisibility(VISIBLE);
+        }
     }
 
     @Override
