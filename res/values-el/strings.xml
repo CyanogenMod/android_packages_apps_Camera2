@@ -292,7 +292,8 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Time Lapse"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Ευρυγώνιος"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Πανόραμα"</string>
-    <string name="mode_refocus" msgid="7436904361494165785">"Εστίαση στο προσκήνιο"</string>
+    <!-- no translation found for mode_refocus (172192967119469061) -->
+    <skip />
     <string name="mode_settings_desc" msgid="1189966170303887131">"Άνοιγμα ρυθμίσεων"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Εναλλαγή σε λειτουργία φωτογραφικής μηχανής"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Εναλλαγή σε βιντεοκάμερα"</string>
@@ -302,9 +303,8 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Εναλλαγή σε λειτουργία παρέλευσης χρόνου"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Εναλλαγή σε ευρυγώνια λειτουργία"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Αλλαγή σε λειτουργία πανοράματος"</string>
-    <string name="mode_refocus_desc" msgid="8632866513335038216">"Εναλλαγή σε λειτουργία εστίασης στο προσκήνιο"</string>
-    <string name="refocus_off_desc" msgid="4043473941193970147">"Εστίαση στο προσκήνιο ανενεργή"</string>
-    <string name="refocus_on_desc" msgid="2549978881191009668">"Εστίαση στο προσκήνιο ενεργή"</string>
+    <!-- no translation found for mode_refocus_desc (6171183297515508465) -->
+    <skip />
     <string name="settings_open_desc" msgid="6914471293841793766">"Άνοιγμα ρυθμίσεων"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Κλείσιμο ρυθμίσεων"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus ανενεργό"</string>
