@@ -395,6 +395,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
+    private View mShutterButton;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
     private boolean mShouldShowShimmy = false;
@@ -835,6 +836,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         progress = 1 - progress;
         float interpolatedProgress = Gusterpolator.INSTANCE.getInterpolation(progress);
         mModeOptionsToggle.setAlpha(interpolatedProgress);
+        // Change shutter button alpha linearly based on the mode list open progress:
+        // set the alpha to disabled alpha when list is fully open, to enabled alpha
+        // when the list is fully closed.
+        mShutterButton.setAlpha(progress * ShutterButton.ALPHA_WHEN_ENABLED
+                + (1 - progress) * ShutterButton.ALPHA_WHEN_DISABLED);
     }
 
     @Override
@@ -842,6 +848,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         // Make sure the alpha on mode options ellipse is reset when mode drawer
         // is closed.
         mModeOptionsToggle.setAlpha(1f);
+        mShutterButton.setAlpha(ShutterButton.ALPHA_WHEN_ENABLED);
     }
 
     /**
@@ -1003,6 +1010,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
         mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
+        mShutterButton = mCameraRootView.findViewById(R.id.shutter_button);
     }
 
     /**

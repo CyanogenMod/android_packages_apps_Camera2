@@ -29,6 +29,8 @@ import android.widget.ImageView;
  */
 public class ShutterButton extends ImageView {
 
+    public static final float ALPHA_WHEN_ENABLED = 1f;
+    public static final float ALPHA_WHEN_DISABLED = 0.2f;
     private boolean mTouchEnabled = true;
 
     /**
