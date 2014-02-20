@@ -292,7 +292,8 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Pospešena reprodukcija"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Široki kot"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="7436904361494165785">"Izostritev v ospredju"</string>
+    <!-- no translation found for mode_refocus (172192967119469061) -->
+    <skip />
     <string name="mode_settings_desc" msgid="1189966170303887131">"Odpri nastavitve"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Preklopi v osnovni način fotoaparata"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Preklopi v način kamere"</string>
@@ -302,9 +303,8 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Preklopi v način pospešene reprodukcije"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Preklopi v širokokotni način"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Preklopi v panoramski način"</string>
-    <string name="mode_refocus_desc" msgid="8632866513335038216">"Preklop v način izostritve v ospredju"</string>
-    <string name="refocus_off_desc" msgid="4043473941193970147">"Izostritev v ospredju izklopljena"</string>
-    <string name="refocus_on_desc" msgid="2549978881191009668">"Izostritev v ospredju vklopljena"</string>
+    <!-- no translation found for mode_refocus_desc (6171183297515508465) -->
+    <skip />
     <string name="settings_open_desc" msgid="6914471293841793766">"Odpri nastavitve"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Zapri nastavitve"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"Način HDR Plus izklopljen"</string>

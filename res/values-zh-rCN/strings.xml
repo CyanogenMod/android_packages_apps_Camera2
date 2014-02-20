@@ -292,7 +292,8 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"缩时拍摄"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"广角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"全景图"</string>
-    <string name="mode_refocus" msgid="7436904361494165785">"前景聚焦"</string>
+    <!-- no translation found for mode_refocus (172192967119469061) -->
+    <skip />
     <string name="mode_settings_desc" msgid="1189966170303887131">"打开设置"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"切换到相机模式"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"切换到摄像机模式"</string>
@@ -302,9 +303,8 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"切换到缩时拍摄模式"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"切换到广角模式"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"切换到全景模式"</string>
-    <string name="mode_refocus_desc" msgid="8632866513335038216">"切换到前景聚焦模式"</string>
-    <string name="refocus_off_desc" msgid="4043473941193970147">"前景聚焦已关闭"</string>
-    <string name="refocus_on_desc" msgid="2549978881191009668">"前景聚焦已打开"</string>
+    <!-- no translation found for mode_refocus_desc (6171183297515508465) -->
+    <skip />
     <string name="settings_open_desc" msgid="6914471293841793766">"打开设置"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"关闭设置"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus已关闭"</string>
@@ -335,6 +335,5 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"默认相机"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"发送反馈"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"正在处理HDR+…"</string>
-    <!-- no translation found for open_source_licenses (1767642450539610653) -->
-    <skip />
+    <string name="open_source_licenses" msgid="1767642450539610653">"开放源代码许可"</string>
 </resources>
