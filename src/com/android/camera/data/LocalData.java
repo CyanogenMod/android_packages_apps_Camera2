@@ -157,7 +157,8 @@ public interface LocalData extends ImageData {
     String getMimeType();
 
     /**
-     * Return media data (such as EXIF) for the item.
+     * @return The media details (such as EXIF) for the data. {@code null} if
+     * not available for the data.
      */
     MediaDetails getMediaDetails(Context context);
 

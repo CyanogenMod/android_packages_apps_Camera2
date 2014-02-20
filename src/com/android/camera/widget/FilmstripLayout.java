@@ -404,6 +404,11 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         }
 
         @Override
+        public void onLongPress(float x, float y) {
+            mFilmstripGestureListener.onLongPress(x, y);
+        }
+
+        @Override
         public void onScaleEnd() {
             if (mFilmstripContentLayout.getTranslationX() == 0f) {
                 mFilmstripGestureListener.onScaleEnd();

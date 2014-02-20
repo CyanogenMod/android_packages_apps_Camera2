@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -85,6 +86,7 @@ import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalDataUtil;
 import com.android.camera.data.LocalMediaObserver;
+import com.android.camera.data.MediaDetails;
 import com.android.camera.data.PanoramaMetadataLoader;
 import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
@@ -101,6 +103,7 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
+import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.PreviewStatusListener;
@@ -491,7 +494,21 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onDataPromoted(int dataID) {
+                public void onFocusedDataLongPressed(int dataId) {
+                    final LocalData data = mDataAdapter.getLocalData(dataId);
+                    if (data == null) {
+                        return;
+                    }
+                    MediaDetails details = data.getMediaDetails(getAndroidContext());
+                    if (details == null) {
+                        return;
+                    }
+                    Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
+                    detailDialog.show();
+                }
+
+                @Override
+                public void onFocusedDataPromoted(int dataID) {
                     UsageStatistics.photoInteraction(
                             UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
                             eventprotos.CameraEvent.InteractionType.DELETE,
@@ -501,7 +518,7 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
-                public void onDataDemoted(int dataID) {
+                public void onFocusedDataDemoted(int dataID) {
                     UsageStatistics.photoInteraction(
                             UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
                             eventprotos.CameraEvent.InteractionType.DELETE,

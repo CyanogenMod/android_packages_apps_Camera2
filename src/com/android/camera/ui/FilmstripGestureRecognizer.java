@@ -36,6 +36,7 @@ public class FilmstripGestureRecognizer {
         boolean onScale(float focusX, float focusY, float scale);
         boolean onDown(float x, float y);
         boolean onUp(float x, float y);
+        void onLongPress(float x, float y);
         void onScaleEnd();
     }
 
@@ -63,6 +64,11 @@ public class FilmstripGestureRecognizer {
 
     private class MyGestureListener
                 extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public void onLongPress(MotionEvent e) {
+            mListener.onLongPress(e.getX(), e.getY());
+        }
+
         @Override
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {
