@@ -297,6 +297,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
         if (mListener != null) {
             mListener.onDataInserted(pos, data);
         }
+        if (mLocalDataListener != null) {
+            mLocalDataListener.onNewDataAdded(data);
+        }
     }
 
     /** Update all the data */
