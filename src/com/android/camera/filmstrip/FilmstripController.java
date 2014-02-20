@@ -164,7 +164,7 @@ public interface FilmstripController {
          *
          * @param dataID The ID of the promoted data.
          */
-        public void onDataPromoted(int dataID);
+        public void onFocusedDataPromoted(int dataID);
 
         /**
          * Callback when the data item is demoted. A data is promoted if the user
@@ -172,7 +172,14 @@ public interface FilmstripController {
          *
          * @param dataID The ID of the demoted data.
          */
-        public void onDataDemoted(int dataID);
+        public void onFocusedDataDemoted(int dataID);
+
+        /**
+         * Callback when the data item is long-pressed.
+         *
+         * @param dataID The ID of the long-pressed data.
+         */
+        public void onFocusedDataLongPressed(int dataID);
 
         /**
          * Called when all the data has been reloaded.

@@ -1661,13 +1661,13 @@ public class FilmstripView extends ViewGroup {
 
     private void promoteData(int itemID, int dataID) {
         if (mListener != null) {
-            mListener.onDataPromoted(dataID);
+            mListener.onFocusedDataPromoted(dataID);
         }
     }
 
     private void demoteData(int itemID, int dataID) {
         if (mListener != null) {
-            mListener.onDataDemoted(dataID);
+            mListener.onFocusedDataDemoted(dataID);
         }
     }
 
@@ -2530,6 +2530,15 @@ public class FilmstripView extends ViewGroup {
                 snapInCenter();
             }
             return false;
+        }
+
+        @Override
+        public void onLongPress(float x, float y) {
+            final int dataId = getCurrentId();
+            if (dataId == -1) {
+                return;
+            }
+            mListener.onFocusedDataLongPressed(dataId);
         }
 
         @Override
