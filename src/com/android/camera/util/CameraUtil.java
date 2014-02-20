@@ -224,7 +224,7 @@ public class CameraUtil {
                 context.getString(R.string.image_file_name_format));
         sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
         sNoFocusModeChangeForTouch = context.getResources().getBoolean(
-                R.bool.useContinuosFocusForTouch);
+                R.bool.useContinuousFocusForTouch);
         sCancelAutoFocusOnPreviewStopped =
                 context.getResources().getBoolean(R.bool.cancelAutoFocusOnPreviewStopped);
         sSamsungHDRFormat = context.getResources().getBoolean(R.bool.needsSamsungHDRFormat);
