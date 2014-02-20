@@ -23,7 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
@@ -43,6 +43,10 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -318,9 +322,6 @@ public abstract class LocalMediaData implements LocalData {
         private static final int mSupportedDataActions =
                 DATA_ACTION_DELETE | DATA_ACTION_EDIT | DATA_ACTION_SHARE;
 
-        /** 32K buffer. */
-        private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
-
         /** from MediaStore, can only be 0, 90, 180, 270 */
         private final int mOrientation;
 
@@ -483,84 +484,44 @@ public abstract class LocalMediaData implements LocalData {
 
             @Override
             protected Bitmap doInBackground(Void... v) {
-                // Generate Bitmap of maximum size that fits into decodeWidth x decodeHeight.
-                // Algorithm: start with full size and step down in powers of 2.
-                int targetWidth = mWidth;
-                int targetHeight = mHeight;
-                int sampleSize = 1;
-
-                while (targetHeight > mDecodeHeight || targetWidth > mDecodeWidth ||
-                        targetHeight > MAXIMUM_TEXTURE_SIZE || targetWidth > MAXIMUM_TEXTURE_SIZE ||
-                        targetHeight * targetWidth > MAXIMUM_DECODE_PIXELS) {
-                    sampleSize *= 2;
-                    targetWidth = mWidth / sampleSize;
-                    targetHeight = mHeight / sampleSize;
-                }
-
-                // For large (> MAXIMUM_TEXTURE_SIZE) high aspect ratio (panorama) Bitmap requests:
-                //   Step 1: ask for double size.
-                //   Step 2: scale maximum edge down to MAXIMUM_TEXTURE_SIZE.
-                if ((mDecodeHeight > MAXIMUM_TEXTURE_SIZE || mDecodeWidth > MAXIMUM_TEXTURE_SIZE) &&
-                        targetWidth * targetHeight < MAXIMUM_DECODE_PIXELS / 4 && sampleSize > 1) {
-                    sampleSize /= 2;
-                }
-
                 // TODO: Implement image cache, which can verify image dims.
 
                 // For correctness, double check image size here.
                 // This only takes 1% of full decode time.
-                int decodedWidth = 0;
-                int decodedHeight = 0;
-                BitmapFactory.Options justBoundsOpts = new BitmapFactory.Options();
-                justBoundsOpts.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(mPath, justBoundsOpts);
-                if (justBoundsOpts.outWidth > 0 && justBoundsOpts.outHeight > 0) {
-                    decodedWidth = justBoundsOpts.outWidth;
-                    decodedHeight = justBoundsOpts.outHeight;
-                }
+                Point decodedSize = LocalDataUtil.decodeBitmapDimension(mPath);
 
                 // If the width and height are valid and not matching the values
                 // from MediaStore, then update the MediaStore. This only
                 // happens when the MediaStore has been told incorrect values.
-                if (decodedWidth > 0 && decodedHeight > 0 &&
-                        (decodedWidth != mWidth || decodedHeight != mHeight)) {
+                if (decodedSize.x > 0 && decodedSize.y > 0 &&
+                        (decodedSize.x != mWidth || decodedSize.y != mHeight)) {
                     ContentValues values = new ContentValues();
-                    values.put(Images.Media.WIDTH, decodedWidth);
-                    values.put(Images.Media.HEIGHT, decodedHeight);
+                    values.put(Images.Media.WIDTH, decodedSize.x);
+                    values.put(Images.Media.HEIGHT, decodedSize.y);
                     mContext.getContentResolver().update(getContentUri(), values, null, null);
                     mNeedsRefresh = true;
                     Log.w(TAG, "Uri " + getContentUri() + " has been updated with" +
-                            " correct size!");
+                            " the correct size!");
                     return null;
                 }
 
-                BitmapFactory.Options opts = new BitmapFactory.Options();
-                opts.inSampleSize = sampleSize;
-                opts.inTempStorage = DECODE_TEMP_STORAGE;
-                if (isCancelled() || !isUsing()) {
-                    return null;
-                }
-                Bitmap b = BitmapFactory.decodeFile(mPath, opts);
-
-                // Not called often because most modes save image data non-rotated.
-                if (mOrientation != 0 && b != null) {
-                    if (isCancelled() || !isUsing()) {
-                        return null;
-                    }
-                    Matrix m = new Matrix();
-                    m.setRotate(mOrientation);
-                    b = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, false);
+                InputStream stream;
+                Bitmap bitmap;
+                try {
+                    stream = new FileInputStream(mPath);
+                    bitmap = LocalDataUtil
+                            .loadImageThumbnailFromStream(stream, mWidth, mHeight, mDecodeWidth,
+                                    mDecodeHeight, mOrientation, MAXIMUM_DECODE_PIXELS);
+                    stream.close();
+                } catch (FileNotFoundException e) {
+                    Log.v(TAG, "File not found:" + mPath);
+                    bitmap = null;
+                } catch (IOException e) {
+                    Log.v(TAG, "IOException for " + mPath, e);
+                    bitmap = null;
                 }
 
-                // If Bitmap maximum edge > MAXIMUM_TEXTURE_SIZE, which can happen for panoramas,
-                // scale to fit in MAXIMUM_TEXTURE_SIZE.
-                if (b.getWidth() > MAXIMUM_TEXTURE_SIZE || b.getHeight() > MAXIMUM_TEXTURE_SIZE) {
-                    int maxEdge = Math.max(b.getWidth(), b.getHeight());
-                    b = Bitmap.createScaledBitmap(b, b.getWidth() * MAXIMUM_TEXTURE_SIZE / maxEdge,
-                            b.getHeight() * MAXIMUM_TEXTURE_SIZE / maxEdge, false);
-                }
-
-                return b;
+                return bitmap;
             }
 
             @Override
@@ -805,24 +766,12 @@ public abstract class LocalMediaData implements LocalData {
                 if (isCancelled() || !isUsing()) {
                     return null;
                 }
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 Bitmap bitmap = null;
-                try {
-                    retriever.setDataSource(mPath);
-                    byte[] data = retriever.getEmbeddedPicture();
-                    if (!isCancelled() && isUsing()) {
-                        if (data != null) {
-                            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        }
-                        if (bitmap == null) {
-                            bitmap = retriever.getFrameAtTime();
-                        }
-                    }
-                } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
-                            + e.getMessage());
+                bitmap = LocalDataUtil.loadVideoThumbnail(mPath);
+
+                if (isCancelled() || !isUsing()) {
+                    return null;
                 }
-                retriever.release();
                 return bitmap;
             }
         }

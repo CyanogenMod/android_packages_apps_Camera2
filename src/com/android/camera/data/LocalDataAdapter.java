@@ -37,6 +37,13 @@ public interface LocalDataAdapter extends DataAdapter {
          *            updated.
          */
         public void onMetadataUpdated(List<Integer> updatedData);
+
+        /**
+         * This method is called when a new local data is added.
+         *
+         * @param data The inserted data.
+         */
+        public void onNewDataAdded(LocalData data);
     }
 
     /**
