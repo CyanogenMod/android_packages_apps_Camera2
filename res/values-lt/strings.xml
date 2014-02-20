@@ -292,7 +292,8 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Fotogr. laiko intervalais"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Plačiakampis fotogr."</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="7436904361494165785">"Židinys priekiniame plane"</string>
+    <!-- no translation found for mode_refocus (172192967119469061) -->
+    <skip />
     <string name="mode_settings_desc" msgid="1189966170303887131">"Atidarykite nustatymus"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Perjungti į fotoaparato režimą"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Perjungti į vaizdo kameros režimą"</string>
@@ -302,9 +303,8 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Perjungti į fotografavimo laiko intervalais režimą"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Perjungti į plačiakampį režimą"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Perjungti į panoraminį režimą"</string>
-    <string name="mode_refocus_desc" msgid="8632866513335038216">"Perjungti į židinio priekiniame plane režimą"</string>
-    <string name="refocus_off_desc" msgid="4043473941193970147">"Židinys priekiniame plane išjungtas"</string>
-    <string name="refocus_on_desc" msgid="2549978881191009668">"Židinys priekiniame plane įjungtas"</string>
+    <!-- no translation found for mode_refocus_desc (6171183297515508465) -->
+    <skip />
     <string name="settings_open_desc" msgid="6914471293841793766">"Atidaryti nustatymus"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Uždaryti nustatymus"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"„HDR Plus“ funkcija išjungta"</string>
