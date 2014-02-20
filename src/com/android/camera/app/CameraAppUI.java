@@ -399,6 +399,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private ModeOptionsOverlay mModeOptionsOverlay;
     private boolean mShouldShowShimmy = false;
     private IndicatorIconController mIndicatorIconController;
+    private View mFocusOverlay;
 
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
@@ -1001,6 +1002,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
         mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
+        mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
     }
 
     /**
@@ -1025,6 +1027,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
+        mFocusOverlay.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -1498,7 +1501,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (bottomBarSpec.enablePanoOrientation
                 && PhotoSphereHelper.getPanoramaOrientationOptionArrayId() > 0) {
             buttonManager.enableButton(ButtonManager.BUTTON_PANO_ORIENTATION,
-                bottomBarSpec.panoOrientationCallback);
+                    bottomBarSpec.panoOrientationCallback);
         } else {
             buttonManager.hideButton(ButtonManager.BUTTON_PANO_ORIENTATION);
         }
