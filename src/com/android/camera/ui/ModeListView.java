@@ -309,6 +309,7 @@ public class ModeListView extends FrameLayout
             float x = ev.getX() - mListView.getX();
             float y = ev.getY() - mListView.getY();
             if (x < 0 || x > mListView.getWidth() || y < 0 || y > mListView.getHeight()) {
+                snapBack(true);
                 return false;
             }
 

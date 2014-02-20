@@ -20,7 +20,8 @@
     android:layout_height="@dimen/mode_selector_item_height"
     android:paddingLeft="16dp"
     android:paddingTop="6dp"
-    android:paddingBottom="6dp">
+    android:paddingBottom="6dp"
+    android:paddingRight="12dp">
     <TextView
         android:id="@+id/selector_text"
         android:layout_gravity="left|center_vertical"
