@@ -129,6 +129,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_CAMERA_GRID_LINES);
         mKeyMap.put(SettingsManager.KEY_RELEASE_DIALOG_LAST_SHOWN_VERSION,
                 SettingsManager.SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION);
+        mKeyMap.put(SettingsManager.KEY_FLASH_SUPPORTED_BACK_CAMERA,
+                SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA);
     }
 
     /**
@@ -209,6 +211,8 @@ public class SettingsCache {
             return SettingsManager.getGridLinesSetting(mContext);
         case SettingsManager.SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION:
             return SettingsManager.getReleaseDialogLastShownVersionSetting(mContext);
+        case SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA:
+            return SettingsManager.getFlashSupportedBackCameraSetting(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }
