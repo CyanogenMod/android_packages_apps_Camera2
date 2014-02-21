@@ -214,7 +214,6 @@ public class CameraActivity extends Activity
 
     private CameraController mCameraController;
     private boolean mPaused;
-    private boolean mUpAsGallery;
     private CameraAppUI mCameraAppUI;
 
     private PeekAnimationHandler mPeekAnimationHandler;
@@ -554,10 +553,6 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onEnterFilmstrip(int dataId) {
-                    if (mGalleryIntent != null) {
-                        mActionBar.setDisplayUseLogoEnabled(true);
-                        mUpAsGallery = true;
-                    }
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(true);
                     }
@@ -565,10 +560,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onLeaveFilmstrip(int dataId) {
-                    if (mGalleryIntent != null) {
-                        mActionBar.setDisplayUseLogoEnabled(false);
-                        mUpAsGallery = false;
-                    }
+                    // Do nothing.
                 }
 
                 @Override
@@ -643,8 +635,7 @@ public class CameraActivity extends Activity
      * @param visible is false, this hides the action bar and switches the
      *            filmstrip UI to lights-out mode.
      */
-    // TODO: This should not be called outside of the activity.
-    public void setFilmstripUiVisibility(boolean visible) {
+    private void setFilmstripUiVisibility(boolean visible) {
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
         int newSystemUIVisibility = (visible ? View.SYSTEM_UI_FLAG_VISIBLE
                 : View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -1018,7 +1009,7 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mFilmstripVisible && mUpAsGallery && startGallery()) {
+                if (mFilmstripVisible && startGallery()) {
                     return true;
                 }
                 onBackPressed();
@@ -1322,6 +1313,9 @@ public class CameraActivity extends Activity
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e(TAG, "Can't get the activity logo");
             }
+        }
+        if (mGalleryIntent != null) {
+            mActionBar.setDisplayUseLogoEnabled(true);
         }
         mActionBar.setLogo(galleryLogo);
         mOrientationManager.resume();
