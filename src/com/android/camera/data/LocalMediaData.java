@@ -127,7 +127,7 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public int getOrientation() {
+    public int getRotation() {
         return 0;
     }
 
@@ -381,7 +381,7 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public int getOrientation() {
+        public int getRotation() {
             return mOrientation;
         }
 

@@ -21,12 +21,17 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+
+import com.android.camera.util.CameraUtil;
 
 /**
  * An ImageView which has the built-in peek animation support.
@@ -34,15 +39,18 @@ import android.widget.ImageView;
 public class PeekView extends ImageView {
 
     private static final float ROTATE_ANGLE = -15f;
-    private static final long PEEK_IN_DURATION_MS = 300;
-    private static final long PEEK_STAY_DURATION_MS = 200;
-    private static final long PEEK_OUT_DURATION_MS = 300;
+    private static final long PEEK_IN_DURATION_MS = 200;
+    private static final long PEEK_STAY_DURATION_MS = 100;
+    private static final long PEEK_OUT_DURATION_MS = 200;
+    private static final float FILMSTRIP_SCALE = 0.7f;
 
     private AnimatorSet mPeekAnimator;
     private float mPeekRotateAngle;
     private Point mRotationPivot;
     private float mRotateScale;
     private boolean mAnimationCanceled;
+    private Drawable mImageDrawable;
+    private Rect mDrawableBound;
 
     public PeekView(Context context) {
         super(context);
@@ -61,12 +69,40 @@ public class PeekView extends ImageView {
 
     private void init() {
         mRotationPivot = new Point();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onDraw(Canvas c) {
+        super.onDraw(c);
+        if (mImageDrawable == null) {
+            return;
+        }
+        c.save();
+        c.rotate(mPeekRotateAngle, mRotationPivot.x, mRotationPivot.y);
+        mImageDrawable.setBounds(mDrawableBound);
+        mImageDrawable.draw(c);
+        c.restore();
+    }
+
+    /**
+     * Starts the peek animation.
+     *
+     * @param bitmap The bitmap for the animation.
+     * @param strong {@code true} if the animation is the strong version which
+     *               shows more portion of the bitmap.
+     */
+    public void startPeekAnimation(final Bitmap bitmap, boolean strong) {
         ValueAnimator.AnimatorUpdateListener updateListener =
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator valueAnimator) {
                         mPeekRotateAngle = mRotateScale * (Float) valueAnimator.getAnimatedValue();
-                        drawPeekAnimation();
+                        invalidate();
                     }
                 };
         ValueAnimator peekAnimateIn = ValueAnimator.ofFloat(0f, ROTATE_ANGLE);
@@ -106,25 +142,16 @@ public class PeekView extends ImageView {
 
             }
         });
-    }
 
-    @Override
-    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setTranslationX(getMeasuredWidth());
-    }
-
-    /**
-     * Starts the peek animation.
-     *
-     * @param bitmap The bitmap for the animation.
-     * @param strong {@code true} if the animation is the strong version which
-     *               shows more portion of the bitmap.
-     */
-    public void startPeekAnimation(final Bitmap bitmap, boolean strong) {
         mRotateScale = (strong ? 1.0f : 0.5f);
-        setImageDrawable(new BitmapDrawable(getResources(), bitmap));
-        mRotationPivot.set(0, getHeight());
+        mImageDrawable = new BitmapDrawable(getResources(), bitmap);
+        Point drawDim = CameraUtil.resizeToFill(mImageDrawable.getIntrinsicWidth(),
+                mImageDrawable.getIntrinsicHeight(), 0, (int) (getWidth() * FILMSTRIP_SCALE),
+                (int) (getHeight() * FILMSTRIP_SCALE));
+        int x = getMeasuredWidth();
+        int y = (getMeasuredHeight() - drawDim.y) / 2;
+        mDrawableBound = new Rect(x, y, x + drawDim.x, y + drawDim.y);
+        mRotationPivot.set(x, (int) (y + drawDim.y * 1.1));
         mPeekAnimator.start();
     }
 
@@ -157,18 +184,8 @@ public class PeekView extends ImageView {
         }
     }
 
-    private void drawPeekAnimation() {
-        if (mPeekAnimator.isRunning()) {
-            setTranslationX(getMeasuredWidth());
-            setRotation(mPeekRotateAngle);
-            setPivotX(mRotationPivot.x);
-            setPivotY(mRotationPivot.y);
-        }
-    }
-
     private void clear() {
         setVisibility(INVISIBLE);
         setImageDrawable(null);
-        setRotation(0);
     }
 }

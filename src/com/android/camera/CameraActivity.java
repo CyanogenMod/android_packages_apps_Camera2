@@ -34,6 +34,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -951,7 +952,7 @@ public class CameraActivity extends Activity
             return;
         }
 
-        mPeekAnimationHandler.startAnimationJob(data, new Callback<Bitmap>() {
+        mPeekAnimationHandler.startDecodingJob(data, new Callback<Bitmap>() {
             @Override
             public void onCallback(Bitmap result) {
                 mCameraAppUI.startPeekAnimation(result, true);
@@ -2026,9 +2027,8 @@ public class CameraActivity extends Activity
          * @param callback {@link com.android.camera.util.Callback} after the
          *                 decoding is done.
          */
-        public void startAnimationJob(final LocalData data,
-                final com.android.camera.util.Callback<Bitmap>
-                callback) {
+        public void startDecodingJob(final LocalData data,
+                final com.android.camera.util.Callback<Bitmap> callback) {
             PeekAnimationHandler.this.obtainMessage(0 /** dummy integer **/,
                     new DataAndCallback(data, callback)).sendToTarget();
         }
@@ -2053,10 +2053,18 @@ public class CameraActivity extends Activity
                         Log.e(TAG, "File not found:" + data.getPath());
                         return;
                     }
+                    Point dim = CameraUtil.resizeToFill(data.getWidth(), data.getHeight(),
+                            data.getRotation(), mAboveFilmstripControlLayout.getWidth(),
+                            mAboveFilmstripControlLayout.getMeasuredHeight());
+                    if (data.getRotation() % 180 != 0) {
+                        int dummy = dim.x;
+                        dim.x = dim.y;
+                        dim.y = dummy;
+                    }
                     bitmap = LocalDataUtil
                             .loadImageThumbnailFromStream(stream, data.getWidth(), data.getHeight(),
-                                    data.getWidth() / 4, data.getHeight() / 4,
-                                    data.getOrientation(), MAX_PEEK_BITMAP_PIXELS);
+                                    (int) (dim.x * 0.7f), (int) (dim.y * 0.7),
+                                    data.getRotation(), MAX_PEEK_BITMAP_PIXELS);
                     break;
 
                 case LocalData.LOCAL_VIDEO:
