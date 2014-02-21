@@ -100,6 +100,12 @@ public class LocalDataUtil {
         /** 32K buffer. */
         byte[] decodeBuffer = new byte[32 * 1024];
 
+        if (orientation % 180 != 0) {
+            int dummy = imageHeight;
+            imageHeight = imageWidth;
+            imageWidth = dummy;
+        }
+
         // Generate Bitmap of maximum size that fits into widthBound x heightBound.
         // Algorithm: start with full size and step down in powers of 2.
         int targetWidth = imageWidth;

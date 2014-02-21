@@ -172,8 +172,8 @@ public class InProgressDataWrapper implements LocalData {
     }
 
     @Override
-    public int getOrientation() {
-        return mLocalData.getOrientation();
+    public int getRotation() {
+        return mLocalData.getRotation();
     }
 
     @Override

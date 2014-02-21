@@ -77,7 +77,7 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public int getOrientation() {
+    public int getRotation() {
         return 0;
     }
 

@@ -82,7 +82,7 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
         }
 
         PhotoData imageData = (PhotoData) data;
-        int originRotation = imageData.getOrientation();
+        int originRotation = imageData.getRotation();
         int finalRotationDegrees;
         if (mClockwise) {
             finalRotationDegrees = (originRotation + 90) % 360;

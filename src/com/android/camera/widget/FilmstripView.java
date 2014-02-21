@@ -22,6 +22,7 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.ui.FilmstripGestureRecognizer;
 import com.android.camera.ui.ZoomView;
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.Arrays;
@@ -606,35 +608,6 @@ public class FilmstripView extends ViewGroup {
         return false;
     }
 
-    /** Returns [width, height] preserving image aspect ratio. */
-    private int[] calculateChildDimension(
-            int imageWidth, int imageHeight, int imageOrientation,
-            int boundWidth, int boundHeight) {
-        if (imageOrientation == 90 || imageOrientation == 270) {
-            // Swap width and height.
-            int savedWidth = imageWidth;
-            imageWidth = imageHeight;
-            imageHeight = savedWidth;
-        }
-        if (imageWidth == ImageData.SIZE_FULL
-                || imageHeight == ImageData.SIZE_FULL) {
-            imageWidth = boundWidth;
-            imageHeight = boundHeight;
-        }
-
-        int[] ret = new int[2];
-        ret[0] = boundWidth;
-        ret[1] = boundHeight;
-
-        if (imageWidth * ret[1] > ret[0] * imageHeight) {
-            ret[1] = imageHeight * ret[0] / imageWidth;
-        } else {
-            ret[0] = imageWidth * ret[1] / imageHeight;
-        }
-
-        return ret;
-    }
-
     private void measureViewItem(ViewItem item, int boundWidth, int boundHeight) {
         int id = item.getId();
         ImageData imageData = mDataAdapter.getImageData(id);
@@ -643,12 +616,11 @@ public class FilmstripView extends ViewGroup {
             return;
         }
 
-        int[] dim = calculateChildDimension(imageData.getWidth(),
-                imageData.getHeight(),
-                imageData.getOrientation(), boundWidth, boundHeight);
+        Point dim = CameraUtil.resizeToFill(imageData.getWidth(), imageData.getHeight(),
+                imageData.getRotation(), boundWidth, boundHeight);
 
-        item.measure(MeasureSpec.makeMeasureSpec(dim[0], MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(dim[1], MeasureSpec.EXACTLY));
+        item.measure(MeasureSpec.makeMeasureSpec(dim.x, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(dim.y, MeasureSpec.EXACTLY));
     }
 
     @Override
@@ -1359,10 +1331,10 @@ public class FilmstripView extends ViewGroup {
         }
 
         final ImageData data = mDataAdapter.getImageData(dataID);
-        int[] dim = calculateChildDimension(
-                data.getWidth(), data.getHeight(), data.getOrientation(),
-                getMeasuredWidth(), getMeasuredHeight());
-        final int offsetX = dim[0] + mViewGapInPixel;
+        Point dim = CameraUtil
+                .resizeToFill(data.getWidth(), data.getHeight(), data.getRotation(),
+                        getMeasuredWidth(), getMeasuredHeight());
+        final int offsetX = dim.x + mViewGapInPixel;
         ViewItem viewItem = buildItemFromData(dataID);
 
         if (insertedItemId >= mCurrentItem) {
@@ -1559,10 +1531,9 @@ public class FilmstripView extends ViewGroup {
             if (!mIsUserScrolling && !mController.isScrolling()) {
                 // If there is no scrolling at all, adjust mCenterX to place
                 // the current item at the center.
-                int[] dim = calculateChildDimension(
-                        data.getWidth(), data.getHeight(), data.getOrientation(),
-                        getMeasuredWidth(), getMeasuredHeight());
-                mCenterX = curr.getLeftPosition() + dim[0] / 2;
+                Point dim = CameraUtil.resizeToFill(data.getWidth(), data.getHeight(),
+                        data.getRotation(), getMeasuredWidth(), getMeasuredHeight());
+                mCenterX = curr.getLeftPosition() + dim.x / 2;
             }
         }
 
@@ -2210,8 +2181,8 @@ public class FilmstripView extends ViewGroup {
                 return FULL_SCREEN_SCALE;
             }
             float imageWidth = imageData.getWidth();
-            if (imageData.getOrientation() == 90
-                    || imageData.getOrientation() == 270) {
+            if (imageData.getRotation() == 90
+                    || imageData.getRotation() == 270) {
                 imageWidth = imageData.getHeight();
             }
             float scale = imageWidth / curr.getWidth();
@@ -2241,7 +2212,7 @@ public class FilmstripView extends ViewGroup {
             if (uri == null || uri == Uri.EMPTY) {
                 return;
             }
-            int orientation = imageData.getOrientation();
+            int orientation = imageData.getRotation();
             mZoomView.loadBitmap(uri, orientation, viewRect);
         }
 
