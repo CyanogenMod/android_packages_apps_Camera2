@@ -387,7 +387,8 @@ public class VideoModule extends CameraModule
             }
 
             // Set rotation and gps data.
-            int rotation = CameraUtil.getJpegRotation(mActivity, mCameraId, mOrientation);
+            CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
+            int rotation = CameraUtil.getJpegRotation(info, mOrientation);
             mParameters.setRotation(rotation);
             Location loc = mLocationManager.getCurrentLocation();
             CameraUtil.setGpsParameters(mParameters, loc);

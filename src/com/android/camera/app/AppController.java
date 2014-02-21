@@ -314,4 +314,7 @@ public interface AppController {
      * Returns the {@link com.android.camera.ButtonManager}.
      */
     public ButtonManager getButtonManager();
+
+    /** Whether auto-rotate is enabled.*/
+    public boolean isAutoRotateScreen();
 }

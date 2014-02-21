@@ -377,6 +377,7 @@ public class PhotoModule
         locationFirstRun();
     }
 
+    @Override
     public void onPreviewInitialDataReceived() {
         startSmartCamera();
     }
@@ -929,7 +930,8 @@ public class PhotoModule
         } else {
             orientation = mOrientation;
         }
-        mJpegRotation = CameraUtil.getJpegRotation(mActivity, mCameraId, orientation);
+        CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
+        mJpegRotation = CameraUtil.getJpegRotation(info, orientation);
         mParameters.setRotation(mJpegRotation);
         Location loc = mActivity.getLocationManager().getCurrentLocation();
         CameraUtil.setGpsParameters(mParameters, loc);
