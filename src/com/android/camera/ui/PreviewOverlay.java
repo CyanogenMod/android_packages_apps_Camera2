@@ -207,6 +207,15 @@ public class PreviewOverlay extends View
                 if (ev.getPointerCount() > 1) {
                     mDeltaX = ev.getX(1) - ev.getX(0);
                     mDeltaY = ev.getY(1) - ev.getY(0);
+                    if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+                        if (!mZoomProcessor.isVisible()) {
+                            mZoomProcessor.showZoomUI();
+                        }
+                    } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
+                        if (mZoomProcessor.isVisible()) {
+                            mZoomProcessor.hideZoomUI();
+                        }
+                    }
                 }
                 return handled;
             }
@@ -347,6 +356,27 @@ public class PreviewOverlay extends View
             if (mZoomListener != null) {
                 mZoomListener.onZoomEnd();
             }
+            invalidate();
+        }
+
+        public boolean isVisible() {
+            return mVisible;
+        }
+
+        public void showZoomUI() {
+            if (mZoomListener == null) {
+                return;
+            }
+            mVisible = true;
+            mFingerAngle = mScaleDetector.getAngle();
+            invalidate();
+        }
+
+        public void hideZoomUI() {
+            if (mZoomListener == null) {
+                return;
+            }
+            mVisible = false;
             invalidate();
         }
 
