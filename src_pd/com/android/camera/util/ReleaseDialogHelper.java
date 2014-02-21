@@ -21,7 +21,12 @@ import android.app.Activity;
 import com.android.camera.settings.SettingsManager;
 
 public class ReleaseDialogHelper {
-    public static void maybeShowDialog(Activity activity, SettingsManager settingsManager) {
+    public static void showReleaseInfoDialogOnStart(Activity activity,
+            SettingsManager settingsManager) {
         // Do nothing.
+    }
+
+    public static void showReleaseInfoDialog(Activity activity, Callback<Void> callback) {
+        callback.onCallback(null);
     }
 }
