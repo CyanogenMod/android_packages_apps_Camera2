@@ -73,10 +73,10 @@ public interface ImageData {
     public int getHeight();
 
     /**
-     * Returns the orientation of the image in degrees. The valid values are
-     * 0, 90, 180, and 270.
+     * Returns the rotation of the image in degrees clockwise. The valid values
+     * are 0, 90, 180, and 270.
      */
-    public int getOrientation();
+    public int getRotation();
 
     /** Returns the image data type. The current valid values are
      * {@code VIEW_TYPE_*}.

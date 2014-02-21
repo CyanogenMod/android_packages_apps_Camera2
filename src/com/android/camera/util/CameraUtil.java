@@ -55,6 +55,7 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
+import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
 
 import java.io.Closeable;
@@ -1000,6 +1001,47 @@ public class CameraUtil {
                 rowPointer += w;
             }
         }
+    }
+
+    /**
+     * Calculates a new dimension to fill the bound with the original aspect
+     * ratio preserved.
+     *
+     * @param imageWidth The original width.
+     * @param imageHeight The original height.
+     * @param imageRotation The clockwise rotation in degrees of the image
+     *                      which the original dimension comes from.
+     * @param boundWidth The width of the bound.
+     * @param boundHeight The height of the bound.
+     *
+     * @returns The final width/height stored in Point.x/Point.y to fill the
+     * bounds and preserve image aspect ratio.
+     */
+    public static Point resizeToFill(int imageWidth, int imageHeight, int imageRotation,
+            int boundWidth, int boundHeight) {
+        if (imageRotation % 180 != 0) {
+            // Swap width and height.
+            int savedWidth = imageWidth;
+            imageWidth = imageHeight;
+            imageHeight = savedWidth;
+        }
+        if (imageWidth == ImageData.SIZE_FULL
+                || imageHeight == ImageData.SIZE_FULL) {
+            imageWidth = boundWidth;
+            imageHeight = boundHeight;
+        }
+
+        Point p = new Point();
+        p.x = boundWidth;
+        p.y = boundHeight;
+
+        if (imageWidth * boundHeight > boundWidth * imageHeight) {
+            p.y = imageHeight * p.x / imageWidth;
+        } else {
+            p.x = imageWidth * p.y / imageHeight;
+        }
+
+        return p;
     }
 
     private static class ImageFileNamer {
