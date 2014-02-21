@@ -769,20 +769,19 @@ public class CameraUtil {
         view.setVisibility(View.GONE);
     }
 
-    public static int getJpegRotation(CameraActivity activity, int cameraId, int orientation) {
-        // See android.hardware.Camera.Parameters.setRotation for
-        // documentation.
-        int rotation = 0;
-        if (orientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            CameraInfo info = activity.getCameraProvider().getCameraInfo()[cameraId];
-            if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-                rotation = (info.orientation - orientation + 360) % 360;
-            } else {  // back-facing camera
-                rotation = (info.orientation + orientation) % 360;
-            }
-        }
-        return rotation;
-    }
+    public static int getJpegRotation(CameraInfo info, int orientation) {
+      // See android.hardware.Camera.Parameters.setRotation for
+      // documentation.
+      int rotation = 0;
+      if (orientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
+          if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+              rotation = (info.orientation - orientation + 360) % 360;
+          } else {  // back-facing camera
+              rotation = (info.orientation + orientation) % 360;
+          }
+      }
+      return rotation;
+  }
 
     /**
      * Down-samples a jpeg byte array.
@@ -946,9 +945,9 @@ public class CameraUtil {
      */
     public static int addPixel(int pixel, int newPixel, float weight) {
         // TODO: scale weight to [0, 1024] to avoid casting to float and back to int.
-        int r = ((pixel & 0x00ff0000) + (int) (((float) (newPixel & 0x00ff0000)) * weight)) & 0x00ff0000;
-        int g = ((pixel & 0x0000ff00) + (int) (((float) (newPixel & 0x0000ff00)) * weight)) & 0x0000ff00;
-        int b = ((pixel & 0x000000ff) + (int) (((float) (newPixel & 0x000000ff)) * weight)) & 0x000000ff;
+        int r = ((pixel & 0x00ff0000) + (int) ((newPixel & 0x00ff0000) * weight)) & 0x00ff0000;
+        int g = ((pixel & 0x0000ff00) + (int) ((newPixel & 0x0000ff00) * weight)) & 0x0000ff00;
+        int b = ((pixel & 0x000000ff) + (int) ((newPixel & 0x000000ff) * weight)) & 0x000000ff;
         return 0xff000000 | r | g | b;
     }
 

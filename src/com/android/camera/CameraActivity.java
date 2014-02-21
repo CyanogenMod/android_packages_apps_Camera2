@@ -1460,7 +1460,9 @@ public class CameraActivity extends Activity
         }
     }
 
+    @Override
     public boolean isAutoRotateScreen() {
+        // TODO: Move to OrientationManager.
         return mAutoRotateScreen;
     }
 
