@@ -263,7 +263,7 @@ public class CameraActivity extends Activity
                         return;
                     }
 
-                    if (PanoramaMetadataLoader.isPanorama(data)) {
+                    if (PanoramaMetadataLoader.isPanoramaAndUseViewer(data)) {
                         mPanoramaViewHelper.showPanorama(contentUri);
                     } else if (RgbzMetadataLoader.hasRGBZData(data)) {
                         mPanoramaViewHelper.showRgbz(contentUri);
@@ -301,6 +301,24 @@ public class CameraActivity extends Activity
                 @Override
                 public void onShare() {
                     final LocalData data = getCurrentLocalData();
+
+                    // If applicable, show release information before this item
+                    // is shared.
+                    if (PanoramaMetadataLoader.isPanorama(data)
+                            || RgbzMetadataLoader.hasRGBZData(data)) {
+                        ReleaseDialogHelper.showReleaseInfoDialog(CameraActivity.this,
+                                new Callback<Void>() {
+                                    @Override
+                                    public void onCallback(Void result) {
+                                        share(data);
+                                    }
+                                });
+                    } else {
+                        share(data);
+                    }
+                }
+
+                private void share(LocalData data) {
                     Intent shareIntent = getShareIntentByData(data);
                     if (shareIntent != null) {
                         try {
@@ -1360,7 +1378,7 @@ public class CameraActivity extends Activity
         findViewById(R.id.activity_root_view)
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         mPanoramaViewHelper.onResume();
-        ReleaseDialogHelper.maybeShowDialog(this, mSettingsManager);
+        ReleaseDialogHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
     }
 
     @Override
@@ -1986,7 +2004,7 @@ public class CameraActivity extends Activity
 
         // We need to add this to a separate DB.
         final int viewButtonVisibility;
-        if (PanoramaMetadataLoader.isPanorama(currentData)) {
+        if (PanoramaMetadataLoader.isPanoramaAndUseViewer(currentData)) {
             viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_PHOTO_SPHERE;
         } else if (RgbzMetadataLoader.hasRGBZData(currentData)) {
             viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_REFOCUS;
