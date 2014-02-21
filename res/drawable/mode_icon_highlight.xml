@@ -19,7 +19,7 @@
     android:shape="ring"
     android:thickness="3dp"
     android:useLevel="false"
-    android:innerRadius="21dp" >
+    android:innerRadius="25dp" >
 
     <solid
         android:color="@color/mode_selector_icon_background"/>

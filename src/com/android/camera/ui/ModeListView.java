@@ -157,6 +157,8 @@ public class ModeListView extends FrameLayout
         }
     };
     private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
+    private View mChildViewTouched = null;
+    private MotionEvent mLastChildTouchEvent = null;
 
     @Override
     public void onPreviewAreaSizeChanged(RectF previewArea) {
@@ -305,67 +307,10 @@ public class ModeListView extends FrameLayout
                 return false;
             }
 
-            // Ignore the tap if it happens outside of the mode list linear layout.
-            float x = ev.getX() - mListView.getX();
-            float y = ev.getY() - mListView.getY();
-            if (x < 0 || x > mListView.getWidth() || y < 0 || y > mListView.getHeight()) {
+            // If the tap is not inside the mode drawer area, snap back.
+            if(!isTouchInsideList(ev)) {
                 snapBack(true);
                 return false;
-            }
-
-            int index = getFocusItem(ev.getX(), ev.getY());
-            // Validate the selection
-            if (index != NO_ITEM_SELECTED) {
-                final int modeId = getModeIndex(index);
-                // Un-highlight all the modes.
-                for (int i = 0; i < mModeSelectorItems.length; i++) {
-                    mModeSelectorItems[i].setHighlighted(false);
-                }
-                // Select the focused item.
-                mModeSelectorItems[index].setSelected(true);
-                mState = MODE_SELECTED;
-                PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
-                effect.setSize(mWidth, mHeight);
-                effect.setAnimationEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        setVisibility(INVISIBLE);
-                        mCurrentEffect = null;
-                        snapBack(false);
-                    }
-                });
-
-                // Calculate the position of the icon in the selected item, and
-                // start animation from that position.
-                int[] location = new int[2];
-                // Gets icon's center position in relative to the window.
-                mModeSelectorItems[index].getIconCenterLocationInWindow(location);
-                int iconX = location[0];
-                int iconY = location[1];
-                // Gets current view's top left position relative to the window.
-                getLocationInWindow(location);
-                // Calculate icon location relative to this view
-                iconX -= location[0];
-                iconY -= location[1];
-
-                effect.setAnimationStartingPosition(iconX, iconY);
-                if (mScreenShotProvider != null) {
-                    effect.setBackground(mScreenShotProvider
-                            .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR), mPreviewArea);
-                    effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
-                }
-                mCurrentEffect = effect;
-                invalidate();
-
-                // Post mode selection runnable to the end of the message queue
-                // so that current UI changes can finish before mode initialization
-                // clogs up UI thread.
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onModeSelected(modeId);
-                    }
-                });
             }
             return true;
         }
@@ -377,6 +322,82 @@ public class ModeListView extends FrameLayout
             return true;
         }
     };
+
+    /**
+     * Gets called when a mode item in the mode drawer is clicked.
+     *
+     * @param selectedItem the item being clicked
+     */
+    private void onItemSelected(ModeSelectorItem selectedItem) {
+
+        final int modeId = selectedItem.getModeId();
+        // Un-highlight all the modes.
+        for (int i = 0; i < mModeSelectorItems.length; i++) {
+            mModeSelectorItems[i].setHighlighted(false);
+            mModeSelectorItems[i].setSelected(false);
+        }
+        // Select the focused item.
+        selectedItem.setSelected(true);
+        mState = MODE_SELECTED;
+        PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
+        effect.setSize(mWidth, mHeight);
+        effect.setAnimationEndAction(new Runnable() {
+            @Override
+            public void run() {
+                setVisibility(INVISIBLE);
+                mCurrentEffect = null;
+                snapBack(false);
+            }
+        });
+
+        // Calculate the position of the icon in the selected item, and
+        // start animation from that position.
+        int[] location = new int[2];
+        // Gets icon's center position in relative to the window.
+        selectedItem.getIconCenterLocationInWindow(location);
+        int iconX = location[0];
+        int iconY = location[1];
+        // Gets current view's top left position relative to the window.
+        getLocationInWindow(location);
+        // Calculate icon location relative to this view
+        iconX -= location[0];
+        iconY -= location[1];
+
+        effect.setAnimationStartingPosition(iconX, iconY);
+        if (mScreenShotProvider != null) {
+            effect.setBackground(mScreenShotProvider
+                    .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR), mPreviewArea);
+            effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
+        }
+        mCurrentEffect = effect;
+        invalidate();
+
+        // Post mode selection runnable to the end of the message queue
+        // so that current UI changes can finish before mode initialization
+        // clogs up UI thread.
+        post(new Runnable() {
+            @Override
+            public void run() {
+                onModeSelected(modeId);
+            }
+        });
+    }
+
+    /**
+     * Checks whether a touch event is inside of the bounds of the mode list.
+     *
+     * @param ev touch event to be checked
+     * @return whether the touch is inside the bounds of the mode list
+     */
+    private boolean isTouchInsideList(MotionEvent ev) {
+        // Ignore the tap if it happens outside of the mode list linear layout.
+        float x = ev.getX() - mListView.getX();
+        float y = ev.getY() - mListView.getY();
+        if (x < 0 || x > mListView.getWidth() || y < 0 || y > mListView.getHeight()) {
+            return false;
+        }
+        return true;
+    }
 
     public ModeListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -476,7 +497,7 @@ public class ModeListView extends FrameLayout
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListView = (LinearLayout) findViewById(R.id.mode_list);
         for (int i = 0; i < mTotalModes; i++) {
-            ModeSelectorItem selectorItem =
+            final ModeSelectorItem selectorItem =
                     (ModeSelectorItem) inflater.inflate(R.layout.mode_selector, null);
             mListView.addView(selectorItem);
             // Sets the top padding of the top item to 0.
@@ -503,6 +524,13 @@ public class ModeListView extends FrameLayout
             // Set content description (for a11y)
             selectorItem.setContentDescription(CameraUtil
                     .getCameraModeContentDescription(modeId, getContext()));
+            selectorItem.setModeId(modeId);
+            selectorItem.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemSelected(selectorItem);
+                }
+            });
 
             mModeSelectorItems[i] = selectorItem;
         }
@@ -567,6 +595,13 @@ public class ModeListView extends FrameLayout
             if (mState == FULLY_SHOWN) {
                 mFocusItem = NO_ITEM_SELECTED;
                 setSwipeMode(false);
+                // If the down event happens inside the mode list, find out which
+                // mode item is being touched and forward all the subsequent touch
+                // events to that mode item for its pressed state and click handling.
+                if (isTouchInsideList(ev)) {
+                    mChildViewTouched = mModeSelectorItems[getFocusItem(ev.getX(), ev.getY())];
+                }
+
             } else {
                 mFocusItem = getFocusItem(ev.getX(), ev.getY());
                 setSwipeMode(true);
@@ -577,14 +612,36 @@ public class ModeListView extends FrameLayout
             setSwipeMode(true);
 
         }
+        forwardTouchEventToChild(ev);
         // Pass all touch events to gesture detector for gesture handling.
         mGestureDetector.onTouchEvent(ev);
         if (ev.getActionMasked() == MotionEvent.ACTION_UP ||
                 ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {
             snap();
             mFocusItem = NO_ITEM_SELECTED;
+            // Reset the touch forward recipient at the end of a touch event series,
+            // i.e. when an up or a cancel event is received.
+            mChildViewTouched = null;
         }
         return true;
+    }
+
+    /**
+     * Forward touch events to a recipient child view. Before feeding the motion
+     * event into the child view, the event needs to be converted in child view's
+     * coordinates.
+     */
+    private void forwardTouchEventToChild(MotionEvent ev) {
+        if (mChildViewTouched != null) {
+            float x = ev.getX() - mListView.getX();
+            float y = ev.getY() - mListView.getY();
+            x -= mChildViewTouched.getLeft();
+            y -= mChildViewTouched.getTop();
+
+            mLastChildTouchEvent = MotionEvent.obtain(ev);
+            mLastChildTouchEvent.setLocation(x, y);
+            mChildViewTouched.onTouchEvent(mLastChildTouchEvent);
+        }
     }
 
     /**
@@ -718,7 +775,7 @@ public class ModeListView extends FrameLayout
                 // Find parent mode in the nav drawer.
                 for (int i = 0; i < mSupportedModes.size(); i++) {
                     if (mSupportedModes.get(i) == parentMode) {
-                        mModeSelectorItems[i].setHighlighted(true);
+                        mModeSelectorItems[i].setSelected(true);
                     }
                 }
             }
@@ -885,6 +942,10 @@ public class ModeListView extends FrameLayout
         // background should be 50% transparent.
         int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
         focusItemWidth = Math.min(maxVisibleWidth, focusItemWidth);
+        if (focusItemWidth != maxVisibleWidth) {
+            // No longer full screen.
+            cancelForwardingTouchEvent();
+        }
         float openRatio = (float) focusItemWidth / maxVisibleWidth;
         setBackgroundAlpha((int) (BACKGROUND_TRANSPARENTCY * openRatio));
         if (mModeListOpenListener != null) {
@@ -892,6 +953,19 @@ public class ModeListView extends FrameLayout
         }
         if (mSettingsButton != null) {
             mSettingsButton.setAlpha(openRatio);
+        }
+    }
+
+    /**
+     * Cancels the touch event forwarding by sending a cancel event to the recipient
+     * view and resetting the touch forward recipient to ensure no more events
+     * can be forwarded in the current series of the touch events.
+     */
+    private void cancelForwardingTouchEvent() {
+        if (mChildViewTouched != null) {
+            mLastChildTouchEvent.setAction(MotionEvent.ACTION_CANCEL);
+            mChildViewTouched.onTouchEvent(mLastChildTouchEvent);
+            mChildViewTouched = null;
         }
     }
 

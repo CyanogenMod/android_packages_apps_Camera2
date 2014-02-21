@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -58,10 +59,12 @@ class ModeSelectorItem extends FrameLayout {
     private int mWidth;
     private int mDefaultBackgroundColor;
     private int mDefaultTextColor;
+    private int mModeId;
 
     public ModeSelectorItem(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(false);
+        setClickable(true);
         mMinVisibleWidth = getResources()
                 .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
     }
@@ -88,13 +91,31 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     public void setHighlighted(boolean highlighted) {
-        // TODO: Remove the highlight logic if UX design on selection doesn't change
-        // within a week.
-        mIcon.setSelected(highlighted);
+        mIcon.setHighlighted(highlighted);
     }
 
     public void setSelected(boolean selected) {
         mIcon.setSelected(selected);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // Do not dispatch any touch event, so that all the events that are received
+        // in onTouchEvent() are only through forwarding.
+         return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        super.onTouchEvent(ev);
+        return false;
+    }
+
+    @Override
+    public void setPressed(boolean pressed) {
+        super.setPressed(pressed);
+        // When pressed state changes, highlight the icon.
+        mIcon.setHighlighted(pressed);
     }
 
     /**
@@ -230,5 +251,21 @@ class ModeSelectorItem extends FrameLayout {
         mIcon.getLocationInWindow(loc);
         loc[0] += mMinVisibleWidth / 2;
         loc[1] += mMinVisibleWidth / 2;
+    }
+
+    /**
+     * Sets the mode id of the current item.
+     *
+     * @param modeId id of the mode represented by current item.
+     */
+    public void setModeId(int modeId) {
+        mModeId = modeId;
+    }
+
+    /**
+     * Gets the mode id of the current item.
+     */
+    public int getModeId() {
+        return mModeId;
     }
 }
