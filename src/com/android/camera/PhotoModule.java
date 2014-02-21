@@ -1125,21 +1125,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonFocus(boolean pressed) {
-        if (mPaused || (mCameraState == SNAPSHOT_IN_PROGRESS)
-                || (mCameraState == PREVIEW_STOPPED)) {
-            return;
-        }
-
-        // Do not do focus if there is not enough storage.
-        if (pressed && !canTakePicture()) {
-            return;
-        }
-
-        if (pressed) {
-            mFocusManager.onShutterDown();
-        } else {
-            mFocusManager.onShutterUp();
-        }
+        // Do nothing. We don't support half-press to focus anymore.
     }
 
     @Override
@@ -1165,14 +1151,15 @@ public class PhotoModule
         // one and re-start the preview. Snapshot in progress also includes the
         // state that autofocus is focusing and a picture will be taken when
         // focus callback arrives.
-        if ((mFocusManager.isFocusingSnapOnFinish() || mCameraState == SNAPSHOT_IN_PROGRESS)
-                && !mIsImageCaptureIntent) {
-            mSnapshotOnIdle = true;
+        if ((mFocusManager.isFocusingSnapOnFinish() || mCameraState == SNAPSHOT_IN_PROGRESS)) {
+            if (!mIsImageCaptureIntent) {
+                mSnapshotOnIdle = true;
+            }
             return;
         }
 
         mSnapshotOnIdle = false;
-        mFocusManager.doSnap();
+        mFocusManager.focusAndCapture();
     }
 
     private void onResumeTasks() {

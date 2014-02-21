@@ -214,21 +214,6 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         }
     }
 
-    public void onShutterDown() {
-        if (!mInitialized) return;
-
-        boolean autoFocusCalled = false;
-        if (needAutoFocusCall()) {
-            // Do not focus if touch focus has been triggered.
-            if (mState != STATE_SUCCESS && mState != STATE_FAIL) {
-                autoFocus();
-                autoFocusCalled = true;
-            }
-        }
-
-        if (!autoFocusCalled) lockAeAwbIfNeeded();
-    }
-
     public void onShutterUp() {
         if (!mInitialized) return;
 
@@ -245,25 +230,20 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         unlockAeAwbIfNeeded();
     }
 
-    public void doSnap() {
+    public void focusAndCapture() {
         if (!mInitialized) return;
 
-        // If the user has half-pressed the shutter and focus is completed, we
-        // can take the photo right away. If the focus mode is infinity, we can
-        // also take the photo.
-        if (!needAutoFocusCall() || (mState == STATE_SUCCESS || mState == STATE_FAIL)) {
+        if (!needAutoFocusCall()) {
+            // Focus is not needed.
+            capture();
+        } else if (mState == STATE_SUCCESS || mState == STATE_FAIL) {
+            // Focus is done already.
             capture();
         } else if (mState == STATE_FOCUSING) {
-            // Half pressing the shutter (i.e. the focus button event) will
-            // already have requested AF for us, so just request capture on
-            // focus here.
+            // Still focusing and will not trigger snap upon finish.
             mState = STATE_FOCUSING_SNAP_ON_FINISH;
         } else if (mState == STATE_IDLE) {
-            // We didn't do focus. This can happen if the user press focus key
-            // while the snapshot is still in progress. The user probably wants
-            // the next snapshot as soon as possible, so we just do a snapshot
-            // without focusing again.
-            capture();
+            autoFocusAndCapture();
         }
     }
 
@@ -407,15 +387,36 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
         onPreviewStopped();
     }
 
-    private void autoFocus() {
+    /**
+     * Triggers the autofocus and sets the specified state.
+     *
+     * @param focusingState The state to use when focus is in progress.
+     */
+    private void autoFocus(int focusingState) {
         Log.v(TAG, "Start autofocus.");
         mListener.autoFocus();
-        mState = STATE_FOCUSING;
+        mState = focusingState;
         // Pause the face view because the driver will keep sending face
         // callbacks after the focus completes.
         mUI.pauseFaceDetection();
         updateFocusUI();
         mHandler.removeMessages(RESET_TOUCH_FOCUS);
+    }
+
+    /**
+     * Triggers the autofocus and set the state to indicate the focus is in
+     * progress.
+     */
+    private void autoFocus() {
+        autoFocus(STATE_FOCUSING);
+    }
+
+    /**
+     * Triggers the autofocus and set the state to which a capture will happen
+     * in the following autofocus callback.
+     */
+    private void autoFocusAndCapture() {
+        autoFocus(STATE_FOCUSING_SNAP_ON_FINISH);
     }
 
     private void cancelAutoFocus() {
