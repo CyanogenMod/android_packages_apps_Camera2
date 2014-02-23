@@ -22,6 +22,7 @@
     <string name="pref_camera_picturesize_entry_12mp">12M pixels (4x3)</string>
     <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
     <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
+    <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
     <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
     <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
     <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels (4x3)</string>
@@ -35,6 +36,7 @@
     <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
     <string name="pref_camera_picturesize_entry_xga">XGA</string>
     <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+    <string name="pref_camera_picturesize_entry_nhd">nHD</string>
     <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
     <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
     <string name="pref_camera_scenemode_entry_antimotionblur">Beweging vervaag vermindering</string>
@@ -118,6 +120,7 @@
     <string name="pref_camera_slow_shutter_entry_2s">2 sekondes</string>
     <string name="pref_camera_slow_shutter_entry_4s">4 sekondes</string>
     <string name="pref_camera_slow_shutter_entry_8s">8 sekondes</string>
+    <string name="pref_camera_storage_title">Berging</string>
     <string name="camera_menu_enhance_label">VERBETER</string>
     <string name="camera_menu_slow_shutter_label">STADIGE SLUITER</string>
     <string name="camera_menu_beauty_mode_label">VERFRAAI</string>
@@ -172,6 +175,9 @@
     <string name="snapshot_qcif_and_d1">Slegs Video grootte kitsblik ondersteuning vir huidige resolusie.</string>
     <string name="pref_camera_hfr_title">Video hoë foto raam snelheid</string>
     <string name="pref_camera_hfr_entry_off">Af</string>
+    <string name="pref_camera_hfr_entry_2x">60 rps</string>
+    <string name="pref_camera_hfr_entry_3x">90 rps</string>
+    <string name="pref_camera_hfr_entry_4x">120 rps</string>
     <string name="pref_camera_denoise_title">Wavelet Denoise Modus</string>
     <string name="pref_camera_denoise_entry_off">Af</string>
     <string name="pref_camera_denoise_entry_on">Aan</string>
@@ -268,4 +274,5 @@
     <string name="time_lapse_error">Ongeldig video-grootte vir tydsverloop opnames.</string>
     <string name="pref_camera_ae_bracket_hdr_title">Auto beligting afbakening</string>
     <string name="pref_camera_picturesize_entry_1280x720">720p</string>
+    <string name="pref_camera_power_shutter_title">Krag knoppie</string>
 </resources>
