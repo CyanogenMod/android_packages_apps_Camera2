@@ -557,11 +557,11 @@
     <!-- An array of camera mode indices in the sequence of their appearance
     in the mode drawer. -->
     <integer-array name="camera_modes_in_nav_drawer_if_supported">
-        <item>@integer/camera_mode_panorama</item>
         <item>@integer/camera_mode_photosphere</item>
+        <item>@integer/camera_mode_panorama</item>
         <item>@integer/camera_mode_refocus</item>
-        <item>@integer/camera_mode_photo</item>
         <item>@integer/camera_mode_video</item>
+        <item>@integer/camera_mode_photo</item>
     </integer-array>
 
     <!-- Camera modes that each supported mode is nested in in nav drawer. -->
