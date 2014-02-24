@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2013 The CyanogenMod Project
+     Copyright (C) 2013-2014 The CyanogenMod Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
     <string name="pref_camera_picturesize_entry_12mp">12 MP</string>
     <string name="pref_camera_picturesize_entry_11_5mp">11,5 MP</string>
     <string name="pref_camera_picturesize_entry_10_4mp">10,4 MP</string>
+    <string name="pref_camera_picturesize_entry_10mp">10 MP</string>
     <string name="pref_camera_picturesize_entry_9mp">9 MP</string>
     <string name="pref_camera_picturesize_entry_8_2mp">8,2 MP</string>
     <string name="pref_camera_picturesize_entry_7_7mp">7,7 MP (4:3)</string>
@@ -35,6 +36,7 @@
     <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
     <string name="pref_camera_picturesize_entry_xga">XGA</string>
     <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+    <string name="pref_camera_picturesize_entry_nhd">nHD</string>
     <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
     <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
     <string name="pref_camera_scenemode_entry_antimotionblur">Reductor de desenfoque</string>
@@ -118,10 +120,12 @@
     <string name="pref_camera_slow_shutter_entry_2s">2 segundos</string>
     <string name="pref_camera_slow_shutter_entry_4s">4 segundos</string>
     <string name="pref_camera_slow_shutter_entry_8s">8 segundos</string>
+    <string name="pref_camera_storage_title">Almacenamiento</string>
     <string name="camera_menu_enhance_label">MEJORAS</string>
     <string name="camera_menu_slow_shutter_label">OBTURADOR LENTO</string>
     <string name="camera_menu_beauty_mode_label">EMBELLECER</string>
     <string name="camera_menu_colorize_label">COLOREAR</string>
     <string name="camera_menu_effects_label">EFECTOS</string>
     <string name="camera_menu_asd_label">ESCENA INTELIGENTE</string>
+    <string name="pref_camera_power_shutter_title">Disparador alternativo</string>
 </resources>
