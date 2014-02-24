@@ -292,8 +292,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervallmodus (time lapse)"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Vidvinkel"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <!-- no translation found for mode_refocus (172192967119469061) -->
-    <skip />
+    <string name="mode_refocus" msgid="172192967119469061">"Uklar linse"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Åpne innstillingene"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Bytt til kameramodus"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Bytt til videokamera"</string>
@@ -303,8 +302,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Bytt til tidsintervall-modus"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Bytt til vidvinkelmodus"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Bytt til panoramamodus"</string>
-    <!-- no translation found for mode_refocus_desc (6171183297515508465) -->
-    <skip />
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Bytt til Uklar linse-modus"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Åpne innstillingene"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Lukk innstillingene"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus av"</string>
