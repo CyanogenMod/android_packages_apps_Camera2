@@ -45,8 +45,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.ViewGroup;
-
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
@@ -71,7 +69,6 @@ import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
-import com.android.camera.util.SmartCameraHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -377,7 +374,6 @@ public class PhotoModule
 
     @Override
     public void onPreviewInitialDataReceived() {
-        startSmartCamera();
     }
 
     // Prompt the user to pick to record location for the very first run of
@@ -612,15 +608,6 @@ public class PhotoModule
                 return false;
             }
         });
-    }
-
-    private void startSmartCamera() {
-        SmartCameraHelper.register(mCameraDevice, mParameters.getPreviewSize(), mActivity,
-                (ViewGroup) mActivity.findViewById(R.id.camera_app_root));
-    }
-
-    private void stopSmartCamera() {
-        SmartCameraHelper.tearDown();
     }
 
     @Override
@@ -1533,7 +1520,6 @@ public class PhotoModule
         if (mFocusManager != null) {
             mFocusManager.onPreviewStopped();
         }
-        stopSmartCamera();
     }
 
     @Override
