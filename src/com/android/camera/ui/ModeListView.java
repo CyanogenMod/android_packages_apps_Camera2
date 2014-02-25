@@ -209,7 +209,7 @@ public class ModeListView extends FrameLayout
     }
 
     public static abstract class ModeListVisibilityChangedListener {
-        private final Boolean mCurrentVisibility = null;
+        private Boolean mCurrentVisibility = null;
 
         /** Whether the mode list is (partially or fully) visible. */
         public abstract void onVisibilityChanged(boolean visible);
@@ -225,12 +225,10 @@ public class ModeListView extends FrameLayout
          * @param visible whether the mode drawer is currently visible.
          */
         private void onVisibilityEvent(boolean visible) {
-            // TODO: Re-activate this check as soon as onVisibilityChanged() is
-            // reporting the initial visibility correctly.
-            //  if (mCurrentVisibility == null || mCurrentVisibility != visible) {
-            //      mCurrentVisibility = visible;
+            if (mCurrentVisibility == null || mCurrentVisibility != visible) {
+                mCurrentVisibility = visible;
                 onVisibilityChanged(visible);
-            //  }
+            }
         }
     }
 
@@ -827,7 +825,7 @@ public class ModeListView extends FrameLayout
             }
         }
         if (mVisibilityChangedListener != null) {
-            mVisibilityChangedListener.onVisibilityEvent(visibility == VISIBLE);
+            mVisibilityChangedListener.onVisibilityEvent(getVisibility() == VISIBLE);
         }
     }
 
