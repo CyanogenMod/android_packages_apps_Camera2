@@ -25,6 +25,12 @@ import com.android.camera.hardware.HardwareSpec;
  * The controller at app level.
  */
 public interface ModuleController {
+    /** Preview is fully visible. */
+    public static final int VISIBILITY_VISIBLE = 0;
+    /** Preview is covered by e.g. the transparent mode drawer. */
+    public static final int VISIBILITY_COVERED = 1;
+    /** Preview is fully hidden, e.g. by the filmstrip. */
+    public static final int VISIBILITY_HIDDEN = 2;
 
     /********************** Life cycle management **********************/
 
@@ -60,9 +66,11 @@ public interface ModuleController {
     /**
      * Called when the preview becomes visible/invisible.
      *
-     * @param visible Whether the preview is visible.
+     * @param visible Whether the preview is visible, one of
+     *            {@link #VISIBILITY_VISIBLE}, {@link #VISIBILITY_COVERED},
+     *            {@link #VISIBILITY_HIDDEN}
      */
-    public void onPreviewVisibilityChanged(boolean visible);
+    public void onPreviewVisibilityChanged(int visibility);
 
     /**
      * Called when the first preview data is received.

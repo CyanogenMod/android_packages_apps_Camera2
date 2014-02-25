@@ -25,7 +25,6 @@ import com.android.camera.app.CameraServices;
 import com.android.camera.module.ModuleController;
 
 public abstract class CameraModule implements ModuleController {
-
     /** Provides common services and functionality to the module. */
     private final CameraServices mServices;
     private final CameraProvider mCameraProvider;
@@ -41,7 +40,7 @@ public abstract class CameraModule implements ModuleController {
     }
 
     @Override
-    public void onPreviewVisibilityChanged(boolean visible) {
+    public void onPreviewVisibilityChanged(int visibility) {
         // Do nothing.
     }
 
@@ -84,6 +83,7 @@ public abstract class CameraModule implements ModuleController {
         }
     }
 
+    @Override
     public void onPreviewInitialDataReceived() {};
 
     /**
