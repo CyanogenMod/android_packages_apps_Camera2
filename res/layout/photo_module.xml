@@ -32,11 +32,4 @@
         android:clickable="true"
         android:background="@android:color/black"
         android:scaleType="fitCenter"/>
-
-    <ViewStub android:id="@+id/face_view_stub"
-        android:inflatedId="@+id/face_view"
-        android:layout="@layout/face_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
 </FrameLayout>
