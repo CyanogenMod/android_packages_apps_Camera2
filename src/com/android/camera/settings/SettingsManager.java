@@ -366,6 +366,9 @@ public class SettingsManager {
     public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 24;
     public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 25;
     public static final int SETTING_STRICT_UPGRADE_VERSION = 26;
+    // TODO(teresako): Change # when launch.
+    public static final int SETTING_SMARTS = 100;
+    public static final int SETTING_SMARTS_NEEDS_OPT_IN = 101;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -402,6 +405,8 @@ public class SettingsManager {
     public static final String KEY_FLASH_SUPPORTED_BACK_CAMERA =
             "pref_flash_supported_back_camera";
     public static final String KEY_STRICT_UPGRADE_VERSION = "pref_strict_upgrade_version";
+    public static final String KEY_SMARTS = "pref_camera_smarts_key";
+    public static final String KEY_SMARTS_NEEDS_OPT_IN = "pref_camera_smarts_needs_opt_in_key";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -1193,5 +1198,37 @@ public class SettingsManager {
     public void syncLocationManager(LocationManager locationManager) {
         boolean value = getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
         locationManager.recordLocation(value);
+    }
+
+    public static Setting getSmartsSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_off_value);
+        String[] values = null;
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue, KEY_SMARTS,
+                values, FLUSH_OFF);
+    }
+
+    public static Setting getSmartsNeedsOptInSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_on_value);
+        String[] values = null;
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue, KEY_SMARTS_NEEDS_OPT_IN,
+                values, FLUSH_OFF);
+    }
+
+    /**
+     * Returns true if the user needs to prompted to be opted into smarts.
+     */
+    public boolean needsSmartOptInPrompt() {
+        return !getBoolean(SettingsManager.SETTING_SMARTS) &&
+                getBoolean(SettingsManager.SETTING_SMARTS_NEEDS_OPT_IN);
+    }
+
+    public boolean areSmartsOn() {
+        return getBoolean(SettingsManager.SETTING_SMARTS);
+    }
+
+    public void setSmarts(boolean on) {
+        setBoolean(SettingsManager.SETTING_SMARTS, on);
+         // If a user edits this setting, we no longer need to prompt the user to opt-in.
+        setBoolean(SettingsManager.SETTING_SMARTS_NEEDS_OPT_IN, false);
     }
 }

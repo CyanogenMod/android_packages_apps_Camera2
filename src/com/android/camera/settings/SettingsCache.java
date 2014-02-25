@@ -133,6 +133,9 @@ public class SettingsCache {
                 SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA);
         mKeyMap.put(SettingsManager.KEY_STRICT_UPGRADE_VERSION,
                 SettingsManager.SETTING_STRICT_UPGRADE_VERSION);
+        mKeyMap.put(SettingsManager.KEY_SMARTS, SettingsManager.SETTING_SMARTS);
+        mKeyMap.put(SettingsManager.KEY_SMARTS_NEEDS_OPT_IN,
+                SettingsManager.SETTING_SMARTS_NEEDS_OPT_IN);
     }
 
     /**
@@ -217,6 +220,10 @@ public class SettingsCache {
             return SettingsManager.getFlashSupportedBackCameraSetting(mContext);
         case SettingsManager.SETTING_STRICT_UPGRADE_VERSION:
             return SettingsManager.getStrictUpgradeVersionSetting(mContext);
+        case SettingsManager.SETTING_SMARTS:
+            return SettingsManager.getSmartsSetting(mContext);
+        case SettingsManager.SETTING_SMARTS_NEEDS_OPT_IN:
+            return SettingsManager.getSmartsNeedsOptInSetting(mContext);
         default:
             return mExtraSettings.settingFromId(id);
         }
