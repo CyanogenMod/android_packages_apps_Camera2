@@ -1743,9 +1743,9 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    public void onPreviewVisibilityChanged(boolean visible) {
+    public void onPreviewVisibilityChanged(int visibility) {
         if (mPreviewing) {
-            enableTorchMode(visible);
+            enableTorchMode(visibility == ModuleController.VISIBILITY_VISIBLE);
         }
     }
 

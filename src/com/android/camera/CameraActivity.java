@@ -107,6 +107,7 @@ import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
+import com.android.camera.ui.ModeListView.ModeListVisibilityChangedListener;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Callback;
@@ -498,7 +499,8 @@ public class CameraActivity extends Activity
                     // one is shown.
                     mFilmstripController.goToFirstItem();
                     if (mCurrentModule != null) {
-                        mCurrentModule.onPreviewVisibilityChanged(true);
+                        mCurrentModule
+                                .onPreviewVisibilityChanged(ModuleController.VISIBILITY_VISIBLE);
                     }
                 }
 
@@ -507,7 +509,8 @@ public class CameraActivity extends Activity
                     mFilmstripVisible = true;
                     updateUiByData(mFilmstripController.getCurrentId());
                     if (mCurrentModule != null) {
-                        mCurrentModule.onPreviewVisibilityChanged(false);
+                        mCurrentModule
+                                .onPreviewVisibilityChanged(ModuleController.VISIBILITY_HIDDEN);
                     }
                 }
 
@@ -1098,6 +1101,16 @@ public class CameraActivity extends Activity
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
         }
+        mModeListView.setVisibilityChangedListener(new ModeListVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if (mCurrentModule != null) {
+                    int visibility = visible ? ModuleController.VISIBILITY_COVERED
+                            : ModuleController.VISIBILITY_VISIBLE;
+                    mCurrentModule.onPreviewVisibilityChanged(visibility);
+                }
+            }
+        });
 
         // Check if this is in the secure camera mode.
         Intent intent = getIntent();
@@ -1731,7 +1744,9 @@ public class CameraActivity extends Activity
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
-        module.onPreviewVisibilityChanged(!mFilmstripVisible);
+        int visibility = mFilmstripVisible ? ModuleController.VISIBILITY_HIDDEN
+                : ModuleController.VISIBILITY_VISIBLE;
+        module.onPreviewVisibilityChanged(visibility);
     }
 
     private void closeModule(CameraModule module) {
