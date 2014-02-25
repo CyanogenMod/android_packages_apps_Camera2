@@ -18,7 +18,9 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.view.View;
+import android.view.ViewGroup;
 import android.util.AttributeSet;
 
 /**
@@ -45,6 +47,19 @@ public class ProgressOverlay extends View {
         if (changed) {
             mCenterX = (right - left) / 2;
             mCenterY = (bottom - top) / 2;
+        }
+    }
+
+    /**
+     * Reposition the view within a given set of bounds, defined by a
+     * {@link android.graphics.RectF}.
+     */
+    public void setBounds(RectF area) {
+        if (area.width() > 0 && area.height() > 0) {
+            ViewGroup.LayoutParams params = getLayoutParams();
+            params.width = (int) area.width();
+            params.height= (int) area.height();
+            setLayoutParams(params);
         }
     }
 
