@@ -55,7 +55,8 @@ public class PhotoUI implements PreviewStatusListener,
 
     private final View mRootView;
 
-    private FaceView mFaceView;
+    // TODO: Remove face view logic if UX does not bring it back within a month.
+    private FaceView mFaceView = null;
     private DecodeImageForReview mDecodeTaskForReview = null;
 
     private int mZoomMax;
@@ -162,13 +163,6 @@ public class PhotoUI implements PreviewStatusListener,
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                  moduleRoot, true);
         initIndicators();
-
-        ViewStub faceViewStub = (ViewStub) mRootView
-                .findViewById(R.id.face_view_stub);
-        if (faceViewStub != null) {
-            faceViewStub.inflate();
-            mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
-        }
         mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
     }
@@ -355,16 +349,20 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     public void onStartFaceDetection(int orientation, boolean mirror) {
-        mFaceView.clear();
-        mFaceView.setVisibility(View.VISIBLE);
-        mFaceView.setDisplayOrientation(orientation);
-        mFaceView.setMirror(mirror);
-        mFaceView.resume();
+        if (mFaceView != null) {
+            mFaceView.clear();
+            mFaceView.setVisibility(View.VISIBLE);
+            mFaceView.setDisplayOrientation(orientation);
+            mFaceView.setMirror(mirror);
+            mFaceView.resume();
+        }
     }
 
     @Override
     public void onFaceDetection(Face[] faces, CameraManager.CameraProxy camera) {
-        mFaceView.setFaces(faces);
+        if (mFaceView != null) {
+            mFaceView.setFaces(faces);
+        }
     }
 
     /**
