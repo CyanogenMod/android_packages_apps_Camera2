@@ -595,12 +595,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     } else if (deltaX <= -Math.abs(deltaY)) {
                         // Swipe left.
                         setSwipeState(SWIPE_LEFT);
-                    } else if (deltaY >= Math.abs(deltaX)) {
-                        // Swipe down.
-                        setSwipeState(SWIPE_DOWN);
-                    } else if (deltaY <= -Math.abs(deltaX)) {
-                        // Swipe up.
-                        setSwipeState(SWIPE_UP);
                     }
                 }
             }
@@ -713,6 +707,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     private void onSwipeDetected(int swipeState) {
         if (swipeState == SWIPE_UP || swipeState == SWIPE_DOWN) {
+            // TODO: Polish quick switch after this release.
             // Quick switch between modes.
             int currentModuleIndex = mController.getCurrentModuleIndex();
             final int moduleToTransitionTo =
