@@ -113,6 +113,7 @@ public class ModeListView extends FrameLayout
     private int mFocusItem = NO_ITEM_SELECTED;
     private AnimationEffects mCurrentEffect;
     private ModeListOpenListener mModeListOpenListener;
+    private ModeListVisibilityChangedListener mVisibilityChangedListener;
     private CameraAppUI.CameraModuleScreenShotProvider mScreenShotProvider = null;
     private int[] mInputPixels;
     private int[] mOutputPixels;
@@ -205,6 +206,32 @@ public class ModeListView extends FrameLayout
          * Gets called when mode list is completely closed.
          */
         public void onModeListClosed();
+    }
+
+    public static abstract class ModeListVisibilityChangedListener {
+        private final Boolean mCurrentVisibility = null;
+
+        /** Whether the mode list is (partially or fully) visible. */
+        public abstract void onVisibilityChanged(boolean visible);
+
+        /**
+         * Internal method to be called by the mode list whenever a visibility
+         * even occurs.
+         * <p>
+         * Do not call {@link #onVisibilityChanged(boolean)} directly, as this
+         * is only called when the visibility has actually changed and not on
+         * each visibility event.
+         *
+         * @param visible whether the mode drawer is currently visible.
+         */
+        private void onVisibilityEvent(boolean visible) {
+            // TODO: Re-activate this check as soon as onVisibilityChanged() is
+            // reporting the initial visibility correctly.
+            //  if (mCurrentVisibility == null || mCurrentVisibility != visible) {
+            //      mCurrentVisibility = visible;
+                onVisibilityChanged(visible);
+            //  }
+        }
     }
 
     /**
@@ -578,6 +605,14 @@ public class ModeListView extends FrameLayout
         mModeListOpenListener = listener;
     }
 
+    /**
+     * Sets or replaces a listener that is called when the visibility of the
+     * mode list changed.
+     */
+    public void setVisibilityChangedListener(ModeListVisibilityChangedListener listener) {
+        mVisibilityChangedListener = listener;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (mCurrentEffect != null) {
@@ -787,9 +822,12 @@ public class ModeListView extends FrameLayout
                     mModeSelectorItems[i].setSelected(false);
                 }
             }
-            if (mModeSwitchListener != null) {
+            if (mModeListOpenListener != null) {
                 mModeListOpenListener.onModeListClosed();
             }
+        }
+        if (mVisibilityChangedListener != null) {
+            mVisibilityChangedListener.onVisibilityEvent(visibility == VISIBLE);
         }
     }
 
@@ -1108,7 +1146,7 @@ public class ModeListView extends FrameLayout
         for (int i = 0; i < mTotalModes; i++) {
             ObjectAnimator animator = ObjectAnimator.ofInt(mModeSelectorItems[i],
                     "visibleWidth", width);
-            int duration = (int) ((float) width / velocity);
+            int duration = (int) (width / velocity);
             animator.setDuration(duration);
             animators.add(animator);
             if (i == focusItem) {
