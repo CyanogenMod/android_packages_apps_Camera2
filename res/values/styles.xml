@@ -276,11 +276,19 @@
         <item name="android:alpha">1.0</item>
     </style>
     <style name="FilmstripBottomControlButton">
-        <item name="android:layout_width">@dimen/filmstrip_bottom_control_size</item>
-        <item name="android:layout_height">@dimen/filmstrip_bottom_control_size</item>
+        <item name="android:layout_width">@dimen/filmstrip_bottom_control_button_size</item>
+        <item name="android:layout_height">@dimen/filmstrip_bottom_control_button_size</item>
         <item name="android:background">@drawable/transparent_button_background</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:layout_gravity">center_vertical</item>
+    </style>
+    <style name="FilmstripBottomProgressText">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:shadowColor">@android:color/black</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">2</item>
     </style>
     <style name="IndicatorIcon">
         <item name="android:layout_width">@dimen/indicator_icon_width</item>
