@@ -387,17 +387,8 @@ public class PhotoModule
     private void locationFirstRun() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        // Check whether we can parse the value. If not, let the user choose
-        // again.
-        try {
-            if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
-                // This line will throw an exception if the value cannot be
-                // parsed. Otherwise, we will return.
-                settingsManager.getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
-                return;
-            }
-        } catch (Exception ex) {
-            // Fall through and open the dialog.
+        if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
+            return;
         }
         if (mActivity.isSecureCamera()) {
             return;

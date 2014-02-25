@@ -1047,6 +1047,20 @@ public class CameraActivity extends Activity
         }
     }
 
+    private SettingsManager.StrictUpgradeCallback mStrictUpgradeCallback
+        = new SettingsManager.StrictUpgradeCallback() {
+                @Override
+                public void upgrade(SettingsManager settingsManager, int version) {
+                    // Show the location dialog on upgrade if
+                    //  (a) the user has never set this option (status quo).
+                    //  (b) the user opt'ed out previously.
+                    if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION) &&
+                            !settingsManager.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
+                        settingsManager.remove(SettingsManager.SETTING_RECORD_LOCATION);
+                    }
+                }
+            };
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -1067,7 +1081,7 @@ public class CameraActivity extends Activity
         mContentResolver = this.getContentResolver();
 
         mSettingsManager = new SettingsManager(mAppContext, this,
-                mCameraController.getNumberOfCameras());
+                mCameraController.getNumberOfCameras(), mStrictUpgradeCallback);
 
         // Remove this after we get rid of ComboPreferences.
         int cameraId = Integer.parseInt(mSettingsManager.get(SettingsManager.SETTING_CAMERA_ID));
