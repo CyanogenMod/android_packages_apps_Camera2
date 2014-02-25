@@ -51,6 +51,51 @@ public class SettingsManager {
     private final AppController mAppController;
 
     /**
+     * General settings upgrade model:
+     *
+     *  On app upgrade, there are three main ways Settings can be stale/incorrect:
+     *  (1) if the type of a setting has changed.
+     *  (2) if a set value is no longer a member of the set of possible values.
+     *  (3) if the SharedPreferences backing file has changed for a setting.
+     *
+     *  Recovery strategies:
+     *  (1) catch the ClassCastException or NumberFormatException and try to do a
+     *      type conversion, or reset the setting to whatever default is valid.
+     *  (2) sanitize sets, and reset to default if set value is no longer valid.
+     *  (3) use the default value by virtue of the setting not yet being in the
+     *      new file.
+     *
+     * Special cases:
+     *
+     *  There are some settings which shouldn't be reset to default on upgrade if
+     *  possible.  We provide a callback which is executed only on strict upgrade.
+     *  This callback does special case upgrades to a subset of the settings.  This
+     *  contrasts  with the general upgrade strategies, which happen lazily, once a
+     *  setting is used.
+     *
+     * Removing obsolete key/value pairs:
+     *
+     *  This can be done in the strict upgrade callback.  The strict upgrade callback
+     *  should be idempotent, so it is important to leave removal code in the upgrade
+     *  callback so the key/value pairs are removed even if a user skips a version.
+     */
+    public interface StrictUpgradeCallback {
+        /**
+         * Will be executed in the SettingsManager constructor if the strict
+         * upgrade version counter has changed.
+         */
+        public void upgrade(SettingsManager settingsManager, int version);
+    }
+
+    /**
+     * Increment this value whenever a new StrictUpgradeCallback needs to
+     * be executed.  This defines upgrade behavior that should be executed
+     * strictly on app upgrades, when the upgrade behavior differs from the general,
+     * lazy upgrade strategies.
+     */
+    private static final int STRICT_UPGRADE_VERSION = 1;
+
+    /**
      * A List of OnSettingChangedListener's, maintained to compare to new
      * listeners and prevent duplicate registering.
      */
@@ -62,7 +107,8 @@ public class SettingsManager {
      */
     private final List<OnSharedPreferenceChangeListener> mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
 
-    public SettingsManager(Context context, AppController app, int nCameras) {
+    public SettingsManager(Context context, AppController app, int nCameras,
+                           StrictUpgradeCallback upgradeCallback) {
         mContext = context;
         mAppController = app;
 
@@ -71,6 +117,15 @@ public class SettingsManager {
 
         mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
         initGlobal();
+
+        if (upgradeCallback != null) {
+            // Check for a strict version upgrade.
+            int version = getInt(SETTING_STRICT_UPGRADE_VERSION);
+            if (STRICT_UPGRADE_VERSION != version) {
+                upgradeCallback.upgrade(this, STRICT_UPGRADE_VERSION);
+            }
+            setInt(SETTING_STRICT_UPGRADE_VERSION, STRICT_UPGRADE_VERSION);
+        }
     }
 
     /**
@@ -310,6 +365,7 @@ public class SettingsManager {
     public static final int SETTING_CAMERA_GRID_LINES = 23;
     public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 24;
     public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 25;
+    public static final int SETTING_STRICT_UPGRADE_VERSION = 26;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -345,6 +401,7 @@ public class SettingsManager {
             "pref_release_dialog_last_shown_version";
     public static final String KEY_FLASH_SUPPORTED_BACK_CAMERA =
             "pref_flash_supported_back_camera";
+    public static final String KEY_STRICT_UPGRADE_VERSION = "pref_strict_upgrade_version";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -457,10 +514,11 @@ public class SettingsManager {
         if (setting == null || !TYPE_STRING.equals(setting.getType())) {
             return -1;
         }
+        return getStringValueIndex(setting.getStringValues(), get(id));
+    }
 
-        String value = get(id);
+    private int getStringValueIndex(String[] possibleValues, String value) {
         if (value != null) {
-            String[] possibleValues = setting.getStringValues();
             if (possibleValues != null) {
                 for (int i = 0; i < possibleValues.length; i++) {
                     if (value.equals(possibleValues[i])) {
@@ -496,16 +554,156 @@ public class SettingsManager {
     }
 
     /**
+     * Returns whether this Setting was last set as a String.
+     */
+    private boolean isString(int id) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(setting);
+        try {
+            preferences.getString(setting.getKey(), null);
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns whether this Setting was last set as a boolean.
+     */
+    private boolean isBoolean(int id) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(setting);
+        try {
+            preferences.getBoolean(setting.getKey(), false);
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns whether this Setting was last set as an Integer.
+     */
+    private boolean isInteger(int id) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(setting);
+        try {
+            preferences.getInt(setting.getKey(), 0);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Recover a Setting by converting it to a String if the type
+     * is known and the type conversion is successful, otherwise
+     * reset to the default.
+     */
+    private String recoverToString(int id) {
+        String value;
+        try {
+            if (isBoolean(id)) {
+                value = (getBoolean(id) ? VALUE_ON : VALUE_OFF);
+            } else if (isInteger(id)) {
+                value = Integer.toString(getInt(id));
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            value = mSettingsCache.get(id).getDefault();
+        }
+        set(id, value);
+        return value;
+    }
+
+    /**
+     * Recover a Setting by converting it to a boolean if the type
+     * is known and the type conversion is successful, otherwise
+     * reset to the default.
+     */
+    private boolean recoverToBoolean(int id) {
+        boolean value;
+        try {
+            if (isString(id)) {
+                value = VALUE_ON.equals(get(id));
+            } else if (isInteger(id)) {
+                value = getInt(id) != 0;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            value = VALUE_ON.equals(mSettingsCache.get(id).getDefault());
+        }
+        setBoolean(id, value);
+        return value;
+    }
+
+    /**
+     * Recover a Setting by converting it to an Integer if the type
+     * is known and the type conversion is successful, otherwise
+     * reset to the default.
+     */
+    private int recoverToInteger(int id) {
+        int value;
+        try {
+            if (isString(id)) {
+                value = Integer.parseInt(get(id));
+            } else if (isBoolean(id)) {
+                value = getBoolean(id) ? 1 : 0;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            value = Integer.parseInt(mSettingsCache.get(id).getDefault());
+        }
+        setInt(id, value);
+        return value;
+    }
+
+    /**
+     * Check if a String value is in the set of possible values for a Setting.
+     * We only keep track of possible values for String types for now.
+     */
+    private String sanitize(Setting setting, String value) {
+        if (setting.getStringValues() != null &&
+                getStringValueIndex(setting.getStringValues(), value) < 0) {
+            // If the set of possible values is not empty, and the value
+            // is not in the set of possible values, use the default, because
+            // the set of possible values probably changed.
+            return setting.getDefault();
+        }
+        return value;
+    }
+
+    /**
      * Get a Setting's String value based on Setting id.
      */
     // TODO: rename to something more descriptive.
     public String get(int id) {
         Setting setting = mSettingsCache.get(id);
+        if (!TYPE_STRING.equals(setting.getType())) {
+            // Incorrect use of the api, the defaults will
+            // probably be defined as the wrong type, no recovery.
+            throw new IllegalArgumentException(
+                "Trying to get String when Setting id=" + id
+                + " is defined as a " + setting.getType());
+        }
+
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
-            return preferences.getString(setting.getKey(), setting.getDefault());
+            try {
+                String value = preferences.getString(setting.getKey(), setting.getDefault());
+                return sanitize(setting, value);
+            } catch (ClassCastException e) {
+                // If the api defines this Setting as a String, but the
+                // last set saved it as a different type, try to recover
+                // the value, but if impossible reset to default.
+                return recoverToString(id);
+            }
         } else {
-            return null;
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -514,12 +712,28 @@ public class SettingsManager {
      */
     public boolean getBoolean(int id) {
         Setting setting = mSettingsCache.get(id);
+        if (!TYPE_BOOLEAN.equals(setting.getType())) {
+            // Incorrect use of the api, the defaults will
+            // probably be defined as the wrong type, no recovery.
+            throw new IllegalArgumentException(
+                "Trying to get boolean when Setting id=" + id
+                + " is defined as a " + setting.getType());
+        }
+
         SharedPreferences preferences = getSettingSource(setting);
-        boolean defaultValue = setting.getDefault().equals(VALUE_ON);
+        boolean defaultValue = VALUE_ON.equals(setting.getDefault());
         if (preferences != null) {
-            return preferences.getBoolean(setting.getKey(), defaultValue);
+            try {
+                return preferences.getBoolean(setting.getKey(), defaultValue);
+            } catch (ClassCastException e) {
+                // If the api defines this Setting as a boolean, but the
+                // last set saved it as a different type, try to recover
+                // the value, but if impossible reset to default.
+                return recoverToBoolean(id);
+            }
         } else {
-            return defaultValue;
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -528,12 +742,28 @@ public class SettingsManager {
      */
     public int getInt(int id) {
         Setting setting = mSettingsCache.get(id);
+        if (!TYPE_INTEGER.equals(setting.getType())) {
+            // Incorrect use of the api, the defaults will
+            // probably be defined as the wrong type, no recovery.
+            throw new IllegalArgumentException(
+                "Trying to get Integer when Setting id=" + id
+                + " is defined as a " + setting.getType());
+        }
+
         SharedPreferences preferences = getSettingSource(setting);
         int defaultValue = Integer.parseInt(setting.getDefault());
         if (preferences != null) {
-            return preferences.getInt(setting.getKey(), defaultValue);
+            try {
+                return preferences.getInt(setting.getKey(), defaultValue);
+            } catch (NumberFormatException e) {
+                // If the api defines this Setting as an Integer, but the
+                // last set saved it as a different type, try to recover
+                // the value, but if impossible reset to default.
+                return recoverToInteger(id);
+            }
         } else {
-            return defaultValue;
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -543,9 +773,13 @@ public class SettingsManager {
     // TODO: rename to something more descriptive.
     public void set(int id, String value) {
         Setting setting = mSettingsCache.get(id);
+        value = sanitize(setting, value);
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
             preferences.edit().putString(setting.getKey(), value).apply();
+        } else {
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -557,6 +791,9 @@ public class SettingsManager {
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
             preferences.edit().putBoolean(setting.getKey(), value).apply();
+        } else {
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -568,6 +805,9 @@ public class SettingsManager {
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
             preferences.edit().putInt(setting.getKey(), value).apply();
+        } else {
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -577,10 +817,12 @@ public class SettingsManager {
     public boolean isSet(int id) {
         Setting setting = mSettingsCache.get(id);
         SharedPreferences preferences = getSettingSource(setting);
-        if (preferences == null) {
-            return false;
+        if (preferences != null) {
+            return preferences.contains(setting.getKey());
+        } else {
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
-        return preferences.contains(setting.getKey());
     }
 
     /**
@@ -591,6 +833,9 @@ public class SettingsManager {
         SharedPreferences preferences = getSettingSource(setting);
         if (preferences != null) {
             preferences.edit().putString(setting.getKey(), setting.getDefault());
+        } else {
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -617,7 +862,22 @@ public class SettingsManager {
                 throw new IllegalArgumentException("Type " + type + " is not known.");
             }
         } else {
-            return false;
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
+        }
+    }
+
+    /**
+     * Remove a Setting from SharedPreferences.
+     */
+    public void remove(int id) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(setting);
+        if (preferences != null) {
+            preferences.edit().remove(setting.getKey()).apply();
+        } else {
+            throw new IllegalStateException(
+                "Setting source=" + setting.getSource() + " is unitialized.");
         }
     }
 
@@ -824,6 +1084,12 @@ public class SettingsManager {
                 KEY_FLASH_SUPPORTED_BACK_CAMERA, null, FLUSH_OFF);
     }
 
+    public static Setting getStrictUpgradeVersionSetting(Context context) {
+        String defaultValue = "0";
+        return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
+                KEY_STRICT_UPGRADE_VERSION, null, FLUSH_OFF);
+    }
+
     // Utilities.
 
     /**
@@ -925,13 +1191,7 @@ public class SettingsManager {
      * given location manager.
      */
     public void syncLocationManager(LocationManager locationManager) {
-        boolean value = false;
-        try {
-            value = this.getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
-        } catch (Exception ex) {
-            // Keep disabled, if we cannot parse the preference.
-            Log.w(TAG, "Could not parse location value. Defaulting to 'false'.");
-        }
+        boolean value = getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
         locationManager.recordLocation(value);
     }
 }
