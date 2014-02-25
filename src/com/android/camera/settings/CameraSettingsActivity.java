@@ -31,9 +31,6 @@ import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
-import com.google.android.gsf.Gservices;
-import com.google.android.gsf.GservicesKeys;
-
 /**
  * Provides the settings UI for the Camera app.
  */
@@ -74,13 +71,6 @@ public class CameraSettingsActivity extends FragmentActivity {
             // Only show open source licenses in GoogleCamera build.
             if (!SettingsHelper.isOpenSourceLicensesShown()) {
                 Preference pref = findPreference("pref_open_source_licenses");
-                getPreferenceScreen().removePreference(pref);
-            }
-
-           // Only show smart camera setting if Gservice flag for smart camera is on.
-            if (!Gservices.getBoolean(getActivity().getContentResolver(),
-                GservicesKeys.ANDROID_CAMERA_SMARTCAM_ENABLED, false)) {
-                Preference pref = findPreference("pref_smart_key");
                 getPreferenceScreen().removePreference(pref);
             }
 
