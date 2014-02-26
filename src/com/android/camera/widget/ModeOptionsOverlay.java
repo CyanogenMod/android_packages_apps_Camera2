@@ -64,19 +64,6 @@ public class ModeOptionsOverlay extends FrameLayout
     // Group of on screen indicators for mode options toggle.
     private LinearLayout mIndicators;
 
-    /**
-     * A generic Runnable for setting the options toggle to the capture
-     * layout state and performing the state transition.
-     */
-    private final Runnable mCloseOptionsRunnable =
-        new Runnable() {
-            @Override
-            public void run() {
-                mModeOptions.setVisibility(View.INVISIBLE);
-                mModeOptionsToggle.setVisibility(View.VISIBLE);
-            }
-        };
-
     public ModeOptionsOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -84,17 +71,13 @@ public class ModeOptionsOverlay extends FrameLayout
     @Override
     public void onFinishInflate() {
         mModeOptions = (TopRightWeightedLayout) findViewById(R.id.mode_options);
-        mModeOptions.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    // close options immediately.
-                    closeModeOptionsDelayed(BOTTOMBAR_OPTIONS_TIMEOUT_MS);
+        mModeOptions.setClickable(true);
+        mModeOptions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    closeModeOptions();
                 }
-                // Let touch event reach mode options or shutter.
-                return false;
-            }
-        });
+            });
 
         mModeOptionsToggle = (FrameLayout) findViewById(R.id.mode_options_toggle);
         mModeOptionsToggle.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +95,7 @@ public class ModeOptionsOverlay extends FrameLayout
 
     @Override
     public void onPreviewTouched(MotionEvent ev) {
-        // close options immediately.
-        closeModeOptionsDelayed(0);
+        closeModeOptions();
     }
 
     @Override
@@ -126,17 +108,13 @@ public class ModeOptionsOverlay extends FrameLayout
      * of milliseconds.  If the options menu is already closed, nothing is
      * scheduled.
      */
-    private void closeModeOptionsDelayed(int milliseconds) {
+    private void closeModeOptions() {
         // Check that the bottom bar options are visible.
         if (mModeOptions.getVisibility() != View.VISIBLE) {
             return;
         }
-
-        // Remove queued callbacks.
-        removeCallbacks(mCloseOptionsRunnable);
-
-        // Close the bottom bar options view in n milliseconds.
-        postDelayed(mCloseOptionsRunnable, milliseconds);
+        mModeOptions.setVisibility(View.INVISIBLE);
+        mModeOptionsToggle.setVisibility(View.VISIBLE);
     }
 
     @Override
