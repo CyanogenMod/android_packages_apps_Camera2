@@ -485,6 +485,11 @@ public class CameraActivity extends Activity
                 }
 
                 @Override
+                public void onSwipeOutBegin() {
+                    mActionBar.hide();
+                }
+
+                @Override
                 public void onFilmstripHidden() {
                     mFilmstripVisible = false;
                     CameraActivity.this.setFilmstripUiVisibility(false);

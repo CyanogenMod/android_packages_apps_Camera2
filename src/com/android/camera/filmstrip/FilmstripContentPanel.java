@@ -35,6 +35,11 @@ public interface FilmstripContentPanel {
         public void onSwipeOut();
 
         /**
+         * Callback on a swiping out begins.
+         */
+        public void onSwipeOutBegin();
+
+        /**
          * Callback when the filmstrip becomes invisible or gone.
          */
         public void onFilmstripHidden();
