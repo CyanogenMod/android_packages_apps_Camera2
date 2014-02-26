@@ -81,7 +81,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     /**
      * The bottom controls on the filmstrip.
      */
-    public static interface BottomControls {
+    public static interface BottomPanel {
         /** Values for the view state of the button. */
         public final int VIEWER_NONE = 0;
         public final int VIEWER_PHOTO_SPHERE = 1;
@@ -146,6 +146,30 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * @param enabled Whether the button is enabled.
          */
         void setShareEnabled(boolean enabled);
+
+        /**
+         * Sets the texts for progress UI.
+         *
+         * @param text The text to show.
+         */
+        void setProgressText(CharSequence text);
+
+        /**
+         * Sets the progress.
+         *
+         * @param progress The progress value. Should be between 0 and 100.
+         */
+        void setProgress(int progress);
+
+        /**
+         * Shows the progress UI and hides the controls.
+         */
+        void showProgress();
+
+        /**
+         * Shows the controls and hides the progress UI.
+         */
+        void showControls();
 
         /**
          * Classes implementing this interface can listen for events on the bottom
@@ -412,7 +436,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private CaptureAnimationOverlay mCaptureOverlay;
     private PreviewStatusListener mPreviewStatusListener;
     private int mModeCoverState = COVER_HIDDEN;
-    private final FilmstripBottomControls mFilmstripBottomControls;
+    private final FilmstripBottomPanel mFilmstripBottomControls;
     private final FilmstripContentPanel mFilmstripPanel;
     private Runnable mHideCoverRunnable;
     private final UncoveredPreviewAreaSizeChangedListener mUncoverPreviewAreaChangedListener;
@@ -626,7 +650,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mCameraRootView = (FrameLayout) appRootView.findViewById(R.id.camera_app_root);
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
-        mFilmstripBottomControls = new FilmstripBottomControls(controller,
+        mFilmstripBottomControls = new FilmstripBottomPanel(controller,
                 (ViewGroup) mAppRootView.findViewById(R.id.filmstrip_bottom_controls));
         mFilmstripPanel = (FilmstripContentPanel) mAppRootView.findViewById(R.id.filmstrip_layout);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),
@@ -1149,17 +1173,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * @return The {@link com.android.camera.app.CameraAppUI.BottomControls} on the
+     * @return The {@link com.android.camera.app.CameraAppUI.BottomPanel} on the
      * bottom of the filmstrip.
      */
-    public BottomControls getFilmstripBottomControls() {
+    public BottomPanel getFilmstripBottomControls() {
         return mFilmstripBottomControls;
     }
 
     /**
      * @param listener The listener for bottom controls.
      */
-    public void setFilmstripBottomControlsListener(BottomControls.Listener listener) {
+    public void setFilmstripBottomControlsListener(BottomPanel.Listener listener) {
         mFilmstripBottomControls.setListener(listener);
     }
 

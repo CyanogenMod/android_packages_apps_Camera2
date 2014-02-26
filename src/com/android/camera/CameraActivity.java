@@ -65,9 +65,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
-import android.widget.TextView;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
@@ -187,9 +185,6 @@ public class CameraActivity extends Activity
     private FrameLayout mAboveFilmstripControlLayout;
     private FilmstripController mFilmstripController;
     private boolean mFilmstripVisible;
-    private TextView mBottomProgressText;
-    private ProgressBar mBottomProgressBar;
-    private View mSessionProgressPanel;
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
@@ -243,8 +238,8 @@ public class CameraActivity extends Activity
      */
     private boolean mKeepScreenOn;
     private int mLastLayoutOrientation;
-    private final CameraAppUI.BottomControls.Listener mMyFilmstripBottomControlListener =
-            new CameraAppUI.BottomControls.Listener() {
+    private final CameraAppUI.BottomPanel.Listener mMyFilmstripBottomControlListener =
+            new CameraAppUI.BottomPanel.Listener() {
 
                 /**
                  * If the current photo is a photo sphere, this will launch the
@@ -676,16 +671,17 @@ public class CameraActivity extends Activity
     }
 
     private void hideSessionProgress() {
-        mSessionProgressPanel.setVisibility(View.GONE);
+        mCameraAppUI.getFilmstripBottomControls().showControls();
     }
 
     private void showSessionProgress(CharSequence message) {
-        mBottomProgressText.setText(message);
-        mSessionProgressPanel.setVisibility(View.VISIBLE);
+        CameraAppUI.BottomPanel controls =  mCameraAppUI.getFilmstripBottomControls();
+        controls.setProgressText(message);
+        controls.showProgress();
     }
 
     private void updateSessionProgress(int progress) {
-        mBottomProgressBar.setProgress(progress);
+        mCameraAppUI.getFilmstripBottomControls().setProgress(progress);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -1153,9 +1149,6 @@ public class CameraActivity extends Activity
         // Add the session listener so we can track the session progress
         // updates.
         getServices().getCaptureSessionManager().addSessionListener(mSessionListener);
-        mSessionProgressPanel = findViewById(R.id.pano_session_progress_panel);
-        mBottomProgressBar = (ProgressBar) findViewById(R.id.pano_session_progress_bar);
-        mBottomProgressText = (TextView) findViewById(R.id.pano_session_progress_text);
         mFilmstripController = ((FilmstripView) findViewById(R.id.filmstrip_view)).getController();
         mFilmstripController.setImageGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
@@ -2004,13 +1997,13 @@ public class CameraActivity extends Activity
      */
     private void updateBottomControlsByData(final LocalData currentData) {
 
-        final CameraAppUI.BottomControls filmstripBottomControls =
+        final CameraAppUI.BottomPanel filmstripBottomPanel =
                 mCameraAppUI.getFilmstripBottomControls();
-        filmstripBottomControls.setEditButtonVisibility(
+        filmstripBottomPanel.setEditButtonVisibility(
                 currentData.isDataActionSupported(LocalData.DATA_ACTION_EDIT));
-        filmstripBottomControls.setShareButtonVisibility(
+        filmstripBottomPanel.setShareButtonVisibility(
                 currentData.isDataActionSupported(LocalData.DATA_ACTION_SHARE));
-        filmstripBottomControls.setDeleteButtonVisibility(
+        filmstripBottomPanel.setDeleteButtonVisibility(
                 currentData.isDataActionSupported(LocalData.DATA_ACTION_DELETE));
 
         /* Progress bar */
@@ -2034,16 +2027,16 @@ public class CameraActivity extends Activity
         // We need to add this to a separate DB.
         final int viewButtonVisibility;
         if (PanoramaMetadataLoader.isPanoramaAndUseViewer(currentData)) {
-            viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_PHOTO_SPHERE;
+            viewButtonVisibility = CameraAppUI.BottomPanel.VIEWER_PHOTO_SPHERE;
         } else if (RgbzMetadataLoader.hasRGBZData(currentData)) {
-            viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_REFOCUS;
+            viewButtonVisibility = CameraAppUI.BottomPanel.VIEWER_REFOCUS;
         } else {
-            viewButtonVisibility = CameraAppUI.BottomControls.VIEWER_NONE;
+            viewButtonVisibility = CameraAppUI.BottomPanel.VIEWER_NONE;
         }
 
-        filmstripBottomControls.setTinyPlanetEnabled(
+        filmstripBottomPanel.setTinyPlanetEnabled(
                 PanoramaMetadataLoader.isPanorama360(currentData));
-        filmstripBottomControls.setViewerButtonVisibility(viewButtonVisibility);
+        filmstripBottomPanel.setViewerButtonVisibility(viewButtonVisibility);
     }
 
     private class PeekAnimationHandler extends Handler {
