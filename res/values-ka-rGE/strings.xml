@@ -302,7 +302,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Timelapse Mode-ზე გადართვა"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Wideangle Mode-ში დაბრუნება"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"გადართვა პანორამულ რეჟიმზე"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"ობიექტივის დაბინდვა რეჟიმზე გადართვა"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"ობიექტივის დაბინდვის რეჟიმზე გადართვა"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"პარამეტრების გახსნა"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"პარამეტრების დახურვა"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus გამორთულია"</string>
