@@ -260,7 +260,7 @@ public class CameraActivity extends Activity
                     }
 
                     if (PanoramaMetadataLoader.isPanoramaAndUseViewer(data)) {
-                        mPanoramaViewHelper.showPanorama(contentUri);
+                        mPanoramaViewHelper.showPanorama(CameraActivity.this, contentUri);
                     } else if (RgbzMetadataLoader.hasRGBZData(data)) {
                         mPanoramaViewHelper.showRgbz(contentUri);
                     }
