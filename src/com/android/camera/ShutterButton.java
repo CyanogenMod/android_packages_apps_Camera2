@@ -22,6 +22,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * A button designed to be used for the on-screen shutter button.
  * It's currently an {@code ImageView} that can call a delegate when the
@@ -46,15 +49,30 @@ public class ShutterButton extends ImageView {
         void onShutterButtonClick();
     }
 
-    private OnShutterButtonListener mListener;
+    private List<OnShutterButtonListener> mListeners
+        = new ArrayList<OnShutterButtonListener>();
     private boolean mOldPressed;
 
     public ShutterButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public void setOnShutterButtonListener(OnShutterButtonListener listener) {
-        mListener = listener;
+    /**
+     * Add an {@link OnShutterButtonListener} to a set of listeners.
+     */
+    public void addOnShutterButtonListener(OnShutterButtonListener listener) {
+        if (!mListeners.contains(listener)) {
+            mListeners.add(listener);
+        }
+    }
+
+    /**
+     * Remove an {@link OnShutterButtonListener} from a set of listeners.
+     */
+    public void removeOnShutterButtonListener(OnShutterButtonListener listener) {
+        if (mListeners.contains(listener)) {
+            mListeners.remove(listener);
+        }
     }
 
     @Override
@@ -116,16 +134,18 @@ public class ShutterButton extends ImageView {
     }
 
     private void callShutterButtonFocus(boolean pressed) {
-        if (mListener != null) {
-            mListener.onShutterButtonFocus(pressed);
+        for (OnShutterButtonListener listener : mListeners) {
+            listener.onShutterButtonFocus(pressed);
         }
     }
 
     @Override
-    public boolean performClick() {
+        public boolean performClick() {
         boolean result = super.performClick();
-        if (mListener != null && getVisibility() == View.VISIBLE) {
-            mListener.onShutterButtonClick();
+        if (getVisibility() == View.VISIBLE) {
+            for (OnShutterButtonListener listener : mListeners) {
+                listener.onShutterButtonClick();
+            }
         }
         return result;
     }

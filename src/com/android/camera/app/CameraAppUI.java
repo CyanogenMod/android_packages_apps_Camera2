@@ -419,7 +419,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final FilmstripLayout mFilmstripLayout;
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
-    private View mShutterButton;
+    private ShutterButton mShutterButton;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
     private boolean mShouldShowShimmy = false;
@@ -1003,6 +1003,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         resetBottomControls(mController.getCurrentModuleController(),
             mController.getCurrentModuleIndex());
 
+        mShutterButton = (ShutterButton) mCameraRootView.findViewById(R.id.shutter_button);
+        addShutterListener(mController.getCurrentModuleController());
+        addShutterListener(mModeOptionsOverlay);
+
         mGridLines = (GridLines) mCameraRootView.findViewById(R.id.grid_lines);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mGridLines);
 
@@ -1029,7 +1033,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
         mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
-        mShutterButton = mCameraRootView.findViewById(R.id.shutter_button);
     }
 
     /**
@@ -1050,6 +1053,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModuleUI != null) {
             mModuleUI.removeAllViews();
         }
+        removeShutterListener(mController.getCurrentModuleController());
         mTextureViewHelper.addPreviewAreaSizeChangedListener(null);
 
         mPreviewStatusListener = null;
@@ -1394,17 +1398,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * If the bottom bar is visible (hence has been drawn),
-     * this sets a {@link #ShutterButton.OnShutterButtonListener}
-     * on the global shutter button,
+     * Add a {@link #ShutterButton.OnShutterButtonListener} to the shutter button.
      */
-    public void setBottomBarShutterListener(
-            ShutterButton.OnShutterButtonListener listener) {
-        ShutterButton shutterButton
-            = (ShutterButton) mCameraRootView.findViewById(R.id.shutter_button);
-        if (shutterButton != null) {
-            shutterButton.setOnShutterButtonListener(listener);
-        }
+    public void addShutterListener(ShutterButton.OnShutterButtonListener listener) {
+        mShutterButton.addOnShutterButtonListener(listener);
+    }
+
+    /**
+     * Remove a {@link #ShutterButton.OnShutterButtonListener} from the shutter button.
+     */
+    public void removeShutterListener(ShutterButton.OnShutterButtonListener listener) {
+        mShutterButton.removeOnShutterButtonListener(listener);
     }
 
     /**

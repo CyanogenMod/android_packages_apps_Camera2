@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.android.camera.ShutterButton;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TopRightWeightedLayout;
@@ -43,7 +44,8 @@ import com.android.camera2.R;
 public class ModeOptionsOverlay extends FrameLayout
     implements PreviewStatusListener.PreviewAreaSizeChangedListener,
                PreviewOverlay.OnPreviewTouchedListener,
-               IndicatorIconController.OnIndicatorVisibilityChangedListener {
+               IndicatorIconController.OnIndicatorVisibilityChangedListener,
+               ShutterButton.OnShutterButtonListener {
 
     private final static String TAG = "ModeOptionsOverlay";
 
@@ -101,6 +103,15 @@ public class ModeOptionsOverlay extends FrameLayout
     @Override
     public void onIndicatorVisibilityChanged(View indicator) {
         showCorrectToggleView(mThreeDots, mIndicators);
+    }
+
+    @Override
+    public void onShutterButtonClick() {
+        closeModeOptions();
+    }
+
+    @Override
+    public void onShutterButtonFocus(boolean pressed) {
     }
 
     /**
