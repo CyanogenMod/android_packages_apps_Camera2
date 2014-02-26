@@ -68,7 +68,7 @@ public class PhotoSphereHelper {
          * @return The {@link android.content.Intent} to invoke the external
          * PhotoSphere viewer.
          */
-        public Intent showPanorama(Uri uri) {
+        public Intent showPanorama(Activity activity, Uri uri) {
             /* Do nothing */
             return null;
         }
