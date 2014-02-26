@@ -42,6 +42,7 @@ import java.util.Locale;
  *  Provides utilities and keys for Camera settings.
  *  TODO: deprecate once all modules are using SettingsManager.
  */
+@Deprecated
 public class CameraSettings {
     private static final int NOT_FOUND = -1;
 
@@ -95,16 +96,6 @@ public class CameraSettings {
         mCameraId = cameraId;
         mCameraInfo = cameraInfo;
         mSettingsManager = mActivityController.getSettingsManager();
-    }
-
-    public PreferenceGroup getPreferenceGroup(int preferenceRes) {
-        PreferenceInflater inflater = new PreferenceInflater(mContext);
-        PreferenceGroup group =
-                (PreferenceGroup) inflater.inflate(preferenceRes);
-        if (mParameters != null) {
-            initPreference(group);
-        }
-        return group;
     }
 
     public static String getSupportedHighestVideoQuality(int cameraId,

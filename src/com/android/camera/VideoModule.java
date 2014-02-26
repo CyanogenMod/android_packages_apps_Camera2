@@ -1129,20 +1129,6 @@ public class VideoModule extends CameraModule
         }
     }
 
-    private PreferenceGroup filterPreferenceScreenByIntent(
-            PreferenceGroup screen) {
-        Intent intent = mActivity.getIntent();
-        if (intent.hasExtra(MediaStore.EXTRA_VIDEO_QUALITY)) {
-            CameraSettings.removePreferenceFromScreen(screen, CameraSettings.KEY_VIDEO_QUALITY);
-        }
-
-        if (intent.hasExtra(MediaStore.EXTRA_DURATION_LIMIT)) {
-            CameraSettings.removePreferenceFromScreen(screen,
-                    CameraSettings.KEY_VIDEO_QUALITY);
-        }
-        return screen;
-    }
-
     // from MediaRecorder.OnErrorListener
     @Override
     public void onError(MediaRecorder mr, int what, int extra) {
