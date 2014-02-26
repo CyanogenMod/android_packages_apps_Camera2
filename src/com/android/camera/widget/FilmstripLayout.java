@@ -311,6 +311,18 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         mFilmstripContentTranslationProgress = pixel / getMeasuredWidth();
     }
 
+    private void onSwipeOut() {
+        if (mListener != null) {
+            mListener.onSwipeOut();
+        }
+    }
+
+    private void onSwipeOutBegin() {
+        if (mListener != null) {
+            mListener.onSwipeOutBegin();
+        }
+    }
+
     /**
      * A gesture listener which passes all the gestures to the
      * {@code mFilmstripView} by default and only intercepts scroll gestures
@@ -330,6 +342,9 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                 return true;
             }
             mSwipeTrend = (((int) dx) >> 1) + (mSwipeTrend >> 1);
+            if (dx < 0 && mFilmstripContentLayout.getTranslationX() == 0) {
+                FilmstripLayout.this.onSwipeOutBegin();
+            }
             float translate = mFilmstripContentLayout.getTranslationX() - dx;
             if (translate < 0f) {
                 translate = 0f;
@@ -339,6 +354,12 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                 }
             }
             translateContentLayoutByPixel(translate);
+            if (translate == 0 && dx > 0) {
+                // This will only happen once since when this condition holds
+                // the onScroll() callback will be forwarded to the filmstrip
+                // view.
+                mFilmstripAnimatorListener.onAnimationEnd(mFilmstripAnimator);
+            }
             mBackgroundDrawable.invalidateSelf();
             return true;
         }
@@ -398,14 +419,13 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             }
             if (mSwipeTrend < 0) {
                 hideFilmstrip();
-                if (mListener != null) {
-                    mListener.onSwipeOut();
-                }
+                onSwipeOut();
             } else if (mSwipeTrend > 0) {
                 showFilmstrip();
             } else {
                 if (mFilmstripContentLayout.getTranslationX() >= getMeasuredWidth() / 2) {
                     hideFilmstrip();
+                    onSwipeOut();
                 } else {
                     showFilmstrip();
                 }
