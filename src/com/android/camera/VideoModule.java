@@ -84,7 +84,6 @@ public class VideoModule extends CameraModule
     implements ModuleController,
     VideoController,
     MemoryListener,
-    ShutterButton.OnShutterButtonListener,
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener, FocusOverlayManager.Listener {
 
@@ -324,7 +323,6 @@ public class VideoModule extends CameraModule
         mAppController = mActivity;
         mUI = new VideoUI(mActivity, this,  mActivity.getModuleLayoutRoot());
         mActivity.setPreviewStatusListener(mUI);
-        mActivity.getCameraAppUI().setBottomBarShutterListener(this);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
@@ -1194,6 +1192,8 @@ public class VideoModule extends CameraModule
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
 
+        // A special case of mode options closing: during capture it should
+        // not be possible to change mode state.
         mAppController.getCameraAppUI().hideModeOptions();
         mAppController.getCameraAppUI().animateBottomBarToCircle(R.drawable.ic_stop);
 

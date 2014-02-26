@@ -1597,9 +1597,9 @@ public class CameraActivity extends Activity
         }
 
         setModuleFromModeIndex(modeIndex);
-        mCameraAppUI.clearModuleUI();
 
         mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);
+        mCameraAppUI.addShutterListener(mCurrentModule);
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera
@@ -1749,6 +1749,7 @@ public class CameraActivity extends Activity
 
     private void closeModule(CameraModule module) {
         module.pause();
+        mCameraAppUI.clearModuleUI();
     }
 
     private void performDeletion() {

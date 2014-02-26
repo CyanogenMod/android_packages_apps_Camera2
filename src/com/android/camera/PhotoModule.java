@@ -88,7 +88,6 @@ public class PhotoModule
         ModuleController,
         MemoryListener,
         FocusOverlayManager.Listener,
-        ShutterButton.OnShutterButtonListener,
         SensorEventListener,
         SettingsManager.OnSettingChangedListener {
 
@@ -335,7 +334,6 @@ public class PhotoModule
 
         mUI = new PhotoUI(mActivity, this, mActivity.getModuleLayoutRoot());
         mActivity.setPreviewStatusListener(mUI);
-        mActivity.getCameraAppUI().setBottomBarShutterListener(this);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));

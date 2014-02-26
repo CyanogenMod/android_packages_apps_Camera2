@@ -17,6 +17,7 @@
 package com.android.camera.module;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.ShutterButton;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.CameraManager;
 import com.android.camera.hardware.HardwareSpec;
@@ -24,7 +25,7 @@ import com.android.camera.hardware.HardwareSpec;
 /**
  * The controller at app level.
  */
-public interface ModuleController {
+public interface ModuleController extends ShutterButton.OnShutterButtonListener {
     /** Preview is fully visible. */
     public static final int VISIBILITY_VISIBLE = 0;
     /** Preview is covered by e.g. the transparent mode drawer. */
