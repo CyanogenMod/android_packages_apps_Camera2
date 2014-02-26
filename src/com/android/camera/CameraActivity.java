@@ -1051,7 +1051,7 @@ public class CameraActivity extends Activity
         }
     }
 
-    private SettingsManager.StrictUpgradeCallback mStrictUpgradeCallback
+    private final SettingsManager.StrictUpgradeCallback mStrictUpgradeCallback
         = new SettingsManager.StrictUpgradeCallback() {
                 @Override
                 public void upgrade(SettingsManager settingsManager, int version) {
@@ -1404,15 +1404,13 @@ public class CameraActivity extends Activity
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         mPanoramaViewHelper.onResume();
         ReleaseDialogHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
+        syncLocationManagerSetting();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mPanoramaViewHelper.onStart();
-        boolean recordLocation = RecordLocationPreference.get(
-                mPreferences, mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
     }
 
     @Override
