@@ -268,4 +268,11 @@ class ModeSelectorItem extends FrameLayout {
     public int getModeId() {
         return mModeId;
     }
+
+    /**
+     * Animate mode icon to selected state.
+     */
+    public void selectWithAnimation() {
+        mIcon.selectWithAnimation();
+    }
 }
