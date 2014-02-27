@@ -91,6 +91,7 @@
 
     <color name="bottombar_unpressed">#191919</color>
     <color name="bottombar_pressed">#262626</color>
+    <color name="mode_options_background">#4C000000</color>
 
     <color name="filmstrip_background">#000000</color>
 

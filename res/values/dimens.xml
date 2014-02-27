@@ -192,4 +192,6 @@
     <dimen name="focus_outer_ring_size">104dp</dimen>
     <dimen name="focus_inner_ring_size">38dp</dimen>
 
+    <dimen name="option_button_circle_size">48dp</dimen>
+    <dimen name="mode_options_toggle_padding">12dp</dimen>
 </resources>
