@@ -45,7 +45,8 @@ public class LocationManager {
     }
 
     /**
-     * Returns the current location from the location provider.
+     * Returns the current location from the location provider or null, if
+     * location could not be determined or is switched off.
      */
     public Location getCurrentLocation() {
         return mLocationProvider.getCurrentLocation();
