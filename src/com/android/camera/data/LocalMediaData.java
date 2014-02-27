@@ -606,42 +606,43 @@ public abstract class LocalMediaData implements LocalData {
             String path = c.getString(COL_DATA);
             int width = c.getInt(COL_WIDTH);
             int height = c.getInt(COL_HEIGHT);
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            String rotation = null;
-            try {
-                retriever.setDataSource(path);
-            } catch (RuntimeException ex) {
-                // setDataSource() can cause RuntimeException beyond
-                // IllegalArgumentException. e.g: data contain *.avi file.
-                retriever.release();
-                Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
-                        + ex.getMessage());
-                return null;
-            }
-            rotation = retriever.extractMetadata(
-                    MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
 
             // Extracts video height/width if available. If unavailable, set to
             // 0.
             if (width == 0 || height == 0) {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                String rotation = null;
+                try {
+                    retriever.setDataSource(path);
+                } catch (RuntimeException ex) {
+                    // setDataSource() can cause RuntimeException beyond
+                    // IllegalArgumentException. e.g: data contain *.avi file.
+                    retriever.release();
+                    Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
+                            + ex.getMessage());
+                    return null;
+                }
+                rotation = retriever.extractMetadata(
+                        MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+
                 String val = retriever.extractMetadata(
                         MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
                 width = (val == null) ? 0 : Integer.parseInt(val);
                 val = retriever.extractMetadata(
                         MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
                 height = (val == null) ? 0 : Integer.parseInt(val);
-            }
-            retriever.release();
-            if (width == 0 || height == 0) {
-                // Width or height is still not available.
-                Log.e(TAG, "Unable to retrieve dimension of video:" + path);
-                return null;
-            }
-            if (rotation != null
-                    && (rotation.equals("90") || rotation.equals("270"))) {
-                int b = width;
-                width = height;
-                height = b;
+                retriever.release();
+                if (width == 0 || height == 0) {
+                    // Width or height is still not available.
+                    Log.e(TAG, "Unable to retrieve dimension of video:" + path);
+                    return null;
+                }
+                if (rotation != null
+                        && (rotation.equals("90") || rotation.equals("270"))) {
+                    int b = width;
+                    width = height;
+                    height = b;
+                }
             }
 
             long sizeInBytes = c.getLong(COL_SIZE);
