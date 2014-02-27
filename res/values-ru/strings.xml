@@ -324,7 +324,7 @@
     <string name="retake_button_description" msgid="4234613030674787714">"Повторить."</string>
     <string name="share_button_description" msgid="5108508790540832053">"Поделиться."</string>
     <string name="view_button_description" msgid="4985768837891362075">"Просмотр."</string>
-    <string name="edit_button_description" msgid="98550816724901925">"Изменить."</string>
+    <string name="edit_button_description" msgid="98550816724901925">"Редактировать"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Удалить."</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Сейчас на кнопке написано \"%s\""</string>
     <string name="setting_location" msgid="4459859689227893838">"Место съемки"</string>
