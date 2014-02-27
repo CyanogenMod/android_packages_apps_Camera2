@@ -938,12 +938,16 @@ public class CameraActivity extends Activity
 
     @Override
     public void lockOrientation() {
-        mOrientationManager.lockOrientation();
+        if (mOrientationManager != null) {
+            mOrientationManager.lockOrientation();
+        }
     }
 
     @Override
     public void unlockOrientation() {
-        mOrientationManager.unlockOrientation();
+        if (mOrientationManager != null) {
+            mOrientationManager.unlockOrientation();
+        }
     }
 
     /**
