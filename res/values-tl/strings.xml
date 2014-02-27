@@ -318,8 +318,7 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Camera sa harap"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Naka-off ang mga grid line"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Naka-on ang mga grid line"</string>
-    <!-- no translation found for more_options_desc (4628738800610478353) -->
-    <skip />
+    <string name="more_options_desc" msgid="4628738800610478353">"Higit pang Mga Opsyon"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Kanselahin"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Tapos na"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Kunang muli"</string>
@@ -327,8 +326,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"Tingnan"</string>
     <string name="edit_button_description" msgid="98550816724901925">"I-edit"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Tanggalin"</string>
-    <!-- no translation found for button_change_announcement (3759686152778772111) -->
-    <skip />
+    <string name="button_change_announcement" msgid="3759686152778772111">"%s na ngayon ang button"</string>
     <string name="setting_location" msgid="4459859689227893838">"Lokasyon"</string>
     <string name="setting_picture_size" msgid="3635524767133302049">"Laki ng Larawan"</string>
     <string name="setting_video_resolution" msgid="5403372871611171250">"Resolution ng Video"</string>
