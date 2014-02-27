@@ -121,8 +121,12 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
-        mRequestingCameraId = -1;
         mCameraProxy = camera;
+        if(mRequestingCameraId == -1) {
+            // Not requesting any camera.
+            return;
+        }
+        mRequestingCameraId = -1;
         mCallbackReceiver.onCameraOpened(camera);
     }
 
@@ -170,12 +174,19 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
 
     @Override
     public void releaseCamera(int id) {
+        if (mCameraProxy == null) {
+            if (mRequestingCameraId == -1) {
+                // Camera not requested yet.
+                Log.w(TAG, "Trying to release the camera before requesting");
+            }
+            // Camera requested but not available yet.
+            mRequestingCameraId = -1;
+            return;
+        }
         if (mCameraProxy.getCameraId() != id) {
             throw new IllegalStateException("Trying to release an unopened camera.");
         }
-        if (mRequestingCameraId != -1) {
-            mRequestingCameraId = -1;
-        }
+        mRequestingCameraId = -1;
     }
 
     public void removeCallbackReceiver() {
