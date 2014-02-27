@@ -16,11 +16,12 @@
 
 package com.android.camera.ui;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -36,6 +37,8 @@ import com.android.camera2.R;
  */
 public class ModeIconView extends View {
 
+    private static final int SELECTION_ANIMATION_DURATION_MS = 500;
+    private static final int HIGHLIGHT_STATE_ALPHA = 0x4C;
     private boolean mHighlightIsOn = false;
     private final GradientDrawable mBackground;
     private final GradientDrawable mHighlightDrawable;
@@ -44,6 +47,8 @@ public class ModeIconView extends View {
     private final int mBackgroundDefaultColor;
     private final int mIconDrawableSize;
     private Drawable mIconDrawable = null;
+    private boolean mSelected = false;
+    private ValueAnimator mSelectionAnimation;
 
     public ModeIconView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,7 +59,7 @@ public class ModeIconView extends View {
                 .getDrawable(R.drawable.mode_icon_background).mutate();
         mBackground.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
         mHighlightDrawable = (GradientDrawable) getResources()
-                .getDrawable(R.drawable.mode_icon_highlight).mutate();
+                .getDrawable(R.drawable.mode_icon_background).mutate();
         mHighlightDrawable.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
         mIconDrawableSize = getResources().getDimensionPixelSize(
                 R.dimen.mode_selector_icon_drawable_size);
@@ -80,9 +85,10 @@ public class ModeIconView extends View {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        mBackground.draw(canvas);
-        if (mHighlightIsOn) {
+        if (mHighlightIsOn && !mSelected) {
             mHighlightDrawable.draw(canvas);
+        } else {
+            mBackground.draw(canvas);
         }
         if (mIconDrawable != null) {
             mIconDrawable.draw(canvas);
@@ -103,7 +109,51 @@ public class ModeIconView extends View {
         } else {
             mBackground.setColor(mBackgroundDefaultColor);
         }
+        mSelected = selected;
         invalidate();
+    }
+
+    /**
+     * Animate mode icon background from highlight state to selected state.
+     */
+    public void selectWithAnimation() {
+        mSelected = true;
+        mHighlightIsOn = false;
+        // Animate alpha between highlight alpha to selected state alpha.
+        mSelectionAnimation = ValueAnimator.ofInt(HIGHLIGHT_STATE_ALPHA, 255);
+        mSelectionAnimation.setDuration(SELECTION_ANIMATION_DURATION_MS);
+        mSelectionAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int alpha = (Integer) animation.getAnimatedValue();
+                int backgroundColor = (mHighlightColor & 0xffffff) | (alpha << 24);
+                mBackground.setColor(backgroundColor);
+                invalidate();
+            }
+        });
+        mSelectionAnimation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mSelectionAnimation = null;
+                invalidate();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                // Do nothing.
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // Do nothing.
+            }
+        });
+        mSelectionAnimation.start();
     }
 
     /**
@@ -125,6 +175,7 @@ public class ModeIconView extends View {
      */
     public void setHighlightColor(int highlightColor) {
         mHighlightColor = highlightColor;
+        highlightColor = (highlightColor & 0xffffff) | 0x4C000000;
         mHighlightDrawable.setColor(highlightColor);
     }
 }
