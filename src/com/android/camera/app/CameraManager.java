@@ -126,6 +126,13 @@ public interface CameraManager {
         public void onDeviceOpenFailure(int cameraId);
 
         /**
+         * Callback when trying to open the camera which is already opened.
+         *
+         * @param cameraId The camera which is causing the open error.
+         */
+        public void onDeviceOpenedAlready(int cameraId);
+
+        /**
          * Callback when {@link java.io.IOException} is caught during
          * {@link android.hardware.Camera#reconnect()}.
          *
@@ -148,10 +155,6 @@ public interface CameraManager {
      */
     public void cameraOpen(Handler handler, int cameraId, CameraOpenCallback callback);
 
-    // TODO: remove this after every module supports onCameraAvailable().
-    @Deprecated
-    public CameraProxy cameraOpenOld(Handler handler, int cameraId, CameraOpenCallback callback);
-
     /**
      * An interface that takes camera operation requests and post messages to the
      * camera handler thread. All camera operations made through this interface is
@@ -165,6 +168,7 @@ public interface CameraManager {
          * camera device over to {@link android.media.MediaRecorder} for
          * recording.
          */
+        @Deprecated
         public android.hardware.Camera getCamera();
 
         /**
@@ -196,10 +200,6 @@ public interface CameraManager {
          * @param cb The callback when any error happens.
          */
         public void reconnect(Handler handler, CameraOpenCallback cb);
-
-        // TODO: remove this.
-        @Deprecated
-        public boolean reconnectOld(Handler handler, CameraOpenCallback cb);
 
         /**
          * Unlocks the camera device.
