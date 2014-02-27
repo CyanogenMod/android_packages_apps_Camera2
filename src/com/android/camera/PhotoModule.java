@@ -871,9 +871,9 @@ public class PhotoModule
     private void setCameraState(int state) {
         mCameraState = state;
         switch (state) {
-            case PhotoController.PREVIEW_STOPPED:
-            case PhotoController.SNAPSHOT_IN_PROGRESS:
-            case PhotoController.SWITCHING_CAMERA:
+            case PREVIEW_STOPPED:
+            case SNAPSHOT_IN_PROGRESS:
+            case SWITCHING_CAMERA:
                 // TODO: Tell app UI to disable swipe
                 break;
             case PhotoController.IDLE:
