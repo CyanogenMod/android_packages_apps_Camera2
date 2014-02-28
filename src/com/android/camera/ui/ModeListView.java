@@ -362,7 +362,7 @@ public class ModeListView extends FrameLayout
             mModeSelectorItems[i].setSelected(false);
         }
         // Select the focused item.
-        selectedItem.selectWithAnimation();
+        selectedItem.setSelected(true);
         mState = MODE_SELECTED;
         PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
         effect.setSize(mWidth, mHeight);
