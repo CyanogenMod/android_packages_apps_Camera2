@@ -115,6 +115,7 @@ public class ModeIconView extends View {
 
     /**
      * Animate mode icon background from highlight state to selected state.
+     * TODO: Remove the selection animation if UX agrees to do so.
      */
     public void selectWithAnimation() {
         mSelected = true;
