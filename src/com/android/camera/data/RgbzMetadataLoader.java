@@ -20,18 +20,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.android.camera.exif.ExifInterface;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import com.android.camera.util.RefocusHelper;
 
 /**
  * Asynchronously loads RGBZ data.
  */
 public class RgbzMetadataLoader {
     private static final String KEY_RGBZ_INFO = "metadata_key_rgbz_info";
-    private static final String EXIF_SOFTWARE_VALUE = "RGBZ";
 
     /**
      * @return whether the data has RGBZ metadata.
@@ -46,35 +41,8 @@ public class RgbzMetadataLoader {
      * @param context  The app context.
      */
     public static void loadRgbzMetadata(final Context context, Uri contentUri, Bundle metadata) {
-        boolean isRgbz = false;
-
-        try {
-            InputStream input;
-            input = context.getContentResolver().openInputStream(contentUri);
-            isRgbz = isRgbz(input);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (isRgbz) {
+        if (RefocusHelper.isRGBZ(context, contentUri)) {
             metadata.putBoolean(KEY_RGBZ_INFO, true);
         }
-    }
-
-    /**
-     * @return Whether the file is an RGBZ file.
-     */
-    private static boolean isRgbz(InputStream input) {
-        ExifInterface exif = new ExifInterface();
-        try {
-            exif.readExif(input);
-            // TODO: Rather than this, check for the presence of the XMP.
-            String software = exif.getTagStringValue(ExifInterface.TAG_SOFTWARE);
-            return software != null && software.startsWith(EXIF_SOFTWARE_VALUE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }
