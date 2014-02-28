@@ -30,7 +30,8 @@ import com.android.camera.util.CameraUtil;
  * TODO: Make this class package private.
  */
 public class CameraController implements CameraManager.CameraOpenCallback, CameraProvider {
-    private final String TAG = "CameraController";
+    private static final String TAG = "CameraController";
+    private static final int EMPTY_REQUEST = -1;
     private final Context mContext;
     private CameraManager.CameraOpenCallback mCallbackReceiver;
     private final Handler mCallbackHandler;
@@ -41,7 +42,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     private final int mFirstFrontCameraId;
 
     private CameraManager.CameraProxy mCameraProxy;
-    private int mRequestingCameraId = -1;
+    private int mRequestingCameraId = EMPTY_REQUEST;
 
     /**
      * Constructor.
@@ -122,11 +123,11 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
         mCameraProxy = camera;
-        if(mRequestingCameraId == -1) {
+        if(mRequestingCameraId == EMPTY_REQUEST) {
             // Not requesting any camera.
             return;
         }
-        mRequestingCameraId = -1;
+        mRequestingCameraId = EMPTY_REQUEST;
         mCallbackReceiver.onCameraOpened(camera);
     }
 
@@ -152,12 +153,15 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
 
     @Override
     public void requestCamera(int id) {
-        if (mRequestingCameraId == id) {
-            // Double open is avoided.
-            return;
-        }
-        if (mRequestingCameraId != -1) {
-            // Another previous request has been made.
+        // Based on
+        // (mRequestingCameraId == id, mRequestingCameraId == EMPTY_REQUEST),
+        // we have (T, T), (T, F), (F, T), (F, F).
+        // (T, T): implies id == EMPTY_REQUEST. We don't allow this to happen
+        //         here. Return.
+        // (F, F): A previous request hasn't been fulfilled yet. Return.
+        // (T, F): Already requested the same camera. No-op. Return.
+        // (F, T): Nothing is going on. Continue.
+        if (mRequestingCameraId != EMPTY_REQUEST || mRequestingCameraId == id) {
             return;
         }
         mRequestingCameraId = id;
@@ -179,18 +183,18 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     @Override
     public void releaseCamera(int id) {
         if (mCameraProxy == null) {
-            if (mRequestingCameraId == -1) {
+            if (mRequestingCameraId == EMPTY_REQUEST) {
                 // Camera not requested yet.
                 Log.w(TAG, "Trying to release the camera before requesting");
             }
             // Camera requested but not available yet.
-            mRequestingCameraId = -1;
+            mRequestingCameraId = EMPTY_REQUEST;
             return;
         }
         if (mCameraProxy.getCameraId() != id) {
             throw new IllegalStateException("Trying to release an unopened camera.");
         }
-        mRequestingCameraId = -1;
+        mRequestingCameraId = EMPTY_REQUEST;
     }
 
     public void removeCallbackReceiver() {
@@ -208,7 +212,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         }
         mCameraProxy.release(true);
         mCameraProxy = null;
-        mRequestingCameraId = -1;
+        mRequestingCameraId = EMPTY_REQUEST;
     }
 
     private static void checkAndOpenCamera(Context context, CameraManager cameraManager,
