@@ -639,9 +639,15 @@ class AndroidCameraManagerImpl implements CameraManager {
     }
 
     @Override
-    public void cameraOpen(Handler handler, int cameraId, CameraOpenCallback callback) {
-        mCameraHandler.obtainMessage(OPEN_CAMERA, cameraId, 0,
-                CameraOpenCallbackForward.getNewInstance(handler, callback)).sendToTarget();
+    public void cameraOpen(final Handler handler, final int cameraId,
+            final CameraOpenCallback callback) {
+        mDispatchThread.runJob(new Runnable() {
+            @Override
+            public void run() {
+                mCameraHandler.obtainMessage(OPEN_CAMERA, cameraId, 0,
+                        CameraOpenCallbackForward.getNewInstance(handler, callback)).sendToTarget();
+            }
+        });
     }
 
     /**

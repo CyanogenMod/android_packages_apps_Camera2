@@ -152,8 +152,12 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
 
     @Override
     public void requestCamera(int id) {
-        // Double open is avoided.
         if (mRequestingCameraId == id) {
+            // Double open is avoided.
+            return;
+        }
+        if (mRequestingCameraId != -1) {
+            // Another previous request has been made.
             return;
         }
         mRequestingCameraId = id;
