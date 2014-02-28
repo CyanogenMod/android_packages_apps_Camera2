@@ -162,14 +162,24 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         void setProgress(int progress);
 
         /**
-         * Shows the progress UI and hides the controls.
+         * Shows the progress.
          */
         void showProgress();
 
         /**
-         * Shows the controls and hides the progress UI.
+         * Hides the progress.
+         */
+        void hideProgress();
+
+        /**
+         * Shows the controls.
          */
         void showControls();
+
+        /**
+         * Hides the controls.
+         */
+        void hideControls();
 
         /**
          * Classes implementing this interface can listen for events on the bottom
@@ -651,7 +661,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeTransitionView = (ModeTransitionView)
                 mAppRootView.findViewById(R.id.mode_transition_view);
         mFilmstripBottomControls = new FilmstripBottomPanel(controller,
-                (ViewGroup) mAppRootView.findViewById(R.id.filmstrip_bottom_controls));
+                (ViewGroup) mAppRootView.findViewById(R.id.filmstrip_bottom_panel));
         mFilmstripPanel = (FilmstripContentPanel) mAppRootView.findViewById(R.id.filmstrip_layout);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),
                 new MyGestureListener());

@@ -669,9 +669,8 @@ public class CameraActivity extends Activity
             mAboveFilmstripControlLayout.setSystemUiVisibility(newSystemUIVisibility);
         }
 
-        boolean currentActionBarVisibility = mActionBar.isShowing();
         mCameraAppUI.getFilmstripBottomControls().setVisible(visible);
-        if (visible != currentActionBarVisibility) {
+        if (visible != mActionBar.isShowing()) {
             if (visible) {
                 mActionBar.show();
             } else {
@@ -681,12 +680,13 @@ public class CameraActivity extends Activity
     }
 
     private void hideSessionProgress() {
-        mCameraAppUI.getFilmstripBottomControls().showControls();
+        mCameraAppUI.getFilmstripBottomControls().hideProgress();
     }
 
     private void showSessionProgress(CharSequence message) {
         CameraAppUI.BottomPanel controls =  mCameraAppUI.getFilmstripBottomControls();
         controls.setProgressText(message);
+        controls.hideControls();
         controls.showProgress();
     }
 
@@ -1982,12 +1982,6 @@ public class CameraActivity extends Activity
      * Updates the visibility of the filmstrip bottom controls.
      */
     private void updateUiByData(final int dataId) {
-        if (isSecureCamera()) {
-            // We cannot show buttons in secure camera since go to other
-            // activities might create a security hole.
-            return;
-        }
-
         final LocalData currentData = mDataAdapter.getLocalData(dataId);
         if (currentData == null) {
             Log.w(TAG, "Current data ID not found.");
@@ -1995,11 +1989,19 @@ public class CameraActivity extends Activity
             return;
         }
 
+        /* Bottom controls. */
+        updateBottomControlsByData(currentData);
+
+        if (isSecureCamera()) {
+            // We cannot show buttons in secure camera since go to other
+            // activities might create a security hole.
+            mCameraAppUI.getFilmstripBottomControls().hideControls();
+            return;
+        }
+
+
         setNfcBeamPushUriFromData(currentData);
 
-        /* Bottom controls. */
-
-        updateBottomControlsByData(currentData);
         if (!mDataAdapter.isMetadataUpdated(dataId)) {
             mDataAdapter.updateMetadata(dataId);
         }
@@ -2012,6 +2014,7 @@ public class CameraActivity extends Activity
 
         final CameraAppUI.BottomPanel filmstripBottomPanel =
                 mCameraAppUI.getFilmstripBottomControls();
+        filmstripBottomPanel.showControls();
         filmstripBottomPanel.setEditButtonVisibility(
                 currentData.isDataActionSupported(LocalData.DATA_ACTION_EDIT));
         filmstripBottomPanel.setShareButtonVisibility(
