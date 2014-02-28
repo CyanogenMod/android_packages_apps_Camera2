@@ -153,6 +153,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         } else {
             Log.e(TAG, "video data not found");
         }
+        c.close();
     }
 
     // TODO: put the database query on background thread
@@ -176,6 +177,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
             // a new data.
             insertData(newData);
         }
+        c.close();
     }
 
     @Override

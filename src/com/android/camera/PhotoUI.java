@@ -44,7 +44,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.os.SystemProperties;
-import android.graphics.Canvas;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
@@ -103,6 +102,8 @@ public class PhotoUI implements PieListener,
 
     // Small indicators which show the camera settings in the viewfinder.
     private ImageView mSceneDetectView;
+
+    private ImageView mBurstModeView;
 
     private OnScreenIndicators mOnScreenIndicators;
 
@@ -236,6 +237,7 @@ public class PhotoUI implements PieListener,
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
+        mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
 
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mAnimationManager = new AnimationManager();
@@ -264,24 +266,6 @@ public class PhotoUI implements PieListener,
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
         mSurfaceTextureSizeListener = listener;
-    }
-
-    public void updatePreviewAspectRatio(float aspectRatio) {
-        if (aspectRatio <= 0) {
-            Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
-            return;
-        }
-        if (mOrientationResize && CameraUtil.isScreenRotated(mActivity)) {
-            aspectRatio = 1f / aspectRatio;
-        }
-
-        if (mAspectRatio != aspectRatio) {
-            mAspectRatio = aspectRatio;
-            // Update transform matrix with the new aspect ratio.
-            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-                setTransformMatrix(mPreviewWidth, mPreviewHeight);
-            }
-        }
     }
 
     private void setTransformMatrix(int width, int height) {
@@ -584,7 +568,7 @@ public class PhotoUI implements PieListener,
         int wbIndex = 2;
         ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
         if (pref != null) {
-            wbIndex = pref.getCurrentIndex();
+            wbIndex = pref.getCurrentUnfilteredIndex();
         }
         mOnScreenIndicators.updateWBIndicator(wbIndex);
         boolean location = RecordLocationPreference.get(
@@ -940,20 +924,11 @@ public class PhotoUI implements PieListener,
         mFaceView.setFaces(faces);
     }
 
-
-    public boolean onScaleStepResize(boolean direction)
-    {
+    public boolean onScaleStepResize(boolean direction) {
         if(mGestures != null){
             return mGestures.onScaleStepResize(direction);
         }
         return false;
-    }
-
-    public void onScaleChangeDraw(Canvas canvas)
-    {
-        if(mGestures != null){
-            mGestures.onScaleChangeDraw(canvas);
-        }
     }
 
     @Override
@@ -980,6 +955,29 @@ public class PhotoUI implements PieListener,
             mSceneDetectView.setImageResource(imgs.getResourceId(i, -1));
         }
         mSceneDetectView.setVisibility(View.VISIBLE);
+    }
+
+    public void updateBurstModeIcon(int burstCount) {
+        if (burstCount == 1) {
+            mBurstModeView.setVisibility(View.GONE);
+            return;
+        }
+
+        switch (burstCount) {
+            case 5:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_5);
+                break;
+            case 10:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_10);
+                break;
+            case 15:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_15);
+                break;
+            case 20:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_20);
+                break;
+        }
+        mBurstModeView.setVisibility(View.VISIBLE);
     }
 }
 

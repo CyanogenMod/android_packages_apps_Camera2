@@ -118,11 +118,15 @@ public class CameraUtil {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
 
+    // Hardware camera key mask
+    private static final int KEY_MASK_CAMERA = 0x20;
+
     private static boolean sEnableZSL;
 
     // Do not change the focus mode when TTF is used
     private static boolean sNoFocusModeChangeForTouch;
 
+    private static boolean sCancelAutoFocusOnPreviewStopped;
 
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
@@ -133,6 +137,10 @@ public class CameraUtil {
 
     public static boolean isZSLEnabled() {
         return sEnableZSL;
+    }
+
+    public static boolean cancelAutoFocusOnPreviewStopped() {
+        return sCancelAutoFocusOnPreviewStopped;
     }
 
     public static boolean isSupported(String value, List<String> supported) {
@@ -159,6 +167,10 @@ public class CameraUtil {
     public static boolean isAutoSceneDetectionSupported(Parameters params) {
         List<String> supported = params.getSupportedSceneModes();
         return (supported != null) && supported.contains(SCENE_MODE_ASD) && (params.get("asd-mode") != null);
+    }
+
+    public static boolean hasCameraKey() {
+        return (sDeviceKeysPresent & KEY_MASK_CAMERA) != 0;
     }
 
     public static boolean isMeteringAreaSupported(Parameters params) {
@@ -196,6 +208,15 @@ public class CameraUtil {
     // Use samsung HDR format
     private static boolean sSamsungHDRFormat;
 
+    // Get available hardware keys
+    private static int sDeviceKeysPresent;
+
+    // Samsung camcorder mode
+    private static boolean sSamsungCamMode;
+
+    // HTC camcorder mode
+    private static boolean sHTCCamMode;
+
     private CameraUtil() {
     }
 
@@ -210,7 +231,13 @@ public class CameraUtil {
         sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
         sNoFocusModeChangeForTouch = context.getResources().getBoolean(
                 R.bool.useContinuosFocusForTouch);
+        sCancelAutoFocusOnPreviewStopped =
+                context.getResources().getBoolean(R.bool.cancelAutoFocusOnPreviewStopped);
         sSamsungHDRFormat = context.getResources().getBoolean(R.bool.needsSamsungHDRFormat);
+        sDeviceKeysPresent = context.getResources().getInteger(
+                com.android.internal.R.integer.config_deviceHardwareKeys);
+        sSamsungCamMode = context.getResources().getBoolean(R.bool.needsSamsungCamMode);
+        sHTCCamMode = context.getResources().getBoolean(R.bool.needsHTCCamMode);
     }
 
     public static int dpToPixel(int dp) {
@@ -223,6 +250,14 @@ public class CameraUtil {
 
     public static boolean noFocusModeChangeForTouch() {
         return sNoFocusModeChangeForTouch;
+    }
+
+    public static boolean useHTCCamMode() {
+        return sHTCCamMode;
+    }
+
+    public static boolean useSamsungCamMode() {
+        return sSamsungCamMode;
     }
 
     // Rotates the bitmap by the specified degree.

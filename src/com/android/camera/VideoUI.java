@@ -18,7 +18,6 @@ package com.android.camera;
 
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -53,6 +52,7 @@ import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateLayout;
+import com.android.camera.PauseButton.OnPauseButtonListener;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
@@ -62,7 +62,8 @@ import java.util.List;
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
         CameraRootView.MyDisplayListener, FocusUI,
-        SurfaceTextureListener, SurfaceHolder.Callback {
+        SurfaceTextureListener, SurfaceHolder.Callback,
+        PauseButton.OnPauseButtonListener {
     private static final String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
     // module fields
@@ -76,6 +77,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private View mReviewDoneButton;
     private View mReviewPlayButton;
     private ShutterButton mShutterButton;
+    private PauseButton mPauseButton;
     private ModuleSwitcher mSwitcher;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
@@ -190,6 +192,7 @@ public class VideoUI implements PieRenderer.PieListener,
         initializeMiscControls();
         initializeControlByIntent();
         initializeOverlay();
+        initializePauseButton();
         mAnimationManager = new AnimationManager();
         mOrientationResize = false;
         mPrevOrientationResize = false;
@@ -511,6 +514,11 @@ public class VideoUI implements PieRenderer.PieListener,
         mLabelsLinearLayout = (LinearLayout) mRootView.findViewById(R.id.labels);
     }
 
+    private void initializePauseButton() {
+        mPauseButton = (PauseButton) mRootView.findViewById(R.id.video_pause);
+        mPauseButton.setOnPauseButtonListener(this);
+    }
+
     public void updateOnScreenIndicators(Parameters param, ComboPreferences prefs) {
       mOnScreenIndicators.updateExposureOnScreenIndicator(param,
               CameraSettings.readExposure(prefs));
@@ -628,12 +636,14 @@ public class VideoUI implements PieRenderer.PieListener,
             hideSwitcher();
             mRecordingTimeView.setText("");
             mRecordingTimeView.setVisibility(View.VISIBLE);
+            mPauseButton.setVisibility(View.VISIBLE);
         } else {
             mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
             if (!mController.isVideoCaptureIntent()) {
                 showSwitcher();
             }
             mRecordingTimeView.setVisibility(View.GONE);
+            mPauseButton.setVisibility(View.GONE);
         }
     }
 
@@ -730,19 +740,11 @@ public class VideoUI implements PieRenderer.PieListener,
         return mCameraControls.getVisibility() == View.VISIBLE;
     }
 
-    public boolean onScaleStepResize(boolean direction)
-    {
+    public boolean onScaleStepResize(boolean direction) {
         if(mGestures != null){
             return mGestures.onScaleStepResize(direction);
         }
         return false;
-    }
-
-    public void onScaleChangeDraw(Canvas canvas)
-    {
-        if(mGestures != null){
-            mGestures.onScaleChangeDraw(canvas);
-        }
     }
 
     @Override
@@ -866,5 +868,25 @@ public class VideoUI implements PieRenderer.PieListener,
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.v(TAG, "Surface destroyed");
         mController.stopPreview();
+    }
+
+     @Override
+    public void onButtonPause() {
+        mRecordingTimeView.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_pausing_indicator, 0, 0, 0);
+                mController.onButtonPause();
+    }
+
+    @Override
+    public void onButtonContinue() {
+        mRecordingTimeView.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_recording_indicator, 0, 0, 0);
+        mController.onButtonContinue();
+    }
+
+    public void resetPauseButton() {
+        mRecordingTimeView.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_recording_indicator, 0, 0, 0);
+        mPauseButton.setPaused(false);
     }
 }

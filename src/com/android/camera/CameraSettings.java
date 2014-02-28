@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2013 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +81,7 @@ public class CameraSettings {
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
     public static final String KEY_STORAGE = "pref_camera_storage_key";
 
+    public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
     public static final String KEY_VIDEO_ENCODER = "pref_camera_videoencoder_key";
     public static final String KEY_AUDIO_ENCODER = "pref_camera_audioencoder_key";
     public static final String KEY_VIDEO_DURATION = "pref_camera_video_duration_key";
@@ -140,6 +142,8 @@ public class CameraSettings {
     public static final String KEY_ASD = "pref_camera_asd";
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
+    public static final String VALUE_ON = "on";
+    public static final String VALUE_OFF = "off";
 
     public static final int CURRENT_VERSION = 5;
     public static final int CURRENT_LOCAL_VERSION = 2;
@@ -307,6 +311,7 @@ public class CameraSettings {
         ListPreference jpegQuality = group.findPreference(KEY_JPEG_QUALITY);
         ListPreference videoSnapSize = group.findPreference(KEY_VIDEO_SNAPSHOT_SIZE);
         ListPreference pictureFormat = group.findPreference(KEY_PICTURE_FORMAT);
+        ListPreference hfr = group.findPreference(KEY_VIDEO_HIGH_FRAME_RATE);
 
         if (!mParameters.isPowerModeSupported() && powerMode != null) {
             removePreference(group, powerMode.getKey());
@@ -376,18 +381,23 @@ public class CameraSettings {
         }
 
         if (contrast != null && !CameraUtil.isSupported(mParameters, "contrast") &&
-                !CameraUtil.isSupported(mParameters, "contrast-max")) {
+                !CameraUtil.isSupported(mParameters, "max-contrast")) {
             removePreference(group, contrast.getKey());
         }
 
         if (sharpness != null && !CameraUtil.isSupported(mParameters, "sharpness") &&
-                !CameraUtil.isSupported(mParameters, "sharpness-max")) {
+                !CameraUtil.isSupported(mParameters, "max-sharpness")) {
             removePreference(group, sharpness.getKey());
         }
 
         if (saturation != null && !CameraUtil.isSupported(mParameters, "saturation") &&
-                !CameraUtil.isSupported(mParameters, "saturation-max")) {
+                !CameraUtil.isSupported(mParameters, "max-saturation")) {
             removePreference(group, saturation.getKey());
+        }
+
+        if (hfr != null) {
+            filterUnsupportedOptions(group,
+                    hfr, mParameters.getSupportedVideoHighFrameRateModes());
         }
     }
 
@@ -409,6 +419,7 @@ public class CameraSettings {
         ListPreference cameraHdr = group.findPreference(KEY_CAMERA_HDR);
         ListPreference disMode = group.findPreference(KEY_DIS);
         ListPreference cameraHdrPlus = group.findPreference(KEY_CAMERA_HDR_PLUS);
+        ListPreference powerShutter = group.findPreference(KEY_POWER_SHUTTER);
         ListPreference beautyMode = group.findPreference(KEY_BEAUTY_MODE);
         ListPreference slowShutter = group.findPreference(KEY_SLOW_SHUTTER);
         ListPreference asd = group.findPreference(KEY_ASD);
@@ -468,6 +479,9 @@ public class CameraSettings {
         if (cameraHdrPlus != null && (!ApiHelper.HAS_CAMERA_HDR_PLUS ||
                 !GcamHelper.hasGcamCapture() || isFrontCamera)) {
             removePreference(group, cameraHdrPlus.getKey());
+        }
+        if (powerShutter != null && CameraUtil.hasCameraKey()) {
+            removePreference(group, powerShutter.getKey());
         }
         if (beautyMode != null) {
             if (!isBeautyModeSupported(mParameters)) {
@@ -900,6 +914,21 @@ public class CameraSettings {
 
     public static boolean isBeautyModeSupported(Parameters params) {
         return params.get("face-beautify") != null;
+    }
+
+    /**
+     * Enable video mode for certain cameras.
+     *
+     * @param params
+     * @param on
+     */
+    public static void setVideoMode(Parameters params, boolean on) {
+        if (CameraUtil.useSamsungCamMode()) {
+            params.set("cam_mode", on ? "1" : "0");
+        }
+        if (CameraUtil.useHTCCamMode()) {
+            params.set("cam-mode", on ? "1" : "0");
+        }
     }
 
     public static List<String> getSupportedSlowShutter(Parameters params) {

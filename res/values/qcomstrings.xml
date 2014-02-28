@@ -1,5 +1,6 @@
 <!--
     Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+    Copyright (C) 2013-2014 The CyanogenMod Project
 
     Not a Contribution.
 
@@ -219,9 +220,9 @@
 
     <!-- Settings screen, hfr radio button choices -->
     <string name="pref_camera_hfr_entry_off">Off</string>
-    <string name="pref_camera_hfr_entry_2x">60 fps</string>
-    <string name="pref_camera_hfr_entry_3x">90 fps</string>
-    <string name="pref_camera_hfr_entry_4x">120 fps</string>
+    <string name="pref_camera_hfr_entry_2x">60 FPS</string>
+    <string name="pref_camera_hfr_entry_3x">90 FPS</string>
+    <string name="pref_camera_hfr_entry_4x">120 FPS</string>
 
     <!-- HFR entry values. Do not translate. -->
     <string name="pref_camera_hfr_value_off" translatable="false">off</string>
@@ -586,4 +587,3 @@
 
     <string name="pref_camera_videosnapsize_default" translatable="false">1920x1080</string>
 </resources>
-

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 The CyanogenMod Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Do not translate - Dummy strings to prevent aapt warnings -->
+    <string name="pref_video_quality_entry_high"></string>
+    <string name="pref_video_quality_entry_low"></string>
+    <string name="Import"></string>
+    <string name="accessibility_back_to_first_level"></string>
+    <string name="accessibility_camera_picker"></string>
+    <string name="accessibility_decrement"></string>
+    <string name="accessibility_increment"></string>
+    <string name="accessibility_review_thumbnail"></string>
+    <string name="accessibility_second_level_indicators"></string>
+    <string name="accessibility_switch_to_new_panorama"></string>
+    <string name="accessibility_zoom_control"></string>
+    <string name="add_account"></string>
+    <string name="albums"></string>
+    <string name="appwidget_empty_text"></string>
+    <string name="appwidget_title"></string>
+    <string name="bg_replacement_message"></string>
+    <string name="caching_label"></string>
+    <string name="camera_connected"></string>
+    <string name="camera_disconnected"></string>
+    <string name="camera_label"></string>
+    <string name="camera_setas_wallpaper"></string>
+    <string name="cancel"></string>
+    <string name="click_import"></string>
+    <string name="confirm"></string>
+    <string name="crop_label"></string>
+    <string name="crop_save_text"></string>
+    <string name="deselect_all"></string>
+    <string name="details_title"></string>
+    <string name="disable_video_snapshot_hint"></string>
+    <string name="done"></string>
+    <string name="empty_album"></string>
+    <string name="fail_to_load"></string>
+    <string name="fail_to_load_image"></string>
+    <string name="ffx_bleach"></string>
+    <string name="ffx_blue_crush"></string>
+    <string name="ffx_bw_contrast"></string>
+    <string name="ffx_instant"></string>
+    <string name="ffx_original"></string>
+    <string name="ffx_punch"></string>
+    <string name="ffx_vintage"></string>
+    <string name="ffx_washout"></string>
+    <string name="ffx_washout_color"></string>
+    <string name="ffx_x_process"></string>
+    <string name="filtershow_saving_image"></string>
+    <string name="folder_camera"></string>
+    <string name="folder_download"></string>
+    <string name="folder_edited_online_photos"></string>
+    <string name="folder_imported"></string>
+    <string name="folder_screenshot"></string>
+    <string name="free_space_format"></string>
+    <string name="gadget_title"></string>
+    <string name="group_by"></string>
+    <string name="group_by_album"></string>
+    <string name="group_by_faces"></string>
+    <string name="group_by_location"></string>
+    <string name="group_by_size"></string>
+    <string name="group_by_tags"></string>
+    <string name="group_by_time"></string>
+    <string name="help"></string>
+    <string name="import_complete"></string>
+    <string name="import_fail"></string>
+    <string name="ingest_empty_device"></string>
+    <string name="ingest_importing"></string>
+    <string name="ingest_no_device"></string>
+    <string name="ingest_scanning"></string>
+    <string name="ingest_scanning_done"></string>
+    <string name="ingest_sorting"></string>
+    <string name="loading"></string>
+    <string name="loading_account"></string>
+    <string name="loading_image"></string>
+    <string name="loading_video"></string>
+    <string name="locations"></string>
+    <string name="make_available_offline"></string>
+    <string name="menu_camera"></string>
+    <string name="menu_search"></string>
+    <string name="movie_view_label"></string>
+    <string name="multiface_crop_help"></string>
+    <string name="mute_action"></string>
+    <string name="muting"></string>
+    <string name="no_albums_alert"></string>
+    <string name="no_connectivity"></string>
+    <string name="no_external_storage"></string>
+    <string name="no_external_storage_title"></string>
+    <string name="no_location"></string>
+    <string name="no_such_item"></string>
+    <string name="no_thumbnail"></string>
+    <string name="ok"></string>
+    <string name="pano_progress_text"></string>
+    <string name="people"></string>
+    <string name="picasa_posts"></string>
+    <string name="process_caching_requests"></string>
+    <string name="resume_playing_message"></string>
+    <string name="resume_playing_restart"></string>
+    <string name="resume_playing_resume"></string>
+    <string name="resume_playing_title"></string>
+    <string name="review_cancel"></string>
+    <string name="review_ok"></string>
+    <string name="save"></string>
+    <string name="save_error"></string>
+    <string name="save_into"></string>
+    <string name="saving_image"></string>
+    <string name="select_album"></string>
+    <string name="select_all"></string>
+    <string name="select_group"></string>
+    <string name="select_image"></string>
+    <string name="select_item"></string>
+    <string name="select_video"></string>
+    <string name="sequence_in_set"></string>
+    <string name="set_label_all_albums"></string>
+    <string name="set_label_local_albums"></string>
+    <string name="set_label_mtp_devices"></string>
+    <string name="set_label_picasa_albums"></string>
+    <string name="set_timer_help"></string>
+    <string name="set_wallpaper"></string>
+    <string name="settings"></string>
+    <string name="show_all"></string>
+    <string name="show_images_only"></string>
+    <string name="show_videos_only"></string>
+    <string name="size_above"></string>
+    <string name="size_below"></string>
+    <string name="size_between"></string>
+    <string name="slideshow"></string>
+    <string name="slideshow_dream_name"></string>
+    <string name="switch_photo_fullscreen"></string>
+    <string name="switch_photo_grid"></string>
+    <string name="switch_to_camera"></string>
+    <string name="sync_album_error"></string>
+    <string name="sync_picasa_albums"></string>
+    <string name="tab_albums"></string>
+    <string name="tab_photos"></string>
+    <string name="tags"></string>
+    <string name="times"></string>
+    <string name="trim_label"></string>
+    <string name="trim_too_short"></string>
+    <string name="trimming"></string>
+    <string name="untagged"></string>
+    <string name="video_mute_err"></string>
+    <string name="wallpaper"></string>
+    <string name="widget_type"></string>
+    <string name="widget_type_album"></string>
+    <string name="widget_type_photo"></string>
+    <string name="widget_type_shuffle"></string>
+</resources>

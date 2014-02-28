@@ -55,20 +55,18 @@ public class MoreSettingPopup extends AbstractSettingPopup
         LayoutInflater mInflater;
         String mOnString;
         String mOffString;
+        ListPreference mActualPref;
+
+        private static final int CHECKBOX_LAYOUT = 0;
+        private static final int MENU_LAYOUT     = CHECKBOX_LAYOUT + 1;
+        private static final int MAX_TYPE_COUNT  = MENU_LAYOUT + 1;
+
         MoreSettingAdapter() {
             super(MoreSettingPopup.this.getContext(), 0, mListItem);
             Context context = getContext();
             mInflater = LayoutInflater.from(context);
             mOnString = context.getString(R.string.setting_on);
             mOffString = context.getString(R.string.setting_off);
-        }
-
-        private int getSettingLayoutId(ListPreference pref) {
-
-            if (isOnOffPreference(pref)) {
-                return R.layout.in_line_setting_check_box;
-            }
-            return R.layout.in_line_setting_menu;
         }
 
         private boolean isOnOffPreference(ListPreference pref) {
@@ -81,17 +79,32 @@ public class MoreSettingPopup extends AbstractSettingPopup
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ListPreference pref = mListItem.get(position);
-            int viewLayoutId = getSettingLayoutId(pref);
-            InLineSettingItem view = (InLineSettingItem)convertView;
+        public int getItemViewType(int position) {
+            mActualPref = mListItem.get(position);
+            if (isOnOffPreference(mActualPref)) {
+                return CHECKBOX_LAYOUT;
+            } else {
+                return MENU_LAYOUT;
+            }
+        }
 
+        @Override
+        public int getViewTypeCount() {
+            return MAX_TYPE_COUNT;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            InLineSettingItem view = (InLineSettingItem) convertView;
+            int type = getItemViewType(position);
             if (view == null) {
                 view = (InLineSettingItem)
-                        mInflater.inflate(viewLayoutId, parent, false);
+                        mInflater.inflate(type == CHECKBOX_LAYOUT
+                            ? R.layout.in_line_setting_check_box
+                            : R.layout.in_line_setting_menu, parent, false);
             }
 
-            view.initialize(pref); // no init for restore one
+            view.initialize(mActualPref);
             view.setSettingChangedListener(MoreSettingPopup.this);
             if (position >= 0 && position < mEnabled.length) {
                 view.setEnabled(mEnabled[position]);

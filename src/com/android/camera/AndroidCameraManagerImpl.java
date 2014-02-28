@@ -41,6 +41,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.hardware.Camera.CameraDataCallback;
 import com.android.camera.util.ApiHelper;
+import android.os.ConditionVariable;
 
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.
@@ -48,6 +49,9 @@ import com.android.camera.util.ApiHelper;
 class AndroidCameraManagerImpl implements CameraManager {
     private static final String TAG = "CAM_" +
             AndroidCameraManagerImpl.class.getSimpleName();
+
+    // Thread progress signals
+    private ConditionVariable mSig = new ConditionVariable();
 
     private Parameters mParameters;
     private boolean mParametersIsDirty;
@@ -212,6 +216,9 @@ class AndroidCameraManagerImpl implements CameraManager {
                         return;
 
                     case RELEASE:
+                        if (mCamera == null) {
+                            return;
+                        }
                         mCamera.release();
                         mCamera = null;
                         return;
@@ -301,9 +308,9 @@ class AndroidCameraManagerImpl implements CameraManager {
 
                     case SET_PARAMETERS:
                         mParametersIsDirty = true;
-                        mParamsToSet.unflatten((String) msg.obj);
-                        mCamera.setParameters(mParamsToSet);
-                        return;
+                        mCamera.setParameters((Parameters) msg.obj);
+                        mSig.open();
+                        break;
 
                     case GET_PARAMETERS:
                         if (mParametersIsDirty) {
@@ -544,8 +551,10 @@ class AndroidCameraManagerImpl implements CameraManager {
                 Log.v(TAG, "null parameters in setParameters()");
                 return;
             }
-            mCameraHandler.obtainMessage(SET_PARAMETERS, params.flatten())
+            mSig.close();
+            mCameraHandler.obtainMessage(SET_PARAMETERS, params)
                     .sendToTarget();
+            mSig.block();
         }
 
         @Override
