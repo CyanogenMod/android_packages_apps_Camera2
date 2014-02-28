@@ -52,6 +52,7 @@ public class VideoUI implements PreviewStatusListener {
     private View mReviewCancelButton;
     private View mReviewDoneButton;
     private View mReviewPlayButton;
+    private View mVideoHints;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
     private View mTimeLapseLabel;
@@ -88,7 +89,11 @@ public class VideoUI implements PreviewStatusListener {
             = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
+            if (mVideoHints.getVisibility() == View.VISIBLE) {
+                mVideoHints.setVisibility(View.INVISIBLE);
+            } else {
+                mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
+            }
             return true;
         }
     };
@@ -106,6 +111,7 @@ public class VideoUI implements PreviewStatusListener {
         initializeMiscControls();
         mAnimationManager = new AnimationManager();
         mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
+        mVideoHints = mRootView.findViewById(R.id.video_shooting_hints);
     }
 
     public void setPreviewSize(int width, int height) {
@@ -273,6 +279,15 @@ public class VideoUI implements PreviewStatusListener {
         if (mFocusUI != null) {
             mFocusUI.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
+    }
+
+    /**
+     * Shows or hides video recording hints.
+     *
+     * @param show shows video recording hints when true, hides it otherwise.
+     */
+    public void showVideoRecordingHints(boolean show) {
+        mVideoHints.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
