@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 /**
@@ -135,13 +136,21 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     @Override
     public void showProgress() {
         mProgressLayout.setVisibility(View.VISIBLE);
-        mControlLayout.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        mProgressLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showControls() {
         mControlLayout.setVisibility(View.VISIBLE);
-        mProgressLayout.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideControls() {
+        mControlLayout.setVisibility(View.INVISIBLE);
     }
 
     private int getViewButtonResource(int state) {
