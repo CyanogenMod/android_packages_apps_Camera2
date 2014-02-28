@@ -30,4 +30,8 @@ public class RefocusHelper {
     public static boolean hasRefocusCapture(Context context) {
         return false;
     }
+
+    public static boolean isRGBZ(Context context, Uri contentUri) {
+        return false;
+    }
 }
