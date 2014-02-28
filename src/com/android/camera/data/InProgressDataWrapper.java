@@ -35,35 +35,17 @@ import com.android.camera2.R;
 public class InProgressDataWrapper implements LocalData {
 
     final LocalData mLocalData;
-    private boolean mHasProgressBar;
 
     public InProgressDataWrapper(LocalData wrappedData) {
         mLocalData = wrappedData;
-    }
-
-    public InProgressDataWrapper(LocalData wrappedData, boolean hasProgressBar) {
-        this(wrappedData);
-        mHasProgressBar = hasProgressBar;
     }
 
     @Override
     public View getView(
             Context context, int width, int height,
             Drawable placeHolder, LocalDataAdapter adapter, boolean isInProgress) {
-        isInProgress = true;
-        View v =  mLocalData.getView(context, width, height, placeHolder, adapter, isInProgress);
 
-        if (mHasProgressBar) {
-            // Return a framelayout with the progressbar and imageview.
-            FrameLayout frame = new FrameLayout(context);
-            frame.setLayoutParams(new FrameLayout.LayoutParams(width, height));
-            frame.addView(v);
-            ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                    .inflate(R.layout.placeholder_progressbar, frame);
-            return frame;
-        }
-
-        return v;
+        return mLocalData.getView(context, width, height, placeHolder, adapter, true);
     }
 
     @Override

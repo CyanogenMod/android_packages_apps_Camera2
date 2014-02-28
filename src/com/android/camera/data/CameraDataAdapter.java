@@ -336,7 +336,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
                     LocalData data = LocalMediaData.PhotoData.buildFromCursor(mContext, c);
                     if (data != null) {
                         if (data.getMimeType().equals(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
-                            l.add(new InProgressDataWrapper(data, true));
+                            l.add(new InProgressDataWrapper(data));
                         } else {
                             l.add(data);
                         }
