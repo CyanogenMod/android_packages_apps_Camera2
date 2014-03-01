@@ -19,7 +19,7 @@
     <style name="Theme.ProxyLauncher" parent="@android:Theme.Translucent.NoTitleBar">
     </style>
 
-    <style name="Theme.Camera" parent="Theme.CameraBase">
+    <style name="Theme.Camera" parent="android:style/Theme.Holo.Light.DarkActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowTitleSize">0dp</item>
@@ -27,18 +27,18 @@
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
         <item name="android:colorBackgroundCacheHint">@android:color/black</item>
-        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Camera.ActionBar</item>
     </style>
-    <style name="Theme.CameraBase" parent="android:Theme.Holo.Light"/>
+
     <style name="Theme.Crop" parent="Theme.GalleryBase">
         <item name="android:displayOptions"></item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Camera.ActionBar</item>
         <item name="android:colorBackground">@null</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowBackground">@drawable/crop_tiled_background</item>
     </style>
-    <style name="Holo.ActionBar" parent="android:Widget.Holo.ActionBar">
+    <style name="Camera.ActionBar" parent="android:Widget.Holo.Light.ActionBar">
         <item name="android:displayOptions">useLogo|showHome|homeAsUp</item>
         <item name="android:background">@drawable/actionbar_translucent</item>
         <item name="android:backgroundStacked">@null</item>
