@@ -355,6 +355,7 @@ public class CameraActivity extends Activity
                             intent.putExtra(Intent.EXTRA_STREAM, contentUri);
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         }
+                        intent = Intent.createChooser(intent, null);
                     }
                     return intent;
                 }
