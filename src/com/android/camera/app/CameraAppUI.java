@@ -413,8 +413,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final int mSlop;
     private final static int SWIPE_TIME_OUT_MS = 500;
 
-    private final static int SHIMMY_DELAY_MS = 1000;
-
     // Mode cover states:
     private final static int COVER_HIDDEN = 0;
     private final static int COVER_SHOWN = 1;
@@ -790,14 +788,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Gets called when activity resumes in preview.
      */
     public void resume() {
-        if (mTextureView == null || mTextureView.getSurfaceTexture() != null) {
-            if (!mIsCaptureIntent) {
-                showShimmyDelayed();
-            }
-        } else {
-            // Show mode theme cover until preview is ready
-            showModeCoverUntilPreviewReady();
-        }
+        // Show mode theme cover until preview is ready
+        showModeCoverUntilPreviewReady();
+
         // Hide action bar first since we are in full screen mode first, and
         // switch the system UI to lights-out mode.
         mFilmstripPanel.hide();
@@ -816,14 +809,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mHideCoverRunnable = new Runnable() {
             @Override
             public void run() {
-                mModeTransitionView.hideModeCover(new AnimationFinishedListener() {
-                    @Override
-                    public void onAnimationFinished(boolean success) {
-                        if (success) {
-                            showShimmyDelayed();
-                        }
-                    }
-                });
+                mModeTransitionView.hideModeCover(null);
+                showShimmyDelayed();
             }
         };
         mModeCoverState = COVER_SHOWN;
@@ -834,7 +821,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             // Show shimmy in SHIMMY_DELAY_MS
             mShouldShowShimmy = mController.shouldShowShimmy();
             if (mShouldShowShimmy) {
-                mModeListView.startAccordionAnimationWithDelay(SHIMMY_DELAY_MS);
+                mModeListView.showModeSwitcherHint();
             }
         }
     }

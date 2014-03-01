@@ -64,12 +64,13 @@ public class ModeListView extends FrameLayout
 
     // Animation Durations
     private static final int DEFAULT_DURATION_MS = 200;
-    private static final int FLY_IN_DURATION_MS = 850;
+    private static final int FLY_IN_DURATION_MS = 0;
     private static final int HOLD_DURATION_MS = 0;
     private static final int FLY_OUT_DURATION_MS = 850;
     private static final int START_DELAY_MS = 100;
     private static final int TOTAL_DURATION_MS = FLY_IN_DURATION_MS + HOLD_DURATION_MS
             + FLY_OUT_DURATION_MS;
+    private static final int HIDE_SHIMMY_DELAY_MS = 1000;
 
     private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
     private static final int NO_ITEM_SELECTED = -1;
@@ -160,6 +161,7 @@ public class ModeListView extends FrameLayout
     private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
     private View mChildViewTouched = null;
     private MotionEvent mLastChildTouchEvent = null;
+    private boolean mStartHidingShimmyWhenWindowGainsFocus = false;
 
     @Override
     public void onPreviewAreaSizeChanged(RectF previewArea) {
@@ -732,31 +734,54 @@ public class ModeListView extends FrameLayout
      * This starts the accordion animation, unless it's already running, in which
      * case the start animation call will be ignored.
      */
-    public void startAccordionAnimation() {
-        if (mState != IDLE) {
+    public void startShimmy() {
+        if (mState != FULLY_SHOWN) {
             return;
         }
         if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
             return;
         }
         mState = ACCORDION_ANIMATION;
-        resetModeSelectors();
-        animateListToWidth(START_DELAY_MS, TOTAL_DURATION_MS, mAccordionInterpolator,
-                0, mIconBlockWidth, 0);
+        int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+        animateListToWidth(START_DELAY_MS * (-1), TOTAL_DURATION_MS, Gusterpolator.INSTANCE,
+                maxVisibleWidth, 0);
     }
 
     /**
-     * This starts the accordion animation with a delay.
-     *
-     * @param delay delay in milliseconds before starting animation
+     * This shows the mode switcher and starts the accordion animation with a delay.
+     * If the view does not currently have focus, (e.g. There are popups on top of
+     * it.) start the delayed accordion animation when it gains focus. Otherwise,
+     * start the animation with a delay right away.
      */
-    public void startAccordionAnimationWithDelay(int delay) {
+    public void showModeSwitcherHint() {
+        if (mState != IDLE) {
+            return;
+        }
+        if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
+            return;
+        }
+        mState = FULLY_SHOWN;
+        setVisibility(VISIBLE);
+        int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+        for (int i = 0; i < mModeSelectorItems.length; i++) {
+            mModeSelectorItems[i].setVisibleWidth(maxVisibleWidth);
+        }
+        onVisibleWidthChanged(maxVisibleWidth);
+        if (hasWindowFocus()) {
+            hideShimmyWithDelay();
+        } else {
+            mStartHidingShimmyWhenWindowGainsFocus = true;
+        }
+
+    }
+
+    private void hideShimmyWithDelay() {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                startAccordionAnimation();
+                startShimmy();
             }
-        }, delay);
+        }, HIDE_SHIMMY_DELAY_MS);
     }
 
     /**
@@ -794,6 +819,15 @@ public class ModeListView extends FrameLayout
             }
         }
         return mModeSelectorItems.length - 1;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (mStartHidingShimmyWhenWindowGainsFocus && hasFocus) {
+            mStartHidingShimmyWhenWindowGainsFocus = false;
+            hideShimmyWithDelay();
+        }
     }
 
     @Override
@@ -1092,7 +1126,8 @@ public class ModeListView extends FrameLayout
     /**
      * Animate the mode list between the given set of visible width.
      *
-     * @param delay start delay between consecutive mode item
+     * @param delay start delay between consecutive mode item. If delay < 0, the
+     *              leader in the animation will be the bottom item.
      * @param duration duration for the animation of each mode item
      * @param interpolator interpolator to be used by the animation
      * @param width a set of values that the animation will animate between over time
@@ -1104,10 +1139,21 @@ public class ModeListView extends FrameLayout
         }
 
         ArrayList<Animator> animators = new ArrayList<Animator>();
+        boolean animateModeItemsInOrder = true;
+        if (delay < 0) {
+            animateModeItemsInOrder = false;
+            delay *= -1;
+        }
         int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
         for (int i = 0; i < mTotalModes; i++) {
-            ObjectAnimator animator = ObjectAnimator.ofInt(mModeSelectorItems[i],
+            ObjectAnimator animator;
+            if (animateModeItemsInOrder) {
+                animator = ObjectAnimator.ofInt(mModeSelectorItems[i],
                     "visibleWidth", width);
+            } else {
+                animator = ObjectAnimator.ofInt(mModeSelectorItems[mTotalModes - 1 -i],
+                        "visibleWidth", width);
+            }
             animator.setDuration(duration);
             animator.setStartDelay(i * delay);
             animators.add(animator);

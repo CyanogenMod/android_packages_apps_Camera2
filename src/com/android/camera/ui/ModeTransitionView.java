@@ -518,8 +518,10 @@ public class ModeTransitionView extends View {
                 public void onAnimationEnd(Animator animation) {
                     setVisibility(GONE);
                     setAlpha(1f);
-                    animationFinishedListener.onAnimationFinished(true);
-                    mAnimationType = IDLE;
+                    if (animationFinishedListener != null) {
+                        animationFinishedListener.onAnimationFinished(true);
+                        mAnimationType = IDLE;
+                    }
                 }
 
                 @Override
