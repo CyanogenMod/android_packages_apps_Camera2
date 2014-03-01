@@ -56,6 +56,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -220,6 +221,8 @@ public class CameraActivity extends Activity
     private Intent mGalleryIntent;
     private long mOnCreateTime;
 
+    private Menu mActionBarMenu;
+
     @Override
     public CameraAppUI getCameraAppUI() {
         return mCameraAppUI;
@@ -383,7 +386,6 @@ public class CameraActivity extends Activity
             };
 
     private ComboPreferences mPreferences;
-    private ContentResolver mContentResolver;
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
@@ -521,16 +523,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onFocusedDataLongPressed(int dataId) {
-                    final LocalData data = mDataAdapter.getLocalData(dataId);
-                    if (data == null) {
-                        return;
-                    }
-                    MediaDetails details = data.getMediaDetails(getAndroidContext());
-                    if (details == null) {
-                        return;
-                    }
-                    Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
-                    detailDialog.show();
+                    // Do nothing.
                 }
 
                 @Override
@@ -1045,6 +1038,9 @@ public class CameraActivity extends Activity
                 }
                 onBackPressed();
                 return true;
+            case R.id.action_details:
+                showDetailsDialog(mFilmstripController.getCurrentId());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -1074,6 +1070,7 @@ public class CameraActivity extends Activity
                 }
             };
 
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -1091,7 +1088,6 @@ public class CameraActivity extends Activity
                 new CameraController(mAppContext, this, mMainHandler,
                         CameraManagerFactory.getAndroidCameraManager());
         mPreferences = new ComboPreferences(mAppContext);
-        mContentResolver = this.getContentResolver();
 
         mSettingsManager = new SettingsManager(mAppContext, this,
                 mCameraController.getNumberOfCameras(), mStrictUpgradeCallback);
@@ -1508,6 +1504,14 @@ public class CameraActivity extends Activity
     public boolean isAutoRotateScreen() {
         // TODO: Move to OrientationManager.
         return mAutoRotateScreen;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.filmstrip_menu, menu);
+        mActionBarMenu = menu;
+        return super.onCreateOptionsMenu(menu);
     }
 
     protected void updateStorageSpace() {
@@ -1979,7 +1983,7 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * Updates the visibility of the filmstrip bottom controls.
+     * Updates the visibility of the filmstrip bottom controls and action bar.
      */
     private void updateUiByData(final int dataId) {
         final LocalData currentData = mDataAdapter.getLocalData(dataId);
@@ -1988,6 +1992,7 @@ public class CameraActivity extends Activity
             hideSessionProgress();
             return;
         }
+        updateActionBarMenu(currentData);
 
         /* Bottom controls. */
         updateBottomControlsByData(currentData);
@@ -2140,5 +2145,37 @@ public class CameraActivity extends Activity
                 }
             });
         }
+    }
+
+    private void showDetailsDialog(int dataId) {
+        final LocalData data = mDataAdapter.getLocalData(dataId);
+        if (data == null) {
+            return;
+        }
+        MediaDetails details = data.getMediaDetails(getAndroidContext());
+        if (details == null) {
+            return;
+        }
+        Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
+        detailDialog.show();
+
+    }
+
+    /**
+     * Show or hide action bar items depending on current data type.
+     */
+    private void updateActionBarMenu(LocalData data) {
+        if (mActionBarMenu == null) {
+            return;
+        }
+
+        MenuItem detailsMenuItem = mActionBarMenu.findItem(R.id.action_details);
+        if (detailsMenuItem == null) {
+            return;
+        }
+
+        int type = data.getLocalDataType();
+        boolean showDetails = (type == LocalData.LOCAL_IMAGE) || (type == LocalData.LOCAL_VIDEO);
+        detailsMenuItem.setVisible(showDetails);
     }
 }
