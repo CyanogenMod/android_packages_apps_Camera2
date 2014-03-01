@@ -89,36 +89,6 @@ public class MainActivityLayout extends FrameLayout {
             // Do not intercept touch once child is in zoom mode
             mCheckToIntercept = false;
             return false;
-        } else {
-            // TODO: Remove this else block once all modules are converted.
-            if (!mCheckToIntercept) {
-                return false;
-            }
-            if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT) {
-                return false;
-            }
-            if (mIsCaptureIntent || !mSwipeEnabled) {
-                return false;
-            }
-            int deltaX = (int) (ev.getX() - mDown.getX());
-            int deltaY = (int) (ev.getY() - mDown.getY());
-            if (ev.getActionMasked() == MotionEvent.ACTION_MOVE
-                    && Math.abs(deltaX) > mSlop) {
-                // Intercept right swipe
-                if (deltaX >= Math.abs(deltaY) * 2) {
-                    mTouchReceiver = mModeList;
-                    onTouchEvent(mDown);
-                    return true;
-                }
-                // Intercept left swipe
-                else if (deltaX < -Math.abs(deltaY) * 2) {
-                    mTouchReceiver = mFilmstripLayout;
-                    UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.FILMSTRIP,
-                            eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
-                    onTouchEvent(mDown);
-                    return true;
-                }
-            }
         }
         return false;
     }

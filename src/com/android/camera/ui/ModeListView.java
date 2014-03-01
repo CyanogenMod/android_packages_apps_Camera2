@@ -58,7 +58,8 @@ import java.util.List;
  * with an animation. To dismiss this list, simply swipe left or select a mode.
  */
 public class ModeListView extends FrameLayout
-        implements PreviewStatusListener.PreviewAreaChangedListener {
+        implements PreviewStatusListener.PreviewAreaChangedListener,
+        ModeSelectorItem.VisibleWidthChangedListener {
 
     private static final String TAG = "ModeListView";
 
@@ -71,12 +72,16 @@ public class ModeListView extends FrameLayout
     private static final int TOTAL_DURATION_MS = FLY_IN_DURATION_MS + HOLD_DURATION_MS
             + FLY_OUT_DURATION_MS;
     private static final int HIDE_SHIMMY_DELAY_MS = 1000;
+    // Assumption for time since last scroll when no data point for last scroll.
+    private static final int SCROLL_INTERVAL_MS = 50;
+    // Last 20% percent of the drawer opening should be slow to ensure soft landing.
+    private static final float SLOW_ZONE_PERCENTAGE = 0.2f;
 
     private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
     private static final int NO_ITEM_SELECTED = -1;
 
     // Scrolling states
-    private static final int IDLE = 0;
+    private static final int FULLY_HIDDEN = 0;
     private static final int FULLY_SHOWN = 1;
     private static final int ACCORDION_ANIMATION = 2;
     private static final int SCROLLING = 3;
@@ -100,24 +105,29 @@ public class ModeListView extends FrameLayout
     private static final float SNAP_BACK_THRESHOLD_RATIO = 0.33f;
 
     private final GestureDetector mGestureDetector;
-    private final int mIconBlockWidth;
     private final RectF mPreviewArea = new RectF();
     private final RectF mUncoveredPreviewArea = new RectF();
 
+    private long mLastScrollTime;
     private int mListBackgroundColor;
     private LinearLayout mListView;
     private SettingsButton mSettingsButton;
-    private int mState = IDLE;
+    private int mState = FULLY_HIDDEN;
     private int mTotalModes;
     private ModeSelectorItem[] mModeSelectorItems;
     private AnimatorSet mAnimatorSet;
     private int mFocusItem = NO_ITEM_SELECTED;
-    private AnimationEffects mCurrentEffect;
+    private ModeListAnimationEffects mCurrentEffect = null;
     private ModeListOpenListener mModeListOpenListener;
     private ModeListVisibilityChangedListener mVisibilityChangedListener;
     private CameraAppUI.CameraModuleScreenShotProvider mScreenShotProvider = null;
     private int[] mInputPixels;
     private int[] mOutputPixels;
+
+    private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
+    private View mChildViewTouched = null;
+    private MotionEvent mLastChildTouchEvent = null;
+    private int mVisibleWidth = 0;
 
     // Width and height of this view. They get updated in onLayout()
     // Unit for width and height are pixels.
@@ -133,6 +143,7 @@ public class ModeListView extends FrameLayout
     private float mVelocityX; // Unit: pixel/ms.
     private final Animator.AnimatorListener mModeListAnimatorListener =
             new Animator.AnimatorListener() {
+        private boolean mCancelled = true;
 
         @Override
         public void onAnimationStart(Animator animation) {
@@ -142,15 +153,20 @@ public class ModeListView extends FrameLayout
         @Override
         public void onAnimationEnd(Animator animation) {
             mAnimatorSet = null;
-            if (mState == ACCORDION_ANIMATION || mState == IDLE) {
+            if (mCancelled) {
+                mCancelled = false;
+                return;
+            }
+            if (mState == ACCORDION_ANIMATION || mState == FULLY_HIDDEN) {
                 resetModeSelectors();
                 setVisibility(INVISIBLE);
-                mState = IDLE;
+                mState = FULLY_HIDDEN;
             }
         }
 
         @Override
         public void onAnimationCancel(Animator animation) {
+            mCancelled = true;
         }
 
         @Override
@@ -158,10 +174,35 @@ public class ModeListView extends FrameLayout
 
         }
     };
-    private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
-    private View mChildViewTouched = null;
-    private MotionEvent mLastChildTouchEvent = null;
-    private boolean mStartHidingShimmyWhenWindowGainsFocus = false;
+    private long mLastDownTime = 0;
+
+    /**
+     * Abstract class for animation effects that are specific for mode list.
+     */
+    private abstract class ModeListAnimationEffects extends AnimationEffects {
+        public void onWindowFocusChanged(boolean hasFocus) {
+            // Default to do nothing.
+        }
+
+        /**
+         * Specifies how the UI elements should respond when mode list opens.
+         * Range: [0f, 1f]. 0f means no change in the UI elements other than
+         * mode drawer itself (i.e. No background dimming, etc). 1f means the
+         * change in the surrounding UI elements should stay in sync with the
+         * mode drawer opening.
+         */
+        public float getModeListOpenFactor() {
+            return 1f;
+        }
+
+        /**
+         * Sets the action (i.e. a runnable to run) at the end of the animation
+         * effects.
+         *
+         * @param runnable the action for the end of animation effects.
+         */
+        public abstract void setAnimationEndAction(Runnable runnable);
+    }
 
     @Override
     public void onPreviewAreaChanged(RectF previewArea) {
@@ -279,7 +320,7 @@ public class ModeListView extends FrameLayout
                     / (float) TOTAL_DURATION_MS;
             if (input == 0) {
                 return 0;
-            }else if (input < flyInDuration) {
+            } else if (input < flyInDuration) {
                 // Stage 1, project result to [0f, 0.5f]
                 input /= flyInDuration;
                 float result = Gusterpolator.INSTANCE.getInterpolation(input);
@@ -308,22 +349,19 @@ public class ModeListView extends FrameLayout
                                 float distanceX, float distanceY) {
 
             if (mState == ACCORDION_ANIMATION) {
-                // Scroll happens during accordion animation.
-                if (isRunningAccordionAnimation()) {
-                    mAnimatorSet.cancel();
+                if (mCurrentEffect != null) {
+                    // Scroll happens during accordion animation.
+                    mCurrentEffect.cancelAnimation();
                 }
-                setVisibility(VISIBLE);
-            }
-
-            if (mState == IDLE) {
+            } else if (mState == FULLY_HIDDEN) {
                 resetModeSelectors();
                 setVisibility(VISIBLE);
             }
-
             mState = SCROLLING;
             // Scroll based on the scrolling distance on the currently focused
             // item.
             scroll(mFocusItem, distanceX * SCROLL_FACTOR, distanceY * SCROLL_FACTOR);
+            mLastScrollTime = System.currentTimeMillis();
             return true;
         }
 
@@ -372,7 +410,6 @@ public class ModeListView extends FrameLayout
             @Override
             public void run() {
                 setVisibility(INVISIBLE);
-                mCurrentEffect = null;
                 snapBack(false);
             }
         });
@@ -429,8 +466,6 @@ public class ModeListView extends FrameLayout
     public ModeListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mGestureDetector = new GestureDetector(context, mOnGestureListener);
-        mIconBlockWidth = getResources()
-                .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
         mListBackgroundColor = getResources().getColor(R.color.mode_list_background);
     }
 
@@ -561,7 +596,10 @@ public class ModeListView extends FrameLayout
 
             mModeSelectorItems[i] = selectorItem;
         }
-
+        // During drawer opening/closing, we change the visible width of the mode
+        // items in sequence, so we listen to the last item's visible width change
+        // for a good timing to do corresponding UI adjustments.
+        mModeSelectorItems[mTotalModes - 1].setVisibleWidthChangedListener(this);
         resetModeSelectors();
     }
 
@@ -615,18 +653,22 @@ public class ModeListView extends FrameLayout
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (mCurrentEffect != null) {
-            return mCurrentEffect.onTouchEvent(ev);
+        if (mCurrentEffect != null && mCurrentEffect.onTouchEvent(ev)) {
+            return true;
         }
 
+        if (mState == ACCORDION_ANIMATION && MotionEvent.ACTION_DOWN == ev.getActionMasked()) {
+            // If shimmy is on-going, reject the first down event, so that it can be handled
+            // by the view underneath. If a swipe is detected, the same series of touch will
+            // re-enter this function, in which case we will consume the touch events.
+            if (mLastDownTime != ev.getDownTime()) {
+                mLastDownTime = ev.getDownTime();
+                return false;
+            }
+        }
         super.onTouchEvent(ev);
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mVelocityX = 0;
-            if  (mState == ACCORDION_ANIMATION) {
-                // Let taps go through to take a capture during the accordion
-                return false;
-            }
-            getParent().requestDisallowInterceptTouchEvent(true);
             if (mState == FULLY_SHOWN) {
                 mFocusItem = NO_ITEM_SELECTED;
                 setSwipeMode(false);
@@ -731,57 +773,18 @@ public class ModeListView extends FrameLayout
     }
 
     /**
-     * This starts the accordion animation, unless it's already running, in which
-     * case the start animation call will be ignored.
-     */
-    public void startShimmy() {
-        if (mState != FULLY_SHOWN) {
-            return;
-        }
-        if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
-            return;
-        }
-        mState = ACCORDION_ANIMATION;
-        int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
-        animateListToWidth(START_DELAY_MS * (-1), TOTAL_DURATION_MS, Gusterpolator.INSTANCE,
-                maxVisibleWidth, 0);
-    }
-
-    /**
      * This shows the mode switcher and starts the accordion animation with a delay.
      * If the view does not currently have focus, (e.g. There are popups on top of
      * it.) start the delayed accordion animation when it gains focus. Otherwise,
      * start the animation with a delay right away.
      */
     public void showModeSwitcherHint() {
-        if (mState != IDLE) {
+        if (mState != FULLY_HIDDEN) {
             return;
         }
-        if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
-            return;
-        }
-        mState = FULLY_SHOWN;
-        setVisibility(VISIBLE);
-        int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
-        for (int i = 0; i < mModeSelectorItems.length; i++) {
-            mModeSelectorItems[i].setVisibleWidth(maxVisibleWidth);
-        }
-        onVisibleWidthChanged(maxVisibleWidth);
-        if (hasWindowFocus()) {
-            hideShimmyWithDelay();
-        } else {
-            mStartHidingShimmyWhenWindowGainsFocus = true;
-        }
-
-    }
-
-    private void hideShimmyWithDelay() {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startShimmy();
-            }
-        }, HIDE_SHIMMY_DELAY_MS);
+        mState = ACCORDION_ANIMATION;
+        mCurrentEffect = new ShimmyAnimationEffects();
+        mCurrentEffect.startAnimation();
     }
 
     /**
@@ -791,8 +794,6 @@ public class ModeListView extends FrameLayout
         for (int i = 0; i < mModeSelectorItems.length; i++) {
             mModeSelectorItems[i].setVisibleWidth(0);
         }
-        // Visible width has been changed to 0
-        onVisibleWidthChanged(0);
     }
 
     private boolean isRunningAccordionAnimation() {
@@ -824,9 +825,8 @@ public class ModeListView extends FrameLayout
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (mStartHidingShimmyWhenWindowGainsFocus && hasFocus) {
-            mStartHidingShimmyWhenWindowGainsFocus = false;
-            hideShimmyWithDelay();
+        if (mCurrentEffect != null) {
+            mCurrentEffect.onWindowFocusChanged(hasFocus);
         }
     }
 
@@ -898,22 +898,21 @@ public class ModeListView extends FrameLayout
         mCurrentTime = SystemClock.uptimeMillis();
         float longestWidth;
         if (itemId != NO_ITEM_SELECTED) {
-            longestWidth = mModeSelectorItems[itemId].getVisibleWidth() - deltaX;
+            longestWidth = mModeSelectorItems[itemId].getVisibleWidth();
         } else {
-            longestWidth = mModeSelectorItems[0].getVisibleWidth() - deltaX;
+            longestWidth = mModeSelectorItems[0].getVisibleWidth();
         }
-        insertNewPosition(longestWidth, mCurrentTime);
+        float newPosition = longestWidth - deltaX;
+        int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+        newPosition = Math.min(newPosition, getMaxMovementBasedOnPosition((int) longestWidth,
+                maxVisibleWidth));
+        newPosition = Math.max(newPosition, 0);
+        insertNewPosition(newPosition, mCurrentTime);
 
         for (int i = 0; i < mModeSelectorItems.length; i++) {
             mModeSelectorItems[i].setVisibleWidth(calculateVisibleWidthForItem(i,
-                    (int) longestWidth));
+                    (int) newPosition));
         }
-        if (longestWidth <= 0) {
-            reset();
-        }
-
-        itemId = itemId == NO_ITEM_SELECTED ? 0 : itemId;
-        onVisibleWidthChanged(mModeSelectorItems[itemId].getVisibleWidth());
     }
 
     /**
@@ -926,7 +925,8 @@ public class ModeListView extends FrameLayout
         }
 
         int delay = Math.abs(itemId - mFocusItem) * DELAY_MS;
-        return (int) getPosition(mCurrentTime - delay);
+        return (int) getPosition(mCurrentTime - delay,
+                mModeSelectorItems[itemId].getVisibleWidth());
     }
 
     /**
@@ -964,14 +964,16 @@ public class ModeListView extends FrameLayout
      * time. These two positions are then interpolated to get the position at the
      * specified time.
      */
-    private float getPosition(long time) {
+    private float getPosition(long time, float currentPosition) {
         int i;
         for (i = 0; i < mPositionHistory.size(); i++) {
             TimeBasedPosition historyPosition = mPositionHistory.get(i);
             if (historyPosition.getTimeStamp() > time) {
                 // Found the winner. Now interpolate between position i and position i - 1
                 if (i == 0) {
-                    return historyPosition.getPosition();
+                    // Slowly approaching to the destination if there isn't enough data points
+                    float weight = 0.2f;
+                    return historyPosition.getPosition() * weight + (1f - weight) * currentPosition;
                 } else {
                     TimeBasedPosition prevTimeBasedPosition = mPositionHistory.get(i - 1);
                     // Start interpolation
@@ -1007,16 +1009,35 @@ public class ModeListView extends FrameLayout
      * When visible width of list is changed, the background of the list needs
      * to darken/lighten correspondingly.
      */
-    private void onVisibleWidthChanged(int focusItemWidth) {
+    public void onVisibleWidthChanged(int visibleWidth) {
+        mVisibleWidth = visibleWidth;
+        float factor = 1f;
+        if (mCurrentEffect != null) {
+            factor = mCurrentEffect.getModeListOpenFactor();
+        }
+
         // When the longest mode item is entirely shown (across the screen), the
         // background should be 50% transparent.
         int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
-        focusItemWidth = Math.min(maxVisibleWidth, focusItemWidth);
-        if (focusItemWidth != maxVisibleWidth) {
+        visibleWidth = Math.min(maxVisibleWidth, visibleWidth);
+        if (visibleWidth != maxVisibleWidth) {
             // No longer full screen.
             cancelForwardingTouchEvent();
         }
-        float openRatio = (float) focusItemWidth / maxVisibleWidth;
+        float openRatio = (float) visibleWidth / maxVisibleWidth;
+        onModeListOpenRatioUpdate(openRatio * factor);
+    }
+
+    /**
+     * Gets called when UI elements such as background and gear icon need to adjust
+     * their appearance based on the percentage of the mode list opening.
+     *
+     * @param openRatio percentage of the mode list opening, ranging [0f, 1f]
+     */
+    private void onModeListOpenRatioUpdate(float openRatio) {
+        for (int i = 0; i < mModeSelectorItems.length; i++) {
+            mModeSelectorItems[i].setTextAlpha(openRatio);
+        }
         setBackgroundAlpha((int) (BACKGROUND_TRANSPARENTCY * openRatio));
         if (mModeListOpenListener != null) {
             mModeListOpenListener.onModeListOpenProgress(openRatio);
@@ -1045,7 +1066,7 @@ public class ModeListView extends FrameLayout
         if (visibility != VISIBLE) {
             // Reset mode list if the window is no longer visible.
             reset();
-            mState = IDLE;
+            mState = FULLY_HIDDEN;
         }
     }
 
@@ -1081,11 +1102,11 @@ public class ModeListView extends FrameLayout
             } else {
                 animateListToWidthAtVelocity(mVelocityX, 0);
             }
-            mState = IDLE;
+            mState = FULLY_HIDDEN;
         } else {
             setVisibility(INVISIBLE);
             resetModeSelectors();
-            mState = IDLE;
+            mState = FULLY_HIDDEN;
         }
     }
 
@@ -1099,12 +1120,12 @@ public class ModeListView extends FrameLayout
     private void snapToFullScreen() {
         int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
         int fullWidth = mModeSelectorItems[focusItem].getMaxVisibleWidth();
-        if (mVelocityX <= VELOCITY_THRESHOLD * SCROLL_FACTOR) {
+        if (mVelocityX <= VELOCITY_THRESHOLD) {
             animateListToWidth(fullWidth);
         } else {
             // If the fling velocity exceeds this threshold, snap to full screen
             // at a constant speed.
-            animateListToWidthAtVelocity(mVelocityX, fullWidth);
+            animateListToWidthAtVelocity(VELOCITY_THRESHOLD, fullWidth);
         }
         mState = FULLY_SHOWN;
         if (mModeListOpenListener != null) {
@@ -1132,7 +1153,7 @@ public class ModeListView extends FrameLayout
      * @param interpolator interpolator to be used by the animation
      * @param width a set of values that the animation will animate between over time
      */
-    private void animateListToWidth(int delay, int duration,
+    private Animator animateListToWidth(int delay, int duration,
                                     TimeInterpolator interpolator, int... width) {
         if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
             mAnimatorSet.end();
@@ -1157,14 +1178,6 @@ public class ModeListView extends FrameLayout
             animator.setDuration(duration);
             animator.setStartDelay(i * delay);
             animators.add(animator);
-            if (i == focusItem) {
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        onVisibleWidthChanged((Integer) animation.getAnimatedValue());
-                    }
-                });
-            }
         }
 
         mAnimatorSet = new AnimatorSet();
@@ -1172,6 +1185,8 @@ public class ModeListView extends FrameLayout
         mAnimatorSet.setInterpolator(interpolator);
         mAnimatorSet.addListener(mModeListAnimatorListener);
         mAnimatorSet.start();
+
+        return mAnimatorSet;
     }
 
     /**
@@ -1193,14 +1208,6 @@ public class ModeListView extends FrameLayout
             int duration = (int) (width / velocity);
             animator.setDuration(duration);
             animators.add(animator);
-            if (i == focusItem) {
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        onVisibleWidthChanged((Integer) animation.getAnimatedValue());
-                    }
-                });
-            }
         }
 
         mAnimatorSet = new AnimatorSet();
@@ -1235,7 +1242,25 @@ public class ModeListView extends FrameLayout
 
     }
 
-    private class PeepholeAnimationEffect extends AnimationEffects {
+    public float getMaxMovementBasedOnPosition(int lastVisibleWidth, int maxWidth) {
+        int timeElapsed = (int) (System.currentTimeMillis() - mLastScrollTime);
+        if (timeElapsed > SCROLL_INTERVAL_MS) {
+            timeElapsed = SCROLL_INTERVAL_MS;
+        }
+        float position;
+        int slowZone = (int) (maxWidth * SLOW_ZONE_PERCENTAGE);
+        if (lastVisibleWidth < (maxWidth - slowZone)) {
+            position = VELOCITY_THRESHOLD * (float) timeElapsed + lastVisibleWidth;
+        } else {
+            float percentageIntoSlowZone = (lastVisibleWidth - (maxWidth - slowZone)) / slowZone;
+            float velocity = (1 - percentageIntoSlowZone) * VELOCITY_THRESHOLD;
+            position = velocity * (float) timeElapsed + lastVisibleWidth;
+        }
+        position = Math.min(maxWidth, position);
+        return position;
+    }
+
+    private class PeepholeAnimationEffect extends ModeListAnimationEffects {
 
         private final static int UNSET = -1;
         private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
@@ -1264,6 +1289,11 @@ public class ModeListView extends FrameLayout
         public void setSize(int width, int height) {
             mWidth = width;
             mHeight = height;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            return true;
         }
 
         @Override
@@ -1373,24 +1403,7 @@ public class ModeListView extends FrameLayout
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (mEndAction != null) {
-                        post(mEndAction);
-                        mEndAction = null;
-                        post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mPeepHoleAnimator = null;
-                                mRadius = 0;
-                                mPeepHoleCenterX = UNSET;
-                                mPeepHoleCenterY = UNSET;
-                            }
-                        });
-                    } else {
-                        mPeepHoleAnimator = null;
-                        mRadius = 0;
-                        mPeepHoleCenterX = UNSET;
-                        mPeepHoleCenterY = UNSET;
-                    }
+                    endAnimation();
                 }
 
                 @Override
@@ -1406,6 +1419,31 @@ public class ModeListView extends FrameLayout
             mPeepHoleAnimator.start();
         }
 
+        @Override
+        public void endAnimation() {
+            if (mEndAction != null) {
+                post(mEndAction);
+                mEndAction = null;
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPeepHoleAnimator = null;
+                        mRadius = 0;
+                        mPeepHoleCenterX = UNSET;
+                        mPeepHoleCenterY = UNSET;
+                        mCurrentEffect = null;
+                    }
+                });
+            } else {
+                mPeepHoleAnimator = null;
+                mRadius = 0;
+                mPeepHoleCenterX = UNSET;
+                mPeepHoleCenterY = UNSET;
+                mCurrentEffect = null;
+            }
+        }
+
+        @Override
         public void setAnimationEndAction(Runnable runnable) {
             mEndAction = runnable;
         }
@@ -1444,5 +1482,152 @@ public class ModeListView extends FrameLayout
                 setBlurredBackground(bitmap);
             }
         };
+    }
+
+    /**
+     * Shimmy animation effects handles the specifics for shimmy animation, including
+     * setting up to show mode drawer (without text) and hide it with shimmy animation.
+     */
+    private class ShimmyAnimationEffects extends ModeListAnimationEffects {
+        private boolean mStartHidingShimmyWhenWindowGainsFocus = false;
+        private Animator mAnimator = null;
+        private float mModeListOpenFactor = 0f;
+        private final Runnable mHideShimmy = new Runnable() {
+            @Override
+            public void run() {
+                startHidingShimmy();
+            }
+        };
+        private Runnable mEndAction = null;
+
+        @Override
+        public void setSize(int width, int height) {
+            // Do nothing.
+        }
+
+        @Override
+        public void drawForeground(Canvas canvas) {
+            // Do nothing.
+        }
+
+        @Override
+        public void startAnimation() {
+            setVisibility(VISIBLE);
+            mSettingsButton.setVisibility(INVISIBLE);
+            onModeListOpenRatioUpdate(0);
+            int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+            for (int i = 0; i < mModeSelectorItems.length; i++) {
+                mModeSelectorItems[i].setVisibleWidth(maxVisibleWidth);
+            }
+            if (hasWindowFocus()) {
+                hideShimmyWithDelay();
+            } else {
+                mStartHidingShimmyWhenWindowGainsFocus = true;
+            }
+        }
+
+        private void hideShimmyWithDelay() {
+            postDelayed(mHideShimmy, HIDE_SHIMMY_DELAY_MS);
+        }
+
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            if (mStartHidingShimmyWhenWindowGainsFocus && hasFocus) {
+                mStartHidingShimmyWhenWindowGainsFocus = false;
+                hideShimmyWithDelay();
+            }
+        }
+
+        /**
+         * This starts the accordion animation, unless it's already running, in which
+         * case the start animation call will be ignored.
+         */
+        private void startHidingShimmy() {
+            int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+            mAnimator = animateListToWidth(START_DELAY_MS * (-1), TOTAL_DURATION_MS,
+                    Gusterpolator.INSTANCE, maxVisibleWidth, 0);
+            mAnimator.addListener(new Animator.AnimatorListener() {
+                private boolean mCanceled = false;
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    endAnimation();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    mCanceled = true;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    // Do nothing.
+                }
+            });
+        }
+
+        @Override
+        public boolean cancelAnimation() {
+            removeCallbacks(mHideShimmy);
+            if (mAnimator != null && mAnimator.isRunning()) {
+                mAnimator.cancel();
+            }
+            endAnimation();
+            return true;
+        }
+
+        @Override
+        public void endAnimation() {
+            mAnimator = null;
+            mSettingsButton.setVisibility(VISIBLE);
+            if (mEndAction != null) {
+                post(mEndAction);
+            }
+            final ValueAnimator openFactorAnimator = ValueAnimator.ofFloat(mModeListOpenFactor, 1f);
+            openFactorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mModeListOpenFactor = (Float) openFactorAnimator.getAnimatedValue();
+                    onVisibleWidthChanged(mVisibleWidth);
+                }
+            });
+            openFactorAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mModeListOpenFactor = 1f;
+                    mCurrentEffect = null;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    // Do nothing.
+                }
+            });
+            openFactorAnimator.start();
+        }
+
+        @Override
+        public float getModeListOpenFactor() {
+            return mModeListOpenFactor;
+        }
+
+        @Override
+        public void setAnimationEndAction(Runnable runnable) {
+            mEndAction = runnable;
+        }
     }
 }
