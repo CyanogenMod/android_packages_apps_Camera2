@@ -92,7 +92,7 @@
     <string name="no_storage" product="default" msgid="5922012950780548098">"使用相機前，請先插入 SD 卡。"</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"正在準備 SD 卡…"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"無法存取 SD 卡。"</string>
-    <string name="time_lapse_title" msgid="3267978566401228497">"延時攝影錄製"</string>
+    <string name="time_lapse_title" msgid="3267978566401228497">"縮時攝影錄製"</string>
     <string name="capturing" msgid="5255164204641920893">"拍攝中"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"選擇相機"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"後置"</string>
@@ -112,7 +112,7 @@
     <string name="pref_video_quality_title" msgid="5887153490982738588">"影片畫質"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"高"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"低"</string>
-    <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"延時攝影"</string>
+    <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"縮時攝影"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"相機設定"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"攝錄影機設定"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"圖片大小"</string>
@@ -275,7 +275,7 @@
     <string name="time_lapse_hours" msgid="5294001144133261436">"小時"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"完成"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"設定時間間隔"</string>
-    <string name="set_time_interval_help" msgid="64145154088021389">"延時攝影功能已關閉；請開啟以設定時間間隔。"</string>
+    <string name="set_time_interval_help" msgid="64145154088021389">"縮時攝影功能已關閉；請開啟以設定時間間隔。"</string>
     <string name="set_duration" msgid="1638453882581604341">"設定倒數時間 (以秒為單位)"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"拍照倒數計時中"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"記錄拍攝地點？"</string>
