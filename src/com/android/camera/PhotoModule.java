@@ -447,9 +447,24 @@ public class PhotoModule
             new ButtonManager.ButtonCallback() {
                 @Override
                 public void onStateChanged(int state) {
+                    // At the time this callback is fired, the camera id
+                    // has be set to the desired camera.
+
                     if (mPaused || mPendingSwitchCameraId != -1) {
                         return;
                     }
+                    // If switching to back camera, and HDR+ is still on,
+                    // switch back to gcam, otherwise handle callback normally.
+                    SettingsManager settingsManager = mActivity.getSettingsManager();
+                    if (settingsManager.isCameraBackFacing()) {
+                        if (settingsManager.requestsReturnToHdrPlus()) {
+                            settingsManager.set(SettingsManager.SETTING_CAMERA_HDR,
+                                SettingsManager.VALUE_ON);
+                            mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+                            return;
+                        }
+                    }
+
                     mPendingSwitchCameraId = state;
 
                     Log.v(TAG, "Start to switch camera. cameraId=" + state);

@@ -26,6 +26,7 @@ import android.util.SparseArray;
 import com.android.camera.ListPreference;
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
+import com.android.camera.util.CameraUtil;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 
@@ -367,6 +368,10 @@ public class SettingsManager {
     public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 25;
     public static final int SETTING_STRICT_UPGRADE_VERSION = 26;
     public static final int SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX = 27;
+    // A boolean for requesting to return to HDR plus
+    // as soon as possible, if a user requests a setting/mode option
+    // that forces them to leave HDR plus.
+    public static final int SETTING_REQUEST_RETURN_HDR_PLUS = 28;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -405,6 +410,7 @@ public class SettingsManager {
     public static final String KEY_STRICT_UPGRADE_VERSION = "pref_strict_upgrade_version";
     public static final String KEY_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES =
             "pref_filmstrip_peek_anim_remaining_play_times";
+    public static final String KEY_REQUEST_RETURN_HDR_PLUS = "pref_request_return_hdr_plus";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -498,7 +504,8 @@ public class SettingsManager {
             return mCameraSettings;
         }
         if (source.equals(SOURCE_MODULE)) {
-            int modeIndex = mAppController.getCurrentModuleIndex();
+            int modeIndex = CameraUtil.getCameraModeParentModeId(
+                mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
             return getModulePreferences(modeIndex);
         }
         return null;
@@ -1099,6 +1106,12 @@ public class SettingsManager {
                 KEY_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES, null, FLUSH_OFF);
     }
 
+    public static Setting getRequestReturnHdrPlusSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_none_value);
+        return new Setting(SOURCE_MODULE, TYPE_BOOLEAN, VALUE_OFF,
+                KEY_REQUEST_RETURN_HDR_PLUS, null, FLUSH_OFF);
+    }
+
     // Utilities.
 
     /**
@@ -1116,6 +1129,13 @@ public class SettingsManager {
     public boolean isHdrPlusOn() {
         String hdrOn = get(SettingsManager.SETTING_CAMERA_HDR);
         return hdrOn.equals(SettingsManager.VALUE_ON);
+    }
+
+    /**
+     * Returns whether the app should return to hdr plus mode if possible.
+     */
+    public boolean requestsReturnToHdrPlus() {
+        return getBoolean(SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS);
     }
 
     /**

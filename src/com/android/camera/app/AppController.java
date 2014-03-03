@@ -109,6 +109,14 @@ public interface AppController {
     public int getQuickSwitchToModuleId(int currentModuleIndex);
 
     /**
+     * Based on a mode switcher index, choose the correct module index.
+     *
+     * @param modeIndex mode switcher index.
+     * @return module index.
+     */
+    public int getPreferredChildModeIndex(int modeIndex);
+
+    /**
      * This gets called when mode is changed.
      *
      * @param moduleIndex index of the new module to switch to
