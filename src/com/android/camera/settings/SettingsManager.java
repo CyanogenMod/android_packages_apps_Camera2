@@ -366,6 +366,7 @@ public class SettingsManager {
     public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 24;
     public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 25;
     public static final int SETTING_STRICT_UPGRADE_VERSION = 26;
+    public static final int SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX = 27;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -402,6 +403,8 @@ public class SettingsManager {
     public static final String KEY_FLASH_SUPPORTED_BACK_CAMERA =
             "pref_flash_supported_back_camera";
     public static final String KEY_STRICT_UPGRADE_VERSION = "pref_strict_upgrade_version";
+    public static final String KEY_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES =
+            "pref_filmstrip_peek_anim_remaining_play_times";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -1088,6 +1091,12 @@ public class SettingsManager {
         String defaultValue = "0";
         return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
                 KEY_STRICT_UPGRADE_VERSION, null, FLUSH_OFF);
+    }
+
+    public static Setting getPeekAnimRemainingTimesSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_filmstrip_peek_anim_play_times);
+        return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
+                KEY_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES, null, FLUSH_OFF);
     }
 
     // Utilities.
