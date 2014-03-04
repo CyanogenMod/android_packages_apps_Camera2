@@ -38,7 +38,7 @@ import com.android.camera.util.CameraUtil;
  */
 public class PeekView extends ImageView {
 
-    private static final float ROTATE_ANGLE = -15f;
+    private static final float ROTATE_ANGLE = -7f;
     private static final long PEEK_IN_DURATION_MS = 200;
     private static final long PEEK_STAY_DURATION_MS = 100;
     private static final long PEEK_OUT_DURATION_MS = 200;
@@ -69,11 +69,6 @@ public class PeekView extends ImageView {
 
     private void init() {
         mRotationPivot = new Point();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
