@@ -999,11 +999,12 @@ class AndroidCameraManagerImpl implements CameraManager {
                 Log.v(TAG, "null parameters in setParameters()");
                 return;
             }
+            final String flattenedParameters = params.flatten();
             mDispatchThread.runJob(new Runnable() {
                 @Override
                 public void run() {
                     mCameraState.waitForStates(CAMERA_IDLE | CAMERA_UNLOCKED);
-                    mCameraHandler.obtainMessage(SET_PARAMETERS, params.flatten()).sendToTarget();
+                    mCameraHandler.obtainMessage(SET_PARAMETERS, flattenedParameters).sendToTarget();
                 }
             });
         }
