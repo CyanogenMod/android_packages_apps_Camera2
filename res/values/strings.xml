@@ -788,4 +788,7 @@ CHAR LIMIT=NONE] -->
     <!-- Title of a dialog showing open source licenses used in the app. [CHAR LIMIT=30] -->
     <string name="open_source_licenses">Open Source Licenses</string>
 
+    <!-- Default number of times to play peek animation. -->
+    <string name="pref_filmstrip_peek_anim_play_times" translatable="false">20</string>
+
  </resources>
