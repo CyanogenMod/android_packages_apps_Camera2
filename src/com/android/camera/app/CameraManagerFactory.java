@@ -25,6 +25,7 @@ import com.android.camera.app.CameraManager;
 public class CameraManagerFactory {
 
     private static AndroidCameraManagerImpl sAndroidCameraManager;
+    private static int sAndoridCameraManagerClientCount;
 
     /**
      * Returns the android camera implementation of {@link com.android.camera.app.CameraManager}.
@@ -34,6 +35,9 @@ public class CameraManagerFactory {
     public static synchronized CameraManager getAndroidCameraManager() {
         if (sAndroidCameraManager == null) {
             sAndroidCameraManager = new AndroidCameraManagerImpl();
+            sAndoridCameraManagerClientCount = 1;
+        } else {
+            ++sAndoridCameraManagerClientCount;
         }
         return sAndroidCameraManager;
     }
@@ -42,8 +46,8 @@ public class CameraManagerFactory {
      * Recycles the resources. Always call this method when the activity is
      * stopped.
      */
-    public static void recycle() {
-        if (sAndroidCameraManager != null) {
+    public static synchronized void recycle() {
+        if (--sAndoridCameraManagerClientCount == 0 && sAndroidCameraManager != null) {
             sAndroidCameraManager.recycle();
             sAndroidCameraManager = null;
         }
