@@ -163,62 +163,64 @@ public class SettingsCache {
 
     private Setting settingFromId(int id) {
         switch (id) {
-        case SettingsManager.SETTING_RECORD_LOCATION:
-            return SettingsManager.getLocationSetting(mContext);
-        case SettingsManager.SETTING_VIDEO_QUALITY:
-            return SettingsManager.getVideoQualitySetting(mContext);
-        case SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL:
-            return SettingsManager.getTimeLapseFrameIntervalSetting(mContext);
-        case SettingsManager.SETTING_PICTURE_SIZE:
-            return SettingsManager.getPictureSizeSetting(mContext);
-        case SettingsManager.SETTING_JPEG_QUALITY:
-            return SettingsManager.getJpegQualitySetting(mContext);
-        case SettingsManager.SETTING_FOCUS_MODE:
-            return SettingsManager.getFocusModeSetting(mContext);
-        case SettingsManager.SETTING_FLASH_MODE:
-            return SettingsManager.getFlashSetting(mContext);
-        case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE:
-            return SettingsManager.getVideoFlashSetting(mContext);
-        case SettingsManager.SETTING_WHITE_BALANCE:
-            return SettingsManager.getWhiteBalanceSetting(mContext);
-        case SettingsManager.SETTING_SCENE_MODE:
-            return SettingsManager.getSceneModeSetting(mContext);
-        case SettingsManager.SETTING_EXPOSURE:
-            return SettingsManager.getExposureSetting(mContext, mCapabilities);
-        case SettingsManager.SETTING_TIMER:
-            return SettingsManager.getTimerSetting(mContext);
-        case SettingsManager.SETTING_TIMER_SOUND_EFFECTS:
-            return SettingsManager.getTimerSoundSetting(mContext);
-        case SettingsManager.SETTING_VIDEO_EFFECT:
-            return SettingsManager.getVideoEffectSetting(mContext);
-        case SettingsManager.SETTING_CAMERA_ID:
-            return SettingsManager.getDefaultCameraIdSetting(mContext, mCapabilities);
-        case SettingsManager.SETTING_CAMERA_HDR:
-            return SettingsManager.getHdrSetting(mContext);
-        case SettingsManager.SETTING_CAMERA_HDR_PLUS:
-            return SettingsManager.getHdrPlusSetting(mContext);
-        case SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN:
-            return SettingsManager.getHintSetting(mContext);
-        case SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN:
-            return SettingsManager.getHintVideoSetting(mContext);
-        case SettingsManager.SETTING_STARTUP_MODULE_INDEX:
-            return SettingsManager.getStartupModuleSetting(mContext);
-        case SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX:
-            return SettingsManager.getShimmyRemainingTimesSetting(mContext);
-        case SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX:
-            return SettingsManager.getLastUsedCameraModule(mContext);
-        case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION:
-            return SettingsManager.getPanoOrientationSetting(mContext);
-        case SettingsManager.SETTING_CAMERA_GRID_LINES:
-            return SettingsManager.getGridLinesSetting(mContext);
-        case SettingsManager.SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION:
-            return SettingsManager.getReleaseDialogLastShownVersionSetting(mContext);
-        case SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA:
-            return SettingsManager.getFlashSupportedBackCameraSetting(mContext);
-        case SettingsManager.SETTING_STRICT_UPGRADE_VERSION:
-            return SettingsManager.getStrictUpgradeVersionSetting(mContext);
-        default:
-            return mExtraSettings.settingFromId(id);
+            case SettingsManager.SETTING_RECORD_LOCATION:
+                return SettingsManager.getLocationSetting(mContext);
+            case SettingsManager.SETTING_VIDEO_QUALITY:
+                return SettingsManager.getVideoQualitySetting(mContext);
+            case SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL:
+                return SettingsManager.getTimeLapseFrameIntervalSetting(mContext);
+            case SettingsManager.SETTING_PICTURE_SIZE:
+                return SettingsManager.getPictureSizeSetting(mContext);
+            case SettingsManager.SETTING_JPEG_QUALITY:
+                return SettingsManager.getJpegQualitySetting(mContext);
+            case SettingsManager.SETTING_FOCUS_MODE:
+                return SettingsManager.getFocusModeSetting(mContext);
+            case SettingsManager.SETTING_FLASH_MODE:
+                return SettingsManager.getFlashSetting(mContext);
+            case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE:
+                return SettingsManager.getVideoFlashSetting(mContext);
+            case SettingsManager.SETTING_WHITE_BALANCE:
+                return SettingsManager.getWhiteBalanceSetting(mContext);
+            case SettingsManager.SETTING_SCENE_MODE:
+                return SettingsManager.getSceneModeSetting(mContext);
+            case SettingsManager.SETTING_EXPOSURE:
+                return SettingsManager.getExposureSetting(mContext, mCapabilities);
+            case SettingsManager.SETTING_TIMER:
+                return SettingsManager.getTimerSetting(mContext);
+            case SettingsManager.SETTING_TIMER_SOUND_EFFECTS:
+                return SettingsManager.getTimerSoundSetting(mContext);
+            case SettingsManager.SETTING_VIDEO_EFFECT:
+                return SettingsManager.getVideoEffectSetting(mContext);
+            case SettingsManager.SETTING_CAMERA_ID:
+                return SettingsManager.getDefaultCameraIdSetting(mContext, mCapabilities);
+            case SettingsManager.SETTING_CAMERA_HDR:
+                return SettingsManager.getHdrSetting(mContext);
+            case SettingsManager.SETTING_CAMERA_HDR_PLUS:
+                return SettingsManager.getHdrPlusSetting(mContext);
+            case SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN:
+                return SettingsManager.getHintSetting(mContext);
+            case SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN:
+                return SettingsManager.getHintVideoSetting(mContext);
+            case SettingsManager.SETTING_STARTUP_MODULE_INDEX:
+                return SettingsManager.getStartupModuleSetting(mContext);
+            case SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX:
+                return SettingsManager.getShimmyRemainingTimesSetting(mContext);
+            case SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX:
+                return SettingsManager.getLastUsedCameraModule(mContext);
+            case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION:
+                return SettingsManager.getPanoOrientationSetting(mContext);
+            case SettingsManager.SETTING_CAMERA_GRID_LINES:
+                return SettingsManager.getGridLinesSetting(mContext);
+            case SettingsManager.SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION:
+                return SettingsManager.getReleaseDialogLastShownVersionSetting(mContext);
+            case SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA:
+                return SettingsManager.getFlashSupportedBackCameraSetting(mContext);
+            case SettingsManager.SETTING_STRICT_UPGRADE_VERSION:
+                return SettingsManager.getStrictUpgradeVersionSetting(mContext);
+            case SettingsManager.SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX:
+                return SettingsManager.getPeekAnimRemainingTimesSetting(mContext);
+            default:
+                return mExtraSettings.settingFromId(id);
         }
     }
 
