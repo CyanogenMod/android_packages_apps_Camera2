@@ -181,6 +181,11 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
+    public boolean waitingForCamera() {
+        return mRequestingCameraId != EMPTY_REQUEST;
+    }
+
+    @Override
     public void releaseCamera(int id) {
         if (mCameraProxy == null) {
             if (mRequestingCameraId == EMPTY_REQUEST) {

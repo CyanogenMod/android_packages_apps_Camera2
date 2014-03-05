@@ -31,6 +31,8 @@ public interface CameraProvider {
      */
     public void requestCamera(int id);
 
+    public boolean waitingForCamera();
+
     /**
      * Releases the camera device.
      *
