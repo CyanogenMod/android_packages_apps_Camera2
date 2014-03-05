@@ -17,8 +17,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="oval">
     <size
-        android:width="48dp"
-        android:height="48dp" />
+        android:width="@dimen/option_button_circle_size"
+        android:height="@dimen/option_button_circle_size" />
     <solid
         android:color="#20000000" />
 </shape>

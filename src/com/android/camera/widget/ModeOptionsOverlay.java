@@ -56,7 +56,7 @@ public class ModeOptionsOverlay extends FrameLayout
     private int mPreviewWidth;
     private int mPreviewHeight;
 
-    private TopRightWeightedLayout mModeOptions;
+    private ModeOptions mModeOptions;
 
     // The mode options toggle can be either a default image, or a
     // group of on screen indicators.
@@ -72,7 +72,7 @@ public class ModeOptionsOverlay extends FrameLayout
 
     @Override
     public void onFinishInflate() {
-        mModeOptions = (TopRightWeightedLayout) findViewById(R.id.mode_options);
+        mModeOptions = (ModeOptions) findViewById(R.id.mode_options);
         mModeOptions.setClickable(true);
         mModeOptions.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -83,12 +83,12 @@ public class ModeOptionsOverlay extends FrameLayout
 
         mModeOptionsToggle = (FrameLayout) findViewById(R.id.mode_options_toggle);
         mModeOptionsToggle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mModeOptionsToggle.setVisibility(View.INVISIBLE);
-                    mModeOptions.setVisibility(View.VISIBLE);
-                }
-            });
+            @Override
+            public void onClick(View v) {
+                mModeOptions.animateVisible();
+            }
+        });
+        mModeOptions.setViewToShowHide(mModeOptionsToggle);
 
         mThreeDots = (ImageView) findViewById(R.id.three_dots);
         mIndicators = (LinearLayout) findViewById(R.id.indicator_icons);
@@ -121,11 +121,10 @@ public class ModeOptionsOverlay extends FrameLayout
      */
     private void closeModeOptions() {
         // Check that the bottom bar options are visible.
-        if (mModeOptions.getVisibility() != View.VISIBLE) {
+        if (mModeOptions.isHidden()) {
             return;
         }
-        mModeOptions.setVisibility(View.INVISIBLE);
-        mModeOptionsToggle.setVisibility(View.VISIBLE);
+        mModeOptions.animateHidden();
     }
 
     @Override
