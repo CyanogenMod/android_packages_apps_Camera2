@@ -54,4 +54,7 @@
 
     <include layout="@layout/mode_options_bottombar" />
 
+    <FrameLayout android:id="@+id/tutorials_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </merge>
