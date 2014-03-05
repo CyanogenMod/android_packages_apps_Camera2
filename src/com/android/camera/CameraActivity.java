@@ -495,6 +495,10 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSwipeOutBegin() {
                     mActionBar.hide();
+                    if (mCurrentModule != null) {
+                        mCurrentModule
+                                .onPreviewVisibilityChanged(ModuleController.VISIBILITY_VISIBLE);
+                    }
                 }
 
                 @Override
@@ -506,10 +510,6 @@ public class CameraActivity extends Activity
                     // when the user swipe in the filmstrip, the most recent
                     // one is shown.
                     mFilmstripController.goToFirstItem();
-                    if (mCurrentModule != null) {
-                        mCurrentModule
-                                .onPreviewVisibilityChanged(ModuleController.VISIBILITY_VISIBLE);
-                    }
                 }
 
                 @Override
