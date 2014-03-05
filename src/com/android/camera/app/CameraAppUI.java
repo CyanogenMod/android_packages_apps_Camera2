@@ -433,6 +433,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private boolean mShouldShowShimmy = false;
     private IndicatorIconController mIndicatorIconController;
     private View mFocusOverlay;
+    private FrameLayout mTutorialsPlaceholder;
 
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
@@ -460,7 +461,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
     private View mModeOptionsToggle;
-    private RectF mBottomBarRect = new RectF();
+    private final RectF mBottomBarRect = new RectF();
     private final View.OnLayoutChangeListener mBottomBarLayoutChangeListener
             = new View.OnLayoutChangeListener() {
         @Override
@@ -489,7 +490,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         }
     };
-    private PeekView mPeekView;
+    private final PeekView mPeekView;
 
     /**
      * Provides current preview frame and the controls/overlay from the module that
@@ -1030,6 +1031,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
         mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
+        mTutorialsPlaceholder = (FrameLayout) mCameraRootView
+                .findViewById(R.id.tutorials_placeholder);
     }
 
     /**
@@ -1052,6 +1055,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
         removeShutterListener(mController.getCurrentModuleController());
         mTextureViewHelper.addPreviewAreaSizeChangedListener(null);
+        mTutorialsPlaceholder.removeAllViews();
 
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
