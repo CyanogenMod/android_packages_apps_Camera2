@@ -2179,6 +2179,10 @@ public class CameraActivity extends Activity
         Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
         detailDialog.show();
 
+        UsageStatistics.photoInteraction(
+                UsageStatistics.hashFileName(fileNameFromDataID(dataId)),
+                eventprotos.CameraEvent.InteractionType.DETAILS,
+                InteractionCause.BUTTON);
     }
 
     /**

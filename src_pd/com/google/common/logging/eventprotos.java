@@ -23,6 +23,7 @@ public class eventprotos {
         public class InteractionType {
             public static final int SHARE = 0;
             public static final int DELETE = 0;
+            public static final int DETAILS = 0;
         }
 
         public class InteractionCause {
