@@ -8,4 +8,6 @@ bin/
 libs/
 gen/
 .idea/
-.gitignore
+
+# ignore OS X metadata
+.DS_Store
