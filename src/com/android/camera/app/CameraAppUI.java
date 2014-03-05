@@ -1489,7 +1489,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         }
 
-        if (bottomBarSpec.hideHdr) {
+        if (bottomBarSpec.hideHdr || mIsCaptureIntent) {
             // Force hide hdr or hdr plus icon.
             buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
         } else {

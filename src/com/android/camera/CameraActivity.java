@@ -1205,10 +1205,6 @@ public class CameraActivity extends Activity
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
             modeIndex = photoIndex;
-            if (mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX)
-                        == gcamIndex && GcamHelper.hasGcamCapture()) {
-                modeIndex = gcamIndex;
-            }
         } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
             modeIndex = photoIndex;
