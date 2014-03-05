@@ -1602,6 +1602,17 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public int getPreferredChildModeIndex(int modeIndex) {
+        if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
+            boolean hdrPlusOn = mSettingsManager.isHdrPlusOn();
+            if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
+                modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
+            }
+        }
+        return modeIndex;
+    }
+
+    @Override
     public void onModeSelected(int modeIndex) {
         if (mCurrentModeIndex == modeIndex) {
             return;
@@ -1618,16 +1629,8 @@ public class CameraActivity extends Activity
         closeModule(mCurrentModule);
         int oldModuleIndex = mCurrentModeIndex;
 
-        // Refocus and Gcam are modes that cannot be selected
-        // from the mode list view, because they are not list items.
-        // Check whether we should interpret MODULE_CRAFT as either.
-        if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
-            boolean hdrPlusOn = mSettingsManager.isHdrPlusOn();
-            if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
-                modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
-            }
-        }
-
+        // Select the correct module index from the mode switcher index.
+        modeIndex = getPreferredChildModeIndex(modeIndex);
         setModuleFromModeIndex(modeIndex);
 
         mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);

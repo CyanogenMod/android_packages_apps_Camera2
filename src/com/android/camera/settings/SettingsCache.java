@@ -133,6 +133,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA);
         mKeyMap.put(SettingsManager.KEY_STRICT_UPGRADE_VERSION,
                 SettingsManager.SETTING_STRICT_UPGRADE_VERSION);
+        mKeyMap.put(SettingsManager.KEY_REQUEST_RETURN_HDR_PLUS,
+                SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS);
     }
 
     /**
@@ -219,6 +221,8 @@ public class SettingsCache {
                 return SettingsManager.getStrictUpgradeVersionSetting(mContext);
             case SettingsManager.SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX:
                 return SettingsManager.getPeekAnimRemainingTimesSetting(mContext);
+            case SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS:
+                return SettingsManager.getRequestReturnHdrPlusSetting(mContext);
             default:
                 return mExtraSettings.settingFromId(id);
         }
