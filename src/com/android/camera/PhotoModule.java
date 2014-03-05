@@ -433,7 +433,6 @@ public class PhotoModule
         Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
         closeCamera();
         mCameraId = mPendingSwitchCameraId;
-        mPendingSwitchCameraId = -1;
         settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
         mActivity.getCameraProvider().requestCamera(mCameraId);
         mUI.clearFaces();
@@ -456,7 +455,7 @@ public class PhotoModule
                     // At the time this callback is fired, the camera id
                     // has be set to the desired camera.
 
-                    if (mPaused || mPendingSwitchCameraId != -1) {
+                    if (mPaused || mAppController.getCameraProvider().waitingForCamera()) {
                         return;
                     }
                     // If switching to back camera, and HDR+ is still on,
@@ -1427,6 +1426,7 @@ public class PhotoModule
 
     private void closeCamera() {
         if (mCameraDevice != null) {
+            stopFaceDetection();
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
             mCameraDevice.setErrorCallback(null);
