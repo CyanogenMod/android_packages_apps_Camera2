@@ -467,7 +467,7 @@ public class VideoModule extends CameraModule
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
-                if (mPaused || mPendingSwitchCameraId != -1) {
+                if (mPaused || mAppController.getCameraProvider().waitingForCamera()) {
                     return;
                 }
                 mPendingSwitchCameraId = state;
