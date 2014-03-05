@@ -1724,7 +1724,12 @@ public class PhotoModule
         if (pressed && !canTakePicture()) return;
 
         if (pressed) {
-            mFocusManager.onShutterDown();
+            String timer = mPreferences.getString(
+                CameraSettings.KEY_TIMER,
+                mActivity.getString(R.string.pref_camera_timer_default));
+            if (timer.equals("0")) {
+                mFocusManager.onShutterDown();
+            }
         } else {
             // for countdown mode, we need to postpone the shutter release
             // i.e. lock the focus during countdown.
