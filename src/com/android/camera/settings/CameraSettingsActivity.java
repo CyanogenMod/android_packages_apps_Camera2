@@ -19,6 +19,8 @@ package com.android.camera.settings;
 import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -60,6 +62,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
     public static class CameraSettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
+        private static final String BUILD_VERSION = "build_version";
         private FeedbackHelper mFeedbackHelper;
 
         @Override
@@ -88,6 +91,14 @@ public class CameraSettingsActivity extends FragmentActivity {
             // Put in the summaries for the currently set values.
             for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
                 setSummary(getPreferenceScreen().getPreference(i));
+            }
+
+            try {
+                final PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo(
+                        getActivity().getPackageName(), 0);
+                findPreference(BUILD_VERSION).setSummary(packageInfo.versionName);
+            } catch (PackageManager.NameNotFoundException e) {
+                findPreference(BUILD_VERSION).setSummary("?");
             }
         }
 
