@@ -1563,5 +1563,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
                 bottomBarSpec.retakeCallback);
         }
+        if (bottomBarSpec.showReview) {
+            buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW,
+               bottomBarSpec.reviewCallback,
+               R.drawable.ic_play);
+        }
     }
 }
