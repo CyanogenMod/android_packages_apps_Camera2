@@ -22,6 +22,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
+import android.os.Build;
 import android.util.Log;
 
 import com.android.camera.app.CameraManager;
@@ -207,15 +208,15 @@ public class SettingsUtil {
         // getNextSupportedQuality will throw an exception.
         // If only one quality is supported, then all three selected qualities
         // will be the same.
-        int largeIndex = getNextSupportedQualityIndex(cameraId, 0);
+        int largeIndex = getNextSupportedVideoQualityIndex(cameraId, 0);
         if (SIZE_LARGE.equals(qualitySetting)) {
             return sVideoQualities[largeIndex];
         }
-        int mediumIndex = getNextSupportedQualityIndex(cameraId, largeIndex + 1);
+        int mediumIndex = getNextSupportedVideoQualityIndex(cameraId, largeIndex + 1);
         if (SIZE_MEDIUM.equals(qualitySetting)) {
             return sVideoQualities[mediumIndex];
         }
-        int smallIndex = getNextSupportedQualityIndex(cameraId, mediumIndex + 1);
+        int smallIndex = getNextSupportedVideoQualityIndex(cameraId, mediumIndex + 1);
         // If we didn't return for 'large' or 'medium, size must be 'small'.
         return sVideoQualities[smallIndex];
     }
@@ -224,9 +225,14 @@ public class SettingsUtil {
      * Starting from 'start' this method returns the next supported video
      * quality.
      */
-    private static int getNextSupportedQualityIndex(int cameraId, int start) {
+    private static int getNextSupportedVideoQualityIndex(int cameraId, int start) {
         int i = start;
         for (; i < sVideoQualities.length; ++i) {
+            // Skip QUALITY_720P for LG-V510 (Palman) due to encoding bug.
+            if (Build.MODEL.startsWith("LG-V510") &&
+                    sVideoQualities[i] == CamcorderProfile.QUALITY_720P) {
+                continue;
+            }
             if (CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
                 break;
             }
