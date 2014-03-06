@@ -45,7 +45,7 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     android:layout_gravity="top"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     android:background="@null"
                     android:alpha="0.0" >
                     <com.android.camera.MultiToggleImageButton
