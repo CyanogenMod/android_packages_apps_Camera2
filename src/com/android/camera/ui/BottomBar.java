@@ -115,6 +115,7 @@ public class BottomBar extends FrameLayout
 
     public void setAdjustPreviewAreaListener(AdjustPreviewAreaListener listener) {
         mAdjustPreviewAreaListener = listener;
+        notifyAreaAdjust();
     }
 
     public BottomBar(Context context, AttributeSet attrs) {
@@ -310,26 +311,10 @@ public class BottomBar extends FrameLayout
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        notifyAreaAdjust();
+
         final int width = getWidth();
         final int height = getHeight();
-
-        if (width > height) {
-            // Portrait
-            if (!mOverLayBottomBar) {
-                mAlignArea.set(getLeft(), 0, getRight(), getTop());
-            } else {
-                mAlignArea.set(getLeft(), 0, getRight(), getBottom());
-            }
-            mAdjustPreviewAreaListener.alignBottomInRect(mAlignArea);
-        } else {
-            // Landscape
-            if (!mOverLayBottomBar) {
-                mAlignArea.set(0, getTop(), getLeft(), getBottom());
-            } else {
-                mAlignArea.set(0, getTop(), getRight(), getBottom());
-            }
-            mAdjustPreviewAreaListener.alignRightInRect(mAlignArea);
-        }
 
         if (changed) {
             mCirclePath.reset();
@@ -515,5 +500,31 @@ public class BottomBar extends FrameLayout
 
         transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
         radiusAnimator.start();
+    }
+
+    private void notifyAreaAdjust() {
+        final int width = getWidth();
+        final int height = getHeight();
+
+        if (width == 0 || height == 0 || mAdjustPreviewAreaListener == null) {
+            return;
+        }
+        if (width > height) {
+            // Portrait
+            if (!mOverLayBottomBar) {
+                mAlignArea.set(getLeft(), 0, getRight(), getTop());
+            } else {
+                mAlignArea.set(getLeft(), 0, getRight(), getBottom());
+            }
+            mAdjustPreviewAreaListener.alignBottomInRect(mAlignArea);
+        } else {
+            // Landscape
+            if (!mOverLayBottomBar) {
+                mAlignArea.set(0, getTop(), getLeft(), getBottom());
+            } else {
+                mAlignArea.set(0, getTop(), getRight(), getBottom());
+            }
+            mAdjustPreviewAreaListener.alignRightInRect(mAlignArea);
+        }
     }
 }
