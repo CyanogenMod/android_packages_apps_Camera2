@@ -955,18 +955,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * Adds a listener to receive callbacks when preview area size changes.
+     * Adds a listener to receive callbacks when preview area changes.
      */
-    public void addPreviewAreaSizeChangedListener(
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+    public void addPreviewAreaChangedListener(
+            PreviewStatusListener.PreviewAreaChangedListener listener) {
         mTextureViewHelper.addPreviewAreaSizeChangedListener(listener);
     }
 
     /**
-     * Removes a listener that receives callbacks when preview area size changes.
+     * Removes a listener that receives callbacks when preview area changes.
      */
-    public void removePreviewAreaSizeChangedListener(
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+    public void removePreviewAreaChangedListener(
+            PreviewStatusListener.PreviewAreaChangedListener listener) {
         mTextureViewHelper.removePreviewAreaSizeChangedListener(listener);
     }
 

@@ -58,7 +58,7 @@ import java.util.List;
  * with an animation. To dismiss this list, simply swipe left or select a mode.
  */
 public class ModeListView extends FrameLayout
-        implements PreviewStatusListener.PreviewAreaSizeChangedListener {
+        implements PreviewStatusListener.PreviewAreaChangedListener {
 
     private static final String TAG = "ModeListView";
 
@@ -164,7 +164,7 @@ public class ModeListView extends FrameLayout
     private boolean mStartHidingShimmyWhenWindowGainsFocus = false;
 
     @Override
-    public void onPreviewAreaSizeChanged(RectF previewArea) {
+    public void onPreviewAreaChanged(RectF previewArea) {
         mPreviewArea.set(previewArea);
     }
 

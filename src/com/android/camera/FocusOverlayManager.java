@@ -58,7 +58,7 @@ import java.util.List;
  * (10) The camera has no autofocus and supports metering area. Touch the screen
  *     to change metering area.
  */
-public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSizeChangedListener {
+public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaChangedListener {
     private static final String TAG = "FocusOverlayManager";
 
     private static final int RESET_TOUCH_FOCUS = 0;
@@ -168,7 +168,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaSiz
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(RectF previewArea) {
+    public void onPreviewAreaChanged(RectF previewArea) {
         setPreviewRect(CameraUtil.rectFToRect(previewArea));
     }
 

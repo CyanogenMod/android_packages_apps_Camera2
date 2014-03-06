@@ -46,7 +46,7 @@ import com.android.camera2.R;
  * a horizontal layout orientation.
 */
 public class BottomBar extends FrameLayout
-    implements PreviewStatusListener.PreviewAreaSizeChangedListener {
+    implements PreviewStatusListener.PreviewAreaChangedListener {
 
     public interface AdjustPreviewAreaListener {
         /**
@@ -350,7 +350,7 @@ public class BottomBar extends FrameLayout
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(RectF previewArea) {
+    public void onPreviewAreaChanged(RectF previewArea) {
         setOffset(previewArea.width(), previewArea.height());
     }
 
