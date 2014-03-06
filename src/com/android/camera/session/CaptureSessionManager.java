@@ -56,8 +56,9 @@ public interface CaptureSessionManager {
      * Creates a new capture session.
      *
      * @param title the title of the new session.
+     * @param location the location of the new session.
      */
-    CaptureSession createNewSession(String title);
+    CaptureSession createNewSession(String title, Location location);
 
     /**
      * Creates a session based on an existing URI in the filmstrip and media

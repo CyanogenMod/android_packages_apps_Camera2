@@ -104,12 +104,14 @@ public class PlaceholderManager {
      * Replace the placeholder with an updated image.
      *
      * @param session the session to update.
+     * @param loc the location of the new item.
      * @param mimeType the mime-type of the new image.
      * @param finalImage whether this is the final image. If set, this will
      *            broadcast that a new picture has been added.
      */
-    public void replacePlaceHolder(Session session, String mimeType, boolean finalImage) {
-        Storage.updateImageFromChangedFile(session.outputUri, mContext.getContentResolver(),
+    public void replacePlaceHolder(Session session, Location loc, String mimeType,
+            boolean finalImage) {
+        Storage.updateImageFromChangedFile(session.outputUri, loc, mContext.getContentResolver(),
                 mimeType);
         if (finalImage) {
             CameraUtil.broadcastNewPicture(mContext, session.outputUri);

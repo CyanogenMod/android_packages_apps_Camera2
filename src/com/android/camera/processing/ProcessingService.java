@@ -133,7 +133,8 @@ public class ProcessingService extends Service {
             Log.e(TAG, "Reference to ProcessingTask is null");
             return;
         }
-        task.process(this, getServices(), mSessionManager.createNewSession(task.getName()));
+        task.process(this, getServices(),
+                mSessionManager.createNewSession(task.getName(), task.getLocation()));
     }
 
     /**
