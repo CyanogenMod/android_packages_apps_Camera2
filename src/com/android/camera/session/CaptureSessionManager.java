@@ -48,6 +48,9 @@ public interface CaptureSessionManager {
         /** Called when the session with the given Uri finished. */
         public void onSessionDone(Uri mediaUri);
 
+        /** Called when the session with the given Uri failed processing. */
+        public void onSessionFailed(Uri mediaUri, CharSequence reason);
+
         /** Called when the session with the given Uri has progressed. */
         public void onSessionProgress(Uri mediaUri, int progress);
     }
@@ -75,7 +78,7 @@ public interface CaptureSessionManager {
      * @param loc the capture location.
      * @param width the width of the captured image.
      * @param height the height of the captured image.
-     * @param orientation the orientatio of the captured image.
+     * @param orientation the orientation of the captured image.
      * @param exif the EXIF data of the captured image.
      * @param listener called when saving is complete.
      */
@@ -115,9 +118,25 @@ public interface CaptureSessionManager {
     public CharSequence getSessionProgressMessage(Uri uri);
 
     /**
-     * Gets the directory to be used for temporary data.
-     *
-     * See {@link SessionStorageManager#getSessionDirectory(String)}
+     * Gets the directory to be used for temporary data. See
+     * {@link SessionStorageManager#getSessionDirectory(String)}
      */
     public File getSessionDirectory(String subDirectory) throws IOException;
+
+    /**
+     * @return Whether the session with the given URI exists and has an error
+     *         message.
+     */
+    public boolean hasErrorMessage(Uri uri);
+
+    /**
+     * @return If existant, returns the error message for the session with the
+     *         given URI.
+     */
+    public CharSequence getErrorMesage(Uri uri);
+
+    /**
+     * Removes any existing error messages for the session with the given URI.
+     */
+    public void removeErrorMessage(Uri uri);
 }

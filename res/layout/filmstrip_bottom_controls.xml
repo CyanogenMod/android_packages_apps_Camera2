@@ -99,6 +99,31 @@
                 android:contentDescription="@string/delete_button_description" />
         </LinearLayout>
 
+        <!-- The progress error panel -->
+        <LinearLayout
+            android:id="@+id/bottom_progress_error_panel"
+            android:layout_width="@dimen/filmstrip_bottom_control_layout_size"
+            android:layout_height="@dimen/filmstrip_bottom_control_button_size"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:src="@drawable/ic_error_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:id="@+id/bottom_progress_error_text"
+                style="@style/FilmstripBottomProgressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
         <!-- The progress bar -->
         <LinearLayout
             android:id="@+id/bottom_progress_panel"

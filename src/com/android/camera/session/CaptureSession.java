@@ -101,6 +101,11 @@ public interface CaptureSession {
     public void finish();
 
     /**
+     * Finish the session and indicate it failed.
+     */
+    public void finishWithFailure(CharSequence reason);
+
+    /**
      * Returns the path to the final output of this session. This is only
      * available after startSession has been called.
      */

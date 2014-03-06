@@ -198,6 +198,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                     PlaceholderManager.PLACEHOLDER_MIME_TYPE, /* finalImage */ false);
             notifySessionUpdate(mPlaceHolderSession.outputUri);
         }
+
+        @Override
+        public void finishWithFailure(CharSequence reason) {
+            if (mPlaceHolderSession == null) {
+                throw new IllegalStateException(
+                        "Cannot call finish without calling startSession first.");
+            }
+            mProgressMessage = reason;
+
+            // Change mime type of session so it's not marked as in progress anymore.
+            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, mLocation,
+                    LocalData.MIME_TYPE_JPEG, /* finalImage */false);
+            mNotificationManager.notifyCompletion(mNotificationId);
+            removeSession(mUri.toString());
+            mFailedSessionMessages.put(mPlaceHolderSession.outputUri, reason);
+            notifyTaskFailed(mPlaceHolderSession.outputUri, reason);
+        }
     }
 
     private final MediaSaver mMediaSaver;
@@ -205,6 +222,10 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     private final PlaceholderManager mPlaceholderManager;
     private final SessionStorageManager mSessionStorageManager;
     private final ContentResolver mContentResolver;
+
+    /** Failed session messages. Uri -> message. */
+    private final HashMap<Uri, CharSequence> mFailedSessionMessages =
+            new HashMap<Uri, CharSequence>();
 
     /**
      * We use this to fire events to the session listeners from the main thread.
@@ -336,6 +357,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     /**
+     * Notifies all task listeners that the task with the given URI has been
+     * failed to process.
+     */
+    private void notifyTaskFailed(final Uri uri, final CharSequence reason) {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mTaskListeners) {
+                    for (SessionListener listener : mTaskListeners) {
+                        listener.onSessionFailed(uri, reason);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Notifies all task listeners that the task with the given URI has
      * progressed to the given state.
      */
@@ -367,5 +405,20 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean hasErrorMessage(Uri uri) {
+        return mFailedSessionMessages.containsKey(uri);
+    }
+
+    @Override
+    public CharSequence getErrorMesage(Uri uri) {
+        return mFailedSessionMessages.get(uri);
+    }
+
+    @Override
+    public void removeErrorMessage(Uri uri) {
+        mFailedSessionMessages.remove(uri);
     }
 }
