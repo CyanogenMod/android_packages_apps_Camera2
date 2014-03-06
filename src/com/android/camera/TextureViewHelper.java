@@ -45,6 +45,18 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private float mAspectRatio = UNSET;
     private boolean mAutoAdjustTransform = true;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
+    /**
+     * To avoid multiple array allocations in clearMatrixTrans().
+     */
+    private final float mMatrixVal[] = new float[9];
+    /**
+     * Used by align*InRect() methods and centerPreviewInRect().
+     */
+    private final Matrix mUntranslatedMatrix = new Matrix();
+    /**
+     * Used by align*InRect() methods and centerPreviewInRect().
+     */
+    private final RectF mUntranslatedPreviewArea = new RectF();
 
     private final ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>
             mPreviewSizeChangedListeners =
@@ -142,21 +154,51 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         mSurfaceTextureListener = listener;
     }
 
+    /**
+     * Aligns the preview to the right of the given reference area. Also
+     * centers the preview vertically.
+     *
+     * @param rect The reference area
+     */
+    public void alignRightInRect(final RectF rect) {
+        updateUntranslatedMatrixAndArea();
+
+        float transX = (rect.width() - mUntranslatedPreviewArea.width());
+        float transY = (rect.height() - mUntranslatedPreviewArea.height()) / 2.0f;
+
+        mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
+        updateTransform(mUntranslatedMatrix);
+    }
+
+    /**
+     * Aligns the preview to the bottom of the given reference area. Also
+     * centers the preview horizontally.
+     *
+     * @param rect The reference area
+     */
+    public void alignBottomInRect(final RectF rect) {
+        updateUntranslatedMatrixAndArea();
+
+        float transX = (rect.width() - mUntranslatedPreviewArea.width()) / 2.0f;
+        float transY = (rect.height() - mUntranslatedPreviewArea.height());
+
+        mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
+        updateTransform(mUntranslatedMatrix);
+    }
+
+    /**
+     * Centers the preview in the given area by setting the transform matrix.
+     *
+     * @param rect The reference area.
+     */
     public void centerPreviewInRect(final RectF rect) {
-        Matrix matrix = mPreview.getTransform(null);
-        RectF previewRect = new RectF(0, 0, mWidth, mHeight);
-        matrix.mapRect(previewRect);
-        float previewWidth = previewRect.width();
-        float previewHeight = previewRect.height();
+        updateUntranslatedMatrixAndArea();
 
-        float rectWidth = rect.right - rect.left;
-        float rectHeight = rect.bottom - rect.top;
+        float transX = (rect.width() - mUntranslatedPreviewArea.width()) / 2.0f;
+        float transY = (rect.height() - mUntranslatedPreviewArea.height()) / 2.0f;
 
-        float transX = (rectWidth - previewWidth)/2.0f;
-        float transY = (rectHeight - previewHeight)/2.0f;
-
-        matrix.preTranslate(transX, transY);
-        updateTransform(matrix);
+        mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
+        updateTransform(mUntranslatedMatrix);
     }
 
     /**
@@ -206,8 +248,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         mPreview.post(new Runnable() {
             @Override
             public void run() {
-                for (PreviewStatusListener.PreviewAreaSizeChangedListener listener
-                        : listeners) {
+                for (PreviewStatusListener.PreviewAreaSizeChangedListener listener : listeners) {
                     listener.onPreviewAreaSizeChanged(previewArea);
                 }
             }
@@ -292,5 +333,27 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             mSurfaceTextureListener.onSurfaceTextureUpdated(surface);
         }
 
+    }
+
+    /**
+     * Clears the translation of the matrix.
+     *
+     * @param m The matrix in which the translation will be cleared.
+     */
+    private void clearMatrixTrans(Matrix m) {
+        m.getValues(mMatrixVal);
+        mMatrixVal[Matrix.MTRANS_X] = 0;
+        mMatrixVal[Matrix.MTRANS_Y] = 0;
+        m.setValues(mMatrixVal);
+    }
+
+    /**
+     * Updates {@code mUntranslatedMatrix} and {mUntranslatedPreviewArea}.
+     */
+    private void updateUntranslatedMatrixAndArea() {
+        mPreview.getTransform(mUntranslatedMatrix);
+        clearMatrixTrans(mUntranslatedMatrix);
+        mUntranslatedPreviewArea.set(0, 0, mPreview.getWidth(), mPreview.getHeight());
+        mUntranslatedMatrix.mapRect(mUntranslatedPreviewArea);
     }
 }
