@@ -17,40 +17,50 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!-- Location -->
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="pref_camera_recordlocation_key"
-        android:title="@string/pref_camera_save_location_title" />
+    <PreferenceCategory android:title="@string/pref_category_general" >
 
-    <!-- Picture Size -->
-    <ListPreference
-        android:defaultValue="@string/pref_camera_picturesize_default"
-        android:key="pref_camera_picturesize_key"
-        android:title="@string/setting_picture_size"
-        android:entries="@array/pref_camera_picturesize_entries"
-        android:entryValues="@array/pref_camera_picturesize_entryvalues" />
+        <!-- Location -->
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_camera_recordlocation_key"
+            android:title="@string/pref_camera_save_location_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_resolution" >
 
-    <!-- Video Resolution -->
-    <ListPreference
-        android:defaultValue="@string/pref_video_quality_default"
-        android:key="pref_video_quality_key"
-        android:title="@string/setting_video_resolution"
-        android:entries="@array/pref_camera_picturesize_entries"
-        android:entryValues="@array/pref_camera_picturesize_entryvalues"/>
+        <!-- Picture Size -->
+        <ListPreference
+            android:defaultValue="@string/pref_camera_picturesize_default"
+            android:entries="@array/pref_camera_picturesize_entries"
+            android:entryValues="@array/pref_camera_picturesize_entryvalues"
+            android:key="pref_camera_picturesize_key"
+            android:title="@string/setting_picture_size" />
 
-    <!-- Send Feedback -->
-    <Preference
-        android:key="pref_send_feedback"
-        android:title="@string/setting_send_feedback" />
+        <!-- Video Resolution -->
+        <ListPreference
+            android:defaultValue="@string/pref_video_quality_default"
+            android:entries="@array/pref_camera_picturesize_entries"
+            android:entryValues="@array/pref_camera_picturesize_entryvalues"
+            android:key="pref_video_quality_key"
+            android:title="@string/setting_video_resolution" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_about" >
+        <!-- Build version. -->
+        <Preference
+            android:key="build_version"
+            android:title="@string/pref_title_build_version" />
 
-    <!-- Open Source Licenses -->
-    <Preference
-        android:key="pref_open_source_licenses"
-        android:title="@string/open_source_licenses" >
-        <intent
-            android:targetClass="com.android.camera.app.LicensesActivity"
-            android:targetPackage="com.google.android.GoogleCamera" />
-    </Preference>
+        <!-- Open Source Licenses -->
+        <Preference
+            android:key="pref_open_source_licenses"
+            android:title="@string/open_source_licenses" >
+            <intent
+                android:targetClass="com.android.camera.app.LicensesActivity"
+                android:targetPackage="com.google.android.GoogleCamera" />
+        </Preference>
+        <!-- Send Feedback -->
+        <Preference
+            android:key="pref_send_feedback"
+            android:title="@string/setting_send_feedback" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

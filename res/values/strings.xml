@@ -791,4 +791,16 @@ CHAR LIMIT=NONE] -->
     <!-- Default number of times to play peek animation. -->
     <string name="pref_filmstrip_peek_anim_play_times" translatable="false">20</string>
 
+    <!--  Title of a preference group which contains general settings. [CHAR LIMIT=30]  -->
+    <string name="pref_category_general">General Settings</string>
+
+    <!--  Title of a preference group which contains general settings. [CHAR LIMIT=30]  -->
+    <string name="pref_category_resolution">Resolution</string>
+
+    <!--  Title of a preference group which contains information about the app. [CHAR LIMIT=30]  -->
+    <string name="pref_category_about">About</string>
+
+    <!--  Title of a preference which shows the build version of the app. [CHAR LIMIT=30]  -->
+    <string name="pref_title_build_version">Build version</string>
+
  </resources>
