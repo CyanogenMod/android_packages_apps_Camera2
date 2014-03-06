@@ -75,11 +75,11 @@ public class ModeOptionsOverlay extends FrameLayout
         mModeOptions = (ModeOptions) findViewById(R.id.mode_options);
         mModeOptions.setClickable(true);
         mModeOptions.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    closeModeOptions();
-                }
-            });
+            @Override
+            public void onClick(View v) {
+                closeModeOptions();
+            }
+        });
 
         mModeOptionsToggle = (FrameLayout) findViewById(R.id.mode_options_toggle);
         mModeOptionsToggle.setOnClickListener(new View.OnClickListener() {
@@ -120,10 +120,6 @@ public class ModeOptionsOverlay extends FrameLayout
      * scheduled.
      */
     private void closeModeOptions() {
-        // Check that the bottom bar options are visible.
-        if (mModeOptions.isHidden()) {
-            return;
-        }
         mModeOptions.animateHidden();
     }
 

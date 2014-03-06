@@ -39,7 +39,7 @@ public class ModeOptions extends FrameLayout {
     private int mBackgroundColor;
     private final Paint mPaint = new Paint();
     private final Path mPath = new Path();
-    private boolean mIsHidden;
+    private boolean mIsHiddenOrHiding;
     private RectF mAnimateFrom = new RectF();
     private View mViewToShowHide;
     private View mModeOptionsButtons;
@@ -66,6 +66,7 @@ public class ModeOptions extends FrameLayout {
 
     @Override
     public void onFinishInflate() {
+        mIsHiddenOrHiding = true;
         mBackgroundColor = getResources().getColor(R.color.mode_options_background);
         mPaint.setAntiAlias(true);
         mPaint.setColor(mBackgroundColor);
@@ -124,10 +125,6 @@ public class ModeOptions extends FrameLayout {
         }
 
         super.onLayout(changed, left, top, right, bottom);
-    }
-
-    public boolean isHidden() {
-        return mIsHidden;
     }
 
     @Override
@@ -266,6 +263,7 @@ public class ModeOptions extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mModeOptionsButtons.setAlpha(0.0f);
+                    mModeOptionsButtons.setVisibility(View.INVISIBLE);
                     invalidate();
                 }
             });
@@ -277,19 +275,24 @@ public class ModeOptions extends FrameLayout {
     }
 
     public void animateVisible() {
-        mIsHidden = false;
-        if (mViewToShowHide != null) {
-            mViewToShowHide.setVisibility(View.INVISIBLE);
+        if (mIsHiddenOrHiding) {
+            if (mViewToShowHide != null) {
+                mViewToShowHide.setVisibility(View.INVISIBLE);
+            }
+            mHiddenAnimator.cancel();
+            mVisibleAnimator.end();
+            mModeOptionsButtons.setVisibility(View.VISIBLE);
+            mVisibleAnimator.start();
         }
-        mHiddenAnimator.cancel();
-        mVisibleAnimator.end();
-        mVisibleAnimator.start();
+        mIsHiddenOrHiding = false;
     }
 
     public void animateHidden() {
-        mIsHidden = true;
-        mVisibleAnimator.cancel();
-        mHiddenAnimator.end();
-        mHiddenAnimator.start();
+        if (!mIsHiddenOrHiding) {
+            mVisibleAnimator.cancel();
+            mHiddenAnimator.end();
+            mHiddenAnimator.start();
+        }
+        mIsHiddenOrHiding = true;
     }
 }
