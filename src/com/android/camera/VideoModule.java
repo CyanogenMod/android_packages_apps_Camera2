@@ -1177,6 +1177,7 @@ public class VideoModule extends CameraModule
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
+        mUI.showVideoRecordingHints(false);
 
         // A special case of mode options closing: during capture it should
         // not be possible to change mode state.
@@ -1276,6 +1277,7 @@ public class VideoModule extends CameraModule
         Log.v(TAG, "stopVideoRecording");
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
+        mUI.showVideoRecordingHints(true);
 
         mAppController.getCameraAppUI().showModeOptions();
         mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
