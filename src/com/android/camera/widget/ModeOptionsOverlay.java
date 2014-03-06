@@ -21,7 +21,6 @@ import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,7 +32,6 @@ import android.widget.LinearLayout;
 import com.android.camera.ShutterButton;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
-import com.android.camera.ui.TopRightWeightedLayout;
 
 import com.android.camera2.R;
 
@@ -42,7 +40,7 @@ import com.android.camera2.R;
  * in the bottom of the preview that is visible above the bottom bar.
  */
 public class ModeOptionsOverlay extends FrameLayout
-    implements PreviewStatusListener.PreviewAreaSizeChangedListener,
+    implements PreviewStatusListener.PreviewAreaChangedListener,
                PreviewOverlay.OnPreviewTouchedListener,
                IndicatorIconController.OnIndicatorVisibilityChangedListener,
                ShutterButton.OnShutterButtonListener {
@@ -134,7 +132,7 @@ public class ModeOptionsOverlay extends FrameLayout
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(RectF previewArea) {
+    public void onPreviewAreaChanged(RectF previewArea) {
         mPreviewWidth = (int) previewArea.width();
         mPreviewHeight = (int) previewArea.height();
         setLayoutDimensions();

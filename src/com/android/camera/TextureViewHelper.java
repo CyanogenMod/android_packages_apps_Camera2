@@ -58,9 +58,9 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      */
     private final RectF mUntranslatedPreviewArea = new RectF();
 
-    private final ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>
+    private final ArrayList<PreviewStatusListener.PreviewAreaChangedListener>
             mPreviewSizeChangedListeners =
-            new ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>();
+            new ArrayList<PreviewStatusListener.PreviewAreaChangedListener>();
     private OnLayoutChangeListener mOnLayoutChangeListener = null;
 
     public TextureViewHelper(TextureView preview) {
@@ -108,7 +108,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     public void clearTransform() {
         mPreview.setTransform(new Matrix());
         mPreviewArea.set(0, 0, mWidth, mHeight);
-        onPreviewSizeChanged(mPreviewArea);
+        onPreviewAreaChanged(mPreviewArea);
     }
 
     public void updateAspectRatio(float aspectRatio) {
@@ -143,7 +143,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private void updatePreviewArea(Matrix matrix) {
         mPreviewArea.set(0, 0, mWidth, mHeight);
         matrix.mapRect(mPreviewArea);
-        onPreviewSizeChanged(mPreviewArea);
+        onPreviewAreaChanged(mPreviewArea);
     }
 
     public void setOnLayoutChangeListener(OnLayoutChangeListener listener) {
@@ -238,18 +238,18 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         updatePreviewArea(matrix);
     }
 
-    private void onPreviewSizeChanged(final RectF previewArea) {
-        // Notify listeners of preview size change
-        final List<PreviewStatusListener.PreviewAreaSizeChangedListener> listeners =
-                new ArrayList<PreviewStatusListener.PreviewAreaSizeChangedListener>(
+    private void onPreviewAreaChanged(final RectF previewArea) {
+        // Notify listeners of preview area change
+        final List<PreviewStatusListener.PreviewAreaChangedListener> listeners =
+                new ArrayList<PreviewStatusListener.PreviewAreaChangedListener>(
                         mPreviewSizeChangedListeners);
         // This method can be called during layout pass. We post a Runnable so
         // that the callbacks won't happen during the layout pass.
         mPreview.post(new Runnable() {
             @Override
             public void run() {
-                for (PreviewStatusListener.PreviewAreaSizeChangedListener listener : listeners) {
-                    listener.onPreviewAreaSizeChanged(previewArea);
+                for (PreviewStatusListener.PreviewAreaChangedListener listener : listeners) {
+                    listener.onPreviewAreaChanged(previewArea);
                 }
             }
         });
@@ -264,37 +264,37 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     }
 
     /**
-     * Adds a listener that will get notified when the preview size changed. This
+     * Adds a listener that will get notified when the preview area changed. This
      * can be useful for UI elements or focus overlay to adjust themselves according
-     * to the preview size change.
+     * to the preview area change.
      *
      * Note that a listener will only be added once. A newly added listener will receive
-     * a notification of current preview size immediately after being added.
+     * a notification of current preview area immediately after being added.
      *
      * This function should be called on the UI thread and listeners will be notified
      * on the UI thread.
      *
-     * @param listener the listener that will get notified of preview size change
+     * @param listener the listener that will get notified of preview area change
      */
     public void addPreviewAreaSizeChangedListener(
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+            PreviewStatusListener.PreviewAreaChangedListener listener) {
         if (listener != null && !mPreviewSizeChangedListeners.contains(listener)) {
             mPreviewSizeChangedListeners.add(listener);
             if (mPreviewArea.width() == 0 || mPreviewArea.height() == 0) {
-                listener.onPreviewAreaSizeChanged(new RectF(0, 0, mWidth, mHeight));
+                listener.onPreviewAreaChanged(new RectF(0, 0, mWidth, mHeight));
             } else {
-                listener.onPreviewAreaSizeChanged(new RectF(mPreviewArea));
+                listener.onPreviewAreaChanged(new RectF(mPreviewArea));
             }
         }
     }
 
     /**
-     * Removes a listener that gets notified when the preview size changed.
+     * Removes a listener that gets notified when the preview area changed.
      *
-     * @param listener the listener that gets notified of preview size change
+     * @param listener the listener that gets notified of preview area change
      */
     public void removePreviewAreaSizeChangedListener(
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
+            PreviewStatusListener.PreviewAreaChangedListener listener) {
         if (listener != null && mPreviewSizeChangedListeners.contains(listener)) {
             mPreviewSizeChangedListeners.remove(listener);
         }

@@ -26,10 +26,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
@@ -366,10 +364,10 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     /**
-     * Returns a {@link com.android.camera.ui.PreviewStatusListener.PreviewAreaSizeChangedListener}
+     * Returns a {@link com.android.camera.ui.PreviewStatusListener.PreviewAreaChangedListener}
      * that should be registered to listen to preview area change.
      */
-    public PreviewAreaSizeChangedListener getPreviewAreaSizeChangedListener() {
+    public PreviewAreaChangedListener getPreviewAreaSizeChangedListener() {
         return mFaceView;
     }
 

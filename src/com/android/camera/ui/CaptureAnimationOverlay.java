@@ -35,7 +35,7 @@ import com.android.camera2.R;
  * will be handled in a separate place.
  */
 public class CaptureAnimationOverlay extends View
-    implements PreviewStatusListener.PreviewAreaSizeChangedListener {
+    implements PreviewStatusListener.PreviewAreaChangedListener {
     private final static String TAG = "CaptureAnimationOverlay";
 
     private final static int FLASH_ANIMATION_DURATION_MS = 350;
@@ -209,7 +209,7 @@ public class CaptureAnimationOverlay extends View
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(RectF previewArea) {
+    public void onPreviewAreaChanged(RectF previewArea) {
         mWidth = (int) previewArea.width();
         mHeight = (int) previewArea.height();
     }

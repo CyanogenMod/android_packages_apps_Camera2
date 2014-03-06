@@ -28,11 +28,9 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * PreviewOverlay is a view that sits on top of the preview. It serves to disambiguate
@@ -47,7 +45,7 @@ import java.util.ArrayList;
  * this class.
  */
 public class PreviewOverlay extends View
-    implements PreviewStatusListener.PreviewAreaSizeChangedListener {
+    implements PreviewStatusListener.PreviewAreaChangedListener {
 
     private static final String TAG = "PreviewOverlay";
 
@@ -144,7 +142,7 @@ public class PreviewOverlay extends View
     }
 
     @Override
-    public void onPreviewAreaSizeChanged(RectF previewArea) {
+    public void onPreviewAreaChanged(RectF previewArea) {
         mZoomProcessor.layout((int) previewArea.left, (int) previewArea.top,
                 (int) previewArea.right, (int) previewArea.bottom);
     }

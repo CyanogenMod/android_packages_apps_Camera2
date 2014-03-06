@@ -826,14 +826,14 @@ public class CameraActivity extends Activity
 
     @Override
     public void addPreviewAreaSizeChangedListener(
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
-        mCameraAppUI.addPreviewAreaSizeChangedListener(listener);
+            PreviewStatusListener.PreviewAreaChangedListener listener) {
+        mCameraAppUI.addPreviewAreaChangedListener(listener);
     }
 
     @Override
     public void removePreviewAreaSizeChangedListener(
-            PreviewStatusListener.PreviewAreaSizeChangedListener listener) {
-        mCameraAppUI.removePreviewAreaSizeChangedListener(listener);
+            PreviewStatusListener.PreviewAreaChangedListener listener) {
+        mCameraAppUI.removePreviewAreaChangedListener(listener);
     }
 
     @Override
