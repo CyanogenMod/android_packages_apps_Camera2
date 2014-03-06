@@ -926,6 +926,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 public void centerPreviewAreaInRect(RectF rect) {
                     mTextureViewHelper.centerPreviewInRect(rect);
                 }
+
+                @Override
+                public void alignBottomInRect(RectF rect) {
+                    mTextureViewHelper.alignBottomInRect(rect);
+                }
+
+                @Override
+                public void alignRightInRect(RectF rect) {
+                    mTextureViewHelper.alignRightInRect(rect);
+                }
             });
         }
     }
