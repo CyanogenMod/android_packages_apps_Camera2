@@ -1018,8 +1018,9 @@ public class PhotoModule
             }else if ((mReceivedSnapNum == mBurstSnapNum)
                         && (mCameraState != LONGSHOT)) {
                 mFocusManager.restartTouchFocusTimer();
-                if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
-                        mFocusManager.getFocusMode())) {
+                if ((CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
+                        mFocusManager.getFocusMode())) && (CameraUtil.cancelAutoFocusOnPreviewStopped()
+                        || mCameraState != PREVIEW_STOPPED)) {
                     mCameraDevice.cancelAutoFocus();
                 }
                 mUI.resumeFaceDetection();
