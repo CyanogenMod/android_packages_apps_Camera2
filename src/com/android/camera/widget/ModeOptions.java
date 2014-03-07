@@ -263,7 +263,7 @@ public class ModeOptions extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mModeOptionsButtons.setAlpha(0.0f);
-                    mModeOptionsButtons.setVisibility(View.INVISIBLE);
+                    setVisibility(View.INVISIBLE);
                     invalidate();
                 }
             });
@@ -281,7 +281,7 @@ public class ModeOptions extends FrameLayout {
             }
             mHiddenAnimator.cancel();
             mVisibleAnimator.end();
-            mModeOptionsButtons.setVisibility(View.VISIBLE);
+            setVisibility(View.VISIBLE);
             mVisibleAnimator.start();
         }
         mIsHiddenOrHiding = false;
