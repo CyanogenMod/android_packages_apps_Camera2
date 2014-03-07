@@ -1587,9 +1587,6 @@ public class VideoModule extends CameraModule
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
 
-        // Initialize location service.
-        mActivity.syncLocationManagerSetting();
-
         if (mPreviewing) {
             mOnResumeTime = SystemClock.uptimeMillis();
             mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
@@ -1625,10 +1622,6 @@ public class VideoModule extends CameraModule
         if (mReceiver != null) {
             mActivity.unregisterReceiver(mReceiver);
             mReceiver = null;
-        }
-
-        if (mLocationManager != null) {
-            mLocationManager.recordLocation(false);
         }
 
         mHandler.removeMessages(MSG_CHECK_DISPLAY_ROTATION);
