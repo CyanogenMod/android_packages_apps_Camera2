@@ -1435,7 +1435,7 @@ public class FilmstripView extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!inFullScreen() || mController.isScrolling()) {
+        if (mController.isScrolling()) {
             return true;
         }
 
