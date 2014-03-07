@@ -157,6 +157,9 @@ public class VideoRecordingHints extends View {
         if (getVisibility() == VISIBLE && getResources().getConfiguration().orientation ==
                 Configuration.ORIENTATION_PORTRAIT) {
             continueRotationAnimation();
+        } else if (getVisibility() != VISIBLE) {
+            mRotationAnimation.cancel();
+            mRotation = 0;
         }
     }
 
@@ -167,6 +170,8 @@ public class VideoRecordingHints extends View {
                 Configuration.ORIENTATION_PORTRAIT) {
             continueRotationAnimation();
         }
+        mIsInLandscape = getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_LANDSCAPE;
     }
 
     @Override
@@ -185,20 +190,17 @@ public class VideoRecordingHints extends View {
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        if (getVisibility() != VISIBLE) {
-            return;
-        }
-
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mRotationAnimation.cancel();
-            // Start fading out.
-            mRotation += 90;
-            if (mAlphaAnimator.isRunning()) {
-                return;
+        if (getVisibility() == VISIBLE) {
+            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                mRotationAnimation.cancel();
+                // Start fading out.
+                if (mAlphaAnimator.isRunning()) {
+                    return;
+                }
+                mAlphaAnimator.start();
+            } else {
+                continueRotationAnimation();
             }
-            mAlphaAnimator.start();
-        } else {
-            continueRotationAnimation();
         }
         mIsInLandscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
