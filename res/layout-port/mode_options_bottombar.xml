@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/mode_options_height"
                 android:layout_gravity="bottom"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:background="#00000000" >
                 <com.android.camera.ui.TopRightWeightedLayout
                     android:id="@+id/mode_options_buttons"
@@ -45,7 +45,7 @@
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:layout_gravity="right"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     android:background="@null"
                     android:alpha="0.0" >
                     <!-- pano image ids and descriptions are added at runtime -->
