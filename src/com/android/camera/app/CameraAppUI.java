@@ -923,19 +923,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
             mBottomBar.setAdjustPreviewAreaListener(new BottomBar.AdjustPreviewAreaListener() {
                 @Override
-                public void centerPreviewAreaInRect(RectF rect) {
+                public void fitAndCenterPreviewAreaInRect(RectF rect) {
                     mPeekView.setTranslationX(0f);
                     mTextureViewHelper.centerPreviewInRect(rect);
                 }
 
                 @Override
-                public void alignBottomInRect(RectF rect) {
+                public void fitAndAlignBottomInRect(RectF rect) {
                     mPeekView.setTranslationX(0f);
                     mTextureViewHelper.alignBottomInRect(rect);
                 }
 
                 @Override
-                public void alignRightInRect(RectF rect) {
+                public void fitAndAlignRightInRect(RectF rect) {
                     mPeekView.setTranslationX(rect.right - mAppRootView.getRight());
                     mTextureViewHelper.alignRightInRect(rect);
                 }
