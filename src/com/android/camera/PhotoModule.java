@@ -574,9 +574,6 @@ public class PhotoModule
             return;
         }
 
-        // Initialize location service.
-        mActivity.syncLocationManagerSetting();
-
         mUI.initializeFirstTime();
 
         // We set the listener only when both service and shutterbutton
@@ -594,9 +591,6 @@ public class PhotoModule
     // If the activity is paused and resumed, this method will be called in
     // onResume.
     private void initializeSecondTime() {
-        // Start location update if needed.
-        mActivity.syncLocationManagerSetting();
-
         getServices().getMemoryManager().addListener(this);
         mNamedImages = new NamedImages();
         mUI.initializeSecondTime(mParameters);
@@ -1264,10 +1258,6 @@ public class PhotoModule
         stopPreview();
 
         mNamedImages = null;
-
-        if (mLocationManager != null) {
-            mLocationManager.recordLocation(false);
-        }
 
         // If we are in an image capture intent and has taken
         // a picture, we just clear it in onPause.
