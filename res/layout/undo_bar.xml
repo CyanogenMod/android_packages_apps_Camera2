@@ -25,6 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="60dp"
             android:gravity="left|center_vertical" />
 
@@ -33,5 +34,6 @@
     <TextView android:id="@+id/camera_undo_deletion_button"
             style="@style/UndoButton"
             android:text="@string/undo"
+            android:layout_marginLeft="8dp"
             android:drawableLeft="@drawable/ic_menu_revert_holo_dark"/>
 </LinearLayout>
