@@ -22,7 +22,6 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
-import android.os.Build;
 import android.util.Log;
 
 import com.android.camera.app.CameraManager;
@@ -228,11 +227,6 @@ public class SettingsUtil {
     private static int getNextSupportedVideoQualityIndex(int cameraId, int start) {
         int i = start;
         for (; i < sVideoQualities.length; ++i) {
-            // Skip QUALITY_720P for LG-V510 (Palman) due to encoding bug.
-            if (Build.MODEL.startsWith("LG-V510") &&
-                    sVideoQualities[i] == CamcorderProfile.QUALITY_720P) {
-                continue;
-            }
             if (CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
                 break;
             }
