@@ -842,7 +842,6 @@ public class CameraActivity extends Activity
                 new CameraManager.CameraPreviewDataCallback() {
                     @Override
                     public void onPreviewFrame(byte[] data, CameraManager.CameraProxy camera) {
-                        mCurrentModule.onPreviewInitialDataReceived();
                         mCameraAppUI.onNewPreviewFrame();
                     }
                 });
