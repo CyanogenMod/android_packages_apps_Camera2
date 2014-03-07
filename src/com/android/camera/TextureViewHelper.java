@@ -83,6 +83,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
                                int oldTop, int oldRight, int oldBottom) {
+        Log.d("SPK", "TextureViewHelper::onLayoutChange()");
         int width = right - left;
         int height = bottom - top;
         if (mWidth != width || mHeight != height) {
@@ -161,7 +162,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * @param rect The reference area
      */
     public void alignRightInRect(final RectF rect) {
-        updateUntranslatedMatrixAndArea();
+        fitUntranslatedMatrixAndArea(rect);
 
         float transX = (rect.width() - mUntranslatedPreviewArea.width());
         float transY = (rect.height() - mUntranslatedPreviewArea.height()) / 2.0f;
@@ -177,7 +178,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * @param rect The reference area
      */
     public void alignBottomInRect(final RectF rect) {
-        updateUntranslatedMatrixAndArea();
+        fitUntranslatedMatrixAndArea(rect);
 
         float transX = (rect.width() - mUntranslatedPreviewArea.width()) / 2.0f;
         float transY = (rect.height() - mUntranslatedPreviewArea.height());
@@ -192,13 +193,42 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * @param rect The reference area.
      */
     public void centerPreviewInRect(final RectF rect) {
-        updateUntranslatedMatrixAndArea();
+        fitUntranslatedMatrixAndArea(rect);
 
         float transX = (rect.width() - mUntranslatedPreviewArea.width()) / 2.0f;
         float transY = (rect.height() - mUntranslatedPreviewArea.height()) / 2.0f;
 
         mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
         updateTransform(mUntranslatedMatrix);
+    }
+
+    /**
+     * Fit the preview area in the given area
+     * @param rect The reference area.
+     */
+    public void fitPreviewInRect(final RectF rect) {
+        boolean landscape = rect.width() > rect.height();
+        int width, height;
+        if (landscape) {
+            width = Math.min((int) rect.width(),
+                              (int) (rect.height() * mAspectRatio));
+            height = Math.min((int) rect.height(),
+                               (int) (rect.width() / mAspectRatio));
+        } else {
+            width = Math.min((int) rect.width(),
+                              (int) (rect.height() / mAspectRatio));
+            height = Math.min((int) rect.height(),
+                               (int) (rect.width() * mAspectRatio));
+        }
+
+        Log.d("SPK", "fitPreviewInRect, old size -> new size: (" + mWidth + ", " + mHeight + ") -> (" + width + ", " + height + ")");
+        mWidth = width;
+        mHeight = height;
+
+        mPreview.setTransform(new Matrix());
+        mPreviewArea.set(0, 0, mWidth, mHeight);
+        onPreviewAreaChanged(mPreviewArea);
+        updateTransform();
     }
 
     /**
@@ -209,6 +239,8 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         if (mAspectRatio == UNSET || mAspectRatio < 0 || mWidth == 0 || mHeight == 0) {
             return;
         }
+
+        Log.d("SPK", "updateTransform(), size = (" + mWidth + ", " + mHeight + ")");
 
         Matrix matrix = mPreview.getTransform(null);
         float scaledTextureWidth, scaledTextureHeight;
@@ -350,9 +382,17 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     /**
      * Updates {@code mUntranslatedMatrix} and {mUntranslatedPreviewArea}.
      */
-    private void updateUntranslatedMatrixAndArea() {
+    private void fitUntranslatedMatrixAndArea(RectF rect) {
         mPreview.getTransform(mUntranslatedMatrix);
         clearMatrixTrans(mUntranslatedMatrix);
+        mUntranslatedPreviewArea.set(0, 0, mPreview.getWidth(), mPreview.getHeight());
+        mUntranslatedMatrix.mapRect(mUntranslatedPreviewArea);
+
+        // Fit in the rect.
+        final float wRatio = rect.width() / mUntranslatedPreviewArea.width();
+        final float hRatio = rect.height() / mUntranslatedPreviewArea.height();
+        final float smallerRatio = Math.min(wRatio, hRatio);
+        mUntranslatedMatrix.postScale(smallerRatio, smallerRatio, 0f, 0f);
         mUntranslatedPreviewArea.set(0, 0, mPreview.getWidth(), mPreview.getHeight());
         mUntranslatedMatrix.mapRect(mUntranslatedPreviewArea);
     }

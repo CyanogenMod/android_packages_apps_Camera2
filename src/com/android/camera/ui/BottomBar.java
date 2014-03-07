@@ -54,7 +54,7 @@ public class BottomBar extends FrameLayout
          *
          * @param rect The reference area.
          */
-        public void centerPreviewAreaInRect(RectF rect);
+        public void fitAndCenterPreviewAreaInRect(RectF rect);
 
         /**
          * Called when the preview should be aligned to the bottom of the
@@ -62,7 +62,7 @@ public class BottomBar extends FrameLayout
          *
          * @param rect The reference area.
          */
-        public void alignBottomInRect(RectF rect);
+        public void fitAndAlignBottomInRect(RectF rect);
 
         /**
          * Called when the preview should be aligned to the right of the
@@ -70,7 +70,7 @@ public class BottomBar extends FrameLayout
          *
          * @param rect The reference area.
          */
-        public void alignRightInRect(RectF rect);
+        public void fitAndAlignRightInRect(RectF rect);
     }
 
     private static final String TAG = "BottomBar";
@@ -276,10 +276,11 @@ public class BottomBar extends FrameLayout
             if ((mPreviewLongEdge == 0 && mPreviewShortEdge == 0) || mOverLayBottomBar) {
                 barWidth = mOptimalHeight;
             } else {
+                float previewAspectRatio = mPreviewLongEdge / mPreviewShortEdge;
                 barWidth = (int) (measureWidth - mPreviewLongEdge);
                 if (barWidth < mMinimumHeight) {
                     barWidth = mOptimalHeight;
-                    setOverlayBottomBar(true);
+                    setOverlayBottomBar(previewAspectRatio > 14f / 9f);
                 } else if (barWidth > mMaximumHeight) {
                     barWidth = mMaximumHeight;
                     setOverlayBottomBar(false);
@@ -292,10 +293,11 @@ public class BottomBar extends FrameLayout
             if ((mPreviewLongEdge == 0 && mPreviewShortEdge == 0) || mOverLayBottomBar) {
                 barHeight = mOptimalHeight;
             } else {
+                float previewAspectRatio = mPreviewLongEdge / mPreviewShortEdge;
                 barHeight = (int) (measureHeight - mPreviewLongEdge);
                 if (barHeight < mMinimumHeight) {
                     barHeight = mOptimalHeight;
-                    setOverlayBottomBar(true);
+                    setOverlayBottomBar(previewAspectRatio > 14f / 9f);
                 } else if (barHeight > mMaximumHeight) {
                     barHeight = mMaximumHeight;
                     setOverlayBottomBar(false);
@@ -516,7 +518,7 @@ public class BottomBar extends FrameLayout
             } else {
                 mAlignArea.set(getLeft(), 0, getRight(), getBottom());
             }
-            mAdjustPreviewAreaListener.alignBottomInRect(mAlignArea);
+            mAdjustPreviewAreaListener.fitAndAlignBottomInRect(mAlignArea);
         } else {
             // Landscape
             if (!mOverLayBottomBar) {
@@ -524,7 +526,7 @@ public class BottomBar extends FrameLayout
             } else {
                 mAlignArea.set(0, getTop(), getRight(), getBottom());
             }
-            mAdjustPreviewAreaListener.alignRightInRect(mAlignArea);
+            mAdjustPreviewAreaListener.fitAndAlignRightInRect(mAlignArea);
         }
     }
 }
