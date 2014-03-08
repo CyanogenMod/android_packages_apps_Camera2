@@ -276,4 +276,10 @@
             camera:title="@string/pref_camera_power_shutter_title"
             camera:entries="@array/pref_switch_entries"
             camera:entryValues="@array/pref_switch_entryvalues" />
+    <ListPreference
+            camera:key="pref_camera_fullscreen_viewfinder"
+            camera:defaultValue="@string/pref_camera_fullscreen_viewfinder_default"
+            camera:title="@string/pref_camera_fullscreen_viewfinder_title"
+            camera:entries="@array/pref_switch_entries"
+            camera:entryValues="@array/pref_switch_entryvalues" />
 </PreferenceGroup>

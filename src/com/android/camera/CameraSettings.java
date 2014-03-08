@@ -140,6 +140,7 @@ public class CameraSettings {
     public static final String KEY_BEAUTY_MODE = "pref_camera_beauty_mode";
     public static final String KEY_SLOW_SHUTTER = "pref_camera_slow_shutter";
     public static final String KEY_ASD = "pref_camera_asd";
+    public static final String KEY_FULLSCREEN_VIEWFINDER = "pref_camera_fullscreen_viewfinder";
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
     public static final String VALUE_ON = "on";
