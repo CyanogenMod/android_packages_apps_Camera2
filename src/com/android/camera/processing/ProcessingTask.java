@@ -17,6 +17,7 @@
 package com.android.camera.processing;
 
 import android.content.Context;
+import android.location.Location;
 
 import com.android.camera.app.CameraServices;
 import com.android.camera.session.CaptureSession;
@@ -71,6 +72,12 @@ public interface ProcessingTask {
      *         has no name.
      */
     public String getName();
+
+    /**
+     * @return The location of the media that is to be processed. Returns null,
+     *         if no location is available.
+     */
+    public Location getLocation();
 
     /** Sets a listener that is informed when this task is done processing. */
     public void setDoneListener(ProcessingTaskDoneListener listener);

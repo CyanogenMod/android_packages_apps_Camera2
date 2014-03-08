@@ -193,8 +193,8 @@ public class Storage {
      * Note: This will update the DATE_TAKEN to right now. We could consider not
      * changing it to preserve the original timestamp.
      */
-    public static void updateImageFromChangedFile(Uri mediaUri, ContentResolver resolver,
-            String mimeType) {
+    public static void updateImageFromChangedFile(Uri mediaUri, Location location,
+            ContentResolver resolver, String mimeType) {
         File mediaFile = new File(ImageLoader.getLocalPathFromUri(resolver, mediaUri));
         if (!mediaFile.exists()) {
             throw new IllegalArgumentException("Provided URI is not an existent file: "
@@ -206,6 +206,10 @@ public class Storage {
         values.put(Images.Media.DATE_TAKEN, System.currentTimeMillis());
         values.put(Images.Media.MIME_TYPE, mimeType);
         values.put(Images.Media.SIZE, mediaFile.length());
+        if (location != null) {
+            values.put(ImageColumns.LATITUDE, location.getLatitude());
+            values.put(ImageColumns.LONGITUDE, location.getLongitude());
+        }
 
         resolver.update(mediaUri, values, null, null);
     }

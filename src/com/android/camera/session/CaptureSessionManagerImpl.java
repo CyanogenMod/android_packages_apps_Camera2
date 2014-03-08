@@ -44,6 +44,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private Uri mUri;
         /** The title of the item being processed. */
         private final String mTitle;
+        /** The location this session was created at. Used for media store.*/
+        private Location mLocation;
         /** The current progress of this session in percent. */
         private int mProgressPercent = 0;
         /** An associated notification ID, else -1. */
@@ -53,13 +55,30 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         /** A place holder for this capture session. */
         private PlaceholderManager.Session mPlaceHolderSession;
 
-        private CaptureSessionImpl(String title) {
+        /**
+         * Creates a new {@link CaptureSession}.
+         *
+         * @param title the title of this session.
+         * @param location the location of this session, used for media store.
+         */
+        private CaptureSessionImpl(String title, Location location) {
             mTitle = title;
+            mLocation = location;
         }
 
         @Override
         public String getTitle() {
             return mTitle;
+        }
+
+        @Override
+        public Location getLocation() {
+            return mLocation;
+        }
+
+        @Override
+        public void setLocation(Location location) {
+            mLocation = location;
         }
 
         @Override
@@ -124,16 +143,16 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public synchronized void saveAndFinish(byte[] data, Location loc, int width, int height,
-                int orientation, ExifInterface exif, OnMediaSavedListener listener) {
+        public synchronized void saveAndFinish(byte[] data, int width, int height, int orientation,
+                ExifInterface exif, OnMediaSavedListener listener) {
             if (mPlaceHolderSession == null) {
                 throw new IllegalStateException(
                         "Cannot call saveAndFinish without calling startSession first.");
             }
 
             // TODO: This needs to happen outside the UI thread.
-            mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, loc, orientation, exif,
-                    data, width, height, LocalData.MIME_TYPE_JPEG);
+            mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, mLocation, orientation,
+                    exif, data, width, height, LocalData.MIME_TYPE_JPEG);
 
             mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
@@ -148,8 +167,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             }
 
             // Set final values in media store, such as mime type and size.
-            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, LocalData.MIME_TYPE_JPEG,
-                    /* finalImage */ true);
+            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, mLocation,
+                    LocalData.MIME_TYPE_JPEG, /* finalImage */ true);
             mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
             notifyTaskDone(mPlaceHolderSession.outputUri);
@@ -175,7 +194,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         @Override
         public void onPreviewChanged() {
-            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession,
+            mPlaceholderManager.replacePlaceHolder(mPlaceHolderSession, mLocation,
                     PlaceholderManager.PLACEHOLDER_MIME_TYPE, /* finalImage */ false);
             notifySessionUpdate(mPlaceHolderSession.outputUri);
         }
@@ -222,13 +241,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
-    public CaptureSession createNewSession(String title) {
-        return new CaptureSessionImpl(title);
+    public CaptureSession createNewSession(String title, Location location) {
+        return new CaptureSessionImpl(title, location);
     }
 
     @Override
     public CaptureSession createSession() {
-        return new CaptureSessionImpl(null);
+        return new CaptureSessionImpl(null, null);
     }
 
     @Override
