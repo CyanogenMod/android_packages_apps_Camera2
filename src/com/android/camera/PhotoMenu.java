@@ -247,7 +247,8 @@ public class PhotoMenu extends PieController
                 CameraSettings.KEY_JPEG_QUALITY,
                 CameraSettings.KEY_AUTOEXPOSURE,
                 CameraSettings.KEY_ANTIBANDING,
-                CameraSettings.KEY_BURST_MODE
+                CameraSettings.KEY_BURST_MODE,
+                CameraSettings.KEY_FULLSCREEN_VIEWFINDER
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
@@ -335,6 +336,8 @@ public class PhotoMenu extends PieController
         } else if (pref.getKey().equals(CameraSettings.KEY_BURST_MODE)) {
             setPreference(CameraSettings.KEY_TIMER, "0");
             mUI.updateBurstModeIcon(Integer.valueOf(pref.getValue()));
+        } else if (pref.getKey().equals(CameraSettings.KEY_FULLSCREEN_VIEWFINDER)) {
+            mUI.updateFullscreenViewfinder(pref.getValue());
         }
         super.onSettingChanged(pref);
     }
