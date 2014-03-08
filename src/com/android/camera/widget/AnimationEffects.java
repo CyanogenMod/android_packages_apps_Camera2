@@ -48,4 +48,19 @@ public abstract class AnimationEffects {
     public abstract void drawForeground(Canvas canvas);
 
     public abstract void startAnimation();
+
+    /**
+     * Cancels the current animation effects.
+     *
+     * @return true if successful, false otherwise.
+     */
+    public boolean cancelAnimation() {
+        return false;
+    }
+
+    /**
+     * Ends the current animation effects. This should be called when animation is
+     * canceled as well, to make sure all the states are properly set.
+     */
+    public abstract void endAnimation();
 }

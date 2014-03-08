@@ -538,7 +538,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     if (mCameraRootView == null || mTextureView == null) {
                         return null;
                     }
-
                     RectF previewArea = mTextureViewHelper.getPreviewArea();
                     // Gets the bitmap from the preview TextureView.
                     Bitmap preview = mTextureView.getBitmap(

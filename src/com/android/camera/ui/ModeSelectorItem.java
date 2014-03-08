@@ -22,6 +22,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ class ModeSelectorItem extends FrameLayout {
     private ModeIconView mIcon;
     private int mVisibleWidth;
     private final int mMinVisibleWidth;
+    private VisibleWidthChangedListener mListener = null;
 
     private int mDrawingMode = FLY_IN;
     private int mHeight;
@@ -60,6 +62,14 @@ class ModeSelectorItem extends FrameLayout {
     private int mDefaultBackgroundColor;
     private int mDefaultTextColor;
     private int mModeId;
+
+    /**
+     * A listener that gets notified when the visible width of the current item
+     * is changed.
+     */
+    public interface VisibleWidthChangedListener {
+        public void onVisibleWidthChanged(int width);
+    }
 
     public ModeSelectorItem(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -88,6 +98,14 @@ class ModeSelectorItem extends FrameLayout {
     public void setDefaultBackgroundColor(int color) {
         mDefaultBackgroundColor = color;
         setBackgroundColor(color);
+    }
+
+    /**
+     * Sets a listener that receives a callback when the visible width of this
+     * selector item changes.
+     */
+    public void setVisibleWidthChangedListener(VisibleWidthChangedListener listener) {
+        mListener = listener;
     }
 
     public void setHighlighted(boolean highlighted) {
@@ -178,30 +196,19 @@ class ModeSelectorItem extends FrameLayout {
         newWidth = Math.max(newWidth, 0);
         // Visible width should not be greater than view width
         newWidth = Math.min(newWidth, fullyShownIconWidth);
-        mVisibleWidth = newWidth;
+
+        if (mVisibleWidth != newWidth) {
+            mVisibleWidth = newWidth;
+            if (mListener != null) {
+                mListener.onVisibleWidthChanged(newWidth);
+            }
+        }
         float transX = 0f;
         // If the given width is less than the icon width, we need to translate icon
         if (mVisibleWidth < mMinVisibleWidth + mIcon.getLeft()) {
             transX = mMinVisibleWidth + mIcon.getLeft() - mVisibleWidth;
         }
         setTranslationX(-transX);
-
-        if (mDrawingMode == FLY_IN) {
-            // Swipe open.
-            int width = Math.min(mVisibleWidth, fullyShownIconWidth);
-            // Linear interpolate text opacity.
-            float alpha = (float) width / (float) fullyShownIconWidth;
-            mText.setAlpha(alpha);
-        } else {
-            // Swipe back.
-            int width = Math.max(mVisibleWidth, mMinVisibleWidth / 2);
-            width = Math.min(width, fullyShownIconWidth);
-            // Linear interpolate text opacity.
-            float alpha = (float) (width - mMinVisibleWidth / 2)
-                    / (float) (fullyShownIconWidth - mMinVisibleWidth);
-            mText.setAlpha(alpha);
-        }
-
         invalidate();
     }
 
@@ -274,5 +281,12 @@ class ModeSelectorItem extends FrameLayout {
      */
     public void selectWithAnimation() {
         mIcon.selectWithAnimation();
+    }
+
+    /**
+     * Sets the alpha on the mode text.
+     */
+    public void setTextAlpha(float alpha) {
+        mText.setAlpha(alpha);
     }
 }
