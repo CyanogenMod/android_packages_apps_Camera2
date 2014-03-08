@@ -384,6 +384,14 @@ public class CameraActivity extends Activity
                     }
                     return intent;
                 }
+
+                @Override
+                public void onProgressErrorClicked() {
+                    LocalData data = getCurrentLocalData();
+                    getServices().getCaptureSessionManager().removeErrorMessage(
+                            data.getContentUri());
+                    updateBottomControlsByData(data);
+                }
             };
 
     private ComboPreferences mPreferences;
@@ -682,7 +690,12 @@ public class CameraActivity extends Activity
         CameraAppUI.BottomPanel controls =  mCameraAppUI.getFilmstripBottomControls();
         controls.setProgressText(message);
         controls.hideControls();
+        controls.hideProgressError();
         controls.showProgress();
+    }
+
+    private void showProcessError(CharSequence message) {
+        mCameraAppUI.getFilmstripBottomControls().showProgressError(message);
     }
 
     private void updateSessionProgress(int progress) {
@@ -737,23 +750,23 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSessionQueued(final Uri uri) {
                     notifyNewMedia(uri);
-                    int dataID = mDataAdapter.findDataByContentUri(uri);
-                    if (dataID != -1) {
+                    int dataId = mDataAdapter.findDataByContentUri(uri);
+                    if (dataId != -1) {
                         // Don't allow special UI actions (swipe to
                         // delete, for example) on in-progress data.
-                        LocalData d = mDataAdapter.getLocalData(dataID);
+                        LocalData d = mDataAdapter.getLocalData(dataId);
                         InProgressDataWrapper newData = new InProgressDataWrapper(d);
-                        mDataAdapter.updateData(dataID, newData);
+                        mDataAdapter.updateData(dataId, newData);
                     }
                 }
 
                 @Override
                 public void onSessionDone(final Uri uri) {
                     Log.v(TAG, "onSessionDone:" + uri);
-                    int doneID = mDataAdapter.findDataByContentUri(uri);
+                    int doneId = mDataAdapter.findDataByContentUri(uri);
                     int currentDataId = mFilmstripController.getCurrentId();
 
-                    if (currentDataId == doneID) {
+                    if (currentDataId == doneId) {
                         hideSessionProgress();
                         updateSessionProgress(0);
                     }
@@ -779,6 +792,20 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSessionUpdated(Uri uri) {
                     mDataAdapter.refresh(uri, /* isInProgress */true);
+                }
+
+                @Override
+                public void onSessionFailed(Uri uri, CharSequence reason) {
+                    Log.v(TAG, "onSessionFailed:" + uri);
+
+                    int failedDataId = mDataAdapter.findDataByContentUri(uri);
+                    int currentDataId = mFilmstripController.getCurrentId();
+
+                    if (currentDataId == failedDataId) {
+                        updateSessionProgress(0);
+                        showProcessError(reason);
+                    }
+                    mDataAdapter.refresh(uri, /* isInProgress */false);
                 }
             };
 
@@ -2052,15 +2079,21 @@ public class CameraActivity extends Activity
         Uri contentUri = currentData.getContentUri();
         CaptureSessionManager sessionManager = getServices()
                 .getCaptureSessionManager();
-        int sessionProgress = sessionManager.getSessionProgress(contentUri);
 
-        if (sessionProgress < 0) {
-            hideSessionProgress();
+        if (sessionManager.hasErrorMessage(contentUri)) {
+            showProcessError(sessionManager.getErrorMesage(contentUri));
         } else {
-            CharSequence progressMessage = sessionManager
-                    .getSessionProgressMessage(contentUri);
-            showSessionProgress(progressMessage);
-            updateSessionProgress(sessionProgress);
+            filmstripBottomPanel.hideProgressError();
+            int sessionProgress = sessionManager.getSessionProgress(contentUri);
+
+            if (sessionProgress < 0) {
+                hideSessionProgress();
+            } else {
+                CharSequence progressMessage = sessionManager
+                        .getSessionProgressMessage(contentUri);
+                showSessionProgress(progressMessage);
+                updateSessionProgress(sessionProgress);
+            }
         }
 
         /* View button */

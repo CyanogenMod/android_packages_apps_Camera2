@@ -21,8 +21,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Path;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -329,8 +329,8 @@ public class BottomBar extends FrameLayout
             mRect.set(
                 0.0f,
                 0.0f,
-                (float) width,
-                (float) height);
+                width,
+                height);
             mRectPath.reset();
             mRectPath.addRect(mRect, Path.Direction.CW);
         }

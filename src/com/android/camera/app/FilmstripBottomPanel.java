@@ -17,12 +17,12 @@
 package com.android.camera.app;
 
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 /**
@@ -34,7 +34,7 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     private final AppController mController;
     private final ViewGroup mLayout;
     private Listener mListener;
-    private View mControlLayout;
+    private final View mControlLayout;
     private ImageButton mEditButton;
     private ImageButton mViewButton;
     private ImageButton mDeleteButton;
@@ -42,6 +42,8 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     private final View mMiddleFiller;
     private View mProgressLayout;
     private TextView mProgressText;
+    private View mProgressErrorLayout;
+    private TextView mProgressErrorText;
     private ProgressBar mProgressBar;
     private boolean mTinyPlanetEnabled;
 
@@ -134,8 +136,22 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     }
 
     @Override
+    public void showProgressError(CharSequence message) {
+        hideControls();
+        hideProgress();
+        mProgressErrorLayout.setVisibility(View.VISIBLE);
+        mProgressErrorText.setText(message);
+    }
+
+    @Override
+    public void hideProgressError() {
+        mProgressErrorLayout.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
     public void showProgress() {
         mProgressLayout.setVisibility(View.VISIBLE);
+        hideProgressError();
     }
 
     @Override
@@ -222,6 +238,16 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
         mProgressBar = (ProgressBar) mLayout.findViewById(R.id.bottom_session_progress_bar);
         mProgressBar.setMax(100);
         mProgressLayout.setVisibility(View.INVISIBLE);
+        mProgressErrorText = (TextView) mLayout.findViewById(R.id.bottom_progress_error_text);
+        mProgressErrorLayout = mLayout.findViewById(R.id.bottom_progress_error_panel);
+        mProgressErrorLayout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onProgressErrorClicked();
+                }
+            }
+        });
     }
 
     /**

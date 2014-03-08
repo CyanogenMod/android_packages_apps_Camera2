@@ -162,6 +162,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         void setProgress(int progress);
 
         /**
+         * Replaces the progress UI with an error message.
+         */
+        void showProgressError(CharSequence message);
+
+        /**
+         * Hide the progress error message.
+         */
+        void hideProgressError();
+
+        /**
          * Shows the progress.
          */
         void showProgress();
@@ -211,6 +221,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
              * Called when the "share" button is pressed.
              */
             public void onShare();
+
+            /**
+             * Called when the progress error message is clicked.
+             */
+            public void onProgressErrorClicked();
         }
     }
 
