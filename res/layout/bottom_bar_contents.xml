@@ -31,7 +31,7 @@
         android:clickable="true"
         android:contentDescription="@string/accessibility_shutter_button"
         android:focusable="true"
-        android:src="@drawable/ic_camera_normal" />
+        android:src="@drawable/ic_camera" />
   </FrameLayout>
 
   <com.android.camera.ui.TopRightWeightedLayout
