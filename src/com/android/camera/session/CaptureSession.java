@@ -31,6 +31,12 @@ public interface CaptureSession {
     /** Returns the title/name of this session. */
     public String getTitle();
 
+    /** Returns the location of this session or null. */
+    public Location getLocation();
+
+    /** Sets the location of this session. */
+    public void setLocation(Location location);
+
     /**
      * Set the progress in percent for the current session. If set to or left at
      * 0, no progress bar is shown.
@@ -86,7 +92,7 @@ public interface CaptureSession {
      * Finish the session by saving the image to disk. Will add the final item
      * in the film strip and remove the progress notifications.
      */
-    public void saveAndFinish(byte[] data, Location loc, int width, int height, int orientation,
+    public void saveAndFinish(byte[] data, int width, int height, int orientation,
             ExifInterface exif, OnMediaSavedListener listener);
 
     /**
