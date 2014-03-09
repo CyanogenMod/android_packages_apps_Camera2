@@ -110,8 +110,6 @@
     <string name="setting_off" msgid="6782191065550276632">"Fra"</string>
     <string name="setting_on" msgid="9086728135773197891">"Til"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Videokvalitet"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Høj"</string>
-    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Lav"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Tidsforløb"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Kameraindstillinger"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Indstillinger for Videokamera"</string>
