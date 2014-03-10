@@ -257,8 +257,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         @Override
         public void onPreviewChanged() {
 
-            final Location loc = null; // mLocationManager.getCurrentLocation();
-            final int heading = 0; // mHeading;
             final String path = this.getPath();
 
             AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
