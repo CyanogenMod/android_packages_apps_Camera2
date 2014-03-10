@@ -930,31 +930,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
 
         mTextureViewHelper.setAutoAdjustTransform(
-            mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
-
-        if (mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-            mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
-
-            mBottomBar.setAdjustPreviewAreaListener(new BottomBar.AdjustPreviewAreaListener() {
-                @Override
-                public void fitAndCenterPreviewAreaInRect(RectF rect) {
-                    mPeekView.setTranslationX(0f);
-                    mTextureViewHelper.centerPreviewInRect(rect);
-                }
-
-                @Override
-                public void fitAndAlignBottomInRect(RectF rect) {
-                    mPeekView.setTranslationX(0f);
-                    mTextureViewHelper.alignBottomInRect(rect);
-                }
-
-                @Override
-                public void fitAndAlignRightInRect(RectF rect) {
-                    mPeekView.setTranslationX(rect.right - mAppRootView.getRight());
-                    mTextureViewHelper.alignRightInRect(rect);
-                }
-            });
-        }
+                mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout());
     }
 
     /**
@@ -1014,12 +990,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             .getColor(R.color.bottombar_pressed);
         setBottomBarPressedColor(pressedColor);
 
-        // Auto adjust the bottom bar for every module, so that panorama
-        // and photosphere can get a transparent bottom bar without any extra work.
-        // TODO: add and remove the bottom bar listener in onPreviewListenerChanged,
-        // based on whether the module needs to adjust the size of the bottom bar.
-        mTextureViewHelper.addPreviewAreaSizeChangedListener(mBottomBar);
-
         mModeOptionsOverlay
             = (ModeOptionsOverlay) mCameraRootView.findViewById(R.id.mode_options_overlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeOptionsOverlay);
@@ -1060,6 +1030,48 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
         mTutorialsPlaceholder = (FrameLayout) mCameraRootView
                 .findViewById(R.id.tutorials_placeholder);
+
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(
+                new PreviewStatusListener.PreviewAreaChangedListener() {
+                    @Override
+                    public void onPreviewAreaChanged(RectF previewArea) {
+                        if (mPreviewStatusListener != null &&
+                                mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
+                            mBottomBar.onPreviewAreaChanged(previewArea);
+                        } else {
+                            mPeekView.setTranslationX(previewArea.right - mAppRootView.getRight());
+                        }
+                    }
+                });
+
+        mBottomBar.setAdjustPreviewAreaListener(new BottomBar.AdjustPreviewAreaListener() {
+            @Override
+            public void fitAndCenterPreviewAreaInRect(RectF rect) {
+                mPeekView.setTranslationX(0f);
+                if (mPreviewStatusListener != null &&
+                        mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout()) {
+                    mTextureViewHelper.centerPreviewInRect(rect);
+                }
+            }
+
+            @Override
+            public void fitAndAlignBottomInRect(RectF rect) {
+                mPeekView.setTranslationX(0f);
+                if (mPreviewStatusListener != null &&
+                        mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout()) {
+                    mTextureViewHelper.alignBottomInRect(rect);
+                }
+            }
+
+            @Override
+            public void fitAndAlignRightInRect(RectF rect) {
+                mPeekView.setTranslationX(rect.right - mAppRootView.getRight());
+                if (mPreviewStatusListener != null &&
+                        mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout()) {
+                    mTextureViewHelper.alignRightInRect(rect);
+                }
+            }
+        });
     }
 
     /**
@@ -1081,7 +1093,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mModuleUI.removeAllViews();
         }
         removeShutterListener(mController.getCurrentModuleController());
-        mTextureViewHelper.addPreviewAreaSizeChangedListener(null);
         mTutorialsPlaceholder.removeAllViews();
 
         mPreviewStatusListener = null;
