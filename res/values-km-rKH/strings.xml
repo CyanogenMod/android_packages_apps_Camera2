@@ -334,4 +334,8 @@
     <string name="setting_send_feedback" msgid="1327616762665878557">"ផ្ញើ​មតិ​ត្រឡប់"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"កំពុង​ដំណើរការ HDR+ …"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"អាជ្ញាប័ណ្ណ​កម្មវិធី​កូដ​ចំហ"</string>
+    <string name="pref_category_general" msgid="6737748849700581019">"ការ​កំណត់​ទូទៅ"</string>
+    <string name="pref_category_resolution" msgid="2555229705716866570">"គុណភាព​បង្ហាញ"</string>
+    <string name="pref_category_about" msgid="1966255405679342337">"អំពី"</string>
+    <string name="pref_title_build_version" msgid="481489988124832651">"កំណែ​បង្កើត"</string>
 </resources>
