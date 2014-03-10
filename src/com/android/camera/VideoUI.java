@@ -17,6 +17,7 @@
 package com.android.camera;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Parameters;
 import android.util.Log;
@@ -49,9 +50,6 @@ public class VideoUI implements PreviewStatusListener {
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
-    private View mReviewCancelButton;
-    private View mReviewDoneButton;
-    private View mReviewPlayButton;
     private View mVideoHints;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
@@ -221,12 +219,6 @@ public class VideoUI implements PreviewStatusListener {
         mReviewImage.setVisibility(View.VISIBLE);
     }
 
-    public void hideReviewUI() {
-        mReviewImage.setVisibility(View.GONE);
-        CameraUtil.fadeOut(mReviewDoneButton);
-        CameraUtil.fadeOut(mReviewPlayButton);
-    }
-
     public void initializeZoom(Parameters param) {
         mZoomMax = param.getMaxZoom();
         mZoomRatios = param.getZoomRatios();
@@ -288,6 +280,13 @@ public class VideoUI implements PreviewStatusListener {
      */
     public void showVideoRecordingHints(boolean show) {
         mVideoHints.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    /**
+     * @return The size of the available preview area.
+     */
+    public Point getPreviewScreenSize() {
+        return new Point(mRootView.getMeasuredWidth(), mRootView.getMeasuredHeight());
     }
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {

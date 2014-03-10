@@ -473,7 +473,7 @@ public class CameraUtil {
         return size;
     }
 
-    public static Size getOptimalPreviewSize(Activity currentActivity,
+    public static Size getOptimalPreviewSize(Context context,
             List<Size> sizes, double targetRatio) {
 
         Point[] points = new Point[sizes.size()];
@@ -483,7 +483,7 @@ public class CameraUtil {
             points[index++] = new Point(s.width, s.height);
         }
 
-        int optimalPickIndex = getOptimalPreviewSize(currentActivity, points, targetRatio);
+        int optimalPickIndex = getOptimalPreviewSize(context, points, targetRatio);
         return (optimalPickIndex == -1) ? null : sizes.get(optimalPickIndex);
     }
 
