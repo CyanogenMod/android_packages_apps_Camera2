@@ -27,6 +27,7 @@ import android.util.Log;
 
 import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraServices;
+import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 
 /**
@@ -133,8 +134,11 @@ public class ProcessingService extends Service {
             Log.e(TAG, "Reference to ProcessingTask is null");
             return;
         }
-        task.process(this, getServices(),
-                mSessionManager.createNewSession(task.getName(), task.getLocation()));
+        CaptureSession session = task.getSession();
+        if (session == null) {
+            session = mSessionManager.createNewSession(task.getName(), task.getLocation());
+        }
+        task.process(this, getServices(), session);
     }
 
     /**
