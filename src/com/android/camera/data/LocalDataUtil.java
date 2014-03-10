@@ -53,15 +53,6 @@ public class LocalDataUtil {
     }
 
     /**
-     * @param mimeType The MIME type to check.
-     * @return Whether the MIME is a placeholder type.
-     * @see {@link com.android.camera.session.PlaceholderManager}.
-     */
-    public static boolean isMimeTypePlaceHolder(String mimeType) {
-        return mimeType.startsWith(PlaceholderManager.PLACEHOLDER_MIME_TYPE);
-    }
-
-    /**
      * Decodes the dimension of a bitmap.
      *
      * @param path The path to the bitmap.
