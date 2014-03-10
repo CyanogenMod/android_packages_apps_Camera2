@@ -52,7 +52,7 @@ class ModeSelectorItem extends FrameLayout {
 
     private TextView mText;
     private ModeIconView mIcon;
-    private int mVisibleWidth;
+    private int mVisibleWidth = 0;
     private final int mMinVisibleWidth;
     private VisibleWidthChangedListener mListener = null;
 
@@ -203,12 +203,6 @@ class ModeSelectorItem extends FrameLayout {
                 mListener.onVisibleWidthChanged(newWidth);
             }
         }
-        float transX = 0f;
-        // If the given width is less than the icon width, we need to translate icon
-        if (mVisibleWidth < mMinVisibleWidth + mIcon.getLeft()) {
-            transX = mMinVisibleWidth + mIcon.getLeft() - mVisibleWidth;
-        }
-        setTranslationX(-transX);
         invalidate();
     }
 
@@ -229,7 +223,15 @@ class ModeSelectorItem extends FrameLayout {
      */
     @Override
     public void draw(Canvas canvas) {
+        float transX = 0f;
+        // If the given width is less than the icon width, we need to translate icon
+        if (mVisibleWidth < mMinVisibleWidth + mIcon.getLeft()) {
+            transX = mMinVisibleWidth + mIcon.getLeft() - mVisibleWidth;
+        }
+        canvas.save();
+        canvas.translate(-transX, 0);
         super.draw(canvas);
+        canvas.restore();
     }
 
     /**
