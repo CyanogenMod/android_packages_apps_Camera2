@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.android.camera.CameraDisabledException;
+import com.android.camera.app.CameraManager.CameraExceptionCallback;
 import com.android.camera.util.CameraUtil;
 
 /**
@@ -80,6 +81,12 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         }
         mFirstBackCameraId = firstBack;
         mFirstFrontCameraId = firstFront;
+    }
+
+    @Override
+    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
+            Handler handler) {
+        mCameraManager.setCameraDefaultExceptionCallback(callback, handler);
     }
 
     @Override
