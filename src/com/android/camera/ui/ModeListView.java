@@ -541,6 +541,8 @@ public class ModeListView extends FrameLayout
                 });
             }
         });
+        // The mode list is initialized to be all the way closed.
+        onModeListOpenRatioUpdate(0);
     }
 
     /**
