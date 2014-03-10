@@ -334,4 +334,8 @@
     <string name="setting_send_feedback" msgid="1327616762665878557">"ສົ່ງຄຳຕິຊົມ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"ກໍາລັງປະມວນຜົນ HDR+ …"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"ລິຂະສິດໂອເພນຊອດ"</string>
+    <string name="pref_category_general" msgid="6737748849700581019">"ການຕັ້ງຄ່າທົ່ວໄປ"</string>
+    <string name="pref_category_resolution" msgid="2555229705716866570">"ຄວາມລະອຽດ"</string>
+    <string name="pref_category_about" msgid="1966255405679342337">"ກ່ຽວກັບ"</string>
+    <string name="pref_title_build_version" msgid="481489988124832651">"ເວີຊັນສ້າງ"</string>
 </resources>

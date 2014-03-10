@@ -334,4 +334,8 @@
     <string name="setting_send_feedback" msgid="1327616762665878557">"Санал хүсэлт илгээх"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ боловсруулж байна…"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Нээлттэй Эхийн Лиценз"</string>
+    <string name="pref_category_general" msgid="6737748849700581019">"Ерөнхий тохиргоо"</string>
+    <string name="pref_category_resolution" msgid="2555229705716866570">"Нягтрал"</string>
+    <string name="pref_category_about" msgid="1966255405679342337">"Тухай"</string>
+    <string name="pref_title_build_version" msgid="481489988124832651">"Хийгдсэн хувилбар"</string>
 </resources>
