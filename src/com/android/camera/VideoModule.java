@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -704,39 +705,61 @@ public class VideoModule extends CameraModule
             quality = CamcorderProfile.QUALITY_HIGH;
         }
         mProfile = CamcorderProfile.get(mCameraId, quality);
-        getDesiredPreviewSize();
         mPreferenceRead = true;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void getDesiredPreviewSize() {
         if (mCameraDevice == null) {
             return;
         }
         mParameters = mCameraDevice.getParameters();
-        if (mParameters.getSupportedVideoSizes() == null) {
-            mDesiredPreviewWidth = mProfile.videoFrameWidth;
-            mDesiredPreviewHeight = mProfile.videoFrameHeight;
-        } else { // Driver supports separates outputs for preview and video.
-            List<Size> sizes = mParameters.getSupportedPreviewSizes();
-            Size preferred = mParameters.getPreferredPreviewSizeForVideo();
-            int product = preferred.width * preferred.height;
-            Iterator<Size> it = sizes.iterator();
-            // Remove the preview sizes that are not preferred.
-            while (it.hasNext()) {
-                Size size = it.next();
-                if (size.width * size.height > product) {
-                    it.remove();
-                }
-            }
-            Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
-                    (double) mProfile.videoFrameWidth / mProfile.videoFrameHeight);
-            mDesiredPreviewWidth = optimalSize.width;
-            mDesiredPreviewHeight = optimalSize.height;
-        }
+        Point desiredPreviewSize = getDesiredPreviewSize(mAppController.getAndroidContext(),
+                mParameters, mProfile, mUI.getPreviewScreenSize());
+        mDesiredPreviewWidth = desiredPreviewSize.x;
+        mDesiredPreviewHeight = desiredPreviewSize.y;
         mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
         Log.v(TAG, "mDesiredPreviewWidth=" + mDesiredPreviewWidth +
                 ". mDesiredPreviewHeight=" + mDesiredPreviewHeight);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    /**
+     * Calculates the preview size and stores it in mDesiredPreviewWidth and
+     * mDesiredPreviewHeight. This function checks {@link
+     * android.hardware.Camera.Parameters#getPreferredPreviewSizeForVideo()}
+     * but also considers the current preview area size on screen and make sure
+     * the final preview size will not be smaller than 1/2 of the current
+     * on screen preview area in terms of their short sides.
+     *
+     * @return The preferred preview size or {@code null} if the camera is not
+     *         opened yet.
+     */
+    private static Point getDesiredPreviewSize(Context context, Parameters parameters,
+            CamcorderProfile profile, Point previewScreenSize) {
+        if (parameters.getSupportedVideoSizes() == null) {
+            // Driver doesn't support separate outputs for preview and video.
+            return new Point(profile.videoFrameWidth, profile.videoFrameHeight);
+        }
+
+        final int previewScreenShortSide = (previewScreenSize.x < previewScreenSize.y ?
+                previewScreenSize.x : previewScreenSize.y);
+        List<Size> sizes = parameters.getSupportedPreviewSizes();
+        Size preferred = parameters.getPreferredPreviewSizeForVideo();
+        final int preferredPreviewSizeShortSide = (preferred.width < preferred.height ?
+                preferred.width : preferred.height);
+        if (preferredPreviewSizeShortSide * 2 < previewScreenShortSide) {
+            preferred.width = profile.videoFrameWidth;
+            preferred.height = profile.videoFrameHeight;
+        }
+        int product = preferred.width * preferred.height;
+        Iterator<Size> it = sizes.iterator();
+        // Remove the preview sizes that are not preferred.
+        while (it.hasNext()) {
+            Size size = it.next();
+            if (size.width * size.height > product) {
+                it.remove();
+            }
+        }
+        Size optimalSize = CameraUtil.getOptimalPreviewSize(context, sizes,
+                (double) profile.videoFrameWidth / profile.videoFrameHeight);
+        return new Point(optimalSize.width, optimalSize.height);
     }
 
     private void resizeForPreviewAspectRatio() {
