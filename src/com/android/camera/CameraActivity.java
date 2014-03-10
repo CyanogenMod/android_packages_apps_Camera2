@@ -102,6 +102,7 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
+import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.MainActivityLayout;
 import com.android.camera.ui.ModeListView;
@@ -1961,6 +1962,11 @@ public class CameraActivity extends Activity
     // For debugging purposes only.
     public CameraModule getCurrentModule() {
         return mCurrentModule;
+    }
+
+    @Override
+    public void showTutorial(AbstractTutorialOverlay tutorial) {
+        mCameraAppUI.showTutorial(tutorial, getLayoutInflater());
     }
 
     /**
