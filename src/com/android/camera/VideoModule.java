@@ -522,7 +522,7 @@ public class VideoModule extends CameraModule
         bottomBarSpec.enableTorchFlash = true;
         bottomBarSpec.flashCallback = mFlashCallback;
         bottomBarSpec.hideHdr = true;
-        bottomBarSpec.hideGridLines = true;
+        bottomBarSpec.enableGridLines = true;
 
         if (isVideoCaptureIntent()) {
             bottomBarSpec.showCancel = true;
