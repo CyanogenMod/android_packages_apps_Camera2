@@ -79,6 +79,11 @@ public interface ProcessingTask {
      */
     public Location getLocation();
 
+    /**
+     * @return The CaptureSession if it has been created, or null.
+     */
+    public CaptureSession getSession();
+
     /** Sets a listener that is informed when this task is done processing. */
     public void setDoneListener(ProcessingTaskDoneListener listener);
 }
