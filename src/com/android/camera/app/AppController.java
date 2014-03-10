@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import com.android.camera.ButtonManager;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 
 /**
@@ -325,4 +326,9 @@ public interface AppController {
 
     /** Whether auto-rotate is enabled.*/
     public boolean isAutoRotateScreen();
+
+    /**
+     * Shows the given tutorial overlay.
+     */
+    public void showTutorial(AbstractTutorialOverlay tutorial);
 }

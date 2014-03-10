@@ -43,6 +43,7 @@ import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.GridLines;
@@ -1596,5 +1597,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                bottomBarSpec.reviewCallback,
                R.drawable.ic_play);
         }
+    }
+
+    /**
+     * Shows the given tutorial on the screen.
+     */
+    public void showTutorial(AbstractTutorialOverlay tutorial, LayoutInflater inflater) {
+        tutorial.show(mTutorialsPlaceholder, inflater);
     }
 }
