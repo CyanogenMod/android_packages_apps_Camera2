@@ -35,7 +35,6 @@ import com.android.camera.util.CameraUtil;
 public class PlaceholderManager {
     private static final String TAG = "PlaceholderManager";
 
-    public static final String PLACEHOLDER_MIME_TYPE = "application/placeholder-image";
     private final Context mContext;
 
     public static class Session {
@@ -71,9 +70,7 @@ public class PlaceholderManager {
         }
 
         Uri uri =
-                Storage.addImage(mContext.getContentResolver(), title, timestamp, null, 0, null,
-                        placeholder, width, height, PLACEHOLDER_MIME_TYPE);
-
+                Storage.addPlaceholder(placeholder, width, height);
         if (uri == null) {
             return null;
         }
@@ -88,41 +85,43 @@ public class PlaceholderManager {
      *         session.
      */
     public Session convertToPlaceholder(Uri uri) {
-        Storage.updateItemMimeType(uri, PLACEHOLDER_MIME_TYPE, mContext.getContentResolver());
         return createSessionFromUri(uri);
     }
 
-    public void replacePlaceholder(Session session, Location location, int orientation,
-            ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
-
-        Storage.updateImage(session.outputUri, mContext.getContentResolver(), session.outputTitle,
-                session.time, location, orientation, exif, jpeg, width, height, mimeType);
-        CameraUtil.broadcastNewPicture(mContext, session.outputUri);
-    }
-
     /**
-     * Replace the placeholder with an updated image.
+     * This converts the placeholder in to a real media item
      *
-     * @param session the session to update.
-     * @param loc the location of the new item.
-     * @param mimeType the mime-type of the new image.
-     * @param finalImage whether this is the final image. If set, this will
-     *            broadcast that a new picture has been added.
+     * @param session the session that is being finished.
+     * @param location the location of the image
+     * @param orientation the orientation of the image
+     * @param exif the exif of the image
+     * @param jpeg the bytes of the image
+     * @param width the width of the image
+     * @param height the height of the image
+     * @param mimeType the mime type of the image
      */
-    public void replacePlaceHolder(Session session, Location loc, String mimeType,
-            boolean finalImage) {
-        Storage.updateImageFromChangedFile(session.outputUri, loc, mContext.getContentResolver(),
-                mimeType);
-        if (finalImage) {
-            CameraUtil.broadcastNewPicture(mContext, session.outputUri);
-        }
+    public void finishPlaceholder(Session session, Location location, int orientation,
+                                   ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
+
+        Uri resultUri = Storage.updateImage(session.outputUri, mContext.getContentResolver(), session.outputTitle,
+                session.time, location, orientation, exif, jpeg, width, height, mimeType);
+        CameraUtil.broadcastNewPicture(mContext, resultUri);
     }
 
     /**
-     * Removes the placeholder for the given session.
+     * This changes the temporary placeholder jpeg without writing it to the media store
+     *
+     * @param session the session to update
+     * @param jpeg the new placeholder bytes
+     * @param width the width of the image
+     * @param height the height of the image
      */
-    public void removePlaceholder(Session session) {
-        Storage.deleteImage(mContext.getContentResolver(), session.outputUri);
+    public void replacePlaceholder(Session session,
+                                   byte[] jpeg, int width, int height) {
+
+        Storage.replacePlaceholder(session.outputUri,
+                jpeg, width, height);
+        CameraUtil.broadcastNewPicture(mContext, session.outputUri);
     }
 
     /**

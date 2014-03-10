@@ -2518,7 +2518,7 @@ public class FilmstripView extends ViewGroup {
             if (currItem == null) {
                 return false;
             }
-            if (!mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
+            if (inFullScreen() && !mDataAdapter.canSwipeInFullScreen(currItem.getId())) {
                 return false;
             }
             hideZoomView();

@@ -179,9 +179,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
     }
 
-    // TODO: put the database query on background thread
-    @Override
-    public void addNewPhoto(Uri uri) {
+    private LocalData localDataFromUri(Uri uri) {
         Cursor cursor = mContext.getContentResolver().query(uri,
                 LocalMediaData.PhotoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
@@ -190,7 +188,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
         try {
             if (cursor == null || !cursor.moveToFirst()) {
-                return;
+                return null;
             }
             newData = LocalMediaData.PhotoData.buildFromCursor(mContext, cursor);
         } finally {
@@ -199,6 +197,23 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 cursor.close();
             }
         }
+        return newData;
+    }
+
+    // TODO: put the database query on background thread
+    @Override
+    public void addNewPhoto(Uri uri) {
+        LocalData newData = localDataFromUri(uri);
+        addData(uri, newData);
+    }
+
+    @Override
+    public void addNewSession(Uri uri) {
+        LocalSessionData newData = new LocalSessionData(uri);
+        addData(uri, newData);
+    }
+
+    private void addData(Uri uri, LocalData newData) {
         int pos = findDataByContentUri(uri);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
@@ -243,8 +258,23 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void refresh(Uri contentUri, boolean isInProgressSession) {
-        final int pos = findDataByContentUri(contentUri);
+    public void finishSession(Uri sessionUri) {
+        Uri contentUri = Storage.getContentUriForSessionUri(sessionUri);
+        if (contentUri == null) {
+            refresh(sessionUri);
+            return;
+        }
+        final int pos = findDataByContentUri(sessionUri);
+        if (pos == -1) {
+            throw new IllegalAccessError("Finishing invalid uri");
+        }
+        LocalData newData = localDataFromUri(contentUri);
+        updateData(pos, newData);
+    }
+
+    @Override
+    public void refresh(Uri uri) {
+        final int pos = findDataByContentUri(uri);
         if (pos == -1) {
             return;
         }
@@ -257,12 +287,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
             mListener.onDataRemoved(pos, data);
             return;
         }
-
-        // Wrap the data item if this represents a session that is in progress.
-        if (isInProgressSession) {
-            refreshedData = new InProgressDataWrapper(refreshedData);
-        }
-
         updateData(pos, refreshedData);
     }
 
@@ -335,11 +359,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 while (true) {
                     LocalData data = LocalMediaData.PhotoData.buildFromCursor(mContext, c);
                     if (data != null) {
-                        if (data.getMimeType().equals(PlaceholderManager.PLACEHOLDER_MIME_TYPE)) {
-                            l.add(new InProgressDataWrapper(data));
-                        } else {
-                            l.add(data);
-                        }
+                        l.add(data);
                     } else {
                         Log.e(TAG, "Error loading data:"
                                 + c.getString(LocalMediaData.PhotoData.COL_DATA));

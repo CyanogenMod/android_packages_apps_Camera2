@@ -81,13 +81,25 @@ public interface LocalDataAdapter extends DataAdapter {
     public void addNewPhoto(Uri uri);
 
     /**
+     * Adds new placeholder uri.
+     *
+     * @param uri the uri of the session to find the placeholder images
+     */
+    public void addNewSession(Uri uri);
+
+    /**
+     * Called when a session is done processing
+     *
+     * @param uri {@link Uri} of the session.
+     */
+    public void finishSession(Uri uri);
+
+    /**
      * Refresh the data by {@link Uri}.
      *
      * @param uri The {@link Uri} of the data to refresh.
-     * @param isInProgressSession Whether this data item has a session in
-     *            progress associated with it.
      */
-    public void refresh(Uri uri, boolean isInProgressSession);
+    public void refresh(Uri uri);
 
     /**
      * Finds the {@link LocalData} of the specified content Uri.

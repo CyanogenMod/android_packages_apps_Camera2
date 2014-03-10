@@ -19,6 +19,7 @@ package com.android.camera;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -36,24 +37,27 @@ import com.android.camera.util.ApiHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Storage {
-    private static final String TAG = "CameraStorage";
-
     public static final String DCIM =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-
     public static final String DIRECTORY = DCIM + "/Camera";
     public static final String JPEG_POSTFIX = ".jpg";
-
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
             String.valueOf(DIRECTORY.toLowerCase().hashCode());
-
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
     public static final long LOW_STORAGE_THRESHOLD_BYTES = 50000000;
+    public static final String CAMERA_SESSION_SCHEME = "camera_session";
+    private static final String TAG = "Storage";
+    private static final String GOOGLE_COM = "google.com";
+    private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<Uri, Uri>();
+    private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();
+    private static HashMap<Uri, Point> sSessionsToSizes= new HashMap<Uri, Point>();
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
@@ -136,6 +140,38 @@ public class Storage {
         return values;
     }
 
+    /**
+     * Add a placeholder for a new image that does not exist yet.
+     * @param jpeg the bytes of the placeholder image
+     * @param width the image's width
+     * @param height the image's height
+     * @return A new URI used to reference this placeholder
+     */
+    public static Uri addPlaceholder(byte[] jpeg, int width, int height) {
+        Uri uri;
+        Uri.Builder builder = new Uri.Builder();
+        String uuid = UUID.randomUUID().toString();
+        builder.scheme(CAMERA_SESSION_SCHEME).authority(GOOGLE_COM).appendPath(uuid);
+        uri = builder.build();
+
+        replacePlaceholder(uri, jpeg, width, height);
+        return uri;
+    }
+
+    /**
+     * Add or replace placeholder for a new image that does not exist yet.
+     * @param uri the uri of the placeholder to replace, or null if this is a new one
+     * @param jpeg the bytes of the placeholder image
+     * @param width the image's width
+     * @param height the image's height
+     * @return A URI used to reference this placeholder
+     */
+    public static void replacePlaceholder(Uri uri, byte[] jpeg, int width, int height) {
+        Point size = new Point(width, height);
+        sSessionsToSizes.put(uri, size);
+        sSessionsToPlaceholderBytes.put(uri, jpeg);
+    }
+
     // Add the image to media store.
     public static Uri addImage(ContentResolver resolver, String title,
             long date, Location location, int orientation, int jpegLength,
@@ -160,17 +196,35 @@ public class Storage {
     }
 
     // Overwrites the file and updates the MediaStore
-    public static void updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
-            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
-            int height, String mimeType) {
+
+    /**
+     * Take jpeg bytes and add them to the media store, either replacing an existing item
+     * or a placeholder uri to replace
+     * @param imageUri The content uri or session uri of the image being updated
+     * @param resolver The content resolver to use
+     * @param title of the image
+     * @param date of the image
+     * @param location of the image
+     * @param orientation of the image
+     * @param exif of the image
+     * @param jpeg bytes of the image
+     * @param width of the image
+     * @param height of the image
+     * @param mimeType of the image
+     * @return The content uri of the newly inserted or replaced item.
+     */
+    public static Uri updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
+           Location location, int orientation, ExifInterface exif,
+           byte[] jpeg, int width, int height, String mimeType) {
         String path = generateFilepath(title);
         writeFile(path, jpeg, exif);
-        updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
+        return updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
                 width, height, mimeType);
     }
 
+
     // Updates the image values in MediaStore
-    public static void updateImage(Uri imageUri, ContentResolver resolver, String title,
+    private static Uri updateImage(Uri imageUri, ContentResolver resolver, String title,
             long date, Location location, int orientation, int jpegLength,
             String path, int width, int height, String mimeType) {
 
@@ -178,13 +232,23 @@ public class Storage {
                 getContentValuesForData(title, date, location, orientation, jpegLength, path,
                         width, height, mimeType);
 
-        // Update the MediaStore
-        int rowsModified = resolver.update(imageUri, values, null, null);
-        if (rowsModified != 1) {
-            // This should never happen
-            throw new IllegalStateException("Bad number of rows (" + rowsModified
-                    + ") updated for uri: " + imageUri);
+
+        Uri resultUri = imageUri;
+        if (Storage.isSessionUri(imageUri)) {
+            // If this is a session uri, then we need to add the image
+            resultUri = addImage(resolver, title, date, location, orientation, jpegLength, path,
+                    width, height, mimeType);
+            sSessionsToContentUris.put(imageUri, resultUri);
+        } else {
+            // Update the MediaStore
+            int rowsModified = resolver.update(imageUri, values, null, null);
+            if (rowsModified != 1) {
+                // This should never happen
+                throw new IllegalStateException("Bad number of rows (" + rowsModified
+                        + ") updated for uri: " + imageUri);
+            }
         }
+        return resultUri;
     }
 
     /**
@@ -219,7 +283,7 @@ public class Storage {
      * switching an image to an in-progress type for re-processing.
      *
      * @param uri the URI of the item to change
-     * @param mimeeType the new mime type of the item
+     * @param mimeType the new mime type of the item
      */
     public static void updateItemMimeType(Uri uri, String mimeType, ContentResolver resolver) {
         ContentValues values = new ContentValues(1);
@@ -244,6 +308,46 @@ public class Storage {
 
     public static String generateFilepath(String title) {
         return DIRECTORY + '/' + title + ".jpg";
+    }
+
+    /**
+     * Returns the jpeg bytes for a placeholder session
+     *
+     * @param uri the session uri to look up
+     * @return The jpeg bytes or null
+     */
+    public static byte[] getJpegForSession(Uri uri) {
+        return sSessionsToPlaceholderBytes.get(uri);
+    }
+
+    /**
+     * Returns the dimensions of the placeholder image
+     *
+     * @param uri the session uri to look up
+     * @return The size
+     */
+    public static Point getSizeForSession(Uri uri) {
+        return sSessionsToSizes.get(uri);
+    }
+
+    /**
+     * Takes a session URI and returns the finished image's content URI
+     *
+     * @param uri the uri of the session that was replaced
+     * @return The uri of the new media item, if it exists, or null.
+     */
+    public static Uri getContentUriForSessionUri(Uri uri) {
+        return sSessionsToContentUris.get(uri);
+    }
+
+    /**
+     * Determines if a URI points to a camera session
+     *
+     * @param uri the uri to check
+     * @return true if it is a session uri.
+     */
+    public static boolean isSessionUri(Uri uri) {
+        return uri.getScheme().equals(CAMERA_SESSION_SCHEME);
     }
 
     public static long getAvailableSpace() {
@@ -281,4 +385,5 @@ public class Storage {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
     }
+
 }
