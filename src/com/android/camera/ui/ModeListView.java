@@ -98,7 +98,7 @@ public class ModeListView extends FrameLayout
      * e.g. A scroll factor of 0.5 means UI will move half as fast as the finger.
      */
     private static final float SCROLL_FACTOR = 0.5f;
-    // 30% transparent black background.
+    // 60% opaque black background.
     private static final int BACKGROUND_TRANSPARENTCY = (int) (0.6f * 255);
     private static final int PREVIEW_DOWN_SAMPLE_FACTOR = 4;
     // Threshold, below which snap back will happen.
