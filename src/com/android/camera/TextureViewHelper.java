@@ -83,7 +83,6 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
                                int oldTop, int oldRight, int oldBottom) {
-        Log.d("SPK", "TextureViewHelper::onLayoutChange()");
         int width = right - left;
         int height = bottom - top;
         if (mWidth != width || mHeight != height) {
@@ -221,7 +220,6 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
                                (int) (rect.width() * mAspectRatio));
         }
 
-        Log.d("SPK", "fitPreviewInRect, old size -> new size: (" + mWidth + ", " + mHeight + ") -> (" + width + ", " + height + ")");
         mWidth = width;
         mHeight = height;
 
@@ -239,8 +237,6 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         if (mAspectRatio == UNSET || mAspectRatio < 0 || mWidth == 0 || mHeight == 0) {
             return;
         }
-
-        Log.d("SPK", "updateTransform(), size = (" + mWidth + ", " + mHeight + ")");
 
         Matrix matrix = mPreview.getTransform(null);
         float scaledTextureWidth, scaledTextureHeight;
@@ -368,32 +364,21 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     }
 
     /**
-     * Clears the translation of the matrix.
-     *
-     * @param m The matrix in which the translation will be cleared.
-     */
-    private void clearMatrixTrans(Matrix m) {
-        m.getValues(mMatrixVal);
-        mMatrixVal[Matrix.MTRANS_X] = 0;
-        mMatrixVal[Matrix.MTRANS_Y] = 0;
-        m.setValues(mMatrixVal);
-    }
-
-    /**
      * Updates {@code mUntranslatedMatrix} and {mUntranslatedPreviewArea}.
      */
     private void fitUntranslatedMatrixAndArea(RectF rect) {
         mPreview.getTransform(mUntranslatedMatrix);
-        clearMatrixTrans(mUntranslatedMatrix);
         mUntranslatedPreviewArea.set(0, 0, mPreview.getWidth(), mPreview.getHeight());
         mUntranslatedMatrix.mapRect(mUntranslatedPreviewArea);
 
-        // Fit in the rect.
-        final float wRatio = rect.width() / mUntranslatedPreviewArea.width();
-        final float hRatio = rect.height() / mUntranslatedPreviewArea.height();
-        final float smallerRatio = Math.min(wRatio, hRatio);
-        mUntranslatedMatrix.postScale(smallerRatio, smallerRatio, 0f, 0f);
-        mUntranslatedPreviewArea.set(0, 0, mPreview.getWidth(), mPreview.getHeight());
-        mUntranslatedMatrix.mapRect(mUntranslatedPreviewArea);
+        // Remove translation needed for fitting the rect.
+        RectF mapToRect = new RectF(rect);
+        mapToRect.offsetTo(0, 0);
+
+        // Fit preview in the rect while maintaining the original aspect ratio.
+        Matrix transform = new Matrix();
+        transform.setRectToRect(mUntranslatedPreviewArea, mapToRect, Matrix.ScaleToFit.START);
+        mUntranslatedMatrix.postConcat(transform);
+        transform.mapRect(mUntranslatedPreviewArea);
     }
 }
