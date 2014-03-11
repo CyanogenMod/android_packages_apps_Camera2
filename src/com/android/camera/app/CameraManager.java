@@ -44,6 +44,14 @@ import android.view.SurfaceHolder;
 public interface CameraManager {
 
     /**
+     * A handler for all camera api runtime exceptions.
+     * The default behavior is to throw the runtime exception.
+     */
+    public interface CameraExceptionCallback {
+        public void onCameraException(RuntimeException e);
+    }
+
+    /**
      * An interface which wraps
      * {@link android.hardware.Camera.AutoFocusCallback}.
      */
@@ -394,4 +402,11 @@ public interface CameraManager {
          */
         public void enableShutterSound(boolean enable);
     }
+
+    /**
+     * Sets a callback for handling camera api runtime exceptions on
+     * a handler.
+     */
+    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
+            Handler handler);
 }
