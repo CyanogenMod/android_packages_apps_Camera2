@@ -57,8 +57,9 @@ public class ProcessingNotificationManager {
 
     private final Context mContext;
     private final NotificationManager mNotificationManager;
-    private final SparseArray<Notification.Builder> mNotificationBuilders =
-            new SparseArray<Notification.Builder>();
+    private final SparseArray<CameraNotification> mPendingNotifications =
+            new SparseArray<CameraNotification>();
+    private CameraNotification mCurrentNotification;
 
     /**
      * Creates a new {@code ProcessingNotificationManager} with a
@@ -79,12 +80,15 @@ public class ProcessingNotificationManager {
      * @return whether the update was successful
      */
     public boolean setProgress(int progress, int notificationId) {
-        Notification.Builder builder = mNotificationBuilders.get(notificationId);
-        if (builder == null) {
+        CameraNotification notification = getNotification(notificationId);
+        if (notification == null) {
             return false;
         }
+        Notification.Builder builder = notification.builder;
         builder.setProgress(100, progress, false);
-        mNotificationManager.notify(notificationId, buildNotification(builder));
+        if (mCurrentNotification == notification) {
+            mNotificationManager.notify(notificationId, buildNotification(builder));
+        }
         return true;
     }
 
@@ -93,19 +97,27 @@ public class ProcessingNotificationManager {
      * @return whether the update was successful
      */
     public boolean setStatus(CharSequence status, int notificationId) {
-        Notification.Builder builder = mNotificationBuilders.get(notificationId);
-        if (builder == null) {
+        CameraNotification notification = getNotification(notificationId);
+        if (notification == null) {
             return false;
         }
+        Notification.Builder builder = notification.builder;
         builder.setContentText(status);
-        mNotificationManager.notify(notificationId, buildNotification(builder));
+        if (mCurrentNotification == notification) {
+            mNotificationManager.notify(notificationId, buildNotification(builder));
+        }
         return true;
     }
 
     /**
      * Creates a new notification indicating that a new computation has started.
      * It will initialize the in-progress notification and add it to the
-     * notification bar.
+     * notification bar when all previous notifications have completed.
+     *
+     * It is possible that the notification may not be shown if it is completed
+     * or canceled before its opportunity to be shown.
+     *
+     * Only one notification is shown at a time.
      *
      * @param statusMessage the status message to show on start
      * @return The ID of the notification.
@@ -115,23 +127,52 @@ public class ProcessingNotificationManager {
         // Increment the global notification id to make sure we have a unique
         // id.
         int notificationId = sUniqueNotificationId.incrementAndGet();
-        mNotificationBuilders.put(notificationId, builder);
-        mNotificationManager.notify(
-                notificationId, buildNotification(builder));
+        CameraNotification newNotification = new CameraNotification();
+        newNotification.builder = builder;
+        newNotification.notificationId = notificationId;
+        mPendingNotifications.put(notificationId, newNotification);
+
+        displayNextNotification();
         return notificationId;
+    }
+
+    private void displayNextNotification() {
+        if (mCurrentNotification == null) {
+            if (mPendingNotifications.size() > 0) {
+                mCurrentNotification = mPendingNotifications.valueAt(0);
+                mPendingNotifications.removeAt(0);
+                Notification.Builder builder = mCurrentNotification.builder;
+                mNotificationManager.notify(
+                        mCurrentNotification.notificationId, buildNotification(builder));
+            }
+        }
+    }
+
+    private CameraNotification getNotification(int notificationId) {
+        if (mCurrentNotification.notificationId == notificationId) {
+            return  mCurrentNotification;
+        }
+        return mPendingNotifications.get(notificationId);
     }
 
     /**
      * Notify a computation is completed. It will remove the in-progress
      * notification.
+     *
+     * This may cause a notification to never be seen if it has not been
+     * shown yet.
      */
     public void notifyCompletion(int notificationId) {
-        Notification.Builder builder = mNotificationBuilders.get(notificationId);
-        if (builder == null) {
-            return;
+        CameraNotification notification = getNotification(notificationId);
+        if (notification != null) {
+            if (mCurrentNotification.notificationId == notificationId) {
+                mNotificationManager.cancel(notificationId);
+                mCurrentNotification = null;
+            } else {
+                mPendingNotifications.remove(notificationId);
+            }
         }
-        mNotificationManager.cancel(notificationId);
-        builder = null;
+        displayNextNotification();
     }
 
     /**
@@ -139,12 +180,7 @@ public class ProcessingNotificationManager {
      * left intact.
      */
     public void cancel(int notificationId) {
-        Notification.Builder builder = mNotificationBuilders.get(notificationId);
-        if (builder == null) {
-            return;
-        }
-        mNotificationManager.cancel(notificationId);
-        builder = null;
+        notifyCompletion(notificationId);
     }
 
     /**
@@ -170,5 +206,10 @@ public class ProcessingNotificationManager {
             return builder.build();
         }
         return builder.getNotification();
+    }
+
+    protected static final class CameraNotification {
+        public Notification.Builder builder;
+        public int notificationId;
     }
 }
