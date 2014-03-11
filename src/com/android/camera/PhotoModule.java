@@ -1161,7 +1161,8 @@ public class PhotoModule
                     }
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
-                if (!mBurstShotInProgress && mCameraState != LONGSHOT) {
+                if (!mBurstShotInProgress && mCameraState != LONGSHOT
+                        && (mReceivedSnapNum == mBurstSnapNum)) {
                     mUI.animateCapture(jpegData, orientation, mMirror);
                 }
             } else {
@@ -1344,7 +1345,8 @@ public class PhotoModule
         mPostViewPictureCallbackTime = 0;
         mJpegImageData = null;
 
-        final boolean animateBefore = (mSceneMode == CameraUtil.SCENE_MODE_HDR);
+        final boolean animateBefore = (mSceneMode == CameraUtil.SCENE_MODE_HDR) ||
+                                      (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL);
         if(mHiston) {
             if (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
                 mHiston = false;
@@ -1669,7 +1671,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonClick() {
-        int nbBurstShots =
+        int nbBurstShots = CameraSettings.useZSLBurst(mParameters) ? 1 :
                 Integer.valueOf(mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
 
         if (mPaused || mUI.collapseCameraControls()
@@ -2406,7 +2408,7 @@ public class PhotoModule
         String format = mPreferences.getString(CameraSettings.KEY_PICTURE_FORMAT,
                 mActivity.getString(R.string.pref_camera_picture_format_value_jpeg));
 
-        if (zsl && (hdr.equals(mActivity.getString(R.string.setting_on_value))
+        if (zsl && (!CameraUtil.isHDRWithZSLEnabled() && hdr.equals(mActivity.getString(R.string.setting_on_value))
                 || !format.equals(mActivity.getString(R.string.pref_camera_picture_format_value_jpeg)))) {
             // Turn off ZSL when taking HDR or RAW shots
             zsl = false;
@@ -2608,6 +2610,12 @@ public class PhotoModule
         // Slow shutter
         CameraSettings.setSlowShutter(mParameters, mPreferences.getString(CameraSettings.KEY_SLOW_SHUTTER,
                 mActivity.getString(R.string.pref_camera_slow_shutter_default)));
+
+        // ZSL burst, set before enabling HDR
+        if (CameraSettings.useZSLBurst(mParameters)) {
+            mParameters.set("snapshot-burst-num",
+                    mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
+        }
 
         // Since changing scene mode may change supported values, set scene mode
         // first. HDR is a scene mode. To promote it in UI, it is stored in a

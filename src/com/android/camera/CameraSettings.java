@@ -375,12 +375,12 @@ public class CameraSettings {
                         mParameters.getSupportedPictureSizes()));
         }
 
-        if (histogram!= null) {
+        if (histogram != null && CameraUtil.isHistogramEnabled()) {
             filterUnsupportedOptions(group,
                     histogram, mParameters.getSupportedHistogramModes());
         }
 
-        if (pictureFormat!= null) {
+        if (pictureFormat != null) {
             filterUnsupportedOptions(group,
                     pictureFormat, getSupportedPictureFormatLists());
         }
@@ -955,4 +955,8 @@ public class CameraSettings {
                 !"slow-shutter-off".equals(params.get("slow-shutter"));
     }
 
+    public static boolean useZSLBurst(Parameters params) {
+        return CameraUtil.isZSLEnabled() &&
+                params.get("num-snaps-per-shutter") != null;
+    }
 }
