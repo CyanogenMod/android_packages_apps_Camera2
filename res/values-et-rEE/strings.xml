@@ -334,4 +334,8 @@
     <string name="setting_send_feedback" msgid="1327616762665878557">"Tagasiside saatmine"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ töötlemine …"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Avatud allika litsentsid"</string>
+    <string name="pref_category_general" msgid="6737748849700581019">"Üldised seaded"</string>
+    <string name="pref_category_resolution" msgid="2555229705716866570">"Eraldusvõime"</string>
+    <string name="pref_category_about" msgid="1966255405679342337">"Teave"</string>
+    <string name="pref_title_build_version" msgid="481489988124832651">"Järguversioon"</string>
 </resources>
