@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera2.R;
 
 import java.util.List;
@@ -47,7 +48,7 @@ import java.util.List;
 public class PreviewOverlay extends View
     implements PreviewStatusListener.PreviewAreaChangedListener {
 
-    private static final String TAG = "PreviewOverlay";
+    private static final Log.Tag TAG = new Log.Tag("PreviewOverlay");
 
     public static final int ZOOM_MIN_FACTOR = 100;
 
@@ -232,7 +233,7 @@ public class PreviewOverlay extends View
      * of any change in scale, and draw the zoom UI on screen.
      */
     private class ZoomProcessor implements ScaleGestureDetector.OnScaleGestureListener {
-        private static final String TAG = "ZoomProcessor";
+        private final Log.Tag TAG = new Log.Tag("ZoomProcessor");
 
         // Diameter of Zoom UI as fraction of maximum possible without clipping.
         private static final float ZOOM_UI_SIZE = 0.8f;

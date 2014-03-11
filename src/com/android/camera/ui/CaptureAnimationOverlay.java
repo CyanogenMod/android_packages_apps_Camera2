@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
@@ -36,7 +37,7 @@ import com.android.camera2.R;
  */
 public class CaptureAnimationOverlay extends View
     implements PreviewStatusListener.PreviewAreaChangedListener {
-    private final static String TAG = "CaptureAnimationOverlay";
+    private final static Log.Tag TAG = new Log.Tag("CaptureAnimOverlay");
 
     private final static int FLASH_ANIMATION_DURATION_MS = 350;
     private final static int FLASH_CIRCLE_SHRINK_DURATION_MS = 200;

@@ -18,7 +18,8 @@ package com.android.camera;
 
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -33,7 +34,7 @@ public class SurfaceTextureRenderer {
         public void onDrawFrame(GL10 gl);
     }
 
-    private static final String TAG = "SurfaceTextureRenderer";
+    private static final Log.Tag TAG = new Log.Tag("SurfTexRenderer");
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private EGLConfig mEglConfig;

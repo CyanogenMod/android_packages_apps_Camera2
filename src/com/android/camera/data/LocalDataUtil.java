@@ -21,9 +21,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
 
-import com.android.camera.session.PlaceholderManager;
+import com.android.camera.debug.Log;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +36,7 @@ import javax.microedition.khronos.opengles.GL11;
  */
 public class LocalDataUtil {
 
-    private static final String TAG = "LocalDataUtil";
+    private static final Log.Tag TAG = new Log.Tag("LocalDataUtil");
 
     /**
      * @param mimeType The MIME type to check.

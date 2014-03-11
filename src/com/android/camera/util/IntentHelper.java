@@ -21,11 +21,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 import java.util.List;
 
 public class IntentHelper {
+    private static final Log.Tag TAG = new Log.Tag("IntentHelper");
 
     public static Intent getDefaultGalleryIntent(Context context) {
         PackageManager pm = context.getPackageManager();
@@ -46,7 +48,7 @@ public class IntentHelper {
                     firstPackage.activityInfo.name);
         }
         for (ResolveInfo info : resolveInfos) {
-            Log.v("intent helper", info.resolvePackageName + ':' + info.activityInfo.packageName +
+            Log.v(TAG, info.resolvePackageName + ':' + info.activityInfo.packageName +
                     ":" + info.activityInfo.name + ',' + info.activityInfo.enabled);
         }
         return intent;

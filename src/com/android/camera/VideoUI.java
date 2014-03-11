@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Parameters;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,17 +28,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.camera.debug.Log;
 import com.android.camera.ui.FocusOverlay;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
-import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.List;
 
 public class VideoUI implements PreviewStatusListener {
-    private static final String TAG = "VideoUI";
+    private static final Log.Tag TAG = new Log.Tag("VideoUI");
 
     private final static float UNSET = 0f;
     private final PreviewOverlay mPreviewOverlay;

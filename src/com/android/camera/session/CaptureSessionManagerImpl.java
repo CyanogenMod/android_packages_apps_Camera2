@@ -23,11 +23,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.data.LocalData;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.FileUtil;
 
@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
-    private static final String TAG = "CaptureSessionManagerImpl";
+    private static final Log.Tag TAG = new Log.Tag("CaptureSessMgrImpl");
     public static final String TEMP_SESSIONS = "TEMP_SESSIONS";
 
     private class CaptureSessionImpl implements CaptureSession {

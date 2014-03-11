@@ -16,7 +16,7 @@
 
 package com.android.camera.exif;
 
-import android.util.Log;
+import com.android.camera.debug.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +68,7 @@ import java.util.TreeMap;
  */
 class ExifParser {
     private static final boolean LOGV = false;
-    private static final String TAG = "ExifParser";
+    private static final Log.Tag TAG = new Log.Tag("ExifParser");
     /**
      * When the parser reaches a new IFD area. Call {@link #getCurrentIfd()} to
      * know which IFD we are in.

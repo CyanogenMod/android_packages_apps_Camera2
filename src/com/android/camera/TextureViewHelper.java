@@ -19,11 +19,11 @@ package com.android.camera;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 
+import com.android.camera.debug.Log;
 import com.android.camera.ui.PreviewStatusListener;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.List;
 public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         OnLayoutChangeListener {
 
-    private static final String TAG = "TextureViewHelper";
+    private static final Log.Tag TAG = new Log.Tag("TexViewHelper");
     private static final float UNSET = 0f;
     private TextureView mPreview;
     private int mWidth = 0;

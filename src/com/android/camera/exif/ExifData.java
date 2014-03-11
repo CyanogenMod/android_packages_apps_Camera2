@@ -16,7 +16,7 @@
 
 package com.android.camera.exif;
 
-import android.util.Log;
+import com.android.camera.debug.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
@@ -32,7 +32,7 @@ import java.util.List;
  * @see IfdData
  */
 class ExifData {
-    private static final String TAG = "ExifData";
+    private static final Log.Tag TAG = new Log.Tag("ExifData");
     private static final byte[] USER_COMMENT_ASCII = {
             0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00
     };

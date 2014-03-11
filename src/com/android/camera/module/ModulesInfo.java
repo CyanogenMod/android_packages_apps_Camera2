@@ -22,6 +22,7 @@ import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
 import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
+import com.android.camera.debug.Log;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
@@ -32,7 +33,7 @@ import com.android.camera2.R;
  * {@link com.android.camera.app.ModuleManager}.
  */
 public class ModulesInfo {
-    private static final String TAG = "ModulesInfo";
+    private static final Log.Tag TAG = new Log.Tag("ModulesInfo");
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);

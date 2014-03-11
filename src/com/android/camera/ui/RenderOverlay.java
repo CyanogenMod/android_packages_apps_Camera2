@@ -24,13 +24,14 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.PreviewGestures;
+import com.android.camera.debug.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RenderOverlay extends FrameLayout {
 
-    private static final String TAG = "RenderOverlay";
+    private static final Log.Tag TAG = new Log.Tag("RenderOverlay");
     private PreviewGestures.SingleTapListener mTapListener;
 
     interface Renderer {

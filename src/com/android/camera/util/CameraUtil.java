@@ -42,7 +42,6 @@ import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -55,6 +54,7 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
 
@@ -71,7 +71,7 @@ import java.util.StringTokenizer;
  * Collection of utility functions used in this package.
  */
 public class CameraUtil {
-    private static final String TAG = "Util";
+    private static final Log.Tag TAG = new Log.Tag("Util");
 
     // For calculate the best fps range for still image capture.
     private final static int MAX_PREVIEW_FPS_TIMES_1000 = 400000;

@@ -23,9 +23,9 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore.Video;
-import android.util.Log;
 
 import com.android.camera.app.MediaSaver;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 
 import java.io.File;
@@ -34,7 +34,7 @@ import java.io.File;
  * A class implementing {@link com.android.camera.app.MediaSaver}.
  */
 public class MediaSaverImpl implements MediaSaver {
-    private static final String TAG = "MediaSaverImpl";
+    private static final Log.Tag TAG = new Log.Tag("MediaSaverImpl");
     private static final String VIDEO_BASE_URI = "content://media/external/video/media";
 
     /** The memory limit for unsaved image is 20MB. */

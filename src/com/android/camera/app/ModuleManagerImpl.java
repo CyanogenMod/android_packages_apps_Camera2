@@ -19,6 +19,7 @@ package com.android.camera.app;
 import android.content.Context;
 import android.util.SparseArray;
 
+import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera2.R;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * A class which implements {@link com.android.camera.app.ModuleManager}.
  */
 public class ModuleManagerImpl implements ModuleManager {
-    private static final String TAG = "ModuleManagerImpl";
+    private static final Log.Tag TAG = new Log.Tag("ModuleManagerImpl");
 
     private final SparseArray<ModuleAgent> mRegisteredModuleAgents = new
             SparseArray<ModuleAgent>(2);

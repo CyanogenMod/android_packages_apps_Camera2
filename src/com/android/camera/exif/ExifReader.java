@@ -16,7 +16,7 @@
 
 package com.android.camera.exif;
 
-import android.util.Log;
+import com.android.camera.debug.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ import java.io.InputStream;
  * {@link ExifData}.
  */
 class ExifReader {
-    private static final String TAG = "ExifReader";
+    private static final Log.Tag TAG = new Log.Tag("ExifReader");
 
     private final ExifInterface mInterface;
 

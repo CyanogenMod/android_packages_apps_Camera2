@@ -19,7 +19,6 @@ package com.android.camera.app;
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.hardware.Camera.ErrorCallback;
 import android.hardware.Camera.OnZoomChangeListener;
 import android.hardware.Camera.Parameters;
 import android.os.Build;
@@ -49,6 +48,14 @@ public interface CameraManager {
      */
     public interface CameraExceptionCallback {
         public void onCameraException(RuntimeException e);
+    }
+
+    /**
+     * An interface which wraps
+     * {@link android.hardware.Camera.ErrorCallback}
+     */
+    public interface CameraErrorCallback {
+        public void onError(int error, CameraProxy camera);
     }
 
     /**
@@ -374,10 +381,11 @@ public interface CameraManager {
         /**
          * Registers an error callback.
          *
+         * @param handler  The handler on which the callback will be invoked.
          * @param cb The error callback.
          * @see android.hardware.Camera#setErrorCallback(android.hardware.Camera.ErrorCallback)
          */
-        public void setErrorCallback(ErrorCallback cb);
+        public void setErrorCallback(Handler handler, CameraErrorCallback cb);
 
         /**
          * Sets the camera parameters.

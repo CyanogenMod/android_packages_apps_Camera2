@@ -21,11 +21,13 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
+import com.android.camera.debug.Log;
+
 // This class aggregates two gesture detectors: GestureDetector,
 // ScaleGestureDetector.
 public class FilmstripGestureRecognizer {
     @SuppressWarnings("unused")
-    private static final String TAG = "FilmStripGestureRecognizer";
+    private static final Log.Tag TAG = new Log.Tag("FStripGestureRecog");
 
     public interface Listener {
         boolean onSingleTapUp(float x, float y);

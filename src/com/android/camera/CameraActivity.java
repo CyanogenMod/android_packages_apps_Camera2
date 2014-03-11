@@ -54,7 +54,6 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.CameraPerformanceTracker;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -93,6 +92,7 @@ import com.android.camera.data.MediaDetails;
 import com.android.camera.data.PanoramaMetadataLoader;
 import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.hardware.HardwareSpec;
@@ -142,7 +142,7 @@ public class CameraActivity extends Activity
         ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
-    private static final String TAG = "CameraActivity";
+    private static final Log.Tag TAG = new Log.Tag("CameraActivity");
 
     private static final String INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE =
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";
@@ -909,7 +909,8 @@ public class CameraActivity extends Activity
                         mCurrentModule.onPreviewInitialDataReceived();
                         mCameraAppUI.onNewPreviewFrame();
                     }
-                });
+                }
+        );
     }
 
     @Override
@@ -1049,7 +1050,7 @@ public class CameraActivity extends Activity
                 startPeekAnimation(newData);
             }
         } else {
-            android.util.Log.w(TAG, "Unknown new media with MIME type:" + mimeType + ", uri:" + uri);
+            Log.w(TAG, "Unknown new media with MIME type:" + mimeType + ", uri:" + uri);
         }
     }
 

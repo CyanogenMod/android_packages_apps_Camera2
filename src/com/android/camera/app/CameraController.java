@@ -19,10 +19,10 @@ package com.android.camera.app;
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.Handler;
-import android.util.Log;
 
 import com.android.camera.CameraDisabledException;
 import com.android.camera.app.CameraManager.CameraExceptionCallback;
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 
 /**
@@ -31,7 +31,7 @@ import com.android.camera.util.CameraUtil;
  * TODO: Make this class package private.
  */
 public class CameraController implements CameraManager.CameraOpenCallback, CameraProvider {
-    private static final String TAG = "CameraController";
+    private static final Log.Tag TAG = new Log.Tag("CameraController");
     private static final int EMPTY_REQUEST = -1;
     private final Context mContext;
     private CameraManager.CameraOpenCallback mCallbackReceiver;

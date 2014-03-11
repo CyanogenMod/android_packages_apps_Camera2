@@ -21,9 +21,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.provider.MediaStore.Images;
-import android.util.Log;
 
 import com.android.camera.data.LocalMediaData.PhotoData;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera2.R;
@@ -37,7 +37,7 @@ import java.io.IOException;
  * data from jpeg file. Note that only {@link PhotoData}  can be rotated.
  */
 public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
-    private static final String TAG = "RotationTask";
+    private static final Log.Tag TAG = new Log.Tag("RotationTask");
     private final Context mContext;
     private final LocalDataAdapter mAdapter;
     private final int mCurrentDataId;

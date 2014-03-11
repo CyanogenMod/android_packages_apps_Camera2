@@ -27,15 +27,15 @@ import android.hardware.Camera.Face;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 public class FaceView extends View
     implements FocusIndicator, Rotatable, PreviewStatusListener.PreviewAreaChangedListener {
-    private static final String TAG = "CAM FaceView";
+    private static final Log.Tag TAG = new Log.Tag("FaceView");
     private final boolean LOGV = false;
     // The value for android.hardware.Camera.setDisplayOrientation.
     private int mDisplayOrientation;
@@ -90,7 +90,9 @@ public class FaceView extends View
     }
 
     public void setFaces(Face[] faces) {
-        if (LOGV) Log.v(TAG, "Num of faces=" + faces.length);
+        if (LOGV) {
+            Log.v(TAG, "Num of faces=" + faces.length);
+        }
         if (mPause) return;
         if (mFaces != null) {
             if ((faces.length > 0 && mFaces.length == 0)
@@ -113,7 +115,9 @@ public class FaceView extends View
 
     public void setDisplayOrientation(int orientation) {
         mDisplayOrientation = orientation;
-        if (LOGV) Log.v(TAG, "mDisplayOrientation=" + orientation);
+        if (LOGV) {
+            Log.v(TAG, "mDisplayOrientation=" + orientation);
+        }
     }
 
     @Override
@@ -124,7 +128,9 @@ public class FaceView extends View
 
     public void setMirror(boolean mirror) {
         mMirror = mirror;
-        if (LOGV) Log.v(TAG, "mMirror=" + mirror);
+        if (LOGV) {
+            Log.v(TAG, "mMirror=" + mirror);
+        }
     }
 
     public boolean faceExists() {
@@ -197,9 +203,13 @@ public class FaceView extends View
 
                 // Transform the coordinates.
                 mRect.set(mFaces[i].rect);
-                if (LOGV) CameraUtil.dumpRect(mRect, "Original rect");
+                if (LOGV) {
+                    CameraUtil.dumpRect(mRect, "Original rect");
+                }
                 mMatrix.mapRect(mRect);
-                if (LOGV) CameraUtil.dumpRect(mRect, "Transformed rect");
+                if (LOGV) {
+                    CameraUtil.dumpRect(mRect, "Transformed rect");
+                }
                 mPaint.setColor(mColor);
                 mRect.offset(mPreviewArea.left, mPreviewArea.top);
                 canvas.drawOval(mRect, mPaint);

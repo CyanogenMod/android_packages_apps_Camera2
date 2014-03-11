@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.android.camera.Storage;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
 
@@ -33,7 +34,7 @@ import com.android.camera.util.CameraUtil;
  * output media item is being produced.
  */
 public class PlaceholderManager {
-    private static final String TAG = "PlaceholderManager";
+    private static final Log.Tag TAG = new Log.Tag("PlaceholderMgr");
 
     private final Context mContext;
 

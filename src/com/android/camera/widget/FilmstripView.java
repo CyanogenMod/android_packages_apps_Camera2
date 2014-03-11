@@ -30,7 +30,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +37,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.ImageData;
@@ -49,7 +49,7 @@ import com.android.camera2.R;
 import java.util.Arrays;
 
 public class FilmstripView extends ViewGroup {
-    private static final String TAG = "FilmStripView";
+    private static final Log.Tag TAG = new Log.Tag("FilmstripView");
 
     private static final int BUFFER_SIZE = 5;
     private static final int GEOMETRY_ADJUST_TIME_MS = 400;

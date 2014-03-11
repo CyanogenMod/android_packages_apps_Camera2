@@ -28,7 +28,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +44,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.app.CameraApp;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.tinyplanet.TinyPlanetPreview.PreviewSizeListener;
 import com.android.camera.util.XmpUtil;
@@ -83,7 +83,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
             "CroppedAreaTopPixels";
     public static final String GOOGLE_PANO_NAMESPACE = "http://ns.google.com/photos/1.0/panorama/";
 
-    private static final String TAG = "TinyPlanetActivity";
+    private static final Log.Tag TAG = new Log.Tag("TinyPlanetActivity");
     /** Delay between a value update and the renderer running. */
     private static final int RENDER_DELAY_MILLIS = 50;
     /** Filename prefix to prepend to the original name for the new file. */

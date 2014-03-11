@@ -16,9 +16,8 @@
 
 package com.android.camera.exif;
 
-import android.util.Log;
+import com.android.camera.debug.Log;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ExifModifier {
-    public static final String TAG = "ExifModifier";
+    public static final Log.Tag TAG = new Log.Tag("ExifModifier");
     public static final boolean DEBUG = false;
     private final ByteBuffer mByteBuffer;
     private final ExifData mTagToModified;

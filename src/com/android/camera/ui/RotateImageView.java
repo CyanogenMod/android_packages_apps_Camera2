@@ -29,13 +29,15 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.android.camera.debug.Log;
+
 /**
  * A @{code ImageView} which can rotate it's content.
  */
 public class RotateImageView extends TwoStateImageView implements Rotatable {
 
     @SuppressWarnings("unused")
-    private static final String TAG = "RotateImageView";
+    private static final Log.Tag TAG = new Log.Tag("RotateImageView");
 
     private static final int ANIMATION_SPEED = 270; // 270 deg/sec
 

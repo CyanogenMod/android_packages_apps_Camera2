@@ -26,8 +26,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
+import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
@@ -59,7 +59,7 @@ import java.util.List;
  *     to change metering area.
  */
 public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaChangedListener {
-    private static final String TAG = "FocusOverlayManager";
+    private static final Log.Tag TAG = new Log.Tag("FocusOverlayMgr");
 
     private static final int RESET_TOUCH_FOCUS = 0;
     private static final int RESET_TOUCH_FOCUS_DELAY = 4000;

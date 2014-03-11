@@ -28,9 +28,9 @@ import android.os.StatFs;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
-import android.util.Log;
 
 import com.android.camera.data.LocalData;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.ImageLoader;
@@ -53,7 +53,7 @@ public class Storage {
     public static final long UNKNOWN_SIZE = -3L;
     public static final long LOW_STORAGE_THRESHOLD_BYTES = 50000000;
     public static final String CAMERA_SESSION_SCHEME = "camera_session";
-    private static final String TAG = "Storage";
+    private static final Log.Tag TAG = new Log.Tag("Storage");
     private static final String GOOGLE_COM = "google.com";
     private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<Uri, Uri>();
     private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();

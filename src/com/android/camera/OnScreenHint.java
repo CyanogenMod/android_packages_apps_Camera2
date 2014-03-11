@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.android.camera.debug.Log;
 import com.android.camera2.R;
 
 /**
@@ -40,7 +41,7 @@ import com.android.camera2.R;
  * constructs everything you need and returns a new {@code OnScreenHint} object.
  */
 public class OnScreenHint {
-    static final String TAG = "OnScreenHint";
+    static final Log.Tag TAG = new Log.Tag("OnScreenHint");
 
     int mGravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
     int mX, mY;

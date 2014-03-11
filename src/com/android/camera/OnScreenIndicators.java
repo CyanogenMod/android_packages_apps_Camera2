@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 

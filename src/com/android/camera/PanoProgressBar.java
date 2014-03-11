@@ -23,9 +23,11 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import com.android.camera.debug.Log;
+
 class PanoProgressBar extends ImageView {
     @SuppressWarnings("unused")
-    private static final String TAG = "PanoProgressBar";
+    private static final Log.Tag TAG = new Log.Tag("PanoProgressBar");
     public static final int DIRECTION_NONE = 0;
     public static final int DIRECTION_LEFT = 1;
     public static final int DIRECTION_RIGHT = 2;

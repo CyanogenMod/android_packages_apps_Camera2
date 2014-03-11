@@ -20,9 +20,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 
 import java.util.UUID;
@@ -31,7 +31,7 @@ import java.util.UUID;
  * A LocalData that does nothing but only shows a view.
  */
 public class SimpleViewData implements LocalData {
-    private static final String TAG = "SimpleViewData";
+    private static final Log.Tag TAG = new Log.Tag("SimpleViewData");
     private static final String SIMPLE_VIEW_URI_SCHEME = "simple_view_data";
 
     private final int mWidth;

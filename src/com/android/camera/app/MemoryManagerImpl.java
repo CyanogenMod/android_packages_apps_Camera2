@@ -20,9 +20,9 @@ import android.app.ActivityManager;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.util.Log;
 
 import com.android.camera.app.MediaSaver.QueueListener;
+import com.android.camera.debug.Log;
 
 import java.util.LinkedList;
 
@@ -32,7 +32,7 @@ import java.util.LinkedList;
  * TODO: Add GCam signals.
  */
 public class MemoryManagerImpl implements MemoryManager, QueueListener, ComponentCallbacks2 {
-    private static final String TAG = "MemoryManagerImpl";
+    private static final Log.Tag TAG = new Log.Tag("MemoryManagerImpl");
 
     private static final int[] sCriticalStates = new int[] {
             ComponentCallbacks2.TRIM_MEMORY_COMPLETE,

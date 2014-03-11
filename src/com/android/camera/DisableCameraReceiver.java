@@ -22,13 +22,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera.CameraInfo;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 // We want to disable camera-related activities if there is no camera. This
 // receiver runs when BOOT_COMPLETED intent is received. After running once
 // this receiver will be disabled, so it will not run again.
 public class DisableCameraReceiver extends BroadcastReceiver {
-    private static final String TAG = "DisableCameraReceiver";
+    private static final Log.Tag TAG = new Log.Tag("DisableCamRcver");
     private static final boolean CHECK_BACK_CAMERA_ONLY = true;
     private static final String ACTIVITIES[] = {
         "com.android.camera.CameraLauncher",
