@@ -74,11 +74,6 @@ public interface ModuleController extends ShutterButton.OnShutterButtonListener 
     public void onPreviewVisibilityChanged(int visibility);
 
     /**
-     * Called when the first preview data is received.
-     */
-    public void onPreviewInitialDataReceived();
-
-    /**
      * Called when the framework layout orientation changed.
      *
      * @param isLandscape Whether the new orientation is landscape or portrait.

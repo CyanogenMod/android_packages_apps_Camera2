@@ -373,10 +373,10 @@ public class PhotoModule
         setCameraState(IDLE);
         startFaceDetection();
         locationFirstRun();
-    }
-
-    @Override
-    public void onPreviewInitialDataReceived() {
+        // TODO(teresako): Check with Camera team re: starting the Smart Camera here rather than
+        // in the onPreviewInitialDataReceived() function which is no longer being called in
+        // Denali. The original issue of the blue overlay not going away no longer seems to be
+        // an issue.  Related CL: https://googleplex-android-review.git.corp.google.com/#/c/428719/.
         startSmartCamera();
     }
 
