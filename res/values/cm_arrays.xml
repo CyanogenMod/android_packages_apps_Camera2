@@ -107,6 +107,9 @@
         <item>@string/camera_menu_slow_shutter_label</item>
     </string-array>
 
+    <!-- Automatic scene detection -->
+
+    <!-- String values of detected scenes -->
     <string-array name="camera_asd_values" translatable="false">
         <item>indoor</item>
         <item>landscape</item>
@@ -115,8 +118,10 @@
         <item>night</item>
         <item>portrait</item>
         <item>sports</item>
+        <item>normal</item>
     </string-array>
 
+    <!-- Corresponding icons -->
     <string-array name="camera_asd_icons" translatable="false">
         <item>@drawable/smart_scene_indoor</item>
         <item>@drawable/smart_scene_landscape</item>
@@ -125,6 +130,7 @@
         <item>@drawable/smart_scene_night</item>
         <item>@drawable/smart_scene_portrait</item>
         <item>@drawable/smart_scene_sports</item>
+        <item />
     </string-array>
 
     <string-array name="pref_camera_asd_labels" translatable="false">

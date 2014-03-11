@@ -60,6 +60,7 @@ import android.widget.TextView;
 
 import com.android.camera.CameraManager.CameraAFCallback;
 import com.android.camera.CameraManager.CameraAFMoveCallback;
+import com.android.camera.CameraManager.CameraMetadataCallback;
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.CameraManager.CameraShutterCallback;
@@ -85,6 +86,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
+
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -134,6 +136,7 @@ public class PhotoModule
     private static final int SWITCH_TO_GCAM_MODULE = 13;
     private static final int CONFIGURE_SKIN_TONE_FACTOR = 14;
     private static final int UPDATE_ASD_ICON = 16;
+    private static final int CLEAR_ASD_ICON = 17;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -268,6 +271,8 @@ public class PhotoModule
     private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
     private final StatsCallback mStatsCallback = new StatsCallback();
 
+    private final ASDMetadataCallback mASDCallback = new ASDMetadataCallback();
+
     private long mFocusStartTime;
     private long mShutterCallbackTime;
     private long mPostViewPictureCallbackTime;
@@ -300,6 +305,7 @@ public class PhotoModule
     private boolean mQuickCapture;
 
     private boolean mSceneDetection = false;
+    private String[] mASDModes;
 
     private SensorManager mSensorManager;
     private float[] mGData = new float[3];
@@ -461,6 +467,10 @@ public class PhotoModule
                     mHandler.sendEmptyMessageDelayed(UPDATE_ASD_ICON, 2000);
                     break;
                 }
+                case CLEAR_ASD_ICON: {
+                    mUI.updateSceneDetectionIcon(null);
+                    break;
+                }
             }
         }
     }
@@ -507,6 +517,7 @@ public class PhotoModule
         RightValue = (TextView)mRootView.findViewById(R.id.skintoneright);
         LeftValue = (TextView)mRootView.findViewById(R.id.skintoneleft);
 
+        mASDModes = mActivity.getResources().getStringArray(R.array.asdModes);
     }
 
     private void initializeControlByIntent() {
@@ -803,6 +814,28 @@ public class PhotoModule
         }
     }
 
+    private final class ASDMetadataCallback implements CameraMetadataCallback {
+        @Override
+        public void onCameraMetadata(byte[] data, CameraProxy camera) {
+            if (!mSceneDetection)
+                return;
+
+            if (data != null && data.length >= 8) {
+                int type = CameraUtil.byteArrayToInt(data, 0);
+                switch (type) {
+                    case CameraSettings.META_DATA_ASD:
+                        // ASD result is just a 32-bit integer
+                        if (data.length >= 12) {
+                            int asdMode = CameraUtil.byteArrayToInt(data, 8);
+                            if (asdMode < mASDModes.length) {
+                                Log.d(TAG, "ASD: value=" + asdMode + " asdMode=" + mASDModes[asdMode]);
+                                mUI.updateSceneDetectionIcon(mASDModes[asdMode]);
+                            }
+                        }
+                }
+            }
+        }
+    }
     private final class LongshotShutterCallback
             implements CameraShutterCallback {
 
@@ -1407,7 +1440,9 @@ public class PhotoModule
     }
 
     private void updateSceneMode() {
-        updateSceneDetection();
+        if (CameraUtil.isAutoSceneDetectionSupported(mParameters)) {
+            updateSceneDetection();
+        }
         // If scene mode or slow shutter is set, for flash mode, white balance and focus mode
         // read settings from preferences so we retain user preferences.
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode) ||
@@ -2142,6 +2177,13 @@ public class PhotoModule
         // Let UI set its expected aspect ratio
         mCameraDevice.setPreviewTexture(st);
 
+        // Callback for automatic scene detection, if supported.
+        // Will run on UI thread
+        if (CameraUtil.isAutoSceneDetectionSupported(mParameters) &&
+                !CameraUtil.useTimerForSceneDetection(mParameters)) {
+            mCameraDevice.setMetadataCallback(mHandler, mASDCallback);
+        }
+
         Log.v(TAG, "startPreview");
         mCameraDevice.startPreview();
         mFocusManager.onPreviewStarted();
@@ -2781,9 +2823,13 @@ public class PhotoModule
     private void updateSceneDetection() {
         mSceneDetection = "on".equals(mPreferences.getString(CameraSettings.KEY_ASD, "off"));
 
+        boolean useTimer = CameraUtil.useTimerForSceneDetection(mParameters);
+
         Log.d(TAG, "updateSceneDetection : " + mSceneDetection);
-        if (mSceneDetection) {
+        if (mSceneDetection && useTimer) {
             mHandler.sendEmptyMessage(UPDATE_ASD_ICON);
+        } else if (!mSceneDetection && !useTimer) {
+            mHandler.sendEmptyMessage(CLEAR_ASD_ICON);
         }
     }
 

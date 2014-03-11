@@ -34,4 +34,11 @@
     <bool name="needsSamsungCamMode">false</bool>
     <!-- HTC Camcorder Mode -->
     <bool name="needsHTCCamMode">false</bool>
+
+    <!-- Ordered list of detected scene modes
+         This should reference the list in camera_asd_values and
+         will be sensor-specific. App will convert from
+         integer in metadata callback to array index. -->
+    <string-array name="asdModes">
+    </string-array>
 </resources>
