@@ -143,10 +143,11 @@ public class ModeListView extends FrameLayout
     private float mVelocityX; // Unit: pixel/ms.
     private final Animator.AnimatorListener mModeListAnimatorListener =
             new Animator.AnimatorListener() {
-        private boolean mCancelled = true;
+        private boolean mCancelled = false;
 
         @Override
         public void onAnimationStart(Animator animation) {
+            mCancelled = false;
             setVisibility(VISIBLE);
         }
 
@@ -154,7 +155,6 @@ public class ModeListView extends FrameLayout
         public void onAnimationEnd(Animator animation) {
             mAnimatorSet = null;
             if (mCancelled) {
-                mCancelled = false;
                 return;
             }
             if (mState == ACCORDION_ANIMATION || mState == FULLY_HIDDEN) {
