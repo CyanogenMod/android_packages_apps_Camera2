@@ -334,4 +334,8 @@
     <string name="setting_send_feedback" msgid="1327616762665878557">"Enviar comentarios"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Procesando HDR+…"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Licencias de código abierto"</string>
+    <string name="pref_category_general" msgid="6737748849700581019">"Configuración general"</string>
+    <string name="pref_category_resolution" msgid="2555229705716866570">"Resolución"</string>
+    <string name="pref_category_about" msgid="1966255405679342337">"Información"</string>
+    <string name="pref_title_build_version" msgid="481489988124832651">"Versión de la compilación"</string>
 </resources>
