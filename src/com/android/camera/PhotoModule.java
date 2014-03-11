@@ -45,6 +45,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
