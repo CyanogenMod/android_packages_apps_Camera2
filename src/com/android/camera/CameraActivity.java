@@ -1461,6 +1461,10 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
         mPanoramaViewHelper.onStart();
+        if (mResetToPreviewOnResume) {
+            mCameraAppUI.resume();
+            mResetToPreviewOnResume = false;
+        }
     }
 
     @Override
