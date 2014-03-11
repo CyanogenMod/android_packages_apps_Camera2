@@ -491,6 +491,8 @@
 
     <!-- The shutter button. [CHAR LIMIT=NONE] -->
     <string name="accessibility_shutter_button">Shutter</string>
+    <!-- The cancel button. Used to cancel an in progress shot [CHAR LIMIT=NONE] -->
+    <string name="accessibility_cancel_button">Cancel</string>
     <!-- The menu button. [CHAR LIMIT=NONE] -->
     <string name="accessibility_menu_button">Menu button</string>
     <!-- The mode picker to switch between camera, video and panorama. [CHAR LIMIT=NONE] -->

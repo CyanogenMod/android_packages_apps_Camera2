@@ -1466,6 +1466,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
+     * Displays the Cancel button instead of the capture button.
+     */
+    public void transitionToCancel() {
+        ModuleController moduleController = mController.getCurrentModuleController();
+        applyModuleSpecs(moduleController.getHardwareSpec(),
+                moduleController.getBottomBarSpec());
+        mBottomBar.transitionToCancel();
+    }
+
+    /**
      * Performs a transition to the global intent layout.
      */
     public void transitionToIntentCaptureLayout() {
