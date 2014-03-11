@@ -1429,6 +1429,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.animateToFullSize(shutterIconId);
     }
 
+    public void setCaptureButtonEnabled(boolean enabled) {
+        mBottomBar.setCaptureButtonEnabled(enabled);
+    }
+
     /**
      * Set the visibility of the bottom bar.
      */
