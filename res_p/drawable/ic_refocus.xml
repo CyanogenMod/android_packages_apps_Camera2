@@ -19,11 +19,11 @@
     <item android:state_enabled="false">
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_capture_camera_disabled" />
+            android:src="@drawable/ic_refocus_disabled" />
     </item>
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_camera_normal" />
+            android:src="@drawable/ic_refocus_normal" />
     </item>
 </selector>
