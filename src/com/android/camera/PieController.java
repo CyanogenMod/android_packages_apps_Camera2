@@ -73,6 +73,8 @@ public class PieController {
         mPreferenceMap.clear();
         mListPreferenceMap.clear();
         setPreferenceGroup(group);
+        mPreferences.clear();
+        mOverrides.clear();
     }
 
     public void onSettingChanged(ListPreference pref) {
