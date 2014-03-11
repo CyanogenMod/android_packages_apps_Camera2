@@ -400,6 +400,10 @@ public class BottomBar extends FrameLayout
         setPaintColor(mBackgroundAlpha, mBackgroundColor);
     }
 
+    public void setCaptureButtonEnabled(boolean enabled) {
+        mShutterButton.setEnabled(enabled);
+    }
+
     private double diagonalLength(double w, double h) {
         return Math.sqrt((w*w) + (h*h));
     }

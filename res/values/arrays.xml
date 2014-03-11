@@ -631,13 +631,13 @@
     </array>
 
     <array name="camera_mode_shutter_icon">
-        <item>@drawable/ic_camera_normal</item>
-        <item>@drawable/ic_video_normal</item>
-        <item>@drawable/ic_refocus_normal</item>
+        <item>@drawable/ic_camera</item>
+        <item>@drawable/ic_video</item>
+        <item>@drawable/ic_refocus</item>
         <item>@null</item>
-        <item>@drawable/ic_panorama_normal</item>
+        <item>@drawable/ic_panorama</item>
         <item>@null</item>
-        <item>@drawable/ic_camera_normal</item>
+        <item>@drawable/ic_camera</item>
     </array>
 
 </resources>
