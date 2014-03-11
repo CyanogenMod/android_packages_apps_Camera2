@@ -27,9 +27,9 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 
@@ -41,7 +41,7 @@ import java.util.List;
 
 public final class ImageLoader {
 
-    private static final String TAG = "ImageLoader";
+    private static final Log.Tag TAG = new Log.Tag("ImageLoader");
 
     public static final String JPEG_MIME_TYPE = "image/jpeg";
     public static final int DEFAULT_COMPRESS_QUALITY = 95;

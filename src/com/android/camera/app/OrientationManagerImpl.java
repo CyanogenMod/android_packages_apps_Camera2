@@ -23,10 +23,10 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
+import com.android.camera.debug.Log;
 import com.android.camera.util.ApiHelper;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.List;
  * TODO: make this class package-private
  */
 public class OrientationManagerImpl implements OrientationManager {
-    private static final String TAG = "OrientationManagerImpl";
+    private static final Log.Tag TAG = new Log.Tag("OrientMgrImpl");
 
     // Orientation hysteresis amount used in rounding, in degrees
     private static final int ORIENTATION_HYSTERESIS = 5;

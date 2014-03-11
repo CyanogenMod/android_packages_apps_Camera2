@@ -16,14 +16,13 @@
 
 package com.android.camera;
 
-import android.util.Log;
-
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 
 import java.io.IOException;
 
 public class Exif {
-    private static final String TAG = "CameraExif";
+    private static final Log.Tag TAG = new Log.Tag("CameraExif");
 
     public static ExifInterface getExif(byte[] jpegData) {
         ExifInterface exif = new ExifInterface();

@@ -19,14 +19,15 @@ package com.android.camera.app;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 /**
  * A class that handles legacy (network, gps) location providers, in the event
  * the fused location provider from Google Play Services is unavailable.
  */
 public class LegacyLocationProvider implements LocationProvider {
-    private static final String TAG = "LegacyLocationProvider";
+    private static final Log.Tag TAG = new Log.Tag("LcyLocProvider");
 
     private Context mContext;
     private android.location.LocationManager mLocationManager;

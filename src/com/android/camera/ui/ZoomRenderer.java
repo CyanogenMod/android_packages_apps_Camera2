@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.ScaleGestureDetector;
 
+import com.android.camera.debug.Log;
 import com.android.camera2.R;
 
 // TODO: remove this; functionality has been moved to PreviewOverlay.
@@ -30,7 +31,7 @@ import com.android.camera2.R;
 public class ZoomRenderer extends OverlayRenderer
         implements ScaleGestureDetector.OnScaleGestureListener {
 
-    private static final String TAG = "ZoomRenderer";
+    private static final Log.Tag TAG = new Log.Tag("ZoomRenderer");
 
     final private int mMinIndex = 0;
     private int mMaxIndex;

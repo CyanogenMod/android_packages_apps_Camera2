@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 
 /* RotatableLayout rotates itself as well as all its children when orientation
@@ -37,7 +38,7 @@ import com.android.camera.util.CameraUtil;
 
 public class RotatableLayout extends FrameLayout {
 
-    private static final String TAG = "RotatableLayout";
+    private static final Log.Tag TAG = new Log.Tag("RotatableLayout");
     private static final int UNKOWN_ORIENTATION = -1;
     // Initial orientation of the layout (ORIENTATION_PORTRAIT, or ORIENTATION_LANDSCAPE)
     private int mInitialOrientation;

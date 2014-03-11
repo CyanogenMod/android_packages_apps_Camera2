@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.ZoomRenderer;
@@ -32,7 +33,7 @@ import com.android.camera.ui.ZoomRenderer;
 public class PreviewGestures
         implements ScaleGestureDetector.OnScaleGestureListener {
 
-    private static final String TAG = "PreviewGestures";
+    private static final Log.Tag TAG = new Log.Tag("PreviewGestures");
 
     private static final int MODE_NONE = 0;
     private static final int MODE_ZOOM = 2;

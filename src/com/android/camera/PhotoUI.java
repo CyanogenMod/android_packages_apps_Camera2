@@ -23,7 +23,6 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +30,7 @@ import android.view.ViewGroup;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.app.CameraManager;
+import com.android.camera.debug.Log;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -42,7 +42,7 @@ import java.util.List;
 public class PhotoUI implements PreviewStatusListener,
     CameraManager.CameraFaceDetectionCallback {
 
-    private static final String TAG = "PhotoUI";
+    private static final Log.Tag TAG = new Log.Tag("PhotoUI");
     private static final int DOWN_SAMPLE_FACTOR = 4;
     private static final float UNSET = 0f;
 

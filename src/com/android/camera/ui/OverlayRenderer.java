@@ -20,9 +20,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
+import com.android.camera.debug.Log;
+
 public abstract class OverlayRenderer implements RenderOverlay.Renderer {
 
-    private static final String TAG = "CAM OverlayRenderer";
+    private static final Log.Tag TAG = new Log.Tag("OverlayRenderer");
     protected RenderOverlay mOverlay;
 
     protected int mLeft, mTop, mRight, mBottom;

@@ -27,12 +27,13 @@ import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.android.camera.Storage;
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
@@ -116,8 +117,7 @@ public abstract class LocalMediaData implements LocalData {
                     result.add(data);
                 } else {
                     final int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-                    Log.e(TAG, "Error loading data:"
-                            + cursor.getString(dataIndex));
+                    Log.e(TAG, "Error loading data:" + cursor.getString(dataIndex));
                 }
             }
 
@@ -307,7 +307,7 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     public static final class PhotoData extends LocalMediaData {
-        private static final String TAG = "PhotoData";
+        private static final Log.Tag TAG = new Log.Tag("PhotoData");
 
         public static final int COL_ID = 0;
         public static final int COL_TITLE = 1;

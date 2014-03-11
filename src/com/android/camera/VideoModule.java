@@ -46,7 +46,6 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -62,6 +61,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
@@ -90,7 +90,7 @@ public class VideoModule extends CameraModule
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener, FocusOverlayManager.Listener {
 
-    private static final String TAG = "VideoModule";
+    private static final Log.Tag TAG = new Log.Tag("VideoModule");
 
     // Messages defined for the UI thread handler.
     private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
@@ -847,7 +847,7 @@ public class VideoModule extends CameraModule
             return;
         }
 
-        mCameraDevice.setErrorCallback(mErrorCallback);
+        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
         if (mPreviewing == true) {
             stopPreview();
         }
@@ -916,7 +916,7 @@ public class VideoModule extends CameraModule
             return;
         }
         mCameraDevice.setZoomChangeListener(null);
-        mCameraDevice.setErrorCallback(null);
+        mCameraDevice.setErrorCallback(null, null);
         mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
         mCameraDevice = null;
         mPreviewing = false;

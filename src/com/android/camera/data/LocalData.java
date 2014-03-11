@@ -21,6 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 
 import java.util.Comparator;
@@ -33,7 +34,7 @@ import java.util.Comparator;
  * can guarantee thread safety for LocalData.
  */
 public interface LocalData extends ImageData {
-    static final String TAG = "LocalData";
+    static final Log.Tag TAG = new Log.Tag("LocalData");
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";
 

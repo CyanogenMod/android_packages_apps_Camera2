@@ -34,10 +34,9 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.android.camera.app.CameraManager.CameraExceptionCallback;
+import com.android.camera.debug.Log;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -47,7 +46,7 @@ import java.util.Queue;
  * A class to implement {@link CameraManager} of the Android camera framework.
  */
 class AndroidCameraManagerImpl implements CameraManager {
-    private static final String TAG = "AndroidCameraManagerImpl";
+    private static final Log.Tag TAG = new Log.Tag("AndroidCamMgrImpl");
     private static final long CAMERA_OPERATION_TIMEOUT_MS = 2500;
     private static final long MAX_MESSAGE_QUEUE_LENGTH = 256;
 
@@ -687,7 +686,7 @@ class AndroidCameraManagerImpl implements CameraManager {
      * A class which implements {@link CameraManager.CameraProxy} and
      * camera handler thread.
      */
-    public class AndroidCameraProxyImpl implements CameraManager.CameraProxy {
+    private class AndroidCameraProxyImpl implements CameraManager.CameraProxy {
         private final int mCameraId;
         /* TODO: remove this Camera instance. */
         private final Camera mCamera;
@@ -1029,11 +1028,13 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
-        public void setErrorCallback(final ErrorCallback cb) {
+        public void setErrorCallback(final Handler handler, final CameraErrorCallback cb) {
             mDispatchThread.runJob(new Runnable() {
                 @Override
                 public void run() {
-                    mCameraHandler.obtainMessage(SET_ERROR_CALLBACK, cb).sendToTarget();
+                    mCameraHandler.obtainMessage(SET_ERROR_CALLBACK, ErrorCallbackForward
+                                    .getNewInstance(handler, AndroidCameraProxyImpl.this, cb)
+                    ).sendToTarget();
                 }
             });
         }
@@ -1143,6 +1144,47 @@ class AndroidCameraManagerImpl implements CameraManager {
                 @Override
                 public void run() {
                     mCallback.onAutoFocus(b, mCamera);
+                }
+            });
+        }
+    }
+
+    /**
+     * A helper class to forward ErrorCallback to another thread.
+     */
+    private static class ErrorCallbackForward implements Camera.ErrorCallback {
+        private final Handler mHandler;
+        private final CameraProxy mCamera;
+        private final CameraErrorCallback mCallback;
+
+        /**
+         * Returns a new instance of {@link AFCallbackForward}.
+         *
+         * @param handler The handler in which the callback will be invoked in.
+         * @param camera  The {@link CameraProxy} which the callback is from.
+         * @param cb      The callback to be invoked.
+         * @return        The instance of the {@link AFCallbackForward},
+         *                or null if any parameter is null.
+         */
+        public static ErrorCallbackForward getNewInstance(
+                Handler handler, CameraProxy camera, CameraErrorCallback cb) {
+            if (handler == null || camera == null || cb == null) return null;
+            return new ErrorCallbackForward(handler, camera, cb);
+        }
+
+        private ErrorCallbackForward(
+                Handler h, CameraProxy camera, CameraErrorCallback cb) {
+            mHandler = h;
+            mCamera = camera;
+            mCallback = cb;
+        }
+
+        @Override
+        public void onError(final int error, Camera camera) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onError(error, mCamera);
                 }
             });
         }

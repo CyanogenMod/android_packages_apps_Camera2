@@ -34,6 +34,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.android.camera.ShutterButton;
+import com.android.camera.debug.Log;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
@@ -72,7 +73,7 @@ public class BottomBar extends FrameLayout
         public void fitAndAlignRightInRect(RectF rect);
     }
 
-    private static final String TAG = "BottomBar";
+    private static final Log.Tag TAG = new Log.Tag("BottomBar");
 
     private static final int CIRCLE_ANIM_DURATION_MS = 300;
 

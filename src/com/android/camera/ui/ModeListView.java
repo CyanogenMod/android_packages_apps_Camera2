@@ -31,7 +31,6 @@ import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -41,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.widget.AnimationEffects;
@@ -61,7 +61,7 @@ public class ModeListView extends FrameLayout
         implements PreviewStatusListener.PreviewAreaChangedListener,
         ModeSelectorItem.VisibleWidthChangedListener {
 
-    private static final String TAG = "ModeListView";
+    private static final Log.Tag TAG = new Log.Tag("ModeListView");
 
     // Animation Durations
     private static final int DEFAULT_DURATION_MS = 200;
@@ -1244,8 +1244,8 @@ public class ModeListView extends FrameLayout
         if (modeSelectorIndex < mTotalModes && modeSelectorIndex >= 0) {
             return mSupportedModes.get(modeSelectorIndex);
         }
-        Log.e(TAG, "Invalid mode selector index: " + modeSelectorIndex + ", total modes: "
-                + mTotalModes);
+        Log.e(TAG, "Invalid mode selector index: " + modeSelectorIndex + ", total modes: " +
+                mTotalModes);
         return getResources().getInteger(R.integer.camera_mode_photo);
     }
 

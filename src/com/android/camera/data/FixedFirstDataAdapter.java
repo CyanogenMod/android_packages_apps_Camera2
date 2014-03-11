@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.ImageData;
 
@@ -33,7 +34,7 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
         implements DataAdapter.Listener {
 
     @SuppressWarnings("unused")
-    private static final String TAG = "FixedFirstDataAdapter";
+    private static final Log.Tag TAG = new Log.Tag("FixedFirstDataAdpt");
 
     private LocalData mFirstData;
     private Listener mListener;

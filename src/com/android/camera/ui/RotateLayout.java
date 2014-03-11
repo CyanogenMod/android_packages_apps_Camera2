@@ -22,11 +22,13 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.camera.debug.Log;
+
 // A RotateLayout is designed to display a single item and provides the
 // capabilities to rotate the item.
 public class RotateLayout extends ViewGroup implements Rotatable {
     @SuppressWarnings("unused")
-    private static final String TAG = "RotateLayout";
+    private static final Log.Tag TAG = new Log.Tag("RotateLayout");
     private int mOrientation;
     private Matrix mMatrix = new Matrix();
     protected View mChild;

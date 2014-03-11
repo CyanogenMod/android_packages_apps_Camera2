@@ -30,9 +30,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.camera.ShutterButton;
+import com.android.camera.debug.Log;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
-
 import com.android.camera2.R;
 
 /**
@@ -45,7 +45,7 @@ public class ModeOptionsOverlay extends FrameLayout
                IndicatorIconController.OnIndicatorVisibilityChangedListener,
                ShutterButton.OnShutterButtonListener {
 
-    private final static String TAG = "ModeOptionsOverlay";
+    private final static Log.Tag TAG = new Log.Tag("ModeOptionsOverlay");
 
     private static final int BOTTOMBAR_OPTIONS_TIMEOUT_MS = 2000;
     private final static int BOTTOM_RIGHT = Gravity.BOTTOM | Gravity.RIGHT;

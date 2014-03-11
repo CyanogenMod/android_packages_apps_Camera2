@@ -20,12 +20,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.android.camera.ListPreference;
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
@@ -38,7 +38,7 @@ import java.util.List;
  * local SharedPreferences.
  */
 public class SettingsManager {
-    private static final String TAG = "SettingsManager";
+    private static final Log.Tag TAG = new Log.Tag("SettingsManager");
 
     private final Context mContext;
     private final SharedPreferences mDefaultSettings;

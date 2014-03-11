@@ -1,7 +1,8 @@
 package com.android.camera.widget;
 
-import android.util.Log;
 import android.widget.AbsListView;
+
+import com.android.camera.debug.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *           preloads.
  */
 public class Preloader<T, Y> implements AbsListView.OnScrollListener {
-    private static final String TAG = "Preloader";
+    private static final Log.Tag TAG = new Log.Tag("Preloader");
 
     /**
      * Implemented by the source for items that should be preloaded.
@@ -94,10 +95,8 @@ public class Preloader<T, Y> implements AbsListView.OnScrollListener {
             end = Math.min(first, mLastStart);
         }
 
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "preload first=" + first + " increasing=" + increasing + " start=" + start
-                    + " end=" + end);
-        }
+        Log.v(TAG, "preload first=" + first + " increasing=" + increasing + " start=" + start +
+                " end=" + end);
 
         mLastEnd = end;
         mLastStart = start;

@@ -19,18 +19,14 @@ package com.android.camera.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.android.camera.ButtonManager;
 import com.android.camera.app.AppController;
-import com.android.camera.module.ModulesInfo;
+import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.PhotoSphereHelper;
-
 import com.android.camera2.R;
 
 /**
@@ -44,7 +40,7 @@ public class IndicatorIconController
     implements SettingsManager.OnSettingChangedListener,
                ButtonManager.ButtonStatusListener {
 
-    private final static String TAG = "IndicatorIconController";
+    private final static Log.Tag TAG = new Log.Tag("IndicatorIconCtrlr");
 
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;

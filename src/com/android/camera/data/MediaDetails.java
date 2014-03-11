@@ -17,9 +17,9 @@
 package com.android.camera.data;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseIntArray;
 
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera2.R;
@@ -32,7 +32,7 @@ import java.util.TreeMap;
 
 public class MediaDetails implements Iterable<Entry<Integer, Object>> {
     @SuppressWarnings("unused")
-    private static final String TAG = "MediaDetails";
+    private static final Log.Tag TAG = new Log.Tag("MediaDetails");
 
     private TreeMap<Integer, Object> mDetails = new TreeMap<Integer, Object>();
     private SparseIntArray mUnits = new SparseIntArray();

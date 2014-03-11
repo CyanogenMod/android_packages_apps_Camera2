@@ -26,10 +26,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+
 import com.android.camera.data.LocalDataUtil;
+import com.android.camera.debug.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,7 +38,7 @@ import java.io.InputStream;
 
 public class ZoomView extends ImageView {
 
-    private static final String TAG = "ZoomView";
+    private static final Log.Tag TAG = new Log.Tag("ZoomView");
 
     private int mViewportWidth = 0;
     private int mViewportHeight = 0;

@@ -22,10 +22,10 @@ import android.media.AudioManager;
 import android.media.MediaActionSound;
 import android.media.SoundPool;
 import android.os.Build;
-import android.util.Log;
 
-import com.android.camera2.R;
+import com.android.camera.debug.Log;
 import com.android.camera.util.ApiHelper;
+import com.android.camera2.R;
 
 /*
  * This class controls the sound playback according to the API level.
@@ -62,7 +62,7 @@ public class SoundClips {
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static class MediaActionSoundPlayer implements Player {
-        private static final String TAG = "MediaActionSoundPlayer";
+        private static final Log.Tag TAG = new Log.Tag("MediaActSndPlayer");
         private MediaActionSound mSound;
 
         @Override
@@ -109,7 +109,7 @@ public class SoundClips {
     private static class SoundPoolPlayer implements
             Player, SoundPool.OnLoadCompleteListener {
 
-        private static final String TAG = "SoundPoolPlayer";
+        private static final Log.Tag TAG = new Log.Tag("SoundPoolPlayer");
         private static final int NUM_SOUND_STREAMS = 1;
         private static final int[] SOUND_RES = { // Soundtrack res IDs.
                 R.raw.focus_complete,

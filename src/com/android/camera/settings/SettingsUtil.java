@@ -22,10 +22,10 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.android.camera.app.CameraManager;
+import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.util.Callback;
 import com.android.camera2.R;
@@ -95,7 +95,7 @@ public class SettingsUtil {
         }
     }
 
-    private static final String TAG = "SettingsUtil";
+    private static final Log.Tag TAG = new Log.Tag("SettingsUtil");
 
     /** Enable debug output. */
     private static final boolean DEBUG = false;
@@ -140,8 +140,8 @@ public class SettingsUtil {
     public static void setCameraPictureSize(String sizeSetting, List<Size> supported,
             Parameters parameters, int cameraId) {
         Size selectedSize = getCameraPictureSize(sizeSetting, supported, cameraId);
-        Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.width + "x"
-                + selectedSize.height);
+        Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.width + "x" +
+                selectedSize.height);
         parameters.setPictureSize(selectedSize.width, selectedSize.height);
     }
 

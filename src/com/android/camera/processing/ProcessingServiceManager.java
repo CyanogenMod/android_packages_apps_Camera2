@@ -18,7 +18,8 @@ package com.android.camera.processing;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -31,7 +32,7 @@ import java.util.NoSuchElementException;
  * directly.
  */
 public class ProcessingServiceManager {
-    private static final String TAG = "ProcessingServiceManager";
+    private static final Log.Tag TAG = new Log.Tag("ProcessingSvcMgr");
 
     /** The singleton instance of this manager. */
     private static ProcessingServiceManager sInstance;

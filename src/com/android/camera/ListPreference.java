@@ -16,27 +16,26 @@
 
 package com.android.camera;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 
-import com.android.camera.settings.SettingsManager;
+import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A type of <code>CameraPreference</code> whose number of possible values
  * is limited.
  */
 public class ListPreference extends CameraPreference {
-    private static final String TAG = "ListPreference";
+    private static final Log.Tag TAG = new Log.Tag("ListPreference");
     private final String mKey;
     private String mValue;
     private final CharSequence[] mDefaultValues;

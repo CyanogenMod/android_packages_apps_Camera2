@@ -30,12 +30,12 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.debug.Log;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
@@ -44,7 +44,7 @@ import com.android.camera2.R;
  * It should only be visible during mode switch.
  */
 public class ModeTransitionView extends View {
-    private static final String TAG = "ModeTransitionView";
+    private static final Log.Tag TAG = new Log.Tag("ModeTransView");
 
     private static final int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
     private static final int ICON_FADE_OUT_DURATION_MS = 850;

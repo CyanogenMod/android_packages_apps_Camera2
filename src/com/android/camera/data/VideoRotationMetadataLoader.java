@@ -1,10 +1,11 @@
 package com.android.camera.data;
 
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 public class VideoRotationMetadataLoader {
-    private static final String TAG = "VideoRotationMetadataLoader";
+    private static final Log.Tag TAG = new Log.Tag("VidRotDataLoader");
     private static final String ROTATION_KEY = "metadata_video_rotation";
     private static final String WIDTH_KEY = "metadata_video_width";
     private static final String HEIGHT_KEY = "metadata_video_height";

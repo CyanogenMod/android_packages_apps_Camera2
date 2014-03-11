@@ -25,7 +25,6 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.util.CameraPerformanceTracker;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,6 +38,7 @@ import com.android.camera.AnimationManager;
 import com.android.camera.ButtonManager;
 import com.android.camera.ShutterButton;
 import com.android.camera.TextureViewHelper;
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
@@ -406,7 +406,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
 
-    private final static String TAG = "CameraAppUI";
+    private final static Log.Tag TAG = new Log.Tag("CameraAppUI");
 
     private final AppController mController;
     private final boolean mIsCaptureIntent;
@@ -698,7 +698,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * record a video.
      */
     public void setSwipeEnabled(boolean enabled) {
-        mAppRootView.setSwipeEnabled(enabled);
         mSwipeEnabled = enabled;
     }
 

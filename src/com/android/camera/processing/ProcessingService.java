@@ -28,10 +28,10 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraServices;
+import com.android.camera.debug.Log;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSession.ProgressListener;
 import com.android.camera.session.CaptureSessionManager;
@@ -70,7 +70,7 @@ public class ProcessingService extends Service implements ProgressListener {
         }
     }
 
-    private static final String TAG = "ProcessingService";
+    private static final Log.Tag TAG = new Log.Tag("ProcessingService");
     private static final int THREAD_PRIORITY = Process.THREAD_PRIORITY_DISPLAY;
     private static final int CAMERA_NOTIFICATION_ID = 2;
     private Notification.Builder mNotificationBuilder;
@@ -106,7 +106,7 @@ public class ProcessingService extends Service implements ProgressListener {
         // Keep CPU awake while allowing screen and keyboard to switch off.
         PowerManager powerManager = (PowerManager) getSystemService(
                 Context.POWER_SERVICE);
-        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG.toString());
         mWakeLock.acquire();
 
         IntentFilter intentFilter = new IntentFilter();

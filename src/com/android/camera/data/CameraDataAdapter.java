@@ -20,9 +20,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.List;
  * A {@link LocalDataAdapter} that provides data in the camera folder.
  */
 public class CameraDataAdapter implements LocalDataAdapter {
-    private static final String TAG = "CameraDataAdapter";
+    private static final Log.Tag TAG = new Log.Tag("CameraDataAdapter");
 
     private static final int DEFAULT_DECODE_SIZE = 1600;
 

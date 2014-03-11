@@ -41,7 +41,6 @@ import android.os.Message;
 import android.os.MessageQueue;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -59,6 +58,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
@@ -95,7 +95,7 @@ public class PhotoModule
         SettingsManager.OnSettingChangedListener,
         RemoteCameraModule {
 
-    private static final String TAG = "PhotoModule";
+    private static final Log.Tag TAG = new Log.Tag("PhotoModule");
 
     // We number the request code from 1000 to avoid collision with Gallery.
     private static final int REQUEST_CROP = 1000;
@@ -1421,7 +1421,7 @@ public class PhotoModule
             stopFaceDetection();
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
-            mCameraDevice.setErrorCallback(null);
+            mCameraDevice.setErrorCallback(null, null);
 
             mFaceDetectionStarted = false;
             mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
@@ -1485,7 +1485,7 @@ public class PhotoModule
             return;
         }
 
-        mCameraDevice.setErrorCallback(mErrorCallback);
+        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
         // ICS camera frameworks has a bug. Face detection state is not cleared
         // after taking a picture. Stop the preview to work around it. The bug
         // was fixed in JB.

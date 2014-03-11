@@ -17,8 +17,8 @@
 package com.android.camera.session;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.android.camera.debug.Log;
 import com.android.camera.util.FileUtil;
 
 import java.io.File;
@@ -29,7 +29,7 @@ import java.io.IOException;
  * Default implementation of {@link SessionStorageManager}.
  */
 public class SessionStorageManagerImpl implements SessionStorageManager {
-    private static final String TAG = "SessionStorageManagerImpl";
+    private static final Log.Tag TAG = new Log.Tag("SesnStorageMgrImpl");
 
     /** Delete temporary session directory remnants after ONE day. */
     private static final int MAX_SESSION_AGE_MILLIS = 24 * 60 * 60 * 1000;

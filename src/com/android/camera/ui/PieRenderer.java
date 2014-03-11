@@ -36,6 +36,7 @@ import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
+import com.android.camera.debug.Log;
 import com.android.camera.drawable.TextDrawable;
 import com.android.camera2.R;
 
@@ -48,7 +49,7 @@ import java.util.List;
 public class PieRenderer extends OverlayRenderer
         implements FocusIndicator {
 
-    private static final String TAG = "PieRenderer";
+    private static final Log.Tag TAG = new Log.Tag("PieRenderer");
 
     // Sometimes continuous autofocus starts and stops several times quickly.
     // These states are used to make sure the animation is run for at least some
