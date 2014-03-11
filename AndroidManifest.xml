@@ -134,13 +134,6 @@
         </activity>
 
         <activity
-            android:name="com.android.camera.crop.CropActivity"
-            android:label="@string/crop_action"
-            android:theme="@style/Theme.Crop"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-        </activity>
-
-        <activity
             android:name="com.android.camera.settings.CameraSettingsActivity"
             android:label="@string/mode_settings"
             android:theme="@style/Theme.CameraSettings"

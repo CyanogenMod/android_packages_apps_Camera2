@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.crop;
+package com.android.camera.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -33,6 +33,7 @@ import android.webkit.MimeTypeMap;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +41,7 @@ import java.util.List;
 
 public final class ImageLoader {
 
-    private static final String LOGTAG = "ImageLoader";
+    private static final String TAG = "ImageLoader";
 
     public static final String JPEG_MIME_TYPE = "image/jpeg";
     public static final int DEFAULT_COMPRESS_QUALITY = 95;
@@ -55,7 +56,6 @@ public final class ImageLoader {
     public static final int ORI_TRANSVERSE = ExifInterface.Orientation.LEFT_BOTTOM;
 
     private static final int BITMAP_LOAD_BACKOUT_ATTEMPTS = 5;
-    private static final float OVERDRAW_ZOOM = 1.2f;
     private ImageLoader() {}
 
     /**
@@ -117,7 +117,7 @@ public final class ImageLoader {
         } catch (IllegalStateException e) {
             // Do nothing
         } finally {
-            Utils.closeSilently(cursor);
+            closeSilently(cursor);
         }
 
         // Fall back to checking EXIF tags in file.
@@ -148,7 +148,7 @@ public final class ImageLoader {
                     }
                 }
             } catch (IOException e) {
-                Log.w(LOGTAG, "Failed to read EXIF orientation", e);
+                Log.w(TAG, "Failed to read EXIF orientation", e);
             }
         }
         return ORI_NORMAL;
@@ -252,9 +252,9 @@ public final class ImageLoader {
             is = context.getContentResolver().openInputStream(uri);
             return BitmapFactory.decodeStream(is, null, o);
         } catch (FileNotFoundException e) {
-            Log.e(LOGTAG, "FileNotFoundException for " + uri, e);
+            Log.e(TAG, "FileNotFoundException for " + uri, e);
         } finally {
-            Utils.closeSilently(is);
+            closeSilently(is);
         }
         return null;
     }
@@ -424,9 +424,19 @@ public final class ImageLoader {
                 List<ExifTag> taglist = exif.getAllTags();
                 return taglist;
             } catch (IOException e) {
-                Log.w(LOGTAG, "Failed to read EXIF tags", e);
+                Log.w(TAG, "Failed to read EXIF tags", e);
             }
         }
         return null;
     }
+
+    private static void closeSilently(Closeable c) {
+        if (c == null) return;
+        try {
+            c.close();
+        } catch (IOException t) {
+            Log.w(TAG, "close fail ", t);
+        }
+    }
+
 }

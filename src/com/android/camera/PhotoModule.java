@@ -45,6 +45,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
@@ -65,7 +66,6 @@ import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
-import com.android.camera.ui.RotateTextToast;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -99,8 +99,7 @@ public class PhotoModule
     // Messages defined for the UI thread handler.
     private static final int MSG_FIRST_TIME_INIT = 1;
     private static final int MSG_SET_CAMERA_PARAMETERS_WHEN_IDLE = 2;
-    private static final int MSG_SHOW_TAP_TO_FOCUS_TOAST = 3;
-    private static final int MSG_SWITCH_TO_GCAM_MODULE = 4;
+    private static final int MSG_SWITCH_TO_GCAM_MODULE = 3;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -301,11 +300,6 @@ public class PhotoModule
 
                 case MSG_SET_CAMERA_PARAMETERS_WHEN_IDLE: {
                     module.setCameraParametersWhenIdle(0);
-                    break;
-                }
-
-                case MSG_SHOW_TAP_TO_FOCUS_TOAST: {
-                    module.showTapToFocusToast();
                     break;
                 }
 
@@ -965,12 +959,6 @@ public class PhotoModule
             return;
         }
         mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
-
-        // Show the toast after getting the first orientation changed.
-        if (mHandler.hasMessages(MSG_SHOW_TAP_TO_FOCUS_TOAST)) {
-            mHandler.removeMessages(MSG_SHOW_TAP_TO_FOCUS_TOAST);
-            showTapToFocusToast();
-        }
     }
 
     @Override
@@ -1791,15 +1779,6 @@ public class PhotoModule
             mSaveUri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
             mCropValue = myExtras.getString("crop");
         }
-    }
-
-    private void showTapToFocusToast() {
-        // TODO: Use a toast?
-        new RotateTextToast(mActivity, R.string.tap_to_focus, 0).show();
-        // Clear the preference.
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.setBoolean(
-                SettingsManager.SETTING_CAMERA_FIRST_USE_HINT_SHOWN, false);
     }
 
     private void initializeCapabilities() {

@@ -30,10 +30,10 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
-import com.android.camera.crop.ImageLoader;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.ImageLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
