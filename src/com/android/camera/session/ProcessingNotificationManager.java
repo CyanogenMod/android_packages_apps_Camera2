@@ -72,6 +72,7 @@ public class ProcessingNotificationManager {
         this.mContext = context;
         this.mNotificationManager = (NotificationManager) context.getSystemService(
                 Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancelAll();
     }
 
     /**
