@@ -99,6 +99,13 @@ public interface CameraManager {
     }
 
     /**
+     * An interface which receives metadata callbacks (Qualcomm specific)
+     */
+    public interface CameraMetadataCallback {
+        public void onCameraMetadata(byte[] data, CameraProxy camera);
+    }
+
+    /**
      * An interface to be called for any exception caught when opening the
      * camera device. This error callback is different from the one defined
      * in the framework, {@link android.hardware.Camera.ErrorCallback}, which
@@ -295,6 +302,11 @@ public interface CameraManager {
          * @param listener The listener.
          */
         public void setZoomChangeListener(OnZoomChangeListener listener);
+
+        /**
+         * Sets the metadata listener
+         */
+        public void setMetadataCallback(Handler handler, CameraMetadataCallback callback);
 
         /**
          * Sets the face detection listener.

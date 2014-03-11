@@ -160,6 +160,11 @@ public class CameraSettings {
     private final CameraInfo[] mCameraInfo;
     private final int mCameraId;
 
+    // Returned by QC's metadata callback
+    public static final int META_DATA_ASD = 1;
+    public static final int META_DATA_FD  = 2;
+    public static final int META_DATA_HDR = 3;
+
     public CameraSettings(Activity activity, Parameters parameters,
                           int cameraId, CameraInfo[] cameraInfo) {
         mContext = activity;
