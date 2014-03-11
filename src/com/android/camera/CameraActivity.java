@@ -1107,6 +1107,15 @@ public class CameraActivity extends Activity
                 }
             };
 
+    private final CameraManager.CameraExceptionCallback mCameraDefaultExceptionCallback
+        = new CameraManager.CameraExceptionCallback() {
+                @Override
+                public void onCameraException(RuntimeException e) {
+                    Log.d(TAG, "Camera Exception", e);
+                    CameraUtil.showErrorAndFinish(CameraActivity.this,
+                            R.string.cannot_connect_camera);
+                }
+            };
 
     @Override
     public void onCreate(Bundle state) {
@@ -1124,6 +1133,9 @@ public class CameraActivity extends Activity
         mCameraController =
                 new CameraController(mAppContext, this, mMainHandler,
                         CameraManagerFactory.getAndroidCameraManager());
+        mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
+                mMainHandler);
+
         mPreferences = new ComboPreferences(mAppContext);
 
         mSettingsManager = new SettingsManager(mAppContext, this,

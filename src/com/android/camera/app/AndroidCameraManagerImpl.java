@@ -37,6 +37,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.android.camera.app.CameraManager.CameraExceptionCallback;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -105,13 +107,32 @@ class AndroidCameraManagerImpl implements CameraManager {
     // Used to retain a copy of Parameters for setting parameters.
     private Parameters mParamsToSet;
 
+    private Handler mCameraExceptionCallbackHandler;
+    private CameraExceptionCallback mCameraExceptionCallback =
+        new CameraExceptionCallback() {
+            @Override
+            public void onCameraException(RuntimeException e) {
+                throw e;
+            }
+        };
+
     AndroidCameraManagerImpl() {
         mCameraHandlerThread = new HandlerThread("Camera Handler Thread");
         mCameraHandlerThread.start();
         mCameraHandler = new CameraHandler(mCameraHandlerThread.getLooper());
+        mCameraExceptionCallbackHandler = mCameraHandler;
         mCameraState = new CameraStateHolder();
         mDispatchThread = new DispatchThread();
         mDispatchThread.start();
+    }
+
+    @Override
+    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
+            Handler handler) {
+        synchronized (mCameraExceptionCallback) {
+            mCameraExceptionCallback = callback;
+            mCameraExceptionCallbackHandler = handler;
+        }
     }
 
     /**
@@ -490,7 +511,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                         throw new RuntimeException("Invalid CameraProxy message=" + msg.what);
                     }
                 }
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 if (msg.what != RELEASE && mCamera != null) {
                     try {
                         mCamera.release();
@@ -511,7 +532,14 @@ class AndroidCameraManagerImpl implements CameraManager {
                         return;
                     }
                 }
-                throw e;
+                synchronized (mCameraExceptionCallback) {
+                    mCameraExceptionCallbackHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                                mCameraExceptionCallback.onCameraException(e);
+                            }
+                        });
+                }
             }
         }
     }
