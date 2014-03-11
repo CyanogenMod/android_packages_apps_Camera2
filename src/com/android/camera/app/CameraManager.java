@@ -250,6 +250,12 @@ public interface CameraManager {
         public void startPreview();
 
         /**
+         * Starts the camera preview and executes a callback on a handler once
+         * the preview starts.
+         */
+        public void startPreviewWithCallback(Handler h, CameraStartPreviewCallback cb);
+
+        /**
          * Stops the camera preview synchronously.
          * {@code stopPreview()} must be synchronous to ensure that the caller can
          * continues to release resources related to camera preview.
@@ -401,6 +407,16 @@ public interface CameraManager {
          *                 {@code false} to disable it.
          */
         public void enableShutterSound(boolean enable);
+    }
+
+    /**
+     * An interface to be called when the camera preview has started.
+     */
+    public interface CameraStartPreviewCallback {
+        /**
+         * Callback when the preview starts.
+         */
+        public void onPreviewStarted();
     }
 
     /**

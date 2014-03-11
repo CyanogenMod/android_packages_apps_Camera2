@@ -400,7 +400,12 @@ class AndroidCameraManagerImpl implements CameraManager {
                     }
 
                     case START_PREVIEW_ASYNC: {
+                        final CameraStartPreviewCallbackForward cbForward =
+                            (CameraStartPreviewCallbackForward) msg.obj;
                         mCamera.startPreview();
+                        if (cbForward != null) {
+                            cbForward.onPreviewStarted();
+                        }
                         break;
                     }
 
@@ -527,7 +532,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                                 ((CameraOpenCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
                             }
                         } else {
-                            Log.w(TAG, "Cannot handle message, mCamera is null.");
+                            Log.w(TAG, "Cannot handle message " + msg.what + ", mCamera is null.");
                         }
                         return;
                     }
@@ -799,7 +804,19 @@ class AndroidCameraManagerImpl implements CameraManager {
             mDispatchThread.runJob(new Runnable() {
                 @Override
                 public void run() {
-                    mCameraHandler.sendEmptyMessage(START_PREVIEW_ASYNC);
+                    mCameraHandler.obtainMessage(START_PREVIEW_ASYNC, null).sendToTarget();
+                }
+            });
+        }
+
+        @Override
+        public void startPreviewWithCallback(final Handler handler,
+                final CameraStartPreviewCallback cb) {
+            mDispatchThread.runJob(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraHandler.obtainMessage(START_PREVIEW_ASYNC,
+                        CameraStartPreviewCallbackForward.getNewInstance(handler, cb)).sendToTarget();
                 }
             });
         }
@@ -1414,6 +1431,36 @@ class AndroidCameraManagerImpl implements CameraManager {
                 @Override
                 public void run() {
                     mCallback.onReconnectionFailure(mgr);
+                }
+            });
+        }
+    }
+
+    private static class CameraStartPreviewCallbackForward
+            implements CameraStartPreviewCallback {
+        private final Handler mHandler;
+        private final CameraStartPreviewCallback mCallback;
+
+        public static CameraStartPreviewCallbackForward getNewInstance(
+                Handler handler, CameraStartPreviewCallback cb) {
+            if (handler == null || cb == null) {
+                return null;
+            }
+            return new CameraStartPreviewCallbackForward(handler, cb);
+        }
+
+        private CameraStartPreviewCallbackForward(Handler h,
+                CameraStartPreviewCallback cb) {
+            mHandler = h;
+            mCallback = cb;
+        }
+
+        @Override
+        public void onPreviewStarted() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onPreviewStarted();
                 }
             });
         }
