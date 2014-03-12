@@ -101,6 +101,7 @@
     <dimen name="navigation_bar_width">42dip</dimen>
     <dimen name="capture_size">48dip</dimen>
     <dimen name="capture_border">8dip</dimen>
+    <dimen name="capture_margin_left">16dip</dimen>
     <dimen name="capture_margin_right">16dip</dimen>
     <dimen name="capture_margin_top">16dip</dimen>
     <dimen name="camera_controls_size">0dip</dimen>
