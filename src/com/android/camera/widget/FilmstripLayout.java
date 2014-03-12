@@ -343,8 +343,22 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             }
             mSwipeTrend = (((int) dx) >> 1) + (mSwipeTrend >> 1);
             if (dx < 0 && mFilmstripContentLayout.getTranslationX() == 0) {
+                mBackgroundDrawable.setOffset(0);
                 FilmstripLayout.this.onSwipeOutBegin();
             }
+
+            // When we start translating the filmstrip in, we want the left edge of the
+            // first view to always be at the rightmost edge of the screen so that it
+            // appears instantly, regardless of the view's distance from the edge of the
+            // filmstrip view. To do so, on our first translation, jump the filmstrip view
+            // to the correct position, and then smoothly animate the translation from that
+            // initial point.
+            if (dx > 0 && mFilmstripContentLayout.getTranslationX() == getMeasuredWidth()) {
+                final int currentItemLeft = mFilmstripView.getCurrentItemLeft();
+                dx = currentItemLeft;
+                mBackgroundDrawable.setOffset(currentItemLeft);
+            }
+
             float translate = mFilmstripContentLayout.getTranslationX() - dx;
             if (translate < 0f) {
                 translate = 0f;
@@ -450,6 +464,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private class MyBackgroundDrawable extends Drawable {
         private Paint mPaint;
         private float mFraction;
+        private int mOffset;
 
         public MyBackgroundDrawable() {
             mPaint = new Paint();
@@ -459,6 +474,14 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
         public void setFraction(float f) {
             mFraction = f;
+        }
+
+        /**
+         * Adjust the target width and translation calculation when we start translating
+         * from a point where width != translationX so that alpha scales smoothly.
+         */
+        public void setOffset(int offset) {
+            mOffset = offset;
         }
 
         @Override
@@ -478,8 +501,8 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
         @Override
         public void draw(Canvas canvas) {
-            int width = getMeasuredWidth();
-            float translation = mFilmstripContentLayout.getTranslationX();
+            int width = getMeasuredWidth() - mOffset;
+            float translation = mFilmstripContentLayout.getTranslationX() - mOffset;
             if (translation == width) {
                 return;
             }
