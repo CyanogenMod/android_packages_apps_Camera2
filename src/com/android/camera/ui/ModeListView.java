@@ -77,15 +77,7 @@ public class ModeListView extends FrameLayout
     // Last 20% percent of the drawer opening should be slow to ensure soft landing.
     private static final float SLOW_ZONE_PERCENTAGE = 0.2f;
 
-    private static final float ROWS_TO_SHOW_IN_LANDSCAPE = 4.5f;
     private static final int NO_ITEM_SELECTED = -1;
-
-    // Scrolling states
-    private static final int FULLY_HIDDEN = 0;
-    private static final int FULLY_SHOWN = 1;
-    private static final int ACCORDION_ANIMATION = 2;
-    private static final int SCROLLING = 3;
-    private static final int MODE_SELECTED = 4;
 
     // Scrolling delay between non-focused item and focused item
     private static final int DELAY_MS = 30;
@@ -108,21 +100,21 @@ public class ModeListView extends FrameLayout
     private final RectF mPreviewArea = new RectF();
     private final RectF mUncoveredPreviewArea = new RectF();
 
+    private ModeListState mCurrentState;
     private long mLastScrollTime;
     private int mListBackgroundColor;
     private LinearLayout mListView;
     private SettingsButton mSettingsButton;
-    private int mState = FULLY_HIDDEN;
     private int mTotalModes;
     private ModeSelectorItem[] mModeSelectorItems;
     private AnimatorSet mAnimatorSet;
     private int mFocusItem = NO_ITEM_SELECTED;
-    private ModeListAnimationEffects mCurrentEffect = null;
     private ModeListOpenListener mModeListOpenListener;
     private ModeListVisibilityChangedListener mVisibilityChangedListener;
     private CameraAppUI.CameraModuleScreenShotProvider mScreenShotProvider = null;
     private int[] mInputPixels;
     private int[] mOutputPixels;
+    private float mModeListOpenFactor = 1f;
 
     private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
     private View mChildViewTouched = null;
@@ -141,67 +133,661 @@ public class ModeListView extends FrameLayout
             = new LinkedList<TimeBasedPosition>();
     private long mCurrentTime;
     private float mVelocityX; // Unit: pixel/ms.
-    private final Animator.AnimatorListener mModeListAnimatorListener =
-            new Animator.AnimatorListener() {
-        private boolean mCancelled = false;
-
-        @Override
-        public void onAnimationStart(Animator animation) {
-            mCancelled = false;
-            setVisibility(VISIBLE);
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            mAnimatorSet = null;
-            if (mCancelled) {
-                return;
-            }
-            if (mState == ACCORDION_ANIMATION || mState == FULLY_HIDDEN) {
-                resetModeSelectors();
-                setVisibility(INVISIBLE);
-                mState = FULLY_HIDDEN;
-            }
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-            mCancelled = true;
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-
-        }
-    };
     private long mLastDownTime = 0;
 
     /**
-     * Abstract class for animation effects that are specific for mode list.
+     * ModeListState defines a set of functions through which the view could manage
+     * or change the states. Sub-classes could selectively override these functions
+     * accordingly to respect the specific requirements for each state. By overriding
+     * these methods, state transition can also be achieved.
      */
-    private abstract class ModeListAnimationEffects extends AnimationEffects {
+    private abstract class ModeListState implements GestureDetector.OnGestureListener {
+        protected AnimationEffects mCurrentAnimationEffects = null;
+
+        /**
+         * If supported, this should show the mode switcher and starts the accordion
+         * animation with a delay. If the view does not currently have focus, (e.g.
+         * There are popups on top of it.) start the delayed accordion animation
+         * when it gains focus. Otherwise, start the animation with a delay right
+         * away.
+         */
+        public void showSwitcherHint() {
+            // Do nothing.
+        }
+
+        /**
+         * Gets the currently running animation effects for the current state.
+         */
+        public AnimationEffects getCurrentAnimationEffects() {
+            return mCurrentAnimationEffects;
+        }
+
+        /**
+         * Returns true if the touch event should be handled, false otherwise.
+         *
+         * @param ev motion event to be handled
+         * @return true if the event should be handled, false otherwise.
+         */
+        public boolean shouldHandleTouchEvent(MotionEvent ev) {
+            return true;
+        }
+
+        /**
+         * Handles touch event. This will be called if
+         * {@link ModeListState#shouldHandleTouchEvent(android.view.MotionEvent)}
+         * returns {@code true}
+         *
+         * @param ev touch event to be handled
+         * @return always true
+         */
+        public boolean onTouchEvent(MotionEvent ev) {
+            return true;
+        }
+
+        /**
+         * Gets called when the window focus has changed.
+         *
+         * @param hasFocus whether current window has focus
+         */
         public void onWindowFocusChanged(boolean hasFocus) {
             // Default to do nothing.
         }
 
         /**
-         * Specifies how the UI elements should respond when mode list opens.
-         * Range: [0f, 1f]. 0f means no change in the UI elements other than
-         * mode drawer itself (i.e. No background dimming, etc). 1f means the
-         * change in the surrounding UI elements should stay in sync with the
-         * mode drawer opening.
+         * Gets called when back key is pressed.
+         *
+         * @return true if handled, false otherwise.
          */
-        public float getModeListOpenFactor() {
-            return 1f;
+        public boolean onBackPressed() {
+            return false;
         }
 
         /**
-         * Sets the action (i.e. a runnable to run) at the end of the animation
-         * effects.
+         * Gets called when there is a {@link View#setVisibility(int)} call to
+         * change the visibility of the mode drawer. Visibility change does not
+         * always make sense, for example there can be an outside call to make
+         * the mode drawer visible when it is in the fully hidden state. The logic
+         * is that the mode drawer can only be made visible when user swipe it in.
          *
-         * @param runnable the action for the end of animation effects.
+         * @param visibility the proposed visibility change
+         * @return true if the visibility change is valid and therefore should be
+         *         handled, false otherwise.
          */
-        public abstract void setAnimationEndAction(Runnable runnable);
+        public boolean shouldHandleVisibilityChange(int visibility) {
+            return true;
+        }
+
+        /**
+         * If supported, this should start blurring the camera preview and
+         * start the mode switch.
+         *
+         * @param selectedItem mode item that has been selected
+         */
+        public void onItemSelected(ModeSelectorItem selectedItem) {
+            // Do nothing.
+        }
+
+        /**
+         * This gets called when mode switch has finished and UI needs to
+         * pinhole into the new mode through animation.
+         */
+        public void startModeSelectionAnimation() {
+            // Do nothing.
+        }
+
+        /**
+         * Hide the mode drawer and switch to fully hidden state.
+         */
+        public void hide() {
+            // Do nothing.
+        }
+
+        /***************GestureListener implementation*****************/
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            // Do nothing.
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            // Do nothing.
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
+        }
+    }
+
+    /**
+     * Fully hidden state. Transitioning to ScrollingState and ShimmyState are supported
+     * in this state.
+     */
+    private class FullyHiddenState extends ModeListState {
+        private boolean mShouldBeVisible = false;
+        public FullyHiddenState() {
+            reset();
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            mShouldBeVisible = true;
+            // Change visibility, and switch to scrolling state.
+            resetModeSelectors();
+            mCurrentState = new ScrollingState();
+            return true;
+        }
+
+        @Override
+        public void showSwitcherHint() {
+            mShouldBeVisible = true;
+            mCurrentState = new ShimmyState();
+        }
+
+        @Override
+        public boolean shouldHandleTouchEvent(MotionEvent ev) {
+            return true;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent ev) {
+            if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                mFocusItem = getFocusItem(ev.getX(), ev.getY());
+                setSwipeMode(true);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean shouldHandleVisibilityChange(int visibility) {
+            if (visibility == VISIBLE && !mShouldBeVisible) {
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    /**
+     * Fully shown state. This state represents when the mode list is entirely shown
+     * on screen without any on-going animation. Transitions from this state could be
+     * to ScrollingState, SelectedState, or FullyHiddenState.
+     */
+    private class FullyShownState extends ModeListState {
+        private Animator mAnimator = null;
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // Go to scrolling state.
+            if (distanceX > 0) {
+                // Swipe out
+                cancelForwardingTouchEvent();
+                mCurrentState = new ScrollingState();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean shouldHandleTouchEvent(MotionEvent ev) {
+            if (mAnimator != null && mAnimator.isRunning()) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent ev) {
+            if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                mFocusItem = NO_ITEM_SELECTED;
+                setSwipeMode(false);
+                // If the down event happens inside the mode list, find out which
+                // mode item is being touched and forward all the subsequent touch
+                // events to that mode item for its pressed state and click handling.
+                if (isTouchInsideList(ev)) {
+                    mChildViewTouched = mModeSelectorItems[getFocusItem(ev.getX(), ev.getY())];
+                }
+            }
+            forwardTouchEventToChild(ev);
+            return true;
+        }
+
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent ev) {
+            // If the tap is not inside the mode drawer area, snap back.
+            if(!isTouchInsideList(ev)) {
+                snapBackAndHide();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onBackPressed() {
+            snapBackAndHide();
+            return true;
+        }
+
+        @Override
+        public void onItemSelected(ModeSelectorItem selectedItem) {
+            mCurrentState = new SelectedState(selectedItem);
+        }
+
+        /**
+         * Snaps back the mode list and go to the fully hidden state.
+         */
+        private void snapBackAndHide() {
+            mAnimator = snapBack(true);
+            if (mAnimator != null) {
+                mAnimator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mAnimator = null;
+                        mCurrentState = new FullyHiddenState();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            } else {
+                mCurrentState = new FullyHiddenState();
+            }
+        }
+
+        @Override
+        public void hide() {
+            if (mAnimator != null) {
+                mAnimator.cancel();
+            } else {
+                mCurrentState = new FullyHiddenState();
+            }
+        }
+    }
+
+    /**
+     * Shimmy state handles the specifics for shimmy animation, including
+     * setting up to show mode drawer (without text) and hide it with shimmy animation.
+     *
+     * This state can be interrupted when scrolling or mode selection happened,
+     * in which case the state will transition into ScrollingState, or SelectedState.
+     * Otherwise, after shimmy finishes successfully, a transition to fully hidden
+     * state will happen.
+     */
+    private class ShimmyState extends ModeListState {
+
+        private boolean mStartHidingShimmyWhenWindowGainsFocus = false;
+        private Animator mAnimator = null;
+        private final Runnable mHideShimmy = new Runnable() {
+            @Override
+            public void run() {
+                startHidingShimmy();
+            }
+        };
+
+        public ShimmyState() {
+            setVisibility(VISIBLE);
+            mSettingsButton.setVisibility(INVISIBLE);
+            mModeListOpenFactor = 0f;
+            onModeListOpenRatioUpdate(0);
+            int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+            for (int i = 0; i < mModeSelectorItems.length; i++) {
+                mModeSelectorItems[i].setVisibleWidth(maxVisibleWidth);
+            }
+            if (hasWindowFocus()) {
+                hideShimmyWithDelay();
+            } else {
+                mStartHidingShimmyWhenWindowGainsFocus = true;
+            }
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // Scroll happens during accordion animation.
+            cancelAnimation();
+            // Go to scrolling state
+            mCurrentState = new ScrollingState();
+            return true;
+        }
+
+        @Override
+        public boolean shouldHandleTouchEvent(MotionEvent ev) {
+            if (MotionEvent.ACTION_DOWN == ev.getActionMasked()) {
+                if (isTouchInsideList(ev) &&
+                        ev.getX() <= mModeSelectorItems[0].getMaxVisibleWidth()) {
+                    mChildViewTouched = mModeSelectorItems[getFocusItem(ev.getX(), ev.getY())];
+                    return true;
+                }
+                // If shimmy is on-going, reject the first down event, so that it can be handled
+                // by the view underneath. If a swipe is detected, the same series of touch will
+                // re-enter this function, in which case we will consume the touch events.
+                if (mLastDownTime != ev.getDownTime()) {
+                    mLastDownTime = ev.getDownTime();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent ev) {
+            if (MotionEvent.ACTION_DOWN == ev.getActionMasked()) {
+                if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    mFocusItem = getFocusItem(ev.getX(), ev.getY());
+                    setSwipeMode(true);
+                }
+            }
+            forwardTouchEventToChild(ev);
+            return true;
+        }
+
+        @Override
+        public void onItemSelected(ModeSelectorItem selectedItem) {
+            cancelAnimation();
+            mCurrentState = new SelectedState(selectedItem);
+        }
+
+        private void hideShimmyWithDelay() {
+            postDelayed(mHideShimmy, HIDE_SHIMMY_DELAY_MS);
+        }
+
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            if (mStartHidingShimmyWhenWindowGainsFocus && hasFocus) {
+                mStartHidingShimmyWhenWindowGainsFocus = false;
+                hideShimmyWithDelay();
+            }
+        }
+
+        /**
+         * This starts the accordion animation, unless it's already running, in which
+         * case the start animation call will be ignored.
+         */
+        private void startHidingShimmy() {
+            if (mAnimator != null) {
+                return;
+            }
+            int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
+            mAnimator = animateListToWidth(START_DELAY_MS * (-1), TOTAL_DURATION_MS,
+                    Gusterpolator.INSTANCE, maxVisibleWidth, 0);
+            mAnimator.addListener(new Animator.AnimatorListener() {
+                private boolean mSuccess = true;
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mAnimator = null;
+                    ShimmyState.this.onAnimationEnd(mSuccess);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    mSuccess = false;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    // Do nothing.
+                }
+            });
+        }
+
+        /**
+         * Cancels the pending/on-going animation.
+         */
+        private void cancelAnimation() {
+            removeCallbacks(mHideShimmy);
+            if (mAnimator != null && mAnimator.isRunning()) {
+                mAnimator.cancel();
+            } else {
+                mAnimator = null;
+                onAnimationEnd(false);
+            }
+        }
+
+        /**
+         * Gets called when the animation finishes or gets canceled.
+         *
+         * @param success indicates whether the animation finishes successfully
+         */
+        private void onAnimationEnd(boolean success) {
+            mSettingsButton.setVisibility(VISIBLE);
+            // If successfully finish hiding shimmy, then we should go back to
+            // fully hidden state.
+            if (success) {
+                mModeListOpenFactor = 1;
+                mCurrentState = new FullyHiddenState();
+                return;
+            }
+
+            // If the animation was canceled before it's finished, animate the mode
+            // list open factor from 0 to 1 to ensure a smooth visual transition.
+            final ValueAnimator openFactorAnimator = ValueAnimator.ofFloat(mModeListOpenFactor, 1f);
+            openFactorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mModeListOpenFactor = (Float) openFactorAnimator.getAnimatedValue();
+                    onVisibleWidthChanged(mVisibleWidth);
+                }
+            });
+            openFactorAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mModeListOpenFactor = 1f;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    // Do nothing.
+                }
+            });
+            openFactorAnimator.start();
+        }
+
+        @Override
+        public void hide() {
+            cancelAnimation();
+            mCurrentState = new FullyHiddenState();
+        }
+
+    }
+
+    /**
+     * When the mode list is being scrolled, it will be in ScrollingState. From
+     * this state, the mode list could transition to fully hidden, fully open
+     * depending on which direction the scrolling goes.
+     */
+    private class ScrollingState extends ModeListState {
+        private Animator mAnimator = null;
+
+        public ScrollingState() {
+            setVisibility(VISIBLE);
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // Scroll based on the scrolling distance on the currently focused
+            // item.
+            scroll(mFocusItem, distanceX * SCROLL_FACTOR,
+                    distanceY * SCROLL_FACTOR);
+            return true;
+        }
+
+        @Override
+        public boolean shouldHandleTouchEvent(MotionEvent ev) {
+            // If the snap back/to full screen animation is on going, ignore any
+            // touch.
+            if (mAnimator != null) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent ev) {
+            if (ev.getActionMasked() == MotionEvent.ACTION_UP ||
+                    ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                final boolean shouldSnapBack = shouldSnapBack();
+                if (shouldSnapBack) {
+                    mAnimator = snapBack();
+                } else {
+                    mAnimator = snapToFullScreen();
+                }
+                mAnimator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mAnimator = null;
+                        mFocusItem = NO_ITEM_SELECTED;
+                        if (shouldSnapBack) {
+                            mCurrentState = new FullyHiddenState();
+                        } else {
+                            mCurrentState = new FullyShownState();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Mode list gets in this state when a mode item has been selected/clicked.
+     * There will be an animation with the blurred preview fading in, a potential
+     * pause to wait for the new mode to be ready, and then the new mode will
+     * be revealed through a pinhole animation. After all the animations finish,
+     * mode list will transition into fully hidden state.
+     */
+    private class SelectedState extends  ModeListState {
+
+        public SelectedState(ModeSelectorItem selectedItem) {
+            final int modeId = selectedItem.getModeId();
+            // Un-highlight all the modes.
+            for (int i = 0; i < mModeSelectorItems.length; i++) {
+                mModeSelectorItems[i].setHighlighted(false);
+                mModeSelectorItems[i].setSelected(false);
+            }
+            // Select the focused item.
+            selectedItem.setSelected(true);
+            PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
+            effect.setSize(mWidth, mHeight);
+
+            // Calculate the position of the icon in the selected item, and
+            // start animation from that position.
+            int[] location = new int[2];
+            // Gets icon's center position in relative to the window.
+            selectedItem.getIconCenterLocationInWindow(location);
+            int iconX = location[0];
+            int iconY = location[1];
+            // Gets current view's top left position relative to the window.
+            getLocationInWindow(location);
+            // Calculate icon location relative to this view
+            iconX -= location[0];
+            iconY -= location[1];
+
+            effect.setAnimationStartingPosition(iconX, iconY);
+            if (mScreenShotProvider != null) {
+                effect.setBackground(mScreenShotProvider
+                        .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR), mPreviewArea);
+                effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
+            }
+            mCurrentAnimationEffects = effect;
+            invalidate();
+
+            // Post mode selection runnable to the end of the message queue
+            // so that current UI changes can finish before mode initialization
+            // clogs up UI thread.
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    onModeSelected(modeId);
+                }
+            });
+        }
+
+        @Override
+        public boolean shouldHandleTouchEvent(MotionEvent ev) {
+            return false;
+        }
+
+        @Override
+        public void startModeSelectionAnimation() {
+            mCurrentAnimationEffects.startAnimation(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mCurrentAnimationEffects = null;
+                    mCurrentState = new FullyHiddenState();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -347,36 +933,14 @@ public class ModeListView extends FrameLayout
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                 float distanceX, float distanceY) {
-
-            if (mState == ACCORDION_ANIMATION) {
-                if (mCurrentEffect != null) {
-                    // Scroll happens during accordion animation.
-                    mCurrentEffect.cancelAnimation();
-                }
-            } else if (mState == FULLY_HIDDEN) {
-                resetModeSelectors();
-                setVisibility(VISIBLE);
-            }
-            mState = SCROLLING;
-            // Scroll based on the scrolling distance on the currently focused
-            // item.
-            scroll(mFocusItem, distanceX * SCROLL_FACTOR, distanceY * SCROLL_FACTOR);
+            mCurrentState.onScroll(e1, e2, distanceX, distanceY);
             mLastScrollTime = System.currentTimeMillis();
             return true;
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            if (mState != FULLY_SHOWN) {
-                // Only allows tap to choose mode when the list is fully shown
-                return false;
-            }
-
-            // If the tap is not inside the mode drawer area, snap back.
-            if(!isTouchInsideList(ev)) {
-                snapBack(true);
-                return false;
-            }
+            mCurrentState.onSingleTapUp(ev);
             return true;
         }
 
@@ -384,6 +948,14 @@ public class ModeListView extends FrameLayout
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             // Cache velocity in the unit pixel/ms.
             mVelocityX = velocityX / 1000f * SCROLL_FACTOR;
+            mCurrentState.onFling(e1, e2, velocityX, velocityY);
+            return true;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent ev) {
+            mVelocityX = 0;
+            mCurrentState.onDown(ev);
             return true;
         }
     };
@@ -394,57 +966,7 @@ public class ModeListView extends FrameLayout
      * @param selectedItem the item being clicked
      */
     private void onItemSelected(ModeSelectorItem selectedItem) {
-
-        final int modeId = selectedItem.getModeId();
-        // Un-highlight all the modes.
-        for (int i = 0; i < mModeSelectorItems.length; i++) {
-            mModeSelectorItems[i].setHighlighted(false);
-            mModeSelectorItems[i].setSelected(false);
-        }
-        // Select the focused item.
-        selectedItem.setSelected(true);
-        mState = MODE_SELECTED;
-        PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
-        effect.setSize(mWidth, mHeight);
-        effect.setAnimationEndAction(new Runnable() {
-            @Override
-            public void run() {
-                setVisibility(INVISIBLE);
-                snapBack(false);
-            }
-        });
-
-        // Calculate the position of the icon in the selected item, and
-        // start animation from that position.
-        int[] location = new int[2];
-        // Gets icon's center position in relative to the window.
-        selectedItem.getIconCenterLocationInWindow(location);
-        int iconX = location[0];
-        int iconY = location[1];
-        // Gets current view's top left position relative to the window.
-        getLocationInWindow(location);
-        // Calculate icon location relative to this view
-        iconX -= location[0];
-        iconY -= location[1];
-
-        effect.setAnimationStartingPosition(iconX, iconY);
-        if (mScreenShotProvider != null) {
-            effect.setBackground(mScreenShotProvider
-                    .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR), mPreviewArea);
-            effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
-        }
-        mCurrentEffect = effect;
-        invalidate();
-
-        // Post mode selection runnable to the end of the message queue
-        // so that current UI changes can finish before mode initialization
-        // clogs up UI thread.
-        post(new Runnable() {
-            @Override
-            public void run() {
-                onModeSelected(modeId);
-            }
-        });
+        mCurrentState.onItemSelected(selectedItem);
     }
 
     /**
@@ -543,6 +1065,9 @@ public class ModeListView extends FrameLayout
         });
         // The mode list is initialized to be all the way closed.
         onModeListOpenRatioUpdate(0);
+        if (mCurrentState == null) {
+            mCurrentState = new FullyHiddenState();
+        }
     }
 
     /**
@@ -655,53 +1180,19 @@ public class ModeListView extends FrameLayout
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (mCurrentEffect != null && mCurrentEffect.onTouchEvent(ev)) {
-            return true;
-        }
-
-        if (mState == ACCORDION_ANIMATION && MotionEvent.ACTION_DOWN == ev.getActionMasked()) {
-            // If shimmy is on-going, reject the first down event, so that it can be handled
-            // by the view underneath. If a swipe is detected, the same series of touch will
-            // re-enter this function, in which case we will consume the touch events.
-            if (mLastDownTime != ev.getDownTime()) {
-                mLastDownTime = ev.getDownTime();
-                return false;
-            }
-        }
-        super.onTouchEvent(ev);
-        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            mVelocityX = 0;
-            if (mState == FULLY_SHOWN) {
-                mFocusItem = NO_ITEM_SELECTED;
-                setSwipeMode(false);
-                // If the down event happens inside the mode list, find out which
-                // mode item is being touched and forward all the subsequent touch
-                // events to that mode item for its pressed state and click handling.
-                if (isTouchInsideList(ev)) {
-                    mChildViewTouched = mModeSelectorItems[getFocusItem(ev.getX(), ev.getY())];
-                }
-
-            } else {
-                mFocusItem = getFocusItem(ev.getX(), ev.getY());
-                setSwipeMode(true);
-            }
-        } else if (mState == ACCORDION_ANIMATION) {
-            // This is a swipe during accordion animation
-            mFocusItem = getFocusItem(ev.getX(), ev.getY());
-            setSwipeMode(true);
-
-        }
-        forwardTouchEventToChild(ev);
-        // Pass all touch events to gesture detector for gesture handling.
-        mGestureDetector.onTouchEvent(ev);
-        if (ev.getActionMasked() == MotionEvent.ACTION_UP ||
-                ev.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-            snap();
-            mFocusItem = NO_ITEM_SELECTED;
-            // Reset the touch forward recipient at the end of a touch event series,
-            // i.e. when an up or a cancel event is received.
+        // Reset touch forward recipient
+        if (MotionEvent.ACTION_DOWN == ev.getActionMasked()) {
             mChildViewTouched = null;
         }
+
+        if (!mCurrentState.shouldHandleTouchEvent(ev)) {
+            return false;
+        }
+        super.onTouchEvent(ev);
+
+        // Pass all touch events to gesture detector for gesture handling.
+        mGestureDetector.onTouchEvent(ev);
+        mCurrentState.onTouchEvent(ev);
         return true;
     }
 
@@ -740,8 +1231,8 @@ public class ModeListView extends FrameLayout
         super.onLayout(changed, left, top, right, bottom);
         mWidth = right - left;
         mHeight = bottom - top - getPaddingTop() - getPaddingBottom();
-        if (mCurrentEffect != null) {
-            mCurrentEffect.setSize(mWidth, mHeight);
+        if (mCurrentState.getCurrentAnimationEffects() != null) {
+            mCurrentState.getCurrentAnimationEffects().setSize(mWidth, mHeight);
         }
     }
 
@@ -765,10 +1256,10 @@ public class ModeListView extends FrameLayout
 
     @Override
     public void draw(Canvas canvas) {
-        if (mCurrentEffect != null) {
-            mCurrentEffect.drawBackground(canvas);
+        if (mCurrentState.getCurrentAnimationEffects() != null) {
+            mCurrentState.getCurrentAnimationEffects().drawBackground(canvas);
             super.draw(canvas);
-            mCurrentEffect.drawForeground(canvas);
+            mCurrentState.getCurrentAnimationEffects().drawForeground(canvas);
         } else {
             super.draw(canvas);
         }
@@ -781,12 +1272,7 @@ public class ModeListView extends FrameLayout
      * start the animation with a delay right away.
      */
     public void showModeSwitcherHint() {
-        if (mState != FULLY_HIDDEN) {
-            return;
-        }
-        mState = ACCORDION_ANIMATION;
-        mCurrentEffect = new ShimmyAnimationEffects();
-        mCurrentEffect.startAnimation();
+        mCurrentState.showSwitcherHint();
     }
 
     /**
@@ -827,9 +1313,7 @@ public class ModeListView extends FrameLayout
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (mCurrentEffect != null) {
-            mCurrentEffect.onWindowFocusChanged(hasFocus);
-        }
+       mCurrentState.onWindowFocusChanged(hasFocus);
     }
 
     @Override
@@ -863,6 +1347,14 @@ public class ModeListView extends FrameLayout
         if (mVisibilityChangedListener != null) {
             mVisibilityChangedListener.onVisibilityEvent(getVisibility() == VISIBLE);
         }
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        if (mCurrentState != null && !mCurrentState.shouldHandleVisibilityChange(visibility)) {
+            return;
+        }
+        super.setVisibility(visibility);
     }
 
     /**
@@ -1003,7 +1495,6 @@ public class ModeListView extends FrameLayout
         resetModeSelectors();
         mScrollTrendX = 0f;
         mScrollTrendY = 0f;
-        mCurrentEffect = null;
         setVisibility(INVISIBLE);
     }
 
@@ -1013,10 +1504,6 @@ public class ModeListView extends FrameLayout
      */
     public void onVisibleWidthChanged(int visibleWidth) {
         mVisibleWidth = visibleWidth;
-        float factor = 1f;
-        if (mCurrentEffect != null) {
-            factor = mCurrentEffect.getModeListOpenFactor();
-        }
 
         // When the longest mode item is entirely shown (across the screen), the
         // background should be 50% transparent.
@@ -1027,7 +1514,7 @@ public class ModeListView extends FrameLayout
             cancelForwardingTouchEvent();
         }
         float openRatio = (float) visibleWidth / maxVisibleWidth;
-        onModeListOpenRatioUpdate(openRatio * factor);
+        onModeListOpenRatioUpdate(openRatio * mModeListOpenFactor);
     }
 
     /**
@@ -1066,9 +1553,7 @@ public class ModeListView extends FrameLayout
     public void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         if (visibility != VISIBLE) {
-            // Reset mode list if the window is no longer visible.
-            reset();
-            mState = FULLY_HIDDEN;
+            mCurrentState.hide();
         }
     }
 
@@ -1079,16 +1564,25 @@ public class ModeListView extends FrameLayout
      * to snap.
      */
     private void snap() {
-        if (mState == SCROLLING) {
-            int itemId = Math.max(0, mFocusItem);
-            if (mModeSelectorItems[itemId].getVisibleWidth()
-                    < mModeSelectorItems[itemId].getMaxVisibleWidth() * SNAP_BACK_THRESHOLD_RATIO) {
-                snapBack();
-            } else if (Math.abs(mScrollTrendX) > Math.abs(mScrollTrendY) && mScrollTrendX > 0) {
-                snapBack();
-            } else {
-                snapToFullScreen();
-            }
+        if (shouldSnapBack()) {
+            snapBack();
+        } else {
+            snapToFullScreen();
+        }
+    }
+
+    private boolean shouldSnapBack() {
+        int itemId = Math.max(0, mFocusItem);
+        if (Math.abs(mVelocityX) > VELOCITY_THRESHOLD) {
+            // Fling to open / close
+            return mVelocityX < 0;
+        } else if (mModeSelectorItems[itemId].getVisibleWidth()
+                < mModeSelectorItems[itemId].getMaxVisibleWidth() * SNAP_BACK_THRESHOLD_RATIO) {
+            return true;
+        } else if (Math.abs(mScrollTrendX) > Math.abs(mScrollTrendY) && mScrollTrendX > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -1097,42 +1591,42 @@ public class ModeListView extends FrameLayout
      *
      * @param withAnimation whether snapping back should be animated
      */
-    public void snapBack(boolean withAnimation) {
+    public Animator snapBack(boolean withAnimation) {
         if (withAnimation) {
             if (mVelocityX > -VELOCITY_THRESHOLD * SCROLL_FACTOR) {
-                animateListToWidth(0);
+                return animateListToWidth(0);
             } else {
-                animateListToWidthAtVelocity(mVelocityX, 0);
+                return animateListToWidthAtVelocity(mVelocityX, 0);
             }
-            mState = FULLY_HIDDEN;
         } else {
             setVisibility(INVISIBLE);
             resetModeSelectors();
-            mState = FULLY_HIDDEN;
+            return null;
         }
     }
 
     /**
      * Snaps the mode list back out with animation.
      */
-    private void snapBack() {
-        snapBack(true);
+    private Animator snapBack() {
+        return snapBack(true);
     }
 
-    private void snapToFullScreen() {
+    private Animator snapToFullScreen() {
+        Animator animator;
         int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
         int fullWidth = mModeSelectorItems[focusItem].getMaxVisibleWidth();
         if (mVelocityX <= VELOCITY_THRESHOLD) {
-            animateListToWidth(fullWidth);
+            animator = animateListToWidth(fullWidth);
         } else {
             // If the fling velocity exceeds this threshold, snap to full screen
             // at a constant speed.
-            animateListToWidthAtVelocity(VELOCITY_THRESHOLD, fullWidth);
+            animator = animateListToWidthAtVelocity(VELOCITY_THRESHOLD, fullWidth);
         }
-        mState = FULLY_SHOWN;
         if (mModeListOpenListener != null) {
             mModeListOpenListener.onOpenFullScreen();
         }
+        return animator;
     }
 
     /**
@@ -1142,8 +1636,8 @@ public class ModeListView extends FrameLayout
      *
      * @param width a set of values that the animation will animate between over time
      */
-    private void animateListToWidth(int... width) {
-        animateListToWidth(0, DEFAULT_DURATION_MS, null, width);
+    private Animator animateListToWidth(int... width) {
+        return animateListToWidth(0, DEFAULT_DURATION_MS, null, width);
     }
 
     /**
@@ -1185,7 +1679,6 @@ public class ModeListView extends FrameLayout
         mAnimatorSet = new AnimatorSet();
         mAnimatorSet.playTogether(animators);
         mAnimatorSet.setInterpolator(interpolator);
-        mAnimatorSet.addListener(mModeListAnimatorListener);
         mAnimatorSet.start();
 
         return mAnimatorSet;
@@ -1197,7 +1690,7 @@ public class ModeListView extends FrameLayout
      * @param velocity the velocity that animation will be at
      * @param width final width of the list
      */
-    private void animateListToWidthAtVelocity(float velocity, int width) {
+    private Animator animateListToWidthAtVelocity(float velocity, int width) {
         if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
             mAnimatorSet.end();
         }
@@ -1215,8 +1708,9 @@ public class ModeListView extends FrameLayout
         mAnimatorSet = new AnimatorSet();
         mAnimatorSet.playTogether(animators);
         mAnimatorSet.setInterpolator(null);
-        mAnimatorSet.addListener(mModeListAnimatorListener);
         mAnimatorSet.start();
+
+        return mAnimatorSet;
     }
 
     /**
@@ -1225,23 +1719,11 @@ public class ModeListView extends FrameLayout
      * @return Whether the UI responded to the key event.
      */
     public boolean onBackPressed() {
-        if (mState == FULLY_SHOWN) {
-            snapBack();
-            return true;
-        } else {
-            return false;
-        }
+        return mCurrentState.onBackPressed();
     }
 
     public void startModeSelectionAnimation() {
-        if (mState != MODE_SELECTED || mCurrentEffect == null) {
-            setVisibility(INVISIBLE);
-            snapBack(false);
-            mCurrentEffect = null;
-        } else {
-            mCurrentEffect.startAnimation();
-        }
-
+        mCurrentState.startModeSelectionAnimation();
     }
 
     public float getMaxMovementBasedOnPosition(int lastVisibleWidth, int maxWidth) {
@@ -1262,7 +1744,7 @@ public class ModeListView extends FrameLayout
         return position;
     }
 
-    private class PeepholeAnimationEffect extends ModeListAnimationEffects {
+    private class PeepholeAnimationEffect extends AnimationEffects {
 
         private final static int UNSET = -1;
         private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
@@ -1277,7 +1759,6 @@ public class ModeListView extends FrameLayout
         private int mPeepHoleCenterY = UNSET;
         private float mRadius = 0f;
         private ValueAnimator mPeepHoleAnimator;
-        private Runnable mEndAction;
         private Bitmap mBackground;
         private Bitmap mBlurredBackground;
         private Bitmap mBackgroundOverlay;
@@ -1369,7 +1850,7 @@ public class ModeListView extends FrameLayout
         }
 
         @Override
-        public void startAnimation() {
+        public void startAnimation(Animator.AnimatorListener listener) {
             if (mPeepHoleAnimator != null && mPeepHoleAnimator.isRunning()) {
                 return;
             }
@@ -1397,57 +1878,14 @@ public class ModeListView extends FrameLayout
                 }
             });
 
-            mPeepHoleAnimator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    endAnimation();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
+            if (listener != null) {
+                mPeepHoleAnimator.addListener(listener);
+            }
             mPeepHoleAnimator.start();
         }
 
         @Override
         public void endAnimation() {
-            if (mEndAction != null) {
-                post(mEndAction);
-                mEndAction = null;
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPeepHoleAnimator = null;
-                        mRadius = 0;
-                        mPeepHoleCenterX = UNSET;
-                        mPeepHoleCenterY = UNSET;
-                        mCurrentEffect = null;
-                    }
-                });
-            } else {
-                mPeepHoleAnimator = null;
-                mRadius = 0;
-                mPeepHoleCenterX = UNSET;
-                mPeepHoleCenterY = UNSET;
-                mCurrentEffect = null;
-            }
-        }
-
-        @Override
-        public void setAnimationEndAction(Runnable runnable) {
-            mEndAction = runnable;
         }
 
         private class BlurTask extends AsyncTask<Bitmap, Integer, Bitmap> {
@@ -1486,150 +1924,4 @@ public class ModeListView extends FrameLayout
         };
     }
 
-    /**
-     * Shimmy animation effects handles the specifics for shimmy animation, including
-     * setting up to show mode drawer (without text) and hide it with shimmy animation.
-     */
-    private class ShimmyAnimationEffects extends ModeListAnimationEffects {
-        private boolean mStartHidingShimmyWhenWindowGainsFocus = false;
-        private Animator mAnimator = null;
-        private float mModeListOpenFactor = 0f;
-        private final Runnable mHideShimmy = new Runnable() {
-            @Override
-            public void run() {
-                startHidingShimmy();
-            }
-        };
-        private Runnable mEndAction = null;
-
-        @Override
-        public void setSize(int width, int height) {
-            // Do nothing.
-        }
-
-        @Override
-        public void drawForeground(Canvas canvas) {
-            // Do nothing.
-        }
-
-        @Override
-        public void startAnimation() {
-            setVisibility(VISIBLE);
-            mSettingsButton.setVisibility(INVISIBLE);
-            onModeListOpenRatioUpdate(0);
-            int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
-            for (int i = 0; i < mModeSelectorItems.length; i++) {
-                mModeSelectorItems[i].setVisibleWidth(maxVisibleWidth);
-            }
-            if (hasWindowFocus()) {
-                hideShimmyWithDelay();
-            } else {
-                mStartHidingShimmyWhenWindowGainsFocus = true;
-            }
-        }
-
-        private void hideShimmyWithDelay() {
-            postDelayed(mHideShimmy, HIDE_SHIMMY_DELAY_MS);
-        }
-
-        @Override
-        public void onWindowFocusChanged(boolean hasFocus) {
-            if (mStartHidingShimmyWhenWindowGainsFocus && hasFocus) {
-                mStartHidingShimmyWhenWindowGainsFocus = false;
-                hideShimmyWithDelay();
-            }
-        }
-
-        /**
-         * This starts the accordion animation, unless it's already running, in which
-         * case the start animation call will be ignored.
-         */
-        private void startHidingShimmy() {
-            int maxVisibleWidth = mModeSelectorItems[0].getMaxVisibleWidth();
-            mAnimator = animateListToWidth(START_DELAY_MS * (-1), TOTAL_DURATION_MS,
-                    Gusterpolator.INSTANCE, maxVisibleWidth, 0);
-            mAnimator.addListener(new Animator.AnimatorListener() {
-                private boolean mCanceled = false;
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    // Do nothing.
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    endAnimation();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    mCanceled = true;
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                    // Do nothing.
-                }
-            });
-        }
-
-        @Override
-        public boolean cancelAnimation() {
-            removeCallbacks(mHideShimmy);
-            if (mAnimator != null && mAnimator.isRunning()) {
-                mAnimator.cancel();
-            }
-            endAnimation();
-            return true;
-        }
-
-        @Override
-        public void endAnimation() {
-            mAnimator = null;
-            mSettingsButton.setVisibility(VISIBLE);
-            if (mEndAction != null) {
-                post(mEndAction);
-            }
-            final ValueAnimator openFactorAnimator = ValueAnimator.ofFloat(mModeListOpenFactor, 1f);
-            openFactorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    mModeListOpenFactor = (Float) openFactorAnimator.getAnimatedValue();
-                    onVisibleWidthChanged(mVisibleWidth);
-                }
-            });
-            openFactorAnimator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    // Do nothing.
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mModeListOpenFactor = 1f;
-                    mCurrentEffect = null;
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    // Do nothing.
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                    // Do nothing.
-                }
-            });
-            openFactorAnimator.start();
-        }
-
-        @Override
-        public float getModeListOpenFactor() {
-            return mModeListOpenFactor;
-        }
-
-        @Override
-        public void setAnimationEndAction(Runnable runnable) {
-            mEndAction = runnable;
-        }
-    }
 }
