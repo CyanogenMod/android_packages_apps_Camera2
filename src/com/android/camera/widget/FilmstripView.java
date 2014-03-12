@@ -27,6 +27,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -58,6 +59,19 @@ public class FilmstripView extends ViewGroup {
     private static final int CAMERA_PREVIEW_SWIPE_THRESHOLD = 300;
     private static final float FILM_STRIP_SCALE = 0.7f;
     private static final float FULL_SCREEN_SCALE = 1f;
+
+    // The min velocity at which the user must have moved their finger in
+    // pixels per millisecond to count a vertical gesture as a promote/demote
+    // at short vertical distances.
+    private static final float PROMOTE_VELOCITY = 3.5f;
+    // The min distance relative to this view's height the user must have
+    // moved their finger to count a vertical gesture as a promote/demote if
+    // they moved their finger at least at PROMOTE_VELOCITY.
+    private static final float VELOCITY_PROMOTE_HEIGHT_RATIO = 1/10f;
+    // The min distance relative to this view's height the user must have
+    // moved their finger to count a vertical gesture as a promote/demote if
+    // they moved their finger at less than PROMOTE_VELOCITY.
+    private static final float PROMOTE_HEIGHT_RATIO = 1/2f;
 
     private static final float TOLERANCE = 0.1f;
     // Only check for intercepting touch events within first 500ms
@@ -2382,7 +2396,8 @@ public class FilmstripView extends ViewGroup {
         private float mScaleTrend;
         private float mMaxScale;
         private int mScrollingDirection = SCROLL_DIR_NONE;
-
+        private long mLastDownTime;
+        private float mLastDownY;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -2433,6 +2448,8 @@ public class FilmstripView extends ViewGroup {
 
         @Override
         public boolean onDown(float x, float y) {
+            mLastDownTime = SystemClock.uptimeMillis();
+            mLastDownY = y;
             mController.cancelFlingAnimation();
             if (!mController.stopScrolling(false)) {
                 return false;
@@ -2454,10 +2471,13 @@ public class FilmstripView extends ViewGroup {
                 mController.loadZoomedImage();
                 return true;
             }
-            float halfH = getHeight() / 2;
+            float promoteHeight = getHeight() * PROMOTE_HEIGHT_RATIO;
+            float velocityPromoteHeight = getHeight() * VELOCITY_PROMOTE_HEIGHT_RATIO;
             mIsUserScrolling = false;
             mScrollingDirection = SCROLL_DIR_NONE;
             // Finds items promoted/demoted.
+            float speedY = Math.abs(y - mLastDownY)
+                    / (SystemClock.uptimeMillis() - mLastDownTime);
             for (int i = 0; i < BUFFER_SIZE; i++) {
                 if (mViewItem[i] == null) {
                     continue;
@@ -2470,11 +2490,13 @@ public class FilmstripView extends ViewGroup {
 
                 if (mDataAdapter.getImageData(id)
                         .isUIActionSupported(ImageData.ACTION_DEMOTE)
-                        && transY > halfH) {
+                        && ((transY > promoteHeight)
+                            || (transY > velocityPromoteHeight && speedY > PROMOTE_VELOCITY))) {
                     demoteData(i, id);
                 } else if (mDataAdapter.getImageData(id)
                         .isUIActionSupported(ImageData.ACTION_PROMOTE)
-                        && transY < -halfH) {
+                        && (transY < -promoteHeight
+                            || (transY < -velocityPromoteHeight && speedY > PROMOTE_VELOCITY))) {
                     promoteData(i, id);
                 } else {
                     // put the view back.
