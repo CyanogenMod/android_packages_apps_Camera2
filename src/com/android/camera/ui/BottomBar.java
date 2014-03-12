@@ -80,6 +80,8 @@ public class BottomBar extends FrameLayout
     private static final int MODE_CAPTURE = 0;
     private static final int MODE_INTENT = 1;
     private static final int MODE_INTENT_REVIEW = 2;
+    private static final int MODE_CANCEL = 3;
+
     private int mMode;
 
     private float mPreviewShortEdge;
@@ -95,9 +97,11 @@ public class BottomBar extends FrameLayout
     private final RectF mAlignArea = new RectF();
 
     private FrameLayout mCaptureLayout;
+    private FrameLayout mCancelLayout;
     private TopRightWeightedLayout mIntentReviewLayout;
 
     private ShutterButton mShutterButton;
+    private ImageButton mCancelButton;
 
     private int mBackgroundColor;
     private int mBackgroundPressedColor;
@@ -155,6 +159,11 @@ public class BottomBar extends FrameLayout
     public void onFinishInflate() {
         mCaptureLayout
             = (FrameLayout) findViewById(R.id.bottombar_capture);
+        mCancelLayout
+            = (FrameLayout) findViewById(R.id.bottombar_cancel);
+
+        mCancelLayout.setVisibility(View.INVISIBLE);
+
         mIntentReviewLayout
             = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent_review);
 
@@ -176,6 +185,26 @@ public class BottomBar extends FrameLayout
                 return false;
             }
         });
+
+        mCancelButton
+                = (ImageButton) findViewById(R.id.shutter_cancel_button);
+        mCancelButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_DOWN == event.getActionMasked()) {
+                    mCancelLayout.setBackgroundColor(mBackgroundPressedColor);
+                } else if (MotionEvent.ACTION_UP == event.getActionMasked() ||
+                        MotionEvent.ACTION_CANCEL == event.getActionMasked()) {
+                    mCancelLayout.setBackgroundColor(mBackgroundColor);
+                } else if (MotionEvent.ACTION_MOVE == event.getActionMasked()) {
+                    if (!mRect.contains(event.getX(), event.getY())) {
+                        mCancelLayout.setBackgroundColor(mBackgroundColor);
+                    }
+                }
+                return false;
+            }
+        });
+
     }
 
     /**
@@ -192,11 +221,24 @@ public class BottomBar extends FrameLayout
      */
     public void transitionToCapture() {
         mCaptureLayout.setVisibility(View.VISIBLE);
+        mCancelLayout.setVisibility(View.INVISIBLE);
         if (mMode == MODE_INTENT || mMode == MODE_INTENT_REVIEW) {
             mIntentReviewLayout.setVisibility(View.INVISIBLE);
         }
 
         mMode = MODE_CAPTURE;
+    }
+
+
+    /**
+     * Perform a transition from the bottom bar options layout to the
+     * bottom bar capture layout.
+     */
+    public void transitionToCancel() {
+        mCaptureLayout.setVisibility(View.INVISIBLE);
+        mIntentReviewLayout.setVisibility(View.INVISIBLE);
+        mCancelLayout.setVisibility(View.VISIBLE);
+        mMode = MODE_CANCEL;
     }
 
     /**
@@ -206,6 +248,8 @@ public class BottomBar extends FrameLayout
     public void transitionToIntentCaptureLayout() {
         mIntentReviewLayout.setVisibility(View.INVISIBLE);
         mCaptureLayout.setVisibility(View.VISIBLE);
+        mCancelLayout.setVisibility(View.INVISIBLE);
+
 
         mMode = MODE_INTENT;
     }

@@ -34,7 +34,26 @@
         android:src="@drawable/ic_camera" />
   </FrameLayout>
 
-  <com.android.camera.ui.TopRightWeightedLayout
+  <FrameLayout
+    android:id="@+id/bottombar_cancel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible" >
+    <ImageButton
+      android:id="@+id/shutter_cancel_button"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
+      android:scaleType="center"
+      android:clickable="true"
+      android:contentDescription="@string/accessibility_cancel_button"
+      android:focusable="true"
+      android:background="@null"
+      android:src="@drawable/ic_cancel" />
+  </FrameLayout>
+
+
+    <com.android.camera.ui.TopRightWeightedLayout
       android:id="@+id/bottombar_intent_review"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
