@@ -431,6 +431,13 @@ public class FilmstripView extends ViewGroup {
             return mView.getWidth();
         }
 
+        /**
+         * Returns the position of the left edge of the view area content is drawn in.
+         */
+        public int getDrawAreaLeft() {
+            return Math.round(mViewArea.left);
+        }
+
         public void copyAttributes(ViewItem item) {
             setLeftPosition(item.getLeftPosition());
             // X
@@ -581,6 +588,13 @@ public class FilmstripView extends ViewGroup {
      */
     public FilmstripController getController() {
         return mController;
+    }
+
+    /**
+     * Returns the draw area width of the current item.
+     */
+    public int  getCurrentItemLeft() {
+        return mViewItem[mCurrentItem].getDrawAreaLeft();
     }
 
     private void setListener(FilmstripController.FilmstripListener l) {
