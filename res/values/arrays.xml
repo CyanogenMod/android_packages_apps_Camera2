@@ -560,8 +560,8 @@
         <item>@integer/camera_mode_photosphere</item>
         <item>@integer/camera_mode_panorama</item>
         <item>@integer/camera_mode_refocus</item>
-        <item>@integer/camera_mode_video</item>
         <item>@integer/camera_mode_photo</item>
+        <item>@integer/camera_mode_video</item>
     </integer-array>
 
     <!-- Camera modes that each supported mode is nested in in nav drawer. -->
