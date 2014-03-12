@@ -47,6 +47,8 @@
                     android:layout_gravity="top"
                     android:visibility="visible"
                     android:background="@null"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:alpha="0.0" >
                     <com.android.camera.MultiToggleImageButton
                         android:id="@+id/camera_toggle_button"
