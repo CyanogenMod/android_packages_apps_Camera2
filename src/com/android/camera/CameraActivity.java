@@ -180,12 +180,15 @@ public class CameraActivity extends Activity
     private SettingsManager mSettingsManager;
 
     private ModeListView mModeListView;
+    private boolean mModeListVisible = false;
     private int mCurrentModeIndex;
     private CameraModule mCurrentModule;
     private ModuleManagerImpl mModuleManager;
     private FrameLayout mAboveFilmstripControlLayout;
     private FilmstripController mFilmstripController;
     private boolean mFilmstripVisible;
+    /** Whether the filmstrip fully covers the preview. */
+    private boolean mFilmstripCoversPreview = false;
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
@@ -503,10 +506,8 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSwipeOutBegin() {
                     mActionBar.hide();
-                    if (mCurrentModule != null) {
-                        mCurrentModule
-                                .onPreviewVisibilityChanged(ModuleController.VISIBILITY_VISIBLE);
-                    }
+                    mFilmstripCoversPreview = false;
+                    updatePreviewVisibility();
                 }
 
                 @Override
@@ -525,10 +526,6 @@ public class CameraActivity extends Activity
                     mFilmstripVisible = true;
                     decrementPeekAnimPlayTimes();
                     updateUiByData(mFilmstripController.getCurrentId());
-                    if (mCurrentModule != null) {
-                        mCurrentModule
-                                .onPreviewVisibilityChanged(ModuleController.VISIBILITY_HIDDEN);
-                    }
                 }
 
                 @Override
@@ -680,6 +677,8 @@ public class CameraActivity extends Activity
                 mActionBar.hide();
             }
         }
+        mFilmstripCoversPreview = visible;
+        updatePreviewVisibility();
     }
 
     private void hideSessionProgress() {
@@ -1159,11 +1158,8 @@ public class CameraActivity extends Activity
         mModeListView.setVisibilityChangedListener(new ModeListVisibilityChangedListener() {
             @Override
             public void onVisibilityChanged(boolean visible) {
-                if (mCurrentModule != null) {
-                    int visibility = visible ? ModuleController.VISIBILITY_COVERED
-                            : ModuleController.VISIBILITY_VISIBLE;
-                    mCurrentModule.onPreviewVisibilityChanged(visibility);
-                }
+                mModeListVisible = visible;
+                updatePreviewVisibility();
             }
         });
 
@@ -1299,6 +1295,25 @@ public class CameraActivity extends Activity
         if (FeedbackHelper.feedbackAvailable()) {
             mFeedbackHelper = new FeedbackHelper(mAppContext);
         }
+    }
+
+    /**
+     * Call this whenever the mode drawer or filmstrip change the visibility
+     * state.
+     */
+    private void updatePreviewVisibility() {
+        if (mCurrentModule == null) {
+            return;
+        }
+        int visibility;
+        if (mFilmstripCoversPreview) {
+            visibility = ModuleController.VISIBILITY_HIDDEN;
+        } else if (mModeListVisible){
+            visibility = ModuleController.VISIBILITY_COVERED;
+        } else {
+            visibility = ModuleController.VISIBILITY_VISIBLE;
+        }
+        mCurrentModule.onPreviewVisibilityChanged(visibility);
     }
 
     private void setRotationAnimation() {
@@ -1801,9 +1816,7 @@ public class CameraActivity extends Activity
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.resume();
-        int visibility = mFilmstripVisible ? ModuleController.VISIBILITY_HIDDEN
-                : ModuleController.VISIBILITY_VISIBLE;
-        module.onPreviewVisibilityChanged(visibility);
+        updatePreviewVisibility();
     }
 
     private void closeModule(CameraModule module) {
