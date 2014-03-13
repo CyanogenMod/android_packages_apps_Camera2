@@ -264,12 +264,16 @@ public class CameraDataAdapter implements LocalDataAdapter {
             refresh(sessionUri);
             return;
         }
+        LocalData newData = localDataFromUri(contentUri);
+
         final int pos = findDataByContentUri(sessionUri);
         if (pos == -1) {
-            throw new IllegalAccessError("Finishing invalid uri");
+            // We do not have a placeholder for this image, perhaps due to the
+            // activity crashing or being killed.
+            addData(contentUri, newData);
+        }  else  {
+            updateData(pos, newData);
         }
-        LocalData newData = localDataFromUri(contentUri);
-        updateData(pos, newData);
     }
 
     @Override
