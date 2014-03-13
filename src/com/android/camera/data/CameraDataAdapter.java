@@ -24,7 +24,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 
-import com.android.camera.Storage;
 import com.android.camera.filmstrip.ImageData;
 
 import java.util.ArrayList;
@@ -161,50 +160,19 @@ public class CameraDataAdapter implements LocalDataAdapter {
         mListener.onDataRemoved(dataID, d);
     }
 
-    // TODO: put the database query on background thread
     @Override
-    public void addNewVideo(Uri uri) {
-        final ContentResolver cr = mContext.getContentResolver();
-        List<LocalData> newVideos = LocalMediaData.VideoData.query(cr, uri);
-        if (newVideos.isEmpty()) {
-            return;
-        }
-        LocalData newVideo = newVideos.get(0);
-        addData(uri, newVideo);
-    }
-
-    private LocalData localPhotoFromUri(Uri uri) {
-        final ContentResolver cr = mContext.getContentResolver();
-        List<LocalData> newPhotos = LocalMediaData.PhotoData.query(cr, uri,
-                LocalMediaData.QUERY_ALL_MEDIA_ID);
-        if (newPhotos.isEmpty()) {
-            return null;
-        }
-        return newPhotos.get(0);
-    }
-
-    // TODO: put the database query on background thread
-    @Override
-    public void addNewPhoto(Uri uri) {
-        LocalData newData = localPhotoFromUri(uri);
-        addData(uri, newData);
-    }
-
-    @Override
-    public void addNewSession(Uri uri) {
-        LocalSessionData newData = new LocalSessionData(uri);
-        addData(uri, newData);
-    }
-
-    private void addData(Uri uri, LocalData newData) {
+    public boolean addData(LocalData newData) {
+        final Uri uri = newData.getUri();
         int pos = findDataByContentUri(uri);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
             Log.v(TAG, "found duplicate data");
             updateData(pos, newData);
+            return false;
         } else {
             // a new data.
             insertData(newData);
+            return true;
         }
     }
 
@@ -238,25 +206,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void flush() {
         replaceData(new LocalDataList());
-    }
-
-    @Override
-    public void finishSession(Uri sessionUri) {
-        Uri contentUri = Storage.getContentUriForSessionUri(sessionUri);
-        if (contentUri == null) {
-            refresh(sessionUri);
-            return;
-        }
-        LocalData newData = localPhotoFromUri(contentUri);
-
-        final int pos = findDataByContentUri(sessionUri);
-        if (pos == -1) {
-            // We do not have a placeholder for this image, perhaps due to the
-            // activity crashing or being killed.
-            addData(contentUri, newData);
-        }  else  {
-            updateData(pos, newData);
-        }
     }
 
     @Override
@@ -295,8 +244,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
     }
 
-    @Override
-    public void insertData(LocalData data) {
+    private void insertData(LocalData data) {
         // Since this function is mostly for adding the newest data,
         // a simple linear search should yield the best performance over a
         // binary search.
@@ -307,9 +255,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
         mImages.add(pos, data);
         if (mListener != null) {
             mListener.onDataInserted(pos, data);
-        }
-        if (mLocalDataListener != null) {
-            mLocalDataListener.onNewDataAdded(data);
         }
     }
 
@@ -354,7 +299,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
             }
             // We may add data that is already present, but if we do, it will be deduped in addData.
             for (LocalData localData : newPhotoData) {
-                addData(localData.getContentUri(), localData);
+                addData(localData);
             }
         }
     }
@@ -387,7 +332,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
             List<LocalData> photoData = LocalMediaData.PhotoData.query(cr,
                     LocalMediaData.PhotoData.CONTENT_URI, LocalMediaData.QUERY_ALL_MEDIA_ID);
             List<LocalData> videoData = LocalMediaData.VideoData.query(cr,
-                    LocalMediaData.VideoData.CONTENT_URI);
+                    LocalMediaData.VideoData.CONTENT_URI, LocalMediaData.QUERY_ALL_MEDIA_ID);
 
             long lastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
             if (!photoData.isEmpty()) {

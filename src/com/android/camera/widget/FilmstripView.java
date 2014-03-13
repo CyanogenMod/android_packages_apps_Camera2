@@ -2188,12 +2188,12 @@ public class FilmstripView extends ViewGroup {
             }
         }
 
-        private Uri getCurrentContentUri() {
+        private Uri getCurrentUri() {
             ViewItem curr = mViewItem[mCurrentItem];
             if (curr == null) {
                 return Uri.EMPTY;
             }
-            return mDataAdapter.getImageData(curr.getId()).getContentUri();
+            return mDataAdapter.getImageData(curr.getId()).getUri();
         }
 
         /**
@@ -2235,7 +2235,7 @@ public class FilmstripView extends ViewGroup {
             if (!imageData.isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return;
             }
-            Uri uri = getCurrentContentUri();
+            Uri uri = getCurrentUri();
             RectF viewRect = curr.getViewRect();
             if (uri == null || uri == Uri.EMPTY) {
                 return;

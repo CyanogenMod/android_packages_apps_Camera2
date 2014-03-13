@@ -25,7 +25,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.android.camera.Storage;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.data.LocalData;
@@ -256,7 +255,12 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public void onPreviewChanged() {
+        public void onPreviewAvailable() {
+            notifySessionPreviewAvailable(mPlaceHolderSession.outputUri);
+        }
+
+        @Override
+        public void updatePreview(String previewPath) {
 
             final String path = this.getPath();
 
@@ -278,7 +282,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                     int height = options.outHeight;
 
                     mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, jpegData, width, height);
-                    notifySessionUpdate(mPlaceHolderSession.outputUri);
+                    onPreviewAvailable();
                 }
             });
         }
@@ -475,13 +479,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
      * Notifies all task listeners that the task with the given URI has updated
      * its media.
      */
-    private void notifySessionUpdate(final Uri uri) {
+    private void notifySessionPreviewAvailable(final Uri uri) {
         mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 synchronized (mTaskListeners) {
                     for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionUpdated(uri);
+                        listener.onSessionPreviewAvailable(uri);
                     }
                 }
             }

@@ -133,8 +133,15 @@ public interface CaptureSession {
     public boolean hasPath();
 
     /**
-     * Called when the underlying media file has been changed and the session
-     * should update itself.
+     * Updates the preview from a file. {@link #onPreviewAvailable()} will be
+     * invoked upon completion.
+     *
+     * @param previewPath The path to the file.
      */
-    public void onPreviewChanged();
+    public void updatePreview(String previewPath);
+
+    /**
+     * Called when the preview is already available
+     */
+    public void onPreviewAvailable();
 }

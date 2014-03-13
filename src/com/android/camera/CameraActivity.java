@@ -33,6 +33,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -84,7 +85,9 @@ import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalDataUtil;
+import com.android.camera.data.LocalMediaData;
 import com.android.camera.data.LocalMediaObserver;
+import com.android.camera.data.LocalSessionData;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.PanoramaMetadataLoader;
 import com.android.camera.data.RgbzMetadataLoader;
@@ -260,7 +263,7 @@ public class CameraActivity extends Activity
                     if (data == null) {
                         return;
                     }
-                    final Uri contentUri = data.getContentUri();
+                    final Uri contentUri = data.getUri();
                     if (contentUri == Uri.EMPTY) {
                         return;
                     }
@@ -348,9 +351,9 @@ public class CameraActivity extends Activity
                  */
                 private Intent getShareIntentByData(final LocalData data) {
                     Intent intent = null;
-                    final Uri contentUri = data.getContentUri();
+                    final Uri contentUri = data.getUri();
                     if (PanoramaMetadataLoader.isPanorama360(data) &&
-                            data.getContentUri() != Uri.EMPTY) {
+                            data.getUri() != Uri.EMPTY) {
                         intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("application/vnd.google.panorama360+jpg");
                         intent.putExtra(Intent.EXTRA_STREAM, contentUri);
@@ -392,7 +395,7 @@ public class CameraActivity extends Activity
                 public void onProgressErrorClicked() {
                     LocalData data = getCurrentLocalData();
                     getServices().getCaptureSessionManager().removeErrorMessage(
-                            data.getContentUri());
+                            data.getUri());
                     updateBottomControlsByData(data);
                 }
             };
@@ -640,11 +643,6 @@ public class CameraActivity extends Activity
                         }
                     }
                 }
-
-                @Override
-                public void onNewDataAdded(LocalData data) {
-                    startPeekAnimation(data);
-                }
             };
 
     public void gotoGallery() {
@@ -748,13 +746,32 @@ public class CameraActivity extends Activity
             new SessionListener() {
                 @Override
                 public void onSessionQueued(final Uri uri) {
-                    notifyNewMedia(uri);
+                    if (!Storage.isSessionUri(uri)) {
+                        return;
+                    }
+                    LocalSessionData newData = new LocalSessionData(uri);
+                    mDataAdapter.addData(newData);
                 }
 
                 @Override
-                public void onSessionDone(final Uri uri) {
-                    Log.v(TAG, "onSessionDone:" + uri);
-                    mDataAdapter.finishSession(uri);
+                public void onSessionDone(final Uri sessionUri) {
+                    Log.v(TAG, "onSessionDone:" + sessionUri);
+                    Uri contentUri = Storage.getContentUriForSessionUri(sessionUri);
+                    if (contentUri == null) {
+                        mDataAdapter.refresh(sessionUri);
+                        return;
+                    }
+                    LocalData newData = LocalMediaData.PhotoData.fromContentUri(
+                            getContentResolver(), contentUri);
+
+                    final int pos = mDataAdapter.findDataByContentUri(sessionUri);
+                    if (pos == -1) {
+                        // We do not have a placeholder for this image, perhaps due to the
+                        // activity crashing or being killed.
+                        mDataAdapter.addData(newData);
+                    }  else  {
+                        mDataAdapter.updateData(pos, newData);
+                    }
                 }
 
                 @Override
@@ -768,7 +785,7 @@ public class CameraActivity extends Activity
                         return;
                     }
                     if (uri.equals(
-                            mDataAdapter.getLocalData(currentDataId).getContentUri())) {
+                            mDataAdapter.getLocalData(currentDataId).getUri())) {
                         updateSessionProgress(progress);
                     }
                 }
@@ -776,6 +793,15 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSessionUpdated(Uri uri) {
                     mDataAdapter.refresh(uri);
+                }
+
+                @Override
+                public void onSessionPreviewAvailable(Uri uri) {
+                    mDataAdapter.refresh(uri);
+                    int dataId = mDataAdapter.findDataByContentUri(uri);
+                    if (dataId != -1) {
+                        startPeekAnimation(mDataAdapter.getLocalData(dataId));
+                    }
                 }
 
                 @Override
@@ -1010,22 +1036,30 @@ public class CameraActivity extends Activity
 
     @Override
     public void notifyNewMedia(Uri uri) {
-        if (Storage.isSessionUri(uri)) {
-            mDataAdapter.addNewSession(uri);
-        } else {
-
-            ContentResolver cr = getContentResolver();
-            String mimeType = cr.getType(uri);
-            if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
-                sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-                mDataAdapter.addNewVideo(uri);
-            } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
-                CameraUtil.broadcastNewPicture(mAppContext, uri);
-                mDataAdapter.addNewPhoto(uri);
-            } else {
-                android.util.Log.w(TAG, "Unknown new media with MIME type:"
-                        + mimeType + ", uri:" + uri);
+        ContentResolver cr = getContentResolver();
+        String mimeType = cr.getType(uri);
+        if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
+            sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
+            LocalData newData = LocalMediaData.VideoData.fromContentUri(getContentResolver(), uri);
+            if (newData == null) {
+                Log.e(TAG, "Can't find video data in content resolver:" + uri);
+                return;
             }
+            if (mDataAdapter.addData(newData)) {
+                startPeekAnimation(newData);
+            }
+        } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
+            CameraUtil.broadcastNewPicture(mAppContext, uri);
+            LocalData newData = LocalMediaData.PhotoData.fromContentUri(getContentResolver(), uri);
+            if (newData == null) {
+                Log.e(TAG, "Can't find photo data in content resolver:" + uri);
+                return;
+            }
+            if (mDataAdapter.addData(newData)) {
+                startPeekAnimation(newData);
+            }
+        } else {
+            android.util.Log.w(TAG, "Unknown new media with MIME type:" + mimeType + ", uri:" + uri);
         }
     }
 
@@ -1443,7 +1477,7 @@ public class CameraActivity extends Activity
         } else {
             LocalData data = mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
             if (data != null) {
-                mDataAdapter.refresh(data.getContentUri());
+                mDataAdapter.refresh(data.getUri());
             }
         }
         // The share button might be disabled to avoid double tapping.
@@ -1791,7 +1825,7 @@ public class CameraActivity extends Activity
      */
     public void launchEditor(LocalData data) {
         Intent intent = new Intent(Intent.ACTION_EDIT)
-                .setDataAndType(data.getContentUri(), data.getMimeType())
+                .setDataAndType(data.getUri(), data.getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
             launchActivityByIntent(intent);
@@ -1831,7 +1865,7 @@ public class CameraActivity extends Activity
     public void launchTinyPlanetEditor(LocalData data) {
         TinyPlanetFragment fragment = new TinyPlanetFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(TinyPlanetFragment.ARGUMENT_URI, data.getContentUri().toString());
+        bundle.putString(TinyPlanetFragment.ARGUMENT_URI, data.getUri().toString());
         bundle.putString(TinyPlanetFragment.ARGUMENT_TITLE, data.getTitle());
         fragment.setArguments(bundle);
         fragment.show(getFragmentManager(), "tiny_planet");
@@ -2054,7 +2088,7 @@ public class CameraActivity extends Activity
             int currentDataId = mFilmstripController.getCurrentId();
             LocalData currentLocalData = mDataAdapter.getLocalData(currentDataId);
             if (currentLocalData != null) {
-                GalleryHelper.setContentUri(startGalleryIntent, currentLocalData.getContentUri());
+                GalleryHelper.setContentUri(startGalleryIntent, currentLocalData.getUri());
             }
             launchActivityByIntent(startGalleryIntent);
         } catch (ActivityNotFoundException e) {
@@ -2064,7 +2098,7 @@ public class CameraActivity extends Activity
     }
 
     private void setNfcBeamPushUriFromData(LocalData data) {
-        final Uri uri = data.getContentUri();
+        final Uri uri = data.getUri();
         if (uri != Uri.EMPTY) {
             mNfcPushUris[0] = uri;
         } else {
@@ -2119,7 +2153,7 @@ public class CameraActivity extends Activity
 
         /* Progress bar */
 
-        Uri contentUri = currentData.getContentUri();
+        Uri contentUri = currentData.getUri();
         CaptureSessionManager sessionManager = getServices()
                 .getCaptureSessionManager();
 
@@ -2197,8 +2231,16 @@ public class CameraActivity extends Activity
 
             final Bitmap bitmap;
             switch (data.getLocalDataType()) {
-                case LocalData.LOCAL_IMAGE:
                 case LocalData.LOCAL_IN_PROGRESS_DATA:
+                    byte[] jpegData = Storage.getJpegForSession(data.getUri());
+                    if (jpegData != null) {
+                        bitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+                    } else {
+                        bitmap = null;
+                    }
+                    break;
+
+                case LocalData.LOCAL_IMAGE:
                     FileInputStream stream;
                     try {
                         stream = new FileInputStream(data.getPath());
@@ -2237,7 +2279,6 @@ public class CameraActivity extends Activity
                 @Override
                 public void run() {
                     callback.onCallback(bitmap);
-                    mCameraAppUI.startPeekAnimation(bitmap, true);
                 }
             });
         }

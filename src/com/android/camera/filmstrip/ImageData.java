@@ -19,8 +19,6 @@ package com.android.camera.filmstrip;
 import android.content.Context;
 import android.net.Uri;
 
-import com.android.camera.util.PhotoSphereHelper;
-
 /**
  * Common interface for all images in the filmstrip.
  */
@@ -116,7 +114,7 @@ public interface ImageData {
     public void recycle();
 
     /**
-     * @return The content URI of this data, or {@code Uri.EMPTY} if not valid.
+     * @return The URI of this data. Must be a unique one and not null.
      */
-    public Uri getContentUri();
+    public Uri getUri();
 }
