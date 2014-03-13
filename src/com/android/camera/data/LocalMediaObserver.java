@@ -24,11 +24,25 @@ import android.database.ContentObserver;
  */
 public class LocalMediaObserver extends ContentObserver {
 
+    private ChangeListener mChangeListener;
+
+    public interface ChangeListener {
+        public void onChange();
+    }
+
     private boolean mActivityPaused = false;
     private boolean mMediaDataChangedDuringPause = false;
 
     public LocalMediaObserver() {
         super(null);
+    }
+
+    public void setForegroundChangeListener(ChangeListener changeListener) {
+        mChangeListener = changeListener;
+    }
+
+    public void removeForegroundChangeListener() {
+        mChangeListener = null;
     }
 
     /**
@@ -37,6 +51,9 @@ public class LocalMediaObserver extends ContentObserver {
      */
     @Override
     public void onChange(boolean selfChange) {
+        if (mChangeListener != null) {
+            mChangeListener.onChange();
+        }
         if (mActivityPaused) {
             mMediaDataChangedDuringPause = true;
         }

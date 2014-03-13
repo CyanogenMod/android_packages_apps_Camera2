@@ -39,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.android.camera.Storage;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
@@ -48,7 +49,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -58,6 +61,11 @@ import java.util.Locale;
  * return a bitmap.
  */
 public abstract class LocalMediaData implements LocalData {
+    /** The minimum id to use to query for all media at a given media store uri */
+    static final int QUERY_ALL_MEDIA_ID = -1;
+    private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
+    private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
+
     protected final long mContentId;
     protected final String mTitle;
     protected final String mMimeType;
@@ -94,6 +102,34 @@ public abstract class LocalMediaData implements LocalData {
         mLatitude = latitude;
         mLongitude = longitude;
         mMetaData = new Bundle();
+    }
+
+    private interface CursorToLocalData {
+        public LocalData build(Cursor cursor);
+    }
+
+    private static List<LocalData> queryLocalMediaData(ContentResolver contentResolver,
+            Uri contentUri, String[] projection, long minimumId, String orderBy,
+            CursorToLocalData builder) {
+        String selection = SELECT_BY_PATH + " AND " + MediaStore.MediaColumns._ID + " > ?";
+        String[] selectionArgs = new String[] { CAMERA_PATH, Long.toString(minimumId) };
+
+        Cursor cursor = contentResolver.query(contentUri, projection,
+                selection, selectionArgs, orderBy);
+        List<LocalData> result = new ArrayList<LocalData>();
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                LocalData data = builder.build(cursor);
+                if (data != null) {
+                    result.add(data);
+                } else {
+                    final int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                    Log.e(TAG, "Error loading data:"
+                            + cursor.getString(dataIndex));
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -298,12 +334,12 @@ public abstract class LocalMediaData implements LocalData {
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        static final String QUERY_ORDER = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC, "
+        private static final String QUERY_ORDER = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC, "
                 + MediaStore.Images.ImageColumns._ID + " DESC";
         /**
          * These values should be kept in sync with column IDs (COL_*) above.
          */
-        static final String[] QUERY_PROJECTION = {
+        private static final String[] QUERY_PROJECTION = {
                 MediaStore.Images.ImageColumns._ID,           // 0, int
                 MediaStore.Images.ImageColumns.TITLE,         // 1, string
                 MediaStore.Images.ImageColumns.MIME_TYPE,     // 2, string
@@ -335,7 +371,12 @@ public abstract class LocalMediaData implements LocalData {
 
         }
 
-        static PhotoData buildFromCursor(Context context, Cursor c) {
+        static List<LocalData> query(ContentResolver cr, Uri uri, long lastId) {
+            return queryLocalMediaData(cr, uri, QUERY_PROJECTION, lastId, QUERY_ORDER,
+                    new PhotoDataBuilder());
+        }
+
+        private static PhotoData buildFromCursor(Cursor c) {
             long id = c.getLong(COL_ID);
             String title = c.getString(COL_TITLE);
             String mimeType = c.getString(COL_MIME_TYPE);
@@ -435,12 +476,16 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public LocalData refresh(Context context) {
+            PhotoData newData = null;
             Cursor c = context.getContentResolver().query(getContentUri(), QUERY_PROJECTION, null,
                     null, null);
-            if (c == null || !c.moveToFirst()) {
-                return null;
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    newData = buildFromCursor(c);
+                }
+                c.close();
             }
-            PhotoData newData = buildFromCursor(context, c);
+
             return newData;
         }
 
@@ -457,6 +502,15 @@ public abstract class LocalMediaData implements LocalData {
                 boolean isInProgressSession) {
             return new PhotoBitmapLoadTask(context, v, decodeWidth, decodeHeight, resolver, adapter,
                     isInProgressSession);
+        }
+
+        @Override
+        public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
+                int currentDataId, boolean clockwise) {
+            RotationTask task = new RotationTask(context, adapter,
+                    currentDataId, clockwise);
+            task.execute(this);
+            return true;
         }
 
         private final class PhotoBitmapLoadTask extends BitmapLoadTask {
@@ -533,13 +587,11 @@ public abstract class LocalMediaData implements LocalData {
             }
         }
 
-        @Override
-        public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-                int currentDataId, boolean clockwise) {
-            RotationTask task = new RotationTask(context, adapter,
-                    currentDataId, clockwise);
-            task.execute(this);
-            return true;
+        private static class PhotoDataBuilder implements CursorToLocalData {
+            @Override
+            public PhotoData build(Cursor cursor) {
+                return LocalMediaData.PhotoData.buildFromCursor(cursor);
+            }
         }
     }
 
@@ -564,12 +616,12 @@ public abstract class LocalMediaData implements LocalData {
         private static final int mSupportedDataActions =
                 DATA_ACTION_DELETE | DATA_ACTION_PLAY | DATA_ACTION_SHARE;
 
-        static final String QUERY_ORDER = MediaStore.Video.VideoColumns.DATE_TAKEN + " DESC, "
-                + MediaStore.Video.VideoColumns._ID + " DESC";
+        private static final String QUERY_ORDER = MediaStore.Video.VideoColumns.DATE_TAKEN
+                + " DESC, " + MediaStore.Video.VideoColumns._ID + " DESC";
         /**
          * These values should be kept in sync with column IDs (COL_*) above.
          */
-        static final String[] QUERY_PROJECTION = {
+        private static final String[] QUERY_PROJECTION = {
                 MediaStore.Video.VideoColumns._ID,           // 0, int
                 MediaStore.Video.VideoColumns.TITLE,         // 1, string
                 MediaStore.Video.VideoColumns.MIME_TYPE,     // 2, string
@@ -597,7 +649,12 @@ public abstract class LocalMediaData implements LocalData {
             mDurationInSeconds = durationInSeconds;
         }
 
-        static VideoData buildFromCursor(Cursor c) {
+        static List<LocalData> query(ContentResolver cr, Uri uri) {
+            return queryLocalMediaData(cr, uri, QUERY_PROJECTION, QUERY_ALL_MEDIA_ID,
+                    QUERY_ORDER, new VideoDataBuilder());
+        }
+
+        private static VideoData buildFromCursor(Cursor c) {
             long id = c.getLong(COL_ID);
             String title = c.getString(COL_TITLE);
             String mimeType = c.getString(COL_MIME_TYPE);
@@ -813,6 +870,14 @@ public abstract class LocalMediaData implements LocalData {
             mView.setScaleType(ImageView.ScaleType.FIT_XY);
             mView.setImageDrawable(d);
             Log.v(TAG, "Created bitmap: " + bitmap.getWidth() + " x " + bitmap.getHeight());
+        }
+    }
+
+    private static class VideoDataBuilder implements CursorToLocalData {
+
+        @Override
+        public VideoData build(Cursor cursor) {
+            return LocalMediaData.VideoData.buildFromCursor(cursor);
         }
     }
 

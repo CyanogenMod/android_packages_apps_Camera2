@@ -47,6 +47,12 @@ public interface LocalDataAdapter extends DataAdapter {
     }
 
     /**
+     * Request for loading any photos that may have been added to the
+     * media store since the last update.
+     */
+    public void requestLoadNewPhotos();
+
+    /**
      * Request for loading the local data.
      */
     public void requestLoad();

@@ -83,7 +83,6 @@ public class LocalSessionData implements LocalData {
         return mUri.toString();
     }
 
-
     @Override
     public boolean isDataActionSupported(int actions) {
         return false;
