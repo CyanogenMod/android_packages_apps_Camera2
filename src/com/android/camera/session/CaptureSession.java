@@ -118,6 +118,14 @@ public interface CaptureSession {
     public Uri getUri();
 
     /**
+     * Returns the Content URI to the final output of this session. This is only
+     * available if the session has been finished.
+     *
+     * Returns null if it has not been finished.
+     */
+    public Uri getContentUri();
+
+    /**
      * Whether this session already has a path. This is the case once it has
      * been started. False is returned, if the session has not been started yet
      * and no path is available

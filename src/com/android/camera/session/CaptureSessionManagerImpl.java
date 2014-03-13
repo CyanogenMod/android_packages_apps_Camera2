@@ -25,20 +25,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.android.camera.Exif;
+import com.android.camera.Storage;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
-import com.android.camera.exif.ExifTag;
-import com.android.camera.exif.Rational;
 import com.android.camera.util.FileUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -66,6 +61,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private CharSequence mProgressMessage;
         /** A place holder for this capture session. */
         private PlaceholderManager.Session mPlaceHolderSession;
+        private Uri mContentUri;
 
         /**
          * Creates a new {@link CaptureSession}.
@@ -163,8 +159,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             }
 
             // TODO: This needs to happen outside the UI thread.
-            mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation, orientation, exif,
-                    data, width, height, LocalData.MIME_TYPE_JPEG);
+            mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
+                    orientation, exif, data, width, height, LocalData.MIME_TYPE_JPEG);
 
             mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
@@ -247,6 +243,11 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         @Override
         public Uri getUri() {
             return mUri;
+        }
+
+        @Override
+        public Uri getContentUri() {
+            return mContentUri;
         }
 
         @Override
