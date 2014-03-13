@@ -99,13 +99,15 @@ public class PlaceholderManager {
      * @param width the width of the image
      * @param height the height of the image
      * @param mimeType the mime type of the image
+     * @return The content URI of the new media item.
      */
-    public void finishPlaceholder(Session session, Location location, int orientation,
-                                   ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
+    public Uri finishPlaceholder(Session session, Location location, int orientation,
+                                 ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
 
         Uri resultUri = Storage.updateImage(session.outputUri, mContext.getContentResolver(), session.outputTitle,
                 session.time, location, orientation, exif, jpeg, width, height, mimeType);
         CameraUtil.broadcastNewPicture(mContext, resultUri);
+        return resultUri;
     }
 
     /**
