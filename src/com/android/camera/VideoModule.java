@@ -376,7 +376,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        if (mPaused || mCameraDevice == null) {
+        if (mMediaRecorderRecording || mPaused || mCameraDevice == null) {
             return;
         }
         // Check if metering area or focus area is supported.
