@@ -439,73 +439,71 @@ public class BottomBar extends FrameLayout
     /**
      * Animates bar to a single stop button
      */
-    public void animateToCircle(int resId) {
-        final ValueAnimator radiusAnimator = ValueAnimator.ofFloat(
-                                                 (float) diagonalLength()/2,
-                                                 mCircleRadius);
-        radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
-        radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
+    public void animateToVideoStop(int resId) {
+        if (mOverLayBottomBar) {
+            final ValueAnimator radiusAnimator =
+                ValueAnimator.ofFloat((float) diagonalLength()/2, mCircleRadius);
+            radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
+            radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
 
-        radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mCirclePath.reset();
-                mCirclePath.addCircle(
-                    getWidth()/2,
-                    getHeight()/2,
-                    (Float) animation.getAnimatedValue(),
-                    Path.Direction.CW);
-
-                invalidate();
-            }
-        });
+            radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mCirclePath.reset();
+                    mCirclePath.addCircle(
+                            getWidth()/2,
+                            getHeight()/2,
+                            (Float) animation.getAnimatedValue(),
+                            Path.Direction.CW);
+                    invalidate();
+                }
+            });
+            mDrawCircle = true;
+            radiusAnimator.start();
+        }
 
         TransitionDrawable transitionDrawable = crossfadeDrawable(
                 mShutterButton.getDrawable(),
                 getResources().getDrawable(resId));
         mShutterButton.setImageDrawable(transitionDrawable);
-
-        mDrawCircle = true;
         transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
-        radiusAnimator.start();
     }
 
     /**
      * Animates bar to full width / length with video capture icon
      */
     public void animateToFullSize(int resId) {
-        final ValueAnimator radiusAnimator = ValueAnimator.ofFloat(
-                                                 mCircleRadius,
-                                                 (float) diagonalLength()/2);
-        radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
-        radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
-        radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mCirclePath.reset();
-                mCirclePath.addCircle(
-                    getWidth()/2,
-                    getHeight()/2,
-                    (Float) animation.getAnimatedValue(),
-                    Path.Direction.CW);
-
-                invalidate();
-            }
-        });
-        radiusAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mDrawCircle = false;
-            }
-        });
+        if (mDrawCircle) {
+            final ValueAnimator radiusAnimator =
+                ValueAnimator.ofFloat(mCircleRadius, (float) diagonalLength()/2);
+            radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
+            radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mCirclePath.reset();
+                    mCirclePath.addCircle(
+                            getWidth()/2,
+                            getHeight()/2,
+                            (Float) animation.getAnimatedValue(),
+                            Path.Direction.CW);
+                    invalidate();
+                }
+            });
+            radiusAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mDrawCircle = false;
+                }
+            });
+            radiusAnimator.start();
+        }
 
         TransitionDrawable transitionDrawable = crossfadeDrawable(
                 mShutterButton.getDrawable(),
                 getResources().getDrawable(resId));
         mShutterButton.setImageDrawable(transitionDrawable);
-
         transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
-        radiusAnimator.start();
     }
 
     private void notifyAreaAdjust() {
