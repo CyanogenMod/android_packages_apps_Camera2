@@ -1363,6 +1363,7 @@ public class CameraActivity extends Activity
         mCameraController.closeCamera();
         mPanoramaViewHelper.onPause();
 
+        mLocalImagesObserver.setForegroundChangeListener(null);
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
         resetScreenOn();
@@ -1455,11 +1456,19 @@ public class CameraActivity extends Activity
                 // as it will load all the data.
                 if (!mFilmstripVisible) {
                     mDataAdapter.requestLoad();
+                } else {
+                    mDataAdapter.requestLoadNewPhotos();
                 }
             }
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
+        mLocalImagesObserver.setForegroundChangeListener(new LocalMediaObserver.ChangeListener() {
+            @Override
+            public void onChange() {
+                mDataAdapter.requestLoadNewPhotos();
+            }
+        });
 
         keepScreenOnForAWhile();
 

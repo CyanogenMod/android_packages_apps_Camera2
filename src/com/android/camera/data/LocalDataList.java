@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Fast access data structure for an ordered LocalData list.
@@ -77,6 +78,12 @@ public class LocalDataList {
     public void add(int pos, LocalData data) {
         mList.add(pos, data);
         mUriMap.put(data.getContentUri(), data);
+    }
+
+    public void addAll(List<LocalData> localDataList) {
+        for (LocalData localData : localDataList) {
+            add(localData);
+        }
     }
 
     public int size() {
