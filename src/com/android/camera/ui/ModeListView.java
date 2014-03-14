@@ -203,6 +203,15 @@ public class ModeListView extends FrameLayout
         }
 
         /**
+         * Gets called when menu key is pressed.
+         *
+         * @return true if handled, false otherwise.
+         */
+        public boolean onMenuPressed() {
+            return false;
+        }
+
+        /**
          * Gets called when there is a {@link View#setVisibility(int)} call to
          * change the visibility of the mode drawer. Visibility change does not
          * always make sense, for example there can be an outside call to make
@@ -279,7 +288,9 @@ public class ModeListView extends FrameLayout
      * in this state.
      */
     private class FullyHiddenState extends ModeListState {
+        private Animator mAnimator = null;
         private boolean mShouldBeVisible = false;
+
         public FullyHiddenState() {
             reset();
         }
@@ -314,13 +325,59 @@ public class ModeListView extends FrameLayout
         }
 
         @Override
+        public boolean onMenuPressed() {
+            if (mAnimator != null) {
+                return false;
+            }
+            snapOpenAndShow();
+            return true;
+        }
+
+        @Override
         public boolean shouldHandleVisibilityChange(int visibility) {
+            if (mAnimator != null) {
+                return false;
+            }
             if (visibility == VISIBLE && !mShouldBeVisible) {
                 return false;
             }
             return true;
         }
+        /**
+         * Snaps open the mode list and go to the fully shown state.
+         */
+        private void snapOpenAndShow() {
+            mShouldBeVisible = true;
+            setVisibility(VISIBLE);
 
+            mAnimator = snapToFullScreen();
+            if (mAnimator != null) {
+                mAnimator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mAnimator = null;
+                        mCurrentState = new FullyShownState();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            } else {
+                mCurrentState = new FullyShownState();
+            }
+        }
     }
 
     /**
@@ -379,6 +436,12 @@ public class ModeListView extends FrameLayout
 
         @Override
         public boolean onBackPressed() {
+            snapBackAndHide();
+            return true;
+        }
+
+        @Override
+        public boolean onMenuPressed() {
             snapBackAndHide();
             return true;
         }
@@ -1555,6 +1618,14 @@ public class ModeListView extends FrameLayout
         if (visibility != VISIBLE) {
             mCurrentState.hide();
         }
+    }
+
+    /**
+     * Defines how the list view should respond to a menu button pressed
+     * event.
+     */
+    public boolean onMenuPressed() {
+        return mCurrentState.onMenuPressed();
     }
 
     /**

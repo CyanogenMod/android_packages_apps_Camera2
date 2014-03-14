@@ -930,18 +930,14 @@ public class VideoModule extends CameraModule
                     mUI.clickShutter();
                     return true;
                 }
-                break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 if (event.getRepeatCount() == 0) {
                     mUI.clickShutter();
                     return true;
                 }
-                break;
             case KeyEvent.KEYCODE_MENU:
-                if (mMediaRecorderRecording) {
-                    return true;
-                }
-                break;
+                // Consume menu button presses during capture.
+                return mMediaRecorderRecording;
         }
         return false;
     }
@@ -952,6 +948,9 @@ public class VideoModule extends CameraModule
             case KeyEvent.KEYCODE_CAMERA:
                 mUI.pressShutter(false);
                 return true;
+            case KeyEvent.KEYCODE_MENU:
+                // Consume menu button presses during capture.
+                return mMediaRecorderRecording;
         }
         return false;
     }
