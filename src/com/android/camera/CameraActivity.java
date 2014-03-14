@@ -1557,8 +1557,16 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (!mFilmstripVisible && mCurrentModule.onKeyUp(keyCode, event)) {
-            return true;
+        if (!mFilmstripVisible) {
+            // If a module is in the middle of capture, it should
+            // consume the key event.
+            if (mCurrentModule.onKeyUp(keyCode, event)) {
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+                // Let the mode list view consume the event.
+                mModeListView.onMenuPressed();
+                return true;
+            }
         }
         return super.onKeyUp(keyCode, event);
     }
