@@ -194,6 +194,7 @@
 
     <dimen name="option_button_circle_size">48dp</dimen>
     <dimen name="mode_options_toggle_padding">12dp</dimen>
+    <dimen name="mode_options_buttons_anim_delta_x">20dp</dimen>
 
     <dimen name="video_hint_arrow_size">118dp</dimen>
     <dimen name="video_hint_phone_graphic_height">66dp</dimen>
