@@ -28,12 +28,16 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.util.AttributeSet;
 
+import com.android.camera.ui.TopRightWeightedLayout;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
+
+import java.util.ArrayList;
 
 public class ModeOptions extends FrameLayout {
     private int mBackgroundColor;
@@ -42,7 +46,7 @@ public class ModeOptions extends FrameLayout {
     private boolean mIsHiddenOrHiding;
     private RectF mAnimateFrom = new RectF();
     private View mViewToShowHide;
-    private View mModeOptionsButtons;
+    private TopRightWeightedLayout mModeOptionsButtons;
 
     private AnimatorSet mVisibleAnimator;
     private AnimatorSet mHiddenAnimator;
@@ -51,7 +55,7 @@ public class ModeOptions extends FrameLayout {
     private static final int RADIUS_ANIMATION_TIME = 250;
     private static final int SHOW_ALPHA_ANIMATION_TIME = 350;
     private static final int HIDE_ALPHA_ANIMATION_TIME = 200;
-    private static final int PADDING_ANIMATION_TIME = 90;
+    private static final int PADDING_ANIMATION_TIME = 350;
 
     private int mParentSize;
     private boolean mIsPortrait;
@@ -70,7 +74,7 @@ public class ModeOptions extends FrameLayout {
         mBackgroundColor = getResources().getColor(R.color.mode_options_background);
         mPaint.setAntiAlias(true);
         mPaint.setColor(mBackgroundColor);
-        mModeOptionsButtons = findViewById(R.id.mode_options_buttons);
+        mModeOptionsButtons = (TopRightWeightedLayout) findViewById(R.id.mode_options_buttons);
     }
 
     @Override
@@ -156,7 +160,6 @@ public class ModeOptions extends FrameLayout {
                         Path.Direction.CW);
                     mDrawCircle = true;
                     mFill = false;
-                    invalidate();
                 }
             });
             radiusAnimator.addListener(new AnimatorListenerAdapter() {
@@ -165,57 +168,61 @@ public class ModeOptions extends FrameLayout {
                     mPath.reset();
                     mDrawCircle = false;
                     mFill = true;
-                    invalidate();
                 }
             });
 
-            final ValueAnimator alphaAnimator = ValueAnimator.ofFloat(1.0f, 1.0f);
+            final ValueAnimator alphaAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
             alphaAnimator.setDuration(SHOW_ALPHA_ANIMATION_TIME);
             alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     mModeOptionsButtons.setAlpha((Float) animation.getAnimatedValue());
-                    invalidate();
                 }
             });
             alphaAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mModeOptionsButtons.setAlpha(1.0f);
-                    invalidate();
                 }
             });
 
-            final ValueAnimator paddingAnimator = ValueAnimator.ofInt(mParentSize, 0);
-            paddingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    if (mIsPortrait) {
-                        mModeOptionsButtons
-                            .setPadding((Integer) animation.getAnimatedValue(), 0, 0, 0);
-                    } else {
-                        mModeOptionsButtons
-                            .setPadding(0, 0, 0, (Integer) animation.getAnimatedValue());
-                    }
-                    requestLayout();
-                    invalidate();
+            final int deltaX = getResources()
+                .getDimensionPixelSize(R.dimen.mode_options_buttons_anim_delta_x);
+            int childCount = ((ViewGroup) mModeOptionsButtons).getChildCount();
+            ArrayList<Animator> paddingAnimators = new ArrayList<Animator>();
+            for (int i = 0; i < childCount; i++) {
+                final View button;
+                if (mIsPortrait) {
+                    button = ((ViewGroup) mModeOptionsButtons).getChildAt(i);
+                } else {
+                    button = ((ViewGroup) mModeOptionsButtons).getChildAt(childCount-1-i);
                 }
-            });
-            paddingAnimator.setDuration(PADDING_ANIMATION_TIME);
-            paddingAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mModeOptionsButtons
-                        .setPadding(0, 0, 0, 0);
 
-                    requestLayout();
-                    invalidate();
+                if (button.getVisibility() == View.VISIBLE) {
+                    final ValueAnimator paddingAnimator =
+                        ValueAnimator.ofFloat((float) (deltaX*(childCount-i)), 0.0f);
+                    paddingAnimator.setDuration(PADDING_ANIMATION_TIME);
+                    paddingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            if (mIsPortrait) {
+                                button.setTranslationX((Float) animation.getAnimatedValue());
+                            } else {
+                                button.setTranslationY(-((Float) animation.getAnimatedValue()));
+                            }
+                            invalidate();
+                        }
+                    });
+
+                    paddingAnimators.add(paddingAnimator);
                 }
-            });
+            }
+            AnimatorSet paddingAnimatorSet = new AnimatorSet();
+            paddingAnimatorSet.playTogether(paddingAnimators);
 
             mVisibleAnimator = new AnimatorSet();
             mVisibleAnimator.setInterpolator(Gusterpolator.INSTANCE);
-            mVisibleAnimator.playTogether(radiusAnimator, alphaAnimator, paddingAnimator);
+            mVisibleAnimator.playTogether(radiusAnimator, alphaAnimator, paddingAnimatorSet);
         }
 
         // hide

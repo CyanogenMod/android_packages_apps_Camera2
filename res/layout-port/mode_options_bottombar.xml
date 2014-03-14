@@ -47,6 +47,8 @@
                     android:layout_gravity="right"
                     android:visibility="visible"
                     android:background="@null"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:alpha="0.0" >
                     <!-- pano image ids and descriptions are added at runtime -->
                     <com.android.camera.MultiToggleImageButton
