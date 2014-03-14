@@ -77,6 +77,11 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
+    public void requestLoadNewPhotos() {
+        mAdapter.requestLoadNewPhotos();
+    }
+
+    @Override
     public void addNewPhoto(Uri uri) {
         mAdapter.addNewPhoto(uri);
     }
@@ -110,6 +115,7 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     public void finishSession(Uri uri) {
         mAdapter.finishSession(uri);
     }
+
     @Override
     public void refresh(Uri uri) {
         mAdapter.refresh(uri);

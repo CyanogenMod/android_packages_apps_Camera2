@@ -18,17 +18,14 @@ package com.android.camera.data;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.filmstrip.ImageData;
-import com.android.camera.session.PlaceholderManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,7 +38,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private static final String TAG = "CameraDataAdapter";
 
     private static final int DEFAULT_DECODE_SIZE = 1600;
-    private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
 
     private final Context mContext;
 
@@ -53,6 +49,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
+    private long mLastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
 
     private LocalData mLocalDataToDelete;
 
@@ -65,6 +62,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void setLocalDataListener(LocalDataListener listener) {
         mLocalDataListener = listener;
+    }
+
+    @Override
+    public void requestLoadNewPhotos() {
+        LoadNewPhotosTask ltask = new LoadNewPhotosTask(mLastPhotoId);
+        ltask.execute(mContext.getContentResolver());
     }
 
     @Override
@@ -161,49 +164,29 @@ public class CameraDataAdapter implements LocalDataAdapter {
     // TODO: put the database query on background thread
     @Override
     public void addNewVideo(Uri uri) {
-        Cursor cursor = mContext.getContentResolver().query(uri,
-                LocalMediaData.VideoData.QUERY_PROJECTION,
-                MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
-                LocalMediaData.VideoData.QUERY_ORDER);
-        if (cursor == null || !cursor.moveToFirst()) {
+        final ContentResolver cr = mContext.getContentResolver();
+        List<LocalData> newVideos = LocalMediaData.VideoData.query(cr, uri);
+        if (newVideos.isEmpty()) {
             return;
         }
-        int pos = findDataByContentUri(uri);
-        LocalMediaData.VideoData newData = LocalMediaData.VideoData.buildFromCursor(cursor);
-        if (pos != -1) {
-            // A duplicate one, just do a substitute.
-            updateData(pos, newData);
-        } else {
-            // A new data.
-            insertData(newData);
-        }
+        LocalData newVideo = newVideos.get(0);
+        addData(uri, newVideo);
     }
 
-    private LocalData localDataFromUri(Uri uri) {
-        Cursor cursor = mContext.getContentResolver().query(uri,
-                LocalMediaData.PhotoData.QUERY_PROJECTION,
-                MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
-                LocalMediaData.PhotoData.QUERY_ORDER);
-        LocalMediaData.PhotoData newData = null;
-
-        try {
-            if (cursor == null || !cursor.moveToFirst()) {
-                return null;
-            }
-            newData = LocalMediaData.PhotoData.buildFromCursor(mContext, cursor);
-        } finally {
-            // Ensure cursor is closed before returning
-            if (cursor != null) {
-                cursor.close();
-            }
+    private LocalData localPhotoFromUri(Uri uri) {
+        final ContentResolver cr = mContext.getContentResolver();
+        List<LocalData> newPhotos = LocalMediaData.PhotoData.query(cr, uri,
+                LocalMediaData.QUERY_ALL_MEDIA_ID);
+        if (newPhotos.isEmpty()) {
+            return null;
         }
-        return newData;
+        return newPhotos.get(0);
     }
 
     // TODO: put the database query on background thread
     @Override
     public void addNewPhoto(Uri uri) {
-        LocalData newData = localDataFromUri(uri);
+        LocalData newData = localPhotoFromUri(uri);
         addData(uri, newData);
     }
 
@@ -217,7 +200,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         int pos = findDataByContentUri(uri);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
-            Log.v(TAG, "found duplicate photo");
+            Log.v(TAG, "found duplicate data");
             updateData(pos, newData);
         } else {
             // a new data.
@@ -264,7 +247,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
             refresh(sessionUri);
             return;
         }
-        LocalData newData = localDataFromUri(contentUri);
+        LocalData newData = localPhotoFromUri(contentUri);
 
         final int pos = findDataByContentUri(sessionUri);
         if (pos == -1) {
@@ -341,80 +324,89 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
     }
 
-    private class QueryTask extends AsyncTask<ContentResolver, Void, LocalDataList> {
+    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
+
+        private long mMinPhotoId;
+
+        public LoadNewPhotosTask(long lastPhotoId) {
+            mMinPhotoId = lastPhotoId;
+        }
+
+        /**
+         * Loads any new photos added to our storage directory since our last query.
+         * @param contentResolvers {@link android.content.ContentResolver} to load data.
+         * @return An {@link java.util.ArrayList} containing any new data.
+         */
+        @Override
+        protected List<LocalData> doInBackground(ContentResolver... contentResolvers) {
+            final ContentResolver cr = contentResolvers[0];
+            return LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
+                    mMinPhotoId);
+        }
+
+        @Override
+        protected void onPostExecute(List<LocalData> newPhotoData) {
+            if (!newPhotoData.isEmpty()) {
+                LocalData newestPhoto = newPhotoData.get(0);
+                // We may overlap with another load task or a query task, in which case we want
+                // to be sure we never decrement the oldest seen id.
+                mLastPhotoId = Math.max(mLastPhotoId, newestPhoto.getContentId());
+            }
+            // We may add data that is already present, but if we do, it will be deduped in addData.
+            for (LocalData localData : newPhotoData) {
+                addData(localData.getContentUri(), localData);
+            }
+        }
+    }
+
+    private class QueryTaskResult {
+        public LocalDataList mLocalDataList;
+        public long mLastPhotoId;
+
+        public QueryTaskResult(LocalDataList localDataList, long lastPhotoId) {
+            mLocalDataList = localDataList;
+            mLastPhotoId = lastPhotoId;
+        }
+    }
+
+    private class QueryTask extends AsyncTask<ContentResolver, Void, QueryTaskResult> {
+
         /**
          * Loads all the photo and video data in the camera folder in background
          * and combine them into one single list.
          *
-         * @param resolver {@link ContentResolver} to load all the data.
-         * @return An {@link ArrayList} of all loaded data.
+         * @param contentResolvers {@link ContentResolver} to load all the data.
+         * @return An {@link com.android.camera.data.CameraDataAdapter.QueryTaskResult} containing
+         *  all loaded data and the highest photo id in the dataset.
          */
         @Override
-        protected LocalDataList doInBackground(ContentResolver... resolver) {
+        protected QueryTaskResult doInBackground(ContentResolver... contentResolvers) {
             LocalDataList l = new LocalDataList();
+            final ContentResolver cr = contentResolvers[0];
             // Photos
-            Cursor c = resolver[0].query(
-                    LocalMediaData.PhotoData.CONTENT_URI,
-                    LocalMediaData.PhotoData.QUERY_PROJECTION,
-                    MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
-                    LocalMediaData.PhotoData.QUERY_ORDER);
-            if (c != null && c.moveToFirst()) {
-                // build up the list.
-                while (true) {
-                    LocalData data = LocalMediaData.PhotoData.buildFromCursor(mContext, c);
-                    if (data != null) {
-                        l.add(data);
-                    } else {
-                        Log.e(TAG, "Error loading data:"
-                                + c.getString(LocalMediaData.PhotoData.COL_DATA));
-                    }
-                    if (c.isLast()) {
-                        break;
-                    }
-                    c.moveToNext();
-                }
-            }
-            if (c != null) {
-                c.close();
+            List<LocalData> photoData = LocalMediaData.PhotoData.query(cr,
+                    LocalMediaData.PhotoData.CONTENT_URI, LocalMediaData.QUERY_ALL_MEDIA_ID);
+            List<LocalData> videoData = LocalMediaData.VideoData.query(cr,
+                    LocalMediaData.VideoData.CONTENT_URI);
+
+            long lastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
+            if (!photoData.isEmpty()) {
+                lastPhotoId = photoData.get(0).getContentId();
             }
 
-            c = resolver[0].query(
-                    LocalMediaData.VideoData.CONTENT_URI,
-                    LocalMediaData.VideoData.QUERY_PROJECTION,
-                    MediaStore.Video.Media.DATA + " like ? ", CAMERA_PATH,
-                    LocalMediaData.VideoData.QUERY_ORDER);
-            if (c != null && c.moveToFirst()) {
-                // build up the list.
-                c.moveToFirst();
-                while (true) {
-                    LocalData data = LocalMediaData.VideoData.buildFromCursor(c);
-                    if (data != null) {
-                        l.add(data);
-                    } else {
-                        Log.e(TAG, "Error loading data:"
-                                + c.getString(LocalMediaData.VideoData.COL_DATA));
-                    }
-                    if (!c.isLast()) {
-                        c.moveToNext();
-                    } else {
-                        break;
-                    }
-                }
-            }
-            if (c != null) {
-                c.close();
-            }
+            l.addAll(photoData);
+            l.addAll(videoData);
+            l.sort(new LocalData.NewestFirstComparator());
 
-            if (l.size() != 0) {
-                l.sort(new LocalData.NewestFirstComparator());
-            }
-
-            return l;
+            return new QueryTaskResult(l, lastPhotoId);
         }
 
         @Override
-        protected void onPostExecute(LocalDataList l) {
-            replaceData(l);
+        protected void onPostExecute(QueryTaskResult result) {
+            // Since we're wiping away all of our data, we should always replace any existing last
+            // photo id with the new one we just obtained so it matches the data we're showing.
+            mLastPhotoId = result.mLastPhotoId;
+            replaceData(result.mLocalDataList);
         }
     }
 
