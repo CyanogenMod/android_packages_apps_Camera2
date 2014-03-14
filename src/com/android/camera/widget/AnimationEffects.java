@@ -16,6 +16,7 @@
 
 package com.android.camera.widget;
 
+import android.animation.Animator;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
@@ -47,7 +48,11 @@ public abstract class AnimationEffects {
      */
     public abstract void drawForeground(Canvas canvas);
 
-    public abstract void startAnimation();
+    /**
+     * Starts the animation and sets the given animator listener as the listener
+     * for the animation.
+     */
+    public abstract void startAnimation(Animator.AnimatorListener animatorListener);
 
     /**
      * Cancels the current animation effects.
