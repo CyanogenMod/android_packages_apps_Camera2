@@ -1228,10 +1228,12 @@ public class CameraActivity extends Activity
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
                 || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())) {
-            modeIndex = photoIndex;
+            modeIndex = mSettingsManager.getInt(
+                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
         } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            modeIndex = photoIndex;
+            modeIndex = mSettingsManager.getInt(
+                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
