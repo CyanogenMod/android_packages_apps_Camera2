@@ -145,7 +145,7 @@ public class CameraSettings {
     public static final String VALUE_ON = "on";
     public static final String VALUE_OFF = "off";
 
-    public static final int CURRENT_VERSION = 6;
+    public static final int CURRENT_VERSION = 7;
     public static final int CURRENT_LOCAL_VERSION = 3;
 
     public static final int DEFAULT_VIDEO_DURATION = 0; // no limit
@@ -716,8 +716,17 @@ public class CameraSettings {
             // ignore the current settings.
             editor.remove("pref_camera_videoquality_key");
             editor.remove("pref_camera_video_duration_key");
+            version = 4;
         }
-        if (version < 6) {
+        if (version == 4) {
+            // Just upgrade to version 5 directly
+            version = 5;
+        }
+        if (version == 5) {
+            // Just upgrade to version 6 directly
+            version = 6;
+        }
+        if (version == 6) {
             // Change jpeg quality {normal,fine,superfine} back to {65,75,85}
             String quality = pref.getString(KEY_JPEG_QUALITY, "superfine");
             if (quality.equals("normal")) {
@@ -728,7 +737,6 @@ public class CameraSettings {
                 quality = "85";
             }
             editor.putString(KEY_JPEG_QUALITY, quality);
-            version = 6;
         }
 
         editor.putInt(KEY_VERSION, CURRENT_VERSION);
