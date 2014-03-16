@@ -717,8 +717,8 @@ public class CameraSettings {
             editor.remove("pref_camera_videoquality_key");
             editor.remove("pref_camera_video_duration_key");
         }
-        if (version == 5) {
-            // Change jpeg quality {normal,fine,superfine} to {65,75,85}
+        if (version < 6) {
+            // Change jpeg quality {normal,fine,superfine} back to {65,75,85}
             String quality = pref.getString(KEY_JPEG_QUALITY, "superfine");
             if (quality.equals("normal")) {
                 quality = "65";
