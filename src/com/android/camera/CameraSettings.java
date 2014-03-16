@@ -716,6 +716,11 @@ public class CameraSettings {
             // ignore the current settings.
             editor.remove("pref_camera_videoquality_key");
             editor.remove("pref_camera_video_duration_key");
+            version = 4;
+        }
+        if (version == 4) {
+            // Just upgrade to version 5 directly
+            version = 5;
         }
         if (version == 5) {
             // Change jpeg quality {normal,fine,superfine} to {65,75,85}
@@ -728,7 +733,6 @@ public class CameraSettings {
                 quality = "85";
             }
             editor.putString(KEY_JPEG_QUALITY, quality);
-            version = 6;
         }
 
         editor.putInt(KEY_VERSION, CURRENT_VERSION);
