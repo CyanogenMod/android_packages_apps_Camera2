@@ -27,9 +27,9 @@ class MetadataLoader {
     private static final String KEY_METADATA_UPDATED = "metadata_updated";
 
     static void loadMetadata(final Context context, final LocalData data) {
-        PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getContentUri(),
+        PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getUri(),
                 data.getMetadata());
-        RgbzMetadataLoader.loadRgbzMetadata(context, data.getContentUri(), data.getMetadata());
+        RgbzMetadataLoader.loadRgbzMetadata(context, data.getUri(), data.getMetadata());
         data.getMetadata().putBoolean(MetadataLoader.KEY_METADATA_UPDATED, true);
     }
 

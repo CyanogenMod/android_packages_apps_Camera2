@@ -123,7 +123,7 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
         if (success) {
             // MediaStore using SQLite is thread safe.
             values.put(Images.Media.ORIENTATION, finalRotationDegrees);
-            mContext.getContentResolver().update(imageData.getContentUri(),
+            mContext.getContentResolver().update(imageData.getUri(),
                     values, null, null);
             double[] latLong = data.getLatLong();
             double latitude = 0;

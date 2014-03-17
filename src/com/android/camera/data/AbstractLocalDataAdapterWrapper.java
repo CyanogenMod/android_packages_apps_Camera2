@@ -72,28 +72,13 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void addNewVideo(Uri uri) {
-        mAdapter.addNewVideo(uri);
-    }
-
-    @Override
     public void requestLoadNewPhotos() {
         mAdapter.requestLoadNewPhotos();
     }
 
     @Override
-    public void addNewPhoto(Uri uri) {
-        mAdapter.addNewPhoto(uri);
-    }
-
-    @Override
-    public void addNewSession(Uri uri) {
-        mAdapter.addNewSession(uri);
-    }
-
-    @Override
-    public void insertData(LocalData data) {
-        mAdapter.insertData(data);
+    public boolean addData(LocalData data) {
+        return mAdapter.addData(data);
     }
 
     @Override
@@ -109,11 +94,6 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     @Override
     public boolean undoDataRemoval() {
         return mAdapter.undoDataRemoval();
-    }
-
-    @Override
-    public void finishSession(Uri uri) {
-        mAdapter.finishSession(uri);
     }
 
     @Override

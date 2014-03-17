@@ -45,6 +45,12 @@ public interface CaptureSessionManager {
          */
         public void onSessionUpdated(Uri mediaUri);
 
+        /**
+         * Called when the preview of the media underlying the session with the
+         * given Uri has been updated.
+         */
+        public void onSessionPreviewAvailable(Uri mediaUri);
+
         /** Called when the session with the given Uri finished. */
         public void onSessionDone(Uri mediaUri);
 

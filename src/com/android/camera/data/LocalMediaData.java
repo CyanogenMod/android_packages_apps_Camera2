@@ -214,7 +214,7 @@ public abstract class LocalMediaData implements LocalData {
         // TODO: Load MediaStore or embedded-in-JPEG-stream thumbnail.
 
         BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
-                context.getContentResolver(), adapter, isInProgress);
+                context.getContentResolver(), adapter);
         task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, (Void[]) null);
         return v;
     }
@@ -309,7 +309,7 @@ public abstract class LocalMediaData implements LocalData {
      */
     protected abstract BitmapLoadTask getBitmapLoadTask(
             Context context, ImageView v, int decodeWidth, int decodeHeight,
-            ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession);
+            ContentResolver resolver, LocalDataAdapter adapter);
 
     public static final class PhotoData extends LocalMediaData {
         private static final String TAG = "PhotoData";
@@ -360,6 +360,14 @@ public abstract class LocalMediaData implements LocalData {
 
         /** from MediaStore, can only be 0, 90, 180, 270 */
         private final int mOrientation;
+
+        public static LocalData fromContentUri(ContentResolver cr, Uri contentUri) {
+            List<LocalData> newPhotos = query(cr, contentUri, QUERY_ALL_MEDIA_ID);
+            if (newPhotos.isEmpty()) {
+                return null;
+            }
+            return newPhotos.get(0);
+        }
 
         public PhotoData(long id, String title, String mimeType,
                 long dateTakenInSeconds, long dateModifiedInSeconds,
@@ -456,7 +464,7 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public Uri getContentUri() {
+        public Uri getUri() {
             Uri baseUri = CONTENT_URI;
             return baseUri.buildUpon().appendPath(String.valueOf(mContentId)).build();
         }
@@ -477,7 +485,7 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public LocalData refresh(Context context) {
             PhotoData newData = null;
-            Cursor c = context.getContentResolver().query(getContentUri(), QUERY_PROJECTION, null,
+            Cursor c = context.getContentResolver().query(getUri(), QUERY_PROJECTION, null,
                     null, null);
             if (c != null) {
                 if (c.moveToFirst()) {
@@ -498,10 +506,9 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(Context context, ImageView v, int decodeWidth,
-                int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter,
-                boolean isInProgressSession) {
-            return new PhotoBitmapLoadTask(context, v, decodeWidth, decodeHeight, resolver, adapter,
-                    isInProgressSession);
+                int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter) {
+            return new PhotoBitmapLoadTask(context, v, decodeWidth, decodeHeight, resolver,
+                    adapter);
         }
 
         @Override
@@ -519,21 +526,15 @@ public abstract class LocalMediaData implements LocalData {
             private final Context mContext;
             private final LocalDataAdapter mAdapter;
 
-            // TODO: Re-think how we can avoid having the in-progress indication
-            // here.
-            private final boolean mIsInProgressSession;
-
             private boolean mNeedsRefresh;
 
             public PhotoBitmapLoadTask(Context context, ImageView v, int decodeWidth,
-                    int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter,
-                    boolean isInProgressSession) {
+                    int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter) {
                 super(context, v);
                 mDecodeWidth = decodeWidth;
                 mDecodeHeight = decodeHeight;
                 mContext = context;
                 mAdapter = adapter;
-                mIsInProgressSession = isInProgressSession;
             }
 
             @Override
@@ -552,9 +553,9 @@ public abstract class LocalMediaData implements LocalData {
                     ContentValues values = new ContentValues();
                     values.put(Images.Media.WIDTH, decodedSize.x);
                     values.put(Images.Media.HEIGHT, decodedSize.y);
-                    mContext.getContentResolver().update(getContentUri(), values, null, null);
+                    mContext.getContentResolver().update(getUri(), values, null, null);
                     mNeedsRefresh = true;
-                    Log.w(TAG, "Uri " + getContentUri() + " has been updated with" +
+                    Log.w(TAG, "Uri " + getUri() + " has been updated with" +
                             " the correct size!");
                     return null;
                 }
@@ -582,7 +583,7 @@ public abstract class LocalMediaData implements LocalData {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 if (mNeedsRefresh && mAdapter != null) {
-                    mAdapter.refresh(getContentUri());
+                    mAdapter.refresh(getUri());
                 }
             }
         }
@@ -649,9 +650,17 @@ public abstract class LocalMediaData implements LocalData {
             mDurationInSeconds = durationInSeconds;
         }
 
-        static List<LocalData> query(ContentResolver cr, Uri uri) {
-            return queryLocalMediaData(cr, uri, QUERY_PROJECTION, QUERY_ALL_MEDIA_ID,
-                    QUERY_ORDER, new VideoDataBuilder());
+        public static LocalData fromContentUri(ContentResolver cr, Uri contentUri) {
+            List<LocalData> newVideos = query(cr, contentUri, QUERY_ALL_MEDIA_ID);
+            if (newVideos.isEmpty()) {
+                return null;
+            }
+            return newVideos.get(0);
+        }
+
+        static List<LocalData> query(ContentResolver cr, Uri uri, long lastId) {
+            return queryLocalMediaData(cr, uri, QUERY_PROJECTION, lastId, QUERY_ORDER,
+                    new VideoDataBuilder());
         }
 
         private static VideoData buildFromCursor(Cursor c) {
@@ -741,7 +750,7 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public Uri getContentUri() {
+        public Uri getUri() {
             Uri baseUri = CONTENT_URI;
             return baseUri.buildUpon().appendPath(String.valueOf(mContentId)).build();
         }
@@ -761,7 +770,7 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public LocalData refresh(Context context) {
-            Cursor c = context.getContentResolver().query(getContentUri(), QUERY_PROJECTION, null,
+            Cursor c = context.getContentResolver().query(getUri(), QUERY_PROJECTION, null,
                     null, null);
             if (c == null || !c.moveToFirst()) {
                 return null;
@@ -795,7 +804,7 @@ public abstract class LocalMediaData implements LocalData {
                 public void onClick(View v) {
                     // TODO: refactor this into activities to avoid this class
                     // conversion.
-                    CameraUtil.playVideo((Activity) context, getContentUri(), mTitle);
+                    CameraUtil.playVideo((Activity) context, getUri(), mTitle);
                 }
             });
 
@@ -808,7 +817,7 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
                 Context context, ImageView v, int decodeWidth, int decodeHeight,
-                ContentResolver resolver, LocalDataAdapter adapter, boolean isInProgressSession) {
+                ContentResolver resolver, LocalDataAdapter adapter) {
             // TODO: Support isInProgressSession for videos when we need it.
             return new VideoBitmapLoadTask(context, v);
         }
