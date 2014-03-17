@@ -1225,11 +1225,12 @@ public class CameraActivity extends Activity
                 || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
             modeIndex = videoIndex;
         } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
-                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
-                        .getAction())) {
-            modeIndex = mSettingsManager.getInt(
-                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
-        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())) {
+            // TODO: synchronize mode options with photo module without losing
+            // HDR+ preferences.
+            modeIndex = photoIndex;
+        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
+                        .getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
             modeIndex = mSettingsManager.getInt(
                 SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
