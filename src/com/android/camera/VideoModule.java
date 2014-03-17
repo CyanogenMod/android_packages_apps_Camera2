@@ -155,9 +155,9 @@ public class VideoModule extends CameraModule
     private int mMaxVideoDurationInMs;
 
     // Time Lapse parameters.
-    private boolean mCaptureTimeLapse = false;
+    private final boolean mCaptureTimeLapse = false;
     // Default 0. If it is larger than 0, the camcorder is in time lapse mode.
-    private int mTimeBetweenTimeLapseFrameCaptureMs = 0;
+    private final int mTimeBetweenTimeLapseFrameCaptureMs = 0;
 
     boolean mPreviewing = false; // True if preview is started.
     // The display rotation in degrees. This is only valid when mPreviewing is
@@ -690,7 +690,8 @@ public class VideoModule extends CameraModule
             mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
         }
 
-        // Read time lapse recording interval.
+        // TODO: Uncomment this block to re-enable time-lapse.
+        /* // Read time lapse recording interval.
         String frameIntervalStr = settingsManager.get(
             SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
         mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
@@ -698,7 +699,7 @@ public class VideoModule extends CameraModule
         // TODO: This should be checked instead directly +1000.
         if (mCaptureTimeLapse) {
             quality += 1000;
-        }
+        } */
 
         // If quality is not supported, request QUALITY_HIGH which is always supported.
         if (CamcorderProfile.hasProfile(mCameraId, quality) == false) {
