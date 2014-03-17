@@ -427,6 +427,14 @@ public class VideoModule extends CameraModule
     }
 
     /**
+     * @return Whether the currently active camera is front-facing.
+     */
+    private boolean isCameraFrontFacing() {
+        CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
+        return info.facing == CameraInfo.CAMERA_FACING_FRONT;
+    }
+
+    /**
      * The focus manager gets initialized after camera is available.
      */
     private void initializeFocusManager() {
@@ -436,8 +444,7 @@ public class VideoModule extends CameraModule
         if (mFocusManager != null) {
             mFocusManager.removeMessages();
         } else {
-            CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
-            mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+            mMirror = isCameraFrontFacing();
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
             mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
@@ -661,10 +668,15 @@ public class VideoModule extends CameraModule
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (!settingsManager.isSet(SettingsManager.SETTING_VIDEO_QUALITY)) {
-            settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY);
+        if (!settingsManager.isSet(SettingsManager.SETTING_VIDEO_QUALITY_BACK)) {
+            settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY_BACK);
         }
-        String videoQuality = settingsManager.get(SettingsManager.SETTING_VIDEO_QUALITY);
+        if (!settingsManager.isSet(SettingsManager.SETTING_VIDEO_QUALITY_FRONT)) {
+            settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY_FRONT);
+        }
+        String videoQuality = settingsManager
+                .get(isCameraFrontFacing() ? SettingsManager.SETTING_VIDEO_QUALITY_FRONT
+                        : SettingsManager.SETTING_VIDEO_QUALITY_BACK);
         int quality = SettingsUtil.getVideoQuality(videoQuality, mCameraId);
         Log.d(TAG, "Selected video quality for '" + videoQuality + "' is " + quality);
 
@@ -1065,7 +1077,7 @@ public class VideoModule extends CameraModule
         int rotation = 0;
         if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
             CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
-            if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+            if (isCameraFrontFacing()) {
                 rotation = (info.orientation - mOrientation + 360) % 360;
             } else {  // back-facing camera
                 rotation = (info.orientation + mOrientation) % 360;
@@ -1287,9 +1299,7 @@ public class VideoModule extends CameraModule
         if (bitmap != null) {
             // MetadataRetriever already rotates the thumbnail. We should rotate
             // it to match the UI orientation (and mirror if it is front-facing camera).
-            CameraInfo[] info = mActivity.getCameraProvider().getCameraInfo();
-            boolean mirror = (info[mCameraId].facing == CameraInfo.CAMERA_FACING_FRONT);
-            bitmap = CameraUtil.rotateAndMirror(bitmap, 0, mirror);
+            bitmap = CameraUtil.rotateAndMirror(bitmap, 0, isCameraFrontFacing());
         }
         return bitmap;
     }
@@ -1687,8 +1697,7 @@ public class VideoModule extends CameraModule
         closeCamera();
         requestCamera(mCameraId);
 
-        CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
-        mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+        mMirror = isCameraFrontFacing();
         if (mFocusManager != null) {
             mFocusManager.setMirror(mMirror);
         }

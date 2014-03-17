@@ -341,44 +341,48 @@ public class SettingsManager {
 
     // For quick lookup from id to Setting.
     public static final int SETTING_RECORD_LOCATION = 0;
-    public static final int SETTING_VIDEO_QUALITY = 1;
-    public static final int SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL = 2;
-    public static final int SETTING_PICTURE_SIZE = 3;
-    public static final int SETTING_JPEG_QUALITY = 4;
-    public static final int SETTING_FOCUS_MODE = 5;
-    public static final int SETTING_FLASH_MODE = 6;
-    public static final int SETTING_VIDEOCAMERA_FLASH_MODE = 7;
-    public static final int SETTING_WHITE_BALANCE = 8;
-    public static final int SETTING_SCENE_MODE = 9;
-    public static final int SETTING_EXPOSURE = 10;
-    public static final int SETTING_TIMER = 11;
-    public static final int SETTING_TIMER_SOUND_EFFECTS = 12;
-    public static final int SETTING_VIDEO_EFFECT = 13;
-    public static final int SETTING_CAMERA_ID = 14;
-    public static final int SETTING_CAMERA_HDR = 15;
-    public static final int SETTING_CAMERA_HDR_PLUS = 16;
-    public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 17;
-    public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 18;
-    public static final int SETTING_STARTUP_MODULE_INDEX = 19;
-    public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 20;
-    public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 21;
-    public static final int SETTING_CAMERA_PANO_ORIENTATION = 22;
-    public static final int SETTING_CAMERA_GRID_LINES = 23;
-    public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 24;
-    public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 25;
-    public static final int SETTING_STRICT_UPGRADE_VERSION = 26;
-    public static final int SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX = 27;
+    public static final int SETTING_VIDEO_QUALITY_BACK = 1;
+    public static final int SETTING_VIDEO_QUALITY_FRONT = 2;
+    public static final int SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL = 3;
+    public static final int SETTING_PICTURE_SIZE_BACK = 4;
+    public static final int SETTING_PICTURE_SIZE_FRONT = 5;
+    public static final int SETTING_JPEG_QUALITY = 6;
+    public static final int SETTING_FOCUS_MODE = 7;
+    public static final int SETTING_FLASH_MODE = 8;
+    public static final int SETTING_VIDEOCAMERA_FLASH_MODE = 9;
+    public static final int SETTING_WHITE_BALANCE = 10;
+    public static final int SETTING_SCENE_MODE = 11;
+    public static final int SETTING_EXPOSURE = 12;
+    public static final int SETTING_TIMER = 13;
+    public static final int SETTING_TIMER_SOUND_EFFECTS = 14;
+    public static final int SETTING_VIDEO_EFFECT = 15;
+    public static final int SETTING_CAMERA_ID = 16;
+    public static final int SETTING_CAMERA_HDR = 17;
+    public static final int SETTING_CAMERA_HDR_PLUS = 18;
+    public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 19;
+    public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 20;
+    public static final int SETTING_STARTUP_MODULE_INDEX = 21;
+    public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 22;
+    public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 23;
+    public static final int SETTING_CAMERA_PANO_ORIENTATION = 24;
+    public static final int SETTING_CAMERA_GRID_LINES = 25;
+    public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 26;
+    public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 27;
+    public static final int SETTING_STRICT_UPGRADE_VERSION = 28;
+    public static final int SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX = 29;
     // A boolean for requesting to return to HDR plus
     // as soon as possible, if a user requests a setting/mode option
     // that forces them to leave HDR plus.
-    public static final int SETTING_REQUEST_RETURN_HDR_PLUS = 28;
+    public static final int SETTING_REQUEST_RETURN_HDR_PLUS = 30;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
-    public static final String KEY_VIDEO_QUALITY = "pref_video_quality_key";
+    public static final String KEY_VIDEO_QUALITY_BACK = "pref_video_quality_back_key";
+    public static final String KEY_VIDEO_QUALITY_FRONT = "pref_video_quality_front_key";
     public static final String KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL =
             "pref_video_time_lapse_frame_interval_key";
-    public static final String KEY_PICTURE_SIZE = "pref_camera_picturesize_key";
+    public static final String KEY_PICTURE_SIZE_BACK = "pref_camera_picturesize_back_key";
+    public static final String KEY_PICTURE_SIZE_FRONT = "pref_camera_picturesize_front_key";
     public static final String KEY_JPEG_QUALITY = "pref_camera_jpegquality_key";
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
     public static final String KEY_FLASH_MODE = "pref_camera_flashmode_key";
@@ -898,11 +902,19 @@ public class SettingsManager {
                 values, FLUSH_OFF);
     }
 
-    public static Setting getPictureSizeSetting(Context context) {
+    public static Setting getPictureSizeBackSetting(Context context) {
         String defaultValue = null;
         String[] values = context.getResources().getStringArray(
                 R.array.pref_camera_picturesize_entryvalues);
-        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE,
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE_BACK,
+                values, FLUSH_OFF);
+    }
+
+    public static Setting getPictureSizeFrontSetting(Context context) {
+        String defaultValue = null;
+        String[] values = context.getResources().getStringArray(
+                R.array.pref_camera_picturesize_entryvalues);
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE_FRONT,
                 values, FLUSH_OFF);
     }
 
@@ -998,11 +1010,19 @@ public class SettingsManager {
                 values, FLUSH_OFF);
     }
 
-    public static Setting getVideoQualitySetting(Context context) {
+    public static Setting getVideoQualityBackSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_video_quality_default);
         String[] values = context.getResources().getStringArray(
                 R.array.pref_video_quality_entryvalues);
-        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_VIDEO_QUALITY,
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_VIDEO_QUALITY_BACK,
+                values, FLUSH_OFF);
+    }
+
+    public static Setting getVideoQualityFrontSetting(Context context) {
+        String defaultValue = context.getString(R.string.pref_video_quality_default);
+        String[] values = context.getResources().getStringArray(
+                R.array.pref_video_quality_entryvalues);
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_VIDEO_QUALITY_FRONT,
                 values, FLUSH_OFF);
     }
 
