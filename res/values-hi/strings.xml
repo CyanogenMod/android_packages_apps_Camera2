@@ -206,6 +206,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"मज़ाकिया चेहरे"</string>
     <string name="effect_background" msgid="1358432220077975015">"पृष्ठभूमि"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"शटर"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"रद्द करें"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"मेनू बटन"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"कैमरा, वीडियो या पैनोरामा चयनकर्ता"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s चेक बॉक्स"</string>
