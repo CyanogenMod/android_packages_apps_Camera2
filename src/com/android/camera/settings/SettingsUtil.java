@@ -23,6 +23,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.android.camera.app.CameraManager;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
@@ -38,6 +39,62 @@ import java.util.List;
  * Utility functions around camera settings.
  */
 public class SettingsUtil {
+    /** The selected Camera sizes. */
+    public static class SelectedPictureSizes {
+        public Size large;
+        public Size medium;
+        public Size small;
+
+        public Size getFromSetting(String sizeSetting) {
+            // Sanitize the value to be either small, medium or large. Default
+            // to the latter.
+            if (!SIZE_SMALL.equals(sizeSetting) && !SIZE_MEDIUM.equals(sizeSetting)) {
+                sizeSetting = SIZE_LARGE;
+            }
+
+            if (SIZE_LARGE.equals(sizeSetting)) {
+                return large;
+            } else if (SIZE_MEDIUM.equals(sizeSetting)) {
+                return medium;
+            } else {
+                return small;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "SelectedPictureSizes: " + sizeToString(large) + ", " + sizeToString(medium)
+                    + ", " + sizeToString(small);
+        }
+
+        private static String sizeToString(Size size) {
+            return size.width + "x" + size.height;
+        }
+    }
+
+    /** The selected {@link CamcorderProfile} qualities. */
+    public static class SelectedVideoQualities {
+        public int large = -1;
+        public int medium = -1;
+        public int small = -1;
+
+        public int getFromSetting(String sizeSetting) {
+            // Sanitize the value to be either small, medium or large. Default
+            // to the latter.
+            if (!SIZE_SMALL.equals(sizeSetting) && !SIZE_MEDIUM.equals(sizeSetting)) {
+                sizeSetting = SIZE_LARGE;
+            }
+
+            if (SIZE_LARGE.equals(sizeSetting)) {
+                return large;
+            } else if (SIZE_MEDIUM.equals(sizeSetting)) {
+                return medium;
+            } else {
+                return small;
+            }
+        }
+    }
+
     private static final String TAG = "SettingsUtil";
 
     /** Enable debug output. */
@@ -63,6 +120,11 @@ public class SettingsUtil {
             CamcorderProfile.QUALITY_QCIF
     };
 
+    public static SparseArray<SelectedPictureSizes> sCachedSelectedPictureSizes =
+            new SparseArray<SelectedPictureSizes>(2);
+    public static SparseArray<SelectedVideoQualities> sCachedSelectedVideoQualities =
+            new SparseArray<SelectedVideoQualities>(2);
+
     /**
      * Based on the selected size, this method selects the matching concrete
      * resolution and sets it as the picture size.
@@ -72,10 +134,12 @@ public class SettingsUtil {
      * @param supported The list of supported resolutions.
      * @param parameters The Camera parameters to set the selected picture
      *            resolution on.
+     * @param cameraId This is used for caching the results for finding the
+     *            different sizes.
      */
     public static void setCameraPictureSize(String sizeSetting, List<Size> supported,
-            Parameters parameters) {
-        Size selectedSize = getCameraPictureSize(sizeSetting, supported);
+            Parameters parameters, int cameraId) {
+        Size selectedSize = getCameraPictureSize(sizeSetting, supported, cameraId);
         Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.width + "x"
                 + selectedSize.height);
         parameters.setPictureSize(selectedSize.width, selectedSize.height);
@@ -89,16 +153,32 @@ public class SettingsUtil {
      * @param sizeSetting The setting selected by the user. One of "large",
      *            "medium, "small".
      * @param supported The list of supported resolutions.
-     * @param parameters The Camera parameters to set the selected picture
-     *            resolution on.
+     * @param cameraId This is used for caching the results for finding the
+     *            different sizes.
      * @return The selected size.
      */
-    public static Size getCameraPictureSize(String sizeSetting, List<Size> supported) {
-        // Sanitize the value to be either small, medium or large. Default to
-        // the latter.
-        if (!SIZE_SMALL.equals(sizeSetting) && !SIZE_MEDIUM.equals(sizeSetting)) {
-            sizeSetting = SIZE_LARGE;
+    private static Size getCameraPictureSize(String sizeSetting, List<Size> supported,
+            int cameraId) {
+        return getSelectedCameraPictureSizes(supported, cameraId).getFromSetting(sizeSetting);
+    }
+
+    /**
+     * Based on the list of supported resolutions, this method selects the ones
+     * that shall be selected for being 'large', 'medium' and 'small'.
+     *
+     * @return It's guaranteed that all three sizes are filled. If less than
+     *         three sizes are supported, the selected sizes might contain
+     *         duplicates.
+     */
+    static SelectedPictureSizes getSelectedCameraPictureSizes(List<Size> supported, int cameraId) {
+        if (sCachedSelectedPictureSizes.get(cameraId) != null) {
+            return sCachedSelectedPictureSizes.get(cameraId);
         }
+        if (supported == null) {
+            return null;
+        }
+
+        SelectedPictureSizes selectedSizes = new SelectedPictureSizes();
 
         // Sort supported sizes by total pixel count, descending.
         Collections.sort(supported, new Comparator<Size>() {
@@ -119,14 +199,12 @@ public class SettingsUtil {
         }
 
         // Large size is always the size with the most pixels reported.
-        Size largeSize = supported.remove(0);
-        if (SIZE_LARGE.equals(sizeSetting)) {
-            return largeSize;
-        }
+        selectedSizes.large = supported.remove(0);
 
         // If possible we want to find medium and small sizes with the same
         // aspect ratio as 'large'.
-        final float targetAspectRatio = largeSize.width / (float) largeSize.height;
+        final float targetAspectRatio = selectedSizes.large.width
+                / (float) selectedSizes.large.height;
 
         // Create a list of sizes with the same aspect ratio as "large" which we
         // will search in primarily.
@@ -153,35 +231,42 @@ public class SettingsUtil {
         // happen on test devices and emulators.
         if (searchList.isEmpty()) {
             Log.w(TAG, "Only one supported resolution.");
-            return largeSize;
+            selectedSizes.medium = selectedSizes.large;
+            selectedSizes.small = selectedSizes.large;
         } else if (searchList.size() == 1) {
             Log.w(TAG, "Only two supported resolutions.");
-            return searchList.get(0);
+            selectedSizes.medium = searchList.get(0);
+            selectedSizes.small = searchList.get(0);
         } else if (searchList.size() == 2) {
-            int index = SIZE_MEDIUM.equals(sizeSetting) ? 0 : 1;
-            return searchList.get(index);
-        }
+            Log.w(TAG, "Exactly three supported resolutions.");
+            selectedSizes.medium = searchList.get(0);
+            selectedSizes.small = searchList.get(1);
+        } else {
 
-        // Based on the large pixel count, determine the target pixel count for
-        // medium and small.
-        final int largePixelCount = largeSize.width * largeSize.height;
-        final int mediumTargetPixelCount = (int) (largePixelCount * MEDIUM_RELATIVE_PICTURE_SIZE);
-        final int smallTargetPixelCount = (int) (largePixelCount * SMALL_RELATIVE_PICTURE_SIZE);
+            // Based on the large pixel count, determine the target pixel count
+            // for medium and small.
+            final int largePixelCount = selectedSizes.large.width * selectedSizes.large.height;
+            final int mediumTargetPixelCount = (int) (largePixelCount * MEDIUM_RELATIVE_PICTURE_SIZE);
+            final int smallTargetPixelCount = (int) (largePixelCount * SMALL_RELATIVE_PICTURE_SIZE);
 
-        int mediumSizeIndex = findClosestSize(searchList, mediumTargetPixelCount);
-        int smallSizeIndex = findClosestSize(searchList, smallTargetPixelCount);
+            int mediumSizeIndex = findClosestSize(searchList, mediumTargetPixelCount);
+            int smallSizeIndex = findClosestSize(searchList, smallTargetPixelCount);
 
-        // If the selected sizes are the same, move the small size one down or
-        // the medium size one up.
-        if (searchList.get(mediumSizeIndex).equals(searchList.get(smallSizeIndex))) {
-            if (smallSizeIndex < (searchList.size() - 1)) {
-                smallSizeIndex += 1;
-            } else {
-                mediumSizeIndex -= 1;
+            // If the selected sizes are the same, move the small size one down
+            // or
+            // the medium size one up.
+            if (searchList.get(mediumSizeIndex).equals(searchList.get(smallSizeIndex))) {
+                if (smallSizeIndex < (searchList.size() - 1)) {
+                    smallSizeIndex += 1;
+                } else {
+                    mediumSizeIndex -= 1;
+                }
             }
+            selectedSizes.medium = searchList.get(mediumSizeIndex);
+            selectedSizes.small = searchList.get(smallSizeIndex);
         }
-        int selectedSizeIndex = SIZE_MEDIUM.equals(sizeSetting) ? mediumSizeIndex : smallSizeIndex;
-        return searchList.get(selectedSizeIndex);
+        sCachedSelectedPictureSizes.put(cameraId, selectedSizes);
+        return selectedSizes;
     }
 
     /**
@@ -195,10 +280,12 @@ public class SettingsUtil {
      * @return The CamcorderProfile quality setting.
      */
     public static int getVideoQuality(String qualitySetting, int cameraId) {
-        // Sanitize the value to be either small, medium or large. Default to
-        // the latter.
-        if (!SIZE_SMALL.equals(qualitySetting) && !SIZE_MEDIUM.equals(qualitySetting)) {
-            qualitySetting = SIZE_LARGE;
+        return getSelectedVideoQualities(cameraId).getFromSetting(qualitySetting);
+    }
+
+    static SelectedVideoQualities getSelectedVideoQualities(int cameraId) {
+        if (sCachedSelectedVideoQualities.get(cameraId) != null) {
+            return sCachedSelectedVideoQualities.get(cameraId);
         }
 
         // Go through the sizes in descending order, see if they are supported,
@@ -208,16 +295,15 @@ public class SettingsUtil {
         // If only one quality is supported, then all three selected qualities
         // will be the same.
         int largeIndex = getNextSupportedVideoQualityIndex(cameraId, 0);
-        if (SIZE_LARGE.equals(qualitySetting)) {
-            return sVideoQualities[largeIndex];
-        }
         int mediumIndex = getNextSupportedVideoQualityIndex(cameraId, largeIndex + 1);
-        if (SIZE_MEDIUM.equals(qualitySetting)) {
-            return sVideoQualities[mediumIndex];
-        }
         int smallIndex = getNextSupportedVideoQualityIndex(cameraId, mediumIndex + 1);
-        // If we didn't return for 'large' or 'medium, size must be 'small'.
-        return sVideoQualities[smallIndex];
+
+        SelectedVideoQualities selectedQualities = new SelectedVideoQualities();
+        selectedQualities.large = sVideoQualities[largeIndex];
+        selectedQualities.medium = sVideoQualities[mediumIndex];
+        selectedQualities.small = sVideoQualities[smallIndex];
+        sCachedSelectedVideoQualities.put(cameraId, selectedQualities);
+        return selectedQualities;
     }
 
     /**

@@ -640,4 +640,16 @@
         <item>@drawable/ic_camera</item>
     </array>
 
+    <!-- These must correspond in order to the entries in CameraProfile. -->
+    <array name="camcorder_profile_names">
+        <item>@string/pref_video_quality_entry_low</item>
+        <item>@string/pref_video_quality_entry_high</item>
+        <item>@string/pref_video_quality_entry_qcif</item>
+        <item>@string/pref_video_quality_entry_cif</item>
+        <item>@string/pref_video_quality_entry_480p</item>
+        <item>@string/pref_video_quality_entry_720p</item>
+        <item>@string/pref_video_quality_entry_1080p</item>
+        <item>@string/pref_video_quality_entry_qvga</item>
+    </array>
+
 </resources>

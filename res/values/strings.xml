@@ -755,10 +755,16 @@ CHAR LIMIT=NONE] -->
 
     <!-- Text shown in camera settings list for toggling photo location on or off [CHAR LIMIT=25] -->
     <string name="setting_location">Location</string>
-    <!-- Text shown in camera settings list for selecting the size of photos that will be captured [CHAR LIMIT=25] -->
-    <string name="setting_picture_size">Picture Size</string>
-    <!-- Text shown in camera settings list for selecting the resolution of videos that will be recorded [CHAR LIMIT=25] -->
-    <string name="setting_video_resolution">Video Resolution</string>
+
+    <!-- Camera settings title for back camera photo resolution. [CHAR LIMIT=25] -->
+    <string name="setting_back_camera_photo">Back camera photo</string>
+    <!-- Camera settings title for back camera video resolution. [CHAR LIMIT=25] -->
+    <string name="setting_back_camera_video">Back camera video</string>
+    <!-- Camera settings title for front camera photo resolution. [CHAR LIMIT=25] -->
+    <string name="setting_front_camera_photo">Front camera photo</string>
+    <!-- Camera settings title for front camera video resolution. [CHAR LIMIT=25] -->
+    <string name="setting_front_camera_video">Front camera video</string>
+
     <!-- Text shown in camera settings list for selecting the camera mode that will be used by default when the app starts [CHAR LIMIT=25] -->
     <string name="setting_default_camera">Default Camera</string>
     <!-- Text shown in camera settings list for sending user feedback to the app publisher [CHAR LIMIT=25] -->
@@ -805,4 +811,23 @@ CHAR LIMIT=NONE] -->
     <!--  Title of a preference which shows the build version of the app. [CHAR LIMIT=30]  -->
     <string name="pref_title_build_version">Build version</string>
 
+    <!-- Video quality setting entry. Videos will be recorded in the lowest quality available on the device. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_low">Low</string>
+    <!-- Video quality setting entry. Videos will be recorded in the highest quality available on the device. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_high">High</string>
+    <!-- Video quality setting entry. Videos will be recorded in quarter CIF quality. [CHAR LIMIT=24] --> 
+    <string name="pref_video_quality_entry_qcif" translatable="false">QCIF</string>
+    <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] --> 
+    <string name="pref_video_quality_entry_cif" translatable="false">CIF</string>
+    <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_480p" translatable="false">SD 480p</string>
+    <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_720p" translatable="false">HD 720p</string>
+    <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_1080p" translatable="false">HD 1080p</string>
+    <!-- Video quality setting entry. Videos will be recorded in quarter VGA quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_qvga" translatable="false">QVGA</string>
+
+    <!-- Message shown in the settings summary for how many megapixels have been selected. [CHAR LIMIT=24]-->
+    <string name="setting_summary_x_megapixels">%1$s megapixels</string>
  </resources>

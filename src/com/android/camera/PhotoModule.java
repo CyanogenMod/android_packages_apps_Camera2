@@ -433,9 +433,7 @@ public class PhotoModule
             mFocusManager.removeMessages();
         }
 
-        // TODO: this needs to be brought into onCameraAvailable();
-        CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
-        mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+        mMirror = isCameraFrontFacing();
         mFocusManager.setMirror(mMirror);
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
@@ -622,9 +620,7 @@ public class PhotoModule
         }
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = true;
-            CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
-            mUI.onStartFaceDetection(mDisplayOrientation,
-                    (info.facing == CameraInfo.CAMERA_FACING_FRONT));
+            mUI.onStartFaceDetection(mDisplayOrientation, isCameraFrontFacing());
             mCameraDevice.setFaceDetectionCallback(mHandler, mUI);
             mCameraDevice.startFaceDetection();
         }
@@ -1179,6 +1175,14 @@ public class PhotoModule
     }
 
     /**
+     * @return Whether the currently active camera is front-facing.
+     */
+    private boolean isCameraFrontFacing() {
+        CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
+        return info.facing == CameraInfo.CAMERA_FACING_FRONT;
+    }
+
+    /**
      * The focus manager is the first UI related element to get initialized, and
      * it requires the RenderOverlay, so initialize it here
      */
@@ -1189,8 +1193,7 @@ public class PhotoModule
         if (mFocusManager != null) {
             mFocusManager.removeMessages();
         } else {
-            CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
-            mMirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+            mMirror = isCameraFrontFacing();
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
             mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
@@ -1620,10 +1623,13 @@ public class PhotoModule
 
     private void updateParametersPictureSize() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        String pictureSize = settingsManager.get(SettingsManager.SETTING_PICTURE_SIZE);
+        String pictureSize = settingsManager
+                .get(isCameraFrontFacing() ? SettingsManager.SETTING_PICTURE_SIZE_FRONT
+                        : SettingsManager.SETTING_PICTURE_SIZE_BACK);
 
         List<Size> supported = mParameters.getSupportedPictureSizes();
-        SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters);
+        SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters,
+                mCameraDevice.getCameraId());
         Size size = mParameters.getPictureSize();
 
         // Set a preview size that is closest to the viewfinder height and has

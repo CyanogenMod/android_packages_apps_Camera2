@@ -94,10 +94,12 @@ public class SettingsCache {
 
     private void initKeyMap() {
         mKeyMap.put(SettingsManager.KEY_RECORD_LOCATION, SettingsManager.SETTING_RECORD_LOCATION);
-        mKeyMap.put(SettingsManager.KEY_VIDEO_QUALITY, SettingsManager.SETTING_VIDEO_QUALITY);
+        mKeyMap.put(SettingsManager.KEY_VIDEO_QUALITY_BACK, SettingsManager.SETTING_VIDEO_QUALITY_BACK);
+        mKeyMap.put(SettingsManager.KEY_VIDEO_QUALITY_FRONT, SettingsManager.SETTING_VIDEO_QUALITY_FRONT);
         mKeyMap.put(SettingsManager.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
                 SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
-        mKeyMap.put(SettingsManager.KEY_PICTURE_SIZE, SettingsManager.SETTING_PICTURE_SIZE);
+        mKeyMap.put(SettingsManager.KEY_PICTURE_SIZE_BACK, SettingsManager.SETTING_PICTURE_SIZE_BACK);
+        mKeyMap.put(SettingsManager.KEY_PICTURE_SIZE_FRONT, SettingsManager.SETTING_PICTURE_SIZE_FRONT);
         mKeyMap.put(SettingsManager.KEY_JPEG_QUALITY, SettingsManager.SETTING_JPEG_QUALITY);
         mKeyMap.put(SettingsManager.KEY_FOCUS_MODE, SettingsManager.SETTING_FOCUS_MODE);
         mKeyMap.put(SettingsManager.KEY_FLASH_MODE, SettingsManager.SETTING_FLASH_MODE);
@@ -167,12 +169,16 @@ public class SettingsCache {
         switch (id) {
             case SettingsManager.SETTING_RECORD_LOCATION:
                 return SettingsManager.getLocationSetting(mContext);
-            case SettingsManager.SETTING_VIDEO_QUALITY:
-                return SettingsManager.getVideoQualitySetting(mContext);
+            case SettingsManager.SETTING_VIDEO_QUALITY_BACK:
+                return SettingsManager.getVideoQualityBackSetting(mContext);
+            case SettingsManager.SETTING_VIDEO_QUALITY_FRONT:
+                return SettingsManager.getVideoQualityFrontSetting(mContext);
             case SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL:
                 return SettingsManager.getTimeLapseFrameIntervalSetting(mContext);
-            case SettingsManager.SETTING_PICTURE_SIZE:
-                return SettingsManager.getPictureSizeSetting(mContext);
+            case SettingsManager.SETTING_PICTURE_SIZE_BACK:
+                return SettingsManager.getPictureSizeBackSetting(mContext);
+            case SettingsManager.SETTING_PICTURE_SIZE_FRONT:
+                return SettingsManager.getPictureSizeFrontSetting(mContext);
             case SettingsManager.SETTING_JPEG_QUALITY:
                 return SettingsManager.getJpegQualitySetting(mContext);
             case SettingsManager.SETTING_FOCUS_MODE:
