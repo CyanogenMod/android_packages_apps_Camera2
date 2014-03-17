@@ -493,7 +493,10 @@ public class SettingsManager {
      * Get the SharedPreferences needed to query/update the setting.
      */
     public SharedPreferences getSettingSource(Setting setting) {
-        String source = setting.getSource();
+        return getSettingSource(setting.getSource());
+    }
+
+    private SharedPreferences getSettingSource(String source) {
         if (source.equals(SOURCE_DEFAULT)) {
             return mDefaultSettings;
         }
@@ -566,9 +569,9 @@ public class SettingsManager {
     /**
      * Returns whether this Setting was last set as a String.
      */
-    private boolean isString(int id) {
+    private boolean isString(int id, String source) {
         Setting setting = mSettingsCache.get(id);
-        SharedPreferences preferences = getSettingSource(setting);
+        SharedPreferences preferences = getSettingSource(source);
         try {
             preferences.getString(setting.getKey(), null);
             return true;
@@ -580,9 +583,9 @@ public class SettingsManager {
     /**
      * Returns whether this Setting was last set as a boolean.
      */
-    private boolean isBoolean(int id) {
+    private boolean isBoolean(int id, String source) {
         Setting setting = mSettingsCache.get(id);
-        SharedPreferences preferences = getSettingSource(setting);
+        SharedPreferences preferences = getSettingSource(source);
         try {
             preferences.getBoolean(setting.getKey(), false);
             return true;
@@ -594,9 +597,9 @@ public class SettingsManager {
     /**
      * Returns whether this Setting was last set as an Integer.
      */
-    private boolean isInteger(int id) {
+    private boolean isInteger(int id, String source) {
         Setting setting = mSettingsCache.get(id);
-        SharedPreferences preferences = getSettingSource(setting);
+        SharedPreferences preferences = getSettingSource(source);
         try {
             preferences.getInt(setting.getKey(), 0);
             return true;
@@ -610,20 +613,20 @@ public class SettingsManager {
      * is known and the type conversion is successful, otherwise
      * reset to the default.
      */
-    private String recoverToString(int id) {
+    private String recoverToString(int id, String source) {
         String value;
         try {
-            if (isBoolean(id)) {
-                value = (getBoolean(id) ? VALUE_ON : VALUE_OFF);
-            } else if (isInteger(id)) {
-                value = Integer.toString(getInt(id));
+            if (isBoolean(id, source)) {
+                value = (getBoolean(id, source) ? VALUE_ON : VALUE_OFF);
+            } else if (isInteger(id, source)) {
+                value = Integer.toString(getInt(id, source));
             } else {
                 throw new Exception();
             }
         } catch (Exception e) {
             value = mSettingsCache.get(id).getDefault();
         }
-        set(id, value);
+        set(id, source, value);
         return value;
     }
 
@@ -632,20 +635,20 @@ public class SettingsManager {
      * is known and the type conversion is successful, otherwise
      * reset to the default.
      */
-    private boolean recoverToBoolean(int id) {
+    private boolean recoverToBoolean(int id, String source) {
         boolean value;
         try {
-            if (isString(id)) {
-                value = VALUE_ON.equals(get(id));
-            } else if (isInteger(id)) {
-                value = getInt(id) != 0;
+            if (isString(id, source)) {
+                value = VALUE_ON.equals(get(id, source));
+            } else if (isInteger(id, source)) {
+                value = getInt(id, source) != 0;
             } else {
                 throw new Exception();
             }
         } catch (Exception e) {
             value = VALUE_ON.equals(mSettingsCache.get(id).getDefault());
         }
-        setBoolean(id, value);
+        setBoolean(id, source, value);
         return value;
     }
 
@@ -654,13 +657,13 @@ public class SettingsManager {
      * is known and the type conversion is successful, otherwise
      * reset to the default.
      */
-    private int recoverToInteger(int id) {
+    private int recoverToInteger(int id, String source) {
         int value;
         try {
-            if (isString(id)) {
-                value = Integer.parseInt(get(id));
-            } else if (isBoolean(id)) {
-                value = getBoolean(id) ? 1 : 0;
+            if (isString(id, source)) {
+                value = Integer.parseInt(get(id, source));
+            } else if (isBoolean(id, source)) {
+                value = getBoolean(id, source) ? 1 : 0;
             } else {
                 throw new Exception();
             }
@@ -689,18 +692,18 @@ public class SettingsManager {
     /**
      * Get a Setting's String value based on Setting id.
      */
-    // TODO: rename to something more descriptive.
+    // TODO: rename to something more descriptive like getString.
     public String get(int id) {
         Setting setting = mSettingsCache.get(id);
-        if (!TYPE_STRING.equals(setting.getType())) {
-            // Incorrect use of the api, the defaults will
-            // probably be defined as the wrong type, no recovery.
-            throw new IllegalArgumentException(
-                "Trying to get String when Setting id=" + id
-                + " is defined as a " + setting.getType());
-        }
+        return get(id, setting.getSource());
+    }
 
-        SharedPreferences preferences = getSettingSource(setting);
+    /**
+     * Get a Setting's String value based on Setting id and a source file id.
+     */
+    public String get(int id, String source) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(source);
         if (preferences != null) {
             try {
                 String value = preferences.getString(setting.getKey(), setting.getDefault());
@@ -709,11 +712,11 @@ public class SettingsManager {
                 // If the api defines this Setting as a String, but the
                 // last set saved it as a different type, try to recover
                 // the value, but if impossible reset to default.
-                return recoverToString(id);
+                return recoverToString(id, source);
             }
         } else {
             throw new IllegalStateException(
-                "Setting source=" + setting.getSource() + " is unitialized.");
+                "Setting source=" + source + " is unitialized.");
         }
     }
 
@@ -722,15 +725,15 @@ public class SettingsManager {
      */
     public boolean getBoolean(int id) {
         Setting setting = mSettingsCache.get(id);
-        if (!TYPE_BOOLEAN.equals(setting.getType())) {
-            // Incorrect use of the api, the defaults will
-            // probably be defined as the wrong type, no recovery.
-            throw new IllegalArgumentException(
-                "Trying to get boolean when Setting id=" + id
-                + " is defined as a " + setting.getType());
-        }
+        return getBoolean(id, setting.getSource());
+    }
 
-        SharedPreferences preferences = getSettingSource(setting);
+    /**
+     * Get a Setting's boolean value based on a Setting id and a source file id.
+     */
+    public boolean getBoolean(int id, String source) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(source);
         boolean defaultValue = VALUE_ON.equals(setting.getDefault());
         if (preferences != null) {
             try {
@@ -739,11 +742,11 @@ public class SettingsManager {
                 // If the api defines this Setting as a boolean, but the
                 // last set saved it as a different type, try to recover
                 // the value, but if impossible reset to default.
-                return recoverToBoolean(id);
+                return recoverToBoolean(id, source);
             }
         } else {
             throw new IllegalStateException(
-                "Setting source=" + setting.getSource() + " is unitialized.");
+                "Setting source=" + source + " is unitialized.");
         }
     }
 
@@ -752,15 +755,15 @@ public class SettingsManager {
      */
     public int getInt(int id) {
         Setting setting = mSettingsCache.get(id);
-        if (!TYPE_INTEGER.equals(setting.getType())) {
-            // Incorrect use of the api, the defaults will
-            // probably be defined as the wrong type, no recovery.
-            throw new IllegalArgumentException(
-                "Trying to get Integer when Setting id=" + id
-                + " is defined as a " + setting.getType());
-        }
+        return getInt(id, setting.getSource());
+    }
 
-        SharedPreferences preferences = getSettingSource(setting);
+    /**
+     * Get a Setting's int value based on Setting id and a source file id.
+     */
+    public int getInt(int id, String source) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(source);
         int defaultValue = Integer.parseInt(setting.getDefault());
         if (preferences != null) {
             try {
@@ -769,11 +772,11 @@ public class SettingsManager {
                 // If the api defines this Setting as an Integer, but the
                 // last set saved it as a different type, try to recover
                 // the value, but if impossible reset to default.
-                return recoverToInteger(id);
+                return recoverToInteger(id, source);
             }
         } else {
             throw new IllegalStateException(
-                "Setting source=" + setting.getSource() + " is unitialized.");
+                "Setting source=" + source + " is unitialized.");
         }
     }
 
@@ -783,13 +786,21 @@ public class SettingsManager {
     // TODO: rename to something more descriptive.
     public void set(int id, String value) {
         Setting setting = mSettingsCache.get(id);
+        set(id, setting.getSource(), value);
+    }
+
+    /**
+     * Set a Setting with a String value based on Setting id and a source file id.
+     */
+    public void set(int id, String source, String value) {
+        Setting setting = mSettingsCache.get(id);
         value = sanitize(setting, value);
-        SharedPreferences preferences = getSettingSource(setting);
+        SharedPreferences preferences = getSettingSource(source);
         if (preferences != null) {
             preferences.edit().putString(setting.getKey(), value).apply();
         } else {
             throw new IllegalStateException(
-                "Setting source=" + setting.getSource() + " is unitialized.");
+                "Setting source=" + source + " is unitialized.");
         }
     }
 
@@ -798,12 +809,19 @@ public class SettingsManager {
      */
     public void setBoolean(int id, boolean value) {
         Setting setting = mSettingsCache.get(id);
-        SharedPreferences preferences = getSettingSource(setting);
+        setBoolean(id, setting.getSource(), value);
+    }
+    /**
+     * Set a Setting with a boolean value based on Setting id and a source file id.
+     */
+    public void setBoolean(int id, String source, boolean value) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(source);
         if (preferences != null) {
             preferences.edit().putBoolean(setting.getKey(), value).apply();
         } else {
             throw new IllegalStateException(
-                "Setting source=" + setting.getSource() + " is unitialized.");
+                "Setting source=" + source + " is unitialized.");
         }
     }
 
@@ -812,12 +830,20 @@ public class SettingsManager {
      */
     public void setInt(int id, int value) {
         Setting setting = mSettingsCache.get(id);
-        SharedPreferences preferences = getSettingSource(setting);
+        setInt(id, setting.getSource(), value);
+    }
+
+    /**
+     * Set a Setting with an int value based on Setting id and a source file id.
+     */
+    public void setInt(int id, String source, int value) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(source);
         if (preferences != null) {
             preferences.edit().putInt(setting.getKey(), value).apply();
         } else {
             throw new IllegalStateException(
-                "Setting source=" + setting.getSource() + " is unitialized.");
+                "Setting source=" + source + " is unitialized.");
         }
     }
 
@@ -826,7 +852,15 @@ public class SettingsManager {
      */
     public boolean isSet(int id) {
         Setting setting = mSettingsCache.get(id);
-        SharedPreferences preferences = getSettingSource(setting);
+        return isSet(id, setting.getSource());
+    }
+
+    /**
+     * Check if a Setting has ever been set based on Setting id and a source file id.
+     */
+    public boolean isSet(int id, String source) {
+        Setting setting = mSettingsCache.get(id);
+        SharedPreferences preferences = getSettingSource(source);
         if (preferences != null) {
             return preferences.contains(setting.getKey());
         } else {
