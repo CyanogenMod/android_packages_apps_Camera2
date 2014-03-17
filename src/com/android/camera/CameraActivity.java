@@ -1098,9 +1098,29 @@ public class CameraActivity extends Activity
                     // Show the location dialog on upgrade if
                     //  (a) the user has never set this option (status quo).
                     //  (b) the user opt'ed out previously.
-                    if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION) &&
-                            !settingsManager.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
-                        settingsManager.remove(SettingsManager.SETTING_RECORD_LOCATION);
+
+                    if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
+                        // Location is set in the source file defined for this setting.
+                        // Remove the setting if the value is false to launch the dialog.
+                        Log.e("DEBUG", "upgrading using current source");
+                        if (!settingsManager.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
+                            settingsManager.remove(SettingsManager.SETTING_RECORD_LOCATION);
+                        }
+                    } else {
+                        // Location is not set, check to see if we're upgrading from
+                        // a different source file.
+                        if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION,
+                                                  SettingsManager.SOURCE_GLOBAL)) {
+                            boolean location = settingsManager.getBoolean(
+                                SettingsManager.SETTING_RECORD_LOCATION,
+                                SettingsManager.SOURCE_GLOBAL);
+                            if (location) {
+                                // Set the old setting only if the value is true, to prevent
+                                // launching the dialog.
+                                settingsManager.setBoolean(
+                                    SettingsManager.SETTING_RECORD_LOCATION, location);
+                            }
+                        }
                     }
                 }
             };
