@@ -378,6 +378,8 @@ public class CameraSettings {
         if (histogram != null && CameraUtil.isHistogramEnabled()) {
             filterUnsupportedOptions(group,
                     histogram, mParameters.getSupportedHistogramModes());
+        } else {
+            removePreference(group, histogram.getKey());
         }
 
         if (pictureFormat != null) {
