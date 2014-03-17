@@ -532,9 +532,11 @@ public class WideAnglePanoramaModule
                     float progressX, float progressY) {
                 float accumulatedHorizontalAngle = progressX * mHorizontalViewAngle;
                 float accumulatedVerticalAngle = progressY * mVerticalViewAngle;
+                boolean isRotated = !(mDeviceOrientationAtCapture == mDeviceOrientation);
                 if (isFinished
                         || (Math.abs(accumulatedHorizontalAngle) >= DEFAULT_SWEEP_ANGLE)
-                        || (Math.abs(accumulatedVerticalAngle) >= DEFAULT_SWEEP_ANGLE)) {
+                        || (Math.abs(accumulatedVerticalAngle) >= DEFAULT_SWEEP_ANGLE)
+                        || isRotated) {
                     stopCapture(false);
                 } else {
                     float panningRateXInDegree = panningRateX * mHorizontalViewAngle;
