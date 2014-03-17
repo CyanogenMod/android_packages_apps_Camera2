@@ -206,6 +206,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"趣怪臉"</string>
     <string name="effect_background" msgid="1358432220077975015">"背景"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"快門"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"取消"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"選單按鈕"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"相機、影片或全景相片選取工具"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s選框"</string>
