@@ -52,14 +52,25 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, int width, int height, Drawable placeHolder,
+    public View getView(Context context, View recycled, int width, int height, Drawable placeHolder,
            LocalDataAdapter adapter, boolean isInProgress) {
-        //TODO do this on a background thread
+        final ImageView imageView;
+        if (recycled != null) {
+            imageView = (ImageView) recycled;
+        } else {
+            imageView = new ImageView(context);
+        }
+
         byte[] jpegData = Storage.getJpegForSession(mUri);
+        //TODO do this on a background thread
         Bitmap bmp = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
-        ImageView imageView = new ImageView(context);
         imageView.setImageBitmap(bmp);
         return imageView;
+    }
+
+    @Override
+    public LocalDataViewType getItemViewType() {
+        return LocalDataViewType.SESSION;
     }
 
     @Override

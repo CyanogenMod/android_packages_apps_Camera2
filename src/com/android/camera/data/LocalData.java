@@ -79,8 +79,15 @@ public interface LocalData extends ImageData {
      * @param height Height in pixels of rendered view.
      * @param adapter Data adapter for this data item.
      */
-    View getView(Context context, int width, int height, Drawable placeHolder,
+    View getView(Context context, View recycled, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress);
+
+    /** Returns a unique identifier for the view created by this data so that the view
+     * can be reused.
+     *
+     * @see android.widget.BaseAdapter#getItemViewType(int)
+     */
+    LocalDataViewType getItemViewType();
 
    /**
      * Request resize of View created by getView().

@@ -111,18 +111,31 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public View getView(Context context, int dataID) {
+    public View getView(Context context, View recycled, int dataID) {
         int totalNumber = mAdapter.getTotalNumber();
 
         if (dataID < totalNumber) {
-            return mAdapter.getView(context, dataID);
+            return mAdapter.getView(context, recycled, dataID);
         } else if (dataID == totalNumber) {
-            return mLastData.getView(context,
+            return mLastData.getView(context, recycled,
                     mSuggestedWidth, mSuggestedHeight, null, null, false);
         }
 
         return null;
     }
+
+    @Override
+    public int getItemViewType(int dataId) {
+        int totalNumber = mAdapter.getTotalNumber();
+
+        if (dataId < totalNumber) {
+            return mAdapter.getItemViewType(dataId);
+        } else if (dataId == totalNumber) {
+            return mLastData.getItemViewType().ordinal();
+        }
+
+        return -1;
+   }
 
     @Override
     public void resizeView(Context context, int dataID, View view, int w, int h) {

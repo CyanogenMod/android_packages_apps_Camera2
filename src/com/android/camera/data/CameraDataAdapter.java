@@ -89,6 +89,15 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
+    public int getItemViewType(int dataId) {
+        if (dataId > mImages.size() || dataId < 0) {
+            return -1;
+        }
+
+        return mImages.get(dataId).getItemViewType().ordinal();
+    }
+
+    @Override
     public LocalData getLocalData(int dataID) {
         if (dataID < 0 || dataID >= mImages.size()) {
             return null;
@@ -114,13 +123,13 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public View getView(Context context, int dataID) {
+    public View getView(Context context, View recycled, int dataID) {
         if (dataID >= mImages.size() || dataID < 0) {
             return null;
         }
 
         return mImages.get(dataID).getView(
-                context, mSuggestedWidth, mSuggestedHeight,
+                context, recycled, mSuggestedWidth, mSuggestedHeight,
                 mPlaceHolder.getConstantState().newDrawable(), this, /* inProgress */ false);
     }
 

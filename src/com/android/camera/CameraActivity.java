@@ -81,6 +81,7 @@ import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.data.CameraDataAdapter;
+import com.android.camera.data.LocalDataViewType;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
@@ -1329,6 +1330,7 @@ public class CameraActivity extends Activity
                     mDataAdapter,
                     new SimpleViewData(
                             v,
+                            LocalDataViewType.SECURE_ALBUM_PLACEHOLDER,
                             v.getDrawable().getIntrinsicWidth(),
                             v.getDrawable().getIntrinsicHeight(),
                             0, 0));

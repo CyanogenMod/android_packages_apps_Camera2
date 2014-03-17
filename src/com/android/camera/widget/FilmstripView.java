@@ -31,6 +31,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,11 @@ import com.android.camera.ui.ZoomView;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
 
 public class FilmstripView extends ViewGroup {
     private static final String TAG = "FilmStripView";
@@ -105,6 +110,8 @@ public class FilmstripView extends ViewGroup {
     private float mOverScaleFactor = 1f;
 
     private boolean mFullScreenUIHidden = false;
+    private SparseArray<Queue<View>> recycledViews = new SparseArray<Queue<View>>();
+
 
     /**
      * A helper class to tract and calculate the view coordination.
@@ -354,6 +361,7 @@ public class FilmstripView extends ViewGroup {
             if (force || mData.getViewType() != ImageData.VIEW_TYPE_STICKY) {
                 removeView(mView);
                 mData.recycle();
+                recycleView(mView, mDataId);
             } else {
                 setVisibility(View.INVISIBLE);
             }
@@ -595,6 +603,26 @@ public class FilmstripView extends ViewGroup {
         }
     }
 
+    private void recycleView(View view, int dataId) {
+        final int viewType = mDataAdapter.getItemViewType(dataId);
+        Queue<View> recycledViewsForType = recycledViews.get(viewType);
+        if (recycledViewsForType == null) {
+            recycledViewsForType = new ArrayDeque<View>();
+            recycledViews.put(viewType, recycledViewsForType);
+        }
+        recycledViewsForType.offer(view);
+    }
+
+    private View getRecycledView(int dataId) {
+        final int viewType = mDataAdapter.getItemViewType(dataId);
+        Queue<View> recycledViewsForType = recycledViews.get(viewType);
+        View result = null;
+        if (recycledViewsForType != null) {
+            result = recycledViewsForType.poll();
+        }
+        return result;
+    }
+
     /**
      * Returns the controller.
      *
@@ -713,7 +741,8 @@ public class FilmstripView extends ViewGroup {
                 * FILM_STRIP_SCALE);
         mDataAdapter.suggestViewSizeBound(maxEdge, maxEdge);
         data.prepare();
-        View v = mDataAdapter.getView(mActivity, dataID);
+        View recycled = getRecycledView(dataID);
+        View v = mDataAdapter.getView(mActivity, recycled, dataID);
         if (v == null) {
             return null;
         }

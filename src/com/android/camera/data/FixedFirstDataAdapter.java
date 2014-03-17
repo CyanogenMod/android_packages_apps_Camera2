@@ -108,12 +108,20 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public View getView(Context context, int dataID) {
+    public View getView(Context context, View recycled, int dataID) {
         if (dataID == 0) {
             return mFirstData.getView(
-                    context, mSuggestedWidth, mSuggestedHeight, null, null, false);
+                    context, recycled, mSuggestedWidth, mSuggestedHeight, null, null, false);
         }
-        return mAdapter.getView(context, dataID - 1);
+        return mAdapter.getView(context, recycled, dataID - 1);
+    }
+
+    @Override
+    public int getItemViewType(int dataId) {
+        if (dataId == 0) {
+            return mFirstData.getItemViewType().ordinal();
+        }
+        return mAdapter.getItemViewType(dataId);
     }
 
     @Override

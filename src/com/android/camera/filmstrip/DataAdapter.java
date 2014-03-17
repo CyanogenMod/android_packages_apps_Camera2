@@ -80,11 +80,19 @@ public interface DataAdapter {
      * Returns the view to visually present the image data.
      *
      * @param context The {@link android.content.Context} to create the view.
+     * @param recycled A view that can be reused if one is available, or null.
      * @param dataID The ID of the image data to be presented.
      * @return The view representing the image data. Null if unavailable or
      *         the {@code dataID} is out of range.
      */
-    public View getView(Context context, int dataID);
+    public View getView(Context context, View recycled, int dataID);
+
+    /** Returns a unique identifier for the view created by this data so that the view
+     * can be reused.
+     *
+     * @see android.widget.BaseAdapter#getItemViewType(int)
+     */
+    public int getItemViewType(int dataId);
 
     /**
      * Resizes the view used to visually present the image data.  This is

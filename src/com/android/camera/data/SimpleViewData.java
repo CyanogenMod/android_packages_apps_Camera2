@@ -41,11 +41,13 @@ public class SimpleViewData implements LocalData {
     private final long mDateModified;
     private final Bundle mMetaData;
     private final Uri mUri;
+    private final LocalDataViewType mItemViewType;
 
     public SimpleViewData(
-            View v, int width, int height,
+            View v, LocalDataViewType viewType, int width, int height,
             int dateTaken, int dateModified) {
         mView = v;
+        mItemViewType = viewType;
         mWidth = width;
         mHeight = height;
         mDateTaken = dateTaken;
@@ -93,6 +95,11 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
+    public LocalDataViewType getItemViewType() {
+        return mItemViewType;
+    }
+
+    @Override
     public String getPath() {
         return "";
     }
@@ -128,7 +135,7 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, int width, int height, Drawable placeHolder,
+    public View getView(Context context, View recycled, int width, int height, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgressSession) {
         return mView;
     }

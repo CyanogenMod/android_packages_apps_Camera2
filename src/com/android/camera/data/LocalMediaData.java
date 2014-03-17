@@ -33,10 +33,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.Storage;
@@ -91,11 +89,11 @@ public abstract class LocalMediaData implements LocalData {
             int width, int height, long sizeInBytes, double latitude,
             double longitude) {
         mContentId = contentId;
-        mTitle = new String(title);
-        mMimeType = new String(mimeType);
+        mTitle = title;
+        mMimeType = mimeType;
         mDateTakenInSeconds = dateTakenInSeconds;
         mDateModifiedInSeconds = dateModifiedInSeconds;
-        mPath = new String(path);
+        mPath = path;
         mWidth = width;
         mHeight = height;
         mSizeInBytes = sizeInBytes;
@@ -220,9 +218,16 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, int decodeWidth, int decodeHeight, Drawable placeHolder,
+    public View getView(Context context, View recycled, int decodeWidth, int decodeHeight, Drawable placeHolder,
             LocalDataAdapter adapter, boolean isInProgress) {
-        return fillImageView(context, new ImageView(context), decodeWidth, decodeHeight,
+        final ImageView imageView;
+        if (recycled != null) {
+            imageView = (ImageView) recycled;
+        } else {
+            imageView = new ImageView(context);
+        }
+
+        return fillImageView(context, imageView, decodeWidth, decodeHeight,
                 placeHolder, adapter, isInProgress);
     }
 
@@ -498,6 +503,11 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public LocalDataViewType getItemViewType() {
+            return LocalDataViewType.PHOTO;
+        }
+
+        @Override
         public void resizeView(Context context, int w, int h, View v, LocalDataAdapter adapter)
         {
             // This will call PhotoBitmapLoadTask.
@@ -605,11 +615,10 @@ public abstract class LocalMediaData implements LocalData {
         public static final int COL_DATA = 5;
         public static final int COL_WIDTH = 6;
         public static final int COL_HEIGHT = 7;
-        public static final int COL_RESOLUTION = 8;
-        public static final int COL_SIZE = 9;
-        public static final int COL_LATITUDE = 10;
-        public static final int COL_LONGITUDE = 11;
-        public static final int COL_DURATION = 12;
+        public static final int COL_SIZE = 8;
+        public static final int COL_LATITUDE = 9;
+        public static final int COL_LONGITUDE = 10;
+        public static final int COL_DURATION = 11;
 
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
@@ -631,11 +640,10 @@ public abstract class LocalMediaData implements LocalData {
                 MediaStore.Video.VideoColumns.DATA,          // 5, string
                 MediaStore.Video.VideoColumns.WIDTH,         // 6, int
                 MediaStore.Video.VideoColumns.HEIGHT,        // 7, int
-                MediaStore.Video.VideoColumns.RESOLUTION,    // 8 string
-                MediaStore.Video.VideoColumns.SIZE,          // 9 long
-                MediaStore.Video.VideoColumns.LATITUDE,      // 10 double
-                MediaStore.Video.VideoColumns.LONGITUDE,     // 11 double
-                MediaStore.Video.VideoColumns.DURATION       // 12 long
+                MediaStore.Video.VideoColumns.SIZE,          // 8 long
+                MediaStore.Video.VideoColumns.LATITUDE,      // 9 double
+                MediaStore.Video.VideoColumns.LONGITUDE,     // 10 double
+                MediaStore.Video.VideoColumns.DURATION       // 11 long
         };
 
         /** The duration in milliseconds. */
@@ -780,26 +788,28 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public View getView(final Context context,
+        public View getView(final Context context, View recycled,
                 int decodeWidth, int decodeHeight, Drawable placeHolder,
                 LocalDataAdapter adapter, boolean isInProgress) {
 
-            // ImageView for the bitmap.
-            ImageView iv = new ImageView(context);
-            iv.setLayoutParams(new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-            fillImageView(context, iv, decodeWidth, decodeHeight, placeHolder,
+            final VideoViewHolder viewHolder;
+            final View result;
+            if (recycled != null) {
+                result = recycled;
+                viewHolder = (VideoViewHolder) recycled.getTag();
+            } else {
+                result = LayoutInflater.from(context).inflate(R.layout.filmstrip_video, null);
+                ImageView videoView = (ImageView) result.findViewById(R.id.video_view);
+                ImageView playButton = (ImageView) result.findViewById(R.id.play_button);
+                viewHolder = new VideoViewHolder(videoView, playButton);
+                result.setTag(viewHolder);
+            }
+
+            fillImageView(context, viewHolder.mVideoView, decodeWidth, decodeHeight, placeHolder,
                     adapter, isInProgress);
 
             // ImageView for the play icon.
-            ImageView icon = new ImageView(context);
-            icon.setImageResource(R.drawable.ic_control_play);
-            icon.setScaleType(ImageView.ScaleType.CENTER);
-            icon.setLayoutParams(new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-            icon.setOnClickListener(new View.OnClickListener() {
+            viewHolder.mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // TODO: refactor this into activities to avoid this class
@@ -808,10 +818,12 @@ public abstract class LocalMediaData implements LocalData {
                 }
             });
 
-            FrameLayout f = new FrameLayout(context);
-            f.addView(iv);
-            f.addView(icon);
-            return f;
+            return result;
+        }
+
+        @Override
+        public LocalDataViewType getItemViewType() {
+            return LocalDataViewType.VIDEO;
         }
 
         @Override
@@ -890,4 +902,13 @@ public abstract class LocalMediaData implements LocalData {
         }
     }
 
+     private static class VideoViewHolder {
+        private final ImageView mVideoView;
+        private final ImageView mPlayButton;
+
+        public VideoViewHolder(ImageView videoView, ImageView playButton) {
+            mVideoView = videoView;
+            mPlayButton = playButton;
+        }
+    }
 }

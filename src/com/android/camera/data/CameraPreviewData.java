@@ -35,7 +35,7 @@ public class CameraPreviewData extends SimpleViewData {
      * @param height The height of the camera preview.
      */
     public CameraPreviewData(View v, int width, int height) {
-        super(v, width, height, -1, -1);
+        super(v, LocalDataViewType.CAMERA_PREVIEW, width, height, -1, -1);
         mPreviewLocked = true;
     }
 
