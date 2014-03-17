@@ -18,7 +18,6 @@ package com.android.camera.data;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -44,7 +43,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     private Listener mListener;
     private LocalDataListener mLocalDataListener;
-    private final Drawable mPlaceHolder;
+    private final int mPlaceHolderResourceId;
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
@@ -52,10 +51,10 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     private LocalData mLocalDataToDelete;
 
-    public CameraDataAdapter(Context context, Drawable placeHolder) {
+    public CameraDataAdapter(Context context, int placeholderResource) {
         mContext = context;
         mImages = new LocalDataList();
-        mPlaceHolder = placeHolder;
+        mPlaceHolderResourceId = placeholderResource;
     }
 
     @Override
@@ -132,7 +131,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
         return mImages.get(dataID).getView(
                 context, recycled, mSuggestedWidth, mSuggestedHeight,
-                mPlaceHolder.getConstantState().newDrawable(), this, /* inProgress */ false);
+                mPlaceHolderResourceId, this, /* inProgress */ false);
     }
 
     @Override
@@ -140,7 +139,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         if (dataID >= mImages.size() || dataID < 0) {
             return;
         }
-        mImages.get(dataID).resizeView(context, w, h, view, this);
+        mImages.get(dataID).loadFullImage(context, w, h, view, this);
     }
 
     @Override

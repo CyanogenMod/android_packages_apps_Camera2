@@ -18,6 +18,7 @@ package com.android.camera.filmstrip;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 
 /**
  * Common interface for all images in the filmstrip.
@@ -111,7 +112,7 @@ public interface ImageData {
      * function after its corresponding view is removed from the view
      * hierarchy.
      */
-    public void recycle();
+    public void recycle(View view);
 
     /**
      * @return The URI of this data. Must be a unique one and not null.

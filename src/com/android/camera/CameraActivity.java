@@ -127,6 +127,8 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.resize.ImageManager;
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.CameraEvent.InteractionCause;
 import com.google.common.logging.eventprotos.NavigationChange;
@@ -137,6 +139,7 @@ import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -1184,6 +1187,12 @@ public class CameraActivity extends Activity
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        final Glide glide = Glide.get();
+        if (!glide.isImageManagerSet()) {
+            // We load exclusively large images, so we want fewer threads to minimize jank.
+            glide.setImageManager(new ImageManager.Builder(getApplicationContext())
+                    .setResizeService(Executors.newSingleThreadExecutor()));
+        }
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
@@ -1275,8 +1284,7 @@ public class CameraActivity extends Activity
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
         // Set up the camera preview first so the preview shows up ASAP.
-        mDataAdapter = new CameraDataAdapter(mAppContext,
-                new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
+        mDataAdapter = new CameraDataAdapter(mAppContext, R.color.photo_placeholder);
         mDataAdapter.setLocalDataListener(mLocalDataListener);
 
         mPreloader = new Preloader<Integer, AsyncTask>(FILMSTRIP_PRELOAD_AHEAD_ITEMS, mDataAdapter,

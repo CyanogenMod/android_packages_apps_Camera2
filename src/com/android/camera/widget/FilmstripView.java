@@ -360,7 +360,7 @@ public class FilmstripView extends ViewGroup {
         public void removeViewFromHierarchy(boolean force) {
             if (force || mData.getViewType() != ImageData.VIEW_TYPE_STICKY) {
                 removeView(mView);
-                mData.recycle();
+                mData.recycle(mView);
                 recycleView(mView, mDataId);
             } else {
                 setVisibility(View.INVISIBLE);
@@ -737,9 +737,10 @@ public class FilmstripView extends ViewGroup {
             return null;
         }
 
-        int maxEdge = (int) ((float) Math.max(this.getHeight(), this.getWidth())
-                * FILM_STRIP_SCALE);
-        mDataAdapter.suggestViewSizeBound(maxEdge, maxEdge);
+        int width = Math.round(mScale * getWidth());
+        int height = Math.round(mScale * getHeight());
+        mDataAdapter.suggestViewSizeBound(width, height);
+
         data.prepare();
         View recycled = getRecycledView(dataID);
         View v = mDataAdapter.getView(mActivity, recycled, dataID);
@@ -954,6 +955,7 @@ public class FilmstripView extends ViewGroup {
 
         curr.layoutWithTranslationX(mDrawArea, mCenterX, mScale);
         curr.setAlpha(1f);
+        curr.setVisibility(VISIBLE);
 
         if (inFullScreen()) {
             curr.setTranslationX(translate * (mCenterX - currCenterX) / (nextCenterX - currCenterX));
@@ -1438,7 +1440,9 @@ public class FilmstripView extends ViewGroup {
 
     private void setDataAdapter(DataAdapter adapter) {
         mDataAdapter = adapter;
-        mDataAdapter.suggestViewSizeBound(getMeasuredWidth(), getMeasuredHeight());
+        int maxEdge = (int) ((float) Math.max(this.getHeight(), this.getWidth())
+                * FILM_STRIP_SCALE);
+        mDataAdapter.suggestViewSizeBound(maxEdge, maxEdge);
         mDataAdapter.setListener(new DataAdapter.Listener() {
             @Override
             public void onDataLoaded() {

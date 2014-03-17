@@ -18,20 +18,15 @@ package com.android.camera.data;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.CamcorderProfile;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,12 +35,11 @@ import android.widget.ImageView;
 import com.android.camera.Storage;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.presenter.target.ImageViewTarget;
+import com.bumptech.glide.presenter.target.Target;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,7 +143,7 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public String getTitle() {
-        return new String(mTitle);
+        return mTitle;
     }
 
     @Override
@@ -204,24 +198,27 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     protected ImageView fillImageView(Context context, ImageView v,
-            int decodeWidth, int decodeHeight, Drawable placeHolder,
+            int decodeWidth, int decodeHeight, int placeHolderResourceId,
             LocalDataAdapter adapter, boolean isInProgress) {
-        v.setScaleType(ImageView.ScaleType.FIT_XY);
-        if (placeHolder != null) {
-            v.setImageDrawable(placeHolder);
+
+        SizedImageViewTarget target = (SizedImageViewTarget) v.getTag();
+        if (target != null) {
+            target = new SizedImageViewTarget(v);
+            v.setTag(target);
         }
 
-        // TODO: Load MediaStore or embedded-in-JPEG-stream thumbnail.
+        Glide.with(context)
+                .load(mPath)
+                .fitCenter()
+                .placeholder(placeHolderResourceId)
+                .into(target);
 
-        BitmapLoadTask task = getBitmapLoadTask(context, v, decodeWidth, decodeHeight,
-                context.getContentResolver(), adapter);
-        task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, (Void[]) null);
         return v;
     }
 
     @Override
-    public View getView(Context context, View recycled, int decodeWidth, int decodeHeight, Drawable placeHolder,
-            LocalDataAdapter adapter, boolean isInProgress) {
+    public View getView(Context context, View recycled, int decodeWidth, int decodeHeight,
+            int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress) {
         final ImageView imageView;
         if (recycled != null) {
             imageView = (ImageView) recycled;
@@ -230,12 +227,12 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         return fillImageView(context, imageView, decodeWidth, decodeHeight,
-                placeHolder, adapter, isInProgress);
+                placeHolderResourceId, adapter, isInProgress);
     }
 
     @Override
-    public void resizeView(Context context, int width, int height, View view,
-                           LocalDataAdapter adapter) {
+    public void loadFullImage(Context context, int width, int height, View view,
+            LocalDataAdapter adapter) {
         // Default is do nothing.
         // Can be implemented by sub-classes.
     }
@@ -248,7 +245,7 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public void recycle() {
+    public void recycle(View view) {
         synchronized (mUsing) {
             mUsing = false;
         }
@@ -309,15 +306,6 @@ public abstract class LocalMediaData implements LocalData {
         return MetadataLoader.isMetadataCached(this);
     }
 
-    /**
-     * A background task that loads the provided ImageView with a Bitmap.
-     * A Bitmap of maximum size that fits into a decodeWidth x decodeHeight
-     * box will be decoded.
-     */
-    protected abstract BitmapLoadTask getBitmapLoadTask(
-            Context context, ImageView v, int decodeWidth, int decodeHeight,
-            ContentResolver resolver, LocalDataAdapter adapter);
-
     public static final class PhotoData extends LocalMediaData {
         private static final String TAG = "PhotoData";
 
@@ -336,8 +324,6 @@ public abstract class LocalMediaData implements LocalData {
 
         // GL max texture size: keep bitmaps below this value.
         private static final int MAXIMUM_TEXTURE_SIZE = 2048;
-        // Maximum pixel count for Bitmaps.  To limit RAM consumption.
-        private static final int MAXIMUM_DECODE_PIXELS = 4000000;
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -367,6 +353,8 @@ public abstract class LocalMediaData implements LocalData {
 
         /** from MediaStore, can only be 0, 90, 180, 270 */
         private final int mOrientation;
+        /** @see #getSignature() */
+        private final String mSignature;
 
         public static LocalData fromContentUri(ContentResolver cr, Uri contentUri) {
             List<LocalData> newPhotos = query(cr, contentUri, QUERY_ALL_MEDIA_ID);
@@ -383,7 +371,7 @@ public abstract class LocalMediaData implements LocalData {
             super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
                     path, width, height, sizeInBytes, latitude, longitude);
             mOrientation = orientation;
-
+            mSignature = mimeType + orientation + dateModifiedInSeconds;
         }
 
         static List<LocalData> query(ContentResolver cr, Uri uri, long lastId) {
@@ -505,105 +493,125 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public String getSignature() {
+            return mSignature;
+        }
+
+        @Override
+        protected ImageView fillImageView(Context context, final ImageView v, final int decodeWidth,
+                final int decodeHeight, int placeHolderResourceId, LocalDataAdapter adapter,
+                boolean isInProgress) {
+            loadImage(context, v, decodeWidth, decodeHeight, placeHolderResourceId, false);
+            return v;
+        }
+
+        private void loadImage(Context context, ImageView imageView, int decodeWidth,
+                int decodeHeight, int placeHolderResourceId, boolean full) {
+            ThumbTarget thumbTarget = (ThumbTarget) imageView.getTag();
+            if (thumbTarget == null) {
+                thumbTarget = new ThumbTarget(imageView);
+                imageView.setTag(thumbTarget);
+            }
+            // Make sure we've reset all state related to showing thumb and full whenever
+            // we load a thumbnail because loading a thumbnail only happens when we're changing
+            // images.
+            if (!full) {
+                thumbTarget.clearTargets();
+            }
+
+            Glide.with(context)
+                    .using(new ImageModelLoader(context))
+                    .load(this)
+                    .placeholder(placeHolderResourceId)
+                    .fitCenter()
+                    .into(thumbTarget.getTarget(decodeWidth, decodeHeight, full));
+        }
+
+        @Override
+        public void recycle(View view) {
+            super.recycle(view);
+            if (view != null) {
+                ThumbTarget thumbTarget = (ThumbTarget) view.getTag();
+                thumbTarget.clearTargets();
+            }
+        }
+
+        @Override
         public LocalDataViewType getItemViewType() {
             return LocalDataViewType.PHOTO;
         }
 
         @Override
-        public void resizeView(Context context, int w, int h, View v, LocalDataAdapter adapter)
+        public void loadFullImage(Context context, int w, int h, View v, LocalDataAdapter adapter)
         {
-            // This will call PhotoBitmapLoadTask.
-            fillImageView(context, (ImageView) v, w, h, null, adapter, false);
-        }
-
-        @Override
-        protected BitmapLoadTask getBitmapLoadTask(Context context, ImageView v, int decodeWidth,
-                int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter) {
-            return new PhotoBitmapLoadTask(context, v, decodeWidth, decodeHeight, resolver,
-                    adapter);
-        }
-
-        @Override
-        public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-                int currentDataId, boolean clockwise) {
-            RotationTask task = new RotationTask(context, adapter,
-                    currentDataId, clockwise);
-            task.execute(this);
-            return true;
-        }
-
-        private final class PhotoBitmapLoadTask extends BitmapLoadTask {
-            private final int mDecodeWidth;
-            private final int mDecodeHeight;
-            private final Context mContext;
-            private final LocalDataAdapter mAdapter;
-
-            private boolean mNeedsRefresh;
-
-            public PhotoBitmapLoadTask(Context context, ImageView v, int decodeWidth,
-                    int decodeHeight, ContentResolver resolver, LocalDataAdapter adapter) {
-                super(context, v);
-                mDecodeWidth = decodeWidth;
-                mDecodeHeight = decodeHeight;
-                mContext = context;
-                mAdapter = adapter;
-            }
-
-            @Override
-            protected Bitmap doInBackground(Void... v) {
-                // TODO: Implement image cache, which can verify image dims.
-
-                // For correctness, double check image size here.
-                // This only takes 1% of full decode time.
-                Point decodedSize = LocalDataUtil.decodeBitmapDimension(mPath);
-
-                // If the width and height are valid and not matching the values
-                // from MediaStore, then update the MediaStore. This only
-                // happens when the MediaStore has been told incorrect values.
-                if (decodedSize.x > 0 && decodedSize.y > 0 &&
-                        (decodedSize.x != mWidth || decodedSize.y != mHeight)) {
-                    ContentValues values = new ContentValues();
-                    values.put(Images.Media.WIDTH, decodedSize.x);
-                    values.put(Images.Media.HEIGHT, decodedSize.y);
-                    mContext.getContentResolver().update(getUri(), values, null, null);
-                    mNeedsRefresh = true;
-                    Log.w(TAG, "Uri " + getUri() + " has been updated with" +
-                            " the correct size!");
-                    return null;
-                }
-
-                InputStream stream;
-                Bitmap bitmap;
-                try {
-                    stream = new FileInputStream(mPath);
-                    bitmap = LocalDataUtil
-                            .loadImageThumbnailFromStream(stream, mWidth, mHeight, mDecodeWidth,
-                                    mDecodeHeight, mOrientation, MAXIMUM_DECODE_PIXELS);
-                    stream.close();
-                } catch (FileNotFoundException e) {
-                    Log.v(TAG, "File not found:" + mPath);
-                    bitmap = null;
-                } catch (IOException e) {
-                    Log.v(TAG, "IOException for " + mPath, e);
-                    bitmap = null;
-                }
-
-                return bitmap;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                super.onPostExecute(bitmap);
-                if (mNeedsRefresh && mAdapter != null) {
-                    mAdapter.refresh(getUri());
-                }
-            }
+            loadImage(context, (ImageView) v, w, h, 0, true);
         }
 
         private static class PhotoDataBuilder implements CursorToLocalData {
             @Override
             public PhotoData build(Cursor cursor) {
                 return LocalMediaData.PhotoData.buildFromCursor(cursor);
+            }
+        }
+
+        /**
+         * In the filmstrip we want to load a small version of an image and then load a
+         * larger version when we switch to full screen mode. This class manages
+         * that transition and loading process by keeping one target for the smaller thumbnail
+         * and a second target for the larger version.
+         */
+        private static class ThumbTarget {
+            private final SizedImageViewTarget mThumbTarget;
+            private final SizedImageViewTarget mFullTarget;
+            private boolean fullLoaded = false;
+
+            public ThumbTarget(ImageView imageView) {
+                mThumbTarget = new SizedImageViewTarget(imageView) {
+                    @Override
+                    public void onImageReady(Bitmap bitmap) {
+                        // If we manage to load the thumb after the full, we don't
+                        // want to replace the higher quality full with the thumb.
+                        if (!fullLoaded) {
+                            super.onImageReady(bitmap);
+                        }
+                    }
+                };
+
+                mFullTarget = new SizedImageViewTarget(imageView) {
+
+                    @Override
+                    public void onImageReady(Bitmap bitmap) {
+                        // When the full is loaded, we no longer need the thumb.
+                        fullLoaded = true;
+                        Glide.cancel(mThumbTarget);
+                        super.onImageReady(bitmap);
+                    }
+
+                    @Override
+                    public void setPlaceholder(Drawable placeholder) {
+                        // We always load the thumb first which will set the placeholder.
+                        // If we were to set the placeholder here too, instead of showing
+                        // the thumb while we load the full, we will instead revert back
+                        // to the placeholder.
+                    }
+                };
+            }
+
+            public Target getTarget(int width, int height, boolean full) {
+                final SizedImageViewTarget result = full ? mFullTarget : mThumbTarget;
+                // Limit the target size so we don't load a bitmap larger than the max size we
+                // can display.
+                width = Math.min(width, MAXIMUM_TEXTURE_SIZE);
+                height = Math.min(height, MAXIMUM_TEXTURE_SIZE);
+
+                result.setSize(width, height);
+                return result;
+            }
+
+            public void clearTargets() {
+                fullLoaded = false;
+                Glide.cancel(mThumbTarget);
+                Glide.cancel(mFullTarget);
             }
         }
     }
@@ -650,6 +658,7 @@ public abstract class LocalMediaData implements LocalData {
 
         /** The duration in milliseconds. */
         private final long mDurationInSeconds;
+        private final String mSignature;
 
         public VideoData(long id, String title, String mimeType,
                 long dateTakenInSeconds, long dateModifiedInSeconds,
@@ -658,6 +667,7 @@ public abstract class LocalMediaData implements LocalData {
             super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
                     path, width, height, sizeInBytes, latitude, longitude);
             mDurationInSeconds = durationInSeconds;
+            mSignature = mimeType + dateModifiedInSeconds;
         }
 
         public static LocalData fromContentUri(ContentResolver cr, Uri contentUri) {
@@ -801,8 +811,34 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public String getSignature() {
+            return mSignature;
+        }
+
+        @Override
+        protected ImageView fillImageView(Context context, final ImageView v, final int decodeWidth,
+                final int decodeHeight, int placeHolderResourceId, LocalDataAdapter adapter,
+                boolean isInProgress) {
+            SizedImageViewTarget target = (SizedImageViewTarget) v.getTag();
+            if (target == null) {
+                target = new SizedImageViewTarget(v);
+                v.setTag(target);
+            }
+            target.setSize(decodeWidth, decodeHeight);
+
+            Glide.with(context)
+                    .using(new VideoModelLoader(context))
+                    .loadFromVideo(this)
+                    .placeholder(placeHolderResourceId)
+                    .fitCenter()
+                    .into(target);
+
+            return v;
+        }
+
+        @Override
         public View getView(final Context context, View recycled,
-                int decodeWidth, int decodeHeight, Drawable placeHolder,
+                int decodeWidth, int decodeHeight, int placeHolderResourceId,
                 LocalDataAdapter adapter, boolean isInProgress) {
 
             final VideoViewHolder viewHolder;
@@ -818,8 +854,8 @@ public abstract class LocalMediaData implements LocalData {
                 result.setTag(viewHolder);
             }
 
-            fillImageView(context, viewHolder.mVideoView, decodeWidth, decodeHeight, placeHolder,
-                    adapter, isInProgress);
+            fillImageView(context, viewHolder.mVideoView, decodeWidth, decodeHeight,
+                    placeHolderResourceId, adapter, isInProgress);
 
             // ImageView for the play icon.
             viewHolder.mPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -835,75 +871,16 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
+        public void recycle(View view) {
+            super.recycle(view);
+            VideoViewHolder videoViewHolder = (VideoViewHolder) view.getTag();
+            Target target = (Target) videoViewHolder.mVideoView.getTag();
+            Glide.cancel(target);
+        }
+
+        @Override
         public LocalDataViewType getItemViewType() {
             return LocalDataViewType.VIDEO;
-        }
-
-        @Override
-        protected BitmapLoadTask getBitmapLoadTask(
-                Context context, ImageView v, int decodeWidth, int decodeHeight,
-                ContentResolver resolver, LocalDataAdapter adapter) {
-            // TODO: Support isInProgressSession for videos when we need it.
-            return new VideoBitmapLoadTask(context, v);
-        }
-
-        private final class VideoBitmapLoadTask extends BitmapLoadTask {
-
-            public VideoBitmapLoadTask(Context context, ImageView v) {
-                super(context, v);
-            }
-
-            @Override
-            protected Bitmap doInBackground(Void... v) {
-                if (isCancelled() || !isUsing()) {
-                    return null;
-                }
-                Bitmap bitmap = null;
-                bitmap = LocalDataUtil.loadVideoThumbnail(mPath);
-
-                if (isCancelled() || !isUsing()) {
-                    return null;
-                }
-                return bitmap;
-            }
-        }
-
-        @Override
-        public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-                int currentDataId, boolean clockwise) {
-            // We don't support rotation for video data.
-            Log.e(TAG, "Unexpected call in rotate90Degrees()");
-            return false;
-        }
-    }
-
-    /**
-     * An {@link AsyncTask} class that loads the bitmap in the background
-     * thread. Sub-classes should implement their own
-     * {@code BitmapLoadTask#doInBackground(Void...)}."
-     */
-    protected abstract class BitmapLoadTask extends AsyncTask<Void, Void, Bitmap> {
-        protected final Context mContext;
-        protected ImageView mView;
-
-        protected BitmapLoadTask(Context context, ImageView v) {
-            mContext = context;
-            mView = v;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (!isUsing()) {
-                return;
-            }
-            if (bitmap == null) {
-                Log.e(TAG, "Failed decoding bitmap for file:" + mPath);
-                return;
-            }
-            BitmapDrawable d = new BitmapDrawable(mContext.getResources(), bitmap);
-            mView.setScaleType(ImageView.ScaleType.FIT_XY);
-            mView.setImageDrawable(d);
-            Log.v(TAG, "Created bitmap: " + bitmap.getWidth() + " x " + bitmap.getHeight());
         }
     }
 
@@ -922,6 +899,32 @@ public abstract class LocalMediaData implements LocalData {
         public VideoViewHolder(ImageView videoView, ImageView playButton) {
             mVideoView = videoView;
             mPlayButton = playButton;
+        }
+    }
+
+    /**
+     * Normally Glide will figure out the necessary size based on the view
+     * the image is being loaded into. In filmstrip the view isn't immediately
+     * laid out after being requested from the data, which can cause Glide to give
+     * up on obtaining the view dimensions. To avoid that, we manually set the
+     * dimensions.
+     */
+    private static class SizedImageViewTarget extends ImageViewTarget {
+        private int mWidth;
+        private int mHeight;
+
+        public SizedImageViewTarget(ImageView imageView) {
+            super(imageView);
+        }
+
+        public void setSize(int width, int height) {
+            mWidth = width;
+            mHeight = height;
+        }
+
+        @Override
+        public void getSize(final SizeReadyCallback cb) {
+            cb.onSizeReady(mWidth, mHeight);
         }
     }
 }

@@ -135,13 +135,13 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, View recycled, int width, int height, Drawable placeHolder,
+    public View getView(Context context, View recycled, int width, int height, int placeHolderResourceId,
             LocalDataAdapter adapter, boolean isInProgressSession) {
         return mView;
     }
 
     @Override
-    public void resizeView(Context context, int w, int h, View view, LocalDataAdapter adapter) {
+    public void loadFullImage(Context context, int w, int h, View view, LocalDataAdapter adapter) {
         // do nothing.
     }
 
@@ -151,8 +151,8 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public void recycle() {
-        // do nothing.
+    public void recycle(View view) {
+        // Do nothing.
     }
 
     @Override
@@ -181,14 +181,6 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise) {
-        // We don't support rotation for SimpleViewData.
-        Log.w(TAG, "Unexpected call in rotate90Degrees()");
-        return false;
-    }
-
-    @Override
     public long getSizeInBytes() {
         return 0;
     }
@@ -201,6 +193,11 @@ public class SimpleViewData implements LocalData {
     @Override
     public Bundle getMetadata() {
         return mMetaData;
+    }
+
+    @Override
+    public String getSignature() {
+        return "";
     }
 
     @Override

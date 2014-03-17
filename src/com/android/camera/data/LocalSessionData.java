@@ -52,8 +52,8 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, View recycled, int width, int height, Drawable placeHolder,
-           LocalDataAdapter adapter, boolean isInProgress) {
+    public View getView(Context context, View recycled, int width, int height,
+            int placeholderResourcedId, LocalDataAdapter adapter, boolean isInProgress) {
         final ImageView imageView;
         if (recycled != null) {
             imageView = (ImageView) recycled;
@@ -74,8 +74,8 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
-    public void resizeView(Context context, int width, int height, View view,
-           LocalDataAdapter adapter) {
+    public void loadFullImage(Context context, int width, int height, View view,
+            LocalDataAdapter adapter) {
 
     }
 
@@ -101,11 +101,6 @@ public class LocalSessionData implements LocalData {
 
     @Override
     public boolean delete(Context c) {
-        return false;
-    }
-
-    @Override
-    public boolean rotate90Degrees(Context context, LocalDataAdapter adapter, int currentDataId, boolean clockwise) {
         return false;
     }
 
@@ -160,6 +155,11 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
+    public String getSignature() {
+        return "";
+    }
+
+    @Override
     public boolean isMetadataUpdated() {
         return true;
     }
@@ -200,7 +200,7 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
-    public void recycle() {
+    public void recycle(View view) {
 
     }
 

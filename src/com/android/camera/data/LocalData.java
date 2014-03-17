@@ -79,7 +79,7 @@ public interface LocalData extends ImageData {
      * @param height Height in pixels of rendered view.
      * @param adapter Data adapter for this data item.
      */
-    View getView(Context context, View recycled, int width, int height, Drawable placeHolder,
+    View getView(Context context, View recycled, int width, int height, int placeHolderResourceId,
             LocalDataAdapter adapter, boolean isInProgress);
 
     /** Returns a unique identifier for the view created by this data so that the view
@@ -98,7 +98,7 @@ public interface LocalData extends ImageData {
      * @param view View created by getView();
      * @param adapter Data adapter for this data item.
      */
-    public void resizeView(Context context, int width, int height, View view, LocalDataAdapter adapter);
+    public void loadFullImage(Context context, int width, int height, View view, LocalDataAdapter adapter);
 
     /**
      * Gets the date when this data is created. The returned date is also used
@@ -131,19 +131,6 @@ public interface LocalData extends ImageData {
 
     /** Removes the data from the storage if possible. */
     boolean delete(Context c);
-
-    /**
-     * Rotate the image in 90 degrees. This is a no-op for non-image.
-     *
-     * @param context Used to update the content provider when rotation is done.
-     * @param adapter Used to update the view.
-     * @param currentDataId Used to update the view.
-     * @param clockwise True if the rotation goes clockwise.
-     *
-     * @return Whether the rotation is supported.
-     */
-    boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise);
 
     void onFullScreen(boolean fullScreen);
 
@@ -201,6 +188,15 @@ public interface LocalData extends ImageData {
      * @return the metadata. Should never be {@code null}.
      */
     Bundle getMetadata();
+
+    /**
+     * Any media store attribute that can potentially change the local data
+     * should be included in this signature, primarily oriented at detecting
+     * edits.
+     *
+     * @return A string identifying the set of changeable attributes.
+     */
+    String getSignature();
 
     /**
      * @return whether the metadata is updated.
