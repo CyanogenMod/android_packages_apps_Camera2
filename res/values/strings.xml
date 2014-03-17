@@ -802,8 +802,8 @@ CHAR LIMIT=NONE] -->
     <!--  Title of a preference group which contains general settings. [CHAR LIMIT=30]  -->
     <string name="pref_category_general">General Settings</string>
 
-    <!--  Title of a preference group which contains general settings. [CHAR LIMIT=30]  -->
-    <string name="pref_category_resolution">Resolution</string>
+    <!--  Title of a preference group which contains settings for changing capture resolution and quality. [CHAR LIMIT=30]  -->
+    <string name="pref_category_resolution_quality">Resolution &amp; Quality</string>
 
     <!--  Title of a preference group which contains information about the app. [CHAR LIMIT=30]  -->
     <string name="pref_category_about">About</string>

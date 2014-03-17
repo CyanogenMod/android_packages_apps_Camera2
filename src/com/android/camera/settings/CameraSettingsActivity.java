@@ -17,6 +17,7 @@
 package com.android.camera.settings;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
@@ -30,8 +31,11 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
@@ -107,7 +111,18 @@ public class CameraSettingsActivity extends FragmentActivity {
             setVisibilities();
 
             // Put in the summaries for the currently set values.
-            fillEntriesAndSummaries((PreferenceGroup) findPreference(PREF_CATEGORY_RESOLUTION));
+            final PreferenceScreen resolutionScreen =
+                    (PreferenceScreen) findPreference(PREF_CATEGORY_RESOLUTION);
+            fillEntriesAndSummaries(resolutionScreen);
+
+            // Make sure the sub-screen has home-as-up configured.
+            resolutionScreen.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    setUpHomeButton(resolutionScreen);
+                    return false;
+                }
+            });
 
             // Set build number.
             try {
@@ -130,6 +145,21 @@ public class CameraSettingsActivity extends FragmentActivity {
                             return true;
                         }
                     });
+        }
+
+        private void setUpHomeButton(PreferenceScreen preferenceScreen) {
+            final Dialog dialog = preferenceScreen.getDialog();
+            dialog.getActionBar().setDisplayHomeAsUpEnabled(true);
+
+            View homeButton = dialog.findViewById(android.R.id.home);
+            if (homeButton != null) {
+                homeButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
         }
 
         /**
@@ -215,6 +245,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             if (!(preference instanceof ListPreference)) {
                 return;
             }
+
             ListPreference listPreference = (ListPreference) preference;
             if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_BACK)) {
                 setSummaryForSelection(mPictureSizesBack, listPreference);
@@ -303,8 +334,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                         mPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(sizes,
                                 backCameraId);
                     }
-                    mVideoQualitiesBack = SettingsUtil.getSelectedVideoQualities(backCameraId);
                 }
+                mVideoQualitiesBack = SettingsUtil.getSelectedVideoQualities(backCameraId);
             } else {
                 mPictureSizesBack = null;
                 mVideoQualitiesBack = null;
@@ -323,8 +354,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                         mPictureSizesFront = SettingsUtil.getSelectedCameraPictureSizes(sizes,
                                 frontCameraId);
                     }
-                    mVideoQualitiesFront = SettingsUtil.getSelectedVideoQualities(frontCameraId);
                 }
+                mVideoQualitiesFront = SettingsUtil.getSelectedVideoQualities(frontCameraId);
             } else {
                 mPictureSizesFront = null;
                 mVideoQualitiesFront = null;
