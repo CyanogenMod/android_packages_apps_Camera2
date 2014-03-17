@@ -206,6 +206,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"WAJAH KONYOL"</string>
     <string name="effect_background" msgid="1358432220077975015">"LATAR BELAKANG"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"Rana"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"Batal"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Tombol menu"</string>
     <string name="accessibility_mode_picker" msgid="5107120667206453381">"Pemilih kamera, video, atau panorama"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s kotak centang"</string>
