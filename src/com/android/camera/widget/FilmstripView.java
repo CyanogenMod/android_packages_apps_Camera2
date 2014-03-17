@@ -797,6 +797,10 @@ public class FilmstripView extends ViewGroup {
         invalidate();
         if (mListener != null) {
             mListener.onDataFocusChanged(prevDataId, mViewItem[mCurrentItem].getId());
+            final int firstVisible = mViewItem[mCurrentItem].getId() - 2;
+            final int visibleItemCount = firstVisible + BUFFER_SIZE;
+            final int totalItemCount = mDataAdapter.getTotalNumber();
+            mListener.onScroll(firstVisible, visibleItemCount, totalItemCount);
         }
     }
 

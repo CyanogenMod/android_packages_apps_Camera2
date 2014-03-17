@@ -43,6 +43,7 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
 import android.nfc.NfcEvent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -122,6 +123,7 @@ import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.ReleaseDialogHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
+import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.CameraEvent.InteractionCause;
@@ -163,6 +165,8 @@ public class CameraActivity extends Activity
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000; // 2 mins.
     private static final int MAX_PEEK_BITMAP_PIXELS = 1600000; // 1.6 * 4 MBs.
+    /** Load metadata for 10 items ahead of our current. */
+    private static final int FILMSTRIP_PRELOAD_AHEAD_ITEMS = 10;
 
     /** Should be used wherever a context is needed. */
     private Context mAppContext;
@@ -228,6 +232,7 @@ public class CameraActivity extends Activity
     private long mOnCreateTime;
 
     private Menu mActionBarMenu;
+    private Preloader<Integer, AsyncTask> mPreloader;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -629,6 +634,11 @@ public class CameraActivity extends Activity
                             updateUiByData(newDataId);
                         }
                     });
+                }
+
+                @Override
+                public void onScroll(int firstVisiblePosition, int visibleItemCount, int totalItemCount) {
+                    mPreloader.onScroll(null /*absListView*/, firstVisiblePosition, visibleItemCount, totalItemCount);
                 }
             };
 
@@ -1268,6 +1278,9 @@ public class CameraActivity extends Activity
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
         mDataAdapter.setLocalDataListener(mLocalDataListener);
 
+        mPreloader = new Preloader<Integer, AsyncTask>(FILMSTRIP_PRELOAD_AHEAD_ITEMS, mDataAdapter,
+                mDataAdapter);
+
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
 
         mLocationManager = new LocationManager(mAppContext);
@@ -1424,6 +1437,7 @@ public class CameraActivity extends Activity
         mLocalImagesObserver.setForegroundChangeListener(null);
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
+        mPreloader.cancelAllLoads();
         resetScreenOn();
         super.onPause();
     }

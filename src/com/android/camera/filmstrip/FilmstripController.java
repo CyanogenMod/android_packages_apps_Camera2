@@ -250,5 +250,15 @@ public interface FilmstripController {
          * @param newDataId The ID of the focused data of {@code -1} if none.
          */
         public void onDataFocusChanged(int prevDataId, int newDataId);
+
+        /**
+         * The callback when we scroll.
+         *
+         * @param firstVisiblePosition The position of the first rendered item (may be slightly offscreen depending on
+         *                             the orientation of the device).
+         * @param visibleItemCount The total number of rendered items.
+         * @param totalItemCount The total number of items in the filmstrip.
+         */
+        public void onScroll(int firstVisiblePosition, int visibleItemCount, int totalItemCount);
     }
 }

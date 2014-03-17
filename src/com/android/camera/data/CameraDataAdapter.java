@@ -72,12 +72,14 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void requestLoad() {
         QueryTask qtask = new QueryTask();
-        qtask.execute(mContext.getContentResolver());
+        qtask.execute(mContext);
     }
 
     @Override
-    public void updateMetadata(int dataId) {
-        new MetadataUpdateTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
+    public AsyncTask updateMetadata(int dataId) {
+        MetadataUpdateTask result = new MetadataUpdateTask();
+        result.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
+        return result;
     }
 
     @Override
@@ -253,6 +255,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         for (; pos < mImages.size()
                 && comp.compare(data, mImages.get(pos)) > 0; pos++);
         mImages.add(pos, data);
+        updateMetadata(pos);
         if (mListener != null) {
             mListener.onDataInserted(pos, data);
         }
@@ -267,6 +270,40 @@ public class CameraDataAdapter implements LocalDataAdapter {
         if (mListener != null) {
             mListener.onDataLoaded();
         }
+    }
+
+    @Override
+    public List<AsyncTask> preloadItems(List<Integer> items) {
+        List<AsyncTask> result = new ArrayList<AsyncTask>();
+        for (Integer id : items) {
+            if (!isMetadataUpdated(id)) {
+                result.add(updateMetadata(id));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void cancelItems(List<AsyncTask> loadTokens) {
+        for (AsyncTask asyncTask : loadTokens) {
+            if (asyncTask != null) {
+                asyncTask.cancel(false);
+            }
+        }
+    }
+
+    @Override
+    public List<Integer> getItemsInRange(int startPosition, int endPosition) {
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i = Math.max(0, startPosition); i < endPosition; i++) {
+            result.add(i);
+        }
+        return result;
+    }
+
+    @Override
+    public int getCount() {
+        return getTotalNumber();
     }
 
     private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
@@ -314,20 +351,23 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
     }
 
-    private class QueryTask extends AsyncTask<ContentResolver, Void, QueryTaskResult> {
+    private class QueryTask extends AsyncTask<Context, Void, QueryTaskResult> {
+        // The maximum number of data to load metadata for in a single task.
+        private static final int MAX_METADATA = 5;
 
         /**
          * Loads all the photo and video data in the camera folder in background
          * and combine them into one single list.
          *
-         * @param contentResolvers {@link ContentResolver} to load all the data.
+         * @param contexts {@link Context} to load all the data.
          * @return An {@link com.android.camera.data.CameraDataAdapter.QueryTaskResult} containing
          *  all loaded data and the highest photo id in the dataset.
          */
         @Override
-        protected QueryTaskResult doInBackground(ContentResolver... contentResolvers) {
+        protected QueryTaskResult doInBackground(Context... contexts) {
+            final Context context = contexts[0];
+            final ContentResolver cr = context.getContentResolver();
             LocalDataList l = new LocalDataList();
-            final ContentResolver cr = contentResolvers[0];
             // Photos
             List<LocalData> photoData = LocalMediaData.PhotoData.query(cr,
                     LocalMediaData.PhotoData.CONTENT_URI, LocalMediaData.QUERY_ALL_MEDIA_ID);
@@ -342,6 +382,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
             l.addAll(photoData);
             l.addAll(videoData);
             l.sort(new LocalData.NewestFirstComparator());
+
+            // Load enough metadata so it's already loaded when we open the filmstrip.
+            for (int i = 0; i < MAX_METADATA && i < l.size(); i++) {
+                LocalData data = l.get(i);
+                MetadataLoader.loadMetadata(context, data);
+            }
 
             return new QueryTaskResult(l, lastPhotoId);
         }
@@ -378,11 +424,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
                     continue;
                 }
                 final LocalData data = mImages.get(id);
-                if (data.getLocalDataType() != LocalData.LOCAL_IMAGE) {
-                    continue;
+                if (MetadataLoader.loadMetadata(mContext, data)) {
+                    updatedList.add(id);
                 }
-                MetadataLoader.loadMetadata(mContext, data);
-                updatedList.add(id);
             }
             return updatedList;
         }
