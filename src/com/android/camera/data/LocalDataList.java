@@ -44,7 +44,7 @@ public class LocalDataList {
             if (!(o instanceof LocalData)) {
                 return false;
             }
-            return mUri.equals(((LocalData) o).getContentUri());
+            return mUri.equals(((LocalData) o).getUri());
         }
     }
 
@@ -67,17 +67,17 @@ public class LocalDataList {
 
     public void set(int pos, LocalData data) {
         mList.set(pos, data);
-        mUriMap.put(data.getContentUri(), data);
+        mUriMap.put(data.getUri(), data);
     }
 
     public void add(LocalData data) {
         mList.add(data);
-        mUriMap.put(data.getContentUri(), data);
+        mUriMap.put(data.getUri(), data);
     }
 
     public void add(int pos, LocalData data) {
         mList.add(pos, data);
-        mUriMap.put(data.getContentUri(), data);
+        mUriMap.put(data.getUri(), data);
     }
 
     public void addAll(List<LocalData> localDataList) {

@@ -194,7 +194,7 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
-    public Uri getContentUri() {
+    public Uri getUri() {
         return mUri;
     }
 }

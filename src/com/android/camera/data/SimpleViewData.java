@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -25,13 +24,15 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.camera.filmstrip.ImageData;
-import com.android.camera.util.PhotoSphereHelper;
+
+import java.util.UUID;
 
 /**
  * A LocalData that does nothing but only shows a view.
  */
 public class SimpleViewData implements LocalData {
     private static final String TAG = "SimpleViewData";
+    private static final String SIMPLE_VIEW_URI_SCHEME = "simple_view_data";
 
     private final int mWidth;
     private final int mHeight;
@@ -39,6 +40,7 @@ public class SimpleViewData implements LocalData {
     private final long mDateTaken;
     private final long mDateModified;
     private final Bundle mMetaData;
+    private final Uri mUri;
 
     public SimpleViewData(
             View v, int width, int height,
@@ -49,6 +51,10 @@ public class SimpleViewData implements LocalData {
         mDateTaken = dateTaken;
         mDateModified = dateModified;
         mMetaData = new Bundle();
+        Uri.Builder builder = new Uri.Builder();
+        String uuid = UUID.randomUUID().toString();
+        builder.scheme(SIMPLE_VIEW_URI_SCHEME).appendPath(uuid);
+        mUri = builder.build();
     }
 
     @Override
@@ -92,8 +98,8 @@ public class SimpleViewData implements LocalData {
     }
 
     @Override
-    public Uri getContentUri() {
-        return Uri.EMPTY;
+    public Uri getUri() {
+        return mUri;
     }
 
     @Override

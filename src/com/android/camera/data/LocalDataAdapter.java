@@ -37,13 +37,6 @@ public interface LocalDataAdapter extends DataAdapter {
          *            updated.
          */
         public void onMetadataUpdated(List<Integer> updatedData);
-
-        /**
-         * This method is called when a new local data is added.
-         *
-         * @param data The inserted data.
-         */
-        public void onNewDataAdded(LocalData data);
     }
 
     /**
@@ -73,32 +66,13 @@ public interface LocalDataAdapter extends DataAdapter {
     public void removeData(int dataID);
 
     /**
-     * Add new local video data.
+     * Adds new local data. The data is either inserted or updated, depending
+     * on the existence of the Uri.
      *
-     * @param uri {@link Uri} of the video.
+     * @param data The new data.
+     * @return Whether the data is newly inserted.
      */
-    public void addNewVideo(Uri uri);
-
-    /**
-     * Adds new local photo data.
-     *
-     * @param uri {@link Uri} of the photo.
-     */
-    public void addNewPhoto(Uri uri);
-
-    /**
-     * Adds new placeholder uri.
-     *
-     * @param uri the uri of the session to find the placeholder images
-     */
-    public void addNewSession(Uri uri);
-
-    /**
-     * Called when a session is done processing
-     *
-     * @param uri {@link Uri} of the session.
-     */
-    public void finishSession(Uri uri);
+    public boolean addData(LocalData data);
 
     /**
      * Refresh the data by {@link Uri}.
@@ -143,9 +117,6 @@ public interface LocalDataAdapter extends DataAdapter {
      * @param data The new data.
      */
     public void updateData(int pos, LocalData data);
-
-    /** Insert a data. */
-    public void insertData(LocalData data);
 
     /** Sets the listener for the LocalData change. */
     public void setLocalDataListener(LocalDataListener listener);
