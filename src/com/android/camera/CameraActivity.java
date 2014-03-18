@@ -1521,12 +1521,15 @@ public class CameraActivity extends Activity
         }
         mLocalImagesObserver.setActivityPaused(false);
         mLocalVideosObserver.setActivityPaused(false);
-        mLocalImagesObserver.setForegroundChangeListener(new LocalMediaObserver.ChangeListener() {
-            @Override
-            public void onChange() {
-                mDataAdapter.requestLoadNewPhotos();
-            }
-        });
+        if (!mSecureCamera) {
+            mLocalImagesObserver.setForegroundChangeListener(
+                    new LocalMediaObserver.ChangeListener() {
+                @Override
+                public void onChange() {
+                    mDataAdapter.requestLoadNewPhotos();
+                }
+            });
+        }
 
         keepScreenOnForAWhile();
 
