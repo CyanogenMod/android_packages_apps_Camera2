@@ -94,7 +94,7 @@ public class SettingsManager {
      * strictly on app upgrades, when the upgrade behavior differs from the general,
      * lazy upgrade strategies.
      */
-    private static final int STRICT_UPGRADE_VERSION = 1;
+    private static final int STRICT_UPGRADE_VERSION = 2;
 
     /**
      * A List of OnSettingChangedListener's, maintained to compare to new

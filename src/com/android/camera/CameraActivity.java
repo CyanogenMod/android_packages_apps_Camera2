@@ -1133,11 +1133,9 @@ public class CameraActivity extends Activity
                     // Show the location dialog on upgrade if
                     //  (a) the user has never set this option (status quo).
                     //  (b) the user opt'ed out previously.
-
                     if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
                         // Location is set in the source file defined for this setting.
                         // Remove the setting if the value is false to launch the dialog.
-                        Log.e("DEBUG", "upgrading using current source");
                         if (!settingsManager.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
                             settingsManager.remove(SettingsManager.SETTING_RECORD_LOCATION);
                         }
@@ -1157,6 +1155,8 @@ public class CameraActivity extends Activity
                             }
                         }
                     }
+
+                    settingsManager.remove(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
                 }
             };
 
