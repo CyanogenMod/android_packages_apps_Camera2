@@ -375,11 +375,13 @@ public class CameraSettings {
                         mParameters.getSupportedPictureSizes()));
         }
 
-        if (histogram != null && CameraUtil.isHistogramEnabled()) {
-            filterUnsupportedOptions(group,
-                    histogram, mParameters.getSupportedHistogramModes());
-        } else {
-            removePreference(group, histogram.getKey());
+        if (histogram != null) {
+            if (CameraUtil.isHistogramEnabled()) {
+                filterUnsupportedOptions(group,
+                        histogram, mParameters.getSupportedHistogramModes());
+            } else {
+                removePreference(group, histogram.getKey());
+            }
         }
 
         if (pictureFormat != null) {
