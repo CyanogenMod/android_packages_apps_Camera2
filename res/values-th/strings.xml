@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ตั้งระยะเวลาเป็นวินาที"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"นับถอยหลังเพื่อถ่ายภาพ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"จดจำตำแหน่งภาพไหม"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"แท็กรูปภาพและวิดีโอด้วยตำแหน่งที่ถ่ายภาพ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ตลอดจนภาพที่บันทึกไว้ของคุณได้"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"แท็กรูปและวิดีโอด้วยตำแหน่งที่ถ่ายภาพ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ตลอดจนภาพ ที่บันทึกไว้ของคุณได้"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ไม่ ขอบคุณ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ใช่"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ตัวเลือกเพิ่มเติม"</string>

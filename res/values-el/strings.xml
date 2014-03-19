@@ -26,9 +26,9 @@
     <item quantity="one" msgid="8811352590292754044">"Διαγραφή επιλεγμένου στοιχείου;"</item>
     <item quantity="other" msgid="5075283252850066610">"Διαγραφή επιλεγμένων στοιχείων;"</item>
   </plurals>
-    <string name="share" msgid="8581089487762243115">"Κοινή χρήση"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"Κοινή χρήση πανοράματος"</string>
-    <string name="share_as_photo" msgid="4831213580709167218">"Κοινή χρήση ως φωτογραφίας"</string>
+    <string name="share" msgid="8581089487762243115">"Κοινοποίηση"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"Κοινοποίηση πανοράματος"</string>
+    <string name="share_as_photo" msgid="4831213580709167218">"Κοινοποίηση ως φωτογραφίας"</string>
     <string name="deleted" msgid="2036165115527228127">"Διαγράφηκε"</string>
     <string name="undo" msgid="5110048345890050107">"ΑΝΑΙΡΕΣΗ"</string>
     <string name="details" msgid="4404020741542549488">"Λεπτομέρειες"</string>
