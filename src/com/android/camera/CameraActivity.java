@@ -1534,9 +1534,6 @@ public class CameraActivity extends Activity
 
         keepScreenOnForAWhile();
 
-        // Lights-out mode at all times.
-        findViewById(R.id.activity_root_view)
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         mPanoramaViewHelper.onResume();
         ReleaseDialogHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
         syncLocationManagerSetting();
