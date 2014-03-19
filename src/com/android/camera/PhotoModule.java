@@ -99,7 +99,6 @@ public class PhotoModule
     // Messages defined for the UI thread handler.
     private static final int MSG_FIRST_TIME_INIT = 1;
     private static final int MSG_SET_CAMERA_PARAMETERS_WHEN_IDLE = 2;
-    private static final int MSG_SWITCH_TO_GCAM_MODULE = 3;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -302,11 +301,26 @@ public class PhotoModule
                     module.setCameraParametersWhenIdle(0);
                     break;
                 }
-
-                case MSG_SWITCH_TO_GCAM_MODULE: {
-                    module.mActivity.onModeSelected(module.mGcamModeIndex);
-                }
             }
+        }
+    }
+
+    private void switchToGcamCapture() {
+        if (mActivity != null && mGcamModeIndex != 0) {
+            SettingsManager settingsManager = mActivity.getSettingsManager();
+            settingsManager.set(SettingsManager.SETTING_CAMERA_HDR,
+                SettingsManager.VALUE_ON);
+
+            // Disable the HDR+ button to prevent callbacks from being
+            // queued before the correct callback is attached to the button
+            // in the new module.  The new module will set the enabled/disabled
+            // of this button when the module's preferred camera becomes available.
+            ButtonManager buttonManager = mActivity.getButtonManager();
+            buttonManager.disableButton(ButtonManager.BUTTON_HDRPLUS);
+
+            // Do not post this to avoid this module switch getting interleaved with
+            // other button callbacks.
+            mActivity.onModeSelected(mGcamModeIndex);
         }
     }
 
@@ -449,9 +463,7 @@ public class PhotoModule
                     SettingsManager settingsManager = mActivity.getSettingsManager();
                     if (settingsManager.isCameraBackFacing()) {
                         if (settingsManager.requestsReturnToHdrPlus()) {
-                            settingsManager.set(SettingsManager.SETTING_CAMERA_HDR,
-                                SettingsManager.VALUE_ON);
-                            mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+                            switchToGcamCapture();
                             return;
                         }
                     }
@@ -475,7 +487,7 @@ public class PhotoModule
                         // Set the camera setting to default backfacing.
                         SettingsManager settingsManager = mActivity.getSettingsManager();
                         settingsManager.setDefault(SettingsManager.SETTING_CAMERA_ID);
-                        mHandler.sendEmptyMessage(MSG_SWITCH_TO_GCAM_MODULE);
+                        switchToGcamCapture();
                     } else {
                         mSceneMode = CameraUtil.SCENE_MODE_HDR;
                         updateParametersSceneMode();
