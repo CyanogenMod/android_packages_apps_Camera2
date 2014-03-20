@@ -23,31 +23,36 @@
         <PreferenceScreen
             android:key="pref_category_resolution"
             android:title="@string/pref_category_resolution_quality" >
+            <PreferenceCategory android:title="@string/mode_camera" >
 
-            <!-- BACK camera PHOTO resolution -->
-            <ListPreference
-                android:defaultValue="@string/pref_camera_picturesize_default"
-                android:entryValues="@array/pref_camera_picturesize_entryvalues"
-                android:key="pref_camera_picturesize_back_key"
-                android:title="@string/setting_back_camera_photo" />
-            <!-- BACK camera VIDEO resolution -->
-            <ListPreference
-                android:defaultValue="@string/pref_camera_picturesize_default"
-                android:entryValues="@array/pref_video_quality_entryvalues"
-                android:key="pref_video_quality_back_key"
-                android:title="@string/setting_back_camera_video" />
-            <!-- FRONT camera PHOTO resolution -->
-            <ListPreference
-                android:defaultValue="@string/pref_camera_picturesize_default"
-                android:entryValues="@array/pref_camera_picturesize_entryvalues"
-                android:key="pref_camera_picturesize_front_key"
-                android:title="@string/setting_front_camera_photo" />
-            <!-- FRONT camera VIDEO resolution -->
-            <ListPreference
-                android:defaultValue="@string/pref_camera_picturesize_default"
-                android:entryValues="@array/pref_video_quality_entryvalues"
-                android:key="pref_video_quality_front_key"
-                android:title="@string/setting_front_camera_video" />
+                <!-- BACK camera PHOTO resolution -->
+                <ListPreference
+                    android:defaultValue="@string/pref_camera_picturesize_default"
+                    android:entryValues="@array/pref_camera_picturesize_entryvalues"
+                    android:key="pref_camera_picturesize_back_key"
+                    android:title="@string/setting_back_camera_photo" />
+                <!-- FRONT camera PHOTO resolution -->
+                <ListPreference
+                    android:defaultValue="@string/pref_camera_picturesize_default"
+                    android:entryValues="@array/pref_camera_picturesize_entryvalues"
+                    android:key="pref_camera_picturesize_front_key"
+                    android:title="@string/setting_front_camera_photo" />
+            </PreferenceCategory>
+            <PreferenceCategory android:title="@string/mode_video" >
+
+                <!-- BACK camera VIDEO resolution -->
+                <ListPreference
+                    android:defaultValue="@string/pref_camera_picturesize_default"
+                    android:entryValues="@array/pref_video_quality_entryvalues"
+                    android:key="pref_video_quality_back_key"
+                    android:title="@string/setting_back_camera_video" />
+                <!-- FRONT camera VIDEO resolution -->
+                <ListPreference
+                    android:defaultValue="@string/pref_camera_picturesize_default"
+                    android:entryValues="@array/pref_video_quality_entryvalues"
+                    android:key="pref_video_quality_front_key"
+                    android:title="@string/setting_front_camera_video" />
+            </PreferenceCategory>
         </PreferenceScreen>
 
         <!-- Location -->

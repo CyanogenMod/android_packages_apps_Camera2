@@ -16,6 +16,9 @@
 
 package com.android.camera.util;
 
+import android.content.Context;
+import android.preference.PreferenceFragment;
+
 import com.android.camera.settings.SettingsCache.ExtraSettings;
 import com.android.camera.settings.SettingsManager.Setting;
 
@@ -27,11 +30,14 @@ public class SettingsHelper implements ExtraSettings {
     }
 
     @Override
-    public Setting settingFromId(int id) {
+    public Setting settingFromId(int id, Context context) {
         return null;
     }
 
     public static boolean isOpenSourceLicensesShown() {
         return false;
+    }
+
+    public static void addAdditionalPreferences(PreferenceFragment fragment) {
     }
 }
