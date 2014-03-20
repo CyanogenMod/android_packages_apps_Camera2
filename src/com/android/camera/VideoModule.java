@@ -1225,7 +1225,7 @@ public class VideoModule extends CameraModule
         // A special case of mode options closing: during capture it should
         // not be possible to change mode state.
         mAppController.getCameraAppUI().hideModeOptions();
-        mAppController.getCameraAppUI().animateBottomBarToCircle(R.drawable.ic_stop);
+        mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
 
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
