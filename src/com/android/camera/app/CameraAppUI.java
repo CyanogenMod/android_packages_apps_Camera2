@@ -1421,8 +1421,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.setShutterButtonIcon(shutterIconId);
     }
 
-    public void animateBottomBarToCircle(int shutterIconId) {
-        mBottomBar.animateToCircle(shutterIconId);
+    public void animateBottomBarToVideoStop(int shutterIconId) {
+        mBottomBar.animateToVideoStop(shutterIconId);
     }
 
     public void animateBottomBarToFullSize(int shutterIconId) {
