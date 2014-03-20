@@ -329,14 +329,20 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Sil"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Düğme artık %s oldu"</string>
     <string name="setting_location" msgid="4459859689227893838">"Konum"</string>
-    <string name="setting_picture_size" msgid="3635524767133302049">"Resim Boyutu"</string>
-    <string name="setting_video_resolution" msgid="5403372871611171250">"Video Çözünürlüğü"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Arka kamera fotoğraf"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Arka kamera video"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Ön kamera fotoğraf"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Ön kamera video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Varsayılan Kamera"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Geri Bildirim Gönder"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ işleniyor…"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Açık Kaynak Lisansları"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Genel Ayarlar"</string>
-    <string name="pref_category_resolution" msgid="2555229705716866570">"Çözünürlük"</string>
+    <!-- no translation found for pref_category_resolution_quality (3659535822878143175) -->
+    <skip />
     <string name="pref_category_about" msgid="1966255405679342337">"Hakkında"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Derleme sürümü"</string>
+    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Düşük"</string>
+    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Yüksek"</string>
+    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapiksel"</string>
 </resources>

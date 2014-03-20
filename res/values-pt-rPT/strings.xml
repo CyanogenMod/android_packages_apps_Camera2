@@ -329,14 +329,20 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Eliminar"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"O botão está agora %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Localização"</string>
-    <string name="setting_picture_size" msgid="3635524767133302049">"Tamanho da imagem"</string>
-    <string name="setting_video_resolution" msgid="5403372871611171250">"Resolução do vídeo"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografia câm. posterior"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo da câmara posterior"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografia câmara frontal"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo da câmara frontal"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Câmara predefinida"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Enviar comentários"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"A processar HDR+…"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Licenças de código aberto"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Definições gerais"</string>
-    <string name="pref_category_resolution" msgid="2555229705716866570">"Resolução"</string>
+    <!-- no translation found for pref_category_resolution_quality (3659535822878143175) -->
+    <skip />
     <string name="pref_category_about" msgid="1966255405679342337">"Acerca de"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Versão da compilação"</string>
+    <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Baixa"</string>
+    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Elevada"</string>
+    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeis"</string>
 </resources>
