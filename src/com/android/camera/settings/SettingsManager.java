@@ -433,7 +433,7 @@ public class SettingsManager {
         /**
          * A constructor used to store a setting's profile.
          */
-        Setting(String source, String type, String defaultValue, String key,
+        public Setting(String source, String type, String defaultValue, String key,
                 String[] values, boolean flushOnCameraChange) {
             mSource = source;
             mType = type;

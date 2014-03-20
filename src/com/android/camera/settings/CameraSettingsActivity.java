@@ -74,8 +74,8 @@ public class CameraSettingsActivity extends FragmentActivity {
 
     public static class CameraSettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
+        public static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
         private static final String BUILD_VERSION = "build_version";
-        private static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
         private FeedbackHelper mFeedbackHelper;
         private String[] mCamcorderProfileNames;
@@ -91,6 +91,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             super.onCreate(savedInstanceState);
             mFeedbackHelper = new FeedbackHelper(getActivity());
             addPreferencesFromResource(R.xml.camera_preferences);
+            SettingsHelper.addAdditionalPreferences(this);
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
         }
 
@@ -255,6 +256,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                 setSummaryForSelection(mVideoQualitiesBack, listPreference);
             } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_FRONT)) {
                 setSummaryForSelection(mVideoQualitiesFront, listPreference);
+            } else {
+                listPreference.setSummary(listPreference.getEntry());
             }
         }
 
