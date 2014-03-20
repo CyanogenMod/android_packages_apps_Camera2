@@ -89,7 +89,7 @@ public class SettingsCache {
          * Generate additional Settings from ids.  Must return null
          * by default.
          */
-        public Setting settingFromId(int id);
+        public Setting settingFromId(int id, Context context);
     }
 
     private void initKeyMap() {
@@ -230,7 +230,7 @@ public class SettingsCache {
             case SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS:
                 return SettingsManager.getRequestReturnHdrPlusSetting(mContext);
             default:
-                return mExtraSettings.settingFromId(id);
+                return mExtraSettings.settingFromId(id, mContext);
         }
     }
 
