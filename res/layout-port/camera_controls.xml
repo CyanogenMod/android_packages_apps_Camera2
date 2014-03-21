@@ -82,4 +82,10 @@
             android:visibility="gone"
             android:src="@drawable/burst_mode_5" />
 
+        <ProgressBar
+            android:id="@+id/wait_spinner"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="invisible" />
+
 </com.android.camera.ui.CameraControls>

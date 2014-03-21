@@ -36,6 +36,7 @@ public class CameraControls extends RotatableLayout {
     private View mPreview;
     private View mSceneDetect;
     private View mBurstMode;
+    private View mSpinner;
 
     public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,6 +59,7 @@ public class CameraControls extends RotatableLayout {
         mPreview = findViewById(R.id.preview_thumb);
         mSceneDetect = findViewById(R.id.scene_detect_icon);
         mBurstMode = findViewById(R.id.burst_mode_icon);
+        mSpinner = findViewById(R.id.wait_spinner);
     }
 
     @Override
@@ -93,6 +95,7 @@ public class CameraControls extends RotatableLayout {
                 break;
             }
         }
+        center(mSpinner, new Rect(l, t, r, b), orientation);
         center(mShutter, l, t, r, b, orientation, rotation, shutter);
         center(mBackgroundView, l, t, r, b, orientation, rotation, new Rect());
         toLeft(mSwitcher, shutter, rotation);

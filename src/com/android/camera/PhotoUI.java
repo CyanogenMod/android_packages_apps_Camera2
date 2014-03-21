@@ -42,6 +42,7 @@ import android.view.ViewStub;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.os.SystemProperties;
 
@@ -99,6 +100,7 @@ public class PhotoUI implements PieListener,
     private ModuleSwitcher mSwitcher;
     private CameraControls mCameraControls;
     private AlertDialog mLocationDialog;
+    private ProgressBar mSpinner;
 
     // Small indicators which show the camera settings in the viewfinder.
     private ImageView mSceneDetectView;
@@ -190,6 +192,7 @@ public class PhotoUI implements PieListener,
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+            hideWaitAnimation();
             mPreviewThumb.setImageBitmap(bitmap);
             if (mZsl) {
                 mAnimationManager.startFadeAnimation(mPreviewThumb);
@@ -243,6 +246,7 @@ public class PhotoUI implements PieListener,
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
+        mSpinner = (ProgressBar) mRootView.findViewById(R.id.wait_spinner);
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
         mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
 
@@ -491,6 +495,15 @@ public class PhotoUI implements PieListener,
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
     }
+
+    public void hideWaitAnimation() {
+        mSpinner.setVisibility(View.INVISIBLE);
+    }
+
+    public void showWaitAnimation() {
+        mSpinner.setVisibility(View.VISIBLE);
+    }
+
     // called from onResume but only the first time
     public  void initializeFirstTime() {
         // Initialize shutter button.
