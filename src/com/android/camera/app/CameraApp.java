@@ -24,7 +24,6 @@ import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.PlaceholderManager;
-import com.android.camera.session.ProcessingNotificationManager;
 import com.android.camera.session.SessionStorageManager;
 import com.android.camera.session.SessionStorageManagerImpl;
 import com.android.camera.util.CameraUtil;
@@ -39,7 +38,6 @@ public class CameraApp extends Application implements CameraServices {
     private CaptureSessionManager mSessionManager;
     private SessionStorageManager mSessionStorageManager;
     private MemoryManagerImpl mMemoryManager;
-    private ProcessingNotificationManager mNotificationManager;
     private PlaceholderManager mPlaceHolderManager;
 
     @Override
@@ -52,11 +50,10 @@ public class CameraApp extends Application implements CameraServices {
         ProcessingServiceManager.initSingleton(context);
 
         mMediaSaver = new MediaSaverImpl();
-        mNotificationManager = new ProcessingNotificationManager(this);
         mPlaceHolderManager = new PlaceholderManager(context);
         mSessionStorageManager = SessionStorageManagerImpl.create(this);
         mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
-                mNotificationManager, mPlaceHolderManager, mSessionStorageManager);
+                mPlaceHolderManager, mSessionStorageManager);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
     }
 

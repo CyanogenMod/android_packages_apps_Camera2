@@ -16,6 +16,8 @@
 
 package com.android.camera.processing;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,7 +33,9 @@ import android.util.Log;
 import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraServices;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.session.CaptureSession.ProgressListener;
 import com.android.camera.session.CaptureSessionManager;
+import com.android.camera2.R;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -51,7 +55,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * }
  * </pre>
  */
-public class ProcessingService extends Service {
+public class ProcessingService extends Service implements ProgressListener {
     /**
      * Class used to receive broadcast and control the service accordingly.
      */
@@ -68,6 +72,9 @@ public class ProcessingService extends Service {
 
     private static final String TAG = "ProcessingService";
     private static final int THREAD_PRIORITY = Process.THREAD_PRIORITY_DISPLAY;
+    private static final int CAMERA_NOTIFICATION_ID = 2;
+    private Notification.Builder mNotificationBuilder;
+    private NotificationManager mNotificationManager;
 
     /** Sending this broadcast intent will cause the processing to pause. */
     public static final String ACTION_PAUSE_PROCESSING_SERVICE =
@@ -108,6 +115,8 @@ public class ProcessingService extends Service {
         intentFilter.addAction(ACTION_PAUSE_PROCESSING_SERVICE);
         intentFilter.addAction(ACTION_RESUME_PROCESSING_SERVICE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mServiceController, intentFilter);
+        mNotificationBuilder = createInProgressNotificationBuilder();
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -126,12 +135,14 @@ public class ProcessingService extends Service {
             mWakeLock.release();
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mServiceController);
+        stopForeground(true);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO: We need to start in foreground using new session API.
-        // startForeground(SERVICE_NOTIFICATION, this.inProgressNotification);
+        // We need to start this service in foreground so that it's not getting
+        // killed easily when memory pressure is building up.
+        startForeground(CAMERA_NOTIFICATION_ID, mNotificationBuilder.build());
 
         asyncProcessAllTasksAndShutdown();
 
@@ -215,8 +226,19 @@ public class ProcessingService extends Service {
         if (session == null) {
             session = mSessionManager.createNewSession(task.getName(), task.getLocation());
         }
+        resetNotification();
+
+        // Adding the listener also causes it to get called for the session's
+        // current status message and percent completed.
+        session.addProgressListener(this);
+
         System.gc();
         task.process(this, getServices(), session);
+    }
+
+    private void resetNotification() {
+        mNotificationBuilder.setContentText("…").setProgress(100, 0, false);
+        postNotification();
     }
 
     /**
@@ -224,5 +246,32 @@ public class ProcessingService extends Service {
      */
     private CameraServices getServices() {
         return (CameraApp) this.getApplication();
+    }
+
+    private void postNotification() {
+        mNotificationManager.notify(CAMERA_NOTIFICATION_ID, mNotificationBuilder.build());
+    }
+
+    /**
+     * Creates a notification to indicate that a computation is in progress.
+     */
+    private Notification.Builder createInProgressNotificationBuilder() {
+        return new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setWhen(System.currentTimeMillis())
+                .setOngoing(true)
+                .setContentTitle(this.getText(R.string.app_name));
+    }
+
+    @Override
+    public void onProgressChanged(int progress) {
+        mNotificationBuilder.setProgress(100, progress, false);
+        postNotification();
+    }
+
+    @Override
+    public void onStatusMessageChanged(CharSequence message) {
+        mNotificationBuilder.setContentText(message);
+        postNotification();
     }
 }
