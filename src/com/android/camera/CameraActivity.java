@@ -2182,15 +2182,20 @@ public class CameraActivity extends Activity
             showProcessError(sessionManager.getErrorMesage(contentUri));
         } else {
             filmstripBottomPanel.hideProgressError();
-            int sessionProgress = sessionManager.getSessionProgress(contentUri);
+            CaptureSession session = sessionManager.getSession(contentUri);
 
-            if (sessionProgress < 0) {
-                hideSessionProgress();
+            if (session != null) {
+                int sessionProgress = session.getProgress();
+
+                if (sessionProgress < 0) {
+                    hideSessionProgress();
+                } else {
+                    CharSequence progressMessage = session.getProgressMessage();
+                    showSessionProgress(progressMessage);
+                    updateSessionProgress(sessionProgress);
+                }
             } else {
-                CharSequence progressMessage = sessionManager
-                        .getSessionProgressMessage(contentUri);
-                showSessionProgress(progressMessage);
-                updateSessionProgress(sessionProgress);
+                hideSessionProgress();
             }
         }
 

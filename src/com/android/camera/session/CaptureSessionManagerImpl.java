@@ -357,6 +357,11 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
+    public CaptureSession getSession(Uri sessionUri) {
+        return mSessions.get(sessionUri);
+    }
+
+    @Override
     public void saveImage(byte[] data, String title, long date, Location loc,
             int width, int height, int orientation, ExifInterface exif,
             OnMediaSavedListener listener) {
@@ -376,26 +381,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         synchronized (mTaskListeners) {
             mTaskListeners.remove(listener);
         }
-    }
-
-    @Override
-    public int getSessionProgress(Uri uri) {
-        CaptureSession session = mSessions.get(uri.toString());
-        if (session != null) {
-            return session.getProgress();
-        }
-
-        // Return -1 to indicate we don't have progress for the given session.
-        return -1;
-    }
-
-    @Override
-    public CharSequence getSessionProgressMessage(Uri uri) {
-        CaptureSession session = mSessions.get(uri.toString());
-        if (session == null) {
-            throw new IllegalArgumentException("Session with given URI does not exist: " + uri);
-        }
-        return session.getProgressMessage();
     }
 
     @Override
