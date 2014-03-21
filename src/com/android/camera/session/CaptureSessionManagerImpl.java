@@ -358,7 +358,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
     @Override
     public CaptureSession getSession(Uri sessionUri) {
-        return mSessions.get(sessionUri);
+        return mSessions.get(sessionUri.toString());
     }
 
     @Override
