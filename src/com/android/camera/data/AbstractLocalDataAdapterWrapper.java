@@ -18,6 +18,9 @@ package com.android.camera.data;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
+
+import java.util.List;
 
 /**
  * An abstract {@link LocalDataAdapter} implementation to wrap another
@@ -102,12 +105,32 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void updateMetadata(int dataId) {
-        mAdapter.updateMetadata(dataId);
+    public AsyncTask updateMetadata(int dataId) {
+        return mAdapter.updateMetadata(dataId);
     }
 
     @Override
     public boolean isMetadataUpdated(int dataId) {
         return mAdapter.isMetadataUpdated(dataId);
+    }
+
+    @Override
+    public List<AsyncTask> preloadItems(List<Integer> items) {
+        return mAdapter.preloadItems(items);
+    }
+
+    @Override
+    public void cancelItems(List<AsyncTask> loadTokens) {
+        mAdapter.cancelItems(loadTokens);
+    }
+
+    @Override
+    public List<Integer> getItemsInRange(int startPosition, int endPosition) {
+        return mAdapter.getItemsInRange(startPosition, endPosition);
+    }
+
+    @Override
+    public int getCount() {
+        return mAdapter.getCount();
     }
 }

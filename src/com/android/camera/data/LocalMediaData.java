@@ -26,7 +26,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaMetadataRetriever;
+import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -126,6 +126,8 @@ public abstract class LocalMediaData implements LocalData {
                             + cursor.getString(dataIndex));
                 }
             }
+
+            cursor.close();
         }
         return result;
     }
@@ -304,7 +306,7 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public boolean isMetadataUpdated() {
-        return MetadataLoader.isMetadataLoaded(this);
+        return MetadataLoader.isMetadataCached(this);
     }
 
     /**
@@ -671,6 +673,44 @@ public abstract class LocalMediaData implements LocalData {
                     new VideoDataBuilder());
         }
 
+        /**
+         * We can't trust the media store and we can't afford the performance overhead of
+         * synchronously decoding the video header for every item when loading our data set
+         * from the media store, so we instead run the metadata loader in the background
+         * to decode the video header for each item and prefer whatever values it obtains.
+         */
+        private int getBestWidth() {
+            int metadataWidth = VideoRotationMetadataLoader.getWidth(this);
+            if (metadataWidth > 0) {
+                return metadataWidth;
+            } else {
+                return mWidth;
+            }
+        }
+
+        private int getBestHeight() {
+            int metadataHeight = VideoRotationMetadataLoader.getHeight(this);
+            if (metadataHeight > 0) {
+                return metadataHeight;
+            } else {
+                return mHeight;
+            }
+        }
+
+        /**
+         * If the metadata loader has determined from the video header that we need to rotate the video
+         * 90 or 270 degrees, then we swap the width and height.
+         */
+        @Override
+        public int getWidth() {
+            return VideoRotationMetadataLoader.isRotated(this) ? getBestHeight() : getBestWidth();
+        }
+
+        @Override
+        public int getHeight() {
+            return VideoRotationMetadataLoader.isRotated(this) ?  getBestWidth() : getBestHeight();
+        }
+
         private static VideoData buildFromCursor(Cursor c) {
             long id = c.getLong(COL_ID);
             String title = c.getString(COL_TITLE);
@@ -681,42 +721,15 @@ public abstract class LocalMediaData implements LocalData {
             int width = c.getInt(COL_WIDTH);
             int height = c.getInt(COL_HEIGHT);
 
-            // Extracts video height/width if available. If unavailable, set to
-            // 0.
+            // If the media store doesn't contain a width and a height, use the width and height
+            // of the default camera mode instead. When the metadata loader runs, it will set the
+            // correct values.
             if (width == 0 || height == 0) {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                String rotation = null;
-                try {
-                    retriever.setDataSource(path);
-                } catch (RuntimeException ex) {
-                    // setDataSource() can cause RuntimeException beyond
-                    // IllegalArgumentException. e.g: data contain *.avi file.
-                    retriever.release();
-                    Log.e(TAG, "MediaMetadataRetriever.setDataSource() fail:"
-                            + ex.getMessage());
-                    return null;
-                }
-                rotation = retriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-
-                String val = retriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                width = (val == null) ? 0 : Integer.parseInt(val);
-                val = retriever.extractMetadata(
-                        MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-                height = (val == null) ? 0 : Integer.parseInt(val);
-                retriever.release();
-                if (width == 0 || height == 0) {
-                    // Width or height is still not available.
-                    Log.e(TAG, "Unable to retrieve dimension of video:" + path);
-                    return null;
-                }
-                if (rotation != null
-                        && (rotation.equals("90") || rotation.equals("270"))) {
-                    int b = width;
-                    width = height;
-                    height = b;
-                }
+                Log.w(TAG, "failed to retrieve width and height from the media store, defaulting " +
+                        " to camera profile");
+                CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+                width = profile.videoFrameWidth;
+                height = profile.videoFrameHeight;
             }
 
             long sizeInBytes = c.getLong(COL_SIZE);

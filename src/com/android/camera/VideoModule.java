@@ -1135,6 +1135,8 @@ public class VideoModule extends CameraModule
         mCurrentVideoValues.put(MediaColumns.DATE_MODIFIED, dateTaken / 1000);
         mCurrentVideoValues.put(Video.Media.MIME_TYPE, mime);
         mCurrentVideoValues.put(Video.Media.DATA, path);
+        mCurrentVideoValues.put(Video.Media.WIDTH, mProfile.videoFrameWidth);
+        mCurrentVideoValues.put(Video.Media.HEIGHT, mProfile.videoFrameHeight);
         mCurrentVideoValues.put(Video.Media.RESOLUTION,
                 Integer.toString(mProfile.videoFrameWidth) + "x" +
                 Integer.toString(mProfile.videoFrameHeight));

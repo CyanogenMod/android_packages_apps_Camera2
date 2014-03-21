@@ -24,16 +24,34 @@ import android.content.Context;
  */
 class MetadataLoader {
 
-    private static final String KEY_METADATA_UPDATED = "metadata_updated";
+    private static final String KEY_METADATA_CACHED = "metadata_cached";
 
-    static void loadMetadata(final Context context, final LocalData data) {
-        PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getUri(),
-                data.getMetadata());
-        RgbzMetadataLoader.loadRgbzMetadata(context, data.getUri(), data.getMetadata());
-        data.getMetadata().putBoolean(MetadataLoader.KEY_METADATA_UPDATED, true);
+    /**
+     * Adds information to the data's metadata bundle if any is available and returns
+     * true if metadata was added and false otherwise. In either case, sets
+     * a flag indicating that we've cached any available metadata and don't need to
+     * load metadata again for this particular item.
+     *
+     * @param context A context.
+     * @param data The data to update metadata for.
+     * @return true if any metadata was added to the data, false otherwise.
+     */
+    static boolean loadMetadata(final Context context, final LocalData data) {
+        boolean metadataAdded = false;
+        if (data.getLocalDataType() == LocalData.LOCAL_IMAGE) {
+            PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getUri(),
+                    data.getMetadata());
+            RgbzMetadataLoader.loadRgbzMetadata(context, data.getUri(), data.getMetadata());
+            metadataAdded = true;
+        } else if (data.getLocalDataType() == LocalData.LOCAL_VIDEO) {
+            VideoRotationMetadataLoader.loadRotationMetdata(data);
+            metadataAdded = true;
+        }
+        data.getMetadata().putBoolean(MetadataLoader.KEY_METADATA_CACHED, true);
+        return metadataAdded;
     }
 
-    static boolean isMetadataLoaded(final LocalData data) {
-        return data.getMetadata().getBoolean(MetadataLoader.KEY_METADATA_UPDATED);
+    static boolean isMetadataCached(final LocalData data) {
+        return data.getMetadata().getBoolean(MetadataLoader.KEY_METADATA_CACHED);
     }
 }
