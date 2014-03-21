@@ -76,6 +76,15 @@ public interface CaptureSessionManager {
     CaptureSession createSession();
 
     /**
+     * Returns a session by session Uri or null if it is not found.
+     *
+     * @param sessionUri the Uri to look up.
+     *
+     * @return The corresponding CaptureSession.
+     */
+    CaptureSession getSession(Uri sessionUri);
+
+    /**
      * Save an image without creating a session that includes progress.
      *
      * @param data the image data to be saved.
@@ -104,24 +113,6 @@ public interface CaptureSessionManager {
      * session updates.
      */
     public void removeSessionListener(SessionListener listener);
-
-    /**
-     * Get session progress by URI.
-     *
-     * @param uri The URI of the final media file to identify the session.
-     * @return Integer from 0 to 100, or -1. The percentage of the session done
-     *         so far. -1 means not found.
-     */
-    public int getSessionProgress(Uri uri);
-
-    /**
-     * Get the string ID for the progress message of the the session with the
-     * given URI.
-     *
-     * @param uri The URI of the final image file to identify the session.
-     * @return The current progress message.
-     */
-    public CharSequence getSessionProgressMessage(Uri uri);
 
     /**
      * Gets the directory to be used for temporary data. See
