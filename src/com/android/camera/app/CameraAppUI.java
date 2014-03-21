@@ -853,6 +853,20 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     }
 
+    /**
+     * Call to stop the preview from being rendered.
+     */
+    public void pausePreviewRendering() {
+        mTextureView.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Call to begin rendering the preview again.
+     */
+    public void resumePreviewRendering() {
+        mTextureView.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onOpenFullScreen() {
         if (mShouldShowShimmy) {
