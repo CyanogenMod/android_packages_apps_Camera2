@@ -1366,6 +1366,10 @@ public class PhotoModule
             animateAfterShutter();
         }
 
+        if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
+            mUI.showWaitAnimation();
+        }
+
         // Set rotation and gps data.
         int orientation;
         // We need to be consistent with the framework orientation (i.e. the
