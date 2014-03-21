@@ -1163,7 +1163,8 @@ public class PhotoModule
                 // Animate capture with real jpeg data instead of a preview frame.
                 if (!mBurstShotInProgress && mCameraState != LONGSHOT
                         && (mReceivedSnapNum == mBurstSnapNum)) {
-                    mUI.animateCapture(jpegData, orientation, mMirror);
+                    mUI.animateCapture(jpegData, orientation, mMirror,
+                            mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL);
                 }
             } else {
                 mJpegImageData = jpegData;

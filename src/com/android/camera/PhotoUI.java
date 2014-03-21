@@ -161,11 +161,14 @@ public class PhotoUI implements PieListener,
         private final byte [] mData;
         private int mOrientation;
         private boolean mMirror;
+        private boolean mZsl;
 
-        public DecodeTask(byte[] data, int orientation, boolean mirror) {
+        public DecodeTask(byte[] data, int orientation, boolean mirror,
+                boolean isZsl) {
             mData = data;
             mOrientation = orientation;
             mMirror = mirror;
+            mZsl = isZsl;
         }
 
         @Override
@@ -188,13 +191,17 @@ public class PhotoUI implements PieListener,
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             mPreviewThumb.setImageBitmap(bitmap);
-            mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            if (mZsl) {
+                mAnimationManager.startFadeAnimation(mPreviewThumb);
+            } else {
+                mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            }
         }
     }
 
     private class DecodeImageForReview extends DecodeTask {
         public DecodeImageForReview(byte[] data, int orientation, boolean mirror) {
-            super(data, orientation, mirror);
+            super(data, orientation, mirror, false);
         }
 
         @Override
@@ -397,9 +404,10 @@ public class PhotoUI implements PieListener,
         updateOnScreenIndicators(params, prefGroup, prefs);
     }
 
-    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
+    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror,
+            boolean isZsl) {
         // Decode jpeg byte array and then animate the jpeg
-        DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
+        DecodeTask task = new DecodeTask(jpegData, orientation, mirror, isZsl);
         task.execute();
     }
 
