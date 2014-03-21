@@ -550,8 +550,7 @@ public abstract class LocalMediaData implements LocalData {
                 // If the width and height are valid and not matching the values
                 // from MediaStore, then update the MediaStore. This only
                 // happens when the MediaStore has been told incorrect values.
-                if (decodedSize.x > 0 && decodedSize.y > 0 &&
-                        (decodedSize.x != mWidth || decodedSize.y != mHeight)) {
+                if (decodedSize != null && (decodedSize.x != mWidth || decodedSize.y != mHeight)) {
                     ContentValues values = new ContentValues();
                     values.put(Images.Media.WIDTH, decodedSize.x);
                     values.put(Images.Media.HEIGHT, decodedSize.y);
