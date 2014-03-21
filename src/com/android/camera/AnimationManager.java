@@ -27,6 +27,9 @@ import android.view.View;
 
 public class AnimationManager {
 
+    public static final int FADE_IN_DURATION = 300;
+    public static final int FADE_OUT_DURATION = 2200;
+
     public static final float FLASH_ALPHA_START = 0.3f;
     public static final float FLASH_ALPHA_END = 0f;
     public static final int FLASH_DURATION = 300;
@@ -37,6 +40,7 @@ public class AnimationManager {
 
     private ObjectAnimator mFlashAnim;
     private AnimatorSet mCaptureAnimator;
+    private AnimatorSet mFadeAnimator;
 
     /**
      * Starts capture animation.
@@ -101,6 +105,7 @@ public class AnimationManager {
             public void onAnimationStart(Animator animator) {
                 view.setClickable(false);
                 view.setVisibility(View.VISIBLE);
+                view.setAlpha(1f);
             }
 
             @Override
@@ -165,6 +170,52 @@ public class AnimationManager {
             }
         });
         mFlashAnim.start();
+    }
+
+    /**
+     * Starts ZSL fade animation.
+     * @params view a thumbnail view that shows a picture fading out
+     */
+    public void startFadeAnimation(final View view) {
+        // End the previous animation if the previous one is still running
+        if (mFadeAnimator != null && mFadeAnimator.isStarted()) {
+            mFadeAnimator.cancel();
+        }
+        // Start new fade animation.
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+        fadeIn.setDuration(AnimationManager.FADE_IN_DURATION);
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
+        fadeOut.setDuration(AnimationManager.FADE_OUT_DURATION);
+
+        mFadeAnimator = new AnimatorSet();
+        mFadeAnimator.playSequentially(fadeIn, fadeOut);
+        mFadeAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                view.setClickable(true);
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                view.setAlpha(0f);
+                view.setVisibility(View.INVISIBLE);
+                mFadeAnimator.removeAllListeners();
+                mFadeAnimator = null;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                view.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+                // Do nothing.
+            }
+        });
+        mFadeAnimator.start();
     }
 
     /**
