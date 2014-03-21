@@ -153,6 +153,9 @@
     <dimen name="photoeditor_original_text_size">18dp</dimen>
     <dimen name="photoeditor_original_text_margin">4dp</dimen>
 
+    <!-- Mode selector text size -->
+    <dimen name="mode_selector_text_size">16sp</dimen>
+
     <!-- Mode selector icon width -->
     <dimen name="mode_selector_icon_block_width">56dp</dimen>
     <dimen name="mode_selector_icon_drawable_size">48dp</dimen>
