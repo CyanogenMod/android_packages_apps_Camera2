@@ -65,7 +65,18 @@ public interface ProcessingTask {
      * @return the {@code ProcessResult} with the result of the processing
      */
     public ProcessingResult process(Context context, CameraServices services,
-        CaptureSession session);
+            CaptureSession session);
+
+    /**
+     * Suspend the task whenever possible. There is no guarantee that the task
+     * will pause right away or at all.
+     */
+    public void suspend();
+
+    /**
+     * Resume the task if it has been suspended before.
+     */
+    public void resume();
 
     /**
      * @return the name of the task. It can be null to indicate that the task

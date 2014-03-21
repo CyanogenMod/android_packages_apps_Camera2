@@ -17,18 +17,24 @@
 package com.android.camera.processing;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Process;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraServices;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A service that processes a {@code ProcessingTask}. The service uses a fifo
@@ -46,15 +52,44 @@ import com.android.camera.session.CaptureSessionManager;
  * </pre>
  */
 public class ProcessingService extends Service {
+    /**
+     * Class used to receive broadcast and control the service accordingly.
+     */
+    public class ServiceController extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() == ACTION_PAUSE_PROCESSING_SERVICE) {
+                ProcessingService.this.pause();
+            } else if (intent.getAction() == ACTION_RESUME_PROCESSING_SERVICE) {
+                ProcessingService.this.resume();
+            }
+        }
+    }
+
     private static final String TAG = "ProcessingService";
     private static final int THREAD_PRIORITY = Process.THREAD_PRIORITY_DISPLAY;
+
+    /** Sending this broadcast intent will cause the processing to pause. */
+    public static final String ACTION_PAUSE_PROCESSING_SERVICE =
+            "com.android.camera.processing.PAUSE";
+    /**
+     * Sending this broadcast intent will cause the processing to resume after
+     * it has been paused.
+     */
+    public static final String ACTION_RESUME_PROCESSING_SERVICE =
+            "com.android.camera.processing.RESUME";
+
     private WakeLock mWakeLock;
+    private final ServiceController mServiceController = new ServiceController();
 
     /** Manages the capture session. */
     private CaptureSessionManager mSessionManager;
 
     private ProcessingServiceManager mProcessingServiceManager;
     private Thread mProcessingThread;
+    private volatile boolean mPaused = false;
+    private ProcessingTask mCurrentTask;
+    private final Lock mSuspendStatusLock = new ReentrantLock();
 
     @Override
     public void onCreate() {
@@ -68,6 +103,11 @@ public class ProcessingService extends Service {
                 Context.POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         mWakeLock.acquire();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PAUSE_PROCESSING_SERVICE);
+        intentFilter.addAction(ACTION_RESUME_PROCESSING_SERVICE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mServiceController, intentFilter);
     }
 
     @Override
@@ -85,10 +125,14 @@ public class ProcessingService extends Service {
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mServiceController);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // TODO: We need to start in foreground using new session API.
+        // startForeground(SERVICE_NOTIFICATION, this.inProgressNotification);
+
         asyncProcessAllTasksAndShutdown();
 
         // We want this service to continue running until it is explicitly
@@ -102,6 +146,30 @@ public class ProcessingService extends Service {
         return null;
     }
 
+    private void pause() {
+        try {
+            mSuspendStatusLock.lock();
+            mPaused = true;
+            if (mCurrentTask != null) {
+                mCurrentTask.suspend();
+            }
+        } finally {
+            mSuspendStatusLock.unlock();
+        }
+    }
+
+    private void resume() {
+        try {
+            mSuspendStatusLock.lock();
+            mPaused = false;
+            if (mCurrentTask != null) {
+                mCurrentTask.resume();
+            }
+        } finally {
+            mSuspendStatusLock.unlock();
+        }
+    }
+
     /**
      * Starts a thread to process all tasks. When no more tasks are in the
      * queue, it exits the thread and shuts down the service.
@@ -110,7 +178,7 @@ public class ProcessingService extends Service {
         if (mProcessingThread != null) {
             return;
         }
-        mProcessingThread = new Thread() {
+        mProcessingThread = new Thread("CameraProcessingThread") {
             @Override
             public void run() {
                 // Set the thread priority
@@ -118,6 +186,15 @@ public class ProcessingService extends Service {
 
                 ProcessingTask task;
                 while ((task = mProcessingServiceManager.popNextSession()) != null) {
+                    mCurrentTask = task;
+                    try {
+                        mSuspendStatusLock.lock();
+                        if (mPaused) {
+                            mCurrentTask.suspend();
+                        }
+                    } finally {
+                        mSuspendStatusLock.unlock();
+                    }
                     processAndNotify(task);
                 }
                 stopSelf();
@@ -138,6 +215,7 @@ public class ProcessingService extends Service {
         if (session == null) {
             session = mSessionManager.createNewSession(task.getName(), task.getLocation());
         }
+        System.gc();
         task.process(this, getServices(), session);
     }
 
