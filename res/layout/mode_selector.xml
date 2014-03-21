@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:textSize="16sp"
+        android:textSize="@dimen/mode_selector_text_size"
         android:textColor="@color/mode_selector_text_color"
         android:layout_marginLeft="@dimen/mode_selector_icon_block_width" />
     <com.android.camera.ui.ModeIconView
