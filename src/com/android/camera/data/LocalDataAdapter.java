@@ -18,7 +18,9 @@ package com.android.camera.data;
 
 import android.net.Uri;
 
+import android.os.AsyncTask;
 import com.android.camera.filmstrip.DataAdapter;
+import com.android.camera.widget.Preloader;
 
 import java.util.List;
 
@@ -26,7 +28,8 @@ import java.util.List;
  * An interface which extends {@link com.android.camera.filmstrip.DataAdapter}
  * and defines operations on the data in the local camera folder.
  */
-public interface LocalDataAdapter extends DataAdapter {
+public interface LocalDataAdapter extends DataAdapter,
+        Preloader.ItemLoader<Integer, AsyncTask>, Preloader.ItemSource<Integer> {
 
     public interface LocalDataListener {
         /**
@@ -127,8 +130,10 @@ public interface LocalDataAdapter extends DataAdapter {
      * {@link com.android.camera.data.LocalDataAdapter.LocalDataListener}.
      *
      * @param dataId The ID of the data to update the metadata for.
+     * @return An {@link android.os.AsyncTask} performing the background load
+     *      that can be used to cancel the load if it's no longer needed.
      */
-    public void updateMetadata(int dataId);
+    public AsyncTask updateMetadata(int dataId);
 
     /**
      * @return whether the metadata is already updated.

@@ -66,6 +66,7 @@ public class LocalDataUtil {
         BitmapFactory.decodeFile(path, justBoundsOpts);
         if (justBoundsOpts.outWidth > 0 && justBoundsOpts.outHeight > 0) {
             size.set(justBoundsOpts.outWidth, justBoundsOpts.outHeight);
+        } else {
             Log.e(TAG, "Bitmap dimension decoding failed for " + path);
         }
         return size;

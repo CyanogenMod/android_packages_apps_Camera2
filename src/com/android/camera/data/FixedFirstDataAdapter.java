@@ -18,6 +18,7 @@ package com.android.camera.data;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.view.View;
 
 import com.android.camera.filmstrip.DataAdapter;
@@ -192,18 +193,19 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public void updateMetadata(int dataId) {
+    public AsyncTask updateMetadata(int dataId) {
         if (dataId > 0) {
-            mAdapter.updateMetadata(dataId);
+            return mAdapter.updateMetadata(dataId - 1);
         } else {
             MetadataLoader.loadMetadata(mContext, mFirstData);
         }
+        return null;
     }
 
     @Override
     public boolean isMetadataUpdated(int dataId) {
         if (dataId > 0) {
-        return mAdapter.isMetadataUpdated(dataId);
+        return mAdapter.isMetadataUpdated(dataId - 1);
         } else {
             return mFirstData.isMetadataUpdated();
         }
