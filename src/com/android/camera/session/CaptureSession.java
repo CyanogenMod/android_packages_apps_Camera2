@@ -27,6 +27,25 @@ import com.android.camera.exif.ExifInterface;
  * a photo sphere or HDR+ photo.
  */
 public interface CaptureSession {
+    /**
+     * Classes implementing this interface can listen to progress updates of
+     * this session.
+     */
+    public static interface ProgressListener {
+        /**
+         * Called when the progress is changed.
+         *
+         * @param progressPercent The current progress in percent.
+         */
+        public void onProgressChanged(int progressPercent);
+
+        /**
+         * Called when the progress message is changed.
+         *
+         * @param message The current progress message.
+         */
+        public void onStatusMessageChanged(CharSequence message);
+    }
 
     /** Returns the title/name of this session. */
     public String getTitle();
@@ -128,7 +147,7 @@ public interface CaptureSession {
     /**
      * Whether this session already has a path. This is the case once it has
      * been started. False is returned, if the session has not been started yet
-     * and no path is available
+     * and no path is available.
      */
     public boolean hasPath();
 
@@ -141,7 +160,17 @@ public interface CaptureSession {
     public void updatePreview(String previewPath);
 
     /**
-     * Called when the preview is already available
+     * Called when the preview is already available.
      */
     public void onPreviewAvailable();
+
+    /**
+     * Adds a progress listener to this session.
+     */
+    public void addProgressListener(ProgressListener listener);
+
+    /**
+     * Removes the given progress listener from this session.
+     */
+    public void removeProgressListener(ProgressListener listener);
 }
