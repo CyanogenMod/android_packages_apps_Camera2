@@ -22,7 +22,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -107,11 +106,13 @@ public class BottomBar extends FrameLayout
     private int mBackgroundPressedColor;
     private int mBackgroundAlpha = 0xff;
 
-    private final Paint mCirclePaint = new Paint();
-    private final Path mCirclePath = new Path();
     private boolean mDrawCircle;
     private final float mCircleRadius;
-    private final Path mRectPath = new Path();
+    private float mCurrentCircleRadius;
+    private int mCircleColor;
+    private final Paint mCirclePaint= new Paint();
+    private float mCenterX;
+    private float mCenterY;
 
     private final RectF mRect = new RectF();
 
@@ -129,15 +130,14 @@ public class BottomBar extends FrameLayout
         mOptimalHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_height_optimal);
         mCircleRadius = getResources()
             .getDimensionPixelSize(R.dimen.video_capture_circle_diameter) / 2;
-        mCirclePaint.setAntiAlias(true);
         mBackgroundAlphaOverlay = getResources().getInteger(R.integer.bottom_bar_background_alpha_overlay);
         mBackgroundAlphaDefault = getResources().getInteger(R.integer
                 .bottom_bar_background_alpha);
     }
 
     private void setPaintColor(int alpha, int color, boolean isCaptureChange) {
-        int computedColor = (alpha << 24) | (color & 0x00ffffff);
-        mCirclePaint.setColor(computedColor);
+        mCircleColor = (alpha << 24) | (color & 0x00ffffff);
+        mCirclePaint.setColor(mCircleColor);
         invalidate();
     }
 
@@ -356,28 +356,9 @@ public class BottomBar extends FrameLayout
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-
         notifyAreaAdjust();
-
-        final int width = getWidth();
-        final int height = getHeight();
-
-        if (changed) {
-            mCirclePath.reset();
-            mCirclePath.addCircle(
-                width/2,
-                height/2,
-                (int)(diagonalLength(width, height)/2),
-                Path.Direction.CW);
-
-            mRect.set(
-                0.0f,
-                0.0f,
-                width,
-                height);
-            mRectPath.reset();
-            mRectPath.addRect(mRect, Path.Direction.CW);
-        }
+        mCenterX = (right - left) / 2;
+        mCenterY = (bottom - top) / 2;
     }
 
     @Override
@@ -413,9 +394,9 @@ public class BottomBar extends FrameLayout
         switch (mMode) {
             case MODE_CAPTURE:
                 if (mDrawCircle) {
-                    canvas.drawPath(mCirclePath, mCirclePaint);
+                    canvas.drawCircle(mCenterX, mCenterY, mCurrentCircleRadius, mCirclePaint);
                 } else {
-                    canvas.drawPath(mRectPath, mCirclePaint);
+                    canvas.drawColor(mCircleColor);
                 }
                 break;
             case MODE_INTENT:
@@ -493,12 +474,7 @@ public class BottomBar extends FrameLayout
             radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mCirclePath.reset();
-                    mCirclePath.addCircle(
-                            getWidth()/2,
-                            getHeight()/2,
-                            (Float) animation.getAnimatedValue(),
-                            Path.Direction.CW);
+                    mCurrentCircleRadius = (Float) animation.getAnimatedValue();
                     invalidate();
                 }
             });
@@ -518,19 +494,15 @@ public class BottomBar extends FrameLayout
      */
     public void animateToFullSize(int resId) {
         if (mDrawCircle) {
+            final float endRadius = (float) diagonalLength()/2;
             final ValueAnimator radiusAnimator =
-                ValueAnimator.ofFloat(mCircleRadius, (float) diagonalLength()/2);
+                ValueAnimator.ofFloat(mCircleRadius, endRadius);
             radiusAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
             radiusAnimator.setInterpolator(Gusterpolator.INSTANCE);
             radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mCirclePath.reset();
-                    mCirclePath.addCircle(
-                            getWidth()/2,
-                            getHeight()/2,
-                            (Float) animation.getAnimatedValue(),
-                            Path.Direction.CW);
+                    mCurrentCircleRadius = (Float) animation.getAnimatedValue();
                     invalidate();
                 }
             });
@@ -538,7 +510,8 @@ public class BottomBar extends FrameLayout
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mDrawCircle = false;
-                }
+                    mCurrentCircleRadius = endRadius;
+               }
             });
             radiusAnimator.start();
         }
