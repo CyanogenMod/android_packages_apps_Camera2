@@ -34,6 +34,7 @@ import com.android.camera.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -54,13 +55,14 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private Location mLocation;
         /** The current progress of this session in percent. */
         private int mProgressPercent = 0;
-        /** An associated notification ID, else -1. */
-        private int mNotificationId = -1;
         /** A message ID for the current progress state. */
         private CharSequence mProgressMessage;
         /** A place holder for this capture session. */
         private PlaceholderManager.Session mPlaceHolderSession;
         private Uri mContentUri;
+        /** These listeners get informed about progress updates. */
+        private final HashSet<ProgressListener> mProgressListeners =
+                new HashSet<ProgressListener>();
 
         /**
          * Creates a new {@link CaptureSession}.
@@ -92,7 +94,9 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         public synchronized void setProgress(int percent) {
             mProgressPercent = percent;
             notifyTaskProgress(mUri, mProgressPercent);
-            mNotificationManager.setProgress(mProgressPercent, mNotificationId);
+            for (ProgressListener listener : mProgressListeners) {
+                listener.onProgressChanged(percent);
+            }
         }
 
         @Override
@@ -108,17 +112,14 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         @Override
         public synchronized void setProgressMessage(CharSequence message) {
             mProgressMessage = message;
-            mNotificationManager.setStatus(mProgressMessage, mNotificationId);
+            for (ProgressListener listener : mProgressListeners) {
+                listener.onStatusMessageChanged(message);
+            }
         }
 
         @Override
         public synchronized void startSession(byte[] placeholder, CharSequence progressMessage) {
-            if (mNotificationId > 0) {
-                throw new RuntimeException("startSession cannot be called a second time.");
-            }
-
             mProgressMessage = progressMessage;
-            mNotificationId = mNotificationManager.notifyStart(mProgressMessage);
 
             final long now = System.currentTimeMillis();
             // TODO: This needs to happen outside the UI thread.
@@ -130,12 +131,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         @Override
         public synchronized void startSession(Uri uri, CharSequence progressMessage) {
-            if (mNotificationId > 0) {
-                throw new RuntimeException("startSession cannot be called a second time.");
-            }
             mUri = uri;
             mProgressMessage = progressMessage;
-            mNotificationId = mNotificationManager.notifyStart(mProgressMessage);
             mPlaceHolderSession = mPlaceholderManager.convertToPlaceholder(uri);
 
             mSessions.put(mUri.toString(), this);
@@ -161,7 +158,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
                     orientation, exif, data, width, height, LocalData.MIME_TYPE_JPEG);
 
-            mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
             notifyTaskDone(mPlaceHolderSession.outputUri);
         }
@@ -186,11 +182,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                     }
                     final byte[] jpegData = jpegDataTemp;
 
-                    final CaptureSession session = CaptureSessionImpl.this;
-
-                    if (session == null) {
-                        throw new IllegalStateException("No session for captured photo");
-                    }
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
                     BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length, options);
@@ -205,8 +196,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                         Log.w(TAG, "Could not read exif", e);
                         exif = null;
                     }
-
-                    session.saveAndFinish(jpegData, width, height, rotation, exif, null);
+                    CaptureSessionImpl.this.saveAndFinish(jpegData, width, height, rotation, exif,
+                            null);
                 }
             });
 
@@ -295,15 +286,25 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             }
             mProgressMessage = reason;
 
-            mNotificationManager.notifyCompletion(mNotificationId);
             removeSession(mUri.toString());
             mFailedSessionMessages.put(mPlaceHolderSession.outputUri, reason);
             notifyTaskFailed(mPlaceHolderSession.outputUri, reason);
         }
+
+        @Override
+        public void addProgressListener(ProgressListener listener) {
+            listener.onStatusMessageChanged(mProgressMessage);
+            listener.onProgressChanged(mProgressPercent);
+            mProgressListeners.add(listener);
+        }
+
+        @Override
+        public void removeProgressListener(ProgressListener listener) {
+            mProgressListeners.remove(listener);
+        }
     }
 
     private final MediaSaver mMediaSaver;
-    private final ProcessingNotificationManager mNotificationManager;
     private final PlaceholderManager mPlaceholderManager;
     private final SessionStorageManager mSessionStorageManager;
     private final ContentResolver mContentResolver;
@@ -328,20 +329,16 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
      *
      * @param mediaSaver used to store the resulting media item
      * @param contentResolver required by the media saver
-     * @param notificationManager used to update system notifications about the
-     *            progress
      * @param placeholderManager used to manage placeholders in the filmstrip
      *            before the final result is ready
      * @param sessionStorageManager used to tell modules where to store
      *            temporary session data
      */
-    public CaptureSessionManagerImpl(MediaSaver mediaSaver,
-            ContentResolver contentResolver, ProcessingNotificationManager notificationManager,
+    public CaptureSessionManagerImpl(MediaSaver mediaSaver, ContentResolver contentResolver,
             PlaceholderManager placeholderManager, SessionStorageManager sessionStorageManager) {
         mSessions = new HashMap<String, CaptureSession>();
         mMediaSaver = mediaSaver;
         mContentResolver = contentResolver;
-        mNotificationManager = notificationManager;
         mPlaceholderManager = placeholderManager;
         mSessionStorageManager = sessionStorageManager;
     }
