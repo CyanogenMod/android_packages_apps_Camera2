@@ -83,6 +83,8 @@ public abstract class CameraModule implements ModuleController {
         }
     }
 
+    public void onPreviewInitialDataReceived() {}
+
     /**
      * Releases the back camera through {@link CameraProvider}.
      * This calls {@link
