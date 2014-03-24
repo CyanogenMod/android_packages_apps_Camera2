@@ -271,13 +271,14 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         return false;
     }
 
-    private void hideFilmstrip() {
+    public void hideFilmstrip() {
         mAnimationDirection = ANIM_DIRECTION_OUT;
         runAnimation(mFilmstripContentTranslationProgress, 1f);
     }
 
-    private void showFilmstrip() {
+    public void showFilmstrip() {
         mAnimationDirection = ANIM_DIRECTION_IN;
+        setVisibility(VISIBLE);
         runAnimation(mFilmstripContentTranslationProgress, 0f);
     }
 

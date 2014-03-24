@@ -1633,4 +1633,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void showTutorial(AbstractTutorialOverlay tutorial, LayoutInflater inflater) {
         tutorial.show(mTutorialsPlaceholder, inflater);
     }
+
+    /***************************Filmstrip api *****************************/
+
+    public void showFilmstrip() {
+        mFilmstripLayout.showFilmstrip();
+    }
 }
