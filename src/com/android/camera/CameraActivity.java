@@ -1376,15 +1376,28 @@ public class CameraActivity extends Activity
         if (mCurrentModule == null) {
             return;
         }
-        int visibility;
-        if (mFilmstripCoversPreview) {
-            visibility = ModuleController.VISIBILITY_HIDDEN;
-        } else if (mModeListVisible){
-            visibility = ModuleController.VISIBILITY_COVERED;
-        } else {
-            visibility = ModuleController.VISIBILITY_VISIBLE;
-        }
+
+        int visibility = getPreviewVisibility();
+        updatePreviewRendering(visibility);
         mCurrentModule.onPreviewVisibilityChanged(visibility);
+    }
+
+    private void updatePreviewRendering(int visibility) {
+        if (visibility == ModuleController.VISIBILITY_HIDDEN) {
+            mCameraAppUI.pausePreviewRendering();
+        } else {
+            mCameraAppUI.resumePreviewRendering();
+        }
+    }
+
+    private int getPreviewVisibility() {
+        if (mFilmstripCoversPreview) {
+            return ModuleController.VISIBILITY_HIDDEN;
+        } else if (mModeListVisible){
+            return ModuleController.VISIBILITY_COVERED;
+        } else {
+            return ModuleController.VISIBILITY_VISIBLE;
+        }
     }
 
     private void setRotationAnimation() {
@@ -1551,6 +1564,9 @@ public class CameraActivity extends Activity
         mPanoramaViewHelper.onResume();
         ReleaseDialogHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
         syncLocationManagerSetting();
+
+        final int previewVisibility = getPreviewVisibility();
+        updatePreviewRendering(previewVisibility);
     }
 
     @Override
