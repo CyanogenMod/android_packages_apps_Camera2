@@ -100,8 +100,6 @@ public class ProcessingService extends Service implements ProgressListener {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "Starting up");
-
         mProcessingServiceManager = ProcessingServiceManager.getInstance();
         mSessionManager = getServices().getCaptureSessionManager();
 
@@ -140,6 +138,8 @@ public class ProcessingService extends Service implements ProgressListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "Starting in foreground.");
+
         // We need to start this service in foreground so that it's not getting
         // killed easily when memory pressure is building up.
         startForeground(CAMERA_NOTIFICATION_ID, mNotificationBuilder.build());
@@ -158,6 +158,7 @@ public class ProcessingService extends Service implements ProgressListener {
     }
 
     private void pause() {
+        Log.d(TAG, "Pausing");
         try {
             mSuspendStatusLock.lock();
             mPaused = true;
@@ -170,6 +171,7 @@ public class ProcessingService extends Service implements ProgressListener {
     }
 
     private void resume() {
+        Log.d(TAG, "Resuming");
         try {
             mSuspendStatusLock.lock();
             mPaused = false;
@@ -233,7 +235,9 @@ public class ProcessingService extends Service implements ProgressListener {
         session.addProgressListener(this);
 
         System.gc();
+        Log.d(TAG, "Processing start");
         task.process(this, getServices(), session);
+        Log.d(TAG, "Processing done");
     }
 
     private void resetNotification() {
