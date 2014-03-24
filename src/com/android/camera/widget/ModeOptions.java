@@ -90,9 +90,6 @@ public class ModeOptions extends FrameLayout {
             params.gravity = Gravity.TOP;
         }
 
-        mVisibleAnimator.end();
-        mHiddenAnimator.end();
-
         mModeOptionsButtons.setLayoutParams(params);
     }
 
@@ -142,6 +139,13 @@ public class ModeOptions extends FrameLayout {
     }
 
     private void setupAnimators() {
+        if (mVisibleAnimator != null) {
+            mVisibleAnimator.end();
+        }
+        if (mHiddenAnimator != null) {
+            mHiddenAnimator.end();
+        }
+
         final float fullSize = (mIsPortrait ? (float) getWidth() : (float) getHeight());
 
         // show
