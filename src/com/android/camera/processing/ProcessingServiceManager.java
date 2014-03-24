@@ -104,9 +104,16 @@ public class ProcessingServiceManager {
     }
 
     /**
+     * @return Whether the service is currently running.
+     */
+    public synchronized boolean isServiceRunning() {
+        return mServiceRunning;
+    }
+
+    /**
      * Called by the processing service, notifying us that it has finished.
      */
-    public synchronized void notifyStitchingFinished() {
+    public synchronized void notifyServiceFinished() {
         this.mServiceRunning = false;
     }
 }
