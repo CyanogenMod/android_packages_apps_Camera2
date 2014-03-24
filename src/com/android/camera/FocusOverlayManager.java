@@ -62,7 +62,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private static final String TAG = "FocusOverlayManager";
 
     private static final int RESET_TOUCH_FOCUS = 0;
-    private static final int RESET_TOUCH_FOCUS_DELAY = 3000;
+    private static final int RESET_TOUCH_FOCUS_DELAY = 4000;
 
     private int mState = STATE_IDLE;
     private static final int STATE_IDLE = 0; // Focus is not active.
@@ -366,7 +366,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             autoFocus();
         } else {  // Just show the indicator in all other cases.
             updateFocusUI();
-            // Reset the metering area in 3 seconds.
+            // Reset the metering area in 4 seconds.
             mHandler.removeMessages(RESET_TOUCH_FOCUS);
             mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
         }
