@@ -121,8 +121,6 @@ public class SettingsCache {
                 SettingsManager.SETTING_VIDEO_FIRST_USE_HINT_SHOWN);
         mKeyMap.put(SettingsManager.KEY_STARTUP_MODULE_INDEX,
                 SettingsManager.SETTING_STARTUP_MODULE_INDEX);
-        mKeyMap.put(SettingsManager.KEY_SHIMMY_REMAINING_PLAY_TIMES,
-                SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX);
         mKeyMap.put(SettingsManager.KEY_CAMERA_MODULE_LAST_USED,
                 SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
         mKeyMap.put(SettingsManager.KEY_CAMERA_PANO_ORIENTATION,
@@ -211,8 +209,6 @@ public class SettingsCache {
                 return SettingsManager.getHintVideoSetting(mContext);
             case SettingsManager.SETTING_STARTUP_MODULE_INDEX:
                 return SettingsManager.getStartupModuleSetting(mContext);
-            case SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX:
-                return SettingsManager.getShimmyRemainingTimesSetting(mContext);
             case SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX:
                 return SettingsManager.getLastUsedCameraModule(mContext);
             case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION:
@@ -225,8 +221,6 @@ public class SettingsCache {
                 return SettingsManager.getFlashSupportedBackCameraSetting(mContext);
             case SettingsManager.SETTING_STRICT_UPGRADE_VERSION:
                 return SettingsManager.getStrictUpgradeVersionSetting(mContext);
-            case SettingsManager.SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX:
-                return SettingsManager.getPeekAnimRemainingTimesSetting(mContext);
             case SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS:
                 return SettingsManager.getRequestReturnHdrPlusSetting(mContext);
             default:

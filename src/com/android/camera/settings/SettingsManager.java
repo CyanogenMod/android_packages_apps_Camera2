@@ -362,14 +362,12 @@ public class SettingsManager {
     public static final int SETTING_CAMERA_FIRST_USE_HINT_SHOWN = 19;
     public static final int SETTING_VIDEO_FIRST_USE_HINT_SHOWN = 20;
     public static final int SETTING_STARTUP_MODULE_INDEX = 21;
-    public static final int SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX = 22;
     public static final int SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX = 23;
     public static final int SETTING_CAMERA_PANO_ORIENTATION = 24;
     public static final int SETTING_CAMERA_GRID_LINES = 25;
     public static final int SETTING_RELEASE_DIALOG_LAST_SHOWN_VERSION = 26;
     public static final int SETTING_FLASH_SUPPORTED_BACK_CAMERA = 27;
     public static final int SETTING_STRICT_UPGRADE_VERSION = 28;
-    public static final int SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX = 29;
     // A boolean for requesting to return to HDR plus
     // as soon as possible, if a user requests a setting/mode option
     // that forces them to leave HDR plus.
@@ -401,8 +399,6 @@ public class SettingsManager {
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN =
             "pref_video_first_use_hint_shown_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
-    public static final String KEY_SHIMMY_REMAINING_PLAY_TIMES =
-            "pref_shimmy_remaining_play_times";
     public static final String KEY_CAMERA_MODULE_LAST_USED =
             "pref_camera_module_last_used_index";
     public static final String KEY_CAMERA_PANO_ORIENTATION = "pref_camera_pano_orientation";
@@ -412,8 +408,6 @@ public class SettingsManager {
     public static final String KEY_FLASH_SUPPORTED_BACK_CAMERA =
             "pref_flash_supported_back_camera";
     public static final String KEY_STRICT_UPGRADE_VERSION = "pref_strict_upgrade_version";
-    public static final String KEY_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES =
-            "pref_filmstrip_peek_anim_remaining_play_times";
     public static final String KEY_REQUEST_RETURN_HDR_PLUS = "pref_request_return_hdr_plus";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
@@ -1108,12 +1102,6 @@ public class SettingsManager {
                 KEY_STARTUP_MODULE_INDEX, values, FLUSH_OFF);
     }
 
-    public static Setting getShimmyRemainingTimesSetting(Context context) {
-        String defaultValue = context.getString(R.string.pref_shimmy_play_times);
-        return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
-                KEY_SHIMMY_REMAINING_PLAY_TIMES, null, FLUSH_OFF);
-    }
-
     public static Setting getLastUsedCameraModule(Context context) {
         String defaultValue = Integer.toString(context.getResources()
                 .getInteger(R.integer.camera_mode_photo));
@@ -1152,12 +1140,6 @@ public class SettingsManager {
         String defaultValue = "0";
         return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
                 KEY_STRICT_UPGRADE_VERSION, null, FLUSH_OFF);
-    }
-
-    public static Setting getPeekAnimRemainingTimesSetting(Context context) {
-        String defaultValue = context.getString(R.string.pref_filmstrip_peek_anim_play_times);
-        return new Setting(SOURCE_DEFAULT, TYPE_INTEGER, defaultValue,
-                KEY_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES, null, FLUSH_OFF);
     }
 
     public static Setting getRequestReturnHdrPlusSetting(Context context) {
