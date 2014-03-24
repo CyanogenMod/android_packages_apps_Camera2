@@ -506,7 +506,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     /**
      * Enable a camera button.
      */
-    private void enableCameraButton(MultiToggleImageButton button,
+    private void enableCameraButton(final MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
@@ -522,6 +522,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_ID, state);
                 int cameraId = Integer.parseInt(mSettingsManager.get(
                         SettingsManager.SETTING_CAMERA_ID));
+                // This is a quick fix for ISE in Gcam module which can be
+                // found by rapid pressing camera switch button. The assumption
+                // here is that each time this button is clicked, the listener
+                // will do something and then enable this button again.
+                button.setEnabled(false);
                 if (cb != null) {
                     cb.onStateChanged(cameraId);
                 }
