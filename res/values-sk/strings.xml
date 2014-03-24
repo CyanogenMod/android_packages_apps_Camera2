@@ -20,7 +20,7 @@
     <string name="video_camera_label" msgid="1723708322021743770">"Videokamera"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
-    <string name="set_image" msgid="3969690281401045698">"Fotografia bude použitá ako"</string>
+    <string name="set_image" msgid="3969690281401045698">"Nastaviť fotku ako"</string>
     <string name="delete" msgid="2714492172818940424">"Odstrániť"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="8811352590292754044">"Odstrániť vybratú položku?"</item>
@@ -106,7 +106,7 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Zvuk odpočít."</string>
+    <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Zvuk odpočítavania"</string>
     <string name="setting_off" msgid="6782191065550276632">"Vypnuté"</string>
     <string name="setting_on" msgid="9086728135773197891">"Zapnuté"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Kvalita videa"</string>

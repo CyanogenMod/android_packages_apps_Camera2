@@ -107,7 +107,7 @@
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Sygnał odliczania"</string>
-    <string name="setting_off" msgid="6782191065550276632">"Wyłączona"</string>
+    <string name="setting_off" msgid="6782191065550276632">"Wyłączone"</string>
     <string name="setting_on" msgid="9086728135773197891">"Włączona"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Jakość filmu"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Wysoka"</string>
@@ -230,7 +230,7 @@
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Przegląd: zrób zdjęcie/nagraj film ponownie"</string>
     <string name="capital_on" msgid="1118214824959797269">"WŁ."</string>
     <string name="capital_off" msgid="3020696135020167263">"WYŁ."</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Wyłączona"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Wyłączone"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 sekundy"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 sekunda"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1,5 sekundy"</string>

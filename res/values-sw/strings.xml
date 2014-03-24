@@ -281,7 +281,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Weka muda katika sekunde"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Inahesabu ili kupiga picha"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Ungependa kukumbuka maeneo ambamo picha ilipigiwa?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Tambulisha picha na video zako kwa kujumuisha maeneo ambapo zinapopigwa.\n\nProgramu nyingine zinaweza kufikia maelezo haya pamoja na picha zako zilizohifadhiwa."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Tambulisha picha na video zako kwa kujumuisha maeneo ambamo zinapigiwa.\n\nProgramu nyingine zinaweza kufikia maelezo haya pamoja na picha zako zilizohifadhiwa."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"La, asante"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ndiyo"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"CHAGUO ZAIDI"</string>
