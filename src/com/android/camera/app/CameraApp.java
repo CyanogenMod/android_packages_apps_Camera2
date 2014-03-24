@@ -17,6 +17,7 @@
 package com.android.camera.app;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
 
 import com.android.camera.MediaSaverImpl;
@@ -43,6 +44,7 @@ public class CameraApp extends Application implements CameraServices {
     @Override
     public void onCreate() {
         super.onCreate();
+
         UsageStatistics.initialize(this);
         CameraUtil.initialize(this);
 
@@ -55,6 +57,8 @@ public class CameraApp extends Application implements CameraServices {
         mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
                 mPlaceHolderManager, mSessionStorageManager);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
+
+        clearNotifications();
     }
 
     @Override
@@ -71,5 +75,17 @@ public class CameraApp extends Application implements CameraServices {
     @Deprecated
     public MediaSaver getMediaSaver() {
         return mMediaSaver;
+    }
+
+    /**
+     * Clears all notifications. This cleans up notifications that we might have
+     * created earlier but remained after a crash.
+     */
+    private void clearNotifications() {
+        NotificationManager manager = (NotificationManager) getSystemService(
+                Context.NOTIFICATION_SERVICE);
+        if (manager != null) {
+            manager.cancelAll();
+        }
     }
 }
