@@ -23,6 +23,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
+      android:contentDescription="@string/accessibility_mode_options"
       android:background="@drawable/bg_options_indicator" >
     <ImageView
         android:id="@+id/pano_indicator"

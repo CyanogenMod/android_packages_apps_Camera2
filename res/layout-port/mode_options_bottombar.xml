@@ -89,6 +89,7 @@
                     android:layout_height="wrap_content"
                     android:scaleType="matrix"
                     android:src="@drawable/ic_options_active"
+                    android:contentDescription="@string/accessibility_mode_options"
                     android:background="@null" />
                 <include layout="@layout/indicators" />
             </FrameLayout>
