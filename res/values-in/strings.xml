@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Kerajinan"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"Kamera Canggih"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Selang Waktu"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Sudut Lebar"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
@@ -338,8 +336,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Memproses HDR+ …"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Lisensi Sumber Terbuka"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Setelan Umum"</string>
-    <!-- no translation found for pref_category_resolution_quality (3659535822878143175) -->
-    <skip />
+    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Resolusi &amp; Kualitas"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Tentang"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Versi bentukan"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Rendah"</string>

@@ -106,8 +106,8 @@
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"倒计时过程中发出提示音"</string>
-    <string name="setting_off" msgid="6782191065550276632">"关"</string>
-    <string name="setting_on" msgid="9086728135773197891">"开"</string>
+    <string name="setting_off" msgid="6782191065550276632">"关闭"</string>
+    <string name="setting_on" msgid="9086728135773197891">"开启"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"视频画质"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"延时"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"相机设置"</string>
@@ -126,8 +126,8 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"闪光灯模式"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"闪光灯模式"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"自动"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"开"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"关"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"开启"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"关闭"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"自动闪光灯"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"打开闪光灯"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"关闭闪光灯"</string>
@@ -219,9 +219,9 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"完成"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"重拍"</string>
-    <string name="capital_on" msgid="1118214824959797269">"开"</string>
-    <string name="capital_off" msgid="3020696135020167263">"关"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"关"</string>
+    <string name="capital_on" msgid="1118214824959797269">"开启"</string>
+    <string name="capital_off" msgid="3020696135020167263">"关闭"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"关闭"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5秒"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1秒"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1.5秒"</string>
@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"相机"</string>
     <string name="mode_video" msgid="8633929034048169139">"视频"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Craft"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"高级相机"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"缩时拍摄"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"广角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"全景图"</string>
@@ -338,8 +336,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"正在处理HDR+…"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"开放源代码许可"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"常规设置"</string>
-    <!-- no translation found for pref_category_resolution_quality (3659535822878143175) -->
-    <skip />
+    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"分辨率和画质"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"应用信息"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"版本号"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"低"</string>
