@@ -270,7 +270,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Angiv varigheden i sekunder"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Der tælles ned for at tage et billede"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Skal billedplaceringer huskes?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Tag dine billeder og videoer med de placeringer, hvor de blev taget.\n\nAndre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Dine billeder og videoer tagges med de placeringer, hvor de blev taget.\n\nAndre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nej tak"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLERE VALGMULIGHEDER"</string>
@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Færdighed"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"Avancerede kameraindst."</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Time-lapse"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Vidvikel"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
