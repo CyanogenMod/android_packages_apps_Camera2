@@ -123,7 +123,7 @@ public class ProcessingService extends Service implements ProgressListener {
 
         // Tell the manager that we're shutting down, so in case new tasks are
         // enqueued, we a new service needs to be started.
-        mProcessingServiceManager.notifyStitchingFinished();
+        mProcessingServiceManager.notifyServiceFinished();
 
         // TODO: Cancel session in progress...
 
