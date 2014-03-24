@@ -42,7 +42,6 @@ import java.util.ArrayList;
 public class ModeOptions extends FrameLayout {
     private int mBackgroundColor;
     private final Paint mPaint = new Paint();
-    private final Path mPath = new Path();
     private boolean mIsHiddenOrHiding;
     private RectF mAnimateFrom = new RectF();
     private View mViewToShowHide;
@@ -59,6 +58,7 @@ public class ModeOptions extends FrameLayout {
 
     private int mParentSize;
     private boolean mIsPortrait;
+    private float mRadius = 0f;
 
     public ModeOptions(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -131,7 +131,7 @@ public class ModeOptions extends FrameLayout {
     @Override
     public void onDraw(Canvas canvas) {
         if (mDrawCircle) {
-            canvas.drawPath(mPath, mPaint);
+            canvas.drawCircle(mAnimateFrom.centerX(), mAnimateFrom.centerY(), mRadius, mPaint);
         } else if (mFill) {
             canvas.drawPaint(mPaint);
         }
@@ -157,11 +157,7 @@ public class ModeOptions extends FrameLayout {
             radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mPath.reset();
-                    mPath.addCircle(mAnimateFrom.centerX(),
-                        mAnimateFrom.centerY(),
-                        (Float) animation.getAnimatedValue(),
-                        Path.Direction.CW);
+                    mRadius = (Float) animation.getAnimatedValue();
                     mDrawCircle = true;
                     mFill = false;
                 }
@@ -169,7 +165,6 @@ public class ModeOptions extends FrameLayout {
             radiusAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mPath.reset();
                     mDrawCircle = false;
                     mFill = true;
                 }
@@ -238,11 +233,7 @@ public class ModeOptions extends FrameLayout {
             radiusAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mPath.reset();
-                    mPath.addCircle(mAnimateFrom.centerX(),
-                        mAnimateFrom.centerY(),
-                        (Float) animation.getAnimatedValue(),
-                        Path.Direction.CW);
+                    mRadius = (Float) animation.getAnimatedValue();
                     mDrawCircle = true;
                     mFill = false;
                     invalidate();
@@ -252,7 +243,6 @@ public class ModeOptions extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     if (mViewToShowHide != null) {
-                        mPath.reset();
                         mViewToShowHide.setVisibility(View.VISIBLE);
                         mDrawCircle = false;
                         mFill = false;
