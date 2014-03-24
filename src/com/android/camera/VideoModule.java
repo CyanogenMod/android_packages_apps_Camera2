@@ -1224,11 +1224,6 @@ public class VideoModule extends CameraModule
         mUI.showFocusUI(false);
         mUI.showVideoRecordingHints(false);
 
-        // A special case of mode options closing: during capture it should
-        // not be possible to change mode state.
-        mAppController.getCameraAppUI().hideModeOptions();
-        mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
-
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             Log.v(TAG, "Storage issue, ignore the start request");
@@ -1275,6 +1270,11 @@ public class VideoModule extends CameraModule
         mMediaRecorderRecording = true;
         mActivity.lockOrientation();
         mRecordingStartTime = SystemClock.uptimeMillis();
+
+        // A special case of mode options closing: during capture it should
+        // not be possible to change mode state.
+        mAppController.getCameraAppUI().hideModeOptions();
+        mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
         mUI.showRecordingUI(true);
 
         setFocusParameters();
@@ -1321,9 +1321,6 @@ public class VideoModule extends CameraModule
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
         mUI.showVideoRecordingHints(true);
-
-        mAppController.getCameraAppUI().showModeOptions();
-        mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
 
         boolean fail = false;
         if (mMediaRecorderRecording) {
@@ -1379,6 +1376,9 @@ public class VideoModule extends CameraModule
         }
         // release media recorder
         releaseMediaRecorder();
+
+        mAppController.getCameraAppUI().showModeOptions();
+        mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
         if (!mPaused) {
             setFocusParameters();
             mCameraDevice.lock();
