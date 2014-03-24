@@ -518,6 +518,8 @@
     <!-- button in review mode indicate the user want to retake another photo/video for attachment [
 CHAR LIMIT=NONE] -->
     <string name="accessibility_review_retake">Review retake</string>
+    <!-- The button that opens up mode options, shown as '...' on screen [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_options">Options</string>
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>
     <!-- Default text for a button that can be toggled on and off. -->
