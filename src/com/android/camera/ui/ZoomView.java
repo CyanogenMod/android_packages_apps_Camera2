@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -28,6 +29,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import com.android.camera.data.LocalDataUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,9 +41,6 @@ public class ZoomView extends ImageView {
 
     private int mViewportWidth = 0;
     private int mViewportHeight = 0;
-
-    private int mFullResImageWidth;
-    private int mFullResImageHeight;
 
     private BitmapRegionDecoder mRegionDecoder;
     private DecodePartialBitmap mPartialDecodingTask;
@@ -57,15 +56,30 @@ public class ZoomView extends ImageView {
 
             // Calculate the rotation matrix to apply orientation on the original image
             // rect.
-            RectF fullResRect = new RectF(0, 0, mFullResImageWidth - 1, mFullResImageHeight - 1);
+            InputStream isForDimensions = getInputStream();
+            if (isForDimensions == null) {
+                return null;
+            }
+
+            Point imageSize = LocalDataUtil.decodeBitmapDimension(isForDimensions);
+            try {
+                isForDimensions.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (imageSize == null) {
+                return null;
+            }
+
+            RectF fullResRect = new RectF(0, 0, imageSize.x - 1, imageSize.y - 1);
             Matrix rotationMatrix = new Matrix();
             rotationMatrix.setRotate(mOrientation, 0, 0);
             rotationMatrix.mapRect(fullResRect);
             // Set the translation of the matrix so that after rotation, the top left
             // of the image rect is at (0, 0)
             rotationMatrix.postTranslate(-fullResRect.left, -fullResRect.top);
-            rotationMatrix.mapRect(fullResRect, new RectF(0, 0, mFullResImageWidth - 1,
-                    mFullResImageHeight - 1));
+            rotationMatrix.mapRect(fullResRect, new RectF(0, 0, imageSize.x - 1,
+                    imageSize.y - 1));
 
             // Find intersection with the screen
             RectF visibleRect = new RectF(endRect);
@@ -91,7 +105,7 @@ public class ZoomView extends ImageView {
             visibleInImage.round(region);
 
             // Make sure region to decode is inside the image.
-            region.intersect(0, 0, mFullResImageWidth - 1, mFullResImageHeight - 1);
+            region.intersect(0, 0, imageSize.x - 1, imageSize.y - 1);
 
             if (region.width() == 0 || region.height() == 0) {
                 Log.e(TAG, "Invalid size for partial region. Region: " + region.toString());
@@ -116,6 +130,10 @@ public class ZoomView extends ImageView {
 
             if (mRegionDecoder == null) {
                 InputStream is = getInputStream();
+                if (is == null) {
+                    return null;
+                }
+
                 try {
                     mRegionDecoder = BitmapRegionDecoder.newInstance(is, false);
                     is.close();
@@ -167,9 +185,6 @@ public class ZoomView extends ImageView {
         if (!uri.equals(mUri)) {
             mUri = uri;
             mOrientation = orientation;
-            mFullResImageHeight = 0;
-            mFullResImageWidth = 0;
-            decodeImageSize();
             mRegionDecoder = null;
         }
         startPartialDecodingTask(imageRect);
@@ -231,20 +246,6 @@ public class ZoomView extends ImageView {
         cancelPartialDecodingTask();
         mPartialDecodingTask = new DecodePartialBitmap();
         mPartialDecodingTask.execute(endRect);
-    }
-
-    private void decodeImageSize() {
-        BitmapFactory.Options option = new BitmapFactory.Options();
-        option.inJustDecodeBounds = true;
-        InputStream is = getInputStream();
-        BitmapFactory.decodeStream(is, null, option);
-        try {
-            is.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to close input stream");
-        }
-        mFullResImageWidth = option.outWidth;
-        mFullResImageHeight = option.outHeight;
     }
 
     // TODO: Cache the inputstream

@@ -25,6 +25,9 @@ import android.util.Log;
 
 import com.android.camera.session.PlaceholderManager;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.khronos.opengles.GL11;
@@ -60,14 +63,39 @@ public class LocalDataUtil {
      *         respectively.
      */
     public static Point decodeBitmapDimension(String path) {
-        Point size = new Point();
+        Point size = null;
+        InputStream is = null;
+        try {
+            is = new FileInputStream(path);
+            size = decodeBitmapDimension(is);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) { }
+            }
+        }
+        return size;
+    }
+
+    /**
+     * Decodes the dimension of a bitmap.
+     *
+     * @param is An input stream with the data of the bitmap.
+     * @return The decoded width/height is stored in Point.x/Point.y
+     *         respectively.
+     */
+    public static Point decodeBitmapDimension(InputStream is) {
+        Point size = null;
         BitmapFactory.Options justBoundsOpts = new BitmapFactory.Options();
         justBoundsOpts.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, justBoundsOpts);
+        BitmapFactory.decodeStream(is, null, justBoundsOpts);
         if (justBoundsOpts.outWidth > 0 && justBoundsOpts.outHeight > 0) {
-            size.set(justBoundsOpts.outWidth, justBoundsOpts.outHeight);
+            size = new Point(justBoundsOpts.outWidth, justBoundsOpts.outHeight);
         } else {
-            Log.e(TAG, "Bitmap dimension decoding failed for " + path);
+            Log.e(TAG, "Bitmap dimension decoding failed");
         }
         return size;
     }
