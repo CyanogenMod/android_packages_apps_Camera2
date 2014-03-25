@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Bildeboble"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Håndverk"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"Avansert kamera"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervallmodus (time lapse)"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Vidvinkel"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
@@ -329,17 +327,16 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Slett"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Knappen er nå %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Plassering"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Baksidekamera – bilder"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Baksidekamera – video"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Forsidekamera – bilder"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"Forsidekamera – video"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Bilde med baksidekamera"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Video med baksidekamera"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Bilde med forsidekamera"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Video med forsidekamera"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Send tilbakemelding"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Behandler HDR + …"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Åpen kildekode-lisenser"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Generelle innstillinger"</string>
-    <!-- no translation found for pref_category_resolution_quality (3659535822878143175) -->
-    <skip />
+    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Oppløsning og kvalitet"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Info"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Delversjon"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Lav"</string>

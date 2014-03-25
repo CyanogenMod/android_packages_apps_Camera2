@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Kraf"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"Kamera Lanjutan"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Selang Masa"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Sudut Lebar"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
@@ -329,25 +327,19 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Padam"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Butang kini %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Lokasi"</string>
-    <!-- no translation found for setting_back_camera_photo (256738900473265017) -->
-    <skip />
-    <!-- no translation found for setting_back_camera_video (5220819479408164689) -->
-    <skip />
-    <!-- no translation found for setting_front_camera_photo (4131886734622868637) -->
-    <skip />
-    <!-- no translation found for setting_front_camera_video (2178799452805359752) -->
-    <skip />
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto kamera belakang"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Video kamera belakang"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto kamera hadapan"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Video kamera hadapan"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Kamera Lalai"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Hantar Maklum Balas"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Memproses HDR+ …"</string>
     <string name="open_source_licenses" msgid="1767642450539610653">"Lesen Sumber Terbuka"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Tetapan Umum"</string>
-    <!-- no translation found for pref_category_resolution_quality (3659535822878143175) -->
-    <skip />
+    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Resolusi &amp; Kualiti"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Perihal"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Versi binaan"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Rendah"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Tinggi"</string>
-    <!-- no translation found for setting_summary_x_megapixels (6533463462760866830) -->
-    <skip />
+    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapiksel"</string>
 </resources>

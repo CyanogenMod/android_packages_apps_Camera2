@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"ກ້ອງຖ່າຍຮູບ"</string>
     <string name="mode_video" msgid="8633929034048169139">"ວິດີໂອ"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"ໂຟໂຕສະເຟຍ"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"ປະດິດ"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"ກ້ອງ​ຖ່າຍ​ຮູບ​ລະດັບສູງ"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Time Lapse"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"ມຸມກວ້າງ"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"ຮູບສີ່ແຈສາກແນວນອນ"</string>
