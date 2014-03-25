@@ -446,7 +446,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private ShutterButton mShutterButton;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
-    private boolean mShouldShowShimmy = false;
     private IndicatorIconController mIndicatorIconController;
     private View mFocusOverlay;
     private FrameLayout mTutorialsPlaceholder;
@@ -835,10 +834,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private void showShimmyDelayed() {
         if (!mIsCaptureIntent) {
             // Show shimmy in SHIMMY_DELAY_MS
-            mShouldShowShimmy = mController.shouldShowShimmy();
-            if (mShouldShowShimmy) {
-                mModeListView.showModeSwitcherHint();
-            }
+            mModeListView.showModeSwitcherHint();
         }
     }
 
@@ -869,12 +865,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onOpenFullScreen() {
-        if (mShouldShowShimmy) {
-            mController.decrementShimmyPlayTimes();
-            // Sets should show shimmy flag to false for this session (i.e. until
-            // next onResume)
-            mShouldShowShimmy = false;
-        }
+        // Do nothing.
     }
 
     @Override

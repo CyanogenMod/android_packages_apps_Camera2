@@ -537,7 +537,6 @@ public class CameraActivity extends Activity
                 @Override
                 public void onFilmstripShown() {
                     mFilmstripVisible = true;
-                    decrementPeekAnimPlayTimes();
                     updateUiByData(mFilmstripController.getCurrentId());
                 }
 
@@ -907,23 +906,6 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public boolean shouldShowShimmy() {
-        int remainingTimes = mSettingsManager.getInt(
-                SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX);
-        return remainingTimes > 0;
-    }
-
-    @Override
-    public void decrementShimmyPlayTimes() {
-        int remainingTimes = mSettingsManager.getInt(
-                SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX) - 1;
-        if (remainingTimes >= 0) {
-            mSettingsManager.setInt(SettingsManager.SETTING_SHIMMY_REMAINING_PLAY_TIMES_INDEX,
-                    remainingTimes);
-        }
-    }
-
-    @Override
     public void updatePreviewTransform(Matrix matrix) {
         mCameraAppUI.updatePreviewTransform(matrix);
     }
@@ -1004,20 +986,6 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * Decrement the remaining play times for peek animation.
-     */
-    private void decrementPeekAnimPlayTimes() {
-        int remainingTimes = mSettingsManager.getInt(
-                SettingsManager.SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX) - 1;
-        if (remainingTimes < 0) {
-            return;
-        }
-        mSettingsManager
-                .setInt(SettingsManager.SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX,
-                        remainingTimes);
-    }
-
-    /**
      * Starts the filmstrip peek animation if the filmstrip is not visible.
      * Only {@link LocalData#LOCAL_IMAGE}, {@link
      * LocalData#LOCAL_IN_PROGRESS_DATA} and {@link
@@ -1036,11 +1004,6 @@ public class CameraActivity extends Activity
             return;
         }
 
-        int remainingTimes = mSettingsManager.getInt(
-                SettingsManager.SETTING_FILMSTRIP_PEEK_ANIM_REMAINING_PLAY_TIMES_INDEX);
-        if (remainingTimes <= 0) {
-            return;
-        }
         mPeekAnimationHandler.startDecodingJob(data, new Callback<Bitmap>() {
             @Override
             public void onCallback(Bitmap result) {
