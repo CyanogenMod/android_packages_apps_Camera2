@@ -100,7 +100,7 @@ public class ModeListView extends FrameLayout
     private final RectF mPreviewArea = new RectF();
     private final RectF mUncoveredPreviewArea = new RectF();
 
-    private ModeListState mCurrentState;
+    private final CurrentStateManager mCurrentStateManager = new CurrentStateManager();
     private long mLastScrollTime;
     private int mListBackgroundColor;
     private LinearLayout mListView;
@@ -135,6 +135,19 @@ public class ModeListView extends FrameLayout
     private float mVelocityX; // Unit: pixel/ms.
     private long mLastDownTime = 0;
 
+    private class CurrentStateManager {
+        private ModeListState mCurrentState;
+
+        ModeListState getCurrentState() {
+            return mCurrentState;
+        }
+
+        void setCurrentState(ModeListState state) {
+            mCurrentState = state;
+            state.onCurrentState();
+        }
+    }
+
     /**
      * ModeListState defines a set of functions through which the view could manage
      * or change the states. Sub-classes could selectively override these functions
@@ -143,6 +156,14 @@ public class ModeListView extends FrameLayout
      */
     private abstract class ModeListState implements GestureDetector.OnGestureListener {
         protected AnimationEffects mCurrentAnimationEffects = null;
+
+        /**
+         * Called by the state manager when this state instance becomes the current
+         * mode list state.
+         */
+        public void onCurrentState() {
+            // Do nothing.
+        }
 
         /**
          * If supported, this should show the mode switcher and starts the accordion
@@ -300,14 +321,14 @@ public class ModeListView extends FrameLayout
             mShouldBeVisible = true;
             // Change visibility, and switch to scrolling state.
             resetModeSelectors();
-            mCurrentState = new ScrollingState();
+            mCurrentStateManager.setCurrentState(new ScrollingState());
             return true;
         }
 
         @Override
         public void showSwitcherHint() {
             mShouldBeVisible = true;
-            mCurrentState = new ShimmyState();
+            mCurrentStateManager.setCurrentState(new ShimmyState());
         }
 
         @Override
@@ -361,7 +382,7 @@ public class ModeListView extends FrameLayout
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         mAnimator = null;
-                        mCurrentState = new FullyShownState();
+                        mCurrentStateManager.setCurrentState(new FullyShownState());
                     }
 
                     @Override
@@ -375,9 +396,16 @@ public class ModeListView extends FrameLayout
                     }
                 });
             } else {
-                mCurrentState = new FullyShownState();
+                mCurrentStateManager.setCurrentState(new FullyShownState());
             }
         }
+
+        @Override
+        public void onCurrentState() {
+          announceForAccessibility(
+                  getContext().getResources().getString(R.string.accessibility_mode_list_hidden));
+        }
+
     }
 
     /**
@@ -394,7 +422,7 @@ public class ModeListView extends FrameLayout
             if (distanceX > 0) {
                 // Swipe out
                 cancelForwardingTouchEvent();
-                mCurrentState = new ScrollingState();
+                mCurrentStateManager.setCurrentState(new ScrollingState());
             }
             return true;
         }
@@ -448,7 +476,7 @@ public class ModeListView extends FrameLayout
 
         @Override
         public void onItemSelected(ModeSelectorItem selectedItem) {
-            mCurrentState = new SelectedState(selectedItem);
+            mCurrentStateManager.setCurrentState(new SelectedState(selectedItem));
         }
 
         /**
@@ -466,7 +494,7 @@ public class ModeListView extends FrameLayout
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         mAnimator = null;
-                        mCurrentState = new FullyHiddenState();
+                        mCurrentStateManager.setCurrentState(new FullyHiddenState());
                     }
 
                     @Override
@@ -480,7 +508,7 @@ public class ModeListView extends FrameLayout
                     }
                 });
             } else {
-                mCurrentState = new FullyHiddenState();
+                mCurrentStateManager.setCurrentState(new FullyHiddenState());
             }
         }
 
@@ -489,9 +517,16 @@ public class ModeListView extends FrameLayout
             if (mAnimator != null) {
                 mAnimator.cancel();
             } else {
-                mCurrentState = new FullyHiddenState();
+                mCurrentStateManager.setCurrentState(new FullyHiddenState());
             }
         }
+
+        @Override
+        public void onCurrentState() {
+          announceForAccessibility(
+                  getContext().getResources().getString(R.string.accessibility_mode_list_shown));
+        }
+
     }
 
     /**
@@ -535,7 +570,7 @@ public class ModeListView extends FrameLayout
             // Scroll happens during accordion animation.
             cancelAnimation();
             // Go to scrolling state
-            mCurrentState = new ScrollingState();
+            mCurrentStateManager.setCurrentState(new ScrollingState());
             return true;
         }
 
@@ -573,7 +608,7 @@ public class ModeListView extends FrameLayout
         @Override
         public void onItemSelected(ModeSelectorItem selectedItem) {
             cancelAnimation();
-            mCurrentState = new SelectedState(selectedItem);
+            mCurrentStateManager.setCurrentState(new SelectedState(selectedItem));
         }
 
         private void hideShimmyWithDelay() {
@@ -648,7 +683,7 @@ public class ModeListView extends FrameLayout
             // fully hidden state.
             if (success) {
                 mModeListOpenFactor = 1;
-                mCurrentState = new FullyHiddenState();
+                mCurrentStateManager.setCurrentState(new FullyHiddenState());
                 return;
             }
 
@@ -689,7 +724,13 @@ public class ModeListView extends FrameLayout
         @Override
         public void hide() {
             cancelAnimation();
-            mCurrentState = new FullyHiddenState();
+            mCurrentStateManager.setCurrentState(new FullyHiddenState());
+        }
+
+        @Override
+        public void onCurrentState() {
+          announceForAccessibility(
+                  getContext().getResources().getString(R.string.accessibility_mode_list_shimmy));
         }
 
     }
@@ -746,9 +787,9 @@ public class ModeListView extends FrameLayout
                         mAnimator = null;
                         mFocusItem = NO_ITEM_SELECTED;
                         if (shouldSnapBack) {
-                            mCurrentState = new FullyHiddenState();
+                            mCurrentStateManager.setCurrentState(new FullyHiddenState());
                         } else {
-                            mCurrentState = new FullyShownState();
+                            mCurrentStateManager.setCurrentState(new FullyShownState());
                         }
                     }
 
@@ -837,7 +878,7 @@ public class ModeListView extends FrameLayout
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mCurrentAnimationEffects = null;
-                    mCurrentState = new FullyHiddenState();
+                    mCurrentStateManager.setCurrentState(new FullyHiddenState());
                 }
 
                 @Override
@@ -996,14 +1037,14 @@ public class ModeListView extends FrameLayout
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                 float distanceX, float distanceY) {
-            mCurrentState.onScroll(e1, e2, distanceX, distanceY);
+            mCurrentStateManager.getCurrentState().onScroll(e1, e2, distanceX, distanceY);
             mLastScrollTime = System.currentTimeMillis();
             return true;
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            mCurrentState.onSingleTapUp(ev);
+            mCurrentStateManager.getCurrentState().onSingleTapUp(ev);
             return true;
         }
 
@@ -1011,14 +1052,14 @@ public class ModeListView extends FrameLayout
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             // Cache velocity in the unit pixel/ms.
             mVelocityX = velocityX / 1000f * SCROLL_FACTOR;
-            mCurrentState.onFling(e1, e2, velocityX, velocityY);
+            mCurrentStateManager.getCurrentState().onFling(e1, e2, velocityX, velocityY);
             return true;
         }
 
         @Override
         public boolean onDown(MotionEvent ev) {
             mVelocityX = 0;
-            mCurrentState.onDown(ev);
+            mCurrentStateManager.getCurrentState().onDown(ev);
             return true;
         }
     };
@@ -1029,7 +1070,7 @@ public class ModeListView extends FrameLayout
      * @param selectedItem the item being clicked
      */
     private void onItemSelected(ModeSelectorItem selectedItem) {
-        mCurrentState.onItemSelected(selectedItem);
+        mCurrentStateManager.getCurrentState().onItemSelected(selectedItem);
     }
 
     /**
@@ -1128,8 +1169,8 @@ public class ModeListView extends FrameLayout
         });
         // The mode list is initialized to be all the way closed.
         onModeListOpenRatioUpdate(0);
-        if (mCurrentState == null) {
-            mCurrentState = new FullyHiddenState();
+        if (mCurrentStateManager.getCurrentState() == null) {
+            mCurrentStateManager.setCurrentState(new FullyHiddenState());
         }
     }
 
@@ -1248,14 +1289,14 @@ public class ModeListView extends FrameLayout
             mChildViewTouched = null;
         }
 
-        if (!mCurrentState.shouldHandleTouchEvent(ev)) {
+        if (!mCurrentStateManager.getCurrentState().shouldHandleTouchEvent(ev)) {
             return false;
         }
         super.onTouchEvent(ev);
 
         // Pass all touch events to gesture detector for gesture handling.
         mGestureDetector.onTouchEvent(ev);
-        mCurrentState.onTouchEvent(ev);
+        mCurrentStateManager.getCurrentState().onTouchEvent(ev);
         return true;
     }
 
@@ -1294,8 +1335,9 @@ public class ModeListView extends FrameLayout
         super.onLayout(changed, left, top, right, bottom);
         mWidth = right - left;
         mHeight = bottom - top - getPaddingTop() - getPaddingBottom();
-        if (mCurrentState.getCurrentAnimationEffects() != null) {
-            mCurrentState.getCurrentAnimationEffects().setSize(mWidth, mHeight);
+        if (mCurrentStateManager.getCurrentState().getCurrentAnimationEffects() != null) {
+            mCurrentStateManager.getCurrentState().getCurrentAnimationEffects().setSize(
+                    mWidth, mHeight);
         }
     }
 
@@ -1319,10 +1361,11 @@ public class ModeListView extends FrameLayout
 
     @Override
     public void draw(Canvas canvas) {
-        if (mCurrentState.getCurrentAnimationEffects() != null) {
-            mCurrentState.getCurrentAnimationEffects().drawBackground(canvas);
+        ModeListState currentState = mCurrentStateManager.getCurrentState();
+        if (currentState.getCurrentAnimationEffects() != null) {
+            currentState.getCurrentAnimationEffects().drawBackground(canvas);
             super.draw(canvas);
-            mCurrentState.getCurrentAnimationEffects().drawForeground(canvas);
+            currentState.getCurrentAnimationEffects().drawForeground(canvas);
         } else {
             super.draw(canvas);
         }
@@ -1335,7 +1378,7 @@ public class ModeListView extends FrameLayout
      * start the animation with a delay right away.
      */
     public void showModeSwitcherHint() {
-        mCurrentState.showSwitcherHint();
+        mCurrentStateManager.getCurrentState().showSwitcherHint();
     }
 
     /**
@@ -1376,7 +1419,7 @@ public class ModeListView extends FrameLayout
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-       mCurrentState.onWindowFocusChanged(hasFocus);
+        mCurrentStateManager.getCurrentState().onWindowFocusChanged(hasFocus);
     }
 
     @Override
@@ -1414,7 +1457,8 @@ public class ModeListView extends FrameLayout
 
     @Override
     public void setVisibility(int visibility) {
-        if (mCurrentState != null && !mCurrentState.shouldHandleVisibilityChange(visibility)) {
+        ModeListState currentState = mCurrentStateManager.getCurrentState();
+        if (currentState != null && !currentState.shouldHandleVisibilityChange(visibility)) {
             return;
         }
         super.setVisibility(visibility);
@@ -1616,7 +1660,7 @@ public class ModeListView extends FrameLayout
     public void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         if (visibility != VISIBLE) {
-            mCurrentState.hide();
+            mCurrentStateManager.getCurrentState().hide();
         }
     }
 
@@ -1625,7 +1669,7 @@ public class ModeListView extends FrameLayout
      * event.
      */
     public boolean onMenuPressed() {
-        return mCurrentState.onMenuPressed();
+        return mCurrentStateManager.getCurrentState().onMenuPressed();
     }
 
     /**
@@ -1790,11 +1834,11 @@ public class ModeListView extends FrameLayout
      * @return Whether the UI responded to the key event.
      */
     public boolean onBackPressed() {
-        return mCurrentState.onBackPressed();
+        return mCurrentStateManager.getCurrentState().onBackPressed();
     }
 
     public void startModeSelectionAnimation() {
-        mCurrentState.startModeSelectionAnimation();
+        mCurrentStateManager.getCurrentState().startModeSelectionAnimation();
     }
 
     public float getMaxMovementBasedOnPosition(int lastVisibleWidth, int maxWidth) {
