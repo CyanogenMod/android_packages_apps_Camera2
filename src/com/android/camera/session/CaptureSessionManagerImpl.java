@@ -112,6 +112,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         @Override
         public synchronized void setProgressMessage(CharSequence message) {
             mProgressMessage = message;
+            notifyTaskProgressText(mUri, message);
             for (ProgressListener listener : mProgressListeners) {
                 listener.onStatusMessageChanged(message);
             }
@@ -451,6 +452,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 synchronized (mTaskListeners) {
                     for (SessionListener listener : mTaskListeners) {
                         listener.onSessionProgress(uri, progressPercent);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Notifies all task listeners that the task with the given URI has
+     * changed its progress message.
+     */
+    private void notifyTaskProgressText(final Uri uri, final CharSequence message) {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mTaskListeners) {
+                    for (SessionListener listener : mTaskListeners) {
+                        listener.onSessionProgressText(uri, message);
                     }
                 }
             }
