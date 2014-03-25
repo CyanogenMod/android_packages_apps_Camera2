@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2013-2014 The CyanogenMod Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_camera_picturesize_entry_50mp">50Mpx (SuperZoom)</string>
+    <string name="pref_camera_picturesize_entry_37_5mp">37,5Mpx (SuperZoom)</string>
+    <string name="pref_camera_picturesize_entry_20_7mp">20,7Mpx</string>
+    <string name="pref_camera_picturesize_entry_18mp">18Mpx</string>
+    <string name="pref_camera_picturesize_entry_12_8mp">12,8Mpx</string>
+    <string name="pref_camera_picturesize_entry_12_7mp">12,7Mpx</string>
+    <string name="pref_camera_picturesize_entry_11_5mp">11,5Mpx</string>
+    <string name="pref_camera_picturesize_entry_10_4mp">10,4Mpx</string>
+    <string name="pref_camera_picturesize_entry_10mp">10Mpx</string>
+    <string name="pref_camera_picturesize_entry_9mp">9Mpx</string>
+    <string name="pref_camera_picturesize_entry_8_2mp">8,2Mpx</string>
+    <string name="pref_camera_picturesize_entry_7_7mp">7,7Mpx (4:3)</string>
+    <string name="pref_camera_picturesize_entry_6_4mp">6,4Mpx</string>
+    <string name="pref_camera_picturesize_entry_6mp">6Mpx</string>
+    <string name="pref_camera_picturesize_entry_4_5mp">4,5Mpx</string>
+    <string name="pref_camera_picturesize_entry_3_7mp">3,7Mpx</string>
+    <string name="pref_camera_picturesize_entry_2_5mp">2,5Mpx</string>
+    <string name="pref_camera_picturesize_entry_2_1mp">2,1Mpx</string>
+    <string name="pref_camera_picturesize_entry_1_9mp">1,9Mpx</string>
+
+    <string name="pref_camera_scenemode_entry_antimotionblur">Redukce rozmazání</string>
+    <string name="pref_camera_scenemode_entry_aqua">Voda</string>
+    <string name="pref_camera_scenemode_entry_ar">Rozšířená realita</string>
+    <string name="pref_camera_scenemode_entry_asd">Nejlepší snímek</string>
+    <string name="pref_camera_scenemode_entry_baby">Dítě</string>
+    <string name="pref_camera_scenemode_entry_backgroundblur">Rozoostřené pozadí</string>
+    <string name="pref_camera_scenemode_entry_backlight">Protisvětlo</string>
+    <string name="pref_camera_scenemode_entry_backlightportrait">Portét v protisvětle</string>
+    <string name="pref_camera_scenemode_entry_barcode">Čárový kód</string>
+    <string name="pref_camera_scenemode_entry_beach">Pláž</string>
+    <string name="pref_camera_scenemode_entry_beauty">Krása</string>
+    <string name="pref_camera_scenemode_entry_candlelight">Osvětlení svíčkou</string>
+    <string name="pref_camera_scenemode_entry_cine">Kino</string>
+    <string name="pref_camera_scenemode_entry_closeup">Detailní</string>
+    <string name="pref_camera_scenemode_entry_dark">Temný</string>
+    <string name="pref_camera_scenemode_entry_dish">Jídlo</string>
+    <string name="pref_camera_scenemode_entry_duskdawn">Soumrak</string>
+    <string name="pref_camera_scenemode_entry_document">Dokument</string>
+    <string name="pref_camera_scenemode_entry_fallcolor">Podzim</string>
+    <string name="pref_camera_scenemode_entry_fireworks">Ohňostroj</string>
+    <string name="pref_camera_scenemode_entry_flowers">Květiny</string>
+    <string name="pref_camera_scenemode_entry_handheldtwilight">Soumrak fotografovaný z ruky</string>
+    <string name="pref_camera_scenemode_entry_highsensitivity">Vysoká citlivost</string>
+    <string name="pref_camera_scenemode_entry_indoor">Doma</string>
+    <string name="pref_camera_scenemode_entry_landscape">Krajina</string>
+    <string name="pref_camera_scenemode_entry_mix_illuminant">Smíšené osvětlení</string>
+    <string name="pref_camera_scenemode_entry_mood">Náladové</string>
+    <string name="pref_camera_scenemode_entry_nightportrait">Noční portrét</string>
+    <string name="pref_camera_scenemode_entry_nightindoor">Doma v noci</string>
+    <string name="pref_camera_scenemode_entry_oldfilm">Starý film</string>
+    <string name="pref_camera_scenemode_entry_pet">Mazlíček</string>
+    <string name="pref_camera_scenemode_entry_portrait">Portrét</string>
+    <string name="pref_camera_scenemode_entry_snow">Sníh</string>
+    <string name="pref_camera_scenemode_entry_softskin">Měkké tony pleti</string>
+    <string name="pref_camera_scenemode_entry_sports">Sporty</string>
+    <string name="pref_camera_scenemode_entry_spotlight">Bodový reflektor</string>
+    <string name="pref_camera_scenemode_entry_steadyphoto">Použití stativu</string>
+    <string name="pref_camera_scenemode_entry_supernight">Temná noc</string>
+    <string name="pref_camera_scenemode_entry_sweepstitch">Plynulé panorama</string>
+    <string name="pref_camera_scenemode_entry_text">Text</string>
+    <string name="pref_camera_scenemode_entry_theatre">Divadlo</string>
+    <string name="pref_camera_scenemode_entry_whiteboard">Bílá tabule</string>
+
+    <string name="pref_camera_focusmode_entry_continuouspicture">Sekvenční snímání</string>
+    <string name="pref_camera_focusmode_entry_extended">Rozšířený</string>
+    <string name="pref_camera_focusmode_entry_facedetect">Detekce obličeje</string>
+    <string name="pref_camera_focusmode_entry_facepriority">Priorita obličeje</string>
+    <string name="pref_camera_focusmode_entry_fixed">Pevný</string>
+    <string name="pref_camera_focusmode_entry_portrait">Portrét</string>
+    <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfokální</string>
+
+    <string name="pref_camera_coloreffect_entry_washed">Seprané</string>
+    <string name="pref_camera_coloreffect_entry_vintage_warm">Staré teplé</string>
+    <string name="pref_camera_coloreffect_entry_vintage_cold">Staré studené</string>
+    <string name="pref_camera_coloreffect_entry_point_blue">Bodový modrý</string>
+    <string name="pref_camera_coloreffect_entry_point_green">Bodový zelený</string>
+    <string name="pref_camera_coloreffect_entry_point_red_yellow">Bodový červenožlutý</string>
+    <string name="pref_camera_coloreffect_entry_cartoonize">Kreslený</string>
+
+    <string name="pref_camera_burst_title">Výcenásobný režim</string>
+
+    <string name="pref_camera_burst_entry_off">Vypnutý</string>
+    <string name="pref_camera_burst_entry_5">5 snímků</string>
+    <string name="pref_camera_burst_entry_10">10 snímků</string>
+    <string name="pref_camera_burst_entry_15">15 snímků</string>
+    <string name="pref_camera_burst_entry_20">20 snímků</string>
+
+    <string name="pref_camera_focustime_title">Trvání ostření dotykem</string>
+    <string name="pref_camera_focustime_summary">Zvolte dobu po kterou bude aktivní dotykové ostření</string>
+
+    <string name="pref_camera_focustime_entry_infinite">Nekonečný</string>
+
+    <string name="pref_camera_flashmode_entry_redeye">Červené oči</string>
+    <string name="pref_camera_flashmode_label_redeye">ČERVENÉ OČI</string>
+
+    <string name="pref_camera_beauty_mode_title">Režim krásy</string>
+
+    <string name="pref_camera_slow_shutter_title">Pomalá závěrka</string>
+    <string name="pref_camera_slow_shutter_entry_off">Vypnuto</string>
+    <string name="pref_camera_slow_shutter_entry_auto">Automaticky</string>
+    <string name="pref_camera_slow_shutter_entry_half_second">1/2 sekundy</string>
+    <string name="pref_camera_slow_shutter_entry_1s">1 sekunda</string>
+    <string name="pref_camera_slow_shutter_entry_2s">2 sekundy</string>
+    <string name="pref_camera_slow_shutter_entry_4s">4 sekundy</string>
+    <string name="pref_camera_slow_shutter_entry_8s">8 sekund</string>
+
+    <string name="pref_camera_storage_title">Úložiště</string>
+
+    <string name="camera_menu_enhance_label">ZLEPŠIT</string>
+    <string name="camera_menu_slow_shutter_label">POMALÁ ZÁVĚRKA</string>
+    <string name="camera_menu_beauty_mode_label">ZKRÁŠLENÍ</string>
+    <string name="camera_menu_colorize_label">OBARVENÍ</string>
+    <string name="camera_menu_effects_label">EFEKTY</string>
+    <string name="camera_menu_asd_label">CHYTRÁ SCÉNA</string>
+
+    <string name="pref_camera_power_shutter_title">Spoušť tlačítkem vypnutí</string>
+</resources>
