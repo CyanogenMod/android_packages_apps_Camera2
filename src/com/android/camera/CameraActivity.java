@@ -1352,18 +1352,7 @@ public class CameraActivity extends Activity
 
         int visibility = getPreviewVisibility();
         updatePreviewRendering(visibility);
-        updateCaptureControls(visibility);
         mCurrentModule.onPreviewVisibilityChanged(visibility);
-    }
-
-    private void updateCaptureControls(int visibility) {
-        if (visibility == ModuleController.VISIBILITY_HIDDEN) {
-            mCameraAppUI.setBottomBarVisible(false);
-            mCameraAppUI.setModeOptionsVisible(false);
-        } else {
-            mCameraAppUI.setBottomBarVisible(true);
-            mCameraAppUI.setModeOptionsVisible(true);
-        }
     }
 
     private void updatePreviewRendering(int visibility) {
