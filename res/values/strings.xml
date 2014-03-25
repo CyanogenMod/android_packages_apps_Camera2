@@ -495,8 +495,6 @@
     <string name="accessibility_cancel_button">Cancel</string>
     <!-- The menu button. [CHAR LIMIT=NONE] -->
     <string name="accessibility_menu_button">Menu button</string>
-    <!-- The mode picker to switch between camera, video and panorama. [CHAR LIMIT=NONE] -->
-    <string name="accessibility_mode_picker">Camera, video, or panorama selector</string>
     <!-- The check box in camera settings, such as store location. [CHAR LIMIT=NONE] -->
     <string name="accessibility_check_box">%1$s check box</string>
     <!-- The button to switch to Camera mode. [CHAR LIMIT=NONE] -->
@@ -520,6 +518,13 @@ CHAR LIMIT=NONE] -->
     <string name="accessibility_review_retake">Review retake</string>
     <!-- The button that opens up mode options, shown as '...' on screen [CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_options">Options</string>
+    <!-- Announcement when the mode list becomes hidden off screen [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_list_hidden">Mode list closed</string>
+    <!-- Announcement when the mode list becomes shown on screen [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_list_shown">Mode list open</string>
+    <!-- Announcement when the mode switcher, on startup, is temporarily on screen as visual hint, then moves off left [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_list_shimmy">Press left to toggle mode list</string>
+
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>
     <!-- Default text for a button that can be toggled on and off. -->
