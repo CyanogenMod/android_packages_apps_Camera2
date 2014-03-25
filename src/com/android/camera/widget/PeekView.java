@@ -32,6 +32,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.android.camera.util.CameraUtil;
+import com.android.camera2.R;
 
 /**
  * An ImageView which has the built-in peek animation support.
@@ -148,6 +149,8 @@ public class PeekView extends ImageView {
         mDrawableBound = new Rect(x, y, x + drawDim.x, y + drawDim.y);
         mRotationPivot.set(x, (int) (y + drawDim.y * 1.1));
         mPeekAnimator.start();
+        announceForAccessibility(
+                getContext().getResources().getString(R.string.accessibility_peek));
     }
 
     /**

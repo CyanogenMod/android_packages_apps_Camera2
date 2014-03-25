@@ -524,6 +524,8 @@ CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_shown">Mode list open</string>
     <!-- Announcement when the mode switcher, on startup, is temporarily on screen as visual hint, then moves off left [CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_shimmy">Press left to toggle mode list</string>
+    <!-- Announcement when a capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
+    <string name="accessibility_peek">Capture taken</string>
 
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>
