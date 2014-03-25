@@ -2146,7 +2146,16 @@ public class FilmstripView extends ViewGroup {
 
         @Override
         public boolean goToNextItem() {
-            final ViewItem nextItem = mViewItem[mCurrentItem + 1];
+            return goToItem(mCurrentItem + 1);
+        }
+
+        @Override
+        public boolean goToPreviousItem() {
+            return goToItem(mCurrentItem - 1);
+        }
+
+        private boolean goToItem(int itemIndex) {
+            final ViewItem nextItem = mViewItem[itemIndex];
             if (nextItem == null) {
                 return false;
             }
