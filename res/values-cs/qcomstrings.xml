@@ -1,0 +1,178 @@
+<!--
+    Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+    Copyright (C) 2013-2014 The CyanogenMod Project
+
+    Not a Contribution.
+
+    Copyright (C) 2007 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<resources>
+    <string name="pref_camera_powermode_title">Režim napájení</string>
+    <string name="pref_camera_powermode_entry_lp">Nízký výkon</string>
+    <string name="pref_camera_powermode_entry_np">Normální výkon</string>
+
+    <string name="pref_camera_autoexposure_title">Režim automatické expozice</string>
+    <string name="pref_camera_autoexposure_entry_frameaverage">Průměrový</string>
+    <string name="pref_camera_autoexposure_entry_centerweighted">Se zvýrazněným středem</string>
+    <string name="pref_camera_autoexposure_entry_spotmetering">Bodový</string>
+
+    <string name="pref_camera_videoencoder_title">Video kodek</string>
+    <string name="pref_camera_videoencoder_dialogtitle">Video kodek</string>
+    <string name="pref_camera_audioencoder_title">Video kodek</string>
+
+    <string name="pref_camera_video_duration_title">Délka videa</string>
+    <string name="pref_camera_video_duration_entry_mms">30 sekund (MMS)</string>
+    <string name="pref_camera_video_duration_entry_10">10 minut</string>
+    <string name="pref_camera_video_duration_entry_30">30 minut</string>
+
+    <string name="pref_camera_skinToneEnhancement_title">Vylepšení tónů pleti</string>
+    <string name="pref_camera_skinToneEnhancement_entry_enable">Povolit</string>
+    <string name="pref_camera_skinToneEnhancement_entry_disable">Zakázat</string>
+
+    <string name="pref_camera_zsl_title">Nulové zpoždění závěrky (ZSL)</string>
+    <string name="pref_camera_selectablezoneaf_title">Zóna automatického ostření</string>
+    <string name="pref_camera_selectablezoneaf_entry_auto">Automaticky</string>
+    <string name="pref_camera_selectablezoneaf_entry_spotmetering">Bodové měření</string>
+    <string name="pref_camera_selectablezoneaf_entry_centerweighted">Se zvýrazněným středem</string>
+    <string name="pref_camera_selectablezoneaf_entry_frameaverage">Průměrové</string>
+    <string name="pref_camera_zsl_entry_off">Vyp</string>
+    <string name="pref_camera_zsl_entry_on">Zap</string>
+
+    <string name="pref_camera_video_hdr_entry_off">Vyp</string>
+    <string name="pref_camera_video_hdr_entry_on">Zap</string>
+
+    <string name="pref_camera_facedetection_title">Detekce obličeje</string>
+    <string name="pref_camera_facedetection_entry_off">Vyp</string>
+    <string name="pref_camera_facedetection_entry_on">Zap</string>
+
+    <string name="pref_camera_redeyereduction_title">Redukce červených očí</string>
+    <string name="pref_camera_redeyereduction_entry_enable">Povolit</string>
+    <string name="pref_camera_redeyereduction_entry_disable">Zakázat</string>
+
+    <string name="error_app_unsupported_hfr">Pro zvolené rozlišení není HFR podporováno</string>
+    <string name="error_app_unsupported_hfr_codec">Pokud je zapnuto HFR, je podporován pouze kodek H.264</string>
+    <string name="error_app_unsupported">Nepodporované rozlišení videa pro daný kodek</string>
+    <string name="error_app_unsupported_raw">Formát obrázku RAW není podporován v režimu ZSL</string>
+    <string name="error_app_unsupported_hdr_zsl">HDR není v režimu ZSL podporováno</string>
+
+    <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE bracketing</string>
+    <string name="pref_camera_ae_bracket_hdr_title">Automatický expoziční bracketing</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_on">Zap</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_off">Vyp</string>
+    <string name="err_app_unsupport_ae_bracket_code">AE bracketing není zatím podporován</string>
+
+    <string name="snapshot_lower_than_video">Rozlišení snímků z videa je nižší než vlastní rozlišení videa. Zvolte rozlišení vyšší nebo stejné jako snímané video.</string>
+    <string name="snapshotsize_low_powermode">Změna velikosti obrázku není povolena v režimu nízkého výkonu, velikost bude stejná jako snímané video. Zvolte normální výkon pro umožnění změny velikosti rozlišení obrázku.</string>
+    <string name="snapshot_qcif_and_d1">V tomto rozlišení je pro snímek z vide povolena pouze velikost snímaného videa.</string>
+
+    <string name="pref_camera_hfr_title">Video s vysokou frekvencí snímků</string>
+    <string name="pref_camera_hfr_entry_off">Vyp</string>
+
+    <string name="pref_camera_denoise_title">Režim vlnového odstranění šumu</string>
+    <string name="pref_camera_denoise_entry_off">Vyp</string>
+    <string name="pref_camera_denoise_entry_on">Zap</string>
+
+    <string name="pref_camera_iso_entry_auto">Automaticky</string>
+    <string name="pref_camera_iso_entry_isodeblur">Automaticky (HJR)</string>
+
+    <string name="pref_camera_antibanding_title">Odstranění pruhů</string>
+    <string name="pref_camera_antibanding_entry_0">Vypnuto</string>
+    <string name="pref_camera_antibanding_entry_3">Automaticky</string>
+
+    <string name="pref_camera_coloreffect_title">Barevný efekt</string>
+    <string name="pref_camera_coloreffect_entry_none">Žádná</string>
+    <string name="pref_camera_coloreffect_entry_mono">Černobílý</string>
+    <string name="pref_camera_coloreffect_entry_sepia">Sépie</string>
+    <string name="pref_camera_coloreffect_entry_negative">Negativ</string>
+    <string name="pref_camera_coloreffect_entry_solarize">Solarizace</string>
+    <string name="pref_camera_coloreffect_entry_posterize">Posterizace</string>
+    <string name="pref_camera_coloreffect_entry_aqua">Voda</string>
+    <string name="pref_camera_coloreffect_entry_emboss">Reliéf</string>
+    <string name="pref_camera_coloreffect_entry_sketch">Skica</string>
+    <string name="pref_camera_coloreffect_entry_neon">Neónový</string>
+    <string name="pref_camera_coloreffect_entry_pastel">Pastelový</string>
+    <string name="pref_camera_coloreffect_entry_mosaic">Mozaika</string>
+    <string name="pref_camera_coloreffect_entry_redtint">Odstín červené</string>
+    <string name="pref_camera_coloreffect_entry_bluetint">Odstín modré</string>
+    <string name="pref_camera_coloreffect_entry_greentint">Odstín zelené</string>
+
+    <string name="pref_camera_touchafaec_title">AF/AEC dotykem</string>
+    <string name="pref_camera_touchafaec_entry_off">Vyp</string>
+    <string name="pref_camera_touchafaec_entry_on">Zap</string>
+
+    <string name="pref_camera_dis_title">Digitální stabilizace obrazu</string>
+    <string name="pref_camera_dis_entry_off">Vyp</string>
+    <string name="pref_camera_dis_entry_on">Zap</string>
+
+    <string name="pref_camera_facerc_title">Detekce obličeje</string>
+    <string name="pref_camera_facerc_entry_off">Vyp</string>
+    <string name="pref_camera_facerc_entry_on">Zap</string>
+
+    <string name="pref_camera_sharpness_entry_level0">Úroveň 0</string>
+    <string name="pref_camera_sharpness_entry_level1">Úroveň 1</string>
+    <string name="pref_camera_sharpness_entry_level2">Úroveň 2 (výchozí)</string>
+    <string name="pref_camera_sharpness_entry_level3">Úroveň 3</string>
+    <string name="pref_camera_sharpness_entry_level4">Úroveň 4</string>
+    <string name="pref_camera_sharpness_entry_level5">Úroveň 5</string>
+    <string name="pref_camera_sharpness_entry_level6">Úroveň 6</string>
+
+    <string name="pref_camera_contrast_entry_level0">Úroveň 0</string>
+    <string name="pref_camera_contrast_entry_level1">Úroveň 1</string>
+    <string name="pref_camera_contrast_entry_level2">Úroveň 2</string>
+    <string name="pref_camera_contrast_entry_level3">Úroveň 3</string>
+    <string name="pref_camera_contrast_entry_level4">Úroveň 4</string>
+    <string name="pref_camera_contrast_entry_level5">Úroveň 5 (výchozí)</string>
+    <string name="pref_camera_contrast_entry_level6">Úroveň 6</string>
+    <string name="pref_camera_contrast_entry_level7">Úroveň 7</string>
+    <string name="pref_camera_contrast_entry_level8">Úroveň 8</string>
+    <string name="pref_camera_contrast_entry_level9">Úroveň 9</string>
+    <string name="pref_camera_contrast_entry_level10">Úroveň 10</string>
+
+    <string name="pref_camera_saturation_entry_level0">Úroveň 0</string>
+    <string name="pref_camera_saturation_entry_level1">Úroveň 1</string>
+    <string name="pref_camera_saturation_entry_level2">Úroveň 2</string>
+    <string name="pref_camera_saturation_entry_level3">Úroveň 3</string>
+    <string name="pref_camera_saturation_entry_level4">Úroveň 4</string>
+    <string name="pref_camera_saturation_entry_level5">Úroveň 5 (výchozí)</string>
+    <string name="pref_camera_saturation_entry_level6">Úroveň 6</string>
+    <string name="pref_camera_saturation_entry_level7">Úroveň 7</string>
+    <string name="pref_camera_saturation_entry_level8">Úroveň 8</string>
+    <string name="pref_camera_saturation_entry_level9">Úroveň 9</string>
+    <string name="pref_camera_saturation_entry_level10">Úroveň 10</string>
+
+    <string name="pref_camera_sharpness_title">Ostrost</string>
+    <string name="pref_camera_contrast_title">Kontrast</string>
+    <string name="pref_camera_saturation_title">Sytost</string>
+    <string name="pref_camera_picture_format_title">Formát obrázku</string>
+
+    <string name="pref_camera_jpegquality_title">Kvalita obrázku</string>
+    <string name="pref_camera_jpegquality_entry_1">65% (normální)</string>
+    <string name="pref_camera_jpegquality_entry_2">75% (jemná)</string>
+    <string name="pref_camera_jpegquality_entry_3">85% (velmi jemná)</string>
+
+    <string name="pref_camera_histogram_title">Histogram</string>
+    <string name="pref_camera_histogram_entry_enable">Povolit</string>
+    <string name="pref_camera_histogram_entry_disable">Zakázat</string>
+
+    <string name="pref_camera_focusmode_entry_normal">Normální</string>
+    <string name="pref_camera_focusmode_entry_continuous">Sekvenční</string>
+
+    <string name="pref_camera_scenedetect_title">Automatická detekce scény</string>
+    <string name="pref_camera_scenedetect_entry_off">Vyp</string>
+    <string name="pref_camera_scenedetect_entry_on">Zap</string>
+
+    <string name="time_lapse_error">Neplatná velikost videa pro časosběrné nahrávání.</string>
+</resources>
