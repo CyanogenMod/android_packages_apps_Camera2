@@ -123,6 +123,13 @@ public interface FilmstripController {
     public boolean goToNextItem();
 
     /**
+     * Scrolls the filmstrip horizontally to the center of the previous item.
+     *
+     * @return Whether the previous item exists.
+     */
+    public boolean goToPreviousItem();
+
+    /**
      * Stops the scrolling.
      *
      * @param forced Forces to stop even if the scrolling can not be
