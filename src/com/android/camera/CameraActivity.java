@@ -1623,6 +1623,18 @@ public class CameraActivity extends Activity
                 mCameraAppUI.showFilmstrip();
                 return true;
             }
+        } else {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                mFilmstripController.goToNextItem();
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                boolean wentToPrevious = mFilmstripController.goToPreviousItem();
+                if (!wentToPrevious) {
+                  // at beginning of filmstrip, hide and go back to preview
+                  mCameraAppUI.hideFilmstrip();
+                }
+                return true;
+            }
         }
         return super.onKeyUp(keyCode, event);
     }
