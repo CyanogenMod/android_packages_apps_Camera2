@@ -1438,6 +1438,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.setCaptureButtonEnabled(enabled);
     }
 
+    public void setModeOptionsVisible(boolean visible) {
+        mModeOptionsOverlay.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    }
+
     /**
      * Set the visibility of the bottom bar.
      */
