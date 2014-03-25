@@ -272,7 +272,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Weka muda katika sekunde"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Inahesabu ili kupiga picha"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Ungependa kukumbuka maeneo ambamo picha ilipigiwa?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Tambulisha picha na video zako kwa kujumuisha maeneo ambapo zinapopigwa.\n\nProgramu nyingine zinaweza kufikia maelezo haya pamoja na picha zako zilizohifadhiwa."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Tambulisha picha na video zako kwa kujumuisha maeneo ambamo zinapigiwa.\n\nProgramu nyingine zinaweza kufikia maelezo haya pamoja na picha zako zilizohifadhiwa."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"La, asante"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ndiyo"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"CHAGUO ZAIDI"</string>
@@ -290,8 +290,6 @@
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Ufundi"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"Kamera Mahiri"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Hali ya Mpito wa Muda"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Pembe Pana"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>

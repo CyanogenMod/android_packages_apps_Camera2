@@ -288,8 +288,6 @@
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Videó"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Körpanorámakép"</string>
-    <string name="mode_craft" msgid="6390039207517142426">"Megmunkálás"</string>
-    <string name="mode_advanced_camera" msgid="3606021380917044124">"Kamera – speciális mód"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Gyorsított felvétel"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Nagy látószög"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorámakép"</string>
@@ -329,8 +327,8 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Törlés"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"A gomb beállítása jelenleg: %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Hely"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Hátulsó kamera – fotó"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Hátulsó kamera – videó"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Hátsó kamera – fotó"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Hátsó kamera – videó"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Elülső kamera – fotó"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Elülső kamera – videó"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Alapértelmezett kamera"</string>
