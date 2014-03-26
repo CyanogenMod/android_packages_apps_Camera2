@@ -449,7 +449,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private IndicatorIconController mIndicatorIconController;
     private View mFocusOverlay;
     private FrameLayout mTutorialsPlaceholder;
-
+    private View mIndicatorBottomBarWrapper;
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
     private DisplayManager.DisplayListener mDisplayListener;
@@ -1035,6 +1035,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
         mTutorialsPlaceholder = (FrameLayout) mCameraRootView
                 .findViewById(R.id.tutorials_placeholder);
+        mIndicatorBottomBarWrapper = (View) mAppRootView
+                .findViewById(R.id.indicator_bottombar_wrapper);
 
         mTextureViewHelper.addPreviewAreaSizeChangedListener(
                 new PreviewStatusListener.PreviewAreaChangedListener() {
@@ -1437,8 +1439,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.setCaptureButtonEnabled(enabled);
     }
 
-    public void setModeOptionsVisible(boolean visible) {
-        mModeOptionsOverlay.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    public void setIndicatorBottomBarWrapperVisible(boolean visible) {
+        mIndicatorBottomBarWrapper.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 
     /**
