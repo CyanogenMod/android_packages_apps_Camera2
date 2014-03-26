@@ -208,7 +208,6 @@
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"Kilango cha kamera"</string>
     <string name="accessibility_cancel_button" msgid="5679989494636116448">"Ghairi"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Kitufe cha menyu"</string>
-    <string name="accessibility_mode_picker" msgid="5107120667206453381">"Kichagua kamera, video au Picha ya mandhari"</string>
     <!-- String.format failed for translation -->
     <!-- no translation found for accessibility_check_box (1084094675439953723) -->
     <skip />
@@ -221,6 +220,11 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Ukaguzi umeghairiwa"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Ukaguzi umekamilika"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Kagua upigaji tena wa picha"</string>
+    <string name="accessibility_mode_options" msgid="6376831760155403217">"Chaguo"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Orodha ya hali imefichwa"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Orodha ya hali inaonyeshwa"</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Bonyeza kushoto ili ugeuze orodha ya hali"</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"Picha imepigwa"</string>
     <string name="capital_on" msgid="1118214824959797269">"WASHA"</string>
     <string name="capital_off" msgid="3020696135020167263">"ZIMA"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Kimezimwa"</string>

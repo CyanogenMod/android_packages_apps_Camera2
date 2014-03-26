@@ -208,7 +208,6 @@
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"ຊັດເຕີ"</string>
     <string name="accessibility_cancel_button" msgid="5679989494636116448">"ຍົກເລີກ"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"ປຸ່ມເມນູ"</string>
-    <string name="accessibility_mode_picker" msgid="5107120667206453381">"ໂຕເລືອກກ້ອງຖ່າຍຮູບ, ກ້ອງວິດີໂອ ຫຼືພາໂນຣາມາ"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"ກ່ອງເຄື່ອງໝາຍ %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"ປ່ຽນໄປຫາຮູບ"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"ສະລັບໄປວິດີໂອ"</string>
@@ -219,6 +218,11 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"ການກວດສອບໃຫ້ຍົກເລີກ"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"ການກວດກາສຳເລັດ"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"ການກວດສອບໃຫ້ຖ່າຍຄືນ"</string>
+    <string name="accessibility_mode_options" msgid="6376831760155403217">"ໂຕເລືອກ"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"ປິດລາຍ​ຊື່​ໂໝດແລ້ວ"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"​ເປີດ​ລາຍ​ຊື່​ໂໝດ​ແລ້ວ"</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"​ກົດ​​​ປຸ່ມ​ລູກ​ສອນ​ຊ້າຍ​ເພື່ອ​​ສະ​ລັບ​ລາຍ​ຊື່​ໂໝດ"</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"​ຈັບ​ພາບ​ແລ້ວ"</string>
     <string name="capital_on" msgid="1118214824959797269">"ເປີດ"</string>
     <string name="capital_off" msgid="3020696135020167263">"ປິດ"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"ປິດ"</string>
