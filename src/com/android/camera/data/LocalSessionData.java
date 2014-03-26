@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.android.camera.Storage;
+import com.android.camera2.R;
 
 import java.util.Date;
 
@@ -59,6 +60,8 @@ public class LocalSessionData implements LocalData {
         Bitmap bmp = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
         ImageView imageView = new ImageView(context);
         imageView.setImageBitmap(bmp);
+        imageView.setContentDescription(context.getResources().getString(
+                R.string.media_processing_content_description));
         return imageView;
     }
 
