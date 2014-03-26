@@ -21,43 +21,43 @@ public class eventprotos {
     public class CameraEvent {
 
         public class InteractionType {
-            public static final int SHARE = 0;
-            public static final int DELETE = 0;
-            public static final int DETAILS = 0;
+            public static final int SHARE = 10000;
+            public static final int DELETE = 10000;
+            public static final int DETAILS = 10000;
         }
 
         public class InteractionCause {
-            public static final int BUTTON = 0;
-            public static final int SWIPE_LEFT = 0;
-            public static final int SWIPE_UP = 0;
-            public static final int SWIPE_DOWN = 0;
-            public static final int SWIPE_RIGHT = 0;
+            public static final int BUTTON = 10000;
+            public static final int SWIPE_LEFT = 10000;
+            public static final int SWIPE_UP = 10000;
+            public static final int SWIPE_DOWN = 10000;
+            public static final int SWIPE_RIGHT = 10000;
         }
     }
 
     public class NavigationChange {
         public class Mode {
-            public static final int PHOTO_CAPTURE = 0;
-            public static final int FILMSTRIP = 0;
-            public static final int VIDEO_CAPTURE = 0;
-            public static final int VIDEO_STILL = 0;
-            public static final int GALLERY = 0;
+            public static final int PHOTO_CAPTURE = 10000;
+            public static final int FILMSTRIP = 10000;
+            public static final int VIDEO_CAPTURE = 10000;
+            public static final int VIDEO_STILL = 10000;
+            public static final int GALLERY = 10000;
         }
     }
 
     public class CameraFailure {
         public class FailureReason {
-            public static final int SECURITY = 0;
-            public static final int OPEN_FAILURE = 0;
-            public static final int RECONNECT_FAILURE = 0;
+            public static final int SECURITY = 10000;
+            public static final int OPEN_FAILURE = 10000;
+            public static final int RECONNECT_FAILURE = 10000;
         }
     }
 
     public class ForegroundEvent {
         public class ForegroundSource {
-            public static final int ICON_LAUNCHER = 0;
-            public static final int LOCK_SCREEN = 0;
-            public static final int INTENT_PICKER = 0;
+            public static final int ICON_LAUNCHER = 10000;
+            public static final int LOCK_SCREEN = 10000;
+            public static final int INTENT_PICKER = 10000;
         }
     }
 }
