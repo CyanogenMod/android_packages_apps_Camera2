@@ -146,13 +146,10 @@
     <string name="pref_camera_saturation_title">Mætning</string>
     <string name="pref_camera_picture_format_title">Billedformat</string>
     <string name="pref_camera_jpegquality_title">Billedkvalitet</string>
-    <string name="pref_camera_jpegquality_entry_superfine">Superfin</string>
-    <string name="pref_camera_jpegquality_entry_fine">Fin</string>
-    <string name="pref_camera_jpegquality_entry_normal">Normal</string>
     <string name="pref_camera_jpegquality_entry_0">55%</string>
-    <string name="pref_camera_jpegquality_entry_1">65%</string>
-    <string name="pref_camera_jpegquality_entry_2">75%</string>
-    <string name="pref_camera_jpegquality_entry_3">85%</string>
+    <string name="pref_camera_jpegquality_entry_1">65% (normal)</string>
+    <string name="pref_camera_jpegquality_entry_2">75% (fin)</string>
+    <string name="pref_camera_jpegquality_entry_3">85% (superfin)</string>
     <string name="pref_camera_jpegquality_entry_4">95%</string>
     <string name="pref_camera_jpegquality_entry_5">100%</string>
     <string name="pref_camera_histogram_title">Histogram</string>
