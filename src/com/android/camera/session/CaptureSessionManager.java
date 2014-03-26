@@ -59,6 +59,9 @@ public interface CaptureSessionManager {
 
         /** Called when the session with the given Uri has progressed. */
         public void onSessionProgress(Uri mediaUri, int progress);
+
+        /** Called when the session with the given Uri has changed its progress text. */
+        public void onSessionProgressText(Uri mediaUri, CharSequence message);
     }
 
     /**
