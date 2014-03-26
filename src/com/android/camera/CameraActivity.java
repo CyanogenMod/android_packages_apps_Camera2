@@ -713,6 +713,10 @@ public class CameraActivity extends Activity
         mCameraAppUI.getFilmstripBottomControls().setProgress(progress);
     }
 
+    private void updateSessionProgressText(CharSequence message) {
+        mCameraAppUI.getFilmstripBottomControls().setProgressText(message);
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setupNfcBeamPush() {
         NfcAdapter adapter = NfcAdapter.getDefaultAdapter(mAppContext);
@@ -801,6 +805,18 @@ public class CameraActivity extends Activity
                     if (uri.equals(
                             mDataAdapter.getLocalData(currentDataId).getUri())) {
                         updateSessionProgress(progress);
+                    }
+                }
+
+                @Override
+                public void onSessionProgressText(final Uri uri, final CharSequence message) {
+                    int currentDataId = mFilmstripController.getCurrentId();
+                    if (currentDataId == -1) {
+                        return;
+                    }
+                    if (uri.equals(
+                            mDataAdapter.getLocalData(currentDataId).getUri())) {
+                        updateSessionProgressText(message);
                     }
                 }
 
