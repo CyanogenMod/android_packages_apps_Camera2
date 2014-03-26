@@ -932,7 +932,7 @@ public class PhotoModule
         setCameraState(SNAPSHOT_IN_PROGRESS);
         UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                 UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"),
-                mParameters);
+                mParameters, null);
         return true;
     }
 
