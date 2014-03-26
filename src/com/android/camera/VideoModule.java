@@ -1262,11 +1262,6 @@ public class VideoModule extends CameraModule
         }
         mAppController.getCameraAppUI().setSwipeEnabled(false);
 
-        // Make sure the video recording has started before announcing
-        // this in accessibility.
-        AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
-                mActivity.getString(R.string.video_recording_started));
-
         // The parameters might have been altered by MediaRecorder already.
         // We need to force mCameraDevice to refresh before getting it.
         mCameraDevice.refreshParameters();
@@ -1349,9 +1344,6 @@ public class VideoModule extends CameraModule
                         : mCurrentVideoFilename);
                 UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
                         statisticFilename, mParameters, duration);
-                AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
-                        mActivity.getAndroidContext().getString(R.string
-                                .video_recording_stopped));
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
                 if (mVideoFilename != null) {
