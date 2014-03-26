@@ -526,6 +526,8 @@ CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_shimmy">Press left to toggle mode list</string>
     <!-- Announcement when a capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
     <string name="accessibility_peek">Capture taken</string>
+    <!-- Description for the lock icon in Secure Camera filmstrip that when clicked, brings user to lock screen then full Camera [CHAR LIMIT=NONE] -->
+    <string name="accessibility_unlock_to_camera">Unlock to Camera</string>
 
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>
