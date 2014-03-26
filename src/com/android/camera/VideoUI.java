@@ -203,7 +203,11 @@ public class VideoUI implements PreviewStatusListener {
         if (recording) {
             mRecordingTimeView.setText("");
             mRecordingTimeView.setVisibility(View.VISIBLE);
+            mRecordingTimeView.announceForAccessibility(
+                    mActivity.getResources().getString(R.string.video_recording_started));
         } else {
+            mRecordingTimeView.announceForAccessibility(
+                    mActivity.getResources().getString(R.string.video_recording_stopped));
             mRecordingTimeView.setVisibility(View.GONE);
         }
     }
