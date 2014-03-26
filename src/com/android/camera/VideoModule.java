@@ -410,7 +410,7 @@ public class VideoModule extends CameraModule
             showVideoSnapshotUI(true);
             mSnapshotInProgress = true;
             UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_STILL,
-                    null, null);
+                    null, null, null);
         }
     }
 
