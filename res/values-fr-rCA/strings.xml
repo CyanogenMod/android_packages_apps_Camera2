@@ -208,7 +208,6 @@
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"Obturateur"</string>
     <string name="accessibility_cancel_button" msgid="5679989494636116448">"Annuler"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Bouton Menu"</string>
-    <string name="accessibility_mode_picker" msgid="5107120667206453381">"Sélecteur du mode Photo, Vidéo ou Panoramique"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"Case à cocher %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Passer en mode Photo"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Passer en mode Vidéo"</string>
@@ -219,6 +218,11 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Examen – Annuler"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Examen – OK"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Examen – Reprendre une photo"</string>
+    <string name="accessibility_mode_options" msgid="6376831760155403217">"Options"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"La liste des modes est fermée"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"La liste des modes est ouverte"</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Touchez la gauche pour activer ou désactiver la liste des modes"</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"La photo a bien été prise"</string>
     <string name="capital_on" msgid="1118214824959797269">"ACTIVÉ"</string>
     <string name="capital_off" msgid="3020696135020167263">"DÉSACTIVÉ"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Désactivé"</string>
