@@ -1319,6 +1319,7 @@ public class CameraActivity extends Activity
                     finish();
                 }
             });
+            v.setContentDescription(getString(R.string.accessibility_unlock_to_camera));
             mDataAdapter = new FixedLastDataAdapter(
                     mAppContext,
                     mDataAdapter,
