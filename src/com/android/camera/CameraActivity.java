@@ -1565,6 +1565,7 @@ public class CameraActivity extends Activity
         getContentResolver().unregisterContentObserver(mLocalVideosObserver);
         getServices().getCaptureSessionManager().removeSessionListener(mSessionListener);
         mCameraAppUI.onDestroy();
+        mModeListView.setVisibilityChangedListener(null);
         mCameraController = null;
         mSettingsManager = null;
         mCameraAppUI = null;
