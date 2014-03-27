@@ -544,6 +544,14 @@ public class PhotoModule
         bottomBarSpec.enableHdr = true;
         bottomBarSpec.hdrCallback = mHdrPlusCallback;
         bottomBarSpec.enableGridLines = true;
+        bottomBarSpec.enableExposureCompensation = true;
+        bottomBarSpec.exposureCompensationSetCallback =
+            new CameraAppUI.BottomBarUISpec.ExposureCompensationSetCallback() {
+            @Override
+            public void setExposure(int value) {
+                setExposureCompensation(value);
+            }
+        };
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
@@ -579,7 +587,7 @@ public class PhotoModule
             Log.e(TAG, "Settings manager is null!");
             return;
         }
-        settingsManager.setDefault(SettingsManager.SETTING_EXPOSURE);
+        settingsManager.setDefault(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
     }
 
     // Snapshots can only be taken after this is called. It should be called
@@ -992,7 +1000,6 @@ public class PhotoModule
         }
         mCameraDevice = cameraProxy;
 
-        resetExposureCompensation();
         initializeCapabilities();
 
         // Reset zoom value index.
@@ -1254,6 +1261,7 @@ public class PhotoModule
     public void pause() {
         mPaused = true;
         SessionStatsCollector.instance().sessionActive(false);
+
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
             mSensorManager.unregisterListener(this, gsensor);
@@ -1678,15 +1686,20 @@ public class PhotoModule
 
     private void updateParametersExposureCompensation() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-
-        int value = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_EXPOSURE));
-        int max = mParameters.getMaxExposureCompensation();
-        int min = mParameters.getMinExposureCompensation();
-        if (value >= min && value <= max) {
-            mParameters.setExposureCompensation(value);
+        if (settingsManager.getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED)) {
+            int value = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE));
+            int max = mParameters.getMaxExposureCompensation();
+            int min = mParameters.getMinExposureCompensation();
+            if (value >= min && value <= max) {
+                mParameters.setExposureCompensation(value);
+            } else {
+                Log.w(TAG, "invalid exposure range: " + value);
+            }
         } else {
-            Log.w(TAG, "invalid exposure range: " + value);
+            // If exposure compensation is not enabled, reset the exposure compensation value.
+            setExposureCompensation(0);
         }
+
     }
 
     private void updateParametersSceneMode() {
@@ -1739,6 +1752,23 @@ public class PhotoModule
                     (CameraAFMoveCallback) mAutoFocusMoveCallback);
         } else {
             mCameraDevice.setAutoFocusMoveCallback(null, null);
+        }
+    }
+
+    /**
+     * Sets the exposure compensation to the given value and also updates settings.
+     *
+     * @param value exposure compensation value to be set
+     */
+    public void setExposureCompensation(int value) {
+        int max = mParameters.getMaxExposureCompensation();
+        int min = mParameters.getMinExposureCompensation();
+        if (value >= min && value <= max) {
+            mParameters.setExposureCompensation(value);
+            SettingsManager settingsManager = mActivity.getSettingsManager();
+            settingsManager.set(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE, Integer.toString(value));
+        } else {
+            Log.w(TAG, "invalid exposure range: " + value);
         }
     }
 

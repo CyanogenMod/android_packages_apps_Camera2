@@ -76,6 +76,7 @@ public class CameraSettingsActivity extends FragmentActivity {
     public static class CameraSettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
         public static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
+        public static final String PREF_CATEGORY_ADVANCED = "pref_category_advanced";
         private static final String BUILD_VERSION = "build_version";
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
         private FeedbackHelper mFeedbackHelper;
@@ -117,15 +118,11 @@ public class CameraSettingsActivity extends FragmentActivity {
             final PreferenceScreen resolutionScreen =
                     (PreferenceScreen) findPreference(PREF_CATEGORY_RESOLUTION);
             fillEntriesAndSummaries(resolutionScreen);
+            configureHomeAsUp(resolutionScreen);
 
-            // Make sure the sub-screen has home-as-up configured.
-            resolutionScreen.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    setUpHomeButton(resolutionScreen);
-                    return false;
-                }
-            });
+            final PreferenceScreen advancedScreen =
+                (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
+            configureHomeAsUp(advancedScreen);
 
             // Set build number.
             try {
@@ -148,6 +145,19 @@ public class CameraSettingsActivity extends FragmentActivity {
                             return true;
                         }
                     });
+        }
+
+        /**
+         * Configure home-as-up for sub-screens.
+         */
+        private void configureHomeAsUp(final PreferenceScreen preferenceScreen) {
+            preferenceScreen.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    setUpHomeButton(preferenceScreen);
+                    return false;
+                }
+            });
         }
 
         private void setUpHomeButton(PreferenceScreen preferenceScreen) {

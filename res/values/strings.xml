@@ -835,9 +835,9 @@ CHAR LIMIT=NONE] -->
     <string name="pref_video_quality_entry_low">Low</string>
     <!-- Video quality setting entry. Videos will be recorded in the highest quality available on the device. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_high">High</string>
-    <!-- Video quality setting entry. Videos will be recorded in quarter CIF quality. [CHAR LIMIT=24] --> 
+    <!-- Video quality setting entry. Videos will be recorded in quarter CIF quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_qcif" translatable="false">QCIF</string>
-    <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] --> 
+    <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_cif" translatable="false">CIF</string>
     <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_480p" translatable="false">SD 480p</string>
@@ -853,4 +853,9 @@ CHAR LIMIT=NONE] -->
 
     <!-- Text shown above the button that opens to editor for images created from lens blur mode. [CHAR LIMIT=60] -->
     <string name="cling_text_for_refocus_editor_button">Click here to edit the lens blur image.</string>
+
+    <!-- Title of a preference group for advanced preferences. [CHAR LIMIT=30] -->
+    <string name="pref_category_advanced">Advanced</string>
+    <!-- Title of a preference for enabling manual exposure compensation. [CHAR LIMIT=30] -->
+    <string name="pref_camera_exposure_compensation">Enable manual exposure compensation</string>
  </resources>

@@ -46,6 +46,11 @@ public class IndicatorIconController
     private ImageView mHdrIndicator;
     private ImageView mPanoIndicator;
 
+    private ImageView mExposureIndicatorN2;
+    private ImageView mExposureIndicatorN1;
+    private ImageView mExposureIndicatorP1;
+    private ImageView mExposureIndicatorP2;
+
     private TypedArray mFlashIndicatorPhotoIcons;
     private TypedArray mFlashIndicatorVideoIcons;
     private TypedArray mHdrPlusIndicatorIcons;
@@ -76,6 +81,11 @@ public class IndicatorIconController
             mPanoIndicatorIcons =
                 context.getResources().obtainTypedArray(panoIndicatorArrayId);
         }
+
+        mExposureIndicatorN2 = (ImageView) root.findViewById(R.id.exposure_n2_indicator);
+        mExposureIndicatorN1 = (ImageView) root.findViewById(R.id.exposure_n1_indicator);
+        mExposureIndicatorP1 = (ImageView) root.findViewById(R.id.exposure_p1_indicator);
+        mExposureIndicatorP2 = (ImageView) root.findViewById(R.id.exposure_p2_indicator);
     }
 
     @Override
@@ -114,6 +124,10 @@ public class IndicatorIconController
                 syncPanoIndicator();
                 break;
             }
+            case ButtonManager.BUTTON_EXPOSURE_COMPENSATION: {
+                syncExposureIndicator();
+                break;
+            }
             default:
                 // Do nothing.  The indicator doesn't care
                 // about button that don't correspond to indicators.
@@ -128,6 +142,7 @@ public class IndicatorIconController
         syncFlashIndicator();
         syncHdrIndicator();
         syncPanoIndicator();
+        syncExposureIndicator();
     }
 
     /**
@@ -135,7 +150,7 @@ public class IndicatorIconController
      * on a view, change the visibility and call any registered
      * {@link OnIndicatorVisibilityChangedListener}.
      */
-    private void changeVisibility(View view, int visibility) {
+    private static void changeVisibility(View view, int visibility) {
         if (view.getVisibility() != visibility) {
             view.setVisibility(visibility);
         }
@@ -209,6 +224,50 @@ public class IndicatorIconController
         }
     }
 
+    private void syncExposureIndicator() {
+        if (mExposureIndicatorN2 == null
+            || mExposureIndicatorN1 == null
+            || mExposureIndicatorP1 == null
+            || mExposureIndicatorP2 == null) {
+            Log.w(TAG, "Trying to sync exposure indicators that are not initialized.");
+            return;
+        }
+
+
+        // Reset all exposure indicator icons.
+        changeVisibility(mExposureIndicatorN2, View.GONE);
+        changeVisibility(mExposureIndicatorN1, View.GONE);
+        changeVisibility(mExposureIndicatorP1, View.GONE);
+        changeVisibility(mExposureIndicatorP2, View.GONE);
+
+        ButtonManager buttonManager = mController.getButtonManager();
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_EXPOSURE_COMPENSATION)
+                && buttonManager.isVisible(ButtonManager.BUTTON_EXPOSURE_COMPENSATION)) {
+
+            String compString = mController.getSettingsManager().get(
+                    SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
+            int comp = Integer.parseInt(compString);
+            // Turn on the appropriate indicator.
+            // Each integer compensation represent 1/6 of a stop.
+            switch (comp / 6) {
+                case -2:
+                    changeVisibility(mExposureIndicatorN2, View.VISIBLE);
+                    break;
+                case -1:
+                    changeVisibility(mExposureIndicatorN1, View.VISIBLE);
+                    break;
+                case 0:
+                    // Do nothing.
+                    break;
+                case 1:
+                    changeVisibility(mExposureIndicatorP1, View.VISIBLE);
+                    break;
+                case 2:
+                    changeVisibility(mExposureIndicatorP2, View.VISIBLE);
+            }
+        }
+    }
+
     /**
      * Sets the image resource and visibility of the indicator
      * based on the indicator's corresponding setting state.
@@ -263,6 +322,12 @@ public class IndicatorIconController
             }
             case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
                 syncPanoIndicator();
+                break;
+            }
+            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED:
+                // Fall through to the next case.
+            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE: {
+                syncExposureIndicator();
                 break;
             }
             default: {

@@ -28,43 +28,90 @@
         android:layout_gravity="right"
         android:visibility="invisible"
         android:background="#00000000" >
-        <com.android.camera.ui.TopRightWeightedLayout
-            android:id="@+id/mode_options_buttons"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_gravity="top"
-            android:visibility="visible"
-            android:background="@null"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:alpha="0.0" >
-            <com.android.camera.MultiToggleImageButton
-                android:id="@+id/camera_toggle_button"
-                style="@style/ModeOption"
-                camera:imageIds="@array/camera_id_icons"
-                camera:contentDescriptionIds="@array/camera_id_descriptions" />
-            <com.android.camera.MultiToggleImageButton
-                android:id="@+id/flash_toggle_button"
-                style="@style/ModeOption"
-                camera:imageIds="@array/camera_flashmode_icons"
-                camera:contentDescriptionIds="@array/camera_flash_descriptions" />
-            <com.android.camera.MultiToggleImageButton
-                android:id="@+id/hdr_plus_toggle_button"
-                style="@style/ModeOption"
-                camera:imageIds="@array/pref_camera_hdr_plus_icons"
-                camera:contentDescriptionIds="@array/hdr_plus_descriptions" />
-            <com.android.camera.MultiToggleImageButton
-                android:id="@+id/grid_lines_toggle_button"
-                style="@style/ModeOption"
-                camera:imageIds="@array/grid_lines_icons"
-                camera:contentDescriptionIds="@array/grid_lines_descriptions" />
-            <!-- pano image ids and descriptions are added at runtime -->
-            <com.android.camera.MultiToggleImageButton
-                android:id="@+id/pano_orientation_toggle_button"
-                style="@style/ModeOption" />
-        </com.android.camera.ui.TopRightWeightedLayout>
+            android:layout_height="match_parent" >
+
+            <com.android.camera.ui.TopRightWeightedLayout
+                android:id="@+id/mode_options_exposure"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="right"
+                android:background="@null"
+                android:visibility="invisible" >
+
+                <ImageButton
+                    android:id="@+id/exposure_n2"
+                    style="@style/ModeOption"
+                    android:background="@null"
+                    android:src="@drawable/ic_exposure_n2" />
+                <ImageButton
+                    android:id="@+id/exposure_n1"
+                    style="@style/ModeOption"
+                    android:background="@null"
+                    android:src="@drawable/ic_exposure_n1" />
+                <ImageButton
+                    android:id="@+id/exposure_0"
+                    style="@style/ModeOption"
+                    android:background="@null"
+                    android:src="@drawable/ic_exposure_0" />
+                <ImageButton
+                    android:id="@+id/exposure_p1"
+                    style="@style/ModeOption"
+                    android:background="@null"
+                    android:src="@drawable/ic_exposure_p1" />
+                <ImageButton
+                    android:id="@+id/exposure_p2"
+                    style="@style/ModeOption"
+                    android:background="@null"
+                    android:src="@drawable/ic_exposure_p2" />
+            </com.android.camera.ui.TopRightWeightedLayout>
+
+            <com.android.camera.ui.TopRightWeightedLayout
+                android:id="@+id/mode_options_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="top"
+                android:visibility="visible"
+                android:background="@null"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:alpha="0.0" >
+                <com.android.camera.MultiToggleImageButton
+                    android:id="@+id/camera_toggle_button"
+                    style="@style/ModeOption"
+                    camera:imageIds="@array/camera_id_icons"
+                    camera:contentDescriptionIds="@array/camera_id_descriptions" />
+                <com.android.camera.MultiToggleImageButton
+                    android:id="@+id/flash_toggle_button"
+                    style="@style/ModeOption"
+                    camera:imageIds="@array/camera_flashmode_icons"
+                    camera:contentDescriptionIds="@array/camera_flash_descriptions" />
+                <com.android.camera.MultiToggleImageButton
+                    android:id="@+id/hdr_plus_toggle_button"
+                    style="@style/ModeOption"
+                    camera:imageIds="@array/pref_camera_hdr_plus_icons"
+                    camera:contentDescriptionIds="@array/hdr_plus_descriptions" />
+                <com.android.camera.MultiToggleImageButton
+                    android:id="@+id/grid_lines_toggle_button"
+                    style="@style/ModeOption"
+                    camera:imageIds="@array/grid_lines_icons"
+                    camera:contentDescriptionIds="@array/grid_lines_descriptions" />
+                <!-- pano image ids and descriptions are added at runtime -->
+                <com.android.camera.MultiToggleImageButton
+                    android:id="@+id/pano_orientation_toggle_button"
+                    style="@style/ModeOption" />
+                <ImageButton
+                    android:id="@+id/exposure_button"
+                    style="@style/ModeOption"
+                    android:background="@null"
+                    android:src="@drawable/ic_exposure" />
+            </com.android.camera.ui.TopRightWeightedLayout>
+        </FrameLayout>
     </com.android.camera.widget.ModeOptions>
 
     <include layout="@layout/indicators" />
