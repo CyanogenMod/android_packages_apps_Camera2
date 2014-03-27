@@ -2113,6 +2113,24 @@ public class VideoModule implements CameraModule,
              mParameters.setVideoHDRMode(videoHDR);
         } else
              mParameters.setVideoHDRMode("off");
+
+        //HFR recording not supported for DIS and/ TimeLapse option
+        String hfr = mParameters.getVideoHighFrameRate();
+        if ((hfr != null) && (!hfr.equals("off"))) {
+             // Read time lapse recording interval.
+             String frameIntervalStr = mPreferences.getString(
+                    CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
+                    mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
+             int timeLapseInterval = Integer.parseInt(frameIntervalStr);
+             if ((timeLapseInterval != 0) || (disMode.equals("enable")) ) {
+                Log.v(TAG,"DIS/Time Lapse ON for HFR selection, turning HFR off");
+                Toast.makeText(mActivity, R.string.error_app_unsupported_hfr_selection,
+                          Toast.LENGTH_LONG).show();
+                mParameters.setVideoHighFrameRate("off");
+                mUI.overrideSettings(CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,"disable");
+                mUI.initializePopup(mPreferenceGroup);
+             }
+        }
     }
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
