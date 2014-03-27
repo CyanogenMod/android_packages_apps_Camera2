@@ -350,11 +350,8 @@ public class SettingsManager {
     public static final int SETTING_FOCUS_MODE = 7;
     public static final int SETTING_FLASH_MODE = 8;
     public static final int SETTING_VIDEOCAMERA_FLASH_MODE = 9;
-    public static final int SETTING_WHITE_BALANCE = 10;
     public static final int SETTING_SCENE_MODE = 11;
     public static final int SETTING_EXPOSURE = 12;
-    public static final int SETTING_TIMER = 13;
-    public static final int SETTING_TIMER_SOUND_EFFECTS = 14;
     public static final int SETTING_VIDEO_EFFECT = 15;
     public static final int SETTING_CAMERA_ID = 16;
     public static final int SETTING_CAMERA_HDR = 17;
@@ -385,11 +382,8 @@ public class SettingsManager {
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
     public static final String KEY_FLASH_MODE = "pref_camera_flashmode_key";
     public static final String KEY_VIDEOCAMERA_FLASH_MODE = "pref_camera_video_flashmode_key";
-    public static final String KEY_WHITE_BALANCE = "pref_camera_whitebalance_key";
     public static final String KEY_SCENE_MODE = "pref_camera_scenemode_key";
     public static final String KEY_EXPOSURE = "pref_camera_exposure_key";
-    public static final String KEY_TIMER = "pref_camera_timer_key";
-    public static final String KEY_TIMER_SOUND_EFFECTS = "pref_camera_timer_sound_key";
     public static final String KEY_VIDEO_EFFECT = "pref_video_effect_key";
     public static final String KEY_CAMERA_ID = "pref_camera_id_key";
     public static final String KEY_CAMERA_HDR = "pref_camera_hdr_key";
@@ -957,14 +951,6 @@ public class SettingsManager {
                 values, FLUSH_ON);
     }
 
-    public static Setting getWhiteBalanceSetting(Context context) {
-        String defaultValue = context.getString(R.string.pref_camera_whitebalance_default);
-        String[] values = context.getResources().getStringArray(
-                R.array.pref_camera_whitebalance_entryvalues);
-        return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_WHITE_BALANCE,
-                values, FLUSH_OFF);
-    }
-
     public static Setting getHdrSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_hdr_default);
         String[] values = context.getResources().getStringArray(
@@ -1020,21 +1006,6 @@ public class SettingsManager {
         String[] values = context.getResources().getStringArray(
                 R.array.pref_camera_focusmode_entryvalues);
         return new Setting(SOURCE_CAMERA, TYPE_STRING, defaultValue, KEY_FOCUS_MODE,
-                values, FLUSH_OFF);
-    }
-
-    public static Setting getTimerSetting(Context context) {
-        String defaultValue = context.getString(R.string.pref_camera_timer_default);
-        String[] values = null; // TODO: get the values dynamically.
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_TIMER,
-                values, FLUSH_OFF);
-    }
-
-    public static Setting getTimerSoundSetting(Context context) {
-        String defaultValue = context.getString(R.string.pref_camera_timer_sound_default);
-        String[] values = context.getResources().getStringArray(
-                R.array.pref_camera_timer_sound_entryvalues);
-        return new Setting(SOURCE_GLOBAL, TYPE_STRING, defaultValue, KEY_TIMER_SOUND_EFFECTS,
                 values, FLUSH_OFF);
     }
 
@@ -1163,6 +1134,14 @@ public class SettingsManager {
      * Returns whether hdr plus mode is set on.
      */
     public boolean isHdrPlusOn() {
+        String hdrOn = get(SettingsManager.SETTING_CAMERA_HDR_PLUS);
+        return hdrOn.equals(SettingsManager.VALUE_ON);
+    }
+
+    /**
+     * Returns whether hdr mode is set on.
+     */
+    public boolean isHdrOn() {
         String hdrOn = get(SettingsManager.SETTING_CAMERA_HDR);
         return hdrOn.equals(SettingsManager.VALUE_ON);
     }
