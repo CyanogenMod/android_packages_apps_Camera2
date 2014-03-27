@@ -13,5 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:contentDescription="@string/video_control_play"
         android:src="@drawable/ic_control_play" />
 </FrameLayout>

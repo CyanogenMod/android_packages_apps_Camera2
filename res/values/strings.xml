@@ -529,10 +529,18 @@ CHAR LIMIT=NONE] -->
     <!-- Description for the lock icon in Secure Camera filmstrip that when clicked, brings user to lock screen then full Camera [CHAR LIMIT=NONE] -->
     <string name="accessibility_unlock_to_camera">Unlock to Camera</string>
 
+    <!-- Content description for media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <string name="media_date_content_description">Media from %s</string>
+    <!-- Content description for media items in filmstrip which are still in the middle of processing [CHAR LIMIT=NONE] -->
+    <string name="media_processing_content_description">Media processing</string>
+
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_off">OFF</string>
+
+    <!-- Describes button on top of a video in filmstrip that is a play icon, pressing starts external video player [CHAR LIMIT=NONE] -->
+    <string name="video_control_play">Play Video</string>
 
     <!-- Text to indicate time lapse recording frame interval [CHAR LIMIT=30] -->
     <string name="pref_video_time_lapse_frame_interval_off">Off</string>

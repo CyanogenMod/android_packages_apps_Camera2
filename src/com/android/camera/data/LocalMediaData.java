@@ -213,6 +213,10 @@ public abstract class LocalMediaData implements LocalData {
                 .placeholder(placeHolderResourceId)
                 .into(target);
 
+        v.setContentDescription(context.getResources().getString(
+                R.string.media_date_content_description,
+                getReadableDate(mDateModifiedInSeconds)));
+
         return v;
     }
 
@@ -274,14 +278,13 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public MediaDetails getMediaDetails(Context context) {
-        DateFormat dateFormatter = DateFormat.getDateTimeInstance();
         MediaDetails mediaDetails = new MediaDetails();
         mediaDetails.addDetail(MediaDetails.INDEX_TITLE, mTitle);
         mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, mWidth);
         mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, mHeight);
         mediaDetails.addDetail(MediaDetails.INDEX_PATH, mPath);
         mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
-                dateFormatter.format(new Date(mDateModifiedInSeconds * 1000)));
+                getReadableDate(mDateModifiedInSeconds));
         if (mSizeInBytes > 0) {
             mediaDetails.addDetail(MediaDetails.INDEX_SIZE, mSizeInBytes);
         }
@@ -291,6 +294,11 @@ public abstract class LocalMediaData implements LocalData {
             mediaDetails.addDetail(MediaDetails.INDEX_LOCATION, locationString);
         }
         return mediaDetails;
+    }
+
+    private String getReadableDate(long dateInSeconds) {
+        DateFormat dateFormatter = DateFormat.getDateTimeInstance();
+        return dateFormatter.format(new Date(dateInSeconds * 1000));
     }
 
     @Override
