@@ -1527,8 +1527,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         /** Standard mode options */
         if (hardwareSpec.isFrontCameraSupported()) {
             if (bottomBarSpec.enableCamera) {
-                buttonManager.enableButton(ButtonManager.BUTTON_CAMERA,
-                    bottomBarSpec.cameraCallback);
+                buttonManager.initializeButton(ButtonManager.BUTTON_CAMERA,
+                        bottomBarSpec.cameraCallback);
             } else {
                 buttonManager.disableButton(ButtonManager.BUTTON_CAMERA);
             }
@@ -1544,9 +1544,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         } else {
             if (hardwareSpec.isFlashSupported()) {
                 if (bottomBarSpec.enableFlash) {
-                    buttonManager.enableButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
+                    buttonManager.initializeButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
                 } else if (bottomBarSpec.enableTorchFlash) {
-                    buttonManager.enableButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
+                    buttonManager.initializeButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
                 }
@@ -1562,15 +1562,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         } else {
             if (hardwareSpec.isHdrPlusSupported()) {
                 if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
-                    buttonManager.enableButton(ButtonManager.BUTTON_HDRPLUS,
-                        bottomBarSpec.hdrCallback);
+                    buttonManager.initializeButton(ButtonManager.BUTTON_HDRPLUS,
+                            bottomBarSpec.hdrCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_HDRPLUS);
                 }
             } else if (hardwareSpec.isHdrSupported()) {
                 if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
-                    buttonManager.enableButton(ButtonManager.BUTTON_HDR,
-                        bottomBarSpec.hdrCallback);
+                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
+                            bottomBarSpec.hdrCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_HDR);
                 }
@@ -1586,9 +1586,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             hideGridLines();
         } else {
             if (bottomBarSpec.enableGridLines) {
-                buttonManager.enableButton(ButtonManager.BUTTON_GRID_LINES,
-                    bottomBarSpec.gridLinesCallback != null ?
-                    bottomBarSpec.gridLinesCallback : getGridLinesCallback());
+                buttonManager.initializeButton(ButtonManager.BUTTON_GRID_LINES,
+                        bottomBarSpec.gridLinesCallback != null ?
+                                bottomBarSpec.gridLinesCallback : getGridLinesCallback()
+                );
             } else {
                 buttonManager.disableButton(ButtonManager.BUTTON_GRID_LINES);
                 hideGridLines();
@@ -1597,7 +1598,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         if (bottomBarSpec.enablePanoOrientation
                 && PhotoSphereHelper.getPanoramaOrientationOptionArrayId() > 0) {
-            buttonManager.enableButton(ButtonManager.BUTTON_PANO_ORIENTATION,
+            buttonManager.initializeButton(ButtonManager.BUTTON_PANO_ORIENTATION,
                     bottomBarSpec.panoOrientationCallback);
         } else {
             buttonManager.hideButton(ButtonManager.BUTTON_PANO_ORIENTATION);
@@ -1605,21 +1606,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         /** Intent UI */
         if (bottomBarSpec.showCancel) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_CANCEL,
-                bottomBarSpec.cancelCallback);
+            buttonManager.initializePushButton(ButtonManager.BUTTON_CANCEL,
+                    bottomBarSpec.cancelCallback);
         }
         if (bottomBarSpec.showDone) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_DONE,
-                bottomBarSpec.doneCallback);
+            buttonManager.initializePushButton(ButtonManager.BUTTON_DONE,
+                    bottomBarSpec.doneCallback);
         }
         if (bottomBarSpec.showRetake) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_RETAKE,
-                bottomBarSpec.retakeCallback);
+            buttonManager.initializePushButton(ButtonManager.BUTTON_RETAKE,
+                    bottomBarSpec.retakeCallback);
         }
         if (bottomBarSpec.showReview) {
-            buttonManager.enablePushButton(ButtonManager.BUTTON_REVIEW,
-               bottomBarSpec.reviewCallback,
-               R.drawable.ic_play);
+            buttonManager.initializePushButton(ButtonManager.BUTTON_REVIEW,
+                    bottomBarSpec.reviewCallback,
+                    R.drawable.ic_play);
         }
     }
 

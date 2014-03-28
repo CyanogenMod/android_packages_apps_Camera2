@@ -105,12 +105,8 @@ public class SettingsCache {
         mKeyMap.put(SettingsManager.KEY_FLASH_MODE, SettingsManager.SETTING_FLASH_MODE);
         mKeyMap.put(SettingsManager.KEY_VIDEOCAMERA_FLASH_MODE,
                 SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
-        mKeyMap.put(SettingsManager.KEY_WHITE_BALANCE, SettingsManager.SETTING_WHITE_BALANCE);
         mKeyMap.put(SettingsManager.KEY_SCENE_MODE, SettingsManager.SETTING_SCENE_MODE);
         mKeyMap.put(SettingsManager.KEY_EXPOSURE, SettingsManager.SETTING_EXPOSURE);
-        mKeyMap.put(SettingsManager.KEY_TIMER, SettingsManager.SETTING_TIMER);
-        mKeyMap.put(SettingsManager.KEY_TIMER_SOUND_EFFECTS,
-                SettingsManager.SETTING_TIMER_SOUND_EFFECTS);
         mKeyMap.put(SettingsManager.KEY_VIDEO_EFFECT, SettingsManager.SETTING_VIDEO_EFFECT);
         mKeyMap.put(SettingsManager.KEY_CAMERA_ID, SettingsManager.SETTING_CAMERA_ID);
         mKeyMap.put(SettingsManager.KEY_CAMERA_HDR, SettingsManager.SETTING_CAMERA_HDR);
@@ -185,16 +181,10 @@ public class SettingsCache {
                 return SettingsManager.getFlashSetting(mContext);
             case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE:
                 return SettingsManager.getVideoFlashSetting(mContext);
-            case SettingsManager.SETTING_WHITE_BALANCE:
-                return SettingsManager.getWhiteBalanceSetting(mContext);
             case SettingsManager.SETTING_SCENE_MODE:
                 return SettingsManager.getSceneModeSetting(mContext);
             case SettingsManager.SETTING_EXPOSURE:
                 return SettingsManager.getExposureSetting(mContext, mCapabilities);
-            case SettingsManager.SETTING_TIMER:
-                return SettingsManager.getTimerSetting(mContext);
-            case SettingsManager.SETTING_TIMER_SOUND_EFFECTS:
-                return SettingsManager.getTimerSoundSetting(mContext);
             case SettingsManager.SETTING_VIDEO_EFFECT:
                 return SettingsManager.getVideoEffectSetting(mContext);
             case SettingsManager.SETTING_CAMERA_ID:

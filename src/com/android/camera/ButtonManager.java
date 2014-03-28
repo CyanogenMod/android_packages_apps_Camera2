@@ -166,9 +166,14 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 button = getButtonOrError(BUTTON_CAMERA);
                 break;
             }
-            case SettingsManager.SETTING_CAMERA_HDR: {
+            case SettingsManager.SETTING_CAMERA_HDR_PLUS: {
                 index = mSettingsManager.getStringValueIndex(id);
                 button = getButtonOrError(BUTTON_HDRPLUS);
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_HDR: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_HDR);
                 break;
             }
             case SettingsManager.SETTING_CAMERA_GRID_LINES: {
@@ -283,59 +288,47 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Enable a known button by id, with a state change callback and
-     * a resource id that points to an array of drawables.
+     * Initialize a known button by id, with a state change callback and
+     * a resource id that points to an array of drawables, and then enable
+     * the button.
      */
-    public void enableButton(int buttonId, ButtonCallback cb) {
+    public void initializeButton(int buttonId, ButtonCallback cb) {
         MultiToggleImageButton button = getButtonOrError(buttonId);
         switch (buttonId) {
             case BUTTON_FLASH:
-                enableFlashButton(button, cb, R.array.camera_flashmode_icons);
+                initializeFlashButton(button, cb, R.array.camera_flashmode_icons);
                 break;
             case BUTTON_TORCH:
-                enableTorchButton(button, cb, R.array.video_flashmode_icons);
+                initializeTorchButton(button, cb, R.array.video_flashmode_icons);
                 break;
             case BUTTON_CAMERA:
-                enableCameraButton(button, cb, R.array.camera_id_icons);
+                initializeCameraButton(button, cb, R.array.camera_id_icons);
                 break;
             case BUTTON_HDRPLUS:
-                enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
+                initializeHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
                 break;
             case BUTTON_HDR:
-                enableHdrPlusButton(button, cb, R.array.pref_camera_hdr_icons);
+                initializeHdrButton(button, cb, R.array.pref_camera_hdr_icons);
                 break;
             case BUTTON_GRID_LINES:
-                enableGridLinesButton(button, cb, R.array.grid_lines_icons);
+                initializeGridLinesButton(button, cb, R.array.grid_lines_icons);
                 break;
             case BUTTON_PANO_ORIENTATION:
-                enablePanoOrientationButton(button, cb,
-                    PhotoSphereHelper.getPanoramaOrientationOptionArrayId());
+                initializePanoOrientationButton(button, cb,
+                        PhotoSphereHelper.getPanoramaOrientationOptionArrayId());
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
 
-        if (!button.isEnabled()) {
-            button.setEnabled(true);
-            if (mListener != null) {
-                mListener.onButtonEnabledChanged(this, buttonId);
-            }
-        }
-        button.setTag(R.string.tag_enabled_id, (Integer) buttonId);
-
-        if (button.getVisibility() != View.VISIBLE) {
-            button.setVisibility(View.VISIBLE);
-            if (mListener != null) {
-                mListener.onButtonVisibilityChanged(this, buttonId);
-            }
-        }
+        enableButton(buttonId);
     }
 
     /**
-     * Enable a known button with a click listener and a resource id.
+     * Initialize a known button with a click listener and a resource id.
      * Sets the button visible.
      */
-    public void enablePushButton(int buttonId, View.OnClickListener cb,
+    public void initializePushButton(int buttonId, View.OnClickListener cb,
             int imageId) {
         ImageButton button = getImageButtonOrError(buttonId);
         button.setOnClickListener(cb);
@@ -358,9 +351,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Enable a known button with a click listener. Sets the button visible.
+     * Initialize a known button with a click listener. Sets the button visible.
      */
-    public void enablePushButton(int buttonId, View.OnClickListener cb) {
+    public void initializePushButton(int buttonId, View.OnClickListener cb) {
         ImageButton button = getImageButtonOrError(buttonId);
         button.setOnClickListener(cb);
 
@@ -392,6 +385,27 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
         }
         button.setTag(R.string.tag_enabled_id, null);
+
+        if (button.getVisibility() != View.VISIBLE) {
+            button.setVisibility(View.VISIBLE);
+            if (mListener != null) {
+                mListener.onButtonVisibilityChanged(this, buttonId);
+            }
+        }
+    }
+
+    /**
+     * Enables a button that has already been initialized.
+     */
+    public void enableButton(int buttonId) {
+        ImageButton button = getButtonOrError(buttonId);
+        if (!button.isEnabled()) {
+            button.setEnabled(true);
+            if (mListener != null) {
+                mListener.onButtonEnabledChanged(this, buttonId);
+            }
+        }
+        button.setTag(R.string.tag_enabled_id, buttonId);
 
         if (button.getVisibility() != View.VISIBLE) {
             button.setVisibility(View.VISIBLE);
@@ -452,9 +466,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Enable a flash button.
+     * Initialize a flash button.
      */
-    private void enableFlashButton(MultiToggleImageButton button,
+    private void initializeFlashButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
@@ -477,9 +491,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Enable video torch button
+     * Initialize video torch button
      */
-    private void enableTorchButton(MultiToggleImageButton button,
+    private void initializeTorchButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
@@ -504,9 +518,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Enable a camera button.
+     * Initialize a camera button.
      */
-    private void enableCameraButton(final MultiToggleImageButton button,
+    private void initializeCameraButton(final MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
@@ -536,9 +550,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Enable an hdr plus button.
+     * Initialize an hdr plus button.
      */
-    private void enableHdrPlusButton(MultiToggleImageButton button,
+    private void initializeHdrPlusButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
@@ -546,13 +560,13 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.hdr_plus_descriptions);
 
-        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
+        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR_PLUS);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
+                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR_PLUS, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -560,10 +574,50 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         });
     }
 
-   /**
-     * Enable a grid lines button.
+    /**
+     * Initialize an hdr button.
      */
-    private void enableGridLinesButton(MultiToggleImageButton button,
+    private void initializeHdrButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+        button.overrideContentDescriptions(R.array.hdr_descriptions);
+
+        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
+        button.setState(index >= 0 ? index : 0, false);
+        updateFlashButton();
+
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
+                if (cb != null) {
+                    cb.onStateChanged(state);
+                    updateFlashButton();
+                }
+            }
+        });
+    }
+
+
+    /**
+     * Flash button will be disabled (i.e. greyed out) when HDR is on.
+     */
+    private void updateFlashButton() {
+        if (mSettingsManager.isHdrOn()) {
+            disableButton(BUTTON_FLASH);
+        } else {
+            enableButton(BUTTON_FLASH);
+        }
+    }
+
+
+    /**
+     * Initialize a grid lines button.
+     */
+    private void initializeGridLinesButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {
@@ -587,9 +641,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
    /**
-     * Enable a panorama orientation button.
+     * Initialize a panorama orientation button.
      */
-    private void enablePanoOrientationButton(MultiToggleImageButton button,
+    private void initializePanoOrientationButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {

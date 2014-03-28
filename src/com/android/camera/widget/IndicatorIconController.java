@@ -198,7 +198,7 @@ public class IndicatorIconController
         if (buttonManager.isEnabled(ButtonManager.BUTTON_HDRPLUS)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDRPLUS)) {
             setIndicatorState(mController.getSettingsManager(),
-                              SettingsManager.SETTING_CAMERA_HDR,
+                              SettingsManager.SETTING_CAMERA_HDR_PLUS,
                               mHdrIndicator, mHdrPlusIndicatorIcons, false);
         } else if (buttonManager.isEnabled(ButtonManager.BUTTON_HDR)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDR)) {
@@ -272,6 +272,10 @@ public class IndicatorIconController
             }
             case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE: {
                 syncFlashIndicator();
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_HDR_PLUS: {
+                syncHdrIndicator();
                 break;
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
