@@ -531,6 +531,12 @@ public class PhotoModule
     };
 
     @Override
+    public void hardResetSettings(SettingsManager settingsManager) {
+        // PhotoModule should hard reset HDR+ to off.
+        settingsManager.set(SettingsManager.SETTING_CAMERA_HDR_PLUS, SettingsManager.VALUE_OFF);
+    }
+
+    @Override
     public HardwareSpec getHardwareSpec() {
         return (mParameters != null ? new HardwareSpecImpl(mParameters) : null);
     }

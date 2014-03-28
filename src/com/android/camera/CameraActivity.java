@@ -1517,6 +1517,8 @@ public class CameraActivity extends Activity
         mPeekAnimationThread = new HandlerThread("Peek animation");
         mPeekAnimationThread.start();
         mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper());
+
+        mCurrentModule.hardResetSettings(mSettingsManager);
         mCurrentModule.resume();
         setSwipingEnabled(true);
 
@@ -1804,9 +1806,7 @@ public class CameraActivity extends Activity
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera
         // starts up.
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(mAppContext);
-        prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, modeIndex).apply();
+        mSettingsManager.setInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX, modeIndex);
     }
 
     /**
@@ -1941,6 +1941,7 @@ public class CameraActivity extends Activity
 
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
+        module.hardResetSettings(mSettingsManager);
         module.resume();
         updatePreviewVisibility();
     }

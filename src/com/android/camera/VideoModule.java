@@ -519,6 +519,11 @@ public class VideoModule extends CameraModule
     };
 
     @Override
+    public void hardResetSettings(SettingsManager settingsManager) {
+        // VideoModule does not need to hard reset any settings.
+    }
+
+    @Override
     public HardwareSpec getHardwareSpec() {
         return (mParameters != null ? new HardwareSpecImpl(mParameters) : null);
     }

@@ -21,6 +21,7 @@ import com.android.camera.ShutterButton;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.CameraManager;
 import com.android.camera.hardware.HardwareSpec;
+import com.android.camera.settings.SettingsManager;
 
 /**
  * The controller at app level.
@@ -104,6 +105,12 @@ public interface ModuleController extends ShutterButton.OnShutterButtonListener 
      * @param cameraProxy The camera device proxy.
      */
     public void onCameraAvailable(CameraManager.CameraProxy cameraProxy);
+
+    /**
+     * Called by the app on startup or module switches, this allows the module
+     * to perform a hard reset on specific settings.
+     */
+    public void hardResetSettings(SettingsManager settingsManager);
 
     /**
      * Returns a {@link com.android.camera.hardware.HardwareSpec}
