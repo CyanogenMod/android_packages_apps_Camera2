@@ -120,11 +120,6 @@ public class ProcessingService extends Service implements ProgressListener {
     @Override
     public void onDestroy() {
         Log.d(TAG, "Shutting down");
-
-        // Tell the manager that we're shutting down, so in case new tasks are
-        // enqueued, we a new service needs to be started.
-        mProcessingServiceManager.notifyServiceFinished();
-
         // TODO: Cancel session in progress...
 
         // Unlock the power manager, i.e. let power management kick in if

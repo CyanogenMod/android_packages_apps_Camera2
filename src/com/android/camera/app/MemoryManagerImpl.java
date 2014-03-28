@@ -33,6 +33,11 @@ import java.util.LinkedList;
  */
 public class MemoryManagerImpl implements MemoryManager, QueueListener, ComponentCallbacks2 {
     private static final Log.Tag TAG = new Log.Tag("MemoryManagerImpl");
+    /**
+     * Let's signal only 70% of max memory is allowed to be used by native code
+     * to allow a buffer for special captures.
+     */
+    private static final float MAX_MEM_ALLOWED = 0.70f;
 
     private static final int[] sCriticalStates = new int[] {
             ComponentCallbacks2.TRIM_MEMORY_COMPLETE,
@@ -129,7 +134,8 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
         // This is defined as the maximum memory allowed to be used by the
         // Dalvik heap, but it's safe to assume the app can use the same amount
         // once more in native code.
-        return Math.max(activityManager.getMemoryClass(), activityManager.getLargeMemoryClass());
+        return (int) (Math.max(activityManager.getMemoryClass(),
+                activityManager.getLargeMemoryClass()) * MAX_MEM_ALLOWED);
     }
 
     /** Notify our listener that memory is running low. */
