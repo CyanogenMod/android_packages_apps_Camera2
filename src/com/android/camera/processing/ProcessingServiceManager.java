@@ -22,7 +22,6 @@ import android.content.Intent;
 import com.android.camera.debug.Log;
 
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 /**
  * Manages a queue of processing tasks as well as the processing service
@@ -45,6 +44,9 @@ public class ProcessingServiceManager {
 
     /** Whether a processing service is currently running. */
     private volatile boolean mServiceRunning = false;
+
+    /** Can be set to prevent tasks from being processed until released.*/
+    private boolean mHoldProcessing = false;
 
     /**
      * Initializes the singleton instance.
@@ -81,40 +83,77 @@ public class ProcessingServiceManager {
         mQueue.add(task);
         Log.d(TAG, "Task added. Queue size now: " + mQueue.size());
 
-        if (!mServiceRunning) {
-            // Starts the service which will then work through the queue. Once
-            // the queue is empty (#popNextSession() returns null), the task
-            // will kill itself automatically and call #stitchingFinished().
-            mAppContext.startService(new Intent(mAppContext, ProcessingService.class));
+        if (!mServiceRunning && !mHoldProcessing) {
+            startService();
         }
-        mServiceRunning = true;
     }
 
     /**
      * Remove the next task from the queue and return it.
      *
-     * @return The next Task or <code>null</code>, of no more tasks are in the
-     *         queue.
+     * @return The next Task or <code>null</code>, if no more tasks are in the
+     *         queue or we have a processing hold. If null is returned the
+     *         service is has to shut down as a new service is started if either
+     *         new items enter the queue or the processing is resumed.
      */
     public synchronized ProcessingTask popNextSession() {
-        try {
+        if (!mQueue.isEmpty() && !mHoldProcessing) {
+            Log.d(TAG, "Popping a session. Remaining: " + (mQueue.size() - 1));
             return mQueue.remove();
-        } catch (NoSuchElementException e) {
+        } else {
+            Log.d(TAG, "Popping null. On hold? " + mHoldProcessing);
+            mServiceRunning = false;
+            // Returning null will shut-down the service.
             return null;
         }
     }
 
     /**
-     * @return Whether the service is currently running.
+     * @return Whether the service has queued items or is running.
      */
-    public synchronized boolean isServiceRunning() {
-        return mServiceRunning;
+    public synchronized boolean isRunningOrHasItems() {
+        return mServiceRunning || !mQueue.isEmpty();
     }
 
     /**
-     * Called by the processing service, notifying us that it has finished.
+     * If the queue is currently empty, processing is suspended for new incoming
+     * items until the hold is released.
+     * <p>
+     * If items are in the queue, processing cannot be suspended.
+     *
+     * @return Whether processing was suspended.
      */
-    public synchronized void notifyServiceFinished() {
-        this.mServiceRunning = false;
+    public synchronized boolean suspendProcessing() {
+        if (!isRunningOrHasItems()) {
+            Log.d(TAG, "Suspend processing");
+            mHoldProcessing = true;
+            return true;
+        } else {
+          Log.d(TAG, "Not able to suspend processing.");
+          return false;
+        }
+    }
+
+    /**
+     * Releases an existing hold.
+     */
+    public synchronized void resumeProcessing() {
+        Log.d(TAG, "Resume processing. Queue size: " + mQueue.size());
+        if (mHoldProcessing) {
+          mHoldProcessing = false;
+            if (!mQueue.isEmpty()) {
+                startService();
+            }
+        }
+    }
+
+    /**
+     * Starts the service which will then work through the queue. Once the queue
+     * is empty {@link #popNextSession()} returns null), the task will kill
+     * itself automatically and call #stitchingFinished().
+     */
+    private void startService() {
+        mAppContext.startService(new Intent(mAppContext, ProcessingService.class));
+        mServiceRunning = true;
     }
 }

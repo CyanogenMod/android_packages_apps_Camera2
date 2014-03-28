@@ -898,7 +898,6 @@ public abstract class LocalMediaData implements LocalData {
             BitmapDrawable d = new BitmapDrawable(mContext.getResources(), bitmap);
             mView.setScaleType(ImageView.ScaleType.FIT_XY);
             mView.setImageDrawable(d);
-            Log.v(TAG, "Created bitmap: " + bitmap.getWidth() + " x " + bitmap.getHeight());
         }
     }
 
