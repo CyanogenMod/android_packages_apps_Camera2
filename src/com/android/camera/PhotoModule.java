@@ -60,6 +60,7 @@ import android.widget.TextView;
 
 import com.android.camera.CameraManager.CameraAFCallback;
 import com.android.camera.CameraManager.CameraAFMoveCallback;
+import com.android.camera.CameraManager.CameraMetadataCallback;
 import com.android.camera.CameraManager.CameraPictureCallback;
 import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.CameraManager.CameraShutterCallback;
@@ -85,6 +86,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
+
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -134,6 +136,7 @@ public class PhotoModule
     private static final int SWITCH_TO_GCAM_MODULE = 13;
     private static final int CONFIGURE_SKIN_TONE_FACTOR = 14;
     private static final int UPDATE_ASD_ICON = 16;
+    private static final int CLEAR_ASD_ICON = 17;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -268,6 +271,8 @@ public class PhotoModule
     private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
     private final StatsCallback mStatsCallback = new StatsCallback();
 
+    private final ASDMetadataCallback mASDCallback = new ASDMetadataCallback();
+
     private long mFocusStartTime;
     private long mShutterCallbackTime;
     private long mPostViewPictureCallbackTime;
@@ -300,6 +305,7 @@ public class PhotoModule
     private boolean mQuickCapture;
 
     private boolean mSceneDetection = false;
+    private String[] mASDModes;
 
     private SensorManager mSensorManager;
     private float[] mGData = new float[3];
@@ -461,6 +467,10 @@ public class PhotoModule
                     mHandler.sendEmptyMessageDelayed(UPDATE_ASD_ICON, 2000);
                     break;
                 }
+                case CLEAR_ASD_ICON: {
+                    mUI.updateSceneDetectionIcon(null);
+                    break;
+                }
             }
         }
     }
@@ -507,6 +517,7 @@ public class PhotoModule
         RightValue = (TextView)mRootView.findViewById(R.id.skintoneright);
         LeftValue = (TextView)mRootView.findViewById(R.id.skintoneleft);
 
+        mASDModes = mActivity.getResources().getStringArray(R.array.asdModes);
     }
 
     private void initializeControlByIntent() {
@@ -803,6 +814,28 @@ public class PhotoModule
         }
     }
 
+    private final class ASDMetadataCallback implements CameraMetadataCallback {
+        @Override
+        public void onCameraMetadata(byte[] data, CameraProxy camera) {
+            if (!mSceneDetection)
+                return;
+
+            if (data != null && data.length >= 8) {
+                int type = CameraUtil.byteArrayToInt(data, 0);
+                switch (type) {
+                    case CameraSettings.META_DATA_ASD:
+                        // ASD result is just a 32-bit integer
+                        if (data.length >= 12) {
+                            int asdMode = CameraUtil.byteArrayToInt(data, 8);
+                            if (asdMode < mASDModes.length) {
+                                Log.d(TAG, "ASD: value=" + asdMode + " asdMode=" + mASDModes[asdMode]);
+                                mUI.updateSceneDetectionIcon(mASDModes[asdMode]);
+                            }
+                        }
+                }
+            }
+        }
+    }
     private final class LongshotShutterCallback
             implements CameraShutterCallback {
 
@@ -1018,8 +1051,9 @@ public class PhotoModule
             }else if ((mReceivedSnapNum == mBurstSnapNum)
                         && (mCameraState != LONGSHOT)) {
                 mFocusManager.restartTouchFocusTimer();
-                if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
-                        mFocusManager.getFocusMode())) {
+                if ((CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
+                        mFocusManager.getFocusMode())) && (CameraUtil.cancelAutoFocusOnPreviewStopped()
+                        || mCameraState != PREVIEW_STOPPED)) {
                     mCameraDevice.cancelAutoFocus();
                 }
                 mUI.resumeFaceDetection();
@@ -1127,7 +1161,8 @@ public class PhotoModule
                     }
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
-                if (!mBurstShotInProgress && mCameraState != LONGSHOT) {
+                if (!mBurstShotInProgress && mCameraState != LONGSHOT
+                        && (mReceivedSnapNum == mBurstSnapNum)) {
                     mUI.animateCapture(jpegData, orientation, mMirror);
                 }
             } else {
@@ -1310,7 +1345,8 @@ public class PhotoModule
         mPostViewPictureCallbackTime = 0;
         mJpegImageData = null;
 
-        final boolean animateBefore = (mSceneMode == CameraUtil.SCENE_MODE_HDR);
+        final boolean animateBefore = (mSceneMode == CameraUtil.SCENE_MODE_HDR) ||
+                                      (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL);
         if(mHiston) {
             if (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
                 mHiston = false;
@@ -1406,7 +1442,9 @@ public class PhotoModule
     }
 
     private void updateSceneMode() {
-        updateSceneDetection();
+        if (CameraUtil.isAutoSceneDetectionSupported(mParameters)) {
+            updateSceneDetection();
+        }
         // If scene mode or slow shutter is set, for flash mode, white balance and focus mode
         // read settings from preferences so we retain user preferences.
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode) ||
@@ -1633,7 +1671,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonClick() {
-        int nbBurstShots =
+        int nbBurstShots = CameraSettings.useZSLBurst(mParameters) ? 1 :
                 Integer.valueOf(mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
 
         if (mPaused || mUI.collapseCameraControls()
@@ -2141,6 +2179,13 @@ public class PhotoModule
         // Let UI set its expected aspect ratio
         mCameraDevice.setPreviewTexture(st);
 
+        // Callback for automatic scene detection, if supported.
+        // Will run on UI thread
+        if (CameraUtil.isAutoSceneDetectionSupported(mParameters) &&
+                !CameraUtil.useTimerForSceneDetection(mParameters)) {
+            mCameraDevice.setMetadataCallback(mHandler, mASDCallback);
+        }
+
         Log.v(TAG, "startPreview");
         mCameraDevice.startPreview();
         mFocusManager.onPreviewStarted();
@@ -2245,12 +2290,11 @@ public class PhotoModule
         Size pic_size = mParameters.getPictureSize();
         if (pic_size == null) {
             Log.e(TAG, "error getPictureSize: size is null");
-        }
-        else{
-            if("100".equals(jpegQuality) && (pic_size.width >= 3200)){
+        } else {
+            if ("100".equals(jpegQuality) && (pic_size.width >= 3200)) {
                 //mUnsupportedJpegQuality = true;
-            }else {
-                mParameters.setJpegQuality(JpegEncodingQualityMappings.getQualityNumber(jpegQuality));
+            } else {
+                mParameters.setJpegQuality(Integer.parseInt(jpegQuality));
             }
         }
 
@@ -2363,7 +2407,7 @@ public class PhotoModule
         String format = mPreferences.getString(CameraSettings.KEY_PICTURE_FORMAT,
                 mActivity.getString(R.string.pref_camera_picture_format_value_jpeg));
 
-        if (zsl && (hdr.equals(mActivity.getString(R.string.setting_on_value))
+        if (zsl && (!CameraUtil.isHDRWithZSLEnabled() && hdr.equals(mActivity.getString(R.string.setting_on_value))
                 || !format.equals(mActivity.getString(R.string.pref_camera_picture_format_value_jpeg)))) {
             // Turn off ZSL when taking HDR or RAW shots
             zsl = false;
@@ -2566,6 +2610,12 @@ public class PhotoModule
         CameraSettings.setSlowShutter(mParameters, mPreferences.getString(CameraSettings.KEY_SLOW_SHUTTER,
                 mActivity.getString(R.string.pref_camera_slow_shutter_default)));
 
+        // ZSL burst, set before enabling HDR
+        if (CameraSettings.useZSLBurst(mParameters)) {
+            mParameters.set("snapshot-burst-num",
+                    mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
+        }
+
         // Since changing scene mode may change supported values, set scene mode
         // first. HDR is a scene mode. To promote it in UI, it is stored in a
         // separate preference.
@@ -2613,11 +2663,6 @@ public class PhotoModule
                 mSceneMode = Parameters.SCENE_MODE_AUTO;
             }
         }
-
-        // Set JPEG quality.
-        int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
-                CameraProfile.QUALITY_HIGH);
-        mParameters.setJpegQuality(jpegQuality);
 
         // Set exposure compensation
         int value = CameraSettings.readExposure(mPreferences);
@@ -2780,9 +2825,13 @@ public class PhotoModule
     private void updateSceneDetection() {
         mSceneDetection = "on".equals(mPreferences.getString(CameraSettings.KEY_ASD, "off"));
 
+        boolean useTimer = CameraUtil.useTimerForSceneDetection(mParameters);
+
         Log.d(TAG, "updateSceneDetection : " + mSceneDetection);
-        if (mSceneDetection) {
+        if (mSceneDetection && useTimer) {
             mHandler.sendEmptyMessage(UPDATE_ASD_ICON);
+        } else if (!mSceneDetection && !useTimer) {
+            mHandler.sendEmptyMessage(CLEAR_ASD_ICON);
         }
     }
 
@@ -3072,42 +3121,6 @@ public class PhotoModule
                 CameraUtil.closeSilently(outputStream);
             }
         }
-    }
-}
-
-/* Below is no longer needed, except to get rid of compile error
- * TODO: Remove these
- */
-class JpegEncodingQualityMappings {
-    private static final String TAG = "JpegEncodingQualityMappings";
-    private static final int DEFAULT_QUALITY = 85;
-    private static HashMap<String, Integer> mHashMap =
-            new HashMap<String, Integer>();
-
-    static {
-        mHashMap.put("normal",    CameraProfile.QUALITY_LOW);
-        mHashMap.put("fine",      CameraProfile.QUALITY_MEDIUM);
-        mHashMap.put("superfine", CameraProfile.QUALITY_HIGH);
-    }
-
-    // Retrieve and return the Jpeg encoding quality number
-    // for the given quality level.
-    public static int getQualityNumber(String jpegQuality) {
-        try{
-            int qualityPercentile = Integer.parseInt(jpegQuality);
-            if(qualityPercentile >= 0 && qualityPercentile <=100)
-                return qualityPercentile;
-            else
-                return DEFAULT_QUALITY;
-        } catch(NumberFormatException nfe){
-            //chosen quality is not a number, continue
-        }
-        Integer quality = mHashMap.get(jpegQuality);
-        if (quality == null) {
-            Log.w(TAG, "Unknown Jpeg quality: " + jpegQuality);
-            return DEFAULT_QUALITY;
-        }
-        return CameraProfile.getJpegEncodingQualityParameter(quality.intValue());
     }
 }
 

@@ -16,8 +16,6 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Do not translate - Dummy strings to prevent aapt warnings -->
-    <string name="pref_video_quality_entry_high"></string>
-    <string name="pref_video_quality_entry_low"></string>
     <string name="Import"></string>
     <string name="accessibility_back_to_first_level"></string>
     <string name="accessibility_camera_picker"></string>

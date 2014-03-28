@@ -25,6 +25,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.AutoFocusMoveCallback;
+import android.hardware.Camera.CameraMetaDataCallback;
 import android.hardware.Camera.ErrorCallback;
 import android.hardware.Camera.FaceDetectionListener;
 import android.hardware.Camera.OnZoomChangeListener;
@@ -40,7 +41,9 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.hardware.Camera.CameraDataCallback;
+
 import com.android.camera.util.ApiHelper;
+
 import android.os.ConditionVariable;
 
 /**
@@ -94,6 +97,8 @@ class AndroidCameraManagerImpl implements CameraManager {
     private static final int SEND_HISTOGRAM_DATA =   602;
     //LONGSHOT
     private static final int SET_LONGSHOT = 701;
+    // Metadata
+    private static final int SET_METADATA_CALLBACK = 801;
 
     private CameraHandler mCameraHandler;
     private android.hardware.Camera mCamera;
@@ -343,6 +348,10 @@ class AndroidCameraManagerImpl implements CameraManager {
                         mCamera.setLongshot((Boolean) msg.obj);
                         break;
 
+                    case SET_METADATA_CALLBACK:
+                        mCamera.setMetadataCb((CameraMetaDataCallback) msg.obj);
+                        return;
+
                     default:
                         throw new RuntimeException("Invalid CameraProxy message=" + msg.what);
                 }
@@ -589,6 +598,13 @@ class AndroidCameraManagerImpl implements CameraManager {
         public void sendHistogramData() {
             mCameraHandler.sendEmptyMessage(SEND_HISTOGRAM_DATA);
         }
+
+        @Override
+        public void setMetadataCallback(Handler handler, CameraMetadataCallback cb) {
+            mCameraHandler.obtainMessage(
+                    SET_METADATA_CALLBACK,
+                    MetadataCallbackForward.getNewInstance(handler, this, cb)).sendToTarget();
+        }
     }
 
     /**
@@ -832,6 +848,44 @@ class AndroidCameraManagerImpl implements CameraManager {
                 @Override
                 public void run() {
                     mCallback.onFaceDetection(faces, mCamera);
+                }
+            });
+        }
+    }
+
+    private static class MetadataCallbackForward implements CameraMetaDataCallback {
+        private final Handler mHandler;
+        private final CameraMetadataCallback mCallback;
+        private final CameraProxy mCamera;
+
+        /**
+         * Returns a new instance of {@link MetadataCallbackForward}.
+         *
+         * @param handler The handler in which the callback will be invoked in.
+         * @param camera  The {@link CameraProxy} which the callback is from.
+         * @param cb      The callback to be invoked.
+         * @return        The instance of the {@link MetadataCallbackForward},
+         *                or null if any parameter is null.
+         */
+        public static MetadataCallbackForward getNewInstance(
+                Handler handler, CameraProxy camera, CameraMetadataCallback cb) {
+            if (handler == null || camera == null || cb == null) return null;
+            return new MetadataCallbackForward(handler, camera, cb);
+        }
+
+        private MetadataCallbackForward(
+                Handler h, CameraProxy camera, CameraMetadataCallback cb) {
+            mHandler = h;
+            mCamera = camera;
+            mCallback = cb;
+        }
+
+        @Override
+        public void onCameraMetaData(final byte[] data, Camera camera) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCameraMetadata(data, mCamera);
                 }
             });
         }

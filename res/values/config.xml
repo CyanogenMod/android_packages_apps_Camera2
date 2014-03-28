@@ -19,6 +19,7 @@
 <resources>
     <!-- Maximum recording length in milliseconds. 0 means unlimited. -->
     <integer name="max_video_recording_length">0</integer>
+    <!-- Zero shutter lag mode -->
     <bool name="enableZSL">false</bool>
     <!-- Stay in continuous focus even if touch-to-focus is used
          This option doesn't make sense if wantsFocusModes is on -->
@@ -34,4 +35,16 @@
     <bool name="needsSamsungCamMode">false</bool>
     <!-- HTC Camcorder Mode -->
     <bool name="needsHTCCamMode">false</bool>
+
+    <!-- Ordered list of detected scene modes
+         This should reference the list in camera_asd_values and
+         will be sensor-specific. App will convert from
+         integer in metadata callback to array index. -->
+    <string-array name="asdModes">
+    </string-array>
+
+    <!-- Allow HDR and ZSL together -->
+    <bool name="enableHDRWithZSL">false</bool>
+    <!-- Enable histogram support -->
+    <bool name="enableHistogram">false</bool>
 </resources>

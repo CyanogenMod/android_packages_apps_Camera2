@@ -128,6 +128,12 @@ public class CameraUtil {
 
     private static boolean sCancelAutoFocusOnPreviewStopped;
 
+    private static String[] sASDModes;
+
+    private static boolean sEnableHDRWithZSL;
+
+    private static boolean sEnableHistogram;
+
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
@@ -166,7 +172,12 @@ public class CameraUtil {
 
     public static boolean isAutoSceneDetectionSupported(Parameters params) {
         List<String> supported = params.getSupportedSceneModes();
-        return (supported != null) && supported.contains(SCENE_MODE_ASD) && (params.get("asd-mode") != null);
+        return (supported != null) && supported.contains(SCENE_MODE_ASD) &&
+                (sASDModes.length > 0 || (params.get("asd-mode") != null));
+    }
+
+    public static boolean useTimerForSceneDetection(Parameters params) {
+        return params.get("asd-mode") != null;
     }
 
     public static boolean hasCameraKey() {
@@ -238,6 +249,9 @@ public class CameraUtil {
                 com.android.internal.R.integer.config_deviceHardwareKeys);
         sSamsungCamMode = context.getResources().getBoolean(R.bool.needsSamsungCamMode);
         sHTCCamMode = context.getResources().getBoolean(R.bool.needsHTCCamMode);
+        sASDModes = context.getResources().getStringArray(R.array.asdModes);
+        sEnableHDRWithZSL = context.getResources().getBoolean(R.bool.enableHDRWithZSL);
+        sEnableHistogram = context.getResources().getBoolean(R.bool.enableHistogram);
     }
 
     public static int dpToPixel(int dp) {
@@ -258,6 +272,14 @@ public class CameraUtil {
 
     public static boolean useSamsungCamMode() {
         return sSamsungCamMode;
+    }
+
+    public static boolean isHDRWithZSLEnabled() {
+        return sEnableHDRWithZSL;
+    }
+
+    public static boolean isHistogramEnabled() {
+        return sEnableHistogram;
     }
 
     // Rotates the bitmap by the specified degree.
@@ -1139,5 +1161,21 @@ public class CameraUtil {
             ret = ret + "\t" + elems[i].toString() + '\n';
         }
         return ret;
+    }
+
+    /**
+     * Fast conversion of byte array to integer
+     *
+     * @param array of types
+     * @param index into the arary
+     * @return integer value
+     */
+    public static int byteArrayToInt(byte[] encodedValue, int offset) {
+        int index = offset;
+        int value = encodedValue[index++] & 0xFF;
+        value ^= (encodedValue[index++] & 0xFF) << Byte.SIZE * 1;
+        value ^= (encodedValue[index++] & 0xFF) << Byte.SIZE * 2;
+        value ^= (encodedValue[index++] & 0xFF) << Byte.SIZE * 3;
+        return value;
     }
 }

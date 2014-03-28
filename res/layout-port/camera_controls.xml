@@ -68,4 +68,18 @@
             android:layout_gravity="top|right"
             android:contentDescription="@string/switch_photo_filmstrip" />
 
+        <ImageView
+            android:id="@+id/scene_detect_icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:src="@drawable/smart_scene_sports" />
+
+        <ImageView
+            android:id="@+id/burst_mode_icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:src="@drawable/burst_mode_5" />
+
 </com.android.camera.ui.CameraControls>

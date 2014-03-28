@@ -142,13 +142,10 @@
     <string name="pref_camera_saturation_title">Saturazione</string>
     <string name="pref_camera_picture_format_title">Formato immagine</string>
     <string name="pref_camera_jpegquality_title">Qualità dell\'immagine</string>
-    <string name="pref_camera_jpegquality_entry_superfine">Elevata</string>
-    <string name="pref_camera_jpegquality_entry_fine">Buona</string>
-    <string name="pref_camera_jpegquality_entry_normal">Normale</string>
     <string name="pref_camera_jpegquality_entry_0">55%</string>
-    <string name="pref_camera_jpegquality_entry_1">65%</string>
-    <string name="pref_camera_jpegquality_entry_2">75%</string>
-    <string name="pref_camera_jpegquality_entry_3">85%</string>
+    <string name="pref_camera_jpegquality_entry_1">65% (normale)</string>
+    <string name="pref_camera_jpegquality_entry_2">75% (buona)</string>
+    <string name="pref_camera_jpegquality_entry_3">85% (elevata)</string>
     <string name="pref_camera_jpegquality_entry_4">95%</string>
     <string name="pref_camera_jpegquality_entry_5">100%</string>
     <string name="pref_camera_histogram_title">Istogramma</string>
