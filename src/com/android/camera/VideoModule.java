@@ -1515,18 +1515,6 @@ public class VideoModule extends CameraModule
 
         enableTorchMode(settingsManager.isCameraBackFacing());
 
-        // Set white balance parameter.
-        String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
-        if (isSupported(whiteBalance,
-                mParameters.getSupportedWhiteBalance())) {
-            mParameters.setWhiteBalance(whiteBalance);
-        } else {
-            whiteBalance = mParameters.getWhiteBalance();
-            if (whiteBalance == null) {
-                whiteBalance = Parameters.WHITE_BALANCE_AUTO;
-            }
-        }
-
         // Set zoom.
         if (mParameters.isZoomSupported()) {
             mParameters.setZoom(mZoomValue);

@@ -312,7 +312,7 @@ public class PhotoModule
     private void switchToGcamCapture() {
         if (mActivity != null && mGcamModeIndex != 0) {
             SettingsManager settingsManager = mActivity.getSettingsManager();
-            settingsManager.set(SettingsManager.SETTING_CAMERA_HDR,
+            settingsManager.set(SettingsManager.SETTING_CAMERA_HDR_PLUS,
                 SettingsManager.VALUE_ON);
 
             // Disable the HDR+ button to prevent callbacks from being
@@ -488,14 +488,22 @@ public class PhotoModule
             new ButtonManager.ButtonCallback() {
                 @Override
                 public void onStateChanged(int state) {
+                    SettingsManager settingsManager = mActivity.getSettingsManager();
                     if (GcamHelper.hasGcamCapture()) {
                         // Set the camera setting to default backfacing.
-                        SettingsManager settingsManager = mActivity.getSettingsManager();
                         settingsManager.setDefault(SettingsManager.SETTING_CAMERA_ID);
                         switchToGcamCapture();
                     } else {
-                        mSceneMode = CameraUtil.SCENE_MODE_HDR;
+                        if (settingsManager.isHdrOn()) {
+                            settingsManager.set(SettingsManager.SETTING_SCENE_MODE,
+                                    CameraUtil.SCENE_MODE_HDR);
+                        } else {
+                            settingsManager.set(SettingsManager.SETTING_SCENE_MODE,
+                                    Parameters.SCENE_MODE_AUTO);
+                        }
                         updateParametersSceneMode();
+                        mCameraDevice.setParameters(mParameters);
+                        updateSceneMode();
                     }
                 }
             };
@@ -962,16 +970,13 @@ public class PhotoModule
         // If scene mode is set, we cannot set flash mode, white balance, and
         // focus mode, instead, we read it from driver
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
-            overrideCameraSettings(mParameters.getFlashMode(),
-                    mParameters.getWhiteBalance(), mParameters.getFocusMode());
+            overrideCameraSettings(mParameters.getFlashMode(), mParameters.getFocusMode());
         }
     }
 
-    private void overrideCameraSettings(final String flashMode,
-            final String whiteBalance, final String focusMode) {
+    private void overrideCameraSettings(final String flashMode, final String focusMode) {
         SettingsManager settingsManager = mActivity.getSettingsManager();
         settingsManager.set(SettingsManager.SETTING_FLASH_MODE, flashMode);
-        settingsManager.set(SettingsManager.SETTING_WHITE_BALANCE, whiteBalance);
         settingsManager.set(SettingsManager.SETTING_FOCUS_MODE, focusMode);
     }
 
@@ -1715,9 +1720,6 @@ public class PhotoModule
             // Set flash mode.
             updateParametersFlashMode();
 
-            // Set white balance mode.
-            updateParametersWhiteBalanceMode();
-
             // Set focus mode.
             mFocusManager.overrideFocusMode(null);
             mParameters.setFocusMode(mFocusManager.getFocusMode());
@@ -1733,17 +1735,6 @@ public class PhotoModule
         List<String> supportedFlash = mParameters.getSupportedFlashModes();
         if (CameraUtil.isSupported(flashMode, supportedFlash)) {
             mParameters.setFlashMode(flashMode);
-        }
-    }
-
-    private void updateParametersWhiteBalanceMode() {
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-
-        // Set white balance parameter.
-        String whiteBalance = settingsManager.get(SettingsManager.SETTING_WHITE_BALANCE);
-        if (CameraUtil.isSupported(whiteBalance,
-                mParameters.getSupportedWhiteBalance())) {
-            mParameters.setWhiteBalance(whiteBalance);
         }
     }
 
