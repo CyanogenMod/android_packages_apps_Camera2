@@ -42,6 +42,7 @@ import android.view.ViewStub;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.os.SystemProperties;
 
@@ -99,6 +100,7 @@ public class PhotoUI implements PieListener,
     private ModuleSwitcher mSwitcher;
     private CameraControls mCameraControls;
     private AlertDialog mLocationDialog;
+    private ProgressBar mSpinner;
 
     // Small indicators which show the camera settings in the viewfinder.
     private ImageView mSceneDetectView;
@@ -161,11 +163,14 @@ public class PhotoUI implements PieListener,
         private final byte [] mData;
         private int mOrientation;
         private boolean mMirror;
+        private boolean mZsl;
 
-        public DecodeTask(byte[] data, int orientation, boolean mirror) {
+        public DecodeTask(byte[] data, int orientation, boolean mirror,
+                boolean isZsl) {
             mData = data;
             mOrientation = orientation;
             mMirror = mirror;
+            mZsl = isZsl;
         }
 
         @Override
@@ -187,14 +192,19 @@ public class PhotoUI implements PieListener,
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+            hideWaitAnimation();
             mPreviewThumb.setImageBitmap(bitmap);
-            mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            if (mZsl) {
+                mAnimationManager.startFadeAnimation(mPreviewThumb);
+            } else {
+                mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            }
         }
     }
 
     private class DecodeImageForReview extends DecodeTask {
         public DecodeImageForReview(byte[] data, int orientation, boolean mirror) {
-            super(data, orientation, mirror);
+            super(data, orientation, mirror, false);
         }
 
         @Override
@@ -236,6 +246,7 @@ public class PhotoUI implements PieListener,
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
+        mSpinner = (ProgressBar) mRootView.findViewById(R.id.wait_spinner);
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
         mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
 
@@ -397,9 +408,10 @@ public class PhotoUI implements PieListener,
         updateOnScreenIndicators(params, prefGroup, prefs);
     }
 
-    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
+    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror,
+            boolean isZsl) {
         // Decode jpeg byte array and then animate the jpeg
-        DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
+        DecodeTask task = new DecodeTask(jpegData, orientation, mirror, isZsl);
         task.execute();
     }
 
@@ -483,6 +495,15 @@ public class PhotoUI implements PieListener,
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
     }
+
+    public void hideWaitAnimation() {
+        mSpinner.setVisibility(View.INVISIBLE);
+    }
+
+    public void showWaitAnimation() {
+        mSpinner.setVisibility(View.VISIBLE);
+    }
+
     // called from onResume but only the first time
     public  void initializeFirstTime() {
         // Initialize shutter button.

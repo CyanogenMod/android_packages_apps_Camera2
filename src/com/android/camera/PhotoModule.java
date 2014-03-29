@@ -1163,7 +1163,9 @@ public class PhotoModule
                 // Animate capture with real jpeg data instead of a preview frame.
                 if (!mBurstShotInProgress && mCameraState != LONGSHOT
                         && (mReceivedSnapNum == mBurstSnapNum)) {
-                    mUI.animateCapture(jpegData, orientation, mMirror);
+                    mUI.animateCapture(jpegData, orientation, mMirror,
+                            (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) &&
+                            (mSceneMode != CameraUtil.SCENE_MODE_HDR));
                 }
             } else {
                 mJpegImageData = jpegData;
@@ -1362,6 +1364,10 @@ public class PhotoModule
 
         if (animateBefore) {
             animateAfterShutter();
+        }
+
+        if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
+            mUI.showWaitAnimation();
         }
 
         // Set rotation and gps data.
