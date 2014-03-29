@@ -196,7 +196,8 @@ public class Log {
 
     private static boolean isLoggable(Tag tag, int level) {
         try {
-            return android.util.Log.isLoggable(tag.toString(), level);
+            return CurrentConfig.get().isDebugging()
+                    || android.util.Log.isLoggable(tag.toString(), level);
         } catch (IllegalArgumentException ex) {
             e(TAG, "Tag too long:" + tag);
             return false;
