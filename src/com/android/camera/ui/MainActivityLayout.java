@@ -112,9 +112,6 @@ public class MainActivityLayout extends FrameLayout {
                 // Intercept left swipe
                 else if (deltaX < -Math.abs(deltaY) * 2) {
                     mTouchReceiver = mFilmstripLayout;
-                    UsageStatistics.instance().changeScreen(
-                            eventprotos.NavigationChange.Mode.FILMSTRIP,
-                            eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
                     onTouchEvent(mDown);
                     return true;
                 }

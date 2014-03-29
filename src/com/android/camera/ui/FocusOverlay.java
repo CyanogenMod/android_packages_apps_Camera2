@@ -25,12 +25,16 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.android.camera.FocusOverlayManager;
+import com.android.camera.debug.Log;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+import com.google.common.logging.eventprotos;
 
 /**
  * Displays a focus indicator.
  */
 public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
+    private static final Log.Tag TAG = new Log.Tag("FocusOverlay");
 
     private final static int FOCUS_DURATION_MS = 500;
     private final static int FOCUS_INDICATOR_ROTATION_DEGREES = 50;
@@ -79,6 +83,10 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mCurrentRunIsAutoFocus = isAutoFocus;
         if (getVisibility() != VISIBLE) {
             setVisibility(VISIBLE);
+        }
+        // Log manual tap to focus.
+        if (isAutoFocus == false) {
+            UsageStatistics.instance().controlUsed(eventprotos.ControlEvent.ControlType.TAP_TO_FOCUS);
         }
     }
 

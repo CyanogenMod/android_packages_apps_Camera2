@@ -130,16 +130,15 @@ public interface MediaSaver {
      * Adds the video data into the {@link android.content.ContentResolver} in
      * the background. Only the database is updated here. The file should
      * already be created by {@link android.media.MediaRecorder}.
-     *
-     * @param path The path of the video file on the storage.
+     *  @param path The path of the video file on the storage.
      * @param duration The length of the video in millisecond.
+     * @param isFrontCamera
      * @param values The values to be stored in the database.
      * @param l A callback object used when the saving is done.
      * @param resolver The {@link android.content.ContentResolver} to be
-     *                 updated.
      */
-    void addVideo(String path, long duration, ContentValues values, OnMediaSavedListener l,
-            ContentResolver resolver);
+    void addVideo(String path, long duration, boolean isFrontCamera, ContentValues values, OnMediaSavedListener l,
+                  ContentResolver resolver);
 
     /**
      * Sets the queue listener.

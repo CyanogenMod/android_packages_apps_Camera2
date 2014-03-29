@@ -18,14 +18,16 @@
 package com.google.common.logging;
 
 public class eventprotos {
-    public class CameraEvent {
-
+    public class MediaInteraction {
         public class InteractionType {
             public static final int SHARE = 10000;
+            public static final int EDIT = 10000;
             public static final int DELETE = 10000;
             public static final int DETAILS = 10000;
         }
+    }
 
+    public class NavigationChange {
         public class InteractionCause {
             public static final int BUTTON = 10000;
             public static final int SWIPE_LEFT = 10000;
@@ -33,14 +35,16 @@ public class eventprotos {
             public static final int SWIPE_DOWN = 10000;
             public static final int SWIPE_RIGHT = 10000;
         }
-    }
-
-    public class NavigationChange {
         public class Mode {
+            public static final int UNKNOWN_MODE = 10000;
             public static final int PHOTO_CAPTURE = 10000;
             public static final int FILMSTRIP = 10000;
             public static final int VIDEO_CAPTURE = 10000;
             public static final int VIDEO_STILL = 10000;
+            public static final int PHOTO_SPHERE = 10000;
+            public static final int LENS_BLUR = 10000;
+            public static final int HDR_PLUS = 10000;
+            public static final int PANORAMA = 10000;
             public static final int GALLERY = 10000;
         }
     }
@@ -55,9 +59,21 @@ public class eventprotos {
 
     public class ForegroundEvent {
         public class ForegroundSource {
-            public static final int ICON_LAUNCHER = 10000;
-            public static final int LOCK_SCREEN = 10000;
-            public static final int INTENT_PICKER = 10000;
+            public static final int UNKNOWN_SOURCE = 10000;
+            public static final int ACTION_IMAGE_CAPTURE = 10000;
+            public static final int ACTION_IMAGE_CAPTURE_SECURE = 10000;
+            public static final int ACTION_VIDEO_CAPTURE = 10000;
+            public static final int ACTION_MAIN = 10000;
+        }
+    }
+
+    public class ControlEvent {
+        public class ControlType {
+            public static final int TAP_TO_FOCUS = 10000;
+            public static final int MENU_FULL_FROM_HIDDEN = 10000;
+            public static final int MENU_FULL_FROM_SCROLL = 10000;
+            public static final int MENU_SCROLL_FROM_SHIMMY = 10000;
+            public static final int OVERALL_SETTINGS = 10000;
         }
     }
 }

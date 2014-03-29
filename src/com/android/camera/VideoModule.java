@@ -404,8 +404,6 @@ public class VideoModule extends CameraModule
                     null, null, null, new JpegPictureCallback(loc));
             showVideoSnapshotUI(true);
             mSnapshotInProgress = true;
-            UsageStatistics.instance().captureEvent(
-                    eventprotos.NavigationChange.Mode.VIDEO_STILL, null, null, null);
         }
     }
 
@@ -1163,7 +1161,7 @@ public class VideoModule extends CameraModule
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
             getServices().getMediaSaver().addVideo(mCurrentVideoFilename,
-                    duration, mCurrentVideoValues,
+                    duration, isCameraFrontFacing(), mCurrentVideoValues,
                     mOnVideoSavedListener, mContentResolver);
         }
         mCurrentVideoValues = null;
@@ -1330,15 +1328,7 @@ public class VideoModule extends CameraModule
                 mMediaRecorder.stop();
                 shouldAddToMediaStoreNow = true;
                 mCurrentVideoFilename = mVideoFilename;
-                Log.v(TAG, "stopVideoRecording: Setting current video filename: "
-                        + mCurrentVideoFilename);
-                float duration = (SystemClock.uptimeMillis() - mRecordingStartTime) / 1000;
-                String statisticFilename = (mCurrentVideoFilename == null
-                        ? "INTENT"
-                        : mCurrentVideoFilename);
-                UsageStatistics.instance().captureEvent(
-                        eventprotos.NavigationChange.Mode.VIDEO_CAPTURE, statisticFilename,
-                        mParameters, duration);
+                Log.v(TAG, "stopVideoRecording: current video filename: " + mCurrentVideoFilename);
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
                 if (mVideoFilename != null) {
@@ -1609,9 +1599,6 @@ public class VideoModule extends CameraModule
             mOnResumeTime = SystemClock.uptimeMillis();
             mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
         }
-
-        UsageStatistics.instance().changeScreen(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
-                eventprotos.CameraEvent.InteractionCause.BUTTON);
         getServices().getMemoryManager().addListener(this);
     }
 
@@ -1781,6 +1768,12 @@ public class VideoModule extends CameraModule
         String title = CameraUtil.createJpegName(dateTaken);
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
+
+        int zoomIndex = mParameters.getZoom();
+        float zoomValue = 0.01f * mParameters.getZoomRatios().get(zoomIndex);
+        UsageStatistics.instance().photoCaptureDoneEvent(
+                eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
+                isCameraFrontFacing(), false, zoomValue);
 
         getServices().getMediaSaver().addImage(
                 data, title, dateTaken, loc, orientation,
