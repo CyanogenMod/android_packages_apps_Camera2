@@ -45,7 +45,7 @@ public class CameraApp extends Application implements CameraServices {
     public void onCreate() {
         super.onCreate();
 
-        UsageStatistics.initialize(this);
+        UsageStatistics.instance().initialize(this);
         CameraUtil.initialize(this);
 
         Context context = getApplicationContext();

@@ -67,7 +67,6 @@ import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
-import com.android.camera.util.AccessibilityUtils;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
@@ -407,8 +406,8 @@ public class VideoModule extends CameraModule
                     null, null, null, new JpegPictureCallback(loc));
             showVideoSnapshotUI(true);
             mSnapshotInProgress = true;
-            UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_STILL,
-                    null, null, null);
+            UsageStatistics.instance().captureEvent(
+                    eventprotos.NavigationChange.Mode.VIDEO_STILL, null, null, null);
         }
     }
 
@@ -1338,8 +1337,9 @@ public class VideoModule extends CameraModule
                 String statisticFilename = (mCurrentVideoFilename == null
                         ? "INTENT"
                         : mCurrentVideoFilename);
-                UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
-                        statisticFilename, mParameters, duration);
+                UsageStatistics.instance().captureEvent(
+                        eventprotos.NavigationChange.Mode.VIDEO_CAPTURE, statisticFilename,
+                        mParameters, duration);
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
                 if (mVideoFilename != null) {
@@ -1611,7 +1611,7 @@ public class VideoModule extends CameraModule
             mHandler.sendEmptyMessageDelayed(MSG_CHECK_DISPLAY_ROTATION, 100);
         }
 
-        UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
+        UsageStatistics.instance().changeScreen(eventprotos.NavigationChange.Mode.VIDEO_CAPTURE,
                 eventprotos.CameraEvent.InteractionCause.BUTTON);
         getServices().getMemoryManager().addListener(this);
     }
