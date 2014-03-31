@@ -238,6 +238,7 @@ class AndroidCameraManagerImpl implements CameraManager {
      */
     private class CameraHandler extends Handler {
         private Camera mCamera;
+
         private class CaptureCallbacks {
             public final ShutterCallback mShutter;
             public final PictureCallback mRaw;
@@ -584,9 +585,10 @@ class AndroidCameraManagerImpl implements CameraManager {
          *
          * @param job The job to run.
          * @param timeoutMs Timeout limit in milliseconds.
-         * @return Whether the waiting is interrupted.
+         * @param jobMsg The message to log when the job runs timeout.
+         * @return Whether the job finishes before timeout.
          */
-        public boolean runJobSync(final Runnable job, Object waitLock, long timeoutMs) {
+        public boolean runJobSync(final Runnable job, Object waitLock, long timeoutMs, String jobMsg) {
             synchronized (waitLock) {
                 long timeoutBound = SystemClock.uptimeMillis() + timeoutMs;
                 try {
@@ -596,7 +598,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                     Log.v(TAG, "Job interrupted");
                     if (SystemClock.uptimeMillis() > timeoutBound) {
                         // Timeout.
-                        Log.v(TAG, "Timeout waiting camera operation");
+                        Log.w(TAG, "Timeout waiting camera operation:" + jobMsg);
                     }
                     return false;
                 }
@@ -712,13 +714,14 @@ class AndroidCameraManagerImpl implements CameraManager {
             Log.v(TAG, "camera manager release");
             if (sync) {
                 final WaitDoneBundle bundle = new WaitDoneBundle();
+
                 mDispatchThread.runJobSync(new Runnable() {
                     @Override
                     public void run() {
                         mCameraHandler.sendEmptyMessage(RELEASE);
                         mCameraHandler.post(bundle.mUnlockRunnable);
                     }
-                }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS);
+                }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "camera release");
             } else {
                 mDispatchThread.runJob(new Runnable() {
                     @Override
@@ -750,7 +753,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                     mCameraHandler.sendEmptyMessage(UNLOCK);
                     mCameraHandler.post(bundle.mUnlockRunnable);
                 }
-            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS);
+            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "camera unlock");
         }
 
         @Override
@@ -784,7 +787,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                             .sendToTarget();
                     mCameraHandler.post(bundle.mUnlockRunnable);
                 }
-            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS);
+            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "set preview texture");
         }
 
         @Override
@@ -829,7 +832,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                     mCameraHandler.sendEmptyMessage(STOP_PREVIEW);
                     mCameraHandler.post(bundle.mUnlockRunnable);
                 }
-            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS);
+            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "stop preview");
         }
 
         @Override
@@ -1064,7 +1067,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                     mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
                     mCameraHandler.post(bundle.mUnlockRunnable);
                 }
-            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS);
+            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "get parameters");
             return mParameters;
         }
 
