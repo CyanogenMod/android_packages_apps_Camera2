@@ -57,6 +57,7 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
+import com.android.camera.widget.Cling;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.ModeOptionsOverlay;
@@ -93,6 +94,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * Sets a new or replaces an existing listener for bottom control events.
          */
         void setListener(Listener listener);
+
+        /**
+         * Sets cling for external viewer button.
+         */
+        void setClingForViewer(int viewerType, Cling cling);
+
+        /**
+         * Clears cling for external viewer button.
+         */
+        void clearClingForViewer(int viewerType);
+
+        /**
+         * Returns a cling for the specified viewer type.
+         */
+        Cling getClingForViewer(int viewerType);
 
         /**
          * Set if the bottom controls are visible.
@@ -691,6 +707,51 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mAnimationManager = new AnimationManager();
         mPeekView = (PeekView) appRootView.findViewById(R.id.peek_view);
         initDisplayListener();
+    }
+
+    /**
+     * Creates a cling for the specific viewer and links the cling to the corresponding
+     * button for layout position.
+     *
+     * @param viewerType defines which viewer the cling is for.
+     */
+    public void setupClingForViewer(int viewerType) {
+        if (viewerType == BottomPanel.VIEWER_REFOCUS) {
+            FrameLayout filmstripContent = (FrameLayout) mAppRootView
+                    .findViewById(R.id.camera_filmstrip_content_layout);
+            if (filmstripContent != null) {
+                // Creates refocus cling.
+                LayoutInflater inflater = (LayoutInflater) mController.getAndroidContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                Cling refocusCling = (Cling) inflater.inflate(R.layout.cling_widget, null, false);
+                // Sets instruction text in the cling.
+                refocusCling.setText(mController.getAndroidContext().getResources()
+                        .getString(R.string.cling_text_for_refocus_editor_button));
+
+                // Adds cling into view hierarchy.
+                int clingWidth = mController.getAndroidContext()
+                        .getResources().getDimensionPixelSize(R.dimen.default_cling_width);
+                filmstripContent.addView(refocusCling, clingWidth,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                mFilmstripBottomControls.setClingForViewer(viewerType, refocusCling);
+            }
+        }
+    }
+
+    /**
+     * Clears the listeners for the cling and remove it from the view hierarchy.
+     *
+     * @param viewerType defines which viewer the cling is for.
+     */
+    public void clearClingForViewer(int viewerType) {
+        Cling clingToBeRemoved = mFilmstripBottomControls.getClingForViewer(viewerType);
+        if (clingToBeRemoved == null) {
+            // No cling is created for the specific viewer type.
+            return;
+        }
+        mFilmstripBottomControls.clearClingForViewer(viewerType);
+        clingToBeRemoved.setVisibility(View.GONE);
+        mAppRootView.removeView(clingToBeRemoved);
     }
 
     /**

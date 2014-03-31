@@ -131,6 +131,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_STRICT_UPGRADE_VERSION);
         mKeyMap.put(SettingsManager.KEY_REQUEST_RETURN_HDR_PLUS,
                 SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS);
+        mKeyMap.put(SettingsManager.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING,
+                SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING);
     }
 
     /**
@@ -213,6 +215,8 @@ public class SettingsCache {
                 return SettingsManager.getStrictUpgradeVersionSetting(mContext);
             case SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS:
                 return SettingsManager.getRequestReturnHdrPlusSetting(mContext);
+            case SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING:
+                return SettingsManager.getShouldShowRefocusViewerCling(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }
