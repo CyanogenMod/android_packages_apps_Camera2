@@ -23,6 +23,7 @@ import android.content.res.Configuration;
 
 import com.android.camera.app.MediaSaver.QueueListener;
 import com.android.camera.debug.Log;
+import com.android.camera.util.GservicesHelper;
 
 import java.util.LinkedList;
 
@@ -127,6 +128,13 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
 
     /** Helper to determine max allowed native memory allocation (in megabytes). */
     private static int getMaxAllowedNativeMemory(Context context) {
+        // First check whether we have a system override.
+        int maxAllowedOverrideMb = GservicesHelper.getMaxAllowedNativeMemoryMb(context);
+        if (maxAllowedOverrideMb > 0) {
+            Log.d(TAG, "Max native memory overridden: " + maxAllowedOverrideMb);
+            return maxAllowedOverrideMb;
+        }
+
         ActivityManager activityManager = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
