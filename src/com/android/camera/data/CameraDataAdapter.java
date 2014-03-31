@@ -25,6 +25,7 @@ import android.view.View;
 
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
+import com.android.camera.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -70,8 +71,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void requestLoad() {
-        QueryTask qtask = new QueryTask();
+    public void requestLoad(Callback<Void> doneCallback) {
+        QueryTask qtask = new QueryTask(doneCallback);
         qtask.execute(mContext);
     }
 
@@ -95,7 +96,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
         if (dataID < 0 || dataID >= mImages.size()) {
             return null;
         }
-
         return mImages.get(dataID);
     }
 
@@ -308,7 +308,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
 
-        private long mMinPhotoId;
+        private final long mMinPhotoId;
 
         public LoadNewPhotosTask(long lastPhotoId) {
             mMinPhotoId = lastPhotoId;
@@ -355,6 +355,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
         // The maximum number of data to load metadata for in a single task.
         private static final int MAX_METADATA = 5;
 
+        private final Callback<Void> mDoneCallback;
+
+        public QueryTask(Callback<Void> doneCallback) {
+            mDoneCallback = doneCallback;
+        }
+
         /**
          * Loads all the photo and video data in the camera folder in background
          * and combine them into one single list.
@@ -388,7 +394,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 LocalData data = l.get(i);
                 MetadataLoader.loadMetadata(context, data);
             }
-
             return new QueryTaskResult(l, lastPhotoId);
         }
 
@@ -398,6 +403,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
             // photo id with the new one we just obtained so it matches the data we're showing.
             mLastPhotoId = result.mLastPhotoId;
             replaceData(result.mLocalDataList);
+            if (mDoneCallback != null) {
+                mDoneCallback.onCallback(null);
+            }
         }
     }
 

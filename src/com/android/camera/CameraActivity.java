@@ -28,7 +28,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -50,7 +49,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.CameraPerformanceTracker;
@@ -1276,7 +1274,12 @@ public class CameraActivity extends Activity
         if (!mSecureCamera) {
             mFilmstripController.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
-                mDataAdapter.requestLoad();
+                mDataAdapter.requestLoad(new Callback<Void>() {
+                    @Override
+                    public void onCallback(Void result) {
+                        fillTemporarySessions();
+                    }
+                });
             }
         } else {
             // Put a lock placeholder as the last image by setting its date to
@@ -1550,7 +1553,12 @@ public class CameraActivity extends Activity
                 // If it's secure camera, requestLoad() should not be called
                 // as it will load all the data.
                 if (!mFilmstripVisible) {
-                    mDataAdapter.requestLoad();
+                    mDataAdapter.requestLoad(new Callback<Void>() {
+                        @Override
+                        public void onCallback(Void result) {
+                            fillTemporarySessions();
+                        }
+                    });
                 } else {
                     mDataAdapter.requestLoadNewPhotos();
                 }
@@ -1576,6 +1584,15 @@ public class CameraActivity extends Activity
 
         final int previewVisibility = getPreviewVisibility();
         updatePreviewRendering(previewVisibility);
+    }
+
+    private void fillTemporarySessions() {
+        if (mSecureCamera) {
+            return;
+        }
+        // There might be sessions still in flight (processed by our service).
+        // Make sure they're added to the filmstrip.
+        getServices().getCaptureSessionManager().fillTemporarySession(mSessionListener);
     }
 
     @Override

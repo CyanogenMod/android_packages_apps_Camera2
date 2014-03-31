@@ -112,10 +112,21 @@ public interface CaptureSessionManager {
     public void addSessionListener(SessionListener listener);
 
     /**
+     * Adds the session with the given uri.
+     */
+    public void putSession(Uri sessionUri, CaptureSession session);
+
+    /**
      * Removes a previously added listener from receiving further capture
      * session updates.
      */
     public void removeSessionListener(SessionListener listener);
+
+    /**
+     * Calls the given listener for all the sessions that are currently
+     * in-flight.
+     */
+    public void fillTemporarySession(SessionListener listener);
 
     /**
      * Gets the directory to be used for temporary data. See
