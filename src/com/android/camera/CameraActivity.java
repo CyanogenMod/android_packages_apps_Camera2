@@ -1275,37 +1275,10 @@ public class CameraActivity extends Activity
 
         mLocationManager = new LocationManager(mAppContext);
 
-        int modeIndex = -1;
-        int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
-        int videoIndex = getResources().getInteger(R.integer.camera_mode_video);
-        int gcamIndex = getResources().getInteger(R.integer.camera_mode_gcam);
-        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
-                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            modeIndex = videoIndex;
-        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())) {
-            // TODO: synchronize mode options with photo module without losing
-            // HDR+ preferences.
-            modeIndex = photoIndex;
-        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
-                        .getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            modeIndex = mSettingsManager.getInt(
-                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
-        } else {
-            // If the activity has not been started using an explicit intent,
-            // read the module index from the last time the user changed modes
-            modeIndex = mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
-            if ((modeIndex == gcamIndex &&
-                    !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
-                modeIndex = photoIndex;
-            }
-        }
-
         mOrientationManager = new OrientationManagerImpl(this);
         mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
 
-        setModuleFromModeIndex(modeIndex);
+        setModuleFromModeIndex(getModeIndex());
         mCameraAppUI.prepareModuleUI();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
@@ -1357,6 +1330,40 @@ public class CameraActivity extends Activity
         if (FeedbackHelper.feedbackAvailable()) {
             mFeedbackHelper = new FeedbackHelper(mAppContext);
         }
+    }
+
+    /**
+     * Get the current mode index from the Intent or from persistent
+     * settings.
+     */
+    public int getModeIndex() {
+        int modeIndex = -1;
+        int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
+        int videoIndex = getResources().getInteger(R.integer.camera_mode_video);
+        int gcamIndex = getResources().getInteger(R.integer.camera_mode_gcam);
+        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
+                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
+            modeIndex = videoIndex;
+        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())) {
+            // TODO: synchronize mode options with photo module without losing
+            // HDR+ preferences.
+            modeIndex = photoIndex;
+        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
+                        .getAction())
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
+            modeIndex = mSettingsManager.getInt(
+                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
+        } else {
+            // If the activity has not been started using an explicit intent,
+            // read the module index from the last time the user changed modes
+            modeIndex = mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
+            if ((modeIndex == gcamIndex &&
+                    !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
+                modeIndex = photoIndex;
+            }
+        }
+        return modeIndex;
     }
 
     /**
@@ -1434,6 +1441,18 @@ public class CameraActivity extends Activity
 
     @Override
     public void onPause() {
+        /*
+         * Save the last module index after all secure camera and icon launches,
+         * not just on mode switches.
+         *
+         * Right now we exclude capture intents from this logic, because we also
+         * ignore the cross-Activity recovery logic in onStart for capture intents.
+         */
+        if (!isCaptureIntent()) {
+            mSettingsManager.setInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX,
+                mCurrentModeIndex);
+        }
+
         mPaused = true;
         mPeekAnimationHandler = null;
         mPeekAnimationThread.quitSafely();
@@ -1522,9 +1541,7 @@ public class CameraActivity extends Activity
         mCurrentModule.resume();
         setSwipingEnabled(true);
 
-        if (mResetToPreviewOnResume) {
-            mCameraAppUI.resume();
-        } else {
+        if (!mResetToPreviewOnResume) {
             LocalData data = mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
             if (data != null) {
                 mDataAdapter.refresh(data.getUri());
@@ -1575,6 +1592,22 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
         mPanoramaViewHelper.onStart();
+
+        /*
+         * If we're starting after launching a different Activity (lockscreen),
+         * we need to use the last mode used in the other Activity, and
+         * not the old one from this Activity.
+         *
+         * This needs to happen before CameraAppUI.resume() in order to set the
+         * mode cover icon to the actual last mode used.
+         *
+         * Right now we exclude capture intents from this logic.
+         */
+        int modeIndex = getModeIndex();
+        if (!isCaptureIntent() && mCurrentModeIndex != modeIndex) {
+            onModeSelected(modeIndex);
+        }
+
         if (mResetToPreviewOnResume) {
             mCameraAppUI.resume();
             mResetToPreviewOnResume = false;
