@@ -15,8 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="pref_camera_picturesize_entry_50mp">50 MP (SuperZoom)</string>
-    <string name="pref_camera_picturesize_entry_37_5mp">37,5 MP (SuperZoom)</string>
     <string name="pref_camera_picturesize_entry_20_7mp">20,7 MP</string>
     <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
     <string name="pref_camera_picturesize_entry_12_8mp">12,8 MP</string>

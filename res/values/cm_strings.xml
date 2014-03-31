@@ -15,10 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Settings screen, dialog choice for 50 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_50mp">50M pixels (SuperZoom)</string>
-    <!-- Settings screen, dialog choice for 37.5 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_37_5mp">37.5M pixels (SuperZoom)</string>
     <!-- Settings screen, dialog choice for 20.7 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixels</string>
     <!-- Settings screen, dialog choice for 18 megapixels picture size [CHAR LIMIT=15] -->
