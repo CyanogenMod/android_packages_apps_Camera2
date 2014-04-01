@@ -14,17 +14,17 @@
      limitations under the License.
 -->
 <!-- This layout is shared by phone and tablet in landscape orientation. -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
   <!-- TODO: make horizontal once nine patch stretches horizontally -->
-  <LinearLayout
-      android:id="@+id/indicator_icons"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/mode_options_toggle"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:padding="@dimen/mode_options_toggle_padding"
+      android:layout_margin="@dimen/mode_options_toggle_padding"
       android:orientation="horizontal"
       android:contentDescription="@string/accessibility_mode_options"
-      android:background="@drawable/bg_options_indicator" >
+      android:background="@drawable/bg_options_indicator"
+      android:layout_gravity="bottom|right" >
     <ImageView
         android:id="@+id/pano_indicator"
         style="@style/IndicatorIcon" />
@@ -34,5 +34,10 @@
     <ImageView
         android:id="@+id/flash_indicator"
         style="@style/IndicatorIcon" />
-  </LinearLayout>
-</merge>
+    <ImageView
+        android:id="@+id/three_dots"
+        style="@style/IndicatorIcon"
+        android:src="@drawable/ic_options_port"
+        android:contentDescription="@string/accessibility_mode_options"
+        android:visibility="visible" />
+</LinearLayout>

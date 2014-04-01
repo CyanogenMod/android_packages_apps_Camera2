@@ -52,8 +52,6 @@ public class IndicatorIconController
     private TypedArray mHdrIndicatorIcons;
     private TypedArray mPanoIndicatorIcons;
 
-    private OnIndicatorVisibilityChangedListener mListener;
-
     private AppController mController;
 
     public IndicatorIconController(AppController controller, View root) {
@@ -78,22 +76,6 @@ public class IndicatorIconController
             mPanoIndicatorIcons =
                 context.getResources().obtainTypedArray(panoIndicatorArrayId);
         }
-    }
-
-    /**
-     * A listener for responding to changes in indicator visibility.
-     */
-    public interface OnIndicatorVisibilityChangedListener {
-        public void onIndicatorVisibilityChanged(View indicator);
-    }
-
-    /**
-     * Set an {@link OnIndicatorVisibilityChangedListener} which will be
-     * called whenever an indicator changes visibility, caused by this
-     * controller.
-     */
-    public void setListener(OnIndicatorVisibilityChangedListener listener) {
-        mListener = listener;
     }
 
     @Override
@@ -156,9 +138,6 @@ public class IndicatorIconController
     private void changeVisibility(View view, int visibility) {
         if (view.getVisibility() != visibility) {
             view.setVisibility(visibility);
-            if (mListener != null) {
-                mListener.onIndicatorVisibilityChanged(view);
-            }
         }
     }
 
