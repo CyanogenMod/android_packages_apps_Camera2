@@ -26,12 +26,10 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import com.android.camera.ShutterButton;
 import com.android.camera.debug.Log;
@@ -311,12 +309,8 @@ public class BottomBar extends FrameLayout
 
         // Calculates the width and height needed for the bar.
         int barWidth, barHeight;
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) getLayoutParams();
         if (measureWidth > measureHeight) {
             // Landscape.
-            // TODO: The bottom bar should not need to care about the
-            // the type of its parent.  Handle this in the parent layout.
-            layoutParams.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
             barHeight = (int) mPreviewShortEdge;
             if ((mPreviewLongEdge == 0 && mPreviewShortEdge == 0) || mOverLayBottomBar) {
                 barWidth = mOptimalHeight;
@@ -333,7 +327,6 @@ public class BottomBar extends FrameLayout
             }
         } else {
             // Portrait
-            layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
             barWidth = (int) mPreviewShortEdge;
             if ((mPreviewLongEdge == 0 && mPreviewShortEdge == 0) || mOverLayBottomBar) {
                 barHeight = mOptimalHeight;
