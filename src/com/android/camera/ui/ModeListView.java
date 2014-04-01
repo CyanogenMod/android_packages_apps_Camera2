@@ -1292,6 +1292,7 @@ public class ModeListView extends FrameLayout
         if (!mCurrentStateManager.getCurrentState().shouldHandleTouchEvent(ev)) {
             return false;
         }
+        getParent().requestDisallowInterceptTouchEvent(true);
         super.onTouchEvent(ev);
 
         // Pass all touch events to gesture detector for gesture handling.

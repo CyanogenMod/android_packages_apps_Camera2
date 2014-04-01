@@ -760,6 +760,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void setSwipeEnabled(boolean enabled) {
         mSwipeEnabled = enabled;
+        // TODO: This can be removed once we come up with a new design for handling swipe
+        // on shutter button and mode options. (More details: b/13751653)
+        mAppRootView.setSwipeEnabled(enabled);
     }
 
     public void onDestroy() {
