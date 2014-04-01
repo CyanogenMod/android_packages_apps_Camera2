@@ -96,10 +96,13 @@ public class CameraPerformanceTracker {
             default:
                 break;
         }
-        if (DEBUG) {
-            Log.d(TAG, "Mode switch duration: " + sInstance.mModeSwitchDuration);
-            Log.d(TAG, "Cold start latency: " + sInstance.mFirstPreviewFrameLatencyColdStart);
-            Log.d(TAG, "Warm start latency: " + sInstance.mFirstPreviewFrameLatencyWarmStart);
+        if (DEBUG && eventType == FIRST_PREVIEW_FRAME) {
+            Log.d(TAG, "Mode switch duration: " + (sInstance.mModeSwitchDuration
+                == UNSET ? "UNSET" : sInstance.mModeSwitchDuration));
+            Log.d(TAG, "Cold start latency: " + (sInstance.mFirstPreviewFrameLatencyColdStart
+                == UNSET ? "UNSET" : sInstance.mFirstPreviewFrameLatencyColdStart));
+            Log.d(TAG, "Warm start latency: " + (sInstance.mFirstPreviewFrameLatencyWarmStart
+                == UNSET ? "UNSET" : sInstance.mFirstPreviewFrameLatencyWarmStart));
         }
     }
 

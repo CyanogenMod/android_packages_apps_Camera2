@@ -1169,8 +1169,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCreate(Bundle state) {
-        super.onCreate(state);
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
+
+        super.onCreate(state);
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
         GcamHelper.init(getContentResolver());
@@ -1445,6 +1446,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onPause() {
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
+
         /*
          * Save the last module index after all secure camera and icon launches,
          * not just on mode switches.
@@ -1461,7 +1464,6 @@ public class CameraActivity extends Activity
         mPeekAnimationHandler = null;
         mPeekAnimationThread.quitSafely();
         mPeekAnimationThread = null;
-        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
 
         // Delete photos that are pending deletion
         performDeletion();
@@ -1490,8 +1492,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
-        mPaused = false;
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
+
+        mPaused = false;
 
         mLastLayoutOrientation = getResources().getConfiguration().orientation;
 
