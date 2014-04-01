@@ -282,6 +282,14 @@ public class CameraActivity extends Activity
                         mPanoramaViewHelper.showPanorama(CameraActivity.this, contentUri);
                     } else if (RgbzMetadataLoader.hasRGBZData(data)) {
                         mPanoramaViewHelper.showRgbz(contentUri);
+                        if (mSettingsManager.getBoolean(
+                                SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
+                            mSettingsManager.setBoolean(
+                                    SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING,
+                                    false);
+                            mCameraAppUI.clearClingForViewer(
+                                    CameraAppUI.BottomPanel.VIEWER_REFOCUS);
+                        }
                     }
                 }
 
@@ -1272,6 +1280,9 @@ public class CameraActivity extends Activity
                 mDataAdapter);
 
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
+        if (mSettingsManager.getBoolean(SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
+            mCameraAppUI.setupClingForViewer(CameraAppUI.BottomPanel.VIEWER_REFOCUS);
+        }
 
         mLocationManager = new LocationManager(mAppContext);
 

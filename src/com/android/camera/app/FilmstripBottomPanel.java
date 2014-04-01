@@ -16,6 +16,7 @@
 
 package com.android.camera.app;
 
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.camera.debug.Log;
+import com.android.camera.widget.Cling;
 import com.android.camera2.R;
 
 /**
@@ -30,6 +33,7 @@ import com.android.camera2.R;
  * sphere image and creating a tiny planet from a photo sphere image.
  */
 class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
+    private static final Log.Tag TAG = new Log.Tag("BottomPanel");
 
     private final AppController mController;
     private final ViewGroup mLayout;
@@ -46,6 +50,7 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     private TextView mProgressErrorText;
     private ProgressBar mProgressBar;
     private boolean mTinyPlanetEnabled;
+    private final SparseArray<Cling> mClingMap = new SparseArray<Cling>();
 
     public FilmstripBottomPanel(AppController controller, ViewGroup bottomControlsLayout) {
         mController = controller;
@@ -65,11 +70,37 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     }
 
     @Override
+    public void setClingForViewer(int viewerType, Cling cling) {
+        if (cling == null) {
+            Log.w(TAG, "Cannot set a null cling for viewer");
+            return;
+        }
+        mClingMap.put(viewerType, cling);
+        cling.setReferenceView(mViewButton);
+    }
+
+    @Override
+    public void clearClingForViewer(int viewerType) {
+        Cling cling = mClingMap.get(viewerType);
+        if (cling == null) {
+            Log.w(TAG, "Cling does not exist for the given viewer type: " + viewerType);
+        }
+        cling.setReferenceView(null);
+        mClingMap.remove(viewerType);
+    }
+
+    @Override
+    public Cling getClingForViewer(int viewerType) {
+        return mClingMap.get(viewerType);
+    }
+
+    @Override
     public void setVisible(boolean visible) {
         if (visible) {
             mLayout.setVisibility(View.VISIBLE);
         } else {
             mLayout.setVisibility(View.INVISIBLE);
+            hideClings();
         }
     }
 
@@ -88,9 +119,15 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     public void setViewerButtonVisibility(int state) {
         if (state == VIEWER_NONE) {
             mViewButton.setVisibility(View.GONE);
+            hideClings();
+
         } else {
             mViewButton.setImageResource(getViewButtonResource(state));
             mViewButton.setVisibility(View.VISIBLE);
+            View cling = mClingMap.get(state);
+            if (cling != null) {
+                cling.setVisibility(View.VISIBLE);
+            }
         }
         updateMiddleFillerLayoutVisibility();
     }
@@ -167,6 +204,15 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     @Override
     public void hideControls() {
         mControlLayout.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Sets all the clings to be invisible.
+     */
+    private void hideClings() {
+        for (int i = 0; i < mClingMap.size(); i++) {
+            mClingMap.valueAt(i).setVisibility(View.INVISIBLE);
+        }
     }
 
     private int getViewButtonResource(int state) {
