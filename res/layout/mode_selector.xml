@@ -35,6 +35,7 @@
     <com.android.camera.ui.ModeIconView
         android:id="@+id/selector_icon"
         android:scaleType="centerInside"
+        android:layout_gravity="left"
         android:layout_width="@dimen/mode_selector_icon_block_width"
         android:layout_height="@dimen/mode_selector_icon_block_width" />
 </com.android.camera.ui.ModeSelectorItem>
