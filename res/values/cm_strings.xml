@@ -183,4 +183,8 @@
     <!-- More Settings screen, power button title -->
     <string name="pref_camera_power_shutter_title">Power shutter</string>
     <string name="pref_camera_power_shutter_default" translatable="false">off</string>
+
+    <!-- SuperZoom -->
+    <string name="pref_superzoom_title">SuperZoom</string>
+    <string name="pref_superzoom_default" translatable="false">off</string>
 </resources>
