@@ -28,6 +28,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.os.AsyncTask;
+import android.util.CameraPerformanceTracker;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.TextureView;
@@ -75,6 +76,7 @@ public class PhotoUI implements PieListener,
 
     private View mRootView;
     private SurfaceTexture mSurfaceTexture;
+    private boolean mFirstFrame = true;
 
     private PopupWindow mPopup;
     private ShutterButton mShutterButton;
@@ -284,6 +286,7 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        mFirstFrame = true;
         synchronized (mSurfaceTextureLock) {
             Log.v(TAG, "SurfaceTexture ready.");
             mSurfaceTexture = surface;
@@ -313,6 +316,10 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        if (mFirstFrame) {
+            CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
+            mFirstFrame = false;
+        }
         // Make sure preview cover is hidden if preview data is available.
         if (mPreviewCover.getVisibility() != View.GONE) {
             mPreviewCover.setVisibility(View.GONE);
