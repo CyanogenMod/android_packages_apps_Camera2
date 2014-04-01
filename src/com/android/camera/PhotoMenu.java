@@ -248,7 +248,8 @@ public class PhotoMenu extends PieController
                 CameraSettings.KEY_AUTOEXPOSURE,
                 CameraSettings.KEY_ANTIBANDING,
                 CameraSettings.KEY_BURST_MODE,
-                CameraSettings.KEY_HISTOGRAM
+                CameraSettings.KEY_HISTOGRAM,
+                CameraSettings.KEY_SUPERZOOM
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
