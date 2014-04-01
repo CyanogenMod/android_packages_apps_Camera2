@@ -845,4 +845,7 @@ CHAR LIMIT=NONE] -->
 
     <!-- Message shown in the settings summary for how many megapixels have been selected. [CHAR LIMIT=24]-->
     <string name="setting_summary_x_megapixels">%1$s megapixels</string>
+
+    <!-- Text shown above the button that opens to editor for images created from lens blur mode. [CHAR LIMIT=60] -->
+    <string name="cling_text_for_refocus_editor_button">Click here to edit the lens blur image.</string>
  </resources>

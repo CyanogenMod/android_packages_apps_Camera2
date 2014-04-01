@@ -369,6 +369,7 @@ public class SettingsManager {
     // as soon as possible, if a user requests a setting/mode option
     // that forces them to leave HDR plus.
     public static final int SETTING_REQUEST_RETURN_HDR_PLUS = 30;
+    public static final int SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING = 31;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -403,8 +404,8 @@ public class SettingsManager {
             "pref_flash_supported_back_camera";
     public static final String KEY_STRICT_UPGRADE_VERSION = "pref_strict_upgrade_version";
     public static final String KEY_REQUEST_RETURN_HDR_PLUS = "pref_request_return_hdr_plus";
-
-    public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
+    public static final String KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING =
+            "pref_should_show_refocus_viewer_cling";
 
     /**
      * Defines a simple class for holding a the spec of a setting. This spec is
@@ -1117,6 +1118,11 @@ public class SettingsManager {
         String defaultValue = context.getString(R.string.setting_none_value);
         return new Setting(SOURCE_MODULE, TYPE_BOOLEAN, VALUE_OFF,
                 KEY_REQUEST_RETURN_HDR_PLUS, null, FLUSH_OFF);
+    }
+
+    public static Setting getShouldShowRefocusViewerCling(Context context) {
+        return new Setting(SOURCE_MODULE, TYPE_BOOLEAN, VALUE_ON,
+                KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING, null, FLUSH_OFF);
     }
 
     // Utilities.
