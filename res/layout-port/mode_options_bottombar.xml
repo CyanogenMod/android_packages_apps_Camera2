@@ -77,22 +77,8 @@
                 </com.android.camera.ui.TopRightWeightedLayout>
             </com.android.camera.widget.ModeOptions>
 
-            <FrameLayout
-                android:id="@+id/mode_options_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/mode_options_toggle_padding"
-                android:layout_gravity="bottom|right" >
-                <ImageView
-                    android:id="@+id/three_dots"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="matrix"
-                    android:src="@drawable/ic_options_active"
-                    android:contentDescription="@string/accessibility_mode_options"
-                    android:background="@null" />
-                <include layout="@layout/indicators" />
-            </FrameLayout>
+            <include layout="@layout/indicators" />
+
         </com.android.camera.widget.ModeOptionsOverlay>
 
         <include layout="@layout/bottom_bar" />

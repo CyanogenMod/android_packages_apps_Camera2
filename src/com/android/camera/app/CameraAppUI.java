@@ -1024,7 +1024,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mIndicatorIconController =
                 new IndicatorIconController(mController, mAppRootView);
         }
-        mIndicatorIconController.setListener(mModeOptionsOverlay);
 
         mController.getButtonManager().load(mCameraRootView);
         mController.getButtonManager().setListener(mIndicatorIconController);
