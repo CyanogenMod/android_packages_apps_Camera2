@@ -17,9 +17,10 @@
 package com.android.camera.data;
 
 import android.net.Uri;
-
 import android.os.AsyncTask;
+
 import com.android.camera.filmstrip.DataAdapter;
+import com.android.camera.util.Callback;
 import com.android.camera.widget.Preloader;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public interface LocalDataAdapter extends DataAdapter,
     /**
      * Request for loading the local data.
      */
-    public void requestLoad();
+    public void requestLoad(Callback<Void> doneCallback);
 
     /**
      * Returns the specified {@link LocalData}.

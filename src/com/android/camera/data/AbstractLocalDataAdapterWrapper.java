@@ -20,6 +20,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.android.camera.util.Callback;
+
 import java.util.List;
 
 /**
@@ -70,8 +72,8 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void requestLoad() {
-        mAdapter.requestLoad();
+    public void requestLoad(Callback<Void> doneCallback) {
+        mAdapter.requestLoad(doneCallback);
     }
 
     @Override

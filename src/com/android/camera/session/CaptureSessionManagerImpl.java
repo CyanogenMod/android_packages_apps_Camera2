@@ -126,7 +126,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             // TODO: This needs to happen outside the UI thread.
             mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder, now);
             mUri = mPlaceHolderSession.outputUri;
-            mSessions.put(mUri.toString(), this);
+            putSession(mUri, this);
             notifyTaskQueued(mUri);
         }
 
@@ -355,8 +355,17 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
+    public void putSession(Uri sessionUri, CaptureSession session) {
+        synchronized (mSessions)  {
+            mSessions.put(sessionUri.toString(), session);
+        }
+    }
+
+    @Override
     public CaptureSession getSession(Uri sessionUri) {
-        return mSessions.get(sessionUri.toString());
+        synchronized (mSessions)  {
+            return mSessions.get(sessionUri.toString());
+        }
     }
 
     @Override
@@ -387,7 +396,9 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     private void removeSession(String sessionUri) {
-        mSessions.remove(sessionUri);
+        synchronized (mSessions) {
+            mSessions.remove(sessionUri);
+        }
     }
 
     /**
@@ -505,5 +516,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     @Override
     public void removeErrorMessage(Uri uri) {
         mFailedSessionMessages.remove(uri);
+    }
+
+    @Override
+    public void fillTemporarySession(final SessionListener listener) {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mSessions) {
+                    for (String sessionUri : mSessions.keySet()) {
+                        CaptureSession session = mSessions.get(sessionUri);
+                        listener.onSessionQueued(session.getUri());
+                        listener.onSessionProgress(session.getUri(), session.getProgress());
+                        listener.onSessionProgressText(session.getUri(),
+                                session.getProgressMessage());
+                    }
+                }
+            }
+        });
     }
 }
