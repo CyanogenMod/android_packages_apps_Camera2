@@ -20,7 +20,6 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.android.camera.ShutterButton;
 import com.android.camera.app.AppController;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
@@ -73,7 +72,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     /** An reference to the gcam mode index. */
     private static int sGcamIndex;
 
-    private ShutterButton mShutterButton;
     private AppController mAppController;
 
     /**
@@ -141,8 +139,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (ImageButton) root.findViewById(R.id.done_button);
         mButtonRetake
             = (ImageButton) root.findViewById(R.id.retake_button);
-        mShutterButton
-            = (ShutterButton) root.findViewById(R.id.shutter_button);
     }
 
     @Override

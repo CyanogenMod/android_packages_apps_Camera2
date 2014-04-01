@@ -186,10 +186,6 @@ public class VideoUI implements PreviewStatusListener {
         }
     }
 
-    public void enableShutter(boolean enable) {
-
-    }
-
     public void setSwipingEnabled(boolean enable) {
         mActivity.setSwipingEnabled(enable);
     }
@@ -229,18 +225,6 @@ public class VideoUI implements PreviewStatusListener {
         // there is no plan to take advantage of the smooth zoom.
         // TODO: setup zoom through App UI.
         mPreviewOverlay.setupZoom(mZoomMax, param.getZoom(), mZoomRatios, new ZoomChangeListener());
-    }
-
-    public void clickShutter() {
-
-    }
-
-    public void pressShutter(boolean pressed) {
-
-    }
-
-    public View getShutterButton() {
-        return null;
     }
 
     public void setRecordingTime(String text) {
