@@ -21,7 +21,7 @@ package com.android.camera.debug;
  */
 public class CurrentConfig {
 
-    private static final Config sDefaultConfig = Configurations.LOG_ALL_NO_DEBUG;
+    private static final Config sDefaultConfig = Configurations.EVERYTHING_ON;
     private static Config sCurrentConfig = sDefaultConfig;
 
     /**
