@@ -26,6 +26,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 
 import com.android.camera.debug.Log;
 import com.android.camera.util.Gusterpolator;
@@ -39,7 +41,6 @@ public class CaptureAnimationOverlay extends View
     implements PreviewStatusListener.PreviewAreaChangedListener {
     private final static Log.Tag TAG = new Log.Tag("CaptureAnimOverlay");
 
-    private final static int FLASH_ANIMATION_DURATION_MS = 350;
     private final static int FLASH_CIRCLE_SHRINK_DURATION_MS = 200;
     private final static int FLASH_CIRCLE_SLIDE_DURATION_MS = 400;
     private final static int FLASH_CIRCLE_SLIDE_START_DELAY_MS = 0;
@@ -47,21 +48,58 @@ public class CaptureAnimationOverlay extends View
     private final static int FLASH_ALPHA_AFTER_SHRINK = 50;
     private final static int FLASH_COLOR = Color.WHITE;
 
+    private static final float FLASH_MAX_ALPHA = 0.85f;
+    private static final long FLASH_FULL_DURATION_MS = 65;
+    private static final long FLASH_DECREASE_DURATION_MS = 150;
+
     private int mWidth;
     private int mHeight;
     private int mFlashCircleCenterX;
     private int mFlashCircleCenterY;
     private int mFlashCircleRadius = 0;
-    private ValueAnimator mFlashAnimation;
+    private AnimatorSet mFlashAnimation;
     private AnimatorSet mFlashCircleAnimation;
     private final Paint mPaint = new Paint();
     private final int mFlashCircleSizeAfterShrink;
+    private final Interpolator mFlashAnimInterpolator;
+    private final ValueAnimator.AnimatorUpdateListener mFlashAnimUpdateListener;
+    private final Animator.AnimatorListener mFlashAnimListener;
 
     public CaptureAnimationOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPaint.setColor(FLASH_COLOR);
         mFlashCircleSizeAfterShrink = getResources()
                 .getDimensionPixelSize(R.dimen.flash_circle_size_after_shrink);
+        mFlashAnimInterpolator = new LinearInterpolator();
+        mFlashAnimUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                setAlpha((Float) animation.getAnimatedValue());
+                invalidate();
+            }
+        };
+        mFlashAnimListener = new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                setVisibility(VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mFlashAnimation = null;
+                setVisibility(INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        };
     }
 
     /**
@@ -164,38 +202,19 @@ public class CaptureAnimationOverlay extends View
             mFlashAnimation.cancel();
         }
 
-        mFlashAnimation = ValueAnimator.ofFloat(0f, .5f, 0f);
-        mFlashAnimation.setDuration(FLASH_ANIMATION_DURATION_MS);
-        mFlashAnimation.setInterpolator(Gusterpolator.INSTANCE);
-        mFlashAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                setAlpha((Float) animation.getAnimatedValue());
-                invalidate();
-            }
-        });
-        mFlashAnimation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                setVisibility(VISIBLE);
-            }
+        ValueAnimator flashAnim1 = ValueAnimator.ofFloat(FLASH_MAX_ALPHA, FLASH_MAX_ALPHA);
+        ValueAnimator flashAnim2 = ValueAnimator.ofFloat(FLASH_MAX_ALPHA, .0f);
+        flashAnim1.setDuration(FLASH_FULL_DURATION_MS);
+        flashAnim2.setDuration(FLASH_DECREASE_DURATION_MS);
+        flashAnim1.addUpdateListener(mFlashAnimUpdateListener);
+        flashAnim2.addUpdateListener(mFlashAnimUpdateListener);
+        flashAnim1.setInterpolator(mFlashAnimInterpolator);
+        flashAnim2.setInterpolator(mFlashAnimInterpolator);
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mFlashAnimation = null;
-                setVisibility(INVISIBLE);
-            }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
+        mFlashAnimation = new AnimatorSet();
+        mFlashAnimation.play(flashAnim1).before(flashAnim2);
+        mFlashAnimation.addListener(mFlashAnimListener);
         mFlashAnimation.start();
     }
 
