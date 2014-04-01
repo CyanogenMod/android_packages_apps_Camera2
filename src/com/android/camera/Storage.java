@@ -123,7 +123,9 @@ public class Storage {
         // Insert into MediaStore.
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
-        if (mimeType.equalsIgnoreCase("jpeg") || mimeType == null) {
+        if (mimeType.equalsIgnoreCase("jpeg") ||
+            mimeType.equalsIgnoreCase("image/jpeg") ||
+            mimeType == null) {
             values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
         } else {
             values.put(ImageColumns.DISPLAY_NAME, title + ".raw");
