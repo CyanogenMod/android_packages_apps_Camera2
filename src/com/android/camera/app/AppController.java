@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
+import com.android.camera.CurrentModuleProvider;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
@@ -35,7 +36,7 @@ import com.android.camera.ui.PreviewStatusListener;
 /**
  * The controller at app level.
  */
-public interface AppController {
+public interface AppController extends CurrentModuleProvider {
 
     /**
      * An interface which defines the shutter events listener.
@@ -88,11 +89,6 @@ public interface AppController {
      * Returns whether the app is currently paused.
      */
     public boolean isPaused();
-
-    /**
-     * Returns the current running module index.
-     */
-    public int getCurrentModuleIndex();
 
     /**
      * Returns the current module controller.
