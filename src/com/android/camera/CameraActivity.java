@@ -46,6 +46,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.CameraPerformanceTracker;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -1013,6 +1014,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCreate(Bundle state) {
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
+
         super.onCreate(state);
         GcamHelper.init(getContentResolver());
 
@@ -1201,6 +1204,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onPause() {
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
+
         // Delete photos that are pending deletion
         performDeletion();
         mOrientationListener.disable();
@@ -1223,6 +1228,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
+        CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
+
         // TODO: Handle this in OrientationManager.
         // Auto-rotate off
         if (Settings.System.getInt(getContentResolver(),

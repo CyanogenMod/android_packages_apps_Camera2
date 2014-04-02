@@ -24,6 +24,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.os.Message;
+import android.util.CameraPerformanceTracker;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -87,6 +88,7 @@ public class VideoUI implements PieRenderer.PieListener,
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
     private SurfaceTexture mSurfaceTexture;
+    private boolean mFirstFrame = true;
     private VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
@@ -719,6 +721,7 @@ public class VideoUI implements PieRenderer.PieListener,
     // SurfaceTexture callbacks
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        mFirstFrame = true;
         mSurfaceTexture = surface;
         mController.onPreviewUIReady();
     }
@@ -737,6 +740,11 @@ public class VideoUI implements PieRenderer.PieListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        if (mFirstFrame) {
+            CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
+            mFirstFrame = false;
+        }
+
         // Make sure preview cover is hidden if preview data is available.
         if (mPreviewCover.getVisibility() != View.GONE) {
             mPreviewCover.setVisibility(View.GONE);
