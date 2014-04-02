@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 
+import com.android.camera.Storage;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.Callback;
@@ -335,8 +336,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
                 mLastPhotoId = Math.max(mLastPhotoId, newestPhoto.getContentId());
             }
             // We may add data that is already present, but if we do, it will be deduped in addData.
+            // addData does not dedupe session items, so we ignore them here
             for (LocalData localData : newPhotoData) {
-                addData(localData);
+                Uri sessionUri = Storage.getSessionUriFromContentUri(localData.getUri());
+                if (sessionUri == null) {
+                    addData(localData);
+                }
             }
         }
     }
