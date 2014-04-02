@@ -292,23 +292,6 @@ public class PhotoUI implements PreviewStatusListener,
         }
     }
 
-    // shutter button handling
-
-    public boolean isShutterPressed() {
-        return false;
-    }
-
-    /**
-     * Enables or disables the shutter button.
-     */
-    public void enableShutter(boolean enabled) {
-
-    }
-
-    public void pressShutterButton() {
-
-    }
-
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
         @Override
         public void onZoomValueChanged(int index) {

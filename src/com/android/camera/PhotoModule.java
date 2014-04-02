@@ -238,9 +238,6 @@ public class PhotoModule
     private final float[] mR = new float[16];
     private int mHeading = -1;
 
-    /** Whether shutter is enabled. */
-    private boolean mShutterEnabled = true;
-
     /** True if all the parameters needed to start preview is ready. */
     private boolean mCameraPreviewParamsReady = false;
 
@@ -707,7 +704,7 @@ public class PhotoModule
 
         @Override
         public void onPictureTaken(final byte[] jpegData, CameraProxy camera) {
-            setShutterEnabled(true);
+            mAppController.setShutterEnabled(true);
             if (mPaused) {
                 return;
             }
@@ -828,7 +825,7 @@ public class PhotoModule
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
             Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
             setCameraState(IDLE);
-            mFocusManager.onAutoFocus(focused, mUI.isShutterPressed());
+            mFocusManager.onAutoFocus(focused, false);
         }
     }
 
@@ -902,7 +899,7 @@ public class PhotoModule
         // If we are already in the middle of taking a snapshot or the image
         // save request is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
-                || mCameraState == SWITCHING_CAMERA || !mShutterEnabled) {
+                || mCameraState == SWITCHING_CAMERA || !mAppController.isShutterEnabled()) {
             return false;
         }
         mCaptureStartTime = System.currentTimeMillis();
@@ -934,7 +931,7 @@ public class PhotoModule
 
         // We don't want user to press the button again while taking a
         // multi-second HDR photo.
-        setShutterEnabled(false);
+        mAppController.setShutterEnabled(false);
         mCameraDevice.takePicture(mHandler,
                 new ShutterCallback(!animateBefore),
                 mRawPictureCallback, mPostViewPictureCallback,
@@ -1382,7 +1379,6 @@ public class PhotoModule
                     // the shutter button gets the focus, onShutterButtonFocus()
                     // will be called again but it is fine.
                     onShutterButtonFocus(true);
-                    mUI.pressShutterButton();
                 }
                 return true;
         }
@@ -1806,11 +1802,6 @@ public class PhotoModule
                 CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
     }
 
-    private void setShutterEnabled(boolean enabled) {
-        mShutterEnabled = enabled;
-        mUI.enableShutter(enabled);
-    }
-
     // TODO: Remove this
     @Override
     public int onZoomChanged(int index) {
@@ -1839,7 +1830,7 @@ public class PhotoModule
 
     @Override
     public void onMemoryStateChanged(int state) {
-        setShutterEnabled(state == MemoryManager.STATE_OK);
+        mAppController.setShutterEnabled(state == MemoryManager.STATE_OK);
     }
 
     @Override
