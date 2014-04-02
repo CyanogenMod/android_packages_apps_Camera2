@@ -1166,6 +1166,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         removeShutterListener(mController.getCurrentModuleController());
         mTutorialsPlaceholder.removeAllViews();
 
+        setShutterButtonEnabled(true);
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
         mFocusOverlay.setVisibility(View.INVISIBLE);
