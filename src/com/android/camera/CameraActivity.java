@@ -194,6 +194,7 @@ public class CameraActivity extends Activity
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
+    private Object mStorageSpaceLock = new Object();
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
@@ -1717,17 +1718,33 @@ public class CameraActivity extends Activity
         return super.onCreateOptionsMenu(menu);
     }
 
-    protected void updateStorageSpace() {
-        mStorageSpaceBytes = Storage.getAvailableSpace();
-    }
-
     protected long getStorageSpaceBytes() {
-        return mStorageSpaceBytes;
+        synchronized (mStorageSpaceLock) {
+            return mStorageSpaceBytes;
+        }
     }
 
     protected void updateStorageSpaceAndHint() {
-        updateStorageSpace();
-        updateStorageHint(mStorageSpaceBytes);
+        /*
+         * We execute disk operations on a background thread in order to
+         * free up the UI thread.  Synchronizing on the lock below ensures
+         * that when getStorageSpaceBytes is called, the main thread waits
+         * until this method has completed.
+         */
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void ... arg) {
+                synchronized (mStorageSpaceLock) {
+                    mStorageSpaceBytes = Storage.getAvailableSpace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void ignore) {
+                updateStorageHint(getStorageSpaceBytes());
+            }
+        }).execute();
     }
 
     protected void updateStorageHint(long storageSpace) {
