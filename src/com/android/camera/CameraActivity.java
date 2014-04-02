@@ -409,8 +409,6 @@ public class CameraActivity extends Activity
                 }
             };
 
-    private ComboPreferences mPreferences;
-
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
         /**
@@ -1152,13 +1150,6 @@ public class CameraActivity extends Activity
         mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
                 mMainHandler);
 
-        mPreferences = new ComboPreferences(mAppContext);
-
-        // Remove this after we get rid of ComboPreferences.
-        int cameraId = Integer.parseInt(mSettingsManager.get(SettingsManager.SETTING_CAMERA_ID));
-        mPreferences.setLocalId(mAppContext, cameraId);
-        CameraSettings.upgradeGlobalPreferences(mPreferences,
-                mCameraController.getNumberOfCameras());
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
         mModuleManager = new ModuleManagerImpl();
