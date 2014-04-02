@@ -57,7 +57,7 @@
     <string name="set_as" msgid="5469055085024870081">"Imposta come"</string>
     <string name="video_err" msgid="1562566029875081552">"Impossibile riprodurre il video"</string>
     <string name="crop_saved" msgid="4465794038855602739">"Immagine ritagliata salvata in <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="title" msgid="8061744305671964703">"Titolo"</string>
+    <string name="title" msgid="8061744305671964703">"Nome"</string>
     <string name="description" msgid="8193138501982849808">"Descrizione"</string>
     <string name="time" msgid="5248213506417024287">"Ora"</string>
     <string name="location" msgid="564326205780827668">"Posizione"</string>
@@ -212,7 +212,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Passa a foto"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Passa a video"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Passa a panorama"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Passa a foto sferica"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Passa a Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Passa ad alta qualità"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Passa a Nuova messa a fuoco"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Annulla verifica"</string>
@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Elenco modalità aperto"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Premi la parte sinistra per visualizzare l\'elenco modalità"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Acquisizione effettuata"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Sblocca per Fotocamera"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Contenuti multimediali di: %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Elaborazione contenuti multimediali in corso"</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Riproduci video"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 secondi"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 secondo"</string>
@@ -331,7 +335,7 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Elimina"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Il pulsante è ora %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Posizione"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto fotocam. posteriore"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto fotocamera poster."</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Video fotocam. posteriore"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto fotocamera anteriore"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video fotocam. anteriore"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Bassa"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Alta"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Fai clic qui per modificare l\'immagine con sfoc. progress."</string>
 </resources>

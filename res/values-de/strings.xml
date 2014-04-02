@@ -221,10 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Optionen"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Modusliste geschlossen"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Modusliste geöffnet"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Links tippen, um die Modusliste ein- bzw. auszublenden"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"Capture aufgenommen"</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Links tippen, um die Modusliste ein- oder auszublenden"</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"Aufnahme abgeschlossen"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Entsperren und dann zur Kamera"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Medien ab %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Medienverarbeitung"</string>
     <string name="capital_on" msgid="1118214824959797269">"An"</string>
     <string name="capital_off" msgid="3020696135020167263">"Aus"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Video abspielen"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Aus"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 Sekunden"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 Sekunde"</string>
@@ -295,7 +299,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Zeitraffer"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Weitwinkel"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Tiefenschärfe abmildern"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Lens Blur"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Einstellungen öffnen"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Zum Kameramodus wechseln"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Zur Videokamera wechseln"</string>
@@ -305,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Zum Zeitraffermodus wechseln"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Zum Weitwinkelmodus wechseln"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Zum Panoramamodus wechseln"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Zum Modus \"Tiefenschärfe abmildern\" wechseln"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Zum Modus \"Lens Blur\" wechseln"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Einstellungen öffnen"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Einstellungen schließen"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus aus"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Niedrig"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Hoch"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s Megapixel"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Zum Bearbeiten des Lens Blur-Bildes hier klicken"</string>
 </resources>

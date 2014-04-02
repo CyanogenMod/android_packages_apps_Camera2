@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Uhlu lwemodi luvuliwe"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Cindezela ngakwesokunxele ukuze uguqule uhlu lwemodi"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Ukushutha kuthathiwe"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Ukuvula kuKhamela"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Imidiya esuka ku-%s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Ukucutshungulwa kwabezindaba"</string>
     <string name="capital_on" msgid="1118214824959797269">"VULIWE"</string>
     <string name="capital_off" msgid="3020696135020167263">"VALIWE"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Dlala ividiyo"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Valiwe"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 amasekhondi"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 isekhondi"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Okuphansi"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Okuphezulu"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s amamega phikiseli"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Chofoza lapha ukuze uhlele isithombe sokufiphalisa ilensi."</string>
 </resources>
