@@ -219,16 +219,16 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Examen – OK"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Examen – Refaire une photo/vidéo"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Options"</string>
-    <!-- no translation found for accessibility_mode_list_hidden (3743267380450401866) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shown (5284322142734069179) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shimmy (7715776181458722316) -->
-    <skip />
-    <!-- no translation found for accessibility_peek (2128006708870513182) -->
-    <skip />
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"La liste des modes a bien été fermée."</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"La liste des modes a bien été ouverte."</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Appuyez sur la gauche pour activer ou désactiver la liste des modes."</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"La photo a bien été prise."</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Déverrouiller l\'appareil photo"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Dernière modification des médias : %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Médias en cours de traitement…"</string>
     <string name="capital_on" msgid="1118214824959797269">"ACTIVÉ"</string>
     <string name="capital_off" msgid="3020696135020167263">"DÉSACTIVÉ"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Lire la vidéo"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Désactivé"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"1 demi-seconde"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 seconde"</string>
@@ -299,7 +299,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Accéléré"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Grand angle"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Effet flou"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Flou de l\'objectif"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Ouvrir les paramètres"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Passer en mode Appareil photo"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Passer en mode Caméra"</string>
@@ -309,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Passer en mode Accéléré"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Passer en mode Grand angle"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Passer en mode Panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Passer en mode Effet flou"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Passer en mode Flou de l\'objectif"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Ouvrir les paramètres"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Fermer les paramètres"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR+ désactivé"</string>
@@ -350,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Faible"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Élevée"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s mégapixels"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Cliquez ici pour modifier l\'image avec effet Flou de l\'objectif."</string>
 </resources>

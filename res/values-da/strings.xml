@@ -218,13 +218,17 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Annullering af gennemgang"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Gennemgangen er fuldført"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Lav billede/video om"</string>
-    <string name="accessibility_mode_options" msgid="6376831760155403217">"Valgmuligheder"</string>
+    <string name="accessibility_mode_options" msgid="6376831760155403217">"Indstillinger"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Tilstandslisten er lukket"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Tilstandslisten er åben"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Tryk til venstre for at åbne eller lukke tilstandslisten"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Billedet blev taget"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås op, og åbn Kamera"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Medier fra %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Mediebehandling"</string>
     <string name="capital_on" msgid="1118214824959797269">"TIL"</string>
     <string name="capital_off" msgid="3020696135020167263">"FRA"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Afspil video"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Fra"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 sekunder"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 sekund"</string>
@@ -305,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Skift til timelapsetilstand"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Skift til vidvinkeltilstand"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Skift til panoramatilstand"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Skift til tilstanden Linsesløring"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Skift til Linsesløring"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Åbn indstillinger"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Luk indstillinger"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus fra"</string>
@@ -323,7 +327,7 @@
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Gitterlinjer til"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Flere valgmuligheder"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Annuller"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"Udført"</string>
+    <string name="done_button_description" msgid="1334963435441544592">"Udfør"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Tag igen"</string>
     <string name="share_button_description" msgid="5108508790540832053">"Del"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Visning"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Lav"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Høj"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klik her for at redigere linsesløringsbillede."</string>
 </resources>

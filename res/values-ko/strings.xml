@@ -219,16 +219,16 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"리뷰 완료"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"다시 찍기"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"옵션"</string>
-    <!-- no translation found for accessibility_mode_list_hidden (3743267380450401866) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shown (5284322142734069179) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shimmy (7715776181458722316) -->
-    <skip />
-    <!-- no translation found for accessibility_peek (2128006708870513182) -->
-    <skip />
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"모드 목록이 닫혔습니다."</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"모드 목록이 열렸습니다."</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"왼쪽을 누르면 모드 목록이 전환됩니다."</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"캡처했습니다."</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"잠금 해제 시 카메라로 이동"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"%s의 미디어"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"미디어 처리 중"</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"동영상 재생"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"OFF"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5초"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1초"</string>
@@ -350,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"낮음"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"높음"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s메가픽셀"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"렌즈 흐림 이미지를 수정하려면 여기를 클릭하세요."</string>
 </resources>

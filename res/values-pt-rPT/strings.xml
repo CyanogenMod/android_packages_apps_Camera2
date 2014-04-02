@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lista de modos aberta"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Prima para a esquerda para ativar/desativar a lista de modos"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Captura efetuada"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloquear para aceder à câmara"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Dados multimédia de %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Dados multimédia em processamento"</string>
     <string name="capital_on" msgid="1118214824959797269">"ATIVADO"</string>
     <string name="capital_off" msgid="3020696135020167263">"DESATIVADO"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Reproduzir vídeo"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Desativado"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 segundos"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 segundo"</string>
@@ -305,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Mudar para o Modo de Intervalo de Tempo"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Mudar para o Modo de Grande Angular"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Mudar para o Modo Panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Mudar para o Modo de desfocagem da lente"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Mudar para o modo de Desfocagem da lente"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Abrir definições"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Fechar definições"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus desligado"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Baixa"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Elevada"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeis"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Clique aqui para editar a imagem da desfocagem da lente."</string>
 </resources>
