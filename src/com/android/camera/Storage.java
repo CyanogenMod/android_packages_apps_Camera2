@@ -241,12 +241,7 @@ public class Storage {
             sSessionsToContentUris.put(imageUri, resultUri);
         } else {
             // Update the MediaStore
-            int rowsModified = resolver.update(imageUri, values, null, null);
-            if (rowsModified != 1) {
-                // This should never happen
-                throw new IllegalStateException("Bad number of rows (" + rowsModified
-                        + ") updated for uri: " + imageUri);
-            }
+            resolver.update(imageUri, values, null, null);
         }
         return resultUri;
     }
