@@ -29,7 +29,7 @@
     <string name="share" msgid="8581089487762243115">"Dela"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Dela panoramabild"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Dela som foto"</string>
-    <string name="deleted" msgid="2036165115527228127">"Har tagits bort"</string>
+    <string name="deleted" msgid="2036165115527228127">"Raderat"</string>
     <string name="undo" msgid="5110048345890050107">"ÅNGRA"</string>
     <string name="details" msgid="4404020741542549488">"Information"</string>
     <string name="close" msgid="4826166926297479820">"Stäng"</string>
@@ -57,7 +57,7 @@
     <string name="set_as" msgid="5469055085024870081">"Ange som"</string>
     <string name="video_err" msgid="1562566029875081552">"Det går inte att spela upp videon."</string>
     <string name="crop_saved" msgid="4465794038855602739">"Den beskurna bilden har sparats i <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="title" msgid="8061744305671964703">"Boktitel"</string>
+    <string name="title" msgid="8061744305671964703">"Titel"</string>
     <string name="description" msgid="8193138501982849808">"Beskrivning"</string>
     <string name="time" msgid="5248213506417024287">"Tid"</string>
     <string name="location" msgid="564326205780827668">"Plats"</string>

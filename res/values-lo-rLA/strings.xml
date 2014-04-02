@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ຕັ້ງໄລຍະເວລາເປັນວິນາທີ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ກຳລັງນັບຖອຍຫຼັງເພື່ອຖ່າຍຮູບ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ຈື່ຂໍ້ມູນສະຖານທີ່ຂອງຮູບບໍ່?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ແທັກສະຖານທີ່ທີ່ຖ່າຍໃຫ້ຮູບ ແລະວິດີໂອຂອງທ່ານ.\n\nແອັບຯອື່ນໆສາມາດເຂົ້າເຖິງຂໍ້ມູນນີ້ໄດ້ ພ້ອມກັບຮູບທີ່ທ່ານບັນທຶກ."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ໃສ່​ຂໍ້ມູນ​ສະຖານທີ່​ໃຫ້​ກັບ​ຮູບພາບ ແລະ​ວິດີໂອ​ທີ່​ທ່ານ​ຖ່າຍ.\n\nແອັບຯ​ອື່ນໆ​ສາມາດ​ເຂົ້າ​ເຖິງ​ຂໍ້ມູນ​ນີ້​ໄດ້​ພ້ອມ​ກັບ​ຮູບ​ທີ່​ທ່ານ​ບັນທຶກ."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ບໍ່, ຂອບໃຈ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ຕົກລົງ"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ຕົວເລືອກເພີ່ມເຕີມ"</string>

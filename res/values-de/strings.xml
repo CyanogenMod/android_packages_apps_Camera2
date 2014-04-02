@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"Unbekannt"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Dieses Element ist lokal gespeichert und offline verfügbar."</string>
     <string name="please_wait" msgid="1416313324505140068">"Bitte warten"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Panoramaaufnahme wird gerendert"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Photo Sphere-Aufnahme wird gerendert"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Kamerafehler"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Keine Verbindung zur Kamera möglich"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Die Kamera wurde aufgrund von Sicherheitsrichtlinien deaktiviert."</string>
