@@ -27,6 +27,7 @@ import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.PlaceholderManager;
 import com.android.camera.session.SessionStorageManager;
 import com.android.camera.session.SessionStorageManagerImpl;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 
@@ -40,6 +41,7 @@ public class CameraApp extends Application implements CameraServices {
     private SessionStorageManager mSessionStorageManager;
     private MemoryManagerImpl mMemoryManager;
     private PlaceholderManager mPlaceHolderManager;
+    private SettingsManager mSettingsManager;
 
     @Override
     public void onCreate() {
@@ -57,6 +59,7 @@ public class CameraApp extends Application implements CameraServices {
         mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
                 mPlaceHolderManager, mSessionStorageManager);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
+        mSettingsManager = new SettingsManager(getApplicationContext());
 
         clearNotifications();
     }
@@ -87,5 +90,10 @@ public class CameraApp extends Application implements CameraServices {
         if (manager != null) {
             manager.cancelAll();
         }
+    }
+
+    @Override
+    public SettingsManager getSettingsManager() {
+        return mSettingsManager;
     }
 }
