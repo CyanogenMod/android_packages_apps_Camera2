@@ -182,7 +182,7 @@ public class ListPreference extends CameraPreference {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(mKey, value);
         editor.apply();
-        UsageStatistics.changePreference(mKey, value, oldValue);
+        UsageStatistics.instance().changePreference(mKey, value, oldValue);
         return true;
     }
 

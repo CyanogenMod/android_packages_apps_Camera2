@@ -944,7 +944,7 @@ public class PhotoModule
 
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
-        UsageStatistics.captureEvent(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+        UsageStatistics.instance().captureEvent(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                 UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"),
                 mParameters, null);
         return true;
@@ -1166,7 +1166,7 @@ public class PhotoModule
             initializeSecondTime();
         }
 
-        UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+        UsageStatistics.instance().changeScreen(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                 eventprotos.CameraEvent.InteractionCause.BUTTON);
 
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

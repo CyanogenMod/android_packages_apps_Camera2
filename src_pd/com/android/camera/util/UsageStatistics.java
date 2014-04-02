@@ -14,22 +14,47 @@
  * limitations under the License.
  */
 
+
 package com.android.camera.util;
+
 import android.content.Context;
-import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 
 public class UsageStatistics {
-    public static void initialize(Context context) {}
-    public static void photoInteraction(String fileNameHash, int interactionType, int cause) {}
-    public static void foregrounded(int source) {}
-    public static void captureEvent(int mode, String fileNameHash,
-                                    Camera.Parameters parameters, Float duration) {}
-    public static void changePreference(String preference, String newValue, String oldValue) {}
-    public static void cameraFailure(int cause) {}
-    public static void tapToFocus() {}
-    public static void changeScreen(int newScreen, Integer interactionCause) {}
+    private static UsageStatistics sInstance;
+
+    public static UsageStatistics instance() {
+        if (sInstance == null) {
+            sInstance = new UsageStatistics();
+        }
+        return sInstance;
+    }
+
+    public void initialize(Context context) {
+    }
+
+    public void photoInteraction(String fileNameHash, int interactionType, int cause) {
+    }
+
+    public void foregrounded(int source) {
+    }
+
+    public void captureEvent(int mode, String fileNameHash, Parameters parameters, Float duration) {
+    }
+
+    public void changePreference(String preference, String newValue, String oldValue) {
+    }
+
+    public void cameraFailure(int cause) {
+    }
+
+    public void tapToFocus() {
+    }
+
+    public void changeScreen(int newScreen, Integer interactionCause) {
+    }
 
     public static String hashFileName(String fileName) {
-        return "";
+        return fileName;
     }
 }
