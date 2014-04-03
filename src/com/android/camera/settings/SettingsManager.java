@@ -1149,7 +1149,7 @@ public class SettingsManager {
     }
 
     public static Setting getShouldShowRefocusViewerCling(Context context) {
-        return new Setting(SOURCE_MODULE, TYPE_BOOLEAN, VALUE_ON,
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, VALUE_ON,
                 KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING, null, FLUSH_OFF);
     }
 

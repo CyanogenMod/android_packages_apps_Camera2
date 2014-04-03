@@ -61,7 +61,7 @@
                     android:layout_weight="1"
                     android:visibility="invisible" />
 
-                <ImageButton
+                <com.android.camera.widget.ExternalViewerButton
                     android:id="@+id/filmstrip_bottom_control_view"
                     style="@style/FilmstripBottomControlButton"
                     android:layout_gravity="center"
