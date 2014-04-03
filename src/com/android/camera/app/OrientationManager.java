@@ -43,6 +43,9 @@ public interface OrientationManager {
      */
     void unlockOrientation();
 
+    /** @return Whether the orientation is locked by the app or the system. */
+    boolean isOrientationLocked();
+
     /**
      * Returns the display rotation degrees relative to the natural orientation
      * in clockwise.
