@@ -41,6 +41,7 @@ public class SettingsManager {
     private static final Log.Tag TAG = new Log.Tag("SettingsManager");
 
     private final Context mContext;
+    private final CurrentModuleProvider mCurrentModuleProvider;
     private final SharedPreferences mDefaultSettings;
     private final SettingsCache mSettingsCache;
     private SharedPreferences mGlobalSettings;
@@ -49,7 +50,6 @@ public class SettingsManager {
     private SettingsCapabilities mCapabilities;
 
     private int mCameraId = -1;
-    private CurrentModuleProvider mCurrentModuleProvider;
 
     /**
      * Increment this value whenever a new StrictUpgradeCallback needs to
@@ -72,7 +72,12 @@ public class SettingsManager {
     private final List<OnSharedPreferenceChangeListener> mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
 
     public SettingsManager(Context context) {
+        this(context, null);
+    }
+
+    public SettingsManager(Context context, CurrentModuleProvider currentModuleProvider) {
         mContext = context;
+        mCurrentModuleProvider = currentModuleProvider;
 
         SettingsCache.ExtraSettings extraSettings = new SettingsHelper();
         mSettingsCache = new SettingsCache(mContext, extraSettings);
@@ -152,13 +157,6 @@ public class SettingsManager {
     private void initGlobal() {
         String globalKey = mContext.getPackageName() + "_preferences_camera";
         mGlobalSettings = mContext.getSharedPreferences(globalKey, Context.MODE_PRIVATE);
-    }
-
-    /**
-     * Set the provider for the current module index, or null.
-     */
-    public void setCurrentModuleProvider(CurrentModuleProvider provider) {
-        mCurrentModuleProvider = provider;
     }
 
     /**
@@ -317,7 +315,6 @@ public class SettingsManager {
         }
         mSharedPreferenceListeners.clear();
         mListeners.clear();
-        mCurrentModuleProvider = null;
     }
 
     /**
@@ -524,10 +521,7 @@ public class SettingsManager {
         if (source.equals(SOURCE_CAMERA)) {
             return mCameraSettings;
         }
-        if (source.equals(SOURCE_MODULE)) {
-            if (mCurrentModuleProvider == null) {
-                throw new IllegalStateException("CurrentModuleProvider not set");
-            }
+        if (source.equals(SOURCE_MODULE) && mCurrentModuleProvider != null) {
             int modeIndex = CameraUtil.getCameraModeParentModeId(
                     mCurrentModuleProvider.getCurrentModuleIndex(), mContext);
             return getModulePreferences(modeIndex);
