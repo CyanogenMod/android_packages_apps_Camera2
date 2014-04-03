@@ -115,6 +115,7 @@ public class BottomBar extends FrameLayout
 
     private final RectF mRect = new RectF();
 
+    private final RectF mPreviewArea = new RectF();
     private AdjustPreviewAreaListener mAdjustPreviewAreaListener;
 
     public void setAdjustPreviewAreaListener(AdjustPreviewAreaListener listener) {
@@ -357,6 +358,10 @@ public class BottomBar extends FrameLayout
 
     @Override
     public void onPreviewAreaChanged(RectF previewArea) {
+        if (mPreviewArea.equals(previewArea)) {
+            return;
+        }
+        mPreviewArea.set(previewArea);
         setOffset(previewArea.width(), previewArea.height());
     }
 
@@ -373,6 +378,10 @@ public class BottomBar extends FrameLayout
             mPreviewLongEdge = offsetLongerEdge;
             mPreviewShortEdge = offsetShorterEdge;
             requestLayout();
+        } else {
+            // This is when the aspect ratio of the preview stays the same but the
+            // preview rect needs to be offseted.
+            notifyAreaAdjust();
         }
     }
 
