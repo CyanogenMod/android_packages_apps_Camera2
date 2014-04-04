@@ -32,7 +32,7 @@
     <string name="deleted" msgid="2036165115527228127">"Odstránené"</string>
     <string name="undo" msgid="5110048345890050107">"SPÄŤ"</string>
     <string name="details" msgid="4404020741542549488">"Podrobnosti"</string>
-    <string name="close" msgid="4826166926297479820">"Zavrieť"</string>
+    <string name="close" msgid="4826166926297479820">"Zatvoriť"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="9217673864242686656">"Počet vybratých položiek: %1$d"</item>
     <item quantity="one" msgid="5806616411905812727">"Počet vybratých položiek: %1$d"</item>
@@ -96,7 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Vybrať fotoaparát"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Späť"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Predný"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Uložiť miesto"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Ukladať polohu"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"POLOHA"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Časovač odpočítavania"</string>
   <plurals name="pref_camera_timer_entry">
@@ -179,7 +179,7 @@
     <string name="dialog_cancel" msgid="692365061128351656">"Zrušiť"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Na karte SD je málo miesta. Zmeňte nastavenie kvality alebo odstráňte niektoré obrázky či iné súbory."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Bolo dosiahnuté obmedzenie veľkosti."</string>
-    <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Veľmi rýchlo"</string>
+    <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Príliš rýchlo"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Príprava panorámy"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"Panorámu sa nepodarilo uložiť."</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"Panoráma"</string>
@@ -212,7 +212,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Prepnúť na fotoaparát"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Prepnúť do režimu video"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Prepnúť na panorámu"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Prepnúť na panorámu Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Prepnúť do režimu Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Prepnúť na vysokú kvalitu"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Prepnúť do režimu Opätovné zaostrenie"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Zrušiť"</string>
@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Zoznam režimov je otvorený"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Ak chcete prepnúť na zoznam režimov, stlačte tlačidlo vľavo"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Snímka bola urobená"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Odomknite a prejdite do aplikácie Fotoaparát"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Médiá z %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Prebieha spracovanie médií"</string>
     <string name="capital_on" msgid="1118214824959797269">"ZAPNUTÉ"</string>
     <string name="capital_off" msgid="3020696135020167263">"VYPNUTÉ"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Prehrať video"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Vypnuté"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 sekundy"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 sekunda"</string>
@@ -295,19 +299,19 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Časozberné video"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoráma"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Rozmazanie šošovky"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Doostrenie po odfotení"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Otvoriť nastavenia"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Prepnutie na režim fotoaparátu"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Prepnúť na režim videokamery"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prepnúť na panorámu Photo Sphere"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prepnúť do režimu Photo Sphere"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"Prepnúť na rozšírený režim fotoaparátu"</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Prepnúť na rozšírený režim fotoaparátu"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Prepnúť na režim časozberného snímania"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Prepnúť na širokouhlý režim"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Prepnúť na panoramatický režim"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Prepnúť do režimu rozmazania šošovky"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Prepnúť do režimu doostrenia po odfotení"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Otvoriť nastavenia"</string>
-    <string name="settings_close_desc" msgid="3095831199632813127">"Zavrieť nastavenia"</string>
+    <string name="settings_close_desc" msgid="3095831199632813127">"Zatvoriť nastavenia"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus vypnuté"</string>
     <string name="hdr_plus_on_desc" msgid="8204780034508139909">"HDR Plus zapnuté"</string>
     <string name="hdr_off_desc" msgid="7921924739852874675">"HDR vypnuté"</string>
@@ -345,5 +349,6 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"Verzia zostavy"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Nízka"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Vysoká"</string>
-    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s Mpx"</string>
+    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s MPx"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Obrázok s doostrením po odfotení upravíte po kliknutí tu."</string>
 </resources>

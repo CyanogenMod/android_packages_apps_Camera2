@@ -212,23 +212,23 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"เปลี่ยนเป็นภาพถ่าย"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"เปลี่ยนเป็นวิดีโอ"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"เปลี่ยนเป็นภาพพาโนรามา"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็นโฟโตสเฟียร์"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็น Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"เปลี่ยนเป็นคุณภาพสูง"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"สลับไปยังโหมดปรับโฟกัส"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"ไม่ผ่านการตรวจสอบ"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"ผ่านการตรวจสอบ"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"ตรวจสอบการถ่ายภาพ/วิดีโอใหม่"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ตัวเลือก"</string>
-    <!-- no translation found for accessibility_mode_list_hidden (3743267380450401866) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shown (5284322142734069179) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shimmy (7715776181458722316) -->
-    <skip />
-    <!-- no translation found for accessibility_peek (2128006708870513182) -->
-    <skip />
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"ปิดรายการในโหมดแล้ว"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"เปิดรายการในโหมดแล้ว"</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"กดทางซ้ายเพื่อสลับรายการในโหมด"</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"จับภาพแล้ว"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ปลดล็อกเพื่อใช้กล้องถ่ายรูป"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"สื่อจาก %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"กำลังประมวลผลสื่อ"</string>
     <string name="capital_on" msgid="1118214824959797269">"เปิด"</string>
     <string name="capital_off" msgid="3020696135020167263">"ปิด"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"เล่นวิดีโอ"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"ปิด"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 วินาที"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 วินาที"</string>
@@ -278,7 +278,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ตั้งระยะเวลาเป็นวินาที"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"นับถอยหลังเพื่อถ่ายภาพ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"จดจำตำแหน่งภาพไหม"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"แท็กรูปและวิดีโอด้วยตำแหน่งที่ถ่ายภาพ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ตลอดจนภาพ ที่บันทึกไว้ของคุณได้"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ใส่ตำแหน่งที่ถ่ายภาพลงในรูปและวิดีโอ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ ตลอดจนภาพที่บันทึกไว้ของคุณได้"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ไม่ ขอบคุณ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ใช่"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ตัวเลือกเพิ่มเติม"</string>
@@ -295,7 +295,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"การตั้งค่า"</string>
     <string name="mode_camera" msgid="279763925715250603">"กล้องถ่ายรูป"</string>
     <string name="mode_video" msgid="8633929034048169139">"วิดีโอ"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"โฟโตสเฟียร์"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"ย่นระยะเวลา"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"มุมกว้าง"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"พาโนรามา"</string>
@@ -303,7 +303,7 @@
     <string name="mode_settings_desc" msgid="1189966170303887131">"เปิดการตั้งค่า"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"เปลี่ยนเป็นโหมดกล้อง"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"เปลี่ยนเป็นกล้องวิดีโอ"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"เปลี่ยนเป็นโหมดโฟโตสเฟียร์"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"เปลี่ยนเป็นโหมด Photo Sphere"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"เปลี่ยนเป็นโหมดกล้องขั้นสูง"</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"เปลี่ยนเป็นโหมดกล้องขั้นสูง"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"เปลี่ยนเป็นโหมดย่นระยะเวลา"</string>
@@ -350,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ต่ำ"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"สูง"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s เมกะพิกเซล"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"คลิกที่นี่เพื่อแก้ไขภาพเลนส์เบลอ"</string>
 </resources>

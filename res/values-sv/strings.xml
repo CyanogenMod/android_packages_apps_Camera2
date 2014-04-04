@@ -29,7 +29,7 @@
     <string name="share" msgid="8581089487762243115">"Dela"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Dela panoramabild"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Dela som foto"</string>
-    <string name="deleted" msgid="2036165115527228127">"Har tagits bort"</string>
+    <string name="deleted" msgid="2036165115527228127">"Raderat"</string>
     <string name="undo" msgid="5110048345890050107">"ÅNGRA"</string>
     <string name="details" msgid="4404020741542549488">"Information"</string>
     <string name="close" msgid="4826166926297479820">"Stäng"</string>
@@ -57,7 +57,7 @@
     <string name="set_as" msgid="5469055085024870081">"Ange som"</string>
     <string name="video_err" msgid="1562566029875081552">"Det går inte att spela upp videon."</string>
     <string name="crop_saved" msgid="4465794038855602739">"Den beskurna bilden har sparats i <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="title" msgid="8061744305671964703">"Boktitel"</string>
+    <string name="title" msgid="8061744305671964703">"Titel"</string>
     <string name="description" msgid="8193138501982849808">"Beskrivning"</string>
     <string name="time" msgid="5248213506417024287">"Tid"</string>
     <string name="location" msgid="564326205780827668">"Plats"</string>
@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lägeslistan har öppnats"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Tryck till vänster om du vill visa/dölja lägeslistan"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"En bild har tagits"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås upp till Kamera"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Media från %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Bearbetar media"</string>
     <string name="capital_on" msgid="1118214824959797269">"PÅ"</string>
     <string name="capital_off" msgid="3020696135020167263">"AV"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Spela upp video"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Av"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 sekunder"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 sekund"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Låg"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Hög"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klicka här om du vill redigera bilder med linsoskärpa."</string>
 </resources>
