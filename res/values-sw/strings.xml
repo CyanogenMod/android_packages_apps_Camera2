@@ -190,7 +190,7 @@
     <string name="dialog_ok" msgid="774141340500181131">"SAWA"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Nafasi ya kadi yako ya SD inaelekea kuisha. Badilisha mpangilio wa ubora au futa baadhi ya picha au faili zingine."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Upeo wa ukubwa umefikiwa."</string>
-    <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Haraka mno"</string>
+    <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Umesonga kwa kasi"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Panorama inaandaliwa"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"Imeshindwa kuhifadhi picha ya panorama."</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"Panorama"</string>

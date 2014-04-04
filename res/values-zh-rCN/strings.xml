@@ -27,7 +27,7 @@
     <item quantity="other" msgid="5075283252850066610">"要删除所选内容吗？"</item>
   </plurals>
     <string name="share" msgid="8581089487762243115">"分享"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"分享全景图"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"分享全景照片"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"以照片形式分享"</string>
     <string name="deleted" msgid="2036165115527228127">"已删除"</string>
     <string name="undo" msgid="5110048345890050107">"撤消"</string>
@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"未知"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"该内容已存储到本地，可以离线查看。"</string>
     <string name="please_wait" msgid="1416313324505140068">"请稍候"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"正在渲染 Photo Sphere 全景照片"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"正在渲染Photo Sphere照片"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"相机发生错误"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"无法连接到相机。"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"由于安全政策的限制，相机已被禁用。"</string>
@@ -97,7 +97,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"选择摄像头"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"后置"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"前置"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"存储位置信息"</string>
+    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"保存位置信息"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"位置信息"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"倒计时器"</string>
   <plurals name="pref_camera_timer_entry">
@@ -191,13 +191,13 @@
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD 卡空间不足。请更改画质设置，或删除部分图片或其他文件。"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"已达文件大小上限。"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"速度太快"</string>
-    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"正在生成全景图"</string>
-    <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"无法保存全景图。"</string>
-    <string name="pano_dialog_title" msgid="6662642763395425145">"全景图"</string>
-    <string name="pano_capture_indication" msgid="4002128831255023954">"正在拍摄全景图"</string>
-    <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"正在等待上一幅全景图处理完毕"</string>
+    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"正在生成全景照片"</string>
+    <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"无法保存全景照片。"</string>
+    <string name="pano_dialog_title" msgid="6662642763395425145">"全景"</string>
+    <string name="pano_capture_indication" msgid="4002128831255023954">"正在拍摄全景照片"</string>
+    <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"正在等待上一幅全景照片处理完毕"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"正在保存…"</string>
-    <string name="pano_review_rendering" msgid="2743087719999377155">"正在渲染全景图"</string>
+    <string name="pano_review_rendering" msgid="2743087719999377155">"正在渲染全景照片"</string>
     <string name="tap_to_focus" msgid="3519718196270593468">"触摸即可对焦。"</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"效果"</string>
     <string name="effect_none" msgid="3102797925086872636">"无"</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"切换到拍照模式"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"切换到视频模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"切换到全景模式"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切换到 Photo Sphere 模式"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切换到Photo Sphere模式"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"切换到高画质模式"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"完成"</string>
@@ -279,9 +279,9 @@
     <string name="set_duration" msgid="1638453882581604341">"设置倒数时间（秒）"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"拍照倒计时中"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"是否记住照片拍摄地点？"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"为您的照片和视频标明拍摄地点。\n\n其他应用在查看您保存的图片时将可以使用这些信息。"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"为您的照片和视频标明拍摄地点。\n\n其他应用在查看您拍摄的照片时将可以使用这些信息。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"不用了"</string>
-    <string name="remember_location_yes" msgid="4339424460683531388">"是"</string>
+    <string name="remember_location_yes" msgid="4339424460683531388">"好"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"更多选项"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"设置"</string>
     <string name="create_tiny_planet" msgid="5186918191372107343">"创建小星球图片"</string>

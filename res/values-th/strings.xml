@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"ไม่ทราบ"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"รายการนี้จัดเก็บภายในเครื่องและสามารถใช้งานแบบออฟไลน์"</string>
     <string name="please_wait" msgid="1416313324505140068">"โปรดรอสักครู่"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"กำลังแสดงผลโฟโตสเฟียร์"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"กำลังแสดงผล Photo Sphere"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"ข้อผิดพลาดกล้องถ่ายรูป"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"ไม่สามารถเชื่อมต่อกับกล้องถ่ายรูป"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"กล้องถ่ายรูปถูกปิดใช้งานเนื่องจากนโยบายด้านความปลอดภัย"</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"เปลี่ยนเป็นภาพถ่าย"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"เปลี่ยนเป็นวิดีโอ"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"เปลี่ยนเป็นภาพพาโนรามา"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็นโฟโตสเฟียร์"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็น Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"เปลี่ยนเป็นคุณภาพสูง"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"ไม่ผ่านการตรวจสอบ"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"ผ่านการตรวจสอบ"</string>
@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ตั้งระยะเวลาเป็นวินาที"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"นับถอยหลังเพื่อถ่ายภาพ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"จดจำตำแหน่งภาพไหม"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"แท็กรูปและวิดีโอด้วยตำแหน่งที่ถ่ายภาพ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ตลอดจนภาพ ที่บันทึกไว้ของคุณได้"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ใส่ตำแหน่งที่ถ่ายภาพลงในรูปและวิดีโอ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ ตลอดจนภาพที่บันทึกไว้ของคุณได้"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ไม่ ขอบคุณ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ใช่"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ตัวเลือกเพิ่มเติม"</string>
