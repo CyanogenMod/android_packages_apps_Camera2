@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"​ເປີດ​ລາຍ​ຊື່​ໂໝດ​ແລ້ວ"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"​ກົດ​​​ປຸ່ມ​ລູກ​ສອນ​ຊ້າຍ​ເພື່ອ​​ສະ​ລັບ​ລາຍ​ຊື່​ໂໝດ"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"​ຈັບ​ພາບ​ແລ້ວ"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"​​ປົດ​ລັອກ​ໃຫ້​ກ້ອງ​ຖ່າຍ​ຮູບ"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"ໄຟ​ລ໌​ຈາກ %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"​ກຳ​ລັງ​ປະ​ມວນ​ຜົນ​ໄຟ​ລ໌"</string>
     <string name="capital_on" msgid="1118214824959797269">"ເປີດ"</string>
     <string name="capital_off" msgid="3020696135020167263">"ປິດ"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"ຫຼິ້ນ​ວິ​ດີ​ໂອ"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"ປິດ"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 ວິນາທີ"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 ວິນາທີ"</string>
@@ -274,7 +278,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ຕັ້ງໄລຍະເວລາເປັນວິນາທີ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ກຳລັງນັບຖອຍຫຼັງເພື່ອຖ່າຍຮູບ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ຈື່ຂໍ້ມູນສະຖານທີ່ຂອງຮູບບໍ່?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ແທັກສະຖານທີ່ທີ່ຖ່າຍໃຫ້ຮູບ ແລະວິດີໂອຂອງທ່ານ.\n\nແອັບຯອື່ນໆສາມາດເຂົ້າເຖິງຂໍ້ມູນນີ້ໄດ້ ພ້ອມກັບຮູບທີ່ທ່ານບັນທຶກ."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ໃສ່​ຂໍ້ມູນ​ສະຖານທີ່​ໃຫ້​ກັບ​ຮູບພາບ ແລະ​ວິດີໂອ​ທີ່​ທ່ານ​ຖ່າຍ.\n\nແອັບຯ​ອື່ນໆ​ສາມາດ​ເຂົ້າ​ເຖິງ​ຂໍ້ມູນ​ນີ້​ໄດ້​ພ້ອມ​ກັບ​ຮູບ​ທີ່​ທ່ານ​ບັນທຶກ."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ບໍ່, ຂອບໃຈ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ຕົກລົງ"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ຕົວເລືອກເພີ່ມເຕີມ"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ຕ່ຳ"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"ສູງ"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s ເມ​ກາ​ພິກ​ເຊວ"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"​ຄ​ລິກ​ບ່ອນ​ນີ້​ເພື່ອ​ແກ້​ໄຂ​ຮູບ​ພາບ​ເລນ​ມົວ"</string>
 </resources>

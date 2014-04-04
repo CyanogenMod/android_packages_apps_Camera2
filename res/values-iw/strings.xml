@@ -96,7 +96,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"בחר מצלמה"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"הקודם"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"חזיתית"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"שמור מיקום"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"שמירת מיקום"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"מיקום"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"טיימר לספירה לאחור"</string>
   <plurals name="pref_camera_timer_entry">
@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"רשימת מצבים פתוחה"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"לחץ משמאל כדי להחליף רשימת מצבים"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"הצילום בוצע"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"שחרר ישירות למצלמה"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"‏מדיה מ-%s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"מדיה בעיבוד"</string>
     <string name="capital_on" msgid="1118214824959797269">"פועל"</string>
     <string name="capital_off" msgid="3020696135020167263">"כבוי"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"הפעל סרטון"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"כבוי"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 שנייה"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"שנייה אחת"</string>
@@ -274,7 +278,7 @@
     <string name="set_duration" msgid="1638453882581604341">"הגדר משך זמן בשניות"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"סופר לאחור עד לצילום תמונה"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"האם לזכור מיקומי תמונות?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"תייג את התמונות והסרטונים שלך לציון המקומות שבהם צולמו.\n\nאפליקציות אחרות יכולות לגשת למידע הזה, כולל תמונות שנשמרו."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"תייג תמונות וסרטונים כדי לציין היכן הם צולמו.\n\nאפליקציות אחרות יכולות לגשת למידע הזה, כולל תמונות שנשמרו."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"לא תודה"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"כן"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"עוד אפשרויות"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"נמוכה"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"גבוהה"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"‏%1$s מגה-פיקסל"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"לחץ כאן כדי לערוך את תמונת טשטש העדשה."</string>
 </resources>

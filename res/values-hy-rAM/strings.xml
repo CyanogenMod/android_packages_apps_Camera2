@@ -219,16 +219,16 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Դիտարկումն արված է"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Վերանայման վերսկսում"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Ընտրանքներ"</string>
-    <!-- no translation found for accessibility_mode_list_hidden (3743267380450401866) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shown (5284322142734069179) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_list_shimmy (7715776181458722316) -->
-    <skip />
-    <!-- no translation found for accessibility_peek (2128006708870513182) -->
-    <skip />
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Ռեժիմի ցուցակը փակ է"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Ռեժիմի ցուցակը բաց է"</string>
+    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Սեղմեք ձախ մասում՝ ռեժիմի ցուցակին փոխարկելու համար"</string>
+    <string name="accessibility_peek" msgid="2128006708870513182">"Լուսանկարված է"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Ապակողպել և բացել տեսախցիկը"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Մեդիա՝ %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Մեդիայի մշակում"</string>
     <string name="capital_on" msgid="1118214824959797269">"Միացված"</string>
     <string name="capital_off" msgid="3020696135020167263">"Անջատված"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Նվագարկել տեսանյութը"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Անջատված"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 վայրկյան"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 վայրկյան"</string>
@@ -350,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ցածր"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Բարձր"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s մեգապիքսել"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Սեղմեք այստեղ՝ ետնապատկերի լղոզումով նկարը փոխելու համար:"</string>
 </resources>

@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lista de modos mostrada"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Pulsa hacia la izquierda para activar la lista de modos"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Se ha hecho una captura"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloquear para acceder a la cámara"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Archivos multimedia de %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Procesando archivos multimedia"</string>
     <string name="capital_on" msgid="1118214824959797269">"SÍ"</string>
     <string name="capital_off" msgid="3020696135020167263">"NO"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Reproducir vídeo"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"No"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 segundos"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 segundo"</string>
@@ -295,7 +299,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervalo de tiempo"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Gran angular"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorámica"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Desenfoque de lente"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Desenfoque de fondo"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Abrir ajustes"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Cambiar al modo de cámara"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Cambiar a la cámara de vídeo"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Baja"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Alta"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeles"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Haz clic para editar la imagen creada con Desenfoque de fondo."</string>
 </resources>

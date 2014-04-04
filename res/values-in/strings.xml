@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Daftar mode dibuka"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Tekan ke kiri untuk beralih daftar mode"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Gambar ditangkap"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Buka untuk ke Kamera"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Media dari %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Media sedang diproses"</string>
     <string name="capital_on" msgid="1118214824959797269">"NYALA"</string>
     <string name="capital_off" msgid="3020696135020167263">"MATI"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Putar Video"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Nonaktif"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 detik"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 detik"</string>
@@ -295,17 +299,17 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Selang Waktu"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Sudut Lebar"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Lensa Buram"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Lens Blur"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Buka Setelan"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Beralih ke Mode Kamera"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Beralih ke Kamera Video"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Beralih ke Mode Foto 360°"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Beralih ke Mode Photo Sphere"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"Beralih ke Mode Kamera Lanjutan"</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Beralih ke Mode Kamera Lanjutan"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Beralih ke Mode Selang Waktu"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Beralih ke Mode Sudut Lebar"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Beralih ke Mode Panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Beralih ke Mode Lensa Buram"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Beralih ke Mode Lens Blur"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Buka setelan"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Tutup setelan"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus nonaktif"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Rendah"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Tinggi"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapiksel"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klik di sini untuk mengedit gambar lens blur."</string>
 </resources>

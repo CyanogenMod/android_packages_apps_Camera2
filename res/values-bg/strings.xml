@@ -223,8 +223,12 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Списъкът с режими е отворен"</string>
     <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Натиснете отляво, за да превключите списъка с режими"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Снимката е направена"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Отключване към Камера"</string>
+    <string name="media_date_content_description" msgid="2497288090192743887">"Мултимедия от %s"</string>
+    <string name="media_processing_content_description" msgid="8138587719107183754">"Мултимедията се обработва"</string>
     <string name="capital_on" msgid="1118214824959797269">"ВКЛ."</string>
     <string name="capital_off" msgid="3020696135020167263">"ИЗКЛ."</string>
+    <string name="video_control_play" msgid="6895236811408921715">"Пускане на видеоклипа"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Изключено"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 секунди"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 секунда"</string>
@@ -346,4 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ниско"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Високо"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s мегапиксела"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Кликнете за редакт. на изобр. от „Замъгляване на обектива“."</string>
 </resources>
