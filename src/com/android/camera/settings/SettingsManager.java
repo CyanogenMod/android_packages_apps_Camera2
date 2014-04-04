@@ -966,12 +966,10 @@ public class SettingsManager {
     public static Setting getDefaultCameraIdSetting(Context context,
             SettingsCapabilities capabilities) {
         String defaultValue = context.getString(R.string.pref_camera_id_default);
-        String[] values = null;
-        if (capabilities != null) {
-            values = capabilities.getSupportedCameraIds();
-        }
+        String[] values = context.getResources().getStringArray(
+                R.array.camera_id_entryvalues);
         return new Setting(SOURCE_MODULE, TYPE_STRING, defaultValue, KEY_CAMERA_ID,
-                values, FLUSH_ON);
+                values, FLUSH_OFF);
     }
 
     public static Setting getHdrSetting(Context context) {
