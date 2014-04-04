@@ -38,7 +38,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.android.camera.CameraActivity;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.FeedbackHelper;
@@ -91,7 +90,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            Context context = ((CameraActivity) getActivity()).getAndroidContext();
+            Context context = this.getActivity().getApplicationContext();
             mFeedbackHelper = new FeedbackHelper(context);
             addPreferencesFromResource(R.xml.camera_preferences);
             SettingsHelper.addAdditionalPreferences(this, context);
