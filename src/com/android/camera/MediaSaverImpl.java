@@ -27,6 +27,7 @@ import android.provider.MediaStore.Video;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.util.UsageStatistics;
 
 import java.io.File;
 
@@ -82,17 +83,18 @@ public class MediaSaverImpl implements MediaSaver {
     }
     @Override
     public void addImage(final byte[] data, String title, Location loc, int width, int height,
-            int orientation, ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver) {
+            int orientation, ExifInterface exif, OnMediaSavedListener l,
+            ContentResolver resolver) {
         addImage(data, title, System.currentTimeMillis(), loc, width, height,
                 orientation, exif, l, resolver);
     }
 
     @Override
-    public void addVideo(String path, long duration, ContentValues values, OnMediaSavedListener l,
-            ContentResolver resolver) {
+    public void addVideo(String path, long duration, boolean isFrontCamera, ContentValues values,
+                         OnMediaSavedListener l, ContentResolver resolver) {
         // We don't set a queue limit for video saving because the file
         // is already in the storage. Only updating the database.
-        new VideoSaveTask(path, duration, values, l, resolver).execute();
+        new VideoSaveTask(path, duration, isFrontCamera, values, l, resolver).execute();
     }
 
     @Override
@@ -173,14 +175,16 @@ public class MediaSaverImpl implements MediaSaver {
     private class VideoSaveTask extends AsyncTask <Void, Void, Uri> {
         private String path;
         private final long duration;
+        private final boolean isFrontCamera;
         private final ContentValues values;
         private final OnMediaSavedListener listener;
         private final ContentResolver resolver;
 
-        public VideoSaveTask(String path, long duration, ContentValues values,
-                OnMediaSavedListener l, ContentResolver r) {
+        public VideoSaveTask(String path, long duration, boolean isFrontCamera,
+                             ContentValues values, OnMediaSavedListener l, ContentResolver r) {
             this.path = path;
             this.duration = duration;
+            this.isFrontCamera = isFrontCamera;
             this.values = new ContentValues(values);
             this.listener = l;
             this.resolver = r;
@@ -198,13 +202,17 @@ public class MediaSaverImpl implements MediaSaver {
                 // Rename the video file to the final name. This avoids other
                 // apps reading incomplete data.  We need to do it after we are
                 // certain that the previous insert to MediaProvider is completed.
-                String finalName = values.getAsString(
-                        Video.Media.DATA);
+                String finalName = values.getAsString(Video.Media.DATA);
                 if (new File(path).renameTo(new File(finalName))) {
                     path = finalName;
                 }
-
                 resolver.update(uri, values, null, null);
+
+                int width = (Integer) values.get(Video.Media.WIDTH);
+                int height = (Integer) values.get(Video.Media.HEIGHT);
+                long size = (Long) values.get(Video.Media.SIZE);
+                UsageStatistics.instance().videoCaptureDoneEvent(finalName, duration,
+                        isFrontCamera, width, height, size);
             } catch (Exception e) {
                 // We failed to insert into the database. This can happen if
                 // the SD card is unmounted.

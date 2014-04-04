@@ -43,9 +43,11 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AnimationEffects;
 import com.android.camera.widget.SettingsButton;
 import com.android.camera2.R;
+import com.google.common.logging.eventprotos;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -397,6 +399,8 @@ public class ModeListView extends FrameLayout
                 });
             } else {
                 mCurrentStateManager.setCurrentState(new FullyShownState());
+                UsageStatistics.instance().controlUsed(
+                        eventprotos.ControlEvent.ControlType.MENU_FULL_FROM_HIDDEN);
             }
         }
 
@@ -571,6 +575,8 @@ public class ModeListView extends FrameLayout
             cancelAnimation();
             // Go to scrolling state
             mCurrentStateManager.setCurrentState(new ScrollingState());
+            UsageStatistics.instance().controlUsed(
+                    eventprotos.ControlEvent.ControlType.MENU_SCROLL_FROM_SHIMMY);
             return true;
         }
 
@@ -790,6 +796,8 @@ public class ModeListView extends FrameLayout
                             mCurrentStateManager.setCurrentState(new FullyHiddenState());
                         } else {
                             mCurrentStateManager.setCurrentState(new FullyShownState());
+                            UsageStatistics.instance().controlUsed(
+                                    eventprotos.ControlEvent.ControlType.MENU_FULL_FROM_SCROLL);
                         }
                     }
 

@@ -69,6 +69,7 @@ import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
+import com.android.camera.util.SessionStatsCollector;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -632,6 +633,7 @@ public class PhotoModule
             mUI.onStartFaceDetection(mDisplayOrientation, isCameraFrontFacing());
             mCameraDevice.setFaceDetectionCallback(mHandler, mUI);
             mCameraDevice.startFaceDetection();
+            SessionStatsCollector.instance().faceScanActive(true);
         }
     }
 
@@ -645,6 +647,7 @@ public class PhotoModule
             mCameraDevice.setFaceDetectionCallback(null, null);
             mCameraDevice.stopFaceDetection();
             mUI.clearFaces();
+            SessionStatsCollector.instance().faceScanActive(false);
         }
     }
 
@@ -740,6 +743,14 @@ public class PhotoModule
 
             ExifInterface exif = Exif.getExif(jpegData);
             int orientation = Exif.getOrientation(exif);
+            int zoomIndex = mParameters.getZoom();
+            float zoomValue = 0.01f * mParameters.getZoomRatios().get(zoomIndex);
+
+            UsageStatistics.instance().photoCaptureDoneEvent(
+                    eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                    mNamedImages.mQueue.lastElement().title + ".jpg", exif,
+                    isCameraFrontFacing(),
+                    mSceneMode == CameraUtil.SCENE_MODE_HDR, zoomValue);
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
@@ -808,22 +819,21 @@ public class PhotoModule
 
             long now = System.currentTimeMillis();
             mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
-            Log.v(TAG, "mJpegCallbackFinishTime = "
-                    + mJpegCallbackFinishTime + "ms");
+            Log.v(TAG, "mJpegCallbackFinishTime = " + mJpegCallbackFinishTime + "ms");
             mJpegPictureCallbackTime = 0;
         }
     }
 
     private final class AutoFocusCallback implements CameraAFCallback {
         @Override
-        public void onAutoFocus(
-                boolean focused, CameraProxy camera) {
+        public void onAutoFocus(boolean focused, CameraProxy camera) {
+            SessionStatsCollector.instance().autofocusResult(focused);
             if (mPaused) {
                 return;
             }
 
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
-            Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
+            Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms   focused = "+focused);
             setCameraState(IDLE);
             mFocusManager.onAutoFocus(focused, false);
         }
@@ -836,6 +846,7 @@ public class PhotoModule
         public void onAutoFocusMoving(
                 boolean moving, CameraProxy camera) {
             mFocusManager.onAutoFocusMoving(moving);
+            SessionStatsCollector.instance().autofocusMoving(moving);
         }
     }
 
@@ -941,9 +952,6 @@ public class PhotoModule
 
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
-        UsageStatistics.instance().captureEvent(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
-                UsageStatistics.hashFileName(mNamedImages.mQueue.lastElement().title + ".jpg"),
-                mParameters, null);
         return true;
     }
 
@@ -1163,9 +1171,6 @@ public class PhotoModule
             initializeSecondTime();
         }
 
-        UsageStatistics.instance().changeScreen(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
-                eventprotos.CameraEvent.InteractionCause.BUTTON);
-
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
             mSensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -1242,11 +1247,13 @@ public class PhotoModule
             Log.v(TAG, "On resume.");
             onResumeTasks();
         }
+        SessionStatsCollector.instance().sessionActive(true);
     }
 
     @Override
     public void pause() {
         mPaused = true;
+        SessionStatsCollector.instance().sessionActive(false);
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (gsensor != null) {
             mSensorManager.unregisterListener(this, gsensor);
@@ -1320,8 +1327,10 @@ public class PhotoModule
 
     @Override
     public void autoFocus() {
+        Log.v(TAG,"Starting auto focus");
         mFocusStartTime = System.currentTimeMillis();
         mCameraDevice.autoFocus(mHandler, mAutoFocusCallback);
+        SessionStatsCollector.instance().autofocusManualTrigger();
         setCameraState(FOCUSING);
     }
 
@@ -1501,7 +1510,7 @@ public class PhotoModule
 
         mFocusManager.onPreviewStarted();
         onPreviewStarted();
-
+        SessionStatsCollector.instance().previewActive(true);
         if (mSnapshotOnIdle) {
             mHandler.post(mDoSnapRunnable);
         }
@@ -1518,6 +1527,7 @@ public class PhotoModule
         if (mFocusManager != null) {
             mFocusManager.onPreviewStopped();
         }
+        SessionStatsCollector.instance().previewActive(false);
     }
 
     @Override
@@ -1599,6 +1609,8 @@ public class PhotoModule
         // Initialize focus mode.
         mFocusManager.overrideFocusMode(null);
         mParameters.setFocusMode(mFocusManager.getFocusMode());
+        SessionStatsCollector.instance().autofocusActive(
+                mFocusManager.getFocusMode() == CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
 
         // Set picture size.
         updateParametersPictureSize();
