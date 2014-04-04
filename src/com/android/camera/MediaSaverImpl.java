@@ -203,7 +203,8 @@ public class MediaSaverImpl implements MediaSaver {
                 // apps reading incomplete data.  We need to do it after we are
                 // certain that the previous insert to MediaProvider is completed.
                 String finalName = values.getAsString(Video.Media.DATA);
-                if (new File(path).renameTo(new File(finalName))) {
+                File finalFile = new File(finalName);
+                if (new File(path).renameTo(finalFile)) {
                     path = finalName;
                 }
                 resolver.update(uri, values, null, null);
@@ -211,7 +212,7 @@ public class MediaSaverImpl implements MediaSaver {
                 int width = (Integer) values.get(Video.Media.WIDTH);
                 int height = (Integer) values.get(Video.Media.HEIGHT);
                 long size = (Long) values.get(Video.Media.SIZE);
-                UsageStatistics.instance().videoCaptureDoneEvent(finalName, duration,
+                UsageStatistics.instance().videoCaptureDoneEvent(finalFile.getName(), duration,
                         isFrontCamera, width, height, size);
             } catch (Exception e) {
                 // We failed to insert into the database. This can happen if
