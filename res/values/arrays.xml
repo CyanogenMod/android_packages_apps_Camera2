@@ -270,6 +270,11 @@
         <item>@string/pref_camera_id_entry_front</item>
     </array>
 
+    <array name="camera_id_entryvalues" translatable="false">
+        <item>@string/pref_camera_id_entry_back_value</item>
+        <item>@string/pref_camera_id_entry_front_value</item>
+    </array>
+
     <array name="camera_id_labels" translatable="false">
         <item>@string/pref_camera_id_label_back</item>
         <item>@string/pref_camera_id_label_front</item>
