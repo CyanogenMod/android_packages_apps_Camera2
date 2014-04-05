@@ -296,7 +296,7 @@ public class CameraSettings {
         return split(str);
     }
 
-    private void qcomInitPreferences(PreferenceGroup group){
+    private void qcomInitPreferences(PreferenceGroup group) {
         //Qcom Preference add here
         ListPreference powerMode = group.findPreference(KEY_POWER_MODE);
         ListPreference colorEffect = group.findPreference(KEY_COLOR_EFFECT);

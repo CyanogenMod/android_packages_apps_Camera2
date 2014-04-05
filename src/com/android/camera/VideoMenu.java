@@ -197,7 +197,8 @@ public class VideoMenu extends PieController
                 CameraSettings.KEY_VIDEO_ENCODER,
                 CameraSettings.KEY_AUDIO_ENCODER,
                 CameraSettings.KEY_FOCUS_TIME,
-                CameraSettings.KEY_JPEG_QUALITY
+                CameraSettings.KEY_JPEG_QUALITY,
+                CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
