@@ -29,7 +29,7 @@
     <string name="share" msgid="8581089487762243115">"共有"</string>
     <string name="share_panorama" msgid="3558466186935359444">"パノラマ写真を共有"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"写真として共有"</string>
-    <string name="deleted" msgid="2036165115527228127">"削除済み"</string>
+    <string name="deleted" msgid="2036165115527228127">"削除しました"</string>
     <string name="undo" msgid="5110048345890050107">"元に戻す"</string>
     <string name="details" msgid="4404020741542549488">"詳細"</string>
     <string name="close" msgid="4826166926297479820">"閉じる"</string>
@@ -335,10 +335,10 @@
     <string name="delete_button_description" msgid="2251065309677200911">"削除"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ボタンは現在%sです"</string>
     <string name="setting_location" msgid="4459859689227893838">"場所"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"背面カメラ写真"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"背面カメラ動画"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"前面カメラ写真"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"前面カメラ動画"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"背面カメラ（写真）"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"背面カメラ（動画）"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"前面カメラ（写真）"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"前面カメラ（動画）"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"デフォルトのカメラ"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"フィードバックを送信"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+を処理しています…"</string>

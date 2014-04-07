@@ -278,7 +278,7 @@
     <string name="set_duration" msgid="1638453882581604341">"تعيين المدة بالثواني"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"جارٍ بدء العد التنازلي لالتقاط صورة"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"هل تريد حفظ مواقع الصور؟"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ضع علامة على الصور ومقاطع الفيديو التابعة لك تشير إلى المواقع التي تم التقاطها منها.\n\nيمكن لتطبيقات أخرى الوصول إلى هذه المعلومات والوصول إلى صورك المحفوظة."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"يمكنك تحديد الموقع الذي تم منه التقاط الصور ومقاطع الفيديو التابعة لك.\n\nيمكن لتطبيقات أخرى الوصول إلى هذه المعلومات والوصول إلى صورك المحفوظة."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"لا شكرًا"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"نعم"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"المزيد من الخيارات"</string>
@@ -295,21 +295,21 @@
     <string name="mode_settings" msgid="2021937261522670921">"الإعدادات"</string>
     <string name="mode_camera" msgid="279763925715250603">"الكاميرا"</string>
     <string name="mode_video" msgid="8633929034048169139">"فيديو"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"‏بانوراما Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"بانوراما 360 درجة"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"لقطات متتابعة"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاوية واسعة"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"بانوراما"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"تعتيم العدسة"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"تركيز العدسة"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"فتح الإعدادات"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"التبديل إلى وضع الكاميرا"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"التبديل إلى كاميرا الفيديو"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"‏التبديل إلى وضع بانوراما Photo Sphere"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"التبديل إلى وضع بانوراما 360 درجة"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"التبديل إلى وضع الكاميرا المتقدم"</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"التبديل إلى وضع الكاميرا المتقدم"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"التبديل إلى وضع لقطات متتابعة"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"التبديل إلى وضع زاوية عريضة"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"التبديل إلى الوضع بانوراما"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"التبديل إلى وضع تعتيم العدسة"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"التبديل إلى وضع تركيز العدسة"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"فتح الإعدادات"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"غلق الإعدادات"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"‏إيقاف HDR Plus"</string>
