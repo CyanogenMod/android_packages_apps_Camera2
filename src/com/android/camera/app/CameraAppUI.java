@@ -853,8 +853,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         } else if (swipeState == SWIPE_LEFT) {
             // Pass the touch sequence to filmstrip layout.
-            UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.FILMSTRIP,
-                eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
+            UsageStatistics.instance().changeScreen(
+                    eventprotos.NavigationChange.Mode.FILMSTRIP,
+                    eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
             mAppRootView.redirectTouchEventsTo(mFilmstripLayout);
         } else if (swipeState == SWIPE_RIGHT) {
             // Pass the touch to mode switcher
@@ -1098,7 +1099,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
         mTutorialsPlaceholder = (FrameLayout) mCameraRootView
                 .findViewById(R.id.tutorials_placeholder);
-        mIndicatorBottomBarWrapper = (View) mAppRootView
+        mIndicatorBottomBarWrapper = mAppRootView
                 .findViewById(R.id.indicator_bottombar_wrapper);
 
         mTextureViewHelper.addPreviewAreaSizeChangedListener(

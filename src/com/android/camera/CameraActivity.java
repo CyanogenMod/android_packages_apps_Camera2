@@ -312,7 +312,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onDelete() {
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.photoInteraction(
+                    UsageStatistics.instance().photoInteraction(
                             UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)),
                             eventprotos.CameraEvent.InteractionType.DELETE,
                             InteractionCause.BUTTON);
@@ -455,15 +455,15 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCameraDisabled(int cameraId) {
-        UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.SECURITY);
-
+        UsageStatistics.instance().cameraFailure(
+                eventprotos.CameraFailure.FailureReason.SECURITY);
         CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
     }
 
     @Override
     public void onDeviceOpenFailure(int cameraId) {
-        UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.OPEN_FAILURE);
-
+        UsageStatistics.instance().cameraFailure(
+                eventprotos.CameraFailure.FailureReason.OPEN_FAILURE);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
@@ -474,8 +474,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onReconnectionFailure(CameraManager mgr) {
-        UsageStatistics.cameraFailure(eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE);
-
+        UsageStatistics.instance().cameraFailure(
+                eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
@@ -518,7 +518,8 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSwipeOut() {
-                    UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                    UsageStatistics.instance().changeScreen(
+                            eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                             eventprotos.CameraEvent.InteractionCause.SWIPE_RIGHT);
                 }
 
@@ -553,7 +554,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onFocusedDataPromoted(int dataID) {
-                    UsageStatistics.photoInteraction(
+                    UsageStatistics.instance().photoInteraction(
                             UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
                             eventprotos.CameraEvent.InteractionType.DELETE,
                             InteractionCause.SWIPE_UP);
@@ -563,7 +564,7 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onFocusedDataDemoted(int dataID) {
-                    UsageStatistics.photoInteraction(
+                    UsageStatistics.instance().photoInteraction(
                             UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
                             eventprotos.CameraEvent.InteractionType.DELETE,
                             InteractionCause.SWIPE_DOWN);
@@ -666,7 +667,7 @@ public class CameraActivity extends Activity
             };
 
     public void gotoGallery() {
-        UsageStatistics.changeScreen(NavigationChange.Mode.FILMSTRIP,
+        UsageStatistics.instance().changeScreen(NavigationChange.Mode.FILMSTRIP,
                 InteractionCause.BUTTON);
 
         mFilmstripController.goToNextItem();
@@ -757,7 +758,7 @@ public class CameraActivity extends Activity
         if (currentDataId < 0) {
             return false;
         }
-        UsageStatistics.photoInteraction(
+        UsageStatistics.instance().photoInteraction(
                 UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)),
                 eventprotos.CameraEvent.InteractionType.SHARE,
                 InteractionCause.BUTTON);
@@ -1240,7 +1241,7 @@ public class CameraActivity extends Activity
             // Foreground event caused by lock screen startup.
             // It is necessary to log this in onCreate, to avoid the
             // onResume->onPause->onResume sequence.
-            UsageStatistics.foregrounded(
+            UsageStatistics.instance().foregrounded(
                     eventprotos.ForegroundEvent.ForegroundSource.LOCK_SCREEN);
 
             // Change the window flags so that secure camera can show when
@@ -1311,7 +1312,7 @@ public class CameraActivity extends Activity
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    UsageStatistics.changeScreen(NavigationChange.Mode.GALLERY,
+                    UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
                             InteractionCause.BUTTON);
                     startGallery();
                     finish();
@@ -1522,11 +1523,11 @@ public class CameraActivity extends Activity
 
         if (isCaptureIntent()) {
             // Foreground event caused by photo or video capure intent.
-            UsageStatistics.foregrounded(
+            UsageStatistics.instance().foregrounded(
                     eventprotos.ForegroundEvent.ForegroundSource.INTENT_PICKER);
         } else if (!mSecureCamera) {
             // Foreground event that is not caused by an intent.
-            UsageStatistics.foregrounded(
+            UsageStatistics.instance().foregrounded(
                     eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
         }
 
@@ -2217,7 +2218,8 @@ public class CameraActivity extends Activity
             return false;
         }
         try {
-            UsageStatistics.changeScreen(NavigationChange.Mode.GALLERY, InteractionCause.BUTTON);
+            UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
+                    InteractionCause.BUTTON);
             Intent startGalleryIntent = new Intent(mGalleryIntent);
             int currentDataId = mFilmstripController.getCurrentId();
             LocalData currentLocalData = mDataAdapter.getLocalData(currentDataId);
@@ -2435,7 +2437,7 @@ public class CameraActivity extends Activity
         Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
         detailDialog.show();
 
-        UsageStatistics.photoInteraction(
+        UsageStatistics.instance().photoInteraction(
                 UsageStatistics.hashFileName(fileNameFromDataID(dataId)),
                 eventprotos.CameraEvent.InteractionType.DETAILS,
                 InteractionCause.BUTTON);

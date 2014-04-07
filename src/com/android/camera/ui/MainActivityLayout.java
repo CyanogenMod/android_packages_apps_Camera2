@@ -30,7 +30,6 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera2.R;
-
 import com.google.common.logging.eventprotos;
 
 public class MainActivityLayout extends FrameLayout {
@@ -113,7 +112,8 @@ public class MainActivityLayout extends FrameLayout {
                 // Intercept left swipe
                 else if (deltaX < -Math.abs(deltaY) * 2) {
                     mTouchReceiver = mFilmstripLayout;
-                    UsageStatistics.changeScreen(eventprotos.NavigationChange.Mode.FILMSTRIP,
+                    UsageStatistics.instance().changeScreen(
+                            eventprotos.NavigationChange.Mode.FILMSTRIP,
                             eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
                     onTouchEvent(mDown);
                     return true;
