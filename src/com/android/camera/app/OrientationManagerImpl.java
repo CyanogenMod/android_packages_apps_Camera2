@@ -153,6 +153,11 @@ public class OrientationManagerImpl implements OrientationManager {
         mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
+    @Override
+    public boolean isOrientationLocked() {
+        return (mOrientationLocked || mRotationLockedSetting);
+    }
+
     private int calculateCurrentScreenOrientation() {
         int displayRotation = getDisplayRotation();
         // Display rotation >= 180 means we need to use the REVERSE landscape/portrait
