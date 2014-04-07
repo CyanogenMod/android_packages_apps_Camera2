@@ -73,7 +73,7 @@ public abstract class AbstractTutorialOverlay {
     /**
      * Removes all views from the place holder.
      */
-    protected void removeOverlay() {
+    public void removeOverlay() {
         if (mPlaceholder != null) {
             mPlaceholder.removeAllViews();
         }
