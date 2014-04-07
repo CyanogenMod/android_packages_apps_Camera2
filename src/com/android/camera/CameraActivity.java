@@ -128,8 +128,9 @@ import com.android.camera2.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.resize.ImageManager;
 import com.google.common.logging.eventprotos;
-import com.google.common.logging.eventprotos.CameraEvent.InteractionCause;
 import com.google.common.logging.eventprotos.NavigationChange;
+import com.google.common.logging.eventprotos.MediaInteraction;
+import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -294,6 +295,10 @@ public class CameraActivity extends Activity
                     if (data == null) {
                         return;
                     }
+                    final int currentDataId = getCurrentDataId();
+                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                            MediaInteraction.InteractionType.EDIT,
+                            NavigationChange.InteractionCause.BUTTON);
                     launchEditor(data);
                 }
 
@@ -309,17 +314,19 @@ public class CameraActivity extends Activity
                 @Override
                 public void onDelete() {
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.instance().photoInteraction(
-                            UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)),
-                            eventprotos.CameraEvent.InteractionType.DELETE,
-                            InteractionCause.BUTTON);
+                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                            MediaInteraction.InteractionType.DELETE,
+                            NavigationChange.InteractionCause.BUTTON);
                     removeData(currentDataId);
                 }
 
                 @Override
                 public void onShare() {
                     final LocalData data = getCurrentLocalData();
-
+                    final int currentDataId = getCurrentDataId();
+                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                            MediaInteraction.InteractionType.SHARE,
+                            NavigationChange.InteractionCause.BUTTON);
                     // If applicable, show release information before this item
                     // is shared.
                     if (PanoramaMetadataLoader.isPanorama(data)
@@ -452,7 +459,8 @@ public class CameraActivity extends Activity
     public void onCameraDisabled(int cameraId) {
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.SECURITY);
-        CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
+        CameraUtil.showErrorAndFinish(this,
+                R.string.camera_disabled);
     }
 
     @Override
@@ -513,9 +521,6 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSwipeOut() {
-                    UsageStatistics.instance().changeScreen(
-                            eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
-                            eventprotos.CameraEvent.InteractionCause.SWIPE_RIGHT);
                 }
 
                 @Override
@@ -528,6 +533,8 @@ public class CameraActivity extends Activity
                 @Override
                 public void onFilmstripHidden() {
                     mFilmstripVisible = false;
+                    UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
+                            NavigationChange.InteractionCause.SWIPE_RIGHT);
                     CameraActivity.this.setFilmstripUiVisibility(false);
                     // When the user hide the filmstrip (either swipe out or
                     // tap on back key) we move to the first item so next time
@@ -539,6 +546,8 @@ public class CameraActivity extends Activity
                 @Override
                 public void onFilmstripShown() {
                     mFilmstripVisible = true;
+                    UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
+                            NavigationChange.InteractionCause.SWIPE_LEFT);
                     updateUiByData(mFilmstripController.getCurrentId());
                 }
 
@@ -549,21 +558,17 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onFocusedDataPromoted(int dataID) {
-                    UsageStatistics.instance().photoInteraction(
-                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
-                            eventprotos.CameraEvent.InteractionType.DELETE,
-                            InteractionCause.SWIPE_UP);
-
+                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(dataID),
+                            MediaInteraction.InteractionType.DELETE,
+                            NavigationChange.InteractionCause.SWIPE_UP);
                     removeData(dataID);
                 }
 
                 @Override
                 public void onFocusedDataDemoted(int dataID) {
-                    UsageStatistics.instance().photoInteraction(
-                            UsageStatistics.hashFileName(fileNameFromDataID(dataID)),
-                            eventprotos.CameraEvent.InteractionType.DELETE,
-                            InteractionCause.SWIPE_DOWN);
-
+                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(dataID),
+                            MediaInteraction.InteractionType.DELETE,
+                            NavigationChange.InteractionCause.SWIPE_DOWN);
                     removeData(dataID);
                 }
 
@@ -601,6 +606,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onLeaveFilmstrip(int dataId) {
                     // Do nothing.
+                    Log.v(TAG,"LEFT THE FILMSTRIP!!!!!!!!!!");
                 }
 
                 @Override
@@ -663,7 +669,7 @@ public class CameraActivity extends Activity
 
     public void gotoGallery() {
         UsageStatistics.instance().changeScreen(NavigationChange.Mode.FILMSTRIP,
-                InteractionCause.BUTTON);
+                NavigationChange.InteractionCause.BUTTON);
 
         mFilmstripController.goToNextItem();
     }
@@ -753,10 +759,9 @@ public class CameraActivity extends Activity
         if (currentDataId < 0) {
             return false;
         }
-        UsageStatistics.instance().photoInteraction(
-                UsageStatistics.hashFileName(fileNameFromDataID(currentDataId)),
-                eventprotos.CameraEvent.InteractionType.SHARE,
-                InteractionCause.BUTTON);
+        UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                MediaInteraction.InteractionType.SHARE,
+                NavigationChange.InteractionCause.BUTTON);
         // TODO add intent.getComponent().getPackageName()
         return true;
     }
@@ -1192,8 +1197,8 @@ public class CameraActivity extends Activity
             // Foreground event caused by lock screen startup.
             // It is necessary to log this in onCreate, to avoid the
             // onResume->onPause->onResume sequence.
-            UsageStatistics.instance().foregrounded(
-                    eventprotos.ForegroundEvent.ForegroundSource.LOCK_SCREEN);
+            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_IMAGE_CAPTURE_SECURE,
+                    currentUserInterfaceMode());
 
             // Change the window flags so that secure camera can show when
             // locked
@@ -1264,7 +1269,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onClick(View view) {
                     UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
-                            InteractionCause.BUTTON);
+                            NavigationChange.InteractionCause.BUTTON);
                     startGallery();
                     finish();
                 }
@@ -1472,14 +1477,23 @@ public class CameraActivity extends Activity
             mAutoRotateScreen = true;
         }
 
-        if (isCaptureIntent()) {
-            // Foreground event caused by photo or video capure intent.
-            UsageStatistics.instance().foregrounded(
-                    eventprotos.ForegroundEvent.ForegroundSource.INTENT_PICKER);
-        } else if (!mSecureCamera) {
-            // Foreground event that is not caused by an intent.
-            UsageStatistics.instance().foregrounded(
-                    eventprotos.ForegroundEvent.ForegroundSource.ICON_LAUNCHER);
+        String action = getIntent().getAction();
+        // Foreground event logging
+        if (MediaStore.ACTION_VIDEO_CAPTURE.equals(action)) {
+            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_VIDEO_CAPTURE,
+                    currentUserInterfaceMode());
+        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)) {
+            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_IMAGE_CAPTURE,
+                    currentUserInterfaceMode());
+        } else if (MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action) ||
+                INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
+            // logged in onCreate()
+        } else if (Intent.ACTION_MAIN.equals(action)) {
+            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_MAIN,
+                    currentUserInterfaceMode());
+        } else {
+            UsageStatistics.instance().foregrounded(ForegroundSource.UNKNOWN_SOURCE,
+                    currentUserInterfaceMode());
         }
 
         Drawable galleryLogo;
@@ -1509,6 +1523,8 @@ public class CameraActivity extends Activity
 
         mCurrentModule.hardResetSettings(mSettingsManager);
         mCurrentModule.resume();
+        UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
+                NavigationChange.InteractionCause.BUTTON);
         setSwipingEnabled(true);
 
         if (!mResetToPreviewOnResume) {
@@ -1850,6 +1866,8 @@ public class CameraActivity extends Activity
      */
     @Override
     public void onSettingsSelected() {
+        UsageStatistics.instance().controlUsed(
+                eventprotos.ControlEvent.ControlType.OVERALL_SETTINGS);
         Intent intent = new Intent(this, CameraSettingsActivity.class);
         startActivity(intent);
     }
@@ -1975,10 +1993,42 @@ public class CameraActivity extends Activity
         fragment.show(getFragmentManager(), "tiny_planet");
     }
 
+    /**
+     * Returns what UI mode (capture mode or filmstrip) we are in.
+     * Returned number one of {@link com.google.common.logging.eventprotos.NavigationChange.Mode}
+     */
+    private int currentUserInterfaceMode() {
+        int mode = NavigationChange.Mode.UNKNOWN_MODE;
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
+            mode = NavigationChange.Mode.PHOTO_CAPTURE;
+        }
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_video)) {
+            mode = NavigationChange.Mode.VIDEO_CAPTURE;
+        }
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_refocus)) {
+            mode = NavigationChange.Mode.LENS_BLUR;
+        }
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_gcam)) {
+            mode = NavigationChange.Mode.HDR_PLUS;
+        }
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_photosphere)) {
+            mode = NavigationChange.Mode.PHOTO_SPHERE;
+        }
+        if (mCurrentModeIndex == getResources().getInteger(R.integer.camera_mode_panorama)) {
+            mode = NavigationChange.Mode.PANORAMA;
+        }
+        if (mFilmstripVisible) {
+            mode = NavigationChange.Mode.FILMSTRIP;
+        }
+        return mode;
+    }
+
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.hardResetSettings(mSettingsManager);
         module.resume();
+        UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
+                NavigationChange.InteractionCause.BUTTON);
         updatePreviewVisibility();
     }
 
@@ -2189,7 +2239,7 @@ public class CameraActivity extends Activity
         }
         try {
             UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
-                    InteractionCause.BUTTON);
+                    NavigationChange.InteractionCause.BUTTON);
             Intent startGalleryIntent = new Intent(mGalleryIntent);
             int currentDataId = mFilmstripController.getCurrentId();
             LocalData currentLocalData = mDataAdapter.getLocalData(currentDataId);
@@ -2406,11 +2456,9 @@ public class CameraActivity extends Activity
         }
         Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
         detailDialog.show();
-
-        UsageStatistics.instance().photoInteraction(
-                UsageStatistics.hashFileName(fileNameFromDataID(dataId)),
-                eventprotos.CameraEvent.InteractionType.DETAILS,
-                InteractionCause.BUTTON);
+        UsageStatistics.instance().mediaInteraction(
+                fileNameFromDataID(dataId), MediaInteraction.InteractionType.DETAILS,
+                NavigationChange.InteractionCause.BUTTON);
     }
 
     /**

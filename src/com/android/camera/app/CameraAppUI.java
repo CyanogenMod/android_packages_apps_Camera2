@@ -853,9 +853,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             }
         } else if (swipeState == SWIPE_LEFT) {
             // Pass the touch sequence to filmstrip layout.
-            UsageStatistics.instance().changeScreen(
-                    eventprotos.NavigationChange.Mode.FILMSTRIP,
-                    eventprotos.CameraEvent.InteractionCause.SWIPE_LEFT);
             mAppRootView.redirectTouchEventsTo(mFilmstripLayout);
         } else if (swipeState == SWIPE_RIGHT) {
             // Pass the touch to mode switcher

@@ -18,7 +18,7 @@
 package com.android.camera.util;
 
 import android.content.Context;
-import android.hardware.Camera.Parameters;
+import com.android.camera.exif.ExifInterface;
 
 public class UsageStatistics {
     private static UsageStatistics sInstance;
@@ -33,28 +33,26 @@ public class UsageStatistics {
     public void initialize(Context context) {
     }
 
-    public void photoInteraction(String fileNameHash, int interactionType, int cause) {
+    public void mediaInteraction(String ref, int interactionType, int cause) {
     }
 
-    public void foregrounded(int source) {
+    public void foregrounded(int source, int mode) {
     }
 
-    public void captureEvent(int mode, String fileNameHash, Parameters parameters, Float duration) {
+    public void videoCaptureDoneEvent(String ref, long durationMsec, boolean front, int width,
+                                      int height, long size) {
     }
 
-    public void changePreference(String preference, String newValue, String oldValue) {
+    public void photoCaptureDoneEvent(int mode, String fileRef, ExifInterface exifRef,
+                                      boolean front, boolean isHDR, float zoom) {
     }
 
     public void cameraFailure(int cause) {
     }
 
-    public void tapToFocus() {
-    }
-
     public void changeScreen(int newScreen, Integer interactionCause) {
     }
 
-    public static String hashFileName(String fileName) {
-        return fileName;
+    public void controlUsed(int control) {
     }
 }

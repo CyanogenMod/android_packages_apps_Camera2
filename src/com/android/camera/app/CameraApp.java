@@ -30,6 +30,7 @@ import com.android.camera.session.SessionStorageManager;
 import com.android.camera.session.SessionStorageManagerImpl;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.RemoteShutterHelper;
+import com.android.camera.util.SessionStatsCollector;
 import com.android.camera.util.UsageStatistics;
 
 /**
@@ -49,6 +50,7 @@ public class CameraApp extends Application implements CameraServices {
         super.onCreate();
 
         UsageStatistics.instance().initialize(this);
+        SessionStatsCollector.instance().initialize(this);
         CameraUtil.initialize(this);
 
         Context context = getApplicationContext();
