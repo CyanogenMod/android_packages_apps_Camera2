@@ -19,11 +19,11 @@ package com.android.camera.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
 import com.android.camera.CurrentModuleProvider;
-import com.android.camera.ListPreference;
 import com.android.camera.app.LocationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
@@ -1207,55 +1207,6 @@ public class SettingsManager {
     // TODO: refactor this into a separate utils module.
 
     /**
-     * Get a String value from first the ListPreference, and if not found from
-     * the SettingsManager. This is a wrapper that adds backwards compatibility
-     * to views that rely on PreferenceGroups.
-     */
-    public String getValueFromPreference(ListPreference pref) {
-        String value = pref.getValue();
-        if (value == null) {
-            Integer id = mSettingsCache.getId(pref.getKey());
-            if (id == null) {
-                return null;
-            }
-            value = get(id);
-        }
-        return value;
-    }
-
-    /**
-     * Set a String value first from the ListPreference, and if unable from the
-     * SettingsManager. This is a wrapper that adds backwards compatibility to
-     * views that rely on PreferenceGroups.
-     */
-    public void setValueFromPreference(ListPreference pref, String value) {
-        boolean set = pref.setValue(value);
-        if (!set) {
-            Integer id = mSettingsCache.getId(pref.getKey());
-            if (id != null) {
-                set(id, value);
-            }
-        }
-    }
-
-    /**
-     * Set a String value first from the ListPreference based on a
-     * ListPreference index, and if unable use the ListPreference key to set the
-     * value using the SettingsManager. This is a wrapper that adds backwards
-     * compatibility to views that rely on PreferenceGroups.
-     */
-    public void setValueIndexFromPreference(ListPreference pref, int index) {
-        boolean set = pref.setValueIndex(index);
-        if (!set) {
-            Integer id = mSettingsCache.getId(pref.getKey());
-            if (id != null) {
-                String value = pref.getValueAtIndex(index);
-                set(id, value);
-            }
-        }
-    }
-
-    /**
      * Sets the settings for whether location recording should be enabled or
      * not. Also makes sure to pass on the change to the location manager.
      */
@@ -1271,5 +1222,17 @@ public class SettingsManager {
     public void syncLocationManager(LocationManager locationManager) {
         boolean value = getBoolean(SettingsManager.SETTING_RECORD_LOCATION);
         locationManager.recordLocation(value);
+    }
+
+    /**
+     * Returns the maximum video recording duration (in milliseconds).
+     */
+    public static int getMaxVideoDuration(Context context) {
+        int duration = 0; // in milliseconds, 0 means unlimited.
+        try {
+            duration = context.getResources().getInteger(R.integer.max_video_recording_length);
+        } catch (Resources.NotFoundException ex) {
+        }
+        return duration;
     }
 }

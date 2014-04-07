@@ -703,7 +703,8 @@ public class VideoModule extends CameraModule
                     intent.getIntExtra(MediaStore.EXTRA_DURATION_LIMIT, 0);
             mMaxVideoDurationInMs = 1000 * seconds;
         } else {
-            mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
+            mMaxVideoDurationInMs = SettingsManager.getMaxVideoDuration(mActivity
+                    .getAndroidContext());
         }
 
         // TODO: Uncomment this block to re-enable time-lapse.
