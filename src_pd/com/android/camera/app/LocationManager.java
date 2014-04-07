@@ -18,7 +18,8 @@ package com.android.camera.app;
 
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
+
+import com.android.camera.debug.Log;
 
 /**
  * A class to select the best available location provider (fused location
@@ -26,7 +27,7 @@ import android.util.Log;
  * and provide a common location interface.
  */
 public class LocationManager {
-    private final String TAG = "LocationManager";
+    private static final Log.Tag TAG = new Log.Tag("LocationManager");
     LocationProvider mLocationProvider;
     private boolean mRecordLocation;
 
