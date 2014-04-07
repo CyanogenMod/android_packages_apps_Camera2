@@ -611,7 +611,6 @@ public class CameraActivity extends Activity
                 @Override
                 public void onLeaveFilmstrip(int dataId) {
                     // Do nothing.
-                    Log.v(TAG,"LEFT THE FILMSTRIP!!!!!!!!!!");
                 }
 
                 @Override
