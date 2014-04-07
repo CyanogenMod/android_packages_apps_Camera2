@@ -25,12 +25,12 @@
     <dimen name="camera_controls_size">520dip</dimen>
 
     <!-- Mode selector text size -->
-    <dimen name="mode_selector_text_size">32sp</dimen>
+    <dimen name="mode_selector_text_size">24sp</dimen>
 
     <!-- Mode selector icon width -->
-    <dimen name="mode_selector_icon_block_width">112dp</dimen>
-    <dimen name="mode_selector_icon_drawable_size">96dp</dimen>
-    <dimen name="mode_selector_item_height">120dp</dimen>
+    <dimen name="mode_selector_icon_block_width">84dp</dimen>
+    <dimen name="mode_selector_icon_drawable_size">72dp</dimen>
+    <dimen name="mode_selector_item_height">90dp</dimen>
 
     <dimen name="bottom_bar_height_min">124dp</dimen>
     <dimen name="bottom_bar_height_max">180dp</dimen>
