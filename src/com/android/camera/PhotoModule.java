@@ -760,11 +760,11 @@ public class PhotoModule
             int zoomIndex = mParameters.getZoom();
             float zoomValue = 0.01f * mParameters.getZoomRatios().get(zoomIndex);
 
+            boolean hdrOn = CameraUtil.SCENE_MODE_HDR.equals(mSceneMode);
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                     mNamedImages.mQueue.lastElement().title + ".jpg", exif,
-                    isCameraFrontFacing(),
-                    mSceneMode == CameraUtil.SCENE_MODE_HDR, zoomValue);
+                    isCameraFrontFacing(), hdrOn, zoomValue);
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
