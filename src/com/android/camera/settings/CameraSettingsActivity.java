@@ -18,6 +18,7 @@ package com.android.camera.settings;
 
 import android.app.ActionBar;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
@@ -37,6 +38,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.FeedbackHelper;
@@ -89,9 +91,10 @@ public class CameraSettingsActivity extends FragmentActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            mFeedbackHelper = new FeedbackHelper(getActivity());
+            Context context = ((CameraActivity) getActivity()).getAndroidContext();
+            mFeedbackHelper = new FeedbackHelper(context);
             addPreferencesFromResource(R.xml.camera_preferences);
-            SettingsHelper.addAdditionalPreferences(this);
+            SettingsHelper.addAdditionalPreferences(this, context);
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
         }
 
@@ -263,7 +266,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the entries for the given list preference.
-         *
+         * 
          * @param selectedQualities The possible S,M,L entries the user can
          *            choose from.
          * @param preference The preference to set the entries for.
@@ -279,7 +282,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the entries for the given list preference.
-         *
+         * 
          * @param selectedQualities The possible S,M,L entries the user can
          *            choose from.
          * @param preference The preference to set the entries for.
@@ -295,7 +298,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the summary for the given list preference.
-         *
+         * 
          * @param selectedQualities The selected picture sizes.
          * @param preference The preference for which to set the summary.
          */
@@ -307,7 +310,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the summary for the given list preference.
-         *
+         * 
          * @param selectedQualities The selected video qualities.
          * @param preference The preference for which to set the summary.
          */
@@ -367,7 +370,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Gets the first camera facing the given direction.
-         *
+         * 
          * @param facing Either {@link CameraInfo#CAMERA_FACING_BACK} or
          *            {@link CameraInfo#CAMERA_FACING_FRONT}.
          * @return The ID of the first camera matching the given direction, or

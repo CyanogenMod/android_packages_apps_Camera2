@@ -38,6 +38,6 @@ public class SettingsHelper implements ExtraSettings {
         return false;
     }
 
-    public static void addAdditionalPreferences(PreferenceFragment fragment) {
+    public static void addAdditionalPreferences(PreferenceFragment fragment, Context context) {
     }
 }
