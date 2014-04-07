@@ -22,8 +22,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
+import com.android.camera.CurrentModuleProvider;
 import com.android.camera.ListPreference;
-import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
@@ -49,7 +49,44 @@ public class SettingsManager {
     private SettingsCapabilities mCapabilities;
 
     private int mCameraId = -1;
-    private final AppController mAppController;
+    private CurrentModuleProvider mCurrentModuleProvider;
+
+    /**
+     * Increment this value whenever a new StrictUpgradeCallback needs to
+     * be executed.  This defines upgrade behavior that should be executed
+     * strictly on app upgrades, when the upgrade behavior differs from the general,
+     * lazy upgrade strategies.
+     */
+    private static final int STRICT_UPGRADE_VERSION = 2;
+
+    /**
+     * A List of OnSettingChangedListener's, maintained to compare to new
+     * listeners and prevent duplicate registering.
+     */
+    private final List<OnSettingChangedListener> mListeners = new ArrayList<OnSettingChangedListener>();
+
+    /**
+     * A List of OnSharedPreferenceChangeListener's, maintained to hold pointers
+     * to actually registered listeners, so they can be unregistered.
+     */
+    private final List<OnSharedPreferenceChangeListener> mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
+
+    public SettingsManager(Context context) {
+        mContext = context;
+
+        SettingsCache.ExtraSettings extraSettings = new SettingsHelper();
+        mSettingsCache = new SettingsCache(mContext, extraSettings);
+
+        mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
+        initGlobal();
+
+        // Check for a strict version upgrade.
+        int version = getInt(SETTING_STRICT_UPGRADE_VERSION);
+        if (STRICT_UPGRADE_VERSION != version) {
+            upgrade(STRICT_UPGRADE_VERSION);
+        }
+        setInt(SETTING_STRICT_UPGRADE_VERSION, STRICT_UPGRADE_VERSION);
+    }
 
     /**
      * General settings upgrade model:
@@ -80,53 +117,33 @@ public class SettingsManager {
      *  should be idempotent, so it is important to leave removal code in the upgrade
      *  callback so the key/value pairs are removed even if a user skips a version.
      */
-    public interface StrictUpgradeCallback {
-        /**
-         * Will be executed in the SettingsManager constructor if the strict
-         * upgrade version counter has changed.
-         */
-        public void upgrade(SettingsManager settingsManager, int version);
-    }
-
-    /**
-     * Increment this value whenever a new StrictUpgradeCallback needs to
-     * be executed.  This defines upgrade behavior that should be executed
-     * strictly on app upgrades, when the upgrade behavior differs from the general,
-     * lazy upgrade strategies.
-     */
-    private static final int STRICT_UPGRADE_VERSION = 2;
-
-    /**
-     * A List of OnSettingChangedListener's, maintained to compare to new
-     * listeners and prevent duplicate registering.
-     */
-    private final List<OnSettingChangedListener> mListeners = new ArrayList<OnSettingChangedListener>();
-
-    /**
-     * A List of OnSharedPreferenceChangeListener's, maintained to hold pointers
-     * to actually registered listeners, so they can be unregistered.
-     */
-    private final List<OnSharedPreferenceChangeListener> mSharedPreferenceListeners = new ArrayList<OnSharedPreferenceChangeListener>();
-
-    public SettingsManager(Context context, AppController app, int nCameras,
-                           StrictUpgradeCallback upgradeCallback) {
-        mContext = context;
-        mAppController = app;
-
-        SettingsCache.ExtraSettings extraSettings = new SettingsHelper();
-        mSettingsCache = new SettingsCache(mContext, extraSettings);
-
-        mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
-        initGlobal();
-
-        if (upgradeCallback != null) {
-            // Check for a strict version upgrade.
-            int version = getInt(SETTING_STRICT_UPGRADE_VERSION);
-            if (STRICT_UPGRADE_VERSION != version) {
-                upgradeCallback.upgrade(this, STRICT_UPGRADE_VERSION);
+    private void upgrade(int version) {
+        // Show the location dialog on upgrade if
+        //  (a) the user has never set this option (status quo).
+        //  (b) the user opt'ed out previously.
+        if (this.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
+            // Location is set in the source file defined for this setting.
+            // Remove the setting if the value is false to launch the dialog.
+            if (!this.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
+                this.remove(SettingsManager.SETTING_RECORD_LOCATION);
             }
-            setInt(SETTING_STRICT_UPGRADE_VERSION, STRICT_UPGRADE_VERSION);
+        } else {
+            // Location is not set, check to see if we're upgrading from
+            // a different source file.
+            if (this.isSet(SettingsManager.SETTING_RECORD_LOCATION,
+                                      SettingsManager.SOURCE_GLOBAL)) {
+                boolean location = this.getBoolean(
+                    SettingsManager.SETTING_RECORD_LOCATION,
+                    SettingsManager.SOURCE_GLOBAL);
+                if (location) {
+                    // Set the old setting only if the value is true, to prevent
+                    // launching the dialog.
+                    this.setBoolean(
+                        SettingsManager.SETTING_RECORD_LOCATION, location);
+                }
+            }
         }
+        this.remove(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
     }
 
     /**
@@ -135,6 +152,13 @@ public class SettingsManager {
     private void initGlobal() {
         String globalKey = mContext.getPackageName() + "_preferences_camera";
         mGlobalSettings = mContext.getSharedPreferences(globalKey, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * Set the provider for the current module index, or null.
+     */
+    public void setCurrentModuleProvider(CurrentModuleProvider provider) {
+        mCurrentModuleProvider = provider;
     }
 
     /**
@@ -293,6 +317,7 @@ public class SettingsManager {
         }
         mSharedPreferenceListeners.clear();
         mListeners.clear();
+        mCurrentModuleProvider = null;
     }
 
     /**
@@ -500,8 +525,11 @@ public class SettingsManager {
             return mCameraSettings;
         }
         if (source.equals(SOURCE_MODULE)) {
+            if (mCurrentModuleProvider == null) {
+                throw new IllegalStateException("CurrentModuleProvider not set");
+            }
             int modeIndex = CameraUtil.getCameraModeParentModeId(
-                mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
+                    mCurrentModuleProvider.getCurrentModuleIndex(), mContext);
             return getModulePreferences(modeIndex);
         }
         return null;
