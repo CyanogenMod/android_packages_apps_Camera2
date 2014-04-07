@@ -253,11 +253,14 @@ public class ModeTransitionView extends View {
         mPeepHoleAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-
+                // Sets a HW layer on the view for the animation.
+                setLayerType(LAYER_TYPE_HARDWARE, null);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                // Sets the layer type back to NONE as a workaround for b/12594617.
+                setLayerType(LAYER_TYPE_NONE, null);
                 mPeepHoleAnimator = null;
                 mRadius = 0;
                 mIconDrawable.setAlpha(ALPHA_FULLY_OPAQUE);
