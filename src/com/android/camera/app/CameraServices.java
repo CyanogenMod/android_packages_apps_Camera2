@@ -18,7 +18,6 @@ package com.android.camera.app;
 
 import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
-import com.android.camera.settings.SettingsManager;
 
 /**
  * Functionality available to all modules and services.
@@ -36,12 +35,6 @@ public interface CameraServices {
      * status updates.
      */
     public MemoryManager getMemoryManager();
-
-    /**
-     * Returns the settings manager used to set and retrieve application
-     * settings.
-     */
-    public SettingsManager getSettingsManager();
 
     /**
      * Returns the media saver instance.

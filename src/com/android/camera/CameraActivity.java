@@ -198,7 +198,7 @@ public class CameraActivity extends Activity
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
-    private Object mStorageSpaceLock = new Object();
+    private final Object mStorageSpaceLock = new Object();
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
@@ -1146,8 +1146,7 @@ public class CameraActivity extends Activity
 
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
-        mSettingsManager = getServices().getSettingsManager();
-        mSettingsManager.setCurrentModuleProvider(this);
+        mSettingsManager = new SettingsManager(mAppContext, this);
         GcamHelper.init(getContentResolver());
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
