@@ -56,6 +56,7 @@ public class Storage {
     private static final Log.Tag TAG = new Log.Tag("Storage");
     private static final String GOOGLE_COM = "google.com";
     private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<Uri, Uri>();
+    private static HashMap<Uri, Uri> sContentUrisToSessions = new HashMap<Uri, Uri>();
     private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();
     private static HashMap<Uri, Point> sSessionsToSizes= new HashMap<Uri, Point>();
 
@@ -239,6 +240,7 @@ public class Storage {
             resultUri = addImage(resolver, title, date, location, orientation, jpegLength, path,
                     width, height, mimeType);
             sSessionsToContentUris.put(imageUri, resultUri);
+            sContentUrisToSessions.put(resultUri, imageUri);
         } else {
             // Update the MediaStore
             resolver.update(imageUri, values, null, null);
@@ -333,6 +335,16 @@ public class Storage {
      */
     public static Uri getContentUriForSessionUri(Uri uri) {
         return sSessionsToContentUris.get(uri);
+    }
+
+    /**
+     * Takes a content URI and returns the original Session Uri if any
+     *
+     * @param contentUri the uri of the media store content
+     * @return The session uri of the original session, if it exists, or null.
+     */
+    public static Uri getSessionUriFromContentUri(Uri contentUri) {
+        return sContentUrisToSessions.get(contentUri);
     }
 
     /**
