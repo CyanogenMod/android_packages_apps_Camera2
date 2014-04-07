@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Przełącz na zdjęcia"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Przełącz na filmy"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Przełącz na panoramę"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Przełącz na Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Przełącz na tryb sferyczny"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Włącz wysoką jakość"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Przegląd: anuluj"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Przegląd: gotowe"</string>

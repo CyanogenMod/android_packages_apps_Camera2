@@ -29,7 +29,7 @@
     <string name="share" msgid="8581089487762243115">"共有"</string>
     <string name="share_panorama" msgid="3558466186935359444">"パノラマ写真を共有"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"写真として共有"</string>
-    <string name="deleted" msgid="2036165115527228127">"削除済み"</string>
+    <string name="deleted" msgid="2036165115527228127">"削除しました"</string>
     <string name="undo" msgid="5110048345890050107">"元に戻す"</string>
     <string name="details" msgid="4404020741542549488">"詳細"</string>
     <string name="close" msgid="4826166926297479820">"閉じる"</string>
