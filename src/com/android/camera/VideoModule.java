@@ -241,7 +241,7 @@ public class VideoModule extends CameraModule
             switch (msg.what) {
 
                 case MSG_ENABLE_SHUTTER_BUTTON:
-                    mUI.enableShutter(true);
+                    mAppController.setShutterEnabled(true);
                     break;
 
                 case MSG_UPDATE_RECORD_TIME: {
@@ -287,9 +287,6 @@ public class VideoModule extends CameraModule
     }
 
     private BroadcastReceiver mReceiver = null;
-
-    /** Whether shutter is enabled. */
-    private boolean mShutterEnabled;
 
     private class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -391,7 +388,8 @@ public class VideoModule extends CameraModule
     private void takeASnapshot() {
         // Only take snapshots if video snapshot is supported by device
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
-            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress || mShutterEnabled) {
+            if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress
+                    || mAppController.isShutterEnabled()) {
                 return;
             }
 
@@ -654,7 +652,7 @@ public class VideoModule extends CameraModule
         } else {
             startVideoRecording();
         }
-        mUI.enableShutter(false);
+        mAppController.setShutterEnabled(false);
         mFocusManager.onShutterUp();
 
         // Keep the shutter button disabled when in video capture intent
@@ -887,7 +885,7 @@ public class VideoModule extends CameraModule
     }
 
     private void onPreviewStarted() {
-        mUI.enableShutter(true);
+        mAppController.setShutterEnabled(true);
         mAppController.onPreviewStarted();
         if (mFocusManager != null) {
             mFocusManager.onPreviewStarted();
@@ -953,12 +951,12 @@ public class VideoModule extends CameraModule
         switch (keyCode) {
             case KeyEvent.KEYCODE_CAMERA:
                 if (event.getRepeatCount() == 0) {
-                    mUI.clickShutter();
+                    onShutterButtonClick();
                     return true;
                 }
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 if (event.getRepeatCount() == 0) {
-                    mUI.clickShutter();
+                    onShutterButtonClick();
                     return true;
                 }
             case KeyEvent.KEYCODE_MENU:
@@ -972,7 +970,7 @@ public class VideoModule extends CameraModule
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_CAMERA:
-                mUI.pressShutter(false);
+                onShutterButtonClick();
                 return true;
             case KeyEvent.KEYCODE_MENU:
                 // Consume menu button presses during capture.
@@ -1596,7 +1594,7 @@ public class VideoModule extends CameraModule
 
         mPaused = false;
         installIntentFilter();
-        mUI.enableShutter(false);
+        mAppController.setShutterEnabled(false);
         mZoomValue = 0;
 
         showVideoSnapshotUI(false);
@@ -1605,7 +1603,7 @@ public class VideoModule extends CameraModule
             requestCamera(mCameraId);
         } else {
             // preview already started
-            mUI.enableShutter(true);
+            mAppController.setShutterEnabled(true);
         }
 
         if (mFocusManager != null) {
@@ -1724,7 +1722,7 @@ public class VideoModule extends CameraModule
             } else {
                 mUI.showPreviewBorder(enabled);
             }
-            mUI.enableShutter(!enabled);
+            mAppController.setShutterEnabled(!enabled);
         }
     }
 
@@ -1843,17 +1841,12 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onMemoryStateChanged(int state) {
-        setShutterEnabled(state == MemoryManager.STATE_OK);
+        mAppController.setShutterEnabled(state == MemoryManager.STATE_OK);
     }
 
     @Override
     public void onLowMemory() {
         // Not much we can do in the video module.
-    }
-
-    private void setShutterEnabled(boolean enabled) {
-        mShutterEnabled = enabled;
-        mUI.enableShutter(enabled);
     }
 
     /***********************FocusOverlayManager Listener****************************/

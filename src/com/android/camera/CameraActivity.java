@@ -951,13 +951,12 @@ public class CameraActivity extends Activity
 
     @Override
     public void setShutterEnabled(boolean enabled) {
-        // TODO: implement this
+        mCameraAppUI.setShutterButtonEnabled(enabled);
     }
 
     @Override
     public boolean isShutterEnabled() {
-        // TODO: implement this
-        return false;
+        return mCameraAppUI.isShutterButtonEnabled();
     }
 
     @Override

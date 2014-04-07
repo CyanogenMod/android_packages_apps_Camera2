@@ -419,8 +419,21 @@ public class BottomBar extends FrameLayout
         setPaintColor(mBackgroundAlpha, mBackgroundColor);
     }
 
-    public void setCaptureButtonEnabled(boolean enabled) {
+    /**
+     * Sets the shutter button enabled if true, disabled if false.
+     * <p>
+     * Disabled means that the shutter button is not clickable and is
+     * greyed out.
+     */
+    public void setShutterButtonEnabled(boolean enabled) {
         mShutterButton.setEnabled(enabled);
+    }
+
+    /**
+     * Returns whether the capture button is enabled.
+     */
+    public boolean isShutterButtonEnabled() {
+        return mShutterButton.isEnabled();
     }
 
     private double diagonalLength(double w, double h) {
