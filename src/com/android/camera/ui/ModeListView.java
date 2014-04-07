@@ -900,6 +900,14 @@ public class ModeListView extends FrameLayout
                 }
             });
         }
+
+        @Override
+        public void hide() {
+            if (!mCurrentAnimationEffects.cancelAnimation()) {
+                mCurrentAnimationEffects = null;
+                mCurrentStateManager.setCurrentState(new FullyHiddenState());
+            }
+        }
     }
 
     @Override
@@ -2035,6 +2043,16 @@ public class ModeListView extends FrameLayout
 
         @Override
         public void endAnimation() {
+        }
+
+        @Override
+        public boolean cancelAnimation() {
+            if (mPeepHoleAnimator == null || !mPeepHoleAnimator.isRunning()) {
+                return false;
+            } else {
+                mPeepHoleAnimator.cancel();
+                return true;
+            }
         }
 
         private class BlurTask extends AsyncTask<Bitmap, Integer, Bitmap> {
