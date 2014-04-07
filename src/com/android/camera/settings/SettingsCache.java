@@ -106,7 +106,7 @@ public class SettingsCache {
         mKeyMap.put(SettingsManager.KEY_VIDEOCAMERA_FLASH_MODE,
                 SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
         mKeyMap.put(SettingsManager.KEY_SCENE_MODE, SettingsManager.SETTING_SCENE_MODE);
-        mKeyMap.put(SettingsManager.KEY_EXPOSURE, SettingsManager.SETTING_EXPOSURE);
+        mKeyMap.put(SettingsManager.KEY_EXPOSURE, SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
         mKeyMap.put(SettingsManager.KEY_VIDEO_EFFECT, SettingsManager.SETTING_VIDEO_EFFECT);
         mKeyMap.put(SettingsManager.KEY_CAMERA_ID, SettingsManager.SETTING_CAMERA_ID);
         mKeyMap.put(SettingsManager.KEY_CAMERA_HDR, SettingsManager.SETTING_CAMERA_HDR);
@@ -133,6 +133,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_REQUEST_RETURN_HDR_PLUS);
         mKeyMap.put(SettingsManager.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING,
                 SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING);
+        mKeyMap.put(SettingsManager.KEY_EXPOSURE_COMPENSATION_ENABLED,
+                SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
     }
 
     /**
@@ -185,7 +187,7 @@ public class SettingsCache {
                 return SettingsManager.getVideoFlashSetting(mContext);
             case SettingsManager.SETTING_SCENE_MODE:
                 return SettingsManager.getSceneModeSetting(mContext);
-            case SettingsManager.SETTING_EXPOSURE:
+            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE:
                 return SettingsManager.getExposureSetting(mContext, mCapabilities);
             case SettingsManager.SETTING_VIDEO_EFFECT:
                 return SettingsManager.getVideoEffectSetting(mContext);
@@ -217,6 +219,8 @@ public class SettingsCache {
                 return SettingsManager.getRequestReturnHdrPlusSetting(mContext);
             case SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING:
                 return SettingsManager.getShouldShowRefocusViewerCling(mContext);
+            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED:
+                return SettingsManager.getManualExposureCompensationSetting(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }

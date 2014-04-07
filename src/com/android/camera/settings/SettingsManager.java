@@ -373,7 +373,7 @@ public class SettingsManager {
     public static final int SETTING_FLASH_MODE = 8;
     public static final int SETTING_VIDEOCAMERA_FLASH_MODE = 9;
     public static final int SETTING_SCENE_MODE = 11;
-    public static final int SETTING_EXPOSURE = 12;
+    public static final int SETTING_EXPOSURE_COMPENSATION_VALUE = 12;
     public static final int SETTING_VIDEO_EFFECT = 15;
     public static final int SETTING_CAMERA_ID = 16;
     public static final int SETTING_CAMERA_HDR = 17;
@@ -392,6 +392,7 @@ public class SettingsManager {
     // that forces them to leave HDR plus.
     public static final int SETTING_REQUEST_RETURN_HDR_PLUS = 30;
     public static final int SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING = 31;
+    public static final int SETTING_EXPOSURE_COMPENSATION_ENABLED = 32;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -428,6 +429,10 @@ public class SettingsManager {
     public static final String KEY_REQUEST_RETURN_HDR_PLUS = "pref_request_return_hdr_plus";
     public static final String KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING =
             "pref_should_show_refocus_viewer_cling";
+    public static final String KEY_EXPOSURE_COMPENSATION_ENABLED =
+            "pref_camera_exposure_compensation_key";
+
+    public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
     /**
      * Defines a simple class for holding a the spec of a setting. This spec is
@@ -947,6 +952,12 @@ public class SettingsManager {
                 values, FLUSH_OFF);
     }
 
+    public static Setting getManualExposureCompensationSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_off_value);
+        String[] values = null;
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue,
+                KEY_EXPOSURE_COMPENSATION_ENABLED, values, FLUSH_OFF);
+    }
     public static Setting getPictureSizeBackSetting(Context context) {
         String defaultValue = null;
         String[] values = context.getResources().getStringArray(
@@ -1205,6 +1216,10 @@ public class SettingsManager {
     public void setLocation(boolean on, LocationManager locationManager) {
         setBoolean(SettingsManager.SETTING_RECORD_LOCATION, on);
         locationManager.recordLocation(on);
+    }
+
+    public void setManualExposureCompensation(boolean on) {
+        setBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED, on);
     }
 
     /**

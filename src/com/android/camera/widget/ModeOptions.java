@@ -30,6 +30,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.util.AttributeSet;
 
@@ -46,6 +47,7 @@ public class ModeOptions extends FrameLayout {
     private RectF mAnimateFrom = new RectF();
     private View mViewToShowHide;
     private TopRightWeightedLayout mModeOptionsButtons;
+    private TopRightWeightedLayout mModeOptionsExposure;
 
     private AnimatorSet mVisibleAnimator;
     private AnimatorSet mHiddenAnimator;
@@ -75,6 +77,16 @@ public class ModeOptions extends FrameLayout {
         mPaint.setAntiAlias(true);
         mPaint.setColor(mBackgroundColor);
         mModeOptionsButtons = (TopRightWeightedLayout) findViewById(R.id.mode_options_buttons);
+
+        mModeOptionsExposure = (TopRightWeightedLayout) findViewById(R.id.mode_options_exposure);
+        ImageButton exposureButton = (ImageButton) findViewById(R.id.exposure_button);
+        exposureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mModeOptionsButtons.setVisibility(View.INVISIBLE);
+                mModeOptionsExposure.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
@@ -91,6 +103,23 @@ public class ModeOptions extends FrameLayout {
         }
 
         mModeOptionsButtons.setLayoutParams(params);
+    }
+
+    @Override
+    public void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility != VISIBLE && !mIsHiddenOrHiding) {
+            // Collapse mode options when window is not visible.
+            setVisibility(INVISIBLE);
+            if (mModeOptionsButtons != null) {
+                mModeOptionsButtons.setVisibility(VISIBLE);
+                mModeOptionsExposure.setVisibility(INVISIBLE);
+            }
+            if (mViewToShowHide != null) {
+                mViewToShowHide.setVisibility(VISIBLE);
+            }
+            mIsHiddenOrHiding = true;
+        }
     }
 
 
@@ -257,14 +286,18 @@ public class ModeOptions extends FrameLayout {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     mModeOptionsButtons.setAlpha((Float) animation.getAnimatedValue());
+                    mModeOptionsExposure.setAlpha((Float) animation.getAnimatedValue());
                     invalidate();
                 }
             });
             alphaAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mModeOptionsButtons.setAlpha(0.0f);
                     setVisibility(View.INVISIBLE);
+                    mModeOptionsButtons.setAlpha(1.0f);
+                    mModeOptionsButtons.setVisibility(View.VISIBLE);
+                    mModeOptionsExposure.setVisibility(View.INVISIBLE);
+                    mModeOptionsExposure.setAlpha(1.0f);
                     invalidate();
                 }
             });

@@ -38,6 +38,7 @@ import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
@@ -450,9 +451,17 @@ public class CameraActivity extends Activity
             SettingsCapabilities capabilities =
                     SettingsUtil.getSettingsCapabilities(camera);
             mSettingsManager.changeCamera(camera.getCameraId(), capabilities);
+            resetExposureCompensationToDefault(camera);
             mCurrentModule.onCameraAvailable(camera);
         }
         mCameraAppUI.onChangeCamera();
+    }
+
+    private void resetExposureCompensationToDefault(CameraManager.CameraProxy camera) {
+        // Reset the exposure compensation before handing the camera to module.
+        Camera.Parameters parameters = camera.getParameters();
+        parameters.setExposureCompensation(0);
+        camera.setParameters(parameters);
     }
 
     @Override

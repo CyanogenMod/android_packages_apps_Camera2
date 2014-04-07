@@ -56,14 +56,12 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.util.PhotoSphereHelper;
-import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.Cling;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.ModeOptionsOverlay;
 import com.android.camera.widget.PeekView;
 import com.android.camera2.R;
-import com.google.common.logging.eventprotos;
 
 /**
  * CameraAppUI centralizes control of views shared across modules. Whereas module
@@ -338,6 +336,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          */
         public boolean enablePanoOrientation;
 
+        public boolean enableExposureCompensation;
+
         /** Intent UI */
 
         /**
@@ -419,6 +419,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * when the review option is pressed. This callback can be null.
          */
         public View.OnClickListener reviewCallback;
+
+        /**
+         * A ExposureCompensationSetCallback that will execute
+         * when an expsosure button is pressed. This callback can be null.
+         */
+        public interface ExposureCompensationSetCallback {
+            public abstract void setExposure(int value);
+        }
+        public ExposureCompensationSetCallback exposureCompensationSetCallback;
     }
 
 
@@ -1668,6 +1677,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     bottomBarSpec.panoOrientationCallback);
         } else {
             buttonManager.hideButton(ButtonManager.BUTTON_PANO_ORIENTATION);
+        }
+
+        boolean enableExposureCompensation = bottomBarSpec.enableExposureCompensation &&
+            mController.getSettingsManager()
+            .getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
+        if (enableExposureCompensation) {
+            buttonManager.initializePushButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION, null);
+            buttonManager.setExposureCompensationCallback(
+                    bottomBarSpec.exposureCompensationSetCallback);
+            buttonManager.updateExposureButtons();
+        } else {
+            buttonManager.hideButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);
+            buttonManager.setExposureCompensationCallback(null);
         }
 
         /** Intent UI */

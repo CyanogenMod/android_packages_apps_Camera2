@@ -17,11 +17,12 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.android.camera.app.AppController;
-import com.android.camera.module.ModuleController;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.PhotoSphereHelper;
 
@@ -44,6 +45,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_REVIEW = 9;
     public static final int BUTTON_PANO_ORIENTATION = 10;
     public static final int BUTTON_GRID_LINES = 11;
+    public static final int BUTTON_EXPOSURE_COMPENSATION = 12;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -64,6 +66,13 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private ImageButton mButtonCancel;
     private ImageButton mButtonDone;
     private ImageButton mButtonRetake; // same as review.
+
+    private ImageButton mButtonExposureCompensation;
+    private ImageButton mExposureN2;
+    private ImageButton mExposureN1;
+    private ImageButton mExposure0;
+    private ImageButton mExposureP1;
+    private ImageButton mExposureP2;
 
     /** A listener for button enabled and visibility
         state changes. */
@@ -139,6 +148,14 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (ImageButton) root.findViewById(R.id.done_button);
         mButtonRetake
             = (ImageButton) root.findViewById(R.id.retake_button);
+
+        mButtonExposureCompensation =
+            (ImageButton) root.findViewById(R.id.exposure_button);
+        mExposureN2 = (ImageButton) root.findViewById(R.id.exposure_n2);
+        mExposureN1 = (ImageButton) root.findViewById(R.id.exposure_n1);
+        mExposure0 = (ImageButton) root.findViewById(R.id.exposure_0);
+        mExposureP1 = (ImageButton) root.findViewById(R.id.exposure_p1);
+        mExposureP2 = (ImageButton) root.findViewById(R.id.exposure_p2);
     }
 
     @Override
@@ -180,6 +197,10 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
                 index = mSettingsManager.getStringValueIndex(id);
                 button = getButtonOrError(BUTTON_PANO_ORIENTATION);
+                break;
+            }
+            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE: {
+                updateExposureButtons();
                 break;
             }
             default: {
@@ -278,6 +299,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Review button could not be found.");
                 }
                 return mButtonRetake;
+            case BUTTON_EXPOSURE_COMPENSATION:
+                if (mButtonExposureCompensation == null) {
+                    throw new IllegalStateException("Exposure Compensation button could not be found.");
+                }
+                return mButtonExposureCompensation;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -351,7 +377,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      */
     public void initializePushButton(int buttonId, View.OnClickListener cb) {
         ImageButton button = getImageButtonOrError(buttonId);
-        button.setOnClickListener(cb);
+        if (cb != null) {
+            button.setOnClickListener(cb);
+        }
 
         if (!button.isEnabled()) {
             button.setEnabled(true);
@@ -426,6 +454,48 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             if (mListener != null) {
                 mListener.onButtonVisibilityChanged(this, buttonId);
             }
+        }
+    }
+
+    public void setExposureCompensationCallback(final CameraAppUI.BottomBarUISpec
+                                        .ExposureCompensationSetCallback cb) {
+        if (cb == null) {
+            mExposureN2.setOnClickListener(null);
+            mExposureN1.setOnClickListener(null);
+            mExposure0.setOnClickListener(null);
+            mExposureP1.setOnClickListener(null);
+            mExposureP2.setOnClickListener(null);
+        } else {
+            View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int comp = 0;
+                    switch(v.getId()) {
+                        case R.id.exposure_n2:
+                            comp = -2;
+                            break;
+                        case R.id.exposure_n1:
+                            comp = -1;
+                            break;
+                        case R.id.exposure_0:
+                            comp = 0;
+                            break;
+                        case R.id.exposure_p1:
+                            comp = 1;
+                            break;
+                        case R.id.exposure_p2:
+                            comp = 2;
+                    }
+                    // Each integer compensation represent 1/6 of a stop.
+                    cb.setExposure(comp * 6);
+                }
+            };
+
+            mExposureN2.setOnClickListener(onClickListener);
+            mExposureN1.setOnClickListener(onClickListener);
+            mExposure0.setOnClickListener(onClickListener);
+            mExposureP1.setOnClickListener(onClickListener);
+            mExposureP2.setOnClickListener(onClickListener);
         }
     }
 
@@ -609,6 +679,43 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
     }
 
+    /**
+     * Update the visual state of the manual exposure buttons
+     */
+    public void updateExposureButtons() {
+        String compString = mSettingsManager.get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
+        int comp = Integer.parseInt(compString);
+
+        // Reset all button states.
+        mExposureN2.setBackground(null);
+        mExposureN1.setBackground(null);
+        mExposure0.setBackground(null);
+        mExposureP1.setBackground(null);
+        mExposureP2.setBackground(null);
+
+        // Highlight the appropriate button.
+        Context context = mAppController.getAndroidContext();
+        Drawable background = context.getResources()
+            .getDrawable(R.drawable.button_background_selected_photo);
+
+        // Each integer compensation represent 1/6 of a stop.
+        switch (comp / 6) {
+            case -2:
+                mExposureN2.setBackground(background);
+                break;
+            case -1:
+                mExposureN1.setBackground(background);
+                break;
+            case 0:
+                mExposure0.setBackground(background);
+                break;
+            case 1:
+                mExposureP1.setBackground(background);
+                break;
+            case 2:
+                mExposureP2.setBackground(background);
+        }
+    }
 
     /**
      * Initialize a grid lines button.

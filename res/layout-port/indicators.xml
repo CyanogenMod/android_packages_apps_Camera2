@@ -26,6 +26,22 @@
       android:background="@drawable/bg_options_indicator"
       android:layout_gravity="bottom|right" >
     <ImageView
+        android:id="@+id/exposure_n2_indicator"
+        style="@style/IndicatorIcon"
+        android:src="@drawable/ic_exposure_n2_indicator" />
+    <ImageView
+        android:id="@+id/exposure_n1_indicator"
+        style="@style/IndicatorIcon"
+        android:src="@drawable/ic_exposure_n1_indicator" />
+    <ImageView
+        android:id="@+id/exposure_p1_indicator"
+        style="@style/IndicatorIcon"
+        android:src="@drawable/ic_exposure_p1_indicator" />
+    <ImageView
+        android:id="@+id/exposure_p2_indicator"
+        style="@style/IndicatorIcon"
+        android:src="@drawable/ic_exposure_p2_indicator" />
+    <ImageView
         android:id="@+id/pano_indicator"
         style="@style/IndicatorIcon" />
     <ImageView
