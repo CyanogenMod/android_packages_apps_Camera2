@@ -1367,7 +1367,8 @@ public class PhotoModule
         }
 
         if (mSceneMode == CameraUtil.SCENE_MODE_HDR ||
-                CameraSettings.isSuperZoomEnabled(mParameters)) {
+                CameraSettings.isSuperZoomEnabled(mParameters) ||
+                CameraSettings.isSlowShutterEnabled(mParameters)) {
             mUI.showWaitAnimation();
         }
 
