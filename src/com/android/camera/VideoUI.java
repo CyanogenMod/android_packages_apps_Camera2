@@ -675,6 +675,8 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     private void setShowMenu(boolean show) {
+        if (mController.isVideoCaptureIntent())
+            return;
         if (mOnScreenIndicators != null) {
             mOnScreenIndicators.setVisibility(show ? View.VISIBLE : View.GONE);
         }
