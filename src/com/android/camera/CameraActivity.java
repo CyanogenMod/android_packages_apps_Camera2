@@ -70,6 +70,7 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppController;
+import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraManager;
@@ -77,6 +78,7 @@ import com.android.camera.app.CameraManagerFactory;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.LocationManager;
+import com.android.camera.app.MemoryManager;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
@@ -136,6 +138,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CameraActivity extends Activity
@@ -243,6 +246,7 @@ public class CameraActivity extends Activity
                     BASE_SYS_UI_VISIBILITY | View.SYSTEM_UI_FLAG_LOW_PROFILE);
         }
     };
+    private MemoryManager mMemoryManager;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -1306,6 +1310,8 @@ public class CameraActivity extends Activity
         if (FeedbackHelper.feedbackAvailable()) {
             mFeedbackHelper = new FeedbackHelper(mAppContext);
         }
+        mMemoryManager = getServices().getMemoryManager();
+        HashMap memoryData = mMemoryManager.queryMemory();
     }
 
     /**
