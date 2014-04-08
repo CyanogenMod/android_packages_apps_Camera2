@@ -61,6 +61,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -129,9 +130,9 @@ import com.android.camera2.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.resize.ImageManager;
 import com.google.common.logging.eventprotos;
-import com.google.common.logging.eventprotos.NavigationChange;
-import com.google.common.logging.eventprotos.MediaInteraction;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
+import com.google.common.logging.eventprotos.MediaInteraction;
+import com.google.common.logging.eventprotos.NavigationChange;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -235,6 +236,17 @@ public class CameraActivity extends Activity
 
     private Menu mActionBarMenu;
     private Preloader<Integer, AsyncTask> mPreloader;
+
+    private static final int LIGHTS_OUT_DELAY_MS = 4000;
+    private final int BASE_SYS_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+    private final Runnable mLightsOutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    BASE_SYS_UI_VISIBILITY | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+        }
+    };
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -683,20 +695,14 @@ public class CameraActivity extends Activity
     }
 
     /**
-     * If 'visible' is false, this hides the action bar and switches the
-     * filmstrip UI to lights-out mode.
+     * If 'visible' is false, this hides the action bar. Also maintains
+     * lights-out at all times.
      *
-     * @param visible is false, this hides the action bar and switches the
-     *            filmstrip UI to lights-out mode.
+     * @param visible is false, this hides the action bar and filmstrip bottom
+     *            controls.
      */
     private void setFilmstripUiVisibility(boolean visible) {
-        int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
-        int newSystemUIVisibility = (visible ? View.SYSTEM_UI_FLAG_VISIBLE
-                : View.SYSTEM_UI_FLAG_FULLSCREEN);
-        if (newSystemUIVisibility != currentSystemUIVisibility) {
-            mAboveFilmstripControlLayout.setSystemUiVisibility(newSystemUIVisibility);
-        }
-
+        mLightsOutRunnable.run();
         mCameraAppUI.getFilmstripBottomControls().setVisible(visible);
         if (visible != mActionBar.isShowing()) {
             if (visible) {
@@ -714,7 +720,7 @@ public class CameraActivity extends Activity
     }
 
     private void showSessionProgress(CharSequence message) {
-        CameraAppUI.BottomPanel controls =  mCameraAppUI.getFilmstripBottomControls();
+        CameraAppUI.BottomPanel controls = mCameraAppUI.getFilmstripBottomControls();
         controls.setProgressText(message);
         controls.hideControls();
         controls.hideProgressError();
@@ -799,10 +805,10 @@ public class CameraActivity extends Activity
 
                     final int pos = mDataAdapter.findDataByContentUri(sessionUri);
                     if (pos == -1) {
-                        // We do not have a placeholder for this image, perhaps due to the
-                        // activity crashing or being killed.
+                        // We do not have a placeholder for this image, perhaps
+                        // due to the activity crashing or being killed.
                         mDataAdapter.addData(newData);
-                    }  else  {
+                    } else {
                         mDataAdapter.updateData(pos, newData);
                     }
                 }
@@ -1580,8 +1586,16 @@ public class CameraActivity extends Activity
         keepScreenOnForAWhile();
 
         // Lights-out mode at all times.
-        findViewById(R.id.activity_root_view)
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+        final View rootView = findViewById(R.id.activity_root_view);
+        mLightsOutRunnable.run();
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(
+                new OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        mMainHandler.removeCallbacks(mLightsOutRunnable);
+                        mMainHandler.postDelayed(mLightsOutRunnable, LIGHTS_OUT_DELAY_MS);
+                    }
+                });
 
         mPanoramaViewHelper.onResume();
         ReleaseDialogHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
