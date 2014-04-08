@@ -20,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.camera2.R;
+
 /**
  * Abstract class that is the foundation for a tutorial overlay modules can show
  * to explain their functionality.
@@ -37,7 +39,7 @@ public abstract class AbstractTutorialOverlay {
 
     private final int mLayoutResId;
     protected final CloseListener mCloseListener;
-    private ViewGroup mPlaceholder;
+    private ViewGroup mPlaceholderWrapper;
 
     /**
      * Create a new overlay.
@@ -55,12 +57,15 @@ public abstract class AbstractTutorialOverlay {
     /**
      * Shows the tutorial on the screen.
      *
-     * @param placeHolder the view group in which the tutorial will be embedded.
+     * @param placeHolderWrapper the view group in which the tutorial will be
+     *            embedded.
      */
-    public final void show(ViewGroup placeHolder, LayoutInflater inflater) {
-        mPlaceholder = placeHolder;
+    public final void show(ViewGroup placeHolderWrapper, LayoutInflater inflater) {
+        mPlaceholderWrapper = placeHolderWrapper;
         removeOverlay();
-        onInflated(inflater.inflate(mLayoutResId, mPlaceholder));
+        ViewGroup placeHolder = (ViewGroup) inflater.inflate(R.layout.tutorials_placeholder,
+                mPlaceholderWrapper).findViewById(R.id.tutorials_placeholder);
+        onInflated(inflater.inflate(mLayoutResId, placeHolder));
     }
 
     /**
@@ -74,8 +79,8 @@ public abstract class AbstractTutorialOverlay {
      * Removes all views from the place holder.
      */
     public void removeOverlay() {
-        if (mPlaceholder != null) {
-            mPlaceholder.removeAllViews();
+        if (mPlaceholderWrapper != null) {
+            mPlaceholderWrapper.removeAllViews();
         }
     }
 
