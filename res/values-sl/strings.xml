@@ -350,5 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Nizka"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Visoka"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s slikovnih pik"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Kliknite tu za urejanje slike, posnete s funk. zam. objekt."</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Kliknite tu za urejanje slike, posnete z zameglitv. objekt."</string>
 </resources>

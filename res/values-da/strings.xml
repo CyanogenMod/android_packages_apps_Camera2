@@ -350,5 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Lav"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Høj"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klik her for at redigere linsesløringsbillede."</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klik her for at redigere billede med linsesløring."</string>
 </resources>

@@ -309,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Shintshela kumodi yokudlula kwesikhathi"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Shintshela kumodi ye-Wideangle"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Shintshela kumodi ye-Panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Shintshela kumodi yelensi efiphele"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Shintshela kumodi ye-Fiphalisa ilensi"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Vula izilungiselelo"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Vala izilungiselelo"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"I-HDR Plus ivaliwe"</string>
