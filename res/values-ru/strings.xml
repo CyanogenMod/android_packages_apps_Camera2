@@ -31,7 +31,7 @@
     <string name="share_as_photo" msgid="4831213580709167218">"Отправить фото"</string>
     <string name="deleted" msgid="2036165115527228127">"Удалено"</string>
     <string name="undo" msgid="5110048345890050107">"ОТМЕНИТЬ"</string>
-    <string name="details" msgid="4404020741542549488">"Детали"</string>
+    <string name="details" msgid="4404020741542549488">"Информация"</string>
     <string name="close" msgid="4826166926297479820">"Закрыть"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="9217673864242686656">"%1$d"</item>
@@ -212,7 +212,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Фото"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Видео"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Панорама"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Круговая панорама"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Высокое качество"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Перейти в режим \"Смена фокуса\""</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Отмена"</string>
@@ -278,7 +278,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Время отсчета в секундах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Обратный отсчет перед съемкой"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Сохранять место съемки?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Информация о месте съемки будет автоматически добавлена в описание ваших фотографий и видеозаписей.\n\nДоступ к этим данным, а также к самим фотографиям и видео смогут получить и другие приложения."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"К вашим фотографиям и видеозаписям будет автоматически добавляться информация о месте съемки.\n\nЭти данные будут доступны другим приложениям, у которых есть доступ к фотографиям и видео."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Нет"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ЕЩЁ"</string>
@@ -293,23 +293,23 @@
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Лента"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Установка обоев…"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Настройки"</string>
-    <string name="mode_camera" msgid="279763925715250603">"Камера"</string>
+    <string name="mode_camera" msgid="279763925715250603">"Фото"</string>
     <string name="mode_video" msgid="8633929034048169139">"Видео"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Круговая панорама"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Замедленная съемка"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Широкоугольная съемка"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Размытое изображение"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Размытие"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Открыть настройки."</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Перейти в обычный режим."</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Включить режим видео."</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Включить режим круговой панорамы."</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Включить режим Photo Sphere."</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"Включить расширенные возможности."</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Включить расширенные возможности."</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Включить режим замедленной съемки."</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Включить режим широкоэкранной съемки."</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Включить режим панорамы."</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Сделать снимок размытым"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Сделать снимок с размытием"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Открыть настройки."</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Закрыть настройки."</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"Режим HDR Plus выключен."</string>
@@ -350,5 +350,5 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Низкое"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Высокое"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s Мпикс."</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Нажмите, чтобы изменить фото"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Нажмите, чтобы настроить размытие"</string>
 </resources>

@@ -311,7 +311,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Badili hadi Hali ya Mabadiliko ya Muda"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Badili hadi Hali ya Pembe pana"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Badili hadi Hali ya Panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Badili hadi Hali ya Ukungu kwenye Lensi"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Badili hadi Hali ya Ukungu kwenye Lenzi"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Fungua mipangilio"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Funga mipangilio"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus imezimwa"</string>
