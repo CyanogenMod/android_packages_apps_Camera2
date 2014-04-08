@@ -20,10 +20,6 @@ package com.android.camera.debug;
  * An interface which defines the debug configurations.
  */
 public interface Config {
-
-    /** @return {@code true} to switch on debug settings. */
-    boolean isDebugging();
-
     /** @return {@code true} to enable isDebugging level logs. */
     boolean logDebug();
 

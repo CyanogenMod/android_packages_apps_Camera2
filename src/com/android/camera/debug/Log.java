@@ -17,6 +17,15 @@
 package com.android.camera.debug;
 
 public class Log {
+    /**
+     * All Camera logging using this class will use this tag prefix.
+     * Additionally, the prefix itself is checked in isLoggable and
+     * serves as an override. So, to toggle all logs allowed by the
+     * current {@link Configuration}, you can set properties:
+     *
+     * adb shell setprop log.tag.CAM_ VERBOSE
+     * adb shell setprop log.tag.CAM_ ""
+     */
     public static final String CAMERA_LOGTAG_PREFIX = "CAM_";
     private static final Log.Tag TAG = new Log.Tag("Log");
 
@@ -196,8 +205,9 @@ public class Log {
 
     private static boolean isLoggable(Tag tag, int level) {
         try {
-            return CurrentConfig.get().isDebugging()
-                    || android.util.Log.isLoggable(tag.toString(), level);
+            // The prefix can be used as an override tag to see all camera logs
+            return android.util.Log.isLoggable(CAMERA_LOGTAG_PREFIX, level)
+                     || android.util.Log.isLoggable(tag.toString(), level);
         } catch (IllegalArgumentException ex) {
             e(TAG, "Tag too long:" + tag);
             return false;
