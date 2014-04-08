@@ -20,6 +20,8 @@ package com.android.camera.util;
 import android.content.Context;
 import com.android.camera.exif.ExifInterface;
 
+import java.util.HashMap;
+
 public class UsageStatistics {
     private static UsageStatistics sInstance;
 
@@ -54,5 +56,8 @@ public class UsageStatistics {
     }
 
     public void controlUsed(int control) {
+    }
+
+    public void reportMemoryConsumed(HashMap memoryData, String reportType) {
     }
 }

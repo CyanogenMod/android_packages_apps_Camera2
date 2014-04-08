@@ -33,6 +33,23 @@ public class MemoryQuery {
     private final long BYTES_IN_KILOBYTE = 1024;
     private final long BYTES_IN_MEGABYTE = BYTES_IN_KILOBYTE * BYTES_IN_KILOBYTE;
 
+    public static final String KEY_TIMESTAMP = "timestamp";
+    public static final String KEY_MEMORY_AVAILABLE = "availMem";
+    public static final String KEY_TOTAL_MEMORY = "totalMem";
+    public static final String KEY_TOTAL_PSS = "totalPSS";
+    public static final String KEY_NATIVE_PSS = "nativePSS";
+    public static final String KEY_DALVIK_PSS = "dalvikPSS";
+    public static final String KEY_OTHER_PSS = "otherPSS";
+    public static final String KEY_THRESHOLD = "threshold";
+    public static final String KEY_LOW_MEMORY = "lowMemory";
+    public static final String KEY_LAST_TRIM_LEVEL = "lastTrimLevel";
+    public static final String KEY_TOTAL_PRIVATE_DIRTY = "totalPrivateDirty";
+    public static final String KEY_TOTAL_SHARED_DIRTY = "totalSharedDirty";
+    public static final String KEY_MEMORY_CLASS = "memoryClass";
+    public static final String KEY_LARGE_MEMORY_CLASS = "largeMemoryClass";
+
+    public static final String REPORT_LABEL_LAUNCH = "launch";
+
     private ActivityManager mActivityManager;
 
     public MemoryQuery(ActivityManager activityManager) {
@@ -85,20 +102,20 @@ public class MemoryQuery {
         }
 
         HashMap outputData = new HashMap();
-        outputData.put("timestamp", new Long(timestamp));
-        outputData.put("availMem", new Long(availMem));
-        outputData.put("totalMem", new Long(totalMem));
-        outputData.put("totalPSS", new Long(totalPSS));
-        outputData.put("lastTrimLevel", new Integer(info.lastTrimLevel));
-        outputData.put("totalPrivateDirty", new Long(totalPrivateDirty));
-        outputData.put("totalSharedDirty", new Long(totalSharedDirty));
-        outputData.put("memoryClass", new Long(memoryClass));
-        outputData.put("largeMemoryClass", new Long(largeMemoryClass));
-        outputData.put("nativePSS", new Long(nativePSS));
-        outputData.put("dalvikPSS", new Long(dalvikPSS));
-        outputData.put("otherPSS", new Long(otherPSS));
-        outputData.put("threshold", new Long(threshold));
-        outputData.put("lowMemory", new Boolean(lowMemory));
+        outputData.put(KEY_TIMESTAMP, new Long(timestamp));
+        outputData.put(KEY_MEMORY_AVAILABLE, new Long(availMem));
+        outputData.put(KEY_TOTAL_MEMORY, new Long(totalMem));
+        outputData.put(KEY_TOTAL_PSS, new Long(totalPSS));
+        outputData.put(KEY_LAST_TRIM_LEVEL, new Integer(info.lastTrimLevel));
+        outputData.put(KEY_TOTAL_PRIVATE_DIRTY, new Long(totalPrivateDirty));
+        outputData.put(KEY_TOTAL_SHARED_DIRTY, new Long(totalSharedDirty));
+        outputData.put(KEY_MEMORY_CLASS, new Long(memoryClass));
+        outputData.put(KEY_LARGE_MEMORY_CLASS, new Long(largeMemoryClass));
+        outputData.put(KEY_NATIVE_PSS, new Long(nativePSS));
+        outputData.put(KEY_DALVIK_PSS, new Long(dalvikPSS));
+        outputData.put(KEY_OTHER_PSS, new Long(otherPSS));
+        outputData.put(KEY_THRESHOLD, new Long(threshold));
+        outputData.put(KEY_LOW_MEMORY, new Boolean(lowMemory));
 
         Log.d(TAG, String.format("timestamp=%d, availMem=%d, totalMem=%d, totalPSS=%d, " +
                 "lastTrimLevel=%d, largeMemoryClass=%d, nativePSS=%d, dalvikPSS=%d, otherPSS=%d," +
