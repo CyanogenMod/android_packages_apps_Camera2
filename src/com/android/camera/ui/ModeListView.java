@@ -573,6 +573,7 @@ public class ModeListView extends FrameLayout
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             // Scroll happens during accordion animation.
             cancelAnimation();
+            cancelForwardingTouchEvent();
             // Go to scrolling state
             mCurrentStateManager.setCurrentState(new ScrollingState());
             UsageStatistics.instance().controlUsed(
