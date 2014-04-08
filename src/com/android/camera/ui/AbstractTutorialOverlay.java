@@ -63,6 +63,7 @@ public abstract class AbstractTutorialOverlay {
     public final void show(ViewGroup placeHolderWrapper, LayoutInflater inflater) {
         mPlaceholderWrapper = placeHolderWrapper;
         removeOverlay();
+        mPlaceholderWrapper.setVisibility(View.VISIBLE);
         ViewGroup placeHolder = (ViewGroup) inflater.inflate(R.layout.tutorials_placeholder,
                 mPlaceholderWrapper).findViewById(R.id.tutorials_placeholder);
         onInflated(inflater.inflate(mLayoutResId, placeHolder));
@@ -87,8 +88,9 @@ public abstract class AbstractTutorialOverlay {
     /**
      * Removes the UI and calls the close listener.
      */
-    protected void close() {
+    public void close() {
         removeOverlay();
+        mPlaceholderWrapper.setVisibility(View.GONE);
         if (mCloseListener != null) {
             mCloseListener.onTutorialClosed();
         }
