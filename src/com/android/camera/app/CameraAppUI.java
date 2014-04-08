@@ -473,7 +473,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private ModeOptionsOverlay mModeOptionsOverlay;
     private IndicatorIconController mIndicatorIconController;
     private View mFocusOverlay;
-    private FrameLayout mTutorialsPlaceholder;
+    private FrameLayout mTutorialsPlaceHolderWrapper;
     private View mIndicatorBottomBarWrapper;
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
@@ -1103,8 +1103,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
         mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
-        mTutorialsPlaceholder = (FrameLayout) mCameraRootView
-                .findViewById(R.id.tutorials_placeholder);
+        mTutorialsPlaceHolderWrapper = (FrameLayout) mCameraRootView
+                .findViewById(R.id.tutorials_placeholder_wrapper);
         mIndicatorBottomBarWrapper = mAppRootView
                 .findViewById(R.id.indicator_bottombar_wrapper);
 
@@ -1170,7 +1170,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mModuleUI.removeAllViews();
         }
         removeShutterListener(mController.getCurrentModuleController());
-        mTutorialsPlaceholder.removeAllViews();
+        mTutorialsPlaceHolderWrapper.removeAllViews();
 
         setShutterButtonEnabled(true);
         mPreviewStatusListener = null;
@@ -1716,7 +1716,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Shows the given tutorial on the screen.
      */
     public void showTutorial(AbstractTutorialOverlay tutorial, LayoutInflater inflater) {
-        tutorial.show(mTutorialsPlaceholder, inflater);
+        tutorial.show(mTutorialsPlaceHolderWrapper, inflater);
     }
 
     /***************************Filmstrip api *****************************/

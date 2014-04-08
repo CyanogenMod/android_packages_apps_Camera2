@@ -35,7 +35,6 @@
         android:layout_height="match_parent"
         android:visibility="invisible" />
 
-
     <com.android.camera.ui.PreviewOverlay
         android:id="@+id/preview_overlay"
         android:layout_width="match_parent"
@@ -55,7 +54,14 @@
 
     <include layout="@layout/mode_options_bottombar" />
 
-    <FrameLayout android:id="@+id/tutorials_placeholder"
+    <FrameLayout
+        android:id="@+id/tutorials_placeholder_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#DEDEDE"
+        android:clickable="true" >
+
+        <include layout="@layout/tutorials_placeholder" />
+    </FrameLayout>
+
 </merge>
