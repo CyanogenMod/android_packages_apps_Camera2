@@ -9,11 +9,6 @@ public enum Configurations implements Config {
      */
     RELEASE {
         @Override
-        public boolean isDebugging() {
-            return false;
-        }
-
-        @Override
         public boolean logDebug() {
             return false;
         }
@@ -44,11 +39,6 @@ public enum Configurations implements Config {
      */
     EVERYTHING_ON {
         @Override
-        public boolean isDebugging() {
-            return true;
-        }
-
-        @Override
         public boolean logDebug() {
             return true;
         }
@@ -78,11 +68,6 @@ public enum Configurations implements Config {
      * Logs everything but disables debug settings.
      */
     LOG_ALL_NO_DEBUG {
-        @Override
-        public boolean isDebugging() {
-            return false;
-        }
-
         @Override
         public boolean logDebug() {
             return true;
