@@ -34,7 +34,7 @@ import com.android.camera2.R;
  * button in sync.
  */
 public class ExternalViewerButton extends ImageButton {
-    private static final Log.Tag TAG = new Log.Tag("ExternalViewerButton");
+    private static final Log.Tag TAG = new Log.Tag("ExtViewerButton");
     private int mState = CameraAppUI.BottomPanel.VIEWER_NONE;
     private final SparseArray<Cling> mClingMap;
 
