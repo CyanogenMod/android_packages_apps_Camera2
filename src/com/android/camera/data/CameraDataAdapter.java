@@ -256,7 +256,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
         for (; pos < mImages.size()
                 && comp.compare(data, mImages.get(pos)) > 0; pos++);
         mImages.add(pos, data);
-        updateMetadata(pos);
         if (mListener != null) {
             mListener.onDataInserted(pos, data);
         }
@@ -322,9 +321,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
          */
         @Override
         protected List<LocalData> doInBackground(ContentResolver... contentResolvers) {
-            final ContentResolver cr = contentResolvers[0];
-            return LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
-                    mMinPhotoId);
+            if (mMinPhotoId != LocalMediaData.QUERY_ALL_MEDIA_ID) {
+                final ContentResolver cr = contentResolvers[0];
+                return LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
+                        mMinPhotoId);
+            }
+            return new ArrayList<LocalData>(0);
         }
 
         @Override
@@ -411,6 +413,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
             if (mDoneCallback != null) {
                 mDoneCallback.onCallback(null);
             }
+            // Now check for any photos added since this task was kicked off
+            LoadNewPhotosTask ltask = new LoadNewPhotosTask(mLastPhotoId);
+            ltask.execute(mContext.getContentResolver());
         }
     }
 
