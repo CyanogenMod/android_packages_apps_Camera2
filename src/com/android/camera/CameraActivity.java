@@ -79,6 +79,7 @@ import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MemoryManager;
+import com.android.camera.app.MemoryQuery;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
@@ -1322,7 +1323,14 @@ public class CameraActivity extends Activity
             mFeedbackHelper = new FeedbackHelper(mAppContext);
         }
         mMemoryManager = getServices().getMemoryManager();
-        HashMap memoryData = mMemoryManager.queryMemory();
+
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            public void run() {
+                HashMap memoryData = mMemoryManager.queryMemory();
+                UsageStatistics.instance().reportMemoryConsumed(memoryData,
+                        MemoryQuery.REPORT_LABEL_LAUNCH);
+            }
+        });
     }
 
     /**
