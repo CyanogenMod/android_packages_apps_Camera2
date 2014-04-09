@@ -48,28 +48,6 @@ public class BottomBarModeOptionsWrapper extends FrameLayout {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        adjustBottomBarGravity(config);
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        adjustBottomBarGravity(getResources().getConfiguration());
-    }
-
-    private void adjustBottomBarGravity(Configuration config) {
-        FrameLayout.LayoutParams lp = (LayoutParams) mBottomBar.getLayoutParams();
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-        } else {
-            lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-        }
-        mBottomBar.setLayoutParams(lp);
-    }
-
-    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         final int bottomBarWidth = mBottomBar.getMeasuredWidth();
         final int bottomBarHeight = mBottomBar.getMeasuredHeight();
