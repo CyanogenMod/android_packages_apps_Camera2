@@ -25,6 +25,7 @@ import com.android.camera.app.MediaSaver.QueueListener;
 import com.android.camera.debug.Log;
 import com.android.camera.util.GservicesHelper;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -54,6 +55,12 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     private final int mMaxAllowedNativeMemory;
 
     /**
+     * Used to query a breakdown of current memory consumption and memory
+     * thresholds.
+     */
+    private final MemoryQuery mMemoryQuery;
+
+    /**
      * Use this to create a wired-up memory manager.
      *
      * @param context this is used to register for system memory events.
@@ -61,7 +68,12 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * @return A wired-up memory manager instance.
      */
     public static MemoryManagerImpl create(Context context, MediaSaver mediaSaver) {
-        MemoryManagerImpl memoryManager = new MemoryManagerImpl(getMaxAllowedNativeMemory(context));
+        ActivityManager activityManager =
+                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        int maxAllowedNativeMemory = getMaxAllowedNativeMemory(context);
+        MemoryQuery mMemoryQuery = new MemoryQuery(activityManager);
+        MemoryManagerImpl memoryManager = new MemoryManagerImpl(maxAllowedNativeMemory,
+                mMemoryQuery);
         context.registerComponentCallbacks(memoryManager);
         mediaSaver.setQueueListener(memoryManager);
         return memoryManager;
@@ -71,9 +83,11 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
      * Use {@link #create(Context, MediaSaver)} to make sure it's wired up
      * correctly.
      */
-    private MemoryManagerImpl(int maxNativeMemory) {
-        mMaxAllowedNativeMemory = maxNativeMemory;
+    private MemoryManagerImpl(int maxAllowedNativeMemory, MemoryQuery memoryQuery) {
+        mMaxAllowedNativeMemory = maxAllowedNativeMemory;
+        mMemoryQuery = memoryQuery;
         Log.d(TAG, "Max native memory: " + mMaxAllowedNativeMemory + " MB");
+
     }
 
     @Override
@@ -124,6 +138,11 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     @Override
     public int getMaxAllowedNativeMemoryAllocation() {
         return mMaxAllowedNativeMemory;
+    }
+
+    @Override
+    public HashMap queryMemory() {
+        return mMemoryQuery.queryMemory();
     }
 
     /** Helper to determine max allowed native memory allocation (in megabytes). */

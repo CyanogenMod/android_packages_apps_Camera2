@@ -16,6 +16,8 @@
 
 package com.android.camera.app;
 
+import java.util.HashMap;
+
 /**
  * Keeps track of memory used by the app and informs modules and services if
  * memory gets low.
@@ -63,4 +65,12 @@ public interface MemoryManager {
      * code by our app (in megabytes).
      */
     public int getMaxAllowedNativeMemoryAllocation();
+
+    /**
+     * Queries the memory consumed, total memory, and memory thresholds for this app.
+     *
+     * @return HashMap containing memory metrics keyed by string labels
+     *     defined in {@link MemoryQuery}.
+     */
+    public HashMap queryMemory();
 }
