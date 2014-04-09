@@ -351,4 +351,6 @@
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Високо"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s мегапиксела"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Кликнете за редакт. на изобр. от „Замъгляване на обектива“."</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"Разширени"</string>
+    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"Ръчна компенсация на експозиц.: Актив."</string>
 </resources>

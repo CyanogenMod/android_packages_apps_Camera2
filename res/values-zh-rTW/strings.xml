@@ -351,4 +351,6 @@
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"高"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s 百萬像素"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"按一下這裡即可編輯鏡頭模糊圖片。"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"進階"</string>
+    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"啟用手動曝光補償"</string>
 </resources>
