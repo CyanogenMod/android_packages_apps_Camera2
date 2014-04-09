@@ -26,6 +26,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -310,6 +311,7 @@ public class BottomBar extends FrameLayout
 
         // Calculates the width and height needed for the bar.
         int barWidth, barHeight;
+        FrameLayout.LayoutParams lp = (LayoutParams) getLayoutParams();
         if (measureWidth > measureHeight) {
             // Landscape.
             barHeight = (int) mPreviewShortEdge;
@@ -326,6 +328,8 @@ public class BottomBar extends FrameLayout
                     setOverlayBottomBar(false);
                 }
             }
+            lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+
         } else {
             // Portrait
             barWidth = (int) mPreviewShortEdge;
@@ -342,7 +346,9 @@ public class BottomBar extends FrameLayout
                     setOverlayBottomBar(false);
                 }
             }
+            lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
         }
+        setLayoutParams(lp);
 
         super.onMeasure(MeasureSpec.makeMeasureSpec(barWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY));
