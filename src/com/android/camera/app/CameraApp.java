@@ -21,6 +21,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 
 import com.android.camera.MediaSaverImpl;
+import com.android.camera.debug.LogHelper;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
@@ -49,11 +50,13 @@ public class CameraApp extends Application implements CameraServices {
     public void onCreate() {
         super.onCreate();
 
+        Context context = getApplicationContext();
+        LogHelper.initialize(context);
+
         UsageStatistics.instance().initialize(this);
         SessionStatsCollector.instance().initialize(this);
         CameraUtil.initialize(this);
 
-        Context context = getApplicationContext();
         ProcessingServiceManager.initSingleton(context);
 
         mMediaSaver = new MediaSaverImpl();

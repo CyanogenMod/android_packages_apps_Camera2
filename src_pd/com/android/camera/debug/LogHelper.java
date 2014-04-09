@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.camera.debug;
 
-/**
- * An interface which defines the debug configurations.
- */
-public interface Config {
-    /** @return {@code true} to enable isDebugging level logs. */
-    boolean logDebug();
+import android.content.Context;
 
-    /** @return {@code true} to enable ERROR level logs. */
-    boolean logError();
+public class LogHelper {
+    public static void initialize(Context context) {
+        // Do nothing.
+    }
 
-    /** @return {@code true} to enable INFO level logs. */
-    boolean logInfo();
-
-    /** @return {@code true} to enable VERBOSE level logs. */
-    boolean logVerbose();
-
-    /** @return {@code true} to enable WARN level logs. */
-    boolean logWarn();
+    /**
+     * Return a valid log level from {@link android.util.Log} to override
+     * the system log level. Return 0 to instead defer to system log level.
+     */
+    public static int getOverrideLevel() {
+        return 0;
+    }
 }
