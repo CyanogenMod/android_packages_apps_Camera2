@@ -42,7 +42,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_SDK_VERSION := 9
 
-LOCAL_LDFLAGS := -llog -lGLESv2
+LOCAL_SHARED_LIBRARIES := liblog libGLESv2
 
 LOCAL_MODULE_TAGS := optional
 
@@ -54,7 +54,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_CPP_EXTENSION := .cc
-LOCAL_LDFLAGS   := -llog -ljnigraphics
+LOCAL_SHARED_LIBRARIES := liblog libjnigraphics
 LOCAL_SDK_VERSION := 9
 LOCAL_MODULE    := libjni_tinyplanet
 LOCAL_SRC_FILES := tinyplanet.cc
