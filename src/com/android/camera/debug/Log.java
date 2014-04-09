@@ -55,159 +55,78 @@ public class Log {
         }
     }
 
-    private interface Logger {
-        void log(Tag tag, String msg);
-        void log(Tag tag, String msg, Throwable tr);
-    }
-
-    private static final Logger SILENT_LOGGER = new Logger() {
-        @Override
-        public void log(Tag tag, String msg) {
-            // Do nothing.
-        }
-
-        @Override
-        public void log(Tag tag, String msg, Throwable tr) {
-            // Do nothing.
-        }
-    };
-
-    private static final Logger LOGGER_D = (!CurrentConfig.get().logDebug() ? SILENT_LOGGER : new Logger() {
-        final int level = android.util.Log.DEBUG;
-
-        @Override
-        public void log(Tag tag, String msg) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.d(tag.toString(), msg);
-            }
-        }
-
-        @Override
-        public void log(Tag tag, String msg, Throwable tr) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.d(tag.toString(), msg, tr);
-            }
-        }
-    });
-
-    private static final Logger LOGGER_E = (!CurrentConfig.get().logError() ? SILENT_LOGGER : new Logger() {
-        final int level = android.util.Log.ERROR;
-
-        @Override
-        public void log(Tag tag, String msg) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.e(tag.toString(), msg);
-            }
-        }
-
-        @Override
-        public void log(Tag tag, String msg, Throwable tr) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.e(tag.toString(), msg, tr);
-            }
-        }
-    });
-
-    private static final Logger LOGGER_I = (!CurrentConfig.get().logInfo() ? SILENT_LOGGER : new Logger() {
-        final int level = android.util.Log.INFO;
-
-        @Override
-        public void log(Tag tag, String msg) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.i(tag.toString(), msg);
-            }
-        }
-
-        @Override
-        public void log(Tag tag, String msg, Throwable tr) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.i(tag.toString(), msg, tr);
-            }
-        }
-    });
-
-    private static final Logger LOGGER_V = (!CurrentConfig.get().logVerbose() ? SILENT_LOGGER : new Logger() {
-        final int level = android.util.Log.VERBOSE;
-
-        @Override
-        public void log(Tag tag, String msg) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.v(tag.toString(), msg);
-            }
-        }
-
-        @Override
-        public void log(Tag tag, String msg, Throwable tr) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.v(tag.toString(), msg, tr);
-            }
-        }
-    });
-
-    private static final Logger LOGGER_W = (!CurrentConfig.get().logWarn() ? SILENT_LOGGER : new Logger() {
-        final int level = android.util.Log.WARN;
-
-        @Override
-        public void log(Tag tag, String msg) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.w(tag.toString(), msg);
-            }
-        }
-
-        @Override
-        public void log(Tag tag, String msg, Throwable tr) {
-            if (isLoggable(tag, level)) {
-                android.util.Log.w(tag.toString(), msg, tr);
-            }
-        }
-    });
-
-
     public static void d(Tag tag, String msg) {
-        LOGGER_D.log(tag, msg);
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.d(tag.toString(), msg);
+        }
     }
 
     public static void d(Tag tag, String msg, Throwable tr) {
-        LOGGER_D.log(tag, msg, tr);
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.d(tag.toString(), msg, tr);
+        }
     }
 
     public static void e(Tag tag, String msg) {
-        LOGGER_E.log(tag, msg);
+        if (isLoggable(tag, android.util.Log.ERROR)) {
+            android.util.Log.e(tag.toString(), msg);
+        }
     }
 
     public static void e(Tag tag, String msg, Throwable tr) {
-        LOGGER_E.log(tag, msg, tr);
+        if (isLoggable(tag, android.util.Log.ERROR)) {
+            android.util.Log.e(tag.toString(), msg, tr);
+        }
     }
 
     public static void i(Tag tag, String msg) {
-        LOGGER_I.log(tag, msg);
+        if (isLoggable(tag, android.util.Log.INFO)) {
+            android.util.Log.i(tag.toString(), msg);
+        }
     }
 
     public static void i(Tag tag, String msg, Throwable tr) {
-        LOGGER_I.log(tag, msg, tr);
+        if (isLoggable(tag, android.util.Log.INFO)) {
+            android.util.Log.i(tag.toString(), msg, tr);
+        }
     }
 
     public static void v(Tag tag, String msg) {
-        LOGGER_V.log(tag, msg);
+        if (isLoggable(tag, android.util.Log.VERBOSE)) {
+            android.util.Log.v(tag.toString(), msg);
+        }
     }
 
     public static void v(Tag tag, String msg, Throwable tr) {
-        LOGGER_V.log(tag, msg, tr);
+        if (isLoggable(tag, android.util.Log.VERBOSE)) {
+            android.util.Log.v(tag.toString(), msg, tr);
+        }
     }
 
     public static void w(Tag tag, String msg) {
-        LOGGER_W.log(tag, msg);
+        if (isLoggable(tag, android.util.Log.WARN)) {
+            android.util.Log.w(tag.toString(), msg);
+        }
     }
 
     public static void w(Tag tag, String msg, Throwable tr) {
-        LOGGER_W.log(tag, msg, tr);
+        if (isLoggable(tag, android.util.Log.WARN)) {
+            android.util.Log.w(tag.toString(), msg, tr);
+        }
     }
 
     private static boolean isLoggable(Tag tag, int level) {
         try {
-            // The prefix can be used as an override tag to see all camera logs
-            return android.util.Log.isLoggable(CAMERA_LOGTAG_PREFIX, level)
-                     || android.util.Log.isLoggable(tag.toString(), level);
+            if (LogHelper.getOverrideLevel() != 0) {
+                // Override system log level and output. VERBOSE is smaller than
+                // ERROR, so the comparison checks that the override value is smaller
+                // than the desired output level. This applies to all tags.
+                return LogHelper.getOverrideLevel() <= level;
+            } else {
+                // The prefix can be used as an override tag to see all camera logs
+                return android.util.Log.isLoggable(CAMERA_LOGTAG_PREFIX, level)
+                        || android.util.Log.isLoggable(tag.toString(), level);
+            }
         } catch (IllegalArgumentException ex) {
             e(TAG, "Tag too long:" + tag);
             return false;
