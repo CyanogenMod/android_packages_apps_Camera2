@@ -56,7 +56,7 @@
   <string name="pref_camera_redeyereduction_entry_enable">Povoliť</string>
   <string name="pref_camera_redeyereduction_entry_disable">Zakázať</string>
   <string name="error_app_unsupported_hfr">HFR nie je podporované pre vybrané rozlíšenie</string>
-  <string name="error_app_unsupported_hfr_codec">Iba kódovanie videa H.264 je podporované pri zapnutom HFR</string>
+  <string name="error_app_unsupported_hfr_codec">Kódovanie videa H.264 je podporované iba pri zapnutom HFR</string>
   <string name="error_app_unsupported">Nepodporované rozlíšenie videa pre tento typ kodeka</string>
   <string name="error_app_unsupported_raw">Formát obrázkov RAW nie je podporovaný v režime ZSL</string>
   <string name="error_app_unsupported_hdr_zsl">HDR nie je podporované v režime ZSL</string>
