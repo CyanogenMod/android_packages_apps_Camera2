@@ -120,6 +120,9 @@
     <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
     <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
 
+    <!-- The message is shown in toast when the app encounters an unsupported resolution for DIS mode -->
+    <string name="error_app_unsupported_dis">Video stabilization is not supported for selected resolution</string>
+
     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
     <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
     <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
