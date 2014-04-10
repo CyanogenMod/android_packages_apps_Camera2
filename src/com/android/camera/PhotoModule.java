@@ -435,7 +435,7 @@ public class PhotoModule
         }
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
+        Log.i(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
         closeCamera();
         mCameraId = mPendingSwitchCameraId;
         settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
@@ -473,7 +473,7 @@ public class PhotoModule
 
                     mPendingSwitchCameraId = state;
 
-                    Log.v(TAG, "Start to switch camera. cameraId=" + state);
+                    Log.d(TAG, "Start to switch camera. cameraId=" + state);
                     // We need to keep a preview frame for the animation before
                     // releasing the camera. This will trigger
                     // onPreviewTextureCopied.
@@ -1156,7 +1156,7 @@ public class PhotoModule
                     + mActivity.getStorageSpaceBytes());
             return;
         }
-        Log.v(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
+        Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
         if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
             mUI.setSwipingEnabled(false);
@@ -1532,7 +1532,7 @@ public class PhotoModule
         // Let UI set its expected aspect ratio
         mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
-        Log.v(TAG, "startPreview");
+        Log.i(TAG, "startPreview");
         mCameraDevice.startPreview();
 
         mFocusManager.onPreviewStarted();
@@ -1546,7 +1546,7 @@ public class PhotoModule
     @Override
     public void stopPreview() {
         if (mCameraDevice != null && mCameraState != PREVIEW_STOPPED) {
-            Log.v(TAG, "stopPreview");
+            Log.i(TAG, "stopPreview");
             mCameraDevice.stopPreview();
             mFaceDetectionStarted = false;
         }
@@ -1695,7 +1695,7 @@ public class PhotoModule
             mUI.updatePreviewAspectRatio((float) optimalSize.width
                     / (float) optimalSize.height);
         }
-        Log.v(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);
+        Log.i(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);
     }
 
     private void updateParametersPictureQuality() {

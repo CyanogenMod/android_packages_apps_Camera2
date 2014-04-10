@@ -1150,7 +1150,7 @@ public class CameraActivity extends Activity
         = new CameraManager.CameraExceptionCallback() {
                 @Override
                 public void onCameraException(RuntimeException e) {
-                    Log.d(TAG, "Camera Exception", e);
+                    Log.e(TAG, "Camera Exception", e);
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.cannot_connect_camera);
                 }

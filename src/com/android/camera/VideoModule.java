@@ -840,7 +840,7 @@ public class VideoModule extends CameraModule
     }
 
     private void startPreview() {
-        Log.v(TAG, "startPreview");
+        Log.i(TAG, "startPreview");
 
         SurfaceTexture surfaceTexture = mActivity.getCameraAppUI().getSurfaceTexture();
         if (!mPreferenceRead || surfaceTexture == null || mPaused == true ||
@@ -911,7 +911,7 @@ public class VideoModule extends CameraModule
     }
 
     private void closeCamera() {
-        Log.v(TAG, "closeCamera");
+        Log.i(TAG, "closeCamera");
         if (mCameraDevice == null) {
             Log.d(TAG, "already stopped.");
             return;
@@ -1009,7 +1009,7 @@ public class VideoModule extends CameraModule
 
     // Prepares media recorder.
     private void initializeRecorder() {
-        Log.v(TAG, "initializeRecorder");
+        Log.i(TAG, "initializeRecorder");
         // If the mCameraDevice is null, then this activity is going to finish
         if (mCameraDevice == null) {
             return;
@@ -1120,7 +1120,7 @@ public class VideoModule extends CameraModule
     }
 
     private void releaseMediaRecorder() {
-        Log.v(TAG, "Releasing media recorder.");
+        Log.i(TAG, "Releasing media recorder.");
         if (mMediaRecorder != null) {
             cleanupEmptyFile();
             mMediaRecorder.reset();
@@ -1228,7 +1228,7 @@ public class VideoModule extends CameraModule
     }
 
     private void startVideoRecording() {
-        Log.v(TAG, "startVideoRecording");
+        Log.i(TAG, "startVideoRecording");
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
@@ -1236,7 +1236,7 @@ public class VideoModule extends CameraModule
 
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
-            Log.v(TAG, "Storage issue, ignore the start request");
+            Log.w(TAG, "Storage issue, ignore the start request");
             return;
         }
 
@@ -1322,7 +1322,7 @@ public class VideoModule extends CameraModule
     }
 
     private boolean stopVideoRecording() {
-        Log.v(TAG, "stopVideoRecording");
+        Log.i(TAG, "stopVideoRecording");
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
         mUI.showVideoRecordingHints(true);
@@ -1535,7 +1535,7 @@ public class VideoModule extends CameraModule
         if (!original.equals(optimalSize)) {
             mParameters.setPictureSize(optimalSize.width, optimalSize.height);
         }
-        Log.v(TAG, "Video snapshot size is " + optimalSize.width + "x" +
+        Log.d(TAG, "Video snapshot size is " + optimalSize.width + "x" +
                 optimalSize.height);
 
         // Set JPEG quality.
