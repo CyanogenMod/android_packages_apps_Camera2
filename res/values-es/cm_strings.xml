@@ -16,8 +16,6 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_50mp">50 MP (SuperZoom)</string>
-  <string name="pref_camera_picturesize_entry_37_5mp">37,5 MP (SuperZoom)</string>
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 MP</string>
   <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 MP</string>
@@ -130,4 +128,5 @@
   <string name="camera_menu_effects_label">EFECTOS</string>
   <string name="camera_menu_asd_label">ESCENA INTELIGENTE</string>
   <string name="pref_camera_power_shutter_title">Disparador alternativo</string>
+  <string name="pref_superzoom_title">SuperZoom</string>
 </resources>
