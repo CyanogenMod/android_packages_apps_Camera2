@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripLayout;
@@ -46,6 +47,7 @@ public class MainActivityLayout extends FrameLayout {
     private boolean mRequestToInterceptTouchEvents = false;
     private View mTouchReceiver = null;
     private final boolean mIsCaptureIntent;
+    private CameraAppUI.NonDecorWindowSizeChangedListener mNonDecorWindowSizeChangedListener = null;
 
     // TODO: This can be removed once we come up with a new design for b/13751653.
     @Deprecated
@@ -142,5 +144,28 @@ public class MainActivityLayout extends FrameLayout {
         }
         mTouchReceiver = touchReceiver;
         mRequestToInterceptTouchEvents = true;
+    }
+
+    @Override
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mNonDecorWindowSizeChangedListener != null) {
+            mNonDecorWindowSizeChangedListener.onNonDecorWindowSizeChanged(
+                    MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    /**
+     * Sets a listener that gets notified when the layout size is changed. This
+     * size is the size of main activity layout. It is also the size of the window
+     * excluding the system decor such as status bar and nav bar.
+     */
+    public void setNonDecorWindowSizeChangedListener(
+            CameraAppUI.NonDecorWindowSizeChangedListener listener) {
+        mNonDecorWindowSizeChangedListener = listener;
+        if (mNonDecorWindowSizeChangedListener != null) {
+            mNonDecorWindowSizeChangedListener.onNonDecorWindowSizeChanged(
+                    getMeasuredWidth(), getMeasuredHeight());
+        }
     }
 }

@@ -26,12 +26,12 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
+import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.ShutterButton;
 import com.android.camera.debug.Log;
 import com.android.camera.util.Gusterpolator;
@@ -44,33 +44,7 @@ import com.android.camera2.R;
  * vertically, whereas in portrait, it stays at the bottom of the parent and has
  * a horizontal layout orientation.
 */
-public class BottomBar extends FrameLayout
-    implements PreviewStatusListener.PreviewAreaChangedListener {
-
-    public interface AdjustPreviewAreaListener {
-        /**
-         * Called when the preview should be centered in the reference area.
-         *
-         * @param rect The reference area.
-         */
-        public void fitAndCenterPreviewAreaInRect(RectF rect);
-
-        /**
-         * Called when the preview should be aligned to the bottom of the
-         * reference area.
-         *
-         * @param rect The reference area.
-         */
-        public void fitAndAlignBottomInRect(RectF rect);
-
-        /**
-         * Called when the preview should be aligned to the right of the
-         * reference area.
-         *
-         * @param rect The reference area.
-         */
-        public void fitAndAlignRightInRect(RectF rect);
-    }
+public class BottomBar extends FrameLayout {
 
     private static final Log.Tag TAG = new Log.Tag("BottomBar");
 
@@ -113,16 +87,9 @@ public class BottomBar extends FrameLayout
     private final Paint mCirclePaint= new Paint();
     private float mCenterX;
     private float mCenterY;
-
     private final RectF mRect = new RectF();
-
     private final RectF mPreviewArea = new RectF();
-    private AdjustPreviewAreaListener mAdjustPreviewAreaListener;
-
-    public void setAdjustPreviewAreaListener(AdjustPreviewAreaListener listener) {
-        mAdjustPreviewAreaListener = listener;
-        notifyAreaAdjust();
-    }
+    private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -283,6 +250,13 @@ public class BottomBar extends FrameLayout
         }
     }
 
+    /**
+     * Sets a capture layout helper to query layout rect from.
+     */
+    public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
+        mCaptureLayoutHelper = helper;
+    }
+
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int measureWidth = MeasureSpec.getSize(widthMeasureSpec);
@@ -291,104 +265,25 @@ public class BottomBar extends FrameLayout
             return;
         }
 
-        if (mPreviewShortEdge != 0 && mPreviewLongEdge != 0) {
-            float previewAspectRatio =
-                    mPreviewLongEdge / mPreviewShortEdge;
-            if (previewAspectRatio < 1.0) {
-                previewAspectRatio = 1.0f / previewAspectRatio;
-            }
-            float screenAspectRatio = (float) measureWidth / (float) measureHeight;
-            if (screenAspectRatio < 1.0) {
-                screenAspectRatio = 1.0f / screenAspectRatio;
-            }
-            // TODO: background alphas should be set by xml references to colors.
-            if (previewAspectRatio >= screenAspectRatio) {
-                setOverlayBottomBar(true);
-            } else {
-                setOverlayBottomBar(false);
-            }
-        }
-
-        // Calculates the width and height needed for the bar.
-        int barWidth, barHeight;
-        FrameLayout.LayoutParams lp = (LayoutParams) getLayoutParams();
-        if (measureWidth > measureHeight) {
-            // Landscape.
-            barHeight = (int) mPreviewShortEdge;
-            if ((mPreviewLongEdge == 0 && mPreviewShortEdge == 0) || mOverLayBottomBar) {
-                barWidth = mOptimalHeight;
-            } else {
-                float previewAspectRatio = mPreviewLongEdge / mPreviewShortEdge;
-                barWidth = (int) (measureWidth - mPreviewLongEdge);
-                if (barWidth < mMinimumHeight) {
-                    barWidth = mOptimalHeight;
-                    setOverlayBottomBar(previewAspectRatio > 14f / 9f);
-                } else if (barWidth > mMaximumHeight) {
-                    barWidth = mMaximumHeight;
-                    setOverlayBottomBar(false);
-                }
-            }
-            lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-
+        if (mCaptureLayoutHelper == null) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            Log.e(TAG, "Capture layout helper needs to be set first.");
         } else {
-            // Portrait
-            barWidth = (int) mPreviewShortEdge;
-            if ((mPreviewLongEdge == 0 && mPreviewShortEdge == 0) || mOverLayBottomBar) {
-                barHeight = mOptimalHeight;
-            } else {
-                float previewAspectRatio = mPreviewLongEdge / mPreviewShortEdge;
-                barHeight = (int) (measureHeight - mPreviewLongEdge);
-                if (barHeight < mMinimumHeight) {
-                    barHeight = mOptimalHeight;
-                    setOverlayBottomBar(previewAspectRatio > 14f / 9f);
-                } else if (barHeight > mMaximumHeight) {
-                    barHeight = mMaximumHeight;
-                    setOverlayBottomBar(false);
-                }
-            }
-            lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            RectF bottomBarRect = mCaptureLayoutHelper.getBottomBarRect();
+            super.onMeasure(MeasureSpec.makeMeasureSpec(
+                            (int) bottomBarRect.width(), MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec((int) bottomBarRect.height(), MeasureSpec.EXACTLY)
+            );
+            boolean shouldOverlayBottomBar = mCaptureLayoutHelper.shouldOverlayBottomBar();
+            setOverlayBottomBar(shouldOverlayBottomBar);
         }
-        setLayoutParams(lp);
-
-        super.onMeasure(MeasureSpec.makeMeasureSpec(barWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY));
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        notifyAreaAdjust();
         mCenterX = (right - left) / 2;
         mCenterY = (bottom - top) / 2;
-    }
-
-    @Override
-    public void onPreviewAreaChanged(RectF previewArea) {
-        if (mPreviewArea.equals(previewArea)) {
-            return;
-        }
-        mPreviewArea.set(previewArea);
-        setOffset(previewArea.width(), previewArea.height());
-    }
-
-    private void setOffset(float scaledTextureWidth, float scaledTextureHeight) {
-        float offsetLongerEdge, offsetShorterEdge;
-        if (scaledTextureHeight > scaledTextureWidth) {
-            offsetLongerEdge = scaledTextureHeight;
-            offsetShorterEdge = scaledTextureWidth;
-        } else {
-            offsetLongerEdge = scaledTextureWidth;
-            offsetShorterEdge = scaledTextureHeight;
-        }
-        if (mPreviewLongEdge != offsetLongerEdge || mPreviewShortEdge != offsetShorterEdge) {
-            mPreviewLongEdge = offsetLongerEdge;
-            mPreviewShortEdge = offsetShorterEdge;
-            requestLayout();
-        } else {
-            // This is when the aspect ratio of the preview stays the same but the
-            // preview rect needs to be offseted.
-            notifyAreaAdjust();
-        }
     }
 
     // prevent touches on bottom bar (not its children)
@@ -543,31 +438,5 @@ public class BottomBar extends FrameLayout
                 getResources().getDrawable(resId));
         mShutterButton.setImageDrawable(transitionDrawable);
         transitionDrawable.startTransition(CIRCLE_ANIM_DURATION_MS);
-    }
-
-    private void notifyAreaAdjust() {
-        final int width = getWidth();
-        final int height = getHeight();
-
-        if (width == 0 || height == 0 || mAdjustPreviewAreaListener == null) {
-            return;
-        }
-        if (width > height) {
-            // Portrait
-            if (!mOverLayBottomBar) {
-                mAlignArea.set(getLeft(), 0, getRight(), getTop());
-            } else {
-                mAlignArea.set(getLeft(), 0, getRight(), getBottom());
-            }
-            mAdjustPreviewAreaListener.fitAndAlignBottomInRect(mAlignArea);
-        } else {
-            // Landscape
-            if (!mOverLayBottomBar) {
-                mAlignArea.set(0, getTop(), getLeft(), getBottom());
-            } else {
-                mAlignArea.set(0, getTop(), getRight(), getBottom());
-            }
-            mAdjustPreviewAreaListener.fitAndAlignRightInRect(mAlignArea);
-        }
     }
 }
