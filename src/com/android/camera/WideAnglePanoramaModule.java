@@ -906,7 +906,7 @@ public class WideAnglePanoramaModule
 
         // Check if another panorama instance is using the mosaic frame processor.
         mUI.dismissAllDialogs();
-        if (!mThreadRunning && mMosaicFrameProcessor.isMosaicMemoryAllocated()) {
+        if (mThreadRunning && mMosaicFrameProcessor.isMosaicMemoryAllocated()) {
             mUI.showWaitingDialog(mDialogWaitingPreviousString);
             // If stitching is still going on, make sure switcher and shutter button
             // are not showing
