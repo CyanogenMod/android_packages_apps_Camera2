@@ -856,6 +856,6 @@ CHAR LIMIT=NONE] -->
 
     <!-- Title of a preference group for advanced preferences. [CHAR LIMIT=30] -->
     <string name="pref_category_advanced">Advanced</string>
-    <!-- Title of a preference for enabling manual exposure compensation. [CHAR LIMIT=30] -->
-    <string name="pref_camera_exposure_compensation">Enable manual exposure compensation</string>
+    <!-- Title of a preference for enabling manual exposure compensation. [CHAR LIMIT=20] -->
+    <string name="pref_camera_exposure_compensation">Manual exposure</string>
  </resources>
