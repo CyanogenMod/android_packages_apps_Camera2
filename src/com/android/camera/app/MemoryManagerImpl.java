@@ -93,21 +93,22 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     @Override
     public void addListener(MemoryListener listener) {
         synchronized (mListeners) {
-            if (mListeners.contains(listener)) {
-                throw new IllegalStateException("Listener already added.");
+            if (!mListeners.contains(listener)) {
+                mListeners.add(listener);
+            } else {
+                Log.w(TAG, "Listener already added.");
             }
-            mListeners.add(listener);
         }
     }
 
     @Override
     public void removeListener(MemoryListener listener) {
         synchronized (mListeners) {
-            if (!mListeners.contains(listener)) {
+            if (mListeners.contains(listener)) {
+                mListeners.remove(listener);
+            } else {
                 Log.w(TAG, "Cannot remove listener that was never added.");
-                return;
             }
-            mListeners.remove(listener);
         }
     }
 
