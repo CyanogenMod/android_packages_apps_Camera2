@@ -17,7 +17,7 @@
 package com.android.camera.app;
 
 import android.content.Context;
-import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -37,6 +37,7 @@ import android.widget.FrameLayout;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.ButtonManager;
+import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.ShutterButton;
 import com.android.camera.TextureViewHelper;
 import com.android.camera.debug.Log;
@@ -46,6 +47,7 @@ import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.BottomBar;
+import com.android.camera.ui.BottomBarModeOptionsWrapper;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.GridLines;
 import com.android.camera.ui.MainActivityLayout;
@@ -484,7 +486,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private IndicatorIconController mIndicatorIconController;
     private View mFocusOverlay;
     private FrameLayout mTutorialsPlaceHolderWrapper;
-    private View mIndicatorBottomBarWrapper;
+    private BottomBarModeOptionsWrapper mIndicatorBottomBarWrapper;
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
     private DisplayManager.DisplayListener mDisplayListener;
@@ -498,7 +500,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final FilmstripBottomPanel mFilmstripBottomControls;
     private final FilmstripContentPanel mFilmstripPanel;
     private Runnable mHideCoverRunnable;
-    private final UncoveredPreviewAreaSizeChangedListener mUncoverPreviewAreaChangedListener;
     private final View.OnLayoutChangeListener mPreviewLayoutChangeListener
             = new View.OnLayoutChangeListener() {
         @Override
@@ -511,36 +512,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
     private View mModeOptionsToggle;
-    private final RectF mBottomBarRect = new RectF();
-    private final View.OnLayoutChangeListener mBottomBarLayoutChangeListener
-            = new View.OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            if (mBottomBar.getVisibility() == View.VISIBLE) {
-                mBottomBarRect.set(left, top, right, bottom);
-            } else {
-                // If bottom bar is not visible, treat it as a 0x0 rect at the
-                // bottom right corner of the screen.
-                mBottomBarRect.set(right, bottom, right, bottom);
-            }
-
-            RectF previewArea = mTextureViewHelper.getPreviewArea();
-            // Use preview area and bottom bar rect to calculate the preview that is
-            // not covered by bottom bar.
-            if (mBottomBar.getResources().getConfiguration().orientation
-                    == Configuration.ORIENTATION_PORTRAIT) {
-                previewArea.bottom = Math.min(mBottomBarRect.top, previewArea.bottom);
-            } else {
-                previewArea.right = Math.min(mBottomBarRect.left, previewArea.right);
-            }
-
-            if (mUncoverPreviewAreaChangedListener != null) {
-                mUncoverPreviewAreaChangedListener.uncoveredPreviewAreaChanged(previewArea);
-            }
-        }
-    };
     private final PeekView mPeekView;
+    private final CaptureLayoutHelper mCaptureLayoutHelper;
 
     /**
      * Provides current preview frame and the controls/overlay from the module that
@@ -567,18 +540,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * Gets notified when the preview area that is not covered by bottom bar is
-     * changed.
+     * This listener gets called when the size of the window (excluding the system
+     * decor such as status bar and nav bar) has changed.
      */
-    public interface UncoveredPreviewAreaSizeChangedListener {
-        /**
-         * Gets called when the preview area that is not covered by bottom bar is
-         * changed.
-         *
-         * @param uncoveredPreviewArea the rect of the preview area that is not
-         *                             under bottom bar
-         */
-        public void uncoveredPreviewAreaChanged(RectF uncoveredPreviewArea);
+    public interface NonDecorWindowSizeChangedListener {
+        public void onNonDecorWindowSizeChanged(int width, int height);
     }
 
     private final CameraModuleScreenShotProvider mCameraModuleScreenShotProvider =
@@ -713,18 +679,23 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mFilmstripPanel = (FilmstripContentPanel) mAppRootView.findViewById(R.id.filmstrip_layout);
         mGestureDetector = new GestureDetector(controller.getAndroidContext(),
                 new MyGestureListener());
+        Resources res = controller.getAndroidContext().getResources();
+        mCaptureLayoutHelper = new CaptureLayoutHelper(
+                res.getDimensionPixelSize(R.dimen.bottom_bar_height_min),
+                res.getDimensionPixelSize(R.dimen.bottom_bar_height_max),
+                res.getDimensionPixelSize(R.dimen.bottom_bar_height_optimal));
         mModeListView = (ModeListView) appRootView.findViewById(R.id.mode_list_layout);
         if (mModeListView != null) {
             mModeListView.setModeSwitchListener(this);
             mModeListView.setModeListOpenListener(this);
             mModeListView.setCameraModuleScreenShotProvider(mCameraModuleScreenShotProvider);
+            mModeListView.setCaptureLayoutHelper(mCaptureLayoutHelper);
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
-        mUncoverPreviewAreaChangedListener =
-                mModeListView.getUncoveredPreviewAreaSizeChangedListener();
         mAnimationManager = new AnimationManager();
         mPeekView = (PeekView) appRootView.findViewById(R.id.peek_view);
+        mAppRootView.setNonDecorWindowSizeChangedListener(mCaptureLayoutHelper);
         initDisplayListener();
     }
 
@@ -1057,16 +1028,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * start.
      */
     public void prepareModuleUI() {
-        mCameraRootView.removeAllViews();
-        LayoutInflater inflater = (LayoutInflater) mController.getAndroidContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.generic_module, mCameraRootView, true);
-
         mController.getSettingsManager().addListener(this);
-
         mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
-        mTextureViewHelper = new TextureViewHelper(mTextureView);
+        mTextureViewHelper = new TextureViewHelper(mTextureView, mCaptureLayoutHelper);
         mTextureViewHelper.setSurfaceTextureListener(this);
         mTextureViewHelper.setOnLayoutChangeListener(mPreviewLayoutChangeListener);
 
@@ -1077,14 +1042,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         int pressedColor = mController.getAndroidContext().getResources()
             .getColor(R.color.bottombar_pressed);
         setBottomBarPressedColor(pressedColor);
+        mBottomBar.setCaptureLayoutHelper(mCaptureLayoutHelper);
 
         mModeOptionsOverlay
             = (ModeOptionsOverlay) mCameraRootView.findViewById(R.id.mode_options_overlay);
-        mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeOptionsOverlay);
 
         // Sets the visibility of the bottom bar and the mode options.
         resetBottomControls(mController.getCurrentModuleController(),
             mController.getCurrentModuleIndex());
+        mModeOptionsOverlay.setCaptureLayoutHelper(mCaptureLayoutHelper);
 
         mShutterButton = (ShutterButton) mCameraRootView.findViewById(R.id.shutter_button);
         addShutterListener(mController.getCurrentModuleController());
@@ -1101,7 +1067,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 mCameraRootView.findViewById(R.id.capture_overlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mPreviewOverlay);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mCaptureOverlay);
-        mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeListView);
 
         if (mIndicatorIconController == null) {
             mIndicatorIconController =
@@ -1113,54 +1078,28 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mController.getSettingsManager().addListener(mIndicatorIconController);
 
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
-        mBottomBar.addOnLayoutChangeListener(mBottomBarLayoutChangeListener);
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
         mTutorialsPlaceHolderWrapper = (FrameLayout) mCameraRootView
                 .findViewById(R.id.tutorials_placeholder_wrapper);
-        mIndicatorBottomBarWrapper = mAppRootView
+        mIndicatorBottomBarWrapper = (BottomBarModeOptionsWrapper) mAppRootView
                 .findViewById(R.id.indicator_bottombar_wrapper);
-
+        mIndicatorBottomBarWrapper.setCaptureLayoutHelper(mCaptureLayoutHelper);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(
                 new PreviewStatusListener.PreviewAreaChangedListener() {
                     @Override
                     public void onPreviewAreaChanged(RectF previewArea) {
-                        if (mPreviewStatusListener != null &&
-                                mPreviewStatusListener.shouldAutoAdjustBottomBar()) {
-                            mBottomBar.onPreviewAreaChanged(previewArea);
-                        } else {
-                            mPeekView.setTranslationX(previewArea.right - mAppRootView.getRight());
-                        }
+                        mPeekView.setTranslationX(previewArea.right - mAppRootView.getRight());
                     }
                 });
 
-        mBottomBar.setAdjustPreviewAreaListener(new BottomBar.AdjustPreviewAreaListener() {
-            @Override
-            public void fitAndCenterPreviewAreaInRect(RectF rect) {
-                mPeekView.setTranslationX(0f);
-                if (mPreviewStatusListener != null &&
-                        mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout()) {
-                    mTextureViewHelper.centerPreviewInRect(rect);
-                }
-            }
-
-            @Override
-            public void fitAndAlignBottomInRect(RectF rect) {
-                mPeekView.setTranslationX(0f);
-                if (mPreviewStatusListener != null &&
-                        mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout()) {
-                    mTextureViewHelper.alignBottomInRect(rect);
-                }
-            }
-
-            @Override
-            public void fitAndAlignRightInRect(RectF rect) {
-                mPeekView.setTranslationX(rect.right - mAppRootView.getRight());
-                if (mPreviewStatusListener != null &&
-                        mPreviewStatusListener.shouldAutoAdjustTransformMatrixOnLayout()) {
-                    mTextureViewHelper.alignRightInRect(rect);
-                }
-            }
-        });
+        mTextureViewHelper.addAspectRatioChangedListener(
+                new PreviewStatusListener.PreviewAspectRatioChangedListener() {
+                    @Override
+                    public void onPreviewAspectRatioChanged(float aspectRatio) {
+                        mModeOptionsOverlay.requestLayout();
+                        mBottomBar.requestLayout();
+                    }
+                });
     }
 
     /**

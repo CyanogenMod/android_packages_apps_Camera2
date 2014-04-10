@@ -17,11 +17,53 @@
            switcher into camera root when refactor is finished. -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera_app_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    <FrameLayout
-        android:id="@+id/camera_app_root"
+
+    <TextureView
+        android:id="@+id/preview_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.android.camera.ui.FocusOverlay
+        android:id="@+id/focus_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.android.camera.ui.CaptureAnimationOverlay
+        android:id="@+id/capture_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
+    <com.android.camera.ui.PreviewOverlay
+        android:id="@+id/preview_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.android.camera.ui.GridLines
+        android:id="@+id/grid_lines"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible" />
+
+    <FrameLayout
+        android:id="@+id/module_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include layout="@layout/mode_options_bottombar" />
+
+    <FrameLayout
+        android:id="@+id/tutorials_placeholder_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DEDEDE"
+        android:visibility="gone"
+        android:clickable="true" >
+    </FrameLayout>
+
     <include layout="@layout/mode_list_layout" />
 </FrameLayout>

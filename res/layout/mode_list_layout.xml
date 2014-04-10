@@ -28,7 +28,7 @@
         android:layout_gravity="top|left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <com.android.camera.widget.SettingsButton
+    <ImageView
         android:id="@+id/settings_button"
         android:layout_width="@dimen/mode_list_settings_icon_size"
         android:layout_height="@dimen/mode_list_settings_icon_size"

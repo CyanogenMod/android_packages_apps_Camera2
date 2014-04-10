@@ -79,4 +79,11 @@ public interface PreviewStatusListener extends TextureView.SurfaceTextureListene
      * Gets called when the preview is flipped (i.e. 180-degree rotated).
      */
     public void onPreviewFlipped();
+
+    /**
+     * This listener gets notified when the preview aspect ratio is changed.
+     */
+    public interface PreviewAspectRatioChangedListener {
+        public void onPreviewAspectRatioChanged(float aspectRatio);
+    }
 }
