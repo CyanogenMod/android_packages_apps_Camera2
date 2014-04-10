@@ -16,25 +16,23 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_50mp">50M píxels (SuperZoom)</string>
-  <string name="pref_camera_picturesize_entry_37_5mp">37.5M píxels (SuperZoom)</string>
-  <string name="pref_camera_picturesize_entry_20_7mp">20.7M píxels</string>
+  <string name="pref_camera_picturesize_entry_20_7mp">20,7M píxels</string>
   <string name="pref_camera_picturesize_entry_18mp">18M píxels</string>
-  <string name="pref_camera_picturesize_entry_12_8mp">12.8M píxels</string>
-  <string name="pref_camera_picturesize_entry_12_7mp">12.7M píxels</string>
-  <string name="pref_camera_picturesize_entry_11_5mp">11.5M píxels</string>
-  <string name="pref_camera_picturesize_entry_10_4mp">10.4M píxels</string>
+  <string name="pref_camera_picturesize_entry_12_8mp">12,8M píxels</string>
+  <string name="pref_camera_picturesize_entry_12_7mp">12,7M píxels</string>
+  <string name="pref_camera_picturesize_entry_11_5mp">11,5M píxels</string>
+  <string name="pref_camera_picturesize_entry_10_4mp">10,4M píxels</string>
   <string name="pref_camera_picturesize_entry_10mp">10M píxels</string>
   <string name="pref_camera_picturesize_entry_9mp">9M píxels</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8.2M píxels</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7M píxels (4:3)</string>
+  <string name="pref_camera_picturesize_entry_8_2mp">8,2M píxels</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7,7M píxels (4:3)</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4M píxels</string>
   <string name="pref_camera_picturesize_entry_6mp">6M píxels</string>
-  <string name="pref_camera_picturesize_entry_4_5mp">4.5M píxels</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3.7M píxels</string>
-  <string name="pref_camera_picturesize_entry_2_5mp">2.5M píxels</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1M píxels</string>
-  <string name="pref_camera_picturesize_entry_1_9mp">1.9M píxels</string>
+  <string name="pref_camera_picturesize_entry_4_5mp">4,5M píxels</string>
+  <string name="pref_camera_picturesize_entry_3_7mp">3,7M píxels</string>
+  <string name="pref_camera_picturesize_entry_2_5mp">2,5M píxels</string>
+  <string name="pref_camera_picturesize_entry_2_1mp">2,1M píxels</string>
+  <string name="pref_camera_picturesize_entry_1_9mp">1,9M píxels</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
@@ -130,4 +128,5 @@
   <string name="camera_menu_effects_label">EFECTES</string>
   <string name="camera_menu_asd_label">ESCENA INTEL·LIGENT</string>
   <string name="pref_camera_power_shutter_title">Obturador ràpid</string>
+  <string name="pref_superzoom_title">SuperZoom</string>
 </resources>
