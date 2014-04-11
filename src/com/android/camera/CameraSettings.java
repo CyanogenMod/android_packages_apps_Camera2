@@ -80,6 +80,7 @@ public class CameraSettings {
     public static final String KEY_PHOTOSPHERE_PICTURESIZE = "pref_photosphere_picturesize_key";
     public static final String KEY_STARTUP_MODULE_INDEX = "camera.startup_module";
     public static final String KEY_STORAGE = "pref_camera_storage_key";
+    public static final String KEY_SUPERZOOM = "pref_camera_superzoom";
 
     public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
     public static final String KEY_VIDEO_ENCODER = "pref_camera_videoencoder_key";
@@ -295,7 +296,7 @@ public class CameraSettings {
         return split(str);
     }
 
-    private void qcomInitPreferences(PreferenceGroup group){
+    private void qcomInitPreferences(PreferenceGroup group) {
         //Qcom Preference add here
         ListPreference powerMode = group.findPreference(KEY_POWER_MODE);
         ListPreference colorEffect = group.findPreference(KEY_COLOR_EFFECT);
@@ -433,6 +434,7 @@ public class CameraSettings {
         ListPreference slowShutter = group.findPreference(KEY_SLOW_SHUTTER);
         ListPreference asd = group.findPreference(KEY_ASD);
         ListPreference storage = group.findPreference(KEY_STORAGE);
+        ListPreference superZoom = group.findPreference(KEY_SUPERZOOM);
 
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
@@ -505,6 +507,9 @@ public class CameraSettings {
         }
         if (storage != null) {
             buildStorage(group, storage);
+        }
+        if (superZoom != null && !isSuperZoomSupported(mParameters)) {
+            removePreference(group, superZoom.getKey());
         }
         qcomInitPreferences(group);
     }
@@ -983,5 +988,20 @@ public class CameraSettings {
     public static boolean useZSLBurst(Parameters params) {
         return CameraUtil.isZSLEnabled() &&
                 params.get("num-snaps-per-shutter") != null;
+    }
+
+    public static void setSuperZoom(Parameters params, boolean on) {
+        if (isSuperZoomSupported(params)) {
+            params.set("high-resolution", on ? "1" : "0");
+        }
+    }
+
+    public static boolean isSuperZoomSupported(Parameters params) {
+        return params.get("high-resolution") != null;
+    }
+
+    public static boolean isSuperZoomEnabled(Parameters params) {
+        return isSuperZoomSupported(params) &&
+            !"0".equals(params.get("high-resolution"));
     }
 }

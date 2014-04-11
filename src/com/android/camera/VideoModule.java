@@ -1966,18 +1966,18 @@ public class VideoModule implements CameraModule,
         }
 
         // Set High Frame Rate.
-        String HighFrameRate = mPreferences.getString(
+        String highFrameRate = mPreferences.getString(
             CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
             mActivity. getString(R.string.pref_camera_hfr_default));
-        if(!("off".equals(HighFrameRate))){
+        if(!("off".equals(highFrameRate))){
             mUnsupportedHFRVideoSize = true;
             String hfrsize = videoWidth+"x"+videoHeight;
             Log.v(TAG, "current set resolution is : "+hfrsize);
             try {
                 Size size = null;
-                if (isSupported(HighFrameRate,mParameters.getSupportedVideoHighFrameRateModes())) {
+                if (isSupported(highFrameRate,mParameters.getSupportedVideoHighFrameRateModes())) {
                     int index = mParameters.getSupportedVideoHighFrameRateModes().indexOf(
-                        HighFrameRate);
+                        highFrameRate);
                     size = mParameters.getSupportedHfrSizes().get(index);
                 }
                 if (size != null) {
@@ -1997,12 +1997,13 @@ public class VideoModule implements CameraModule,
             if(mVideoEncoder != MediaRecorder.VideoEncoder.H264)
                 mUnsupportedHFRVideoCodec = true;
         }
-        if (isSupported(HighFrameRate,
+        if (isSupported(highFrameRate,
                 mParameters.getSupportedVideoHighFrameRateModes()) &&
                 !mUnsupportedHFRVideoSize) {
-            mParameters.setVideoHighFrameRate(HighFrameRate);
-            } else
+            mParameters.setVideoHighFrameRate(highFrameRate);
+        } else {
             mParameters.setVideoHighFrameRate("off");
+        }
 
         // Read Flip mode from adb command
         //value: 0(default) - FLIP_MODE_OFF

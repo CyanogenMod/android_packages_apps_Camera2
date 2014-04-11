@@ -1366,7 +1366,9 @@ public class PhotoModule
             animateAfterShutter();
         }
 
-        if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
+        if (mSceneMode == CameraUtil.SCENE_MODE_HDR ||
+                CameraSettings.isSuperZoomEnabled(mParameters) ||
+                CameraSettings.isSlowShutterEnabled(mParameters)) {
             mUI.showWaitAnimation();
         }
 
@@ -2621,6 +2623,10 @@ public class PhotoModule
             mParameters.set("snapshot-burst-num",
                     mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
         }
+
+        // SuperZoom
+        CameraSettings.setSuperZoom(mParameters, mPreferences.getString(CameraSettings.KEY_SUPERZOOM,
+                mActivity.getString(R.string.pref_superzoom_default)).equals("on"));
 
         // Since changing scene mode may change supported values, set scene mode
         // first. HDR is a scene mode. To promote it in UI, it is stored in a
