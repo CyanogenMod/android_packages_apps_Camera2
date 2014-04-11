@@ -653,7 +653,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
         int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
         button.setState(index >= 0 ? index : 0, false);
-        updateFlashButton();
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -661,22 +660,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
-                    updateFlashButton();
                 }
             }
         });
-    }
-
-
-    /**
-     * Flash button will be disabled (i.e. greyed out) when HDR is on.
-     */
-    private void updateFlashButton() {
-        if (mSettingsManager.isHdrOn()) {
-            disableButton(BUTTON_FLASH);
-        } else {
-            enableButton(BUTTON_FLASH);
-        }
     }
 
     /**

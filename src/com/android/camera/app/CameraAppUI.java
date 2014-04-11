@@ -76,7 +76,9 @@ import com.android.camera2.R;
  * events to appropriate recipient views.
  */
 public class CameraAppUI implements ModeListView.ModeSwitchListener,
-        TextureView.SurfaceTextureListener, ModeListView.ModeListOpenListener {
+                                    TextureView.SurfaceTextureListener,
+                                    ModeListView.ModeListOpenListener,
+                                    SettingsManager.OnSettingChangedListener {
 
     /**
      * The bottom controls on the filmstrip.
@@ -1052,6 +1054,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.generic_module, mCameraRootView, true);
 
+        mController.getSettingsManager().addListener(this);
+
         mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
         mTextureViewHelper = new TextureViewHelper(mTextureView);
@@ -1579,6 +1583,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToIntentReviewLayout();
+    }
+
+    @Override
+    public void onSettingChanged(SettingsManager settingsManager, int id) {
+        // Update the mode options based on the hardware spec,
+        // when hdr changes to prevent flash from getting out of sync.
+        if (id == SettingsManager.SETTING_CAMERA_HDR) {
+            ModuleController moduleController = mController.getCurrentModuleController();
+            applyModuleSpecs(moduleController.getHardwareSpec(),
+                             moduleController.getBottomBarSpec());
+        }
     }
 
     /**
