@@ -2752,6 +2752,8 @@ public class PhotoModule
 
         } else {
             mFocusManager.overrideFocusMode(mParameters.getFocusMode());
+            if (hdrOn)
+                mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
         }
 
         if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
