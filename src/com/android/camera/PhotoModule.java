@@ -766,12 +766,8 @@ public class PhotoModule
             ExifInterface exif = Exif.getExif(jpegData);
             int orientation = Exif.getOrientation(exif);
             int zoomIndex = mParameters.getZoom();
-            float zoomValue = -1;
+            float zoomValue = 0.01f * mParameters.getZoomRatios().get(zoomIndex);
 
-            List<Integer> zoomRatios = mParameters.getZoomRatios();
-            if (zoomRatios != null && zoomRatios.contains(zoomIndex)) {
-                zoomValue = 0.01f * zoomRatios.get(zoomIndex);
-            }
             boolean hdrOn = CameraUtil.SCENE_MODE_HDR.equals(mSceneMode);
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
