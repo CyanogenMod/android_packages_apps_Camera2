@@ -557,6 +557,9 @@ public class PhotoModule
                 setExposureCompensation(value);
             }
         };
+        bottomBarSpec.minExposureCompensation = mParameters.getMinExposureCompensation();
+        bottomBarSpec.maxExposureCompensation = mParameters.getMaxExposureCompensation();
+        bottomBarSpec.exposureCompensationStep = mParameters.getExposureCompensationStep();
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
