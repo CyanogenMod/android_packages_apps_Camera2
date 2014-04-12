@@ -113,6 +113,9 @@ public class PhotoModule
 
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
 
+    private static final boolean NO_STOP_PREVIEW_ICS_WORKAROUND =
+            shouldNotCallStopPreviewAfterTakingPicture();
+
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
     private int mCameraId;
@@ -1498,8 +1501,11 @@ public class PhotoModule
         // ICS camera frameworks has a bug. Face detection state is not cleared
         // after taking a picture. Stop the preview to work around it. The bug
         // was fixed in JB.
-        if (mCameraState != PREVIEW_STOPPED) {
-            stopPreview();
+        // TODO: Remove all of this for 'E'.
+        if (!NO_STOP_PREVIEW_ICS_WORKAROUND) {
+            if (mCameraState != PREVIEW_STOPPED) {
+                stopPreview();
+            }
         }
 
         setDisplayOrientation();
@@ -1931,5 +1937,22 @@ public class PhotoModule
                 CameraUtil.closeSilently(outputStream);
             }
         }
+    }
+
+    /**
+     * Depending on the device, this returns whether we should avoid using the
+     * ICS-only workaround to call stopPreview before startPreview
+     * <p>
+     * The proper solution is to remove the stopPreview call completely, but as
+     * we have only limited time for testing left, let's be careful and target
+     * specific devices only.
+     * <p>
+     * Context: http://b/13966525
+     */
+    private static boolean shouldNotCallStopPreviewAfterTakingPicture() {
+        // The M8 is the only known device with a really long stopPreview
+        // duration.
+        return Build.MANUFACTURER.toLowerCase().contains("htc") &&
+                Build.DEVICE.toLowerCase().contains("m8");
     }
 }
