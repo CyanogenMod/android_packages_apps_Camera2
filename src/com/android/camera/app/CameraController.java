@@ -130,32 +130,42 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
         mCameraProxy = camera;
-        if(mRequestingCameraId == EMPTY_REQUEST) {
+        if (mRequestingCameraId == EMPTY_REQUEST) {
             // Not requesting any camera.
             return;
         }
         mRequestingCameraId = EMPTY_REQUEST;
-        mCallbackReceiver.onCameraOpened(camera);
+        if (mCallbackReceiver != null) {
+            mCallbackReceiver.onCameraOpened(camera);
+        }
     }
 
     @Override
     public void onCameraDisabled(int cameraId) {
-        mCallbackReceiver.onCameraDisabled(cameraId);
+        if (mCallbackReceiver != null) {
+            mCallbackReceiver.onCameraDisabled(cameraId);
+        }
     }
 
     @Override
     public void onDeviceOpenFailure(int cameraId) {
-        mCallbackReceiver.onDeviceOpenFailure(cameraId);
+        if (mCallbackReceiver != null) {
+            mCallbackReceiver.onDeviceOpenFailure(cameraId);
+        }
     }
 
     @Override
     public void onDeviceOpenedAlready(int cameraId) {
-        mCallbackReceiver.onDeviceOpenedAlready(cameraId);
+        if (mCallbackReceiver != null) {
+            mCallbackReceiver.onDeviceOpenedAlready(cameraId);
+        }
     }
 
     @Override
     public void onReconnectionFailure(CameraManager mgr) {
-        mCallbackReceiver.onReconnectionFailure(mgr);
+        if (mCallbackReceiver != null) {
+            mCallbackReceiver.onReconnectionFailure(mgr);
+        }
     }
 
     @Override
