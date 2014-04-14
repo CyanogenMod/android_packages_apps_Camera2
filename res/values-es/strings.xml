@@ -352,5 +352,5 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeles"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Haz clic para editar la imagen creada con Efecto de enfoque."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avanzadas"</string>
-    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"Habilitar compensación de exposición manual"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposición manual"</string>
 </resources>

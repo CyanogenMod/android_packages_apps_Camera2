@@ -301,7 +301,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Hali ya Mpito wa Muda"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Pembe Pana"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Ukungu kwenye Lenzi"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Kuangazia Shabaha"</string>
     <string name="mode_settings_desc" msgid="1189966170303887131">"Fungua Mipangilio"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Badili hadi Hali ya Kamera"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Badili hadi Kamera ya Video"</string>
@@ -311,7 +311,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Badili hadi Hali ya Mabadiliko ya Muda"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Badili hadi Hali ya Pembe pana"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Badili hadi Hali ya Panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Badili hadi Hali ya Ukungu kwenye Lenzi"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Badili hadi Hali ya Kuangazia Shabaha"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Fungua mipangilio"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Funga mipangilio"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus imezimwa"</string>
@@ -352,7 +352,7 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Chini"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Juu"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"Megapikseli %1$s"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Bofya hapa ili ubadilishe picha ya ukungu kwenye lensi"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Bofya hapa ili uhariri picha iliyoangaziwa shabaha."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Mahiri"</string>
-    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"Washa fidia ya mwanga wa kujiwekea"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Mwanga wa kujiwekea"</string>
 </resources>
