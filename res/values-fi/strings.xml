@@ -351,8 +351,7 @@
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Korkea"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapikseliä"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Muokkaa linssin sumennusta käytt. kuvaa klikkaamalla tätä."</string>
-    <!-- no translation found for pref_category_advanced (5921085080077574872) -->
-    <skip />
-    <!-- no translation found for pref_camera_exposure_compensation (7868154111253006451) -->
+    <string name="pref_category_advanced" msgid="5921085080077574872">"Lisäasetukset"</string>
+    <!-- no translation found for pref_camera_exposure_compensation (4143245817259719147) -->
     <skip />
 </resources>
