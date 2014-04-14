@@ -309,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Пребаците на режим снимања у дужем интервалу"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Пребаците на режим широког угла"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Пребаците на режим панораме"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Пребацивање на режим замагљивања објектива"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Пребацивање на режим Замагљивања објектива"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Отворите подешавања"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Затворите подешавања"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus је искључен"</string>
@@ -352,5 +352,5 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s мегапиксела"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Кликните да бисте изменили слику са замагљеним објективом."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Напредна"</string>
-    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"Омогући компензацију ручне експозиције"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ручна експозиција"</string>
 </resources>

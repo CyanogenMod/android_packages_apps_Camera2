@@ -309,7 +309,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Canvia al mode d\'interval de temps"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Canvia al mode de gran angular"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Canvia al mode de panorama"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Canvia al mode d\'Efecte d\'enfocament"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Canvia al mode Efecte d\'enfocament"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Obre la configuració"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Tanca la configuració"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus desactivat"</string>
@@ -352,5 +352,5 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxels"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Fes clic aquí per editar la imatge creada amb Efecte d\'enfocament."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avançades"</string>
-    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"Act. compens. exposició manual"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposició manual"</string>
 </resources>

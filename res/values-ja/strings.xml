@@ -352,5 +352,5 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$sメガピクセル"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"レンズぼかし画像を編集するには、ここをタップします。"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"詳細設定"</string>
-    <string name="pref_camera_exposure_compensation" msgid="7868154111253006451">"手動の露出補正を有効にする"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"手動の露出補正"</string>
 </resources>
