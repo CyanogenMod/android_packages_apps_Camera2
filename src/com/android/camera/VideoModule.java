@@ -555,6 +555,10 @@ public class VideoModule extends CameraModule
         readVideoPreferences();
         resizeForPreviewAspectRatio();
         initializeFocusManager();
+        // TODO: Having focus overlay manager caching the parameters is prone to error,
+        // we should consider passing the parameters to focus overlay to ensure the
+        // parameters are up to date.
+        mFocusManager.setParameters(mInitialParams);
 
         startPreview();
         initializeVideoSnapshot();
