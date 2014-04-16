@@ -294,9 +294,9 @@ public class SettingsUtil {
         // getNextSupportedQuality will throw an exception.
         // If only one quality is supported, then all three selected qualities
         // will be the same.
-        int largeIndex = getNextSupportedVideoQualityIndex(cameraId, 0);
-        int mediumIndex = getNextSupportedVideoQualityIndex(cameraId, largeIndex + 1);
-        int smallIndex = getNextSupportedVideoQualityIndex(cameraId, mediumIndex + 1);
+        int largeIndex = getNextSupportedVideoQualityIndex(cameraId, -1);
+        int mediumIndex = getNextSupportedVideoQualityIndex(cameraId, largeIndex);
+        int smallIndex = getNextSupportedVideoQualityIndex(cameraId, mediumIndex);
 
         SelectedVideoQualities selectedQualities = new SelectedVideoQualities();
         selectedQualities.large = sVideoQualities[largeIndex];
@@ -311,28 +311,23 @@ public class SettingsUtil {
      * quality.
      */
     private static int getNextSupportedVideoQualityIndex(int cameraId, int start) {
-        int i = start;
+        int i = start + 1;
         for (; i < sVideoQualities.length; ++i) {
             if (CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
-                break;
+              // We found a new supported quality.
+              return i;
             }
         }
 
-        // Were we not able to find a supported quality?
-        if (i >= sVideoQualities.length) {
-            if (start == 0) {
-                // This means we couldn't find any supported quality.
-                throw new IllegalArgumentException("Could not find supported video qualities.");
-            } else {
-                // We get here if start is larger than zero then we found a
-                // larger size already previously. In this edge case, just
-                // return the same index as the previous size.
-                return start;
-            }
+        // Failed to find another supported quality.
+        if (start < 0 || start >= sVideoQualities.length) {
+          // This means we couldn't find any supported quality.
+          throw new IllegalArgumentException("Could not find supported video qualities.");
         }
 
-        // We found a new supported quality.
-        return i;
+        // We previously found a larger supported size. In this edge case, just
+        // return the same index as the previous size.
+        return start;
     }
 
     /**
