@@ -29,7 +29,7 @@ public class AppManagerFactory {
 
     public static synchronized AppManagerFactory getInstance(Context ctx) {
         if (sFactory == null) {
-            sFactory = new AppManagerFactory(ctx);
+            sFactory = new AppManagerFactory(ctx.getApplicationContext());
         }
         return sFactory;
     }
