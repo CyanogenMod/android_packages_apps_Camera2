@@ -140,7 +140,9 @@ public class PlaceholderManager {
                 new String[] {
                         MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.DISPLAY_NAME,
                 }, null, null, null);
-        if (cursor == null) {
+        // The count could be 0 if the original media item was deleted before
+        // the session was created.
+        if (cursor == null || cursor.getCount() == 0) {
             return null;
         }
         int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN);
