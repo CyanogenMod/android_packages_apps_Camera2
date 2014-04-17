@@ -18,6 +18,9 @@
 package com.android.camera.util;
 
 import android.content.Context;
+
+import com.android.camera.app.MemoryManager.ReportType;
+import com.android.camera.app.MemoryQuery.MemoryMeasurement;
 import com.android.camera.exif.ExifInterface;
 
 import java.util.HashMap;
@@ -67,6 +70,9 @@ public class UsageStatistics {
     public void controlUsed(int control) {
     }
 
-    public void reportMemoryConsumed(HashMap memoryData, String reportType) {
+    public void reportMemoryConsumed(MemoryMeasurement memoryData, ReportType reportType) {
+    }
+
+    public void reportMemoryWindow(MemoryMeasurement memoryData, ReportType reportType) {
     }
 }
