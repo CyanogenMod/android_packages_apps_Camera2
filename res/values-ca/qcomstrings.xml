@@ -44,13 +44,13 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Medició puntual</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Ponderada al centre</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Mitjana del marc</string>
-  <string name="pref_camera_zsl_entry_off">Apagat</string>
+  <string name="pref_camera_zsl_entry_off">Desactivat</string>
   <string name="pref_camera_zsl_entry_on">Encés</string>
-  <string name="pref_camera_video_hdr_entry_off">Apagat</string>
+  <string name="pref_camera_video_hdr_entry_off">Desactivat</string>
   <string name="pref_camera_video_hdr_entry_on">Encés</string>
   <string name="pref_camera_video_hdr_title">Vídeo HDR</string>
   <string name="pref_camera_facedetection_title">Detecció de cares</string>
-  <string name="pref_camera_facedetection_entry_off">Apagat</string>
+  <string name="pref_camera_facedetection_entry_off">Desactivat</string>
   <string name="pref_camera_facedetection_entry_on">Encés</string>
   <string name="pref_camera_redeyereduction_title">Reducció d\'ulls vermells</string>
   <string name="pref_camera_redeyereduction_entry_enable">Activa</string>
@@ -63,18 +63,18 @@
   <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
   <string name="pref_camera_ae_bracket_hdr_title">Bracketing Auto Exposició</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Encés</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_off">Apagat</string>
+  <string name="pref_camera_ae_bracket_hdr_entry_off">Desactivat</string>
   <string name="err_app_unsupport_ae_bracket_code">Ara no hi ha suport per AE bracket per part de les Apps</string>
   <string name="snapshot_lower_than_video">La mida de la captura de vídeo és més baixa que la mida del vídeo. Redimensionant a la mida del vídeo. Si us plau selecciona una resolució més gran o igual a la mida del vídeo actual.</string>
   <string name="snapshotsize_low_powermode">No està suportada aquesta resolució de fotografia en el mode d\'estalvi energètic. Es prendrà una captura\nde la mida del vídeo. Si us plau selecciona el mode d\'alt rendiment per aquesta mida de fotografia.</string>
   <string name="snapshot_qcif_and_d1">Només estan suportats les captures en la mida de vídeo per aquesta resolució</string>
   <string name="pref_camera_hfr_title">Vídeo d\'alt rati de fotogrames, HFR</string>
-  <string name="pref_camera_hfr_entry_off">Apagat</string>
+  <string name="pref_camera_hfr_entry_off">Desactivat</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
   <string name="pref_camera_denoise_title">Mode de neteja de soroll d\'ondeta</string>
-  <string name="pref_camera_denoise_entry_off">Apagat</string>
+  <string name="pref_camera_denoise_entry_off">Desactivat</string>
   <string name="pref_camera_denoise_entry_on">Encés</string>
   <string name="pref_camera_iso_title">ISO</string>
   <string name="pref_camera_iso_entry_auto">Auto</string>
@@ -85,7 +85,7 @@
   <string name="pref_camera_iso_entry_iso800">ISO800</string>
   <string name="pref_camera_iso_entry_iso1600">ISO1600</string>
   <string name="pref_camera_antibanding_title">Anti Bandeig</string>
-  <string name="pref_camera_antibanding_entry_0">Apagat</string>
+  <string name="pref_camera_antibanding_entry_0">Desactivat</string>
   <string name="pref_camera_antibanding_entry_1">50 Hz</string>
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>
   <string name="pref_camera_antibanding_entry_3">Auto</string>
@@ -162,7 +162,7 @@
   <string name="pref_camera_focusmode_entry_normal">Normal</string>
   <string name="pref_camera_focusmode_entry_continuous">Continu</string>
   <string name="pref_camera_scenedetect_title">Auto Detecció d\'Escenes</string>
-  <string name="pref_camera_scenedetect_entry_off">Apagat</string>
+  <string name="pref_camera_scenedetect_entry_off">Desactivat</string>
   <string name="pref_camera_scenedetect_entry_on">Encés</string>
   <string name="time_lapse_error">Mida del vídeo invàlida per a la gravació time-lapse.</string>
 </resources>

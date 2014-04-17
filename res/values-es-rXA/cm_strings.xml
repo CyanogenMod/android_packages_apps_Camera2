@@ -53,7 +53,6 @@
   <string name="pref_camera_scenemode_entry_candlelight">Lluz de vela</string>
   <string name="pref_camera_scenemode_entry_cine">Cine</string>
   <string name="pref_camera_scenemode_entry_closeup">Detalle</string>
-  <string name="pref_camera_scenemode_entry_dark">Escuru</string>
   <string name="pref_camera_scenemode_entry_dish">Reflector</string>
   <string name="pref_camera_scenemode_entry_duskdawn">Riscar/Aséu</string>
   <string name="pref_camera_scenemode_entry_document">Documentu</string>
@@ -96,7 +95,6 @@
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Puntu encarnáu-mariellu</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Viñetiar</string>
   <string name="pref_camera_burst_title">Mou rabasera</string>
-  <string name="pref_camera_burst_entry_off">Desactiváu</string>
   <string name="pref_camera_burst_entry_5">5 semeyes</string>
   <string name="pref_camera_burst_entry_10">10 semeyes</string>
   <string name="pref_camera_burst_entry_15">15 semeyes</string>
