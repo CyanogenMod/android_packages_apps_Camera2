@@ -33,6 +33,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.CameraProfile;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -839,8 +840,14 @@ public class PhotoModule
                 }
             }
 
-            // Send the taken photo to remote shutter listeners, if any are registered.
-            getServices().getRemoteShutterListener().onPictureTaken(jpegData);
+            // Send the taken photo to remote shutter listeners, if any are
+            // registered.
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    getServices().getRemoteShutterListener().onPictureTaken(jpegData);
+                }
+            });
 
             // Check this in advance of each shot so we don't add to shutter
             // latency. It's true that someone else could write to the SD card
@@ -945,6 +952,7 @@ public class PhotoModule
             return false;
         }
         mCaptureStartTime = System.currentTimeMillis();
+
         mPostViewPictureCallbackTime = 0;
         mJpegImageData = null;
 
