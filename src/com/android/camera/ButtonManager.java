@@ -74,6 +74,10 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private ImageButton mExposureP1;
     private ImageButton mExposureP2;
 
+    private int mMinExposureCompensation;
+    private int mMaxExposureCompensation;
+    private float mExposureCompensationStep;
+
     /** A listener for button enabled and visibility
         state changes. */
     private ButtonStatusListener mListener;
@@ -486,8 +490,12 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                         case R.id.exposure_p2:
                             comp = 2;
                     }
-                    // Each integer compensation represent 1/6 of a stop.
-                    cb.setExposure(comp * 6);
+
+                    if (mExposureCompensationStep != 0.0f) {
+                        int compValue =
+                            Math.round(comp / mExposureCompensationStep);
+                        cb.setExposure(compValue);
+                    }
                 }
             };
 
@@ -497,6 +505,25 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             mExposureP1.setOnClickListener(onClickListener);
             mExposureP2.setOnClickListener(onClickListener);
         }
+    }
+
+    /**
+     * Set the exposure compensation parameters supported by the current camera mode.
+     * @param min Minimum exposure compensation value.
+     * @param max Maximum exposure compensation value.
+     * @param step Expsoure compensation step value.
+     */
+    public void setExposureCompensationParameters(int min, int max, float step) {
+        mMaxExposureCompensation = max;
+        mMinExposureCompensation = min;
+        mExposureCompensationStep = step;
+
+        mExposureN2.setEnabled(Math.round(min * step) <= -2);
+        mExposureN1.setEnabled(Math.round(min * step) <= -1);
+        mExposureP1.setEnabled(Math.round(max * step) >= 1);
+        mExposureP1.setEnabled(Math.round(max * step) >= 2);
+
+        updateExposureButtons();
     }
 
     /**
@@ -670,7 +697,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      */
     public void updateExposureButtons() {
         String compString = mSettingsManager.get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
-        int comp = Integer.parseInt(compString);
+        int compValue = Integer.parseInt(compString);
 
         // Reset all button states.
         mExposureN2.setBackground(null);
@@ -684,22 +711,24 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         Drawable background = context.getResources()
             .getDrawable(R.drawable.button_background_selected_photo);
 
-        // Each integer compensation represent 1/6 of a stop.
-        switch (comp / 6) {
-            case -2:
-                mExposureN2.setBackground(background);
-                break;
-            case -1:
-                mExposureN1.setBackground(background);
-                break;
-            case 0:
-                mExposure0.setBackground(background);
-                break;
-            case 1:
-                mExposureP1.setBackground(background);
-                break;
-            case 2:
-                mExposureP2.setBackground(background);
+        if (mExposureCompensationStep != 0.0f) {
+            int comp = Math.round(compValue * mExposureCompensationStep);
+            switch (comp) {
+                case -2:
+                    mExposureN2.setBackground(background);
+                    break;
+                case -1:
+                    mExposureN1.setBackground(background);
+                    break;
+                case 0:
+                    mExposure0.setBackground(background);
+                    break;
+                case 1:
+                    mExposureP1.setBackground(background);
+                    break;
+                case 2:
+                    mExposureP2.setBackground(background);
+            }
         }
     }
 

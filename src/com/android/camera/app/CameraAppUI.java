@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.hardware.display.DisplayManager;
 import android.util.CameraPerformanceTracker;
 import android.view.GestureDetector;
@@ -427,9 +428,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * when an expsosure button is pressed. This callback can be null.
          */
         public interface ExposureCompensationSetCallback {
-            public abstract void setExposure(int value);
+            public void setExposure(int value);
         }
         public ExposureCompensationSetCallback exposureCompensationSetCallback;
+
+        /**
+         * Exposure compensation parameters.
+         */
+        public int minExposureCompensation;
+        public int maxExposureCompensation;
+        public float exposureCompensationStep;
     }
 
 
@@ -1707,6 +1715,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);
             buttonManager.setExposureCompensationCallback(null);
         }
+
+        buttonManager.setExposureCompensationParameters(
+                bottomBarSpec.minExposureCompensation,
+                bottomBarSpec.maxExposureCompensation,
+                bottomBarSpec.exposureCompensationStep);
 
         /** Intent UI */
         if (bottomBarSpec.showCancel) {
