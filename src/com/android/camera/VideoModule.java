@@ -325,6 +325,9 @@ public class VideoModule extends CameraModule
         // TODO: Need to look at the controller interface to see if we can get
         // rid of passing in the activity directly.
         mAppController = mActivity;
+
+        mActivity.updateStorageSpaceAndHint();
+
         mUI = new VideoUI(mActivity, this,  mActivity.getModuleLayoutRoot());
         mActivity.setPreviewStatusListener(mUI);
 
@@ -1390,6 +1393,10 @@ public class VideoModule extends CameraModule
             // by MediaRecorder.
             mParameters = mCameraDevice.getParameters();
         }
+
+        // Redo storage space calculation so it's accurate for the next video recording.
+        mActivity.updateStorageSpaceAndHint();
+
         return fail;
     }
 
