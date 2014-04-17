@@ -65,7 +65,7 @@
   <string name="pref_camera_ae_bracket_hdr_entry_on">Ligado</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Desligar</string>
   <string name="err_app_unsupport_ae_bracket_code">Escalonamento AE ainda não é suportado</string>
-  <string name="snapshot_lower_than_video">O tamanho de captura de imagem de vídeo é menor que o tamanho do vídeo, limitado ao tamanho do vídeo. Por favor escolha uma resolução maior ou igual que o tamanho de vídeo atual.</string>
+  <string name="snapshot_lower_than_video">O tamanho de captura de imagem de vídeo é menor que o tamanho do vídeo, limitado ao tamanho do vídeo. Por favor escolha uma resolução maior ou igual ao tamanho de vídeo atual.</string>
   <string name="snapshotsize_low_powermode">Alterar o tamanho da imagem não é suportado no modo de baixa energia, uma captura do tamanho do vídeo será tirada. Escolha o modo de energia normal para alterar o tamanho da imagem.</string>
   <string name="snapshot_qcif_and_d1">Apenas são suportadas capturas do tamanho do vídeo para esta resolução.</string>
   <string name="pref_camera_hfr_title">Vídeo de taxa de frames elevada</string>

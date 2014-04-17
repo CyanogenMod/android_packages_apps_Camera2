@@ -113,7 +113,7 @@
   <string name="pref_camera_flashmode_label_redeye">ULLS VERMELLS</string>
   <string name="pref_camera_beauty_mode_title">Mode bonic</string>
   <string name="pref_camera_slow_shutter_title">Obturador lent</string>
-  <string name="pref_camera_slow_shutter_entry_off">Apagat</string>
+  <string name="pref_camera_slow_shutter_entry_off">Desactivat</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
   <string name="pref_camera_slow_shutter_entry_half_second">1/2 segon</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 segon</string>
