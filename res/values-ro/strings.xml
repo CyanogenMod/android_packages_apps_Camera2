@@ -352,6 +352,5 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixeli"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Dați clic aici pentru a edita imaginea cu fundal încețoșat."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avansat"</string>
-    <!-- no translation found for pref_camera_exposure_compensation (4143245817259719147) -->
-    <skip />
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Expunere manuală"</string>
 </resources>
