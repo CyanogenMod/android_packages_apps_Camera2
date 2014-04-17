@@ -323,8 +323,8 @@
     <string name="torch_off_desc" msgid="8304675202998742618">"Işık kapalı"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Arka kamera"</string>
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Ön kamera"</string>
-    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Izgara çizgileri kapalı"</string>
-    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Izgara çizgileri açık"</string>
+    <string name="grid_lines_off_desc" msgid="2022385817190451353">"Kılavuz çizgileri kapalı"</string>
+    <string name="grid_lines_on_desc" msgid="4601540461914364817">"Kılavuz çizgileri açık"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Diğer Seçenekler"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"İptal"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Bitti"</string>
