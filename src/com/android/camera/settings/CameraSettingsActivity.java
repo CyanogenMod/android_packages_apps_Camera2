@@ -275,13 +275,17 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the entries for the given list preference.
-         * 
+         *
          * @param selectedQualities The possible S,M,L entries the user can
          *            choose from.
          * @param preference The preference to set the entries for.
          */
         private void setEntriesForSelection(SelectedPictureSizes selectedSizes,
                 ListPreference preference) {
+            if (selectedSizes == null) {
+                return;
+            }
+
             String[] entries = new String[3];
             entries[0] = getSizeSummaryString(selectedSizes.large);
             entries[1] = getSizeSummaryString(selectedSizes.medium);
@@ -291,13 +295,17 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the entries for the given list preference.
-         * 
+         *
          * @param selectedQualities The possible S,M,L entries the user can
          *            choose from.
          * @param preference The preference to set the entries for.
          */
         private void setEntriesForSelection(SelectedVideoQualities selectedQualities,
                 ListPreference preference) {
+            if (mVideoQualitiesFront == null) {
+                return;
+            }
+
             String[] entries = new String[3];
             entries[0] = mCamcorderProfileNames[selectedQualities.large];
             entries[1] = mCamcorderProfileNames[selectedQualities.medium];
@@ -307,24 +315,32 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Sets the summary for the given list preference.
-         * 
+         *
          * @param selectedQualities The selected picture sizes.
          * @param preference The preference for which to set the summary.
          */
         private void setSummaryForSelection(SelectedPictureSizes selectedSizes,
                 ListPreference preference) {
+            if (selectedSizes == null) {
+                return;
+            }
+
             Size selectedSize = selectedSizes.getFromSetting(preference.getValue());
             preference.setSummary(getSizeSummaryString(selectedSize));
         }
 
         /**
          * Sets the summary for the given list preference.
-         * 
+         *
          * @param selectedQualities The selected video qualities.
          * @param preference The preference for which to set the summary.
          */
         private void setSummaryForSelection(SelectedVideoQualities selectedQualities,
                 ListPreference preference) {
+            if (selectedQualities == null) {
+                return;
+            }
+
             int selectedQuality = selectedQualities.getFromSetting(preference.getValue());
             preference.setSummary(mCamcorderProfileNames[selectedQuality]);
         }
@@ -379,7 +395,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * Gets the first camera facing the given direction.
-         * 
+         *
          * @param facing Either {@link CameraInfo#CAMERA_FACING_BACK} or
          *            {@link CameraInfo#CAMERA_FACING_FRONT}.
          * @return The ID of the first camera matching the given direction, or
