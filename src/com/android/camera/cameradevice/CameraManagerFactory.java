@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.app;
-
-import com.android.camera.app.AndroidCameraManagerImpl;
-import com.android.camera.app.CameraManager;
+package com.android.camera.cameradevice;
 
 /**
  * A factory class for {@link CameraManager}.
@@ -28,7 +25,7 @@ public class CameraManagerFactory {
     private static int sAndoridCameraManagerClientCount;
 
     /**
-     * Returns the android camera implementation of {@link com.android.camera.app.CameraManager}.
+     * Returns the android camera implementation of {@link com.android.camera.cameradevice.CameraManager}.
      *
      * @return The {@link CameraManager} to control the camera device.
      */

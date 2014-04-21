@@ -20,7 +20,7 @@ import android.app.Activity;
 import android.hardware.Camera;
 import android.view.ViewGroup;
 
-import com.android.camera.app.CameraManager.CameraProxy;
+import com.android.camera.cameradevice.CameraManager.CameraProxy;
 
 public class SmartCameraHelper {
     public static void register(CameraProxy camera, Camera.Size previewSize, Activity activity,

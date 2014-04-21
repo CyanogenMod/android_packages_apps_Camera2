@@ -24,7 +24,7 @@ import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
-import com.android.camera.app.CameraManager;
+import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.util.Callback;

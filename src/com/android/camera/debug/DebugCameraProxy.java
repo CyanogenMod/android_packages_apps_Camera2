@@ -21,10 +21,10 @@ import android.hardware.Camera;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-import com.android.camera.app.CameraManager;
+import com.android.camera.cameradevice.CameraManager;
 
 /**
- * A {@link com.android.camera.app.CameraManager.CameraProxy} which wraps the
+ * A {@link com.android.camera.cameradevice.CameraManager.CameraProxy} which wraps the
  * other and adds logs for all operations.
  */
 public class DebugCameraProxy implements CameraManager.CameraProxy {

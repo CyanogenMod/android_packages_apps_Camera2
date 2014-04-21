@@ -21,7 +21,8 @@ import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.camera.CameraDisabledException;
-import com.android.camera.app.CameraManager.CameraExceptionCallback;
+import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraManager.CameraExceptionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 

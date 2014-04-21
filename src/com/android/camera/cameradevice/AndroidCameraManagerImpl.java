@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.app;
+package com.android.camera.cameradevice;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;

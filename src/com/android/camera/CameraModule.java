@@ -72,7 +72,7 @@ public abstract class CameraModule implements ModuleController {
      * This calls {@link
      * com.android.camera.app.CameraProvider#requestCamera(int)}. The camera
      * will be returned through {@link
-     * #onCameraAvailable(com.android.camera.app.CameraManager.CameraProxy)}
+     * #onCameraAvailable(com.android.camera.cameradevice.CameraManager.CameraProxy)}
      * when it's available. This is a no-op when there's no back camera
      * available.
      */

@@ -54,9 +54,9 @@ import android.widget.Toast;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
-import com.android.camera.app.CameraManager;
-import com.android.camera.app.CameraManager.CameraPictureCallback;
-import com.android.camera.app.CameraManager.CameraProxy;
+import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
+import com.android.camera.cameradevice.CameraManager.CameraProxy;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;

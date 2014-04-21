@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.app;
+package com.android.camera.cameradevice;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
@@ -161,7 +161,7 @@ public interface CameraManager {
      * Opens the camera of the specified ID asynchronously. The camera device
      * will be opened in the camera handler thread and will be returned through
      * the {@link CameraManager.CameraOpenCallback#
-     * onCameraOpened(com.android.camera.app.CameraManager.CameraProxy)}.
+     * onCameraOpened(com.android.camera.cameradevice.CameraManager.CameraProxy)}.
      *
      * @param handler The {@link android.os.Handler} in which the callback
      *                was handled.
@@ -206,7 +206,7 @@ public interface CameraManager {
         /**
          * Reconnects to the camera device. On success, the camera device will
          * be returned through {@link CameraManager
-         * .CameraOpenCallback#onCameraOpened(com.android.camera.app.CameraManager
+         * .CameraOpenCallback#onCameraOpened(com.android.camera.cameradevice.CameraManager
          * .CameraProxy)}.
          * @see android.hardware.Camera#reconnect()
          *

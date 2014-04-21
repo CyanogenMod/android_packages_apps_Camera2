@@ -16,7 +16,7 @@
 
 package com.android.camera;
 
-import com.android.camera.app.CameraManager;
+import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.debug.Log;
 
 public class CameraErrorCallback

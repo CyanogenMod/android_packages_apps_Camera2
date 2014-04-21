@@ -18,7 +18,7 @@ package com.android.camera;
 
 import android.hardware.Camera.CameraInfo;
 
-import com.android.camera.app.CameraManager.CameraProxy;
+import com.android.camera.cameradevice.CameraManager.CameraProxy;
 
 /**
  * The class is kept to make sure the tests can build.

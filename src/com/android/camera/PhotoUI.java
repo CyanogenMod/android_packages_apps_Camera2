@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
-import com.android.camera.app.CameraManager;
+import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;

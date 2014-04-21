@@ -19,7 +19,7 @@ package com.android.camera.module;
 import com.android.camera.CameraActivity;
 import com.android.camera.ShutterButton;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
-import com.android.camera.app.CameraManager;
+import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.settings.SettingsManager;
 
