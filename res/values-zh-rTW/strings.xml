@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"不明"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"這個項目已儲存在本機上，並且可供離線使用。"</string>
     <string name="please_wait" msgid="1416313324505140068">"請稍候"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"正在轉譯全景拍攝相片"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"正在進行 Photo Sphere 全景成像作業"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"相機發生錯誤"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"無法連接相機。"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"由於安全性政策規定，相機已遭停用。"</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"切換至拍照模式"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"切換至影片模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"切換至全景模式"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至 Photo Sphere 全景拍攝"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至 Photo Sphere 球形全景拍攝"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"切換至高畫質"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"完成"</string>
