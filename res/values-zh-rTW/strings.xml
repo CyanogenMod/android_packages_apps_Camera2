@@ -212,7 +212,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"切換至拍照模式"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"切換至影片模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"切換至全景模式"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至 Photo Sphere 全景拍攝"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至 Photo Sphere 球形全景拍攝"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"切換至高畫質"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"切換至重新對焦模式"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
@@ -295,7 +295,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"設定"</string>
     <string name="mode_camera" msgid="279763925715250603">"相機"</string>
     <string name="mode_video" msgid="8633929034048169139">"影片"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"全景相片"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere 球形全景拍攝"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"縮時攝影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"廣角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"全景"</string>
@@ -303,7 +303,7 @@
     <string name="mode_settings_desc" msgid="1189966170303887131">"開啟設定"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"切換至相機模式"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"切換至攝影機"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"切換至 Photo Sphere 全景拍攝模式"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"切換至 Photo Sphere 球形全景拍攝模式"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"切換至進階相機模式"</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"切換至進階相機模式"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"切換至縮時攝影模式"</string>
