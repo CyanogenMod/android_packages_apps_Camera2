@@ -56,6 +56,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
+import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
 import com.android.camera.cameradevice.CameraManager.CameraProxy;
@@ -116,6 +117,7 @@ public class VideoModule extends CameraModule
 
     private int mCameraId;
     private Parameters mParameters;
+    private CameraCapabilities mCameraCapabilities;
 
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
@@ -393,7 +395,7 @@ public class VideoModule extends CameraModule
 
     private void takeASnapshot() {
         // Only take snapshots if video snapshot is supported by device
-        if(!mParameters.isVideoSnapshotSupported()) {
+        if(!mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_SNAPSHOT)) {
             Log.w(TAG, "Cannot take a video snapshot - not supported by hardware");
             return;
         }
@@ -561,6 +563,7 @@ public class VideoModule extends CameraModule
     public void onCameraAvailable(CameraProxy cameraProxy) {
         mCameraDevice = cameraProxy;
         mInitialParams = mCameraDevice.getParameters();
+        mCameraCapabilities = mCameraDevice.getCapabilities();
         mFocusAreaSupported = CameraUtil.isFocusAreaSupported(mInitialParams);
         mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(mInitialParams);
         readVideoPreferences();
@@ -569,7 +572,7 @@ public class VideoModule extends CameraModule
         // TODO: Having focus overlay manager caching the parameters is prone to error,
         // we should consider passing the parameters to focus overlay to ensure the
         // parameters are up to date.
-        mFocusManager.setParameters(mInitialParams);
+        mFocusManager.setParameters(mInitialParams, mCameraCapabilities);
 
         startPreview();
         initializeVideoSnapshot();
@@ -1535,7 +1538,7 @@ public class VideoModule extends CameraModule
         enableTorchMode(settingsManager.isCameraBackFacing());
 
         // Set zoom.
-        if (mParameters.isZoomSupported()) {
+        if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
             mParameters.setZoom(mZoomValue);
         }
         updateFocusParameters();
@@ -1729,7 +1732,8 @@ public class VideoModule extends CameraModule
         if (mParameters == null) {
             return;
         }
-        if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
+        if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_SNAPSHOT) &&
+                !mIsVideoCaptureIntent) {
             if (enabled) {
                 mUI.animateFlash();
             } else {

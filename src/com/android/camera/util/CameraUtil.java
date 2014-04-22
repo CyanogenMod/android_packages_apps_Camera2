@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
+import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
@@ -104,7 +105,6 @@ public class CameraUtil {
     public static final String RECORDING_HINT = "recording-hint";
     private static final String AUTO_EXPOSURE_LOCK_SUPPORTED = "auto-exposure-lock-supported";
     private static final String AUTO_WHITE_BALANCE_LOCK_SUPPORTED = "auto-whitebalance-lock-supported";
-    private static final String VIDEO_SNAPSHOT_SUPPORTED = "video-snapshot-supported";
     public static final String SCENE_MODE_HDR = "hdr";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
@@ -126,10 +126,6 @@ public class CameraUtil {
 
     public static boolean isAutoWhiteBalanceLockSupported(Parameters params) {
         return TRUE.equals(params.get(AUTO_WHITE_BALANCE_LOCK_SUPPORTED));
-    }
-
-    public static boolean isVideoSnapshotSupported(Parameters params) {
-        return TRUE.equals(params.get(VIDEO_SNAPSHOT_SUPPORTED));
     }
 
     public static boolean isCameraHdrSupported(Parameters params) {
@@ -466,29 +462,22 @@ public class CameraUtil {
         return orientationHistory;
     }
 
-    private static Size getDefaultDisplaySize(Context context, Point size) {
+    private static Size getDefaultDisplaySize(Context context) {
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getSize(size);
-        return new Size(size);
+        Point res = new Point();
+        windowManager.getDefaultDisplay().getSize(res);
+        return new Size(res);
     }
 
     public static Size getOptimalPreviewSize(Context context,
             List<Size> sizes, double targetRatio) {
-
-        Point[] points = new Point[sizes.size()];
-
-        int index = 0;
-        for (Size s : sizes) {
-            points[index++] = new Point(s.width(), s.height());
-        }
-
-        int optimalPickIndex = getOptimalPreviewSize(context, points, targetRatio);
+        int optimalPickIndex = getOptimalPreviewSizeIndex(context, sizes, targetRatio);
         return (optimalPickIndex == -1) ? null : sizes.get(optimalPickIndex);
     }
 
-    public static int getOptimalPreviewSize(Context context,
-            Point[] sizes, double targetRatio) {
+    public static int getOptimalPreviewSizeIndex(Context context,
+            List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.01;
         if (sizes == null) {
@@ -503,18 +492,18 @@ public class CameraUtil {
         // wrong size of preview surface. When we change the preview size, the
         // new overlay will be created before the old one closed, which causes
         // an exception. For now, just get the screen size.
-        Size defaultDisplaySize = getDefaultDisplaySize(context, new Point());
+        Size defaultDisplaySize = getDefaultDisplaySize(context);
         int targetHeight = Math.min(defaultDisplaySize.width(), defaultDisplaySize.height());
         // Try to find an size match aspect ratio and size
-        for (int i = 0; i < sizes.length; i++) {
-            Point size = sizes[i];
-            double ratio = (double) size.x / size.y;
+        for (int i = 0; i < sizes.size(); i++) {
+            Size size = sizes.get(i);
+            double ratio = (double) size.width() / size.height();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
             }
-            if (Math.abs(size.y - targetHeight) < minDiff) {
+            if (Math.abs(size.height() - targetHeight) < minDiff) {
                 optimalSizeIndex = i;
-                minDiff = Math.abs(size.y - targetHeight);
+                minDiff = Math.abs(size.height() - targetHeight);
             }
         }
         // Cannot find the one match the aspect ratio. This should not happen.
@@ -522,11 +511,11 @@ public class CameraUtil {
         if (optimalSizeIndex == -1) {
             Log.w(TAG, "No preview size match the aspect ratio");
             minDiff = Double.MAX_VALUE;
-            for (int i = 0; i < sizes.length; i++) {
-                Point size = sizes[i];
-                if (Math.abs(size.y - targetHeight) < minDiff) {
+            for (int i = 0; i < sizes.size(); i++) {
+                Size size = sizes.get(i);
+                if (Math.abs(size.height() - targetHeight) < minDiff) {
                     optimalSizeIndex = i;
-                    minDiff = Math.abs(size.y - targetHeight);
+                    minDiff = Math.abs(size.height() - targetHeight);
                 }
             }
         }
@@ -839,12 +828,12 @@ public class CameraUtil {
      * camera can slow down the framerate to allow for less-noisy/dark
      * viewfinder output in dark conditions.
      *
-     * @param params Camera's parameters.
+     * @param capabilities Camera's capabilities.
      * @return null if no appropiate fps range can't be found. Otherwise, return
      *         the right range.
      */
-    public static int[] getPhotoPreviewFpsRange(Parameters params) {
-        return getPhotoPreviewFpsRange(params.getSupportedPreviewFpsRange());
+    public static int[] getPhotoPreviewFpsRange(CameraCapabilities capabilities) {
+        return getPhotoPreviewFpsRange(capabilities.getSupportedPreviewFpsRange());
     }
 
     public static int[] getPhotoPreviewFpsRange(List<int[]> frameRates) {

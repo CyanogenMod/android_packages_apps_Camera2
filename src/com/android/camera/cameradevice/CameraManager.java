@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.OnZoomChangeListener;
-import android.hardware.Camera.Parameters;
 import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
@@ -197,11 +196,15 @@ public interface CameraManager {
         public android.hardware.Camera getCamera();
 
         /**
-         * Returns the camera ID associated to by this
+         * @return The camera ID associated to by this
          * {@link CameraManager.CameraProxy}.
-         * @return
          */
         public int getCameraId();
+
+        /**
+         * @return The camera capabilities.
+         */
+        public CameraCapabilities getCapabilities();
 
         /**
          * Reconnects to the camera device. On success, the camera device will
@@ -392,7 +395,7 @@ public interface CameraManager {
          *
          * @param params The camera parameters to use.
          */
-        public void setParameters(Parameters params);
+        public void setParameters(Camera.Parameters params);
 
         /**
          * Gets the current camera parameters synchronously. This method is
@@ -400,7 +403,7 @@ public interface CameraManager {
          * the parameters. If the parameters are already cached, it returns
          * immediately.
          */
-        public Parameters getParameters();
+        public Camera.Parameters getParameters();
 
         /**
          * Forces {@code CameraProxy} to update the cached version of the camera

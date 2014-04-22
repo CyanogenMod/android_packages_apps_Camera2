@@ -362,7 +362,9 @@ class AndroidCameraManagerImpl implements CameraManager {
                             mCameraState.setState(CAMERA_IDLE);
                             if (openCallback != null) {
                                 openCallback.onCameraOpened(
-                                        new AndroidCameraProxyImpl(cameraId, mCamera));
+                                        new AndroidCameraProxyImpl(cameraId, mCamera,
+                                                new AndroidCameraCapabilities(mParamsToSet))
+                                );
                             }
                         } else {
                             if (openCallback != null) {
@@ -399,7 +401,8 @@ class AndroidCameraManagerImpl implements CameraManager {
 
                         mCameraState.setState(CAMERA_IDLE);
                         if (cbForward != null) {
-                            cbForward.onCameraOpened(new AndroidCameraProxyImpl(cameraId, mCamera));
+                            cbForward.onCameraOpened(new AndroidCameraProxyImpl(cameraId, mCamera,
+                                    new AndroidCameraCapabilities(mParamsToSet)));
                         }
                         break;
                     }
@@ -748,10 +751,13 @@ class AndroidCameraManagerImpl implements CameraManager {
         private final int mCameraId;
         /* TODO: remove this Camera instance. */
         private final Camera mCamera;
+        private final AndroidCameraCapabilities mCapabilities;
 
-        private AndroidCameraProxyImpl(int cameraId, Camera camera) {
+        private AndroidCameraProxyImpl(int cameraId, Camera camera,
+                AndroidCameraCapabilities capabilities) {
             mCamera = camera;
             mCameraId = cameraId;
+            mCapabilities = capabilities;
         }
 
         @Override
@@ -762,6 +768,11 @@ class AndroidCameraManagerImpl implements CameraManager {
         @Override
         public int getCameraId() {
             return mCameraId;
+        }
+
+        @Override
+        public CameraCapabilities getCapabilities() {
+            return new AndroidCameraCapabilities(mCapabilities);
         }
 
         @Override
@@ -1122,7 +1133,6 @@ class AndroidCameraManagerImpl implements CameraManager {
                 }
             });
         }
-
     }
 
     private static class WaitDoneBundle {
