@@ -17,6 +17,7 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 
 import com.android.camera.app.CameraApp;
@@ -49,6 +50,8 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
      */
     private float mAspectRatio = TextureViewHelper.MATCH_SCREEN;
     private PositionConfiguration mPositionConfiguration = null;
+    private int mRotation = 0;
+    private boolean mShowBottomBar = true;
 
     /**
      * PositionConfiguration contains the layout info for bottom bar and preview
@@ -86,6 +89,15 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
     }
 
     /**
+     * Sets whether bottom bar will show or not. This will affect the calculation
+     * of uncovered preview area, which is used to lay out mode list, mode options,
+     * etc.
+     */
+    public void setShowBottomBar(boolean showBottomBar) {
+        mShowBottomBar = showBottomBar;
+    }
+
+    /**
      * Updates bottom bar rect and preview rect. This gets called whenever
      * preview aspect ratio changes or main activity layout size changes.
      */
@@ -93,7 +105,8 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
         if (mWindowWidth == 0 || mWindowHeight == 0) {
             return;
         }
-        mPositionConfiguration = getPositionConfiguration(mWindowWidth, mWindowHeight, mAspectRatio);
+        mPositionConfiguration = getPositionConfiguration(mWindowWidth, mWindowHeight, mAspectRatio,
+                mRotation);
     }
 
     /**
@@ -146,17 +159,38 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
             return new RectF();
         }
 
+        if (!RectF.intersects(mPositionConfiguration.mBottomBarRect,
+                mPositionConfiguration.mPreviewRect) || !mShowBottomBar) {
+            return mPositionConfiguration.mPreviewRect;
+        }
+
         if (mWindowHeight > mWindowWidth) {
             // Portrait.
-            return new RectF(mPositionConfiguration.mPreviewRect.left,
-                    mPositionConfiguration.mPreviewRect.top,
-                    mPositionConfiguration.mPreviewRect.right,
-                    mPositionConfiguration.mBottomBarRect.top);
+            if (mRotation >= 180) {
+                // Reverse portrait, bottom bar align top.
+                return new RectF(mPositionConfiguration.mPreviewRect.left,
+                        mPositionConfiguration.mBottomBarRect.bottom,
+                        mPositionConfiguration.mPreviewRect.right,
+                        mPositionConfiguration.mPreviewRect.bottom);
+            } else {
+                return new RectF(mPositionConfiguration.mPreviewRect.left,
+                        mPositionConfiguration.mPreviewRect.top,
+                        mPositionConfiguration.mPreviewRect.right,
+                        mPositionConfiguration.mBottomBarRect.top);
+            }
         } else {
-            return new RectF(mPositionConfiguration.mPreviewRect.left,
-                    mPositionConfiguration.mPreviewRect.top,
-                    mPositionConfiguration.mBottomBarRect.left,
-                    mPositionConfiguration.mPreviewRect.bottom);
+            if (mRotation >= 180) {
+                // Reverse landscape, bottom bar align left.
+                return new RectF(mPositionConfiguration.mBottomBarRect.right,
+                        mPositionConfiguration.mPreviewRect.top,
+                        mPositionConfiguration.mPreviewRect.right,
+                        mPositionConfiguration.mPreviewRect.bottom);
+            } else {
+                return new RectF(mPositionConfiguration.mPreviewRect.left,
+                        mPositionConfiguration.mPreviewRect.top,
+                        mPositionConfiguration.mBottomBarRect.left,
+                        mPositionConfiguration.mPreviewRect.bottom);
+            }
         }
     }
 
@@ -176,9 +210,10 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
     }
 
     @Override
-    public void onNonDecorWindowSizeChanged(int width, int height) {
+    public void onNonDecorWindowSizeChanged(int width, int height, int rotation) {
         mWindowWidth = width;
         mWindowHeight = height;
+        mRotation = rotation;
         updatePositionConfiguration();
     }
 
@@ -191,11 +226,12 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
      * @param height height of the main activity layout, excluding system decor
      *               such as status bar, nav bar, etc.
      * @param previewAspectRatio aspect ratio of the preview
+     * @param rotation rotation from the natural orientation
      * @return a custom position configuration that contains bottom bar rect,
      *         preview rect and whether bottom bar should be overlaid.
      */
     private PositionConfiguration getPositionConfiguration(int width, int height,
-            float previewAspectRatio) {
+            float previewAspectRatio, int rotation) {
         boolean landscape = width > height;
 
         // If the aspect ratio is defined as fill the screen, then preview should
@@ -209,76 +245,85 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
             } else {
                 config.mBottomBarRect.set(0, height - mBottomBarOptimalHeight, width, height);
             }
-            return config;
-        }
-
-        if (previewAspectRatio < 1) {
-            previewAspectRatio = 1 / previewAspectRatio;
-        }
-        // Get the bottom bar width and height.
-        float barSize;
-        int longerEdge = Math.max(width, height);
-        int shorterEdge = Math.min(width, height);
-
-        // Check the remaining space if fit short edge.
-        float spaceNeededAlongLongerEdge = shorterEdge * previewAspectRatio;
-        float remainingSpaceAlongLongerEdge = longerEdge - spaceNeededAlongLongerEdge;
-
-        float previewShorterEdge;
-        float previewLongerEdge;
-        if (remainingSpaceAlongLongerEdge <= 0) {
-            // Preview aspect ratio > screen aspect ratio: fit longer edge.
-            previewLongerEdge = longerEdge;
-            previewShorterEdge = longerEdge / previewAspectRatio;
-            barSize = mBottomBarOptimalHeight;
-            config.mBottomBarOverlay = true;
-
-            if (landscape) {
-                config.mPreviewRect.set(0, height / 2 - previewShorterEdge / 2, previewLongerEdge,
-                        height / 2 + previewShorterEdge / 2);
-                config.mBottomBarRect.set(width - barSize, height / 2 - previewShorterEdge / 2,
-                        width, height / 2 + previewShorterEdge / 2);
-            } else {
-                config.mPreviewRect.set(width / 2 - previewShorterEdge / 2, 0,
-                        width / 2 + previewShorterEdge / 2, previewLongerEdge);
-                config.mBottomBarRect.set(width / 2 - previewShorterEdge / 2, height - barSize,
-                        width / 2 + previewShorterEdge / 2, height);
-            }
-        } else if (remainingSpaceAlongLongerEdge <= mBottomBarMinHeight) {
-            // Need to scale down the preview to fit in the space excluding the bottom bar.
-            previewLongerEdge = longerEdge - mBottomBarMinHeight;
-            previewShorterEdge = previewLongerEdge / previewAspectRatio;
-            barSize = mBottomBarMinHeight;
-            config.mBottomBarOverlay = false;
-            if (landscape) {
-                config.mPreviewRect.set(0, height / 2 - previewShorterEdge / 2, previewLongerEdge,
-                        height / 2 + previewShorterEdge / 2);
-                config.mBottomBarRect.set(width - barSize, height / 2 - previewShorterEdge / 2,
-                        width, height / 2 + previewShorterEdge / 2);
-            } else {
-                config.mPreviewRect.set(width / 2 - previewShorterEdge / 2, 0,
-                        width / 2 + previewShorterEdge / 2, previewLongerEdge);
-                config.mBottomBarRect.set(width / 2 - previewShorterEdge / 2, height - barSize,
-                        width / 2 + previewShorterEdge / 2, height);
-            }
         } else {
-            // Fit shorter edge.
-            barSize = remainingSpaceAlongLongerEdge <= mBottomBarMaxHeight ?
-                    remainingSpaceAlongLongerEdge: mBottomBarMaxHeight;
-            previewShorterEdge = shorterEdge;
-            previewLongerEdge = shorterEdge * previewAspectRatio;
-            config.mBottomBarOverlay = false;
-            if (landscape) {
-                float right = width - barSize;
-                float left = right - previewLongerEdge;
-                config.mPreviewRect.set(left, 0, right, previewShorterEdge);
-                config.mBottomBarRect.set(width - barSize, 0, width, height);
-            } else {
-                float bottom = height - barSize;
-                float top = bottom - previewLongerEdge;
-                config.mPreviewRect.set(0, top, previewShorterEdge, bottom);
-                config.mBottomBarRect.set(0, height - barSize, width, height);
+            if (previewAspectRatio < 1) {
+                previewAspectRatio = 1 / previewAspectRatio;
             }
+            // Get the bottom bar width and height.
+            float barSize;
+            int longerEdge = Math.max(width, height);
+            int shorterEdge = Math.min(width, height);
+
+            // Check the remaining space if fit short edge.
+            float spaceNeededAlongLongerEdge = shorterEdge * previewAspectRatio;
+            float remainingSpaceAlongLongerEdge = longerEdge - spaceNeededAlongLongerEdge;
+
+            float previewShorterEdge;
+            float previewLongerEdge;
+            if (remainingSpaceAlongLongerEdge <= 0) {
+                // Preview aspect ratio > screen aspect ratio: fit longer edge.
+                previewLongerEdge = longerEdge;
+                previewShorterEdge = longerEdge / previewAspectRatio;
+                barSize = mBottomBarOptimalHeight;
+                config.mBottomBarOverlay = true;
+
+                if (landscape) {
+                    config.mPreviewRect.set(0, height / 2 - previewShorterEdge / 2, previewLongerEdge,
+                            height / 2 + previewShorterEdge / 2);
+                    config.mBottomBarRect.set(width - barSize, height / 2 - previewShorterEdge / 2,
+                            width, height / 2 + previewShorterEdge / 2);
+                } else {
+                    config.mPreviewRect.set(width / 2 - previewShorterEdge / 2, 0,
+                            width / 2 + previewShorterEdge / 2, previewLongerEdge);
+                    config.mBottomBarRect.set(width / 2 - previewShorterEdge / 2, height - barSize,
+                            width / 2 + previewShorterEdge / 2, height);
+                }
+            } else if (remainingSpaceAlongLongerEdge <= mBottomBarMinHeight) {
+                // Need to scale down the preview to fit in the space excluding the bottom bar.
+                previewLongerEdge = longerEdge - mBottomBarMinHeight;
+                previewShorterEdge = previewLongerEdge / previewAspectRatio;
+                barSize = mBottomBarMinHeight;
+                config.mBottomBarOverlay = false;
+                if (landscape) {
+                    config.mPreviewRect.set(0, height / 2 - previewShorterEdge / 2, previewLongerEdge,
+                            height / 2 + previewShorterEdge / 2);
+                    config.mBottomBarRect.set(width - barSize, height / 2 - previewShorterEdge / 2,
+                            width, height / 2 + previewShorterEdge / 2);
+                } else {
+                    config.mPreviewRect.set(width / 2 - previewShorterEdge / 2, 0,
+                            width / 2 + previewShorterEdge / 2, previewLongerEdge);
+                    config.mBottomBarRect.set(width / 2 - previewShorterEdge / 2, height - barSize,
+                            width / 2 + previewShorterEdge / 2, height);
+                }
+            } else {
+                // Fit shorter edge.
+                barSize = remainingSpaceAlongLongerEdge <= mBottomBarMaxHeight ?
+                        remainingSpaceAlongLongerEdge : mBottomBarMaxHeight;
+                previewShorterEdge = shorterEdge;
+                previewLongerEdge = shorterEdge * previewAspectRatio;
+                config.mBottomBarOverlay = false;
+                if (landscape) {
+                    float right = width - barSize;
+                    float left = right - previewLongerEdge;
+                    config.mPreviewRect.set(left, 0, right, previewShorterEdge);
+                    config.mBottomBarRect.set(width - barSize, 0, width, height);
+                } else {
+                    float bottom = height - barSize;
+                    float top = bottom - previewLongerEdge;
+                    config.mPreviewRect.set(0, top, previewShorterEdge, bottom);
+                    config.mBottomBarRect.set(0, height - barSize, width, height);
+                }
+            }
+        }
+
+        if (rotation >= 180) {
+            // Rotate 180 degrees.
+            Matrix rotate = new Matrix();
+            rotate.setRotate(180, width / 2, height / 2);
+            if (!config.mBottomBarOverlay) {
+                rotate.mapRect(config.mPreviewRect);
+            }
+            rotate.mapRect(config.mBottomBarRect);
         }
         return config;
     }

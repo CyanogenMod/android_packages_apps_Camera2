@@ -121,39 +121,17 @@ public class ModeOptionsOverlay extends FrameLayout
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setLayoutDimensions();
-    }
-
-    /**
-     * The overlay takes its horizontal dimension from the preview.  The vertical
-     * dimension of the overlay is determined by its parent layout, which has
-     * knowledge of the bottom bar dimensions.
-     */
-    private void setLayoutDimensions() {
         if (mCaptureLayoutHelper == null) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             Log.e(TAG, "Capture layout helper needs to be set first.");
-            return;
-        }
-
-        RectF previewRect = mCaptureLayoutHelper.getPreviewRect();
-        int previewWidth = (int) previewRect.width();
-        int previewHeight = (int) previewRect.height();
-
-        if (previewWidth == 0 || previewHeight == 0) {
-            return;
-        }
-
-        boolean isPortrait = Configuration.ORIENTATION_PORTRAIT
-            == getResources().getConfiguration().orientation;
-
-        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) getLayoutParams();
-        if (isPortrait) {
-            params.width = previewWidth;
         } else {
-            params.height = previewHeight;
+            RectF uncoveredPreviewRect = mCaptureLayoutHelper.getUncoveredPreviewRect();
+            super.onMeasure(MeasureSpec.makeMeasureSpec(
+                            (int) uncoveredPreviewRect.width(), MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec((int) uncoveredPreviewRect.height(),
+                            MeasureSpec.EXACTLY)
+            );
         }
-        setLayoutParams(params);
     }
 
     /**
