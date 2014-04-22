@@ -49,18 +49,17 @@ import android.provider.MediaStore.Video;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
-import com.android.camera.cameradevice.CameraManager.CameraProxy;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
+import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
+import com.android.camera.cameradevice.CameraManager.CameraProxy;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.hardware.HardwareSpec;
@@ -70,7 +69,6 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.SmartCameraHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -900,8 +898,6 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onPreviewInitialDataReceived() {
-        SmartCameraHelper.register(mCameraDevice, mParameters.getPreviewSize(), mActivity,
-                (ViewGroup) mActivity.findViewById(R.id.camera_app_root));
     }
 
     @Override
@@ -914,7 +910,6 @@ public class VideoModule extends CameraModule
             mFocusManager.onPreviewStopped();
         }
         mPreviewing = false;
-        SmartCameraHelper.tearDown();
     }
 
     private void closeCamera() {

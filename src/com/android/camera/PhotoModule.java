@@ -45,20 +45,19 @@ import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.app.LocationManager;
+import com.android.camera.app.MediaSaver;
+import com.android.camera.app.MemoryManager;
+import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.cameradevice.CameraManager.CameraAFCallback;
 import com.android.camera.cameradevice.CameraManager.CameraAFMoveCallback;
 import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
 import com.android.camera.cameradevice.CameraManager.CameraProxy;
 import com.android.camera.cameradevice.CameraManager.CameraShutterCallback;
-import com.android.camera.app.LocationManager;
-import com.android.camera.app.MediaSaver;
-import com.android.camera.app.MemoryManager;
-import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -73,7 +72,6 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.SessionStatsCollector;
-import com.android.camera.util.SmartCameraHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -379,11 +377,6 @@ public class PhotoModule
         setCameraState(IDLE);
         startFaceDetection();
         locationFirstRun();
-        // TODO(teresako): Check with Camera team re: starting the Smart Camera here rather than
-        // in the onPreviewInitialDataReceived() function which is no longer being called in
-        // Denali. The original issue of the blue overlay not going away no longer seems to be
-        // an issue.  Related CL: https://googleplex-android-review.git.corp.google.com/#/c/428719/.
-        startSmartCamera();
     }
 
     // Prompt the user to pick to record location for the very first run of
@@ -638,15 +631,6 @@ public class PhotoModule
                 return false;
             }
         });
-    }
-
-    private void startSmartCamera() {
-        SmartCameraHelper.register(mCameraDevice, mParameters.getPreviewSize(), mActivity,
-                (ViewGroup) mActivity.findViewById(R.id.camera_app_root));
-    }
-
-    private void stopSmartCamera() {
-        SmartCameraHelper.tearDown();
     }
 
     @Override
@@ -1564,7 +1548,6 @@ public class PhotoModule
         if (mFocusManager != null) {
             mFocusManager.onPreviewStopped();
         }
-        stopSmartCamera();
         SessionStatsCollector.instance().previewActive(false);
     }
 
