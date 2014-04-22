@@ -48,9 +48,7 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 
 public class FilmstripView extends ViewGroup {
@@ -1179,10 +1177,10 @@ public class FilmstripView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        mDrawArea.left = l;
-        mDrawArea.top = t;
-        mDrawArea.right = r;
-        mDrawArea.bottom = b;
+        mDrawArea.left = 0;
+        mDrawArea.top = 0;
+        mDrawArea.right = r - l;
+        mDrawArea.bottom = b - t;
         mZoomView.layout(mDrawArea.left, mDrawArea.top, mDrawArea.right, mDrawArea.bottom);
         // TODO: Need a more robust solution to decide when to re-layout
         // If in the middle of zooming, only re-layout when the layout has
