@@ -109,7 +109,7 @@
     <string name="pref_camera_redeyereduction_default" translatable="false">disable</string>
 
     <!-- The message is shown in toast when the app encounters an unsupported selection for HFR/HSR mode -->
-    <string name="error_app_unsupported_hfr_selection">HFR is not supported when video stabilization or time lapse is on</string>
+    <string name="error_app_unsupported_hfr_selection">HFR is not supported when video stabilization, time lapse or video HDR is on</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported resolution for HFR mode -->
     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
