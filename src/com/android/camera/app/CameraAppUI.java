@@ -1609,6 +1609,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         ButtonManager buttonManager = mController.getButtonManager();
         SettingsManager settingsManager = mController.getSettingsManager();
 
+        buttonManager.setToInitialState();
+
         /** Standard mode options */
         if (hardwareSpec.isFrontCameraSupported()) {
             if (bottomBarSpec.enableCamera) {
@@ -1683,10 +1685,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         if (bottomBarSpec.enablePanoOrientation
                 && PhotoSphereHelper.getPanoramaOrientationOptionArrayId() > 0) {
-            buttonManager.initializeButton(ButtonManager.BUTTON_PANO_ORIENTATION,
-                    bottomBarSpec.panoOrientationCallback);
-        } else {
-            buttonManager.hideButton(ButtonManager.BUTTON_PANO_ORIENTATION);
+            buttonManager.initializePanoOrientationButtons(bottomBarSpec.panoOrientationCallback);
         }
 
         boolean enableExposureCompensation = bottomBarSpec.enableExposureCompensation &&

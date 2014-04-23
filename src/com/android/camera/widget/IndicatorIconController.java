@@ -120,10 +120,6 @@ public class IndicatorIconController
                 syncHdrIndicator();
                 break;
             }
-            case ButtonManager.BUTTON_PANO_ORIENTATION: {
-                syncPanoIndicator();
-                break;
-            }
             case ButtonManager.BUTTON_EXPOSURE_COMPENSATION: {
                 syncExposureIndicator();
                 break;
@@ -214,8 +210,7 @@ public class IndicatorIconController
         }
 
         ButtonManager buttonManager = mController.getButtonManager();
-        if (buttonManager.isEnabled(ButtonManager.BUTTON_PANO_ORIENTATION)
-                && buttonManager.isVisible(ButtonManager.BUTTON_PANO_ORIENTATION)) {
+        if (buttonManager.isPanoEnabled()) {
             setIndicatorState(mController.getSettingsManager(),
                               SettingsManager.SETTING_CAMERA_PANO_ORIENTATION,
                               mPanoIndicator, mPanoIndicatorIcons, true);

@@ -16,15 +16,22 @@
 
 package com.android.camera;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.RadioOptions;
 import com.android.camera.util.PhotoSphereHelper;
+import com.android.camera.widget.ModeOptions;
 
 import com.android.camera2.R;
 
@@ -43,7 +50,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_DONE = 7;
     public static final int BUTTON_RETAKE = 8;
     public static final int BUTTON_REVIEW = 9;
-    public static final int BUTTON_PANO_ORIENTATION = 10;
     public static final int BUTTON_GRID_LINES = 11;
     public static final int BUTTON_EXPOSURE_COMPENSATION = 12;
 
@@ -60,7 +66,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private MultiToggleImageButton mButtonFlash;
     private MultiToggleImageButton mButtonHdr;
     private MultiToggleImageButton mButtonGridlines;
-    private MultiToggleImageButton mButtonPanoOrientation;
 
     /** Intent UI buttons. */
     private ImageButton mButtonCancel;
@@ -73,6 +78,10 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private ImageButton mExposure0;
     private ImageButton mExposureP1;
     private ImageButton mExposureP2;
+    private RadioOptions mModeOptionsExposure;
+    private RadioOptions mModeOptionsPano;
+    private View mModeOptionsButtons;
+    private ModeOptions mModeOptions;
 
     private int mMinExposureCompensation;
     private int mMaxExposureCompensation;
@@ -144,8 +153,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             = (MultiToggleImageButton) root.findViewById(R.id.hdr_plus_toggle_button);
         mButtonGridlines
             = (MultiToggleImageButton) root.findViewById(R.id.grid_lines_toggle_button);
-        mButtonPanoOrientation
-            = (MultiToggleImageButton) root.findViewById(R.id.pano_orientation_toggle_button);
         mButtonCancel
             = (ImageButton) root.findViewById(R.id.cancel_button);
         mButtonDone
@@ -160,6 +167,10 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         mExposure0 = (ImageButton) root.findViewById(R.id.exposure_0);
         mExposureP1 = (ImageButton) root.findViewById(R.id.exposure_p1);
         mExposureP2 = (ImageButton) root.findViewById(R.id.exposure_p2);
+        mModeOptionsExposure = (RadioOptions) root.findViewById(R.id.mode_options_exposure);
+        mModeOptionsPano = (RadioOptions) root.findViewById(R.id.mode_options_pano);
+        mModeOptionsButtons = root.findViewById(R.id.mode_options_buttons);
+        mModeOptions = (ModeOptions) root.findViewById(R.id.mode_options);
     }
 
     @Override
@@ -199,8 +210,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 break;
             }
             case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_PANO_ORIENTATION);
+                updatePanoButtons();
                 break;
             }
             case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE: {
@@ -266,11 +276,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Grid lines button could not be found.");
                 }
                 return mButtonGridlines;
-            case BUTTON_PANO_ORIENTATION:
-                if (mButtonPanoOrientation == null) {
-                    throw new IllegalStateException("Pano orientation button could not be found.");
-                }
-                return mButtonPanoOrientation;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -338,10 +343,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 break;
             case BUTTON_GRID_LINES:
                 initializeGridLinesButton(button, cb, R.array.grid_lines_icons);
-                break;
-            case BUTTON_PANO_ORIENTATION:
-                initializePanoOrientationButton(button, cb,
-                        PhotoSphereHelper.getPanoramaOrientationOptionArrayId());
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -461,49 +462,28 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
     }
 
+    public void setToInitialState() {
+        mModeOptions.setMainBar(ModeOptions.BAR_STANDARD);
+    }
+
     public void setExposureCompensationCallback(final CameraAppUI.BottomBarUISpec
                                         .ExposureCompensationSetCallback cb) {
         if (cb == null) {
-            mExposureN2.setOnClickListener(null);
-            mExposureN1.setOnClickListener(null);
-            mExposure0.setOnClickListener(null);
-            mExposureP1.setOnClickListener(null);
-            mExposureP2.setOnClickListener(null);
+            mModeOptionsExposure.setOnOptionClickListener(null);
         } else {
-            View.OnClickListener onClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int comp = 0;
-                    switch(v.getId()) {
-                        case R.id.exposure_n2:
-                            comp = -2;
-                            break;
-                        case R.id.exposure_n1:
-                            comp = -1;
-                            break;
-                        case R.id.exposure_0:
-                            comp = 0;
-                            break;
-                        case R.id.exposure_p1:
-                            comp = 1;
-                            break;
-                        case R.id.exposure_p2:
-                            comp = 2;
-                    }
+            mModeOptionsExposure
+                .setOnOptionClickListener(new RadioOptions.OnOptionClickListener() {
+                    @Override
+                    public void onOptionClicked(View v) {
+                        int comp = Integer.parseInt((String)(v.getTag()));
 
-                    if (mExposureCompensationStep != 0.0f) {
-                        int compValue =
-                            Math.round(comp / mExposureCompensationStep);
-                        cb.setExposure(compValue);
+                        if (mExposureCompensationStep != 0.0f) {
+                            int compValue =
+                                Math.round(comp / mExposureCompensationStep);
+                            cb.setExposure(compValue);
+                        }
                     }
-                }
-            };
-
-            mExposureN2.setOnClickListener(onClickListener);
-            mExposureN1.setOnClickListener(onClickListener);
-            mExposure0.setOnClickListener(onClickListener);
-            mExposureP1.setOnClickListener(onClickListener);
-            mExposureP2.setOnClickListener(onClickListener);
+                });
         }
     }
 
@@ -696,39 +676,12 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Update the visual state of the manual exposure buttons
      */
     public void updateExposureButtons() {
-        String compString = mSettingsManager.get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
+        String compString = mSettingsManager
+            .get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
         int compValue = Integer.parseInt(compString);
-
-        // Reset all button states.
-        mExposureN2.setBackground(null);
-        mExposureN1.setBackground(null);
-        mExposure0.setBackground(null);
-        mExposureP1.setBackground(null);
-        mExposureP2.setBackground(null);
-
-        // Highlight the appropriate button.
-        Context context = mAppController.getAndroidContext();
-        Drawable background = context.getResources()
-            .getDrawable(R.drawable.button_background_selected_photo);
-
         if (mExposureCompensationStep != 0.0f) {
             int comp = Math.round(compValue * mExposureCompensationStep);
-            switch (comp) {
-                case -2:
-                    mExposureN2.setBackground(background);
-                    break;
-                case -1:
-                    mExposureN1.setBackground(background);
-                    break;
-                case 0:
-                    mExposure0.setBackground(background);
-                    break;
-                case 1:
-                    mExposureP1.setBackground(background);
-                    break;
-                case 2:
-                    mExposureP2.setBackground(background);
-            }
+            mModeOptionsExposure.setSelectedOptionByTag(String.valueOf(comp));
         }
     }
 
@@ -758,30 +711,72 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         button.setState(index >= 0 ? index : 0, true);
     }
 
+    public boolean isPanoEnabled() {
+        return mModeOptions.getMainBar() == ModeOptions.BAR_PANO;
+    }
+
    /**
-     * Initialize a panorama orientation button.
+     * Initialize a panorama orientation buttons.
      */
-    private void initializePanoOrientationButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
-
+    public void initializePanoOrientationButtons(final ButtonCallback cb) {
+        int resIdImages = PhotoSphereHelper.getPanoramaOrientationOptionArrayId();
+        int resIdDescriptions = PhotoSphereHelper.getPanoramaOrientationDescriptions();
         if (resIdImages > 0) {
-            button.overrideImageIds(resIdImages);
-        }
-        button.overrideContentDescriptions(
-            PhotoSphereHelper.getPanoramaOrientationDescriptions());
-        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
-            @Override
-            public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(
-                    SettingsManager.SETTING_CAMERA_PANO_ORIENTATION, state);
-                if (cb != null) {
-                    cb.onStateChanged(state);
-                }
-            }
-        });
+            TypedArray imageIds = null;
+            TypedArray descriptionIds = null;
+            try {
+                mModeOptions.setMainBar(ModeOptions.BAR_PANO);
+                imageIds = mAppController
+                    .getAndroidContext().getResources().obtainTypedArray(resIdImages);
+                descriptionIds = mAppController
+                    .getAndroidContext().getResources().obtainTypedArray(resIdDescriptions);
+                mModeOptionsPano.removeAllViews();
+                for (int i = 0; i < imageIds.length(); i++) {
+                    int imageId = imageIds.getResourceId(i, 0);
+                    if (imageId > 0) {
+                        ImageButton imageButton = (ImageButton) LayoutInflater
+                            .from(mAppController.getAndroidContext())
+                            .inflate(R.layout.mode_options_imagebutton_template,
+                                     mModeOptionsPano, false);
+                        imageButton.setImageResource(imageId);
+                        imageButton.setTag(String.valueOf(i));
+                        mModeOptionsPano.addView(imageButton);
 
-        int index = mSettingsManager.getStringValueIndex(
-            SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
-        button.setState(index >= 0 ? index : 0, true);
+                        int descriptionId = descriptionIds.getResourceId(i, 0);
+                        if (descriptionId > 0) {
+                            imageButton.setContentDescription(
+                                    mAppController.getAndroidContext().getString(descriptionId));
+                        }
+                    }
+                }
+                mModeOptionsPano.updateListeners();
+                mModeOptionsPano
+                    .setOnOptionClickListener(new RadioOptions.OnOptionClickListener() {
+                        @Override
+                        public void onOptionClicked(View v) {
+                            if (cb != null) {
+                                int state = Integer.parseInt((String)v.getTag());
+                                mSettingsManager.setStringValueIndex(
+                                    SettingsManager.SETTING_CAMERA_PANO_ORIENTATION, state);
+                                cb.onStateChanged(state);
+                            }
+                        }
+                    });
+            } finally {
+                if (imageIds != null) {
+                    imageIds.recycle();
+                }
+                if (descriptionIds != null) {
+                    descriptionIds.recycle();
+                }
+                updatePanoButtons();
+            }
+        }
+    }
+
+    private void updatePanoButtons() {
+        int modeIndex = mSettingsManager
+            .getStringValueIndex(SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
+        mModeOptionsPano.setSelectedOptionByTag(String.valueOf(modeIndex));
     }
 }
