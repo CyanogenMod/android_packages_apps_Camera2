@@ -35,7 +35,6 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -466,11 +465,11 @@ public class CameraUtil {
         return orientationHistory;
     }
 
-    private static Point getDefaultDisplaySize(Context context, Point size) {
+    private static Size getDefaultDisplaySize(Context context, Point size) {
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getSize(size);
-        return size;
+        return new Size(size);
     }
 
     public static Size getOptimalPreviewSize(Context context,
@@ -503,8 +502,8 @@ public class CameraUtil {
         // wrong size of preview surface. When we change the preview size, the
         // new overlay will be created before the old one closed, which causes
         // an exception. For now, just get the screen size.
-        Point point = getDefaultDisplaySize(context, new Point());
-        int targetHeight = Math.min(point.x, point.y);
+        Size defaultDisplaySize = getDefaultDisplaySize(context, new Point());
+        int targetHeight = Math.min(defaultDisplaySize.width, defaultDisplaySize.height);
         // Try to find an size match aspect ratio and size
         for (int i = 0; i < sizes.length; i++) {
             Point size = sizes[i];

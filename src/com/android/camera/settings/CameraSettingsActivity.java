@@ -25,7 +25,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -42,6 +41,7 @@ import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.SettingsHelper;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 
 import java.text.DecimalFormat;
@@ -276,7 +276,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Sets the entries for the given list preference.
          *
-         * @param selectedQualities The possible S,M,L entries the user can
+         * @param selectedSizes The possible S,M,L entries the user can
          *            choose from.
          * @param preference The preference to set the entries for.
          */
@@ -316,7 +316,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Sets the summary for the given list preference.
          *
-         * @param selectedQualities The selected picture sizes.
+         * @param selectedSizes The selected picture sizes.
          * @param preference The preference for which to set the summary.
          */
         private void setSummaryForSelection(SelectedPictureSizes selectedSizes,
@@ -360,7 +360,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                 if (mPictureSizesBack == null) {
                     Camera backCamera = Camera.open(backCameraId);
                     if (backCamera != null) {
-                        List<Size> sizes = backCamera.getParameters().getSupportedPictureSizes();
+                        List<Size> sizes = Size.buildListFromCameraSizes(
+                                backCamera.getParameters().getSupportedPictureSizes());
                         backCamera.release();
                         mPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(sizes,
                                 backCameraId);
@@ -380,7 +381,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                 if (mPictureSizesFront == null) {
                     Camera frontCamera = Camera.open(frontCameraId);
                     if (frontCamera != null) {
-                        List<Size> sizes = frontCamera.getParameters().getSupportedPictureSizes();
+                        List<Size> sizes = Size.buildListFromCameraSizes(
+                                frontCamera.getParameters().getSupportedPictureSizes());
                         frontCamera.release();
                         mPictureSizesFront = SettingsUtil.getSelectedCameraPictureSizes(sizes,
                                 frontCameraId);
