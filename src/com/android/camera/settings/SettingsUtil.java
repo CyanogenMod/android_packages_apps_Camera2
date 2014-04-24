@@ -68,7 +68,7 @@ public class SettingsUtil {
         }
 
         private static String sizeToString(Size size) {
-            return size.width + "x" + size.height;
+            return size.width() + "x" + size.height();
         }
     }
 
@@ -140,9 +140,9 @@ public class SettingsUtil {
     public static void setCameraPictureSize(String sizeSetting, List<Size> supported,
             Parameters parameters, int cameraId) {
         Size selectedSize = getCameraPictureSize(sizeSetting, supported, cameraId);
-        Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.width + "x" +
-                selectedSize.height);
-        parameters.setPictureSize(selectedSize.width, selectedSize.height);
+        Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.width() + "x" +
+                selectedSize.height());
+        parameters.setPictureSize(selectedSize.width(), selectedSize.height());
     }
 
     /**
@@ -184,17 +184,17 @@ public class SettingsUtil {
         Collections.sort(supported, new Comparator<Size>() {
             @Override
             public int compare(Size lhs, Size rhs) {
-                int leftArea = lhs.width * lhs.height;
-                int rightArea = rhs.width * rhs.height;
+                int leftArea = lhs.width() * lhs.height();
+                int rightArea = rhs.width() * rhs.height();
                 return rightArea - leftArea;
             }
         });
         if (DEBUG) {
             Log.d(TAG, "Supported Sizes:");
             for (Size size : supported) {
-                Log.d(TAG, " --> " + size.width + "x" + size.height + "  "
-                        + ((size.width * size.height) / 1000000f) + " - "
-                        + (size.width / (float) size.height));
+                Log.d(TAG, " --> " + size.width() + "x" + size.height() + "  "
+                        + ((size.width() * size.height()) / 1000000f) + " - "
+                        + (size.width() / (float) size.height()));
             }
         }
 
@@ -203,14 +203,14 @@ public class SettingsUtil {
 
         // If possible we want to find medium and small sizes with the same
         // aspect ratio as 'large'.
-        final float targetAspectRatio = selectedSizes.large.width
-                / (float) selectedSizes.large.height;
+        final float targetAspectRatio = selectedSizes.large.width()
+                / (float) selectedSizes.large.height();
 
         // Create a list of sizes with the same aspect ratio as "large" which we
         // will search in primarily.
         ArrayList<Size> aspectRatioMatches = new ArrayList<Size>();
         for (Size size : supported) {
-            float aspectRatio = size.width / (float) size.height;
+            float aspectRatio = size.width() / (float) size.height();
             // Allow for small rounding errors in aspect ratio.
             if (Math.abs(aspectRatio - targetAspectRatio) < 0.01) {
                 aspectRatioMatches.add(size);
@@ -245,7 +245,7 @@ public class SettingsUtil {
 
             // Based on the large pixel count, determine the target pixel count
             // for medium and small.
-            final int largePixelCount = selectedSizes.large.width * selectedSizes.large.height;
+            final int largePixelCount = selectedSizes.large.width() * selectedSizes.large.height();
             final int mediumTargetPixelCount = (int) (largePixelCount * MEDIUM_RELATIVE_PICTURE_SIZE);
             final int smallTargetPixelCount = (int) (largePixelCount * SMALL_RELATIVE_PICTURE_SIZE);
 
@@ -340,7 +340,7 @@ public class SettingsUtil {
 
         for (int i = 0; i < sortedSizes.size(); ++i) {
             Size size = sortedSizes.get(i);
-            int pixelCountDiff = Math.abs((size.width * size.height) - targetPixelCount);
+            int pixelCountDiff = Math.abs((size.width() * size.height()) - targetPixelCount);
             if (pixelCountDiff < closestMatchPixelCountDiff) {
                 closestMatchIndex = i;
                 closestMatchPixelCountDiff = pixelCountDiff;

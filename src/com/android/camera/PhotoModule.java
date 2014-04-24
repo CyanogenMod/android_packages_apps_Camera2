@@ -773,11 +773,11 @@ public class PhotoModule
                 Size s = new Size(mParameters.getPictureSize());
                 int width, height;
                 if ((mJpegRotation + orientation) % 180 == 0) {
-                    width = s.width;
-                    height = s.height;
+                    width = s.width();
+                    height = s.height();
                 } else {
-                    width = s.height;
-                    height = s.width;
+                    width = s.height();
+                    height = s.width();
                 }
                 NamedEntity name = mNamedImages.getNextNameEntity();
                 String title = (name == null) ? null : name.title;
@@ -1668,10 +1668,10 @@ public class PhotoModule
         // the right aspect ratio.
         List<Size> sizes = Size.buildListFromCameraSizes(mParameters.getSupportedPreviewSizes());
         Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
-                (double) size.width / size.height);
+                (double) size.width() / size.height());
         Size original = new Size(mParameters.getPreviewSize());
         if (!original.equals(optimalSize)) {
-            mParameters.setPreviewSize(optimalSize.width, optimalSize.height);
+            mParameters.setPreviewSize(optimalSize.width(), optimalSize.height());
 
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
@@ -1684,11 +1684,11 @@ public class PhotoModule
             mParameters = mCameraDevice.getParameters();
         }
 
-        if (optimalSize.width != 0 && optimalSize.height != 0) {
-            mUI.updatePreviewAspectRatio((float) optimalSize.width
-                    / (float) optimalSize.height);
+        if (optimalSize.width() != 0 && optimalSize.height() != 0) {
+            mUI.updatePreviewAspectRatio((float) optimalSize.width()
+                    / (float) optimalSize.height());
         }
-        Log.i(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);
+        Log.i(TAG, "Preview size is " + optimalSize);
     }
 
     private void updateParametersPictureQuality() {
