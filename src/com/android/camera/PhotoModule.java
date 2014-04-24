@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -72,6 +71,7 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.SessionStatsCollector;
+import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -770,7 +770,7 @@ public class PhotoModule
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
-                Size s = mParameters.getPictureSize();
+                Size s = new Size(mParameters.getPictureSize());
                 int width, height;
                 if ((mJpegRotation + orientation) % 180 == 0) {
                     width = s.width;
@@ -1659,17 +1659,17 @@ public class PhotoModule
                 .get(isCameraFrontFacing() ? SettingsManager.SETTING_PICTURE_SIZE_FRONT
                         : SettingsManager.SETTING_PICTURE_SIZE_BACK);
 
-        List<Size> supported = mParameters.getSupportedPictureSizes();
+        List<Size> supported = Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
         SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters,
                 mCameraDevice.getCameraId());
-        Size size = mParameters.getPictureSize();
+        Size size = new Size(mParameters.getPictureSize());
 
         // Set a preview size that is closest to the viewfinder height and has
         // the right aspect ratio.
-        List<Size> sizes = mParameters.getSupportedPreviewSizes();
+        List<Size> sizes = Size.buildListFromCameraSizes(mParameters.getSupportedPreviewSizes());
         Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
                 (double) size.width / size.height);
-        Size original = mParameters.getPreviewSize();
+        Size original = new Size(mParameters.getPreviewSize());
         if (!original.equals(optimalSize)) {
             mParameters.setPreviewSize(optimalSize.width, optimalSize.height);
 
