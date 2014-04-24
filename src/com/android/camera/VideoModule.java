@@ -30,7 +30,6 @@ import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
@@ -69,6 +68,7 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -761,13 +761,12 @@ public class VideoModule extends CameraModule
 
         final int previewScreenShortSide = (previewScreenSize.x < previewScreenSize.y ?
                 previewScreenSize.x : previewScreenSize.y);
-        List<Size> sizes = parameters.getSupportedPreviewSizes();
-        Size preferred = parameters.getPreferredPreviewSizeForVideo();
+        List<Size> sizes = Size.buildListFromCameraSizes(parameters.getSupportedPreviewSizes());
+        Size preferred = new Size(parameters.getPreferredPreviewSizeForVideo());
         final int preferredPreviewSizeShortSide = (preferred.width < preferred.height ?
                 preferred.width : preferred.height);
         if (preferredPreviewSizeShortSide * 2 < previewScreenShortSide) {
-            preferred.width = profile.videoFrameWidth;
-            preferred.height = profile.videoFrameHeight;
+            preferred = new Size(profile.videoFrameWidth, profile.videoFrameHeight);
         }
         int product = preferred.width * preferred.height;
         Iterator<Size> it = sizes.iterator();
@@ -1538,10 +1537,11 @@ public class VideoModule extends CameraModule
         // The logic here is different from the logic in still-mode camera.
         // There we determine the preview size based on the picture size, but
         // here we determine the picture size based on the preview size.
-        List<Size> supported = mParameters.getSupportedPictureSizes();
+        List<Size> supported =
+                Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
         Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
                 (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
-        Size original = mParameters.getPictureSize();
+        Size original = new Size(mParameters.getPictureSize());
         if (!original.equals(optimalSize)) {
             mParameters.setPictureSize(optimalSize.width, optimalSize.height);
         }
