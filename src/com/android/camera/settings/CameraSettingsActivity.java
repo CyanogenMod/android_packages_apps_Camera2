@@ -421,7 +421,7 @@ public class CameraSettingsActivity extends FragmentActivity {
          *         picture size in megapixels.
          */
         private String getSizeSummaryString(Size size) {
-            String megaPixels = sMegaPixelFormat.format((size.width * size.height) / 1e6);
+            String megaPixels = sMegaPixelFormat.format((size.width() * size.height()) / 1e6);
             return getResources().getString(R.string.setting_summary_x_megapixels, megaPixels);
         }
     }

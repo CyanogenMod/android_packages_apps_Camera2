@@ -42,15 +42,13 @@ public class Size {
         return list;
     }
 
-    public final int width;
-    public final int height;
+    private final Point val;
 
     /**
      * Constructor.
      */
     public Size(int width, int height) {
-        this.width = width;
-        this.height = height;
+        val = new Point(width, height);
     }
 
     /**
@@ -58,26 +56,22 @@ public class Size {
      */
     public Size(Size other) {
         if (other == null) {
-            width = 0;
-            height = 0;
+            val = new Point(0, 0);
         } else {
-            width = other.width;
-            height = other.height;
+            val = new Point(other.width(), other.height());
         }
     }
 
     /**
      * Constructor from a source {@link android.hardware.Camera.Size}.
      *
-     * @param s The source size.
+     * @param other The source size.
      */
-    public Size(Camera.Size s) {
-        if (s == null) {
-            width = 0;
-            height = 0;
+    public Size(Camera.Size other) {
+        if (other == null) {
+            val = new Point(0, 0);
         } else {
-            width = s.width;
-            height = s.height;
+            val = new Point(other.width, other.height);
         }
     }
 
@@ -88,16 +82,36 @@ public class Size {
      */
     public Size(Point p) {
         if (p == null) {
-            width = 0;
-            height = 0;
+            val = new Point(0, 0);
         } else {
-            width = p.x;
-            height = p.y;
+            val = new Point(p);
         }
+    }
+
+    public int width() {
+        return val.x;
+    }
+
+    public int height() {
+        return val.y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Size) {
+            Size other = (Size) o;
+            return val.equals(other.val);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return val.hashCode();
     }
 
     @Override
     public String toString() {
-        return "Size: (" + this.width + " x " + this.height + ")";
+        return "Size: (" + this.width() + " x " + this.height() + ")";
     }
 }

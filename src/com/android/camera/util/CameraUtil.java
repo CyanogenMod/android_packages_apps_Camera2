@@ -479,7 +479,7 @@ public class CameraUtil {
 
         int index = 0;
         for (Size s : sizes) {
-            points[index++] = new Point(s.width, s.height);
+            points[index++] = new Point(s.width(), s.height());
         }
 
         int optimalPickIndex = getOptimalPreviewSize(context, points, targetRatio);
@@ -503,7 +503,7 @@ public class CameraUtil {
         // new overlay will be created before the old one closed, which causes
         // an exception. For now, just get the screen size.
         Size defaultDisplaySize = getDefaultDisplaySize(context, new Point());
-        int targetHeight = Math.min(defaultDisplaySize.width, defaultDisplaySize.height);
+        int targetHeight = Math.min(defaultDisplaySize.width(), defaultDisplaySize.height());
         // Try to find an size match aspect ratio and size
         for (int i = 0; i < sizes.length; i++) {
             Point size = sizes[i];
@@ -545,11 +545,11 @@ public class CameraUtil {
 
         // Try to find a size matches aspect ratio and has the largest width
         for (Size size : sizes) {
-            double ratio = (double) size.width / size.height;
+            double ratio = (double) size.width() / size.height();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
             }
-            if (optimalSize == null || size.width > optimalSize.width) {
+            if (optimalSize == null || size.width() > optimalSize.width()) {
                 optimalSize = size;
             }
         }
@@ -559,7 +559,7 @@ public class CameraUtil {
         if (optimalSize == null) {
             Log.w(TAG, "No picture size match the aspect ratio");
             for (Size size : sizes) {
-                if (optimalSize == null || size.width > optimalSize.width) {
+                if (optimalSize == null || size.width() > optimalSize.width()) {
                     optimalSize = size;
                 }
             }

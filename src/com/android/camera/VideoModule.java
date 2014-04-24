@@ -763,23 +763,23 @@ public class VideoModule extends CameraModule
                 previewScreenSize.x : previewScreenSize.y);
         List<Size> sizes = Size.buildListFromCameraSizes(parameters.getSupportedPreviewSizes());
         Size preferred = new Size(parameters.getPreferredPreviewSizeForVideo());
-        final int preferredPreviewSizeShortSide = (preferred.width < preferred.height ?
-                preferred.width : preferred.height);
+        final int preferredPreviewSizeShortSide = (preferred.width() < preferred.height() ?
+                preferred.width() : preferred.height());
         if (preferredPreviewSizeShortSide * 2 < previewScreenShortSide) {
             preferred = new Size(profile.videoFrameWidth, profile.videoFrameHeight);
         }
-        int product = preferred.width * preferred.height;
+        int product = preferred.width() * preferred.height();
         Iterator<Size> it = sizes.iterator();
         // Remove the preview sizes that are not preferred.
         while (it.hasNext()) {
             Size size = it.next();
-            if (size.width * size.height > product) {
+            if (size.width() * size.height() > product) {
                 it.remove();
             }
         }
         Size optimalSize = CameraUtil.getOptimalPreviewSize(context, sizes,
                 (double) profile.videoFrameWidth / profile.videoFrameHeight);
-        return new Point(optimalSize.width, optimalSize.height);
+        return new Point(optimalSize.width(), optimalSize.height());
     }
 
     private void resizeForPreviewAspectRatio() {
@@ -1543,10 +1543,9 @@ public class VideoModule extends CameraModule
                 (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
         Size original = new Size(mParameters.getPictureSize());
         if (!original.equals(optimalSize)) {
-            mParameters.setPictureSize(optimalSize.width, optimalSize.height);
+            mParameters.setPictureSize(optimalSize.width(), optimalSize.height());
         }
-        Log.d(TAG, "Video snapshot size is " + optimalSize.width + "x" +
-                optimalSize.height);
+        Log.d(TAG, "Video snapshot size is " + optimalSize);
 
         // Set JPEG quality.
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
