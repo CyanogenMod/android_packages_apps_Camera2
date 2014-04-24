@@ -39,13 +39,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AnimationEffects;
-import com.android.camera.widget.SettingsButton;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 
@@ -60,8 +60,7 @@ import java.util.List;
  * with an animation. To dismiss this list, simply swipe left or select a mode.
  */
 public class ModeListView extends FrameLayout
-        implements PreviewStatusListener.PreviewAreaChangedListener,
-        ModeSelectorItem.VisibleWidthChangedListener {
+        implements ModeSelectorItem.VisibleWidthChangedListener {
 
     private static final Log.Tag TAG = new Log.Tag("ModeListView");
 
@@ -99,14 +98,12 @@ public class ModeListView extends FrameLayout
     private static final float SNAP_BACK_THRESHOLD_RATIO = 0.33f;
 
     private final GestureDetector mGestureDetector;
-    private final RectF mPreviewArea = new RectF();
-    private final RectF mUncoveredPreviewArea = new RectF();
-
     private final CurrentStateManager mCurrentStateManager = new CurrentStateManager();
+    private final int mSettingsButtonMargin;
     private long mLastScrollTime;
     private int mListBackgroundColor;
     private LinearLayout mListView;
-    private SettingsButton mSettingsButton;
+    private View mSettingsButton;
     private int mTotalModes;
     private ModeSelectorItem[] mModeSelectorItems;
     private AnimatorSet mAnimatorSet;
@@ -118,7 +115,6 @@ public class ModeListView extends FrameLayout
     private int[] mOutputPixels;
     private float mModeListOpenFactor = 1f;
 
-    private boolean mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
     private View mChildViewTouched = null;
     private MotionEvent mLastChildTouchEvent = null;
     private int mVisibleWidth = 0;
@@ -136,6 +132,7 @@ public class ModeListView extends FrameLayout
     private long mCurrentTime;
     private float mVelocityX; // Unit: pixel/ms.
     private long mLastDownTime = 0;
+    private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
     private class CurrentStateManager {
         private ModeListState mCurrentState;
@@ -854,7 +851,8 @@ public class ModeListView extends FrameLayout
             effect.setAnimationStartingPosition(iconX, iconY);
             if (mScreenShotProvider != null) {
                 effect.setBackground(mScreenShotProvider
-                        .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR), mPreviewArea);
+                        .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR),
+                        mCaptureLayoutHelper.getPreviewRect());
                 effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
             }
             mCurrentAnimationEffects = effect;
@@ -910,26 +908,6 @@ public class ModeListView extends FrameLayout
             }
         }
     }
-
-    @Override
-    public void onPreviewAreaChanged(RectF previewArea) {
-        mPreviewArea.set(previewArea);
-    }
-
-    private final CameraAppUI.UncoveredPreviewAreaSizeChangedListener
-            mUncoveredPreviewAreaSizeChangedListener =
-            new CameraAppUI.UncoveredPreviewAreaSizeChangedListener() {
-
-                @Override
-                public void uncoveredPreviewAreaChanged(RectF uncoveredPreviewArea) {
-                    mUncoveredPreviewArea.set(uncoveredPreviewArea);
-                    mSettingsButton.uncoveredPreviewAreaChanged(uncoveredPreviewArea);
-                    if (mAdjustPositionWhenUncoveredPreviewAreaChanges) {
-                        mAdjustPositionWhenUncoveredPreviewAreaChanges = false;
-                        centerModeDrawerInUncoveredPreview(getMeasuredWidth(), getMeasuredHeight());
-                    }
-                }
-            };
 
     public interface ModeSwitchListener {
         public void onModeSelected(int modeIndex);
@@ -1110,11 +1088,8 @@ public class ModeListView extends FrameLayout
         super(context, attrs);
         mGestureDetector = new GestureDetector(context, mOnGestureListener);
         mListBackgroundColor = getResources().getColor(R.color.mode_list_background);
-    }
-
-    public CameraAppUI.UncoveredPreviewAreaSizeChangedListener
-            getUncoveredPreviewAreaSizeChangedListener() {
-        return mUncoveredPreviewAreaSizeChangedListener;
+        mSettingsButtonMargin = getResources().getDimensionPixelSize(
+                R.dimen.mode_list_settings_icon_margin);
     }
 
     /**
@@ -1167,7 +1142,7 @@ public class ModeListView extends FrameLayout
         }
         mTotalModes = mSupportedModes.size();
         initializeModeSelectorItems();
-        mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
+        mSettingsButton = findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1353,6 +1328,9 @@ public class ModeListView extends FrameLayout
         super.onLayout(changed, left, top, right, bottom);
         mWidth = right - left;
         mHeight = bottom - top - getPaddingTop() - getPaddingBottom();
+
+        updateModeListLayout();
+
         if (mCurrentStateManager.getCurrentState().getCurrentAnimationEffects() != null) {
             mCurrentStateManager.getCurrentState().getCurrentAnimationEffects().setSize(
                     mWidth, mHeight);
@@ -1360,21 +1338,42 @@ public class ModeListView extends FrameLayout
     }
 
     /**
-     * Here we calculate the children size based on the orientation, change
-     * their layout parameters if needed before propagating onMeasure call
-     * to the children, so the newly changed params will take effect in this
-     * pass.
-     *
-     * @param widthMeasureSpec Horizontal space requirements as imposed by the
-     *        parent
-     * @param heightMeasureSpec Vertical space requirements as imposed by the
-     *        parent
+     * Sets a capture layout helper to query layout rect from.
      */
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        centerModeDrawerInUncoveredPreview(MeasureSpec.getSize(widthMeasureSpec),
-                MeasureSpec.getSize(heightMeasureSpec));
+    public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
+        mCaptureLayoutHelper = helper;
+    }
+
+    private void updateModeListLayout() {
+        if (mCaptureLayoutHelper == null) {
+            Log.e(TAG, "Capture layout helper needs to be set first.");
+            return;
+        }
+        // Center mode drawer in the portion of camera preview that is not covered by
+        // bottom bar.
+        RectF uncoveredPreviewArea = mCaptureLayoutHelper.getUncoveredPreviewRect();
+        // Align left:
+        mListView.setTranslationX(uncoveredPreviewArea.left);
+        // Align center vertical:
+        mListView.setTranslationY(uncoveredPreviewArea.centerY()
+                - mListView.getMeasuredHeight() / 2);
+
+        updateSettingsButtonLayout(uncoveredPreviewArea);
+    }
+
+    private void updateSettingsButtonLayout(RectF uncoveredPreviewArea) {
+        if (mWidth > mHeight) {
+            // Align to the top right.
+            mSettingsButton.setTranslationX(uncoveredPreviewArea.right - mSettingsButtonMargin
+                    - mSettingsButton.getMeasuredWidth());
+            mSettingsButton.setTranslationY(uncoveredPreviewArea.top + mSettingsButtonMargin);
+        } else {
+            // Align to the bottom right.
+            mSettingsButton.setTranslationX(uncoveredPreviewArea.right - mSettingsButtonMargin
+                    - mSettingsButton.getMeasuredWidth());
+            mSettingsButton.setTranslationY(uncoveredPreviewArea.bottom - mSettingsButtonMargin
+                    - mSettingsButton.getMeasuredHeight());
+        }
     }
 
     @Override
@@ -1444,7 +1443,6 @@ public class ModeListView extends FrameLayout
     public void onVisibilityChanged(View v, int visibility) {
         super.onVisibilityChanged(v, visibility);
         if (visibility == VISIBLE) {
-            centerModeDrawerInUncoveredPreview(getMeasuredWidth(), getMeasuredHeight());
             // Highlight current module
             if (mModeSwitchListener != null) {
                 int modeId = mModeSwitchListener.getCurrentModeIndex();
@@ -1456,6 +1454,7 @@ public class ModeListView extends FrameLayout
                     }
                 }
             }
+            updateModeListLayout();
         } else {
             if (mModeSelectorItems != null) {
                 // When becoming invisible/gone after initializing mode selector items.
@@ -1480,31 +1479,6 @@ public class ModeListView extends FrameLayout
             return;
         }
         super.setVisibility(visibility);
-    }
-
-    /**
-     * Center mode drawer in the portion of camera preview that is not covered by
-     * bottom bar.
-     */
-    // TODO: Combine SettingsButton logic into here if UX design does not change
-    // for another week.
-    private void centerModeDrawerInUncoveredPreview(int measuredWidth, int measuredHeight) {
-
-        // Assuming the preview is centered in the space aside from bottom bar.
-        float previewAreaWidth = mUncoveredPreviewArea.right + mUncoveredPreviewArea.left;
-        float previewAreaHeight = mUncoveredPreviewArea.top + mUncoveredPreviewArea.bottom;
-        if (measuredWidth > measuredHeight && previewAreaWidth < previewAreaHeight
-                || measuredWidth < measuredHeight && previewAreaWidth > previewAreaHeight) {
-            // Cached preview area is stale, update mode drawer position on next
-            // layout pass.
-            mAdjustPositionWhenUncoveredPreviewAreaChanges = true;
-        } else {
-            // Align left:
-            mListView.setTranslationX(mUncoveredPreviewArea.left);
-            // Align center vertical:
-            mListView.setTranslationY(mUncoveredPreviewArea.centerY()
-                    - mListView.getMeasuredHeight() / 2);
-        }
     }
 
     private void scroll(int itemId, float deltaX, float deltaY) {

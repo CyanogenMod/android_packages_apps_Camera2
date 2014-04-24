@@ -37,36 +37,30 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         OnLayoutChangeListener {
 
     private static final Log.Tag TAG = new Log.Tag("TexViewHelper");
-    private static final float UNSET = 0f;
+    public static final float MATCH_SCREEN = 0f;
     private TextureView mPreview;
     private int mWidth = 0;
     private int mHeight = 0;
     private RectF mPreviewArea = new RectF();
-    private float mAspectRatio = UNSET;
+    private float mAspectRatio = MATCH_SCREEN;
     private boolean mAutoAdjustTransform = true;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
-    /**
-     * To avoid multiple array allocations in clearMatrixTrans().
-     */
-    private final float mMatrixVal[] = new float[9];
-    /**
-     * Used by align*InRect() methods and centerPreviewInRect().
-     */
-    private final Matrix mUntranslatedMatrix = new Matrix();
-    /**
-     * Used by align*InRect() methods and centerPreviewInRect().
-     */
-    private final RectF mUntranslatedPreviewArea = new RectF();
+
+    private final ArrayList<PreviewStatusListener.PreviewAspectRatioChangedListener>
+            mAspectRatioChangedListeners =
+            new ArrayList<PreviewStatusListener.PreviewAspectRatioChangedListener>();
 
     private final ArrayList<PreviewStatusListener.PreviewAreaChangedListener>
             mPreviewSizeChangedListeners =
             new ArrayList<PreviewStatusListener.PreviewAreaChangedListener>();
     private OnLayoutChangeListener mOnLayoutChangeListener = null;
+    private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
-    public TextureViewHelper(TextureView preview) {
+    public TextureViewHelper(TextureView preview, CaptureLayoutHelper helper) {
         mPreview = preview;
         mPreview.addOnLayoutChangeListener(this);
         mPreview.setSurfaceTextureListener(this);
+        mCaptureLayoutHelper = helper;
     }
 
     /**
@@ -109,6 +103,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         mPreview.setTransform(new Matrix());
         mPreviewArea.set(0, 0, mWidth, mHeight);
         onPreviewAreaChanged(mPreviewArea);
+        setAspectRatio(MATCH_SCREEN);
     }
 
     public void updateAspectRatio(float aspectRatio) {
@@ -119,8 +114,30 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         if (aspectRatio < 1f) {
             aspectRatio = 1f / aspectRatio;
         }
-        mAspectRatio = aspectRatio;
+        setAspectRatio(aspectRatio);
         updateTransform();
+    }
+
+    private void setAspectRatio(float aspectRatio) {
+        if (mAspectRatio != aspectRatio) {
+            mAspectRatio = aspectRatio;
+            onAspectRatioChanged();
+        }
+    }
+
+    private void onAspectRatioChanged() {
+        mCaptureLayoutHelper.onPreviewAspectRatioChanged(mAspectRatio);
+        for (PreviewStatusListener.PreviewAspectRatioChangedListener listener
+                : mAspectRatioChangedListeners) {
+            listener.onPreviewAspectRatioChanged(mAspectRatio);
+        }
+    }
+
+    public void addAspectRatioChangedListener(
+            PreviewStatusListener.PreviewAspectRatioChangedListener listener) {
+        if (listener != null && !mAspectRatioChangedListeners.contains(listener)) {
+            mAspectRatioChangedListeners.add(listener);
+        }
     }
 
     public void updateTransform(Matrix matrix) {
@@ -133,6 +150,17 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             Log.e(TAG, "Invalid preview size: " + previewWidth + " x " + previewHeight);
             return;
         }
+        float aspectRatio = previewWidth / previewHeight;
+        aspectRatio = aspectRatio < 1 ? 1 / aspectRatio : aspectRatio;
+        if (aspectRatio != mAspectRatio) {
+            setAspectRatio(aspectRatio);
+        }
+
+        RectF previewAreaBasedOnAspectRatio = mCaptureLayoutHelper.getPreviewRect();
+        Matrix addtionalTransform = new Matrix();
+        addtionalTransform.setRectToRect(previewRect, previewAreaBasedOnAspectRatio,
+                Matrix.ScaleToFit.CENTER);
+        matrix.postConcat(addtionalTransform);
         mPreview.setTransform(matrix);
         updatePreviewArea(matrix);
     }
@@ -155,113 +183,17 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     }
 
     /**
-     * Aligns the preview to the right of the given reference area. Also
-     * centers the preview vertically.
-     *
-     * @param rect The reference area
-     */
-    public void alignRightInRect(final RectF rect) {
-        fitUntranslatedMatrixAndArea(rect);
-
-        float transX = (rect.width() - mUntranslatedPreviewArea.width());
-        float transY = (rect.height() - mUntranslatedPreviewArea.height()) / 2.0f;
-
-        mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
-        updateTransform(mUntranslatedMatrix);
-    }
-
-    /**
-     * Aligns the preview to the bottom of the given reference area. Also
-     * centers the preview horizontally.
-     *
-     * @param rect The reference area
-     */
-    public void alignBottomInRect(final RectF rect) {
-        fitUntranslatedMatrixAndArea(rect);
-
-        float transX = (rect.width() - mUntranslatedPreviewArea.width()) / 2.0f;
-        float transY = (rect.height() - mUntranslatedPreviewArea.height());
-
-        mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
-        updateTransform(mUntranslatedMatrix);
-    }
-
-    /**
-     * Centers the preview in the given area by setting the transform matrix.
-     *
-     * @param rect The reference area.
-     */
-    public void centerPreviewInRect(final RectF rect) {
-        fitUntranslatedMatrixAndArea(rect);
-
-        float transX = (rect.width() - mUntranslatedPreviewArea.width()) / 2.0f;
-        float transY = (rect.height() - mUntranslatedPreviewArea.height()) / 2.0f;
-
-        mUntranslatedMatrix.postTranslate(rect.left + transX, rect.top + transY);
-        updateTransform(mUntranslatedMatrix);
-    }
-
-    /**
-     * Fit the preview area in the given area
-     * @param rect The reference area.
-     */
-    public void fitPreviewInRect(final RectF rect) {
-        boolean landscape = rect.width() > rect.height();
-        int width, height;
-        if (landscape) {
-            width = Math.min((int) rect.width(),
-                              (int) (rect.height() * mAspectRatio));
-            height = Math.min((int) rect.height(),
-                               (int) (rect.width() / mAspectRatio));
-        } else {
-            width = Math.min((int) rect.width(),
-                              (int) (rect.height() / mAspectRatio));
-            height = Math.min((int) rect.height(),
-                               (int) (rect.width() * mAspectRatio));
-        }
-
-        mWidth = width;
-        mHeight = height;
-
-        mPreview.setTransform(new Matrix());
-        mPreviewArea.set(0, 0, mWidth, mHeight);
-        onPreviewAreaChanged(mPreviewArea);
-        updateTransform();
-    }
-
-    /**
      * Updates the transform matrix based current width and height of TextureView
      * and preview stream aspect ratio.
      */
     private void updateTransform() {
-        if (mAspectRatio == UNSET || mAspectRatio < 0 || mWidth == 0 || mHeight == 0) {
+        if (mAspectRatio == MATCH_SCREEN || mAspectRatio < 0 || mWidth == 0 || mHeight == 0) {
             return;
         }
 
         Matrix matrix = mPreview.getTransform(null);
-        float scaledTextureWidth, scaledTextureHeight;
-
-        boolean landscape = mWidth > mHeight;
-        if (landscape) {
-            scaledTextureWidth = Math.min(mWidth,
-                    (int) (mHeight * mAspectRatio));
-            scaledTextureHeight = Math.min(mHeight,
-                    (int) (mWidth / mAspectRatio));
-        } else {
-            scaledTextureWidth = Math.min(mWidth,
-                    (int) (mHeight / mAspectRatio));
-            scaledTextureHeight = Math.min(mHeight,
-                    (int) (mWidth * mAspectRatio));
-        }
-
-        float scaleX = scaledTextureWidth / mWidth;
-        float scaleY = scaledTextureHeight / mHeight;
-
-        if (landscape) {
-            matrix.setScale(scaleX, scaleY, 0f, (float) mHeight / 2);
-        } else {
-            matrix.setScale(scaleX, scaleY, (float) mWidth / 2, 0.0f);
-        }
+        RectF previewRect = mCaptureLayoutHelper.getPreviewRect();
+        matrix.setRectToRect(new RectF(0, 0, mWidth, mHeight), previewRect, Matrix.ScaleToFit.FILL);
         mPreview.setTransform(matrix);
         updatePreviewArea(matrix);
     }
@@ -295,10 +227,10 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * Adds a listener that will get notified when the preview area changed. This
      * can be useful for UI elements or focus overlay to adjust themselves according
      * to the preview area change.
-     *
+     * <p/>
      * Note that a listener will only be added once. A newly added listener will receive
      * a notification of current preview area immediately after being added.
-     *
+     * <p/>
      * This function should be called on the UI thread and listeners will be notified
      * on the UI thread.
      *
@@ -361,24 +293,5 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             mSurfaceTextureListener.onSurfaceTextureUpdated(surface);
         }
 
-    }
-
-    /**
-     * Updates {@code mUntranslatedMatrix} and {mUntranslatedPreviewArea}.
-     */
-    private void fitUntranslatedMatrixAndArea(RectF rect) {
-        mPreview.getTransform(mUntranslatedMatrix);
-        mUntranslatedPreviewArea.set(0, 0, mPreview.getWidth(), mPreview.getHeight());
-        mUntranslatedMatrix.mapRect(mUntranslatedPreviewArea);
-
-        // Remove translation needed for fitting the rect.
-        RectF mapToRect = new RectF(rect);
-        mapToRect.offsetTo(0, 0);
-
-        // Fit preview in the rect while maintaining the original aspect ratio.
-        Matrix transform = new Matrix();
-        transform.setRectToRect(mUntranslatedPreviewArea, mapToRect, Matrix.ScaleToFit.START);
-        mUntranslatedMatrix.postConcat(transform);
-        transform.mapRect(mUntranslatedPreviewArea);
     }
 }

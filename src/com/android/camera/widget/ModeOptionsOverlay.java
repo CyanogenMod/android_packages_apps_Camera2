@@ -28,10 +28,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.ShutterButton;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.PreviewOverlay;
-import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera2.R;
 
 /**
@@ -39,8 +39,7 @@ import com.android.camera2.R;
  * in the bottom of the preview that is visible above the bottom bar.
  */
 public class ModeOptionsOverlay extends FrameLayout
-    implements PreviewStatusListener.PreviewAreaChangedListener,
-               PreviewOverlay.OnPreviewTouchedListener,
+    implements PreviewOverlay.OnPreviewTouchedListener,
                ShutterButton.OnShutterButtonListener {
 
     private final static Log.Tag TAG = new Log.Tag("ModeOptionsOverlay");
@@ -49,17 +48,22 @@ public class ModeOptionsOverlay extends FrameLayout
     private final static int BOTTOM_RIGHT = Gravity.BOTTOM | Gravity.RIGHT;
     private final static int TOP_RIGHT = Gravity.TOP | Gravity.RIGHT;
 
-    private int mPreviewWidth;
-    private int mPreviewHeight;
-
     private ModeOptions mModeOptions;
     // need a reference to set the onClickLIstener and fix the layout gravity on orientation change
     private LinearLayout mModeOptionsToggle;
     // need a reference to fix the rotation on orientation change
     private ImageView mThreeDots;
+    private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
     public ModeOptionsOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    /**
+     * Sets a capture layout helper to query layout rect from.
+     */
+    public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
+        mCaptureLayoutHelper = helper;
     }
 
     @Override
@@ -116,9 +120,8 @@ public class ModeOptionsOverlay extends FrameLayout
     }
 
     @Override
-    public void onPreviewAreaChanged(RectF previewArea) {
-        mPreviewWidth = (int) previewArea.width();
-        mPreviewHeight = (int) previewArea.height();
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setLayoutDimensions();
     }
 
@@ -128,7 +131,16 @@ public class ModeOptionsOverlay extends FrameLayout
      * knowledge of the bottom bar dimensions.
      */
     private void setLayoutDimensions() {
-        if (mPreviewWidth == 0 || mPreviewHeight == 0) {
+        if (mCaptureLayoutHelper == null) {
+            Log.e(TAG, "Capture layout helper needs to be set first.");
+            return;
+        }
+
+        RectF previewRect = mCaptureLayoutHelper.getPreviewRect();
+        int previewWidth = (int) previewRect.width();
+        int previewHeight = (int) previewRect.height();
+
+        if (previewWidth == 0 || previewHeight == 0) {
             return;
         }
 
@@ -137,9 +149,9 @@ public class ModeOptionsOverlay extends FrameLayout
 
         ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) getLayoutParams();
         if (isPortrait) {
-            params.width = mPreviewWidth;
+            params.width = previewWidth;
         } else {
-            params.height = mPreviewHeight;
+            params.height = previewHeight;
         }
         setLayoutParams(params);
     }

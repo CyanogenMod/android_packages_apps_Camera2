@@ -17,13 +17,13 @@
 package com.android.camera.ui;
 
 import android.content.Context;
-import android.content.res.Configuration;
+import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.android.camera.CaptureLayoutHelper;
+import com.android.camera.debug.Log;
 import com.android.camera2.R;
 
 /**
@@ -34,8 +34,10 @@ import com.android.camera2.R;
  */
 public class BottomBarModeOptionsWrapper extends FrameLayout {
 
+    private final static Log.Tag TAG = new Log.Tag("BottomBarWrapper");
     private View mModeOptionsOverlay;
     private View mBottomBar;
+    private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
     public BottomBarModeOptionsWrapper(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -47,27 +49,25 @@ public class BottomBarModeOptionsWrapper extends FrameLayout {
         mBottomBar = findViewById(R.id.bottom_bar);
     }
 
+    /**
+     * Sets a capture layout helper to query layout rect from.
+     */
+    public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
+        mCaptureLayoutHelper = helper;
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        final int bottomBarWidth = mBottomBar.getMeasuredWidth();
-        final int bottomBarHeight = mBottomBar.getMeasuredHeight();
-        right -= left;
-        bottom -= top;
-        left = 0;
-        top = 0;
-        super.onLayout(changed, left, top, right, bottom);
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // Lay out mode options to the left of bottom bar and in the vertical
-            // center of the parent view.
-            int centerY = (top + bottom) / 2;
-            mModeOptionsOverlay.layout(left, centerY - bottomBarHeight / 2,
-                    right - bottomBarWidth, centerY + bottomBarHeight / 2);
-        } else {
-            // Lay out mode options above the bottom bar and in the horizontal center.
-            int centerX = (left + right) / 2;
-            mModeOptionsOverlay.layout(centerX - bottomBarWidth / 2, top,
-                    centerX + bottomBarWidth / 2, bottom - bottomBarHeight);
+        if (mCaptureLayoutHelper == null) {
+            Log.e(TAG, "Capture layout helper needs to be set first.");
+            return;
         }
+        RectF uncoveredPreviewRect = mCaptureLayoutHelper.getUncoveredPreviewRect();
+        RectF bottomBarRect = mCaptureLayoutHelper.getBottomBarRect();
+
+        mModeOptionsOverlay.layout((int) uncoveredPreviewRect.left, (int) uncoveredPreviewRect.top,
+                (int) uncoveredPreviewRect.right, (int) uncoveredPreviewRect.bottom);
+        mBottomBar.layout((int) bottomBarRect.left, (int) bottomBarRect.top,
+                (int) bottomBarRect.right, (int) bottomBarRect.bottom);
     }
 }
