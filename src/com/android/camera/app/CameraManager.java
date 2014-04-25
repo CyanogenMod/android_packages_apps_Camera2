@@ -137,8 +137,9 @@ public interface CameraManager {
          * caught.
          *
          * @param cameraId The camera with the hardware failure.
+         * @param info The extra info regarding this failure.
          */
-        public void onDeviceOpenFailure(int cameraId);
+        public void onDeviceOpenFailure(int cameraId, String info);
 
         /**
          * Callback when trying to open the camera which is already opened.

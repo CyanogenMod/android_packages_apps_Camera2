@@ -70,7 +70,6 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 
 import com.android.camera.app.AppController;
-import com.android.camera.app.CameraApp;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraManager;
@@ -486,7 +485,8 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onDeviceOpenFailure(int cameraId) {
+    public void onDeviceOpenFailure(int cameraId, String info) {
+        // TODO: send "info" to UsageStatistics logging.
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.OPEN_FAILURE);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
