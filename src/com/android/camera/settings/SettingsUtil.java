@@ -311,18 +311,17 @@ public class SettingsUtil {
      * quality.
      */
     private static int getNextSupportedVideoQualityIndex(int cameraId, int start) {
-        int i = start + 1;
-        for (; i < sVideoQualities.length; ++i) {
+        for (int i = start + 1; i < sVideoQualities.length; ++i) {
             if (CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
-              // We found a new supported quality.
-              return i;
+                // We found a new supported quality.
+                return i;
             }
         }
 
         // Failed to find another supported quality.
         if (start < 0 || start >= sVideoQualities.length) {
-          // This means we couldn't find any supported quality.
-          throw new IllegalArgumentException("Could not find supported video qualities.");
+            // This means we couldn't find any supported quality.
+            throw new IllegalArgumentException("Could not find supported video qualities.");
         }
 
         // We previously found a larger supported size. In this edge case, just
