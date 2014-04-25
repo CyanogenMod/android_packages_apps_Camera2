@@ -40,6 +40,7 @@
   <string name="pref_camera_skinToneEnhancement_entry_disable">Wyłącz</string>
   <string name="pref_camera_zsl_title">Bez opóźnienia migawki (ZSL)</string>
   <string name="pref_camera_selectablezoneaf_title">Strefa automatycznego wyostrzenia</string>
+  <string name="pref_camera_selectablezoneaf_entry_auto">Automatyczne</string>
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Pomiar punktowy</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Centralnie ważony</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Średnia ramki</string>
@@ -76,6 +77,7 @@
   <string name="pref_camera_denoise_entry_off">Wył.</string>
   <string name="pref_camera_denoise_entry_on">Wł.</string>
   <string name="pref_camera_iso_title">ISO</string>
+  <string name="pref_camera_iso_entry_auto">Automatyczne</string>
   <string name="pref_camera_iso_entry_isodeblur">Auto (HJR)</string>
   <string name="pref_camera_iso_entry_iso100">ISO100</string>
   <string name="pref_camera_iso_entry_iso200">ISO200</string>
@@ -86,6 +88,7 @@
   <string name="pref_camera_antibanding_entry_0">Wył.</string>
   <string name="pref_camera_antibanding_entry_1">50 Hz</string>
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>
+  <string name="pref_camera_antibanding_entry_3">Automatyczne</string>
   <string name="pref_camera_coloreffect_title">Efekty koloru</string>
   <string name="pref_camera_coloreffect_entry_none">Brak</string>
   <string name="pref_camera_coloreffect_entry_mono">Mono</string>
