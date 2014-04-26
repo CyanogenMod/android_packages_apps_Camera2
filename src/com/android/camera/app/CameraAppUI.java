@@ -536,7 +536,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * decor such as status bar and nav bar) has changed.
      */
     public interface NonDecorWindowSizeChangedListener {
-        public void onNonDecorWindowSizeChanged(int width, int height);
+        public void onNonDecorWindowSizeChanged(int width, int height, int rotation);
     }
 
     private final CameraModuleScreenShotProvider mCameraModuleScreenShotProvider =
@@ -775,6 +775,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     if ((rotation - mLastRotation + 360) % 360 == 180
                             && mPreviewStatusListener != null) {
                         mPreviewStatusListener.onPreviewFlipped();
+                        mIndicatorBottomBarWrapper.requestLayout();
+                        mModeListView.requestLayout();
+                        mTextureView.requestLayout();
                     }
                     mLastRotation = rotation;
                 }
@@ -1091,7 +1094,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                         mModeOptionsOverlay.requestLayout();
                         mBottomBar.requestLayout();
                     }
-                });
+                }
+        );
     }
 
     /**
@@ -1384,6 +1388,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void resetBottomControls(ModuleController module, int moduleIndex) {
         if (areBottomControlsUsed(module)) {
             setBottomBarShutterIcon(moduleIndex);
+            mCaptureLayoutHelper.setShowBottomBar(true);
+        } else {
+            mCaptureLayoutHelper.setShowBottomBar(false);
         }
     }
 
