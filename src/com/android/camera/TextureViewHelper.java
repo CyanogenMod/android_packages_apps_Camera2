@@ -25,6 +25,7 @@ import android.view.View.OnLayoutChangeListener;
 
 import com.android.camera.debug.Log;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.util.CameraUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
     private static final Log.Tag TAG = new Log.Tag("TexViewHelper");
     public static final float MATCH_SCREEN = 0f;
+    private static final int UNSET = -1;
     private TextureView mPreview;
     private int mWidth = 0;
     private int mHeight = 0;
@@ -55,6 +57,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             new ArrayList<PreviewStatusListener.PreviewAreaChangedListener>();
     private OnLayoutChangeListener mOnLayoutChangeListener = null;
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
+    private int mOrientation = UNSET;
 
     public TextureViewHelper(TextureView preview, CaptureLayoutHelper helper) {
         mPreview = preview;
@@ -79,9 +82,11 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
                                int oldTop, int oldRight, int oldBottom) {
         int width = right - left;
         int height = bottom - top;
-        if (mWidth != width || mHeight != height) {
+        int rotation = CameraUtil.getDisplayRotation(mPreview.getContext());
+        if (mWidth != width || mHeight != height || mOrientation != rotation) {
             mWidth = width;
             mHeight = height;
+            mOrientation = rotation;
             if (mAutoAdjustTransform) {
                 updateTransform();
             } else {
