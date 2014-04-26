@@ -372,7 +372,13 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onSingleTapUp(View view, int x, int y) {
-        if (mMediaRecorderRecording || mPaused || mCameraDevice == null) {
+        if (mPaused || mCameraDevice == null) {
+            return;
+        }
+        if (mMediaRecorderRecording) {
+            if (!mSnapshotInProgress) {
+                takeASnapshot();
+            }
             return;
         }
         // Check if metering area or focus area is supported.
@@ -387,7 +393,7 @@ public class VideoModule extends CameraModule
         // Only take snapshots if video snapshot is supported by device
         if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress
-                    || mAppController.isShutterEnabled()) {
+                    || !mAppController.isShutterEnabled()) {
                 return;
             }
 
@@ -399,7 +405,7 @@ public class VideoModule extends CameraModule
             CameraUtil.setGpsParameters(mParameters, loc);
             mCameraDevice.setParameters(mParameters);
 
-            Log.v(TAG, "Video snapshot start");
+            Log.i(TAG, "Video snapshot start");
             mCameraDevice.takePicture(mHandler,
                     null, null, null, new JpegPictureCallback(loc));
             showVideoSnapshotUI(true);
@@ -1764,7 +1770,7 @@ public class VideoModule extends CameraModule
 
         @Override
         public void onPictureTaken(byte [] jpegData, CameraProxy camera) {
-            Log.v(TAG, "onPictureTaken");
+            Log.i(TAG, "Video snapshot taken.");
             mSnapshotInProgress = false;
             showVideoSnapshotUI(false);
             storeImage(jpegData, mLocation);
