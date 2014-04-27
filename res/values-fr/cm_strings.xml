@@ -53,6 +53,7 @@
   <string name="pref_camera_scenemode_entry_candlelight">Lueur de chandelles</string>
   <string name="pref_camera_scenemode_entry_cine">Ciné</string>
   <string name="pref_camera_scenemode_entry_closeup">Gros plan</string>
+  <string name="pref_camera_scenemode_entry_dark">Sombre</string>
   <string name="pref_camera_scenemode_entry_dish">Plat</string>
   <string name="pref_camera_scenemode_entry_duskdawn">Crépuscule</string>
   <string name="pref_camera_scenemode_entry_document">Document</string>
@@ -85,6 +86,7 @@
   <string name="pref_camera_focusmode_entry_facedetect">Détection de visage</string>
   <string name="pref_camera_focusmode_entry_facepriority">Priorité aux visages</string>
   <string name="pref_camera_focusmode_entry_fixed">Fixé</string>
+  <string name="pref_camera_focusmode_entry_portrait">Portrait</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
   <string name="pref_camera_coloreffect_entry_washed">Lavé</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Vintage chaud</string>
@@ -94,6 +96,7 @@
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Point rouge-jaune</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Cartooniser</string>
   <string name="pref_camera_burst_title">Mode rafale</string>
+  <string name="pref_camera_burst_entry_off">Désactiver</string>
   <string name="pref_camera_burst_entry_5">5 photos</string>
   <string name="pref_camera_burst_entry_10">10 photos</string>
   <string name="pref_camera_burst_entry_15">15 photos</string>
@@ -110,6 +113,7 @@
   <string name="pref_camera_flashmode_label_redeye">YEUX ROUGES</string>
   <string name="pref_camera_beauty_mode_title">Mode beauté</string>
   <string name="pref_camera_slow_shutter_title">Obturation lente</string>
+  <string name="pref_camera_slow_shutter_entry_off">Désactiver</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
   <string name="pref_camera_slow_shutter_entry_half_second">1/2 seconde</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 seconde</string>
