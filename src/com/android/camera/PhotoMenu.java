@@ -315,20 +315,20 @@ public class PhotoMenu extends PieController
         if (notSame(pref, CameraSettings.KEY_CAMERA_HDR, mSettingOff)) {
             setPreference(CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
             setPreference(CameraSettings.KEY_BEAUTY_MODE, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off");
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             setPreference(CameraSettings.KEY_ASD, mSettingOff);
             disableBurstMode();
         } else if (notSame(pref, CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO) ||
                    notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off");
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             if (!notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
                 setPreference(CameraSettings.KEY_ASD, mSettingOff);
             }
         } else if (notSame(pref, CameraSettings.KEY_BEAUTY_MODE, mSettingOff)) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off");
-        } else if (notSame(pref, CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off")) {
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
+        } else if (notSame(pref, CameraSettings.KEY_SLOW_SHUTTER, "0")) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
             setPreference(CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
             setPreference(CameraSettings.KEY_ASD, mSettingOff);
