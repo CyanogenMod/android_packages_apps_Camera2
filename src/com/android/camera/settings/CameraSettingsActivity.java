@@ -183,15 +183,15 @@ public class CameraSettingsActivity extends FragmentActivity {
             PreferenceGroup resolutions =
                     (PreferenceGroup) findPreference(PREF_CATEGORY_RESOLUTION);
             if (mPictureSizesBack == null) {
-                resolutions.removePreference(
+                recursiveDelete(resolutions,
                         findPreference(SettingsManager.KEY_PICTURE_SIZE_BACK));
-                resolutions.removePreference(
+                recursiveDelete(resolutions,
                         findPreference(SettingsManager.KEY_VIDEO_QUALITY_BACK));
             }
             if (mPictureSizesFront == null) {
-                resolutions.removePreference(
+                recursiveDelete(resolutions,
                         findPreference(SettingsManager.KEY_PICTURE_SIZE_FRONT));
-                resolutions.removePreference(
+                recursiveDelete(resolutions,
                         findPreference(SettingsManager.KEY_VIDEO_QUALITY_FRONT));
             }
         }
@@ -209,6 +209,28 @@ public class CameraSettingsActivity extends FragmentActivity {
                 setSummary(pref);
                 setEntries(pref);
             }
+        }
+
+        /**
+         * Recursively traverses the tree from the given group as the route and
+         * tries to delete the preference. Traversal stops once the preference
+         * was found and removed.
+         */
+        private boolean recursiveDelete(PreferenceGroup group, Preference preference) {
+            if (group.removePreference(preference)) {
+                // Removal was successful.
+                return true;
+            }
+
+            for (int i = 0; i < group.getPreferenceCount(); ++i) {
+                Preference pref = group.getPreference(i);
+                if (pref instanceof PreferenceGroup) {
+                    if (recursiveDelete((PreferenceGroup) pref, preference)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         @Override
@@ -302,7 +324,7 @@ public class CameraSettingsActivity extends FragmentActivity {
          */
         private void setEntriesForSelection(SelectedVideoQualities selectedQualities,
                 ListPreference preference) {
-            if (mVideoQualitiesFront == null) {
+            if (selectedQualities == null) {
                 return;
             }
 
