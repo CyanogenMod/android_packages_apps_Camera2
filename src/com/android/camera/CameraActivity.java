@@ -482,16 +482,15 @@ public class CameraActivity extends Activity
     @Override
     public void onCameraDisabled(int cameraId) {
         UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.SECURITY);
+                eventprotos.CameraFailure.FailureReason.SECURITY, null);
         CameraUtil.showErrorAndFinish(this,
                 R.string.camera_disabled);
     }
 
     @Override
     public void onDeviceOpenFailure(int cameraId, String info) {
-        // TODO: send "info" to UsageStatistics logging.
         UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.OPEN_FAILURE);
+                eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
@@ -503,7 +502,7 @@ public class CameraActivity extends Activity
     @Override
     public void onReconnectionFailure(CameraManager mgr) {
         UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE);
+                eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
@@ -1488,6 +1487,7 @@ public class CameraActivity extends Activity
     @Override
     public void onResume() {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
+        Log.v(TAG, "Build info: " + Build.DISPLAY);
 
         mPaused = false;
 
