@@ -45,6 +45,7 @@ import com.android.camera.util.Size;
 import com.android.camera2.R;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -308,11 +309,17 @@ public class CameraSettingsActivity extends FragmentActivity {
                 return;
             }
 
-            String[] entries = new String[3];
-            entries[0] = getSizeSummaryString(selectedSizes.large);
-            entries[1] = getSizeSummaryString(selectedSizes.medium);
-            entries[2] = getSizeSummaryString(selectedSizes.small);
-            preference.setEntries(entries);
+            // Avoid adding double entries at the bottom of the list which
+            // indicates that not at least 3 sizes are supported.
+            ArrayList<String> entries = new ArrayList<String>();
+            entries.add(getSizeSummaryString(selectedSizes.large));
+            if (selectedSizes.medium != selectedSizes.large) {
+                entries.add(getSizeSummaryString(selectedSizes.medium));
+            }
+            if (selectedSizes.small != selectedSizes.medium) {
+                entries.add(getSizeSummaryString(selectedSizes.small));
+            }
+            preference.setEntries(entries.toArray(new String[0]));
         }
 
         /**
@@ -328,11 +335,17 @@ public class CameraSettingsActivity extends FragmentActivity {
                 return;
             }
 
-            String[] entries = new String[3];
-            entries[0] = mCamcorderProfileNames[selectedQualities.large];
-            entries[1] = mCamcorderProfileNames[selectedQualities.medium];
-            entries[2] = mCamcorderProfileNames[selectedQualities.small];
-            preference.setEntries(entries);
+            // Avoid adding double entries at the bottom of the list which
+            // indicates that not at least 3 qualities are supported.
+            ArrayList<String> entries = new ArrayList<String>();
+            entries.add(mCamcorderProfileNames[selectedQualities.large]);
+            if (selectedQualities.medium != selectedQualities.large) {
+                entries.add(mCamcorderProfileNames[selectedQualities.medium]);
+            }
+            if (selectedQualities.small != selectedQualities.medium) {
+                entries.add(mCamcorderProfileNames[selectedQualities.small]);
+            }
+            preference.setEntries(entries.toArray(new String[0]));
         }
 
         /**
