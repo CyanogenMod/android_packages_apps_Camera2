@@ -24,7 +24,7 @@
     <string name="delete" msgid="2714492172818940424">"Schließen"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="8811352590292754044">"Ausgewähltes Element löschen?"</item>
-    <item quantity="other" msgid="5075283252850066610">"Ausgewählte Elemente löschen?"</item>
+    <item quantity="other" msgid="5075283252850066610">"Wirklich löschen?"</item>
   </plurals>
     <string name="share" msgid="8581089487762243115">"Teilen"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Panorama teilen"</string>
