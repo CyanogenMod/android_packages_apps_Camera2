@@ -450,7 +450,24 @@ public class CameraDataAdapter implements LocalDataAdapter {
         }
 
         @Override
-        protected void onPostExecute(List<Integer> updatedData) {
+        protected void onPostExecute(final List<Integer> updatedData) {
+            // Since the metadata will affect the width and height of the data
+            // if it's a video, we need to notify the DataAdapter listener
+            // because ImageData.getWidth() and ImageData.getHeight() now may
+            // return different values due to the metadata.
+            if (mListener != null) {
+                mListener.onDataUpdated(new UpdateReporter() {
+                    @Override
+                    public boolean isDataRemoved(int dataID) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isDataUpdated(int dataID) {
+                        return updatedData.contains(dataID);
+                    }
+                });
+            }
             if (mLocalDataListener == null) {
                 return;
             }
