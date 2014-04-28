@@ -967,7 +967,7 @@ class AndroidCameraManagerImpl implements CameraManager {
             mDispatchThread.runJob(new Runnable() {
                 @Override
                 public void run() {
-                    mCameraState.waitForStates(CAMERA_IDLE);
+                    mCameraState.waitForStates(CAMERA_IDLE | CAMERA_UNLOCKED);
                     mCameraHandler.requestTakePicture(ShutterCallbackForward
                             .getNewInstance(handler, AndroidCameraProxyImpl.this, shutter),
                             PictureCallbackForward
