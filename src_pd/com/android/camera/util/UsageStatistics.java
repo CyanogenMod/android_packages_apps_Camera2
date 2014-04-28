@@ -49,7 +49,7 @@ public class UsageStatistics {
                                       boolean front, boolean isHDR, float zoom) {
     }
 
-    public void cameraFailure(int cause) {
+    public void cameraFailure(int cause, String info) {
     }
 
     public void changeScreen(int newScreen, Integer interactionCause) {
