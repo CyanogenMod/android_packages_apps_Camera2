@@ -149,9 +149,9 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
-    public void onDeviceOpenFailure(int cameraId) {
+    public void onDeviceOpenFailure(int cameraId, String info) {
         if (mCallbackReceiver != null) {
-            mCallbackReceiver.onDeviceOpenFailure(cameraId);
+            mCallbackReceiver.onDeviceOpenFailure(cameraId, info);
         }
     }
 

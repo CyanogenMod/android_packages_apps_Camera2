@@ -49,6 +49,7 @@ class AndroidCameraManagerImpl implements CameraManager {
     private static final Log.Tag TAG = new Log.Tag("AndroidCamMgrImpl");
     private static final long CAMERA_OPERATION_TIMEOUT_MS = 2500;
     private static final long MAX_MESSAGE_QUEUE_LENGTH = 256;
+    private static final int MAX_HISTORY_SIZE = 400;
 
     private Parameters mParameters;
     private boolean mParametersIsDirty;
@@ -237,7 +238,10 @@ class AndroidCameraManagerImpl implements CameraManager {
      * The handler on which the actual camera operations happen.
      */
     private class CameraHandler extends Handler {
+
         private Camera mCamera;
+
+        private LinkedList<Integer> mMsgHistory;
 
         private class CaptureCallbacks {
             public final ShutterCallback mShutter;
@@ -256,6 +260,20 @@ class AndroidCameraManagerImpl implements CameraManager {
 
         CameraHandler(Looper looper) {
             super(looper);
+            mMsgHistory = new LinkedList<Integer>();
+            // We add a -1 at the beginning to mark the very beginning of the
+            // history.
+            mMsgHistory.offerLast(-1);
+        }
+
+        private String generateHistoryString(int cameraId) {
+            String info = new String("HIST");
+            info += "_ID" + cameraId;
+            for (Integer msg : mMsgHistory) {
+                info = info + '_' + msg.toString();
+            }
+            info += "_HEND";
+            return info;
         }
 
         private void startFaceDetection() {
@@ -318,6 +336,10 @@ class AndroidCameraManagerImpl implements CameraManager {
          */
         @Override
         public void handleMessage(final Message msg) {
+            mMsgHistory.offerLast(msg.what);
+            while (mMsgHistory.size() > MAX_HISTORY_SIZE) {
+                mMsgHistory.pollFirst();
+            }
             try {
                 switch (msg.what) {
                     case OPEN_CAMERA: {
@@ -344,7 +366,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                             }
                         } else {
                             if (openCallback != null) {
-                                openCallback.onDeviceOpenFailure(cameraId);
+                                openCallback.onDeviceOpenFailure(cameraId, generateHistoryString(cameraId));
                             }
                         }
                         break;
@@ -532,8 +554,10 @@ class AndroidCameraManagerImpl implements CameraManager {
                 } else {
                     if (mCamera == null) {
                         if (msg.what == OPEN_CAMERA) {
+                            final int cameraId = msg.arg1;
                             if (msg.obj != null) {
-                                ((CameraOpenCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                                ((CameraOpenCallback) msg.obj).onDeviceOpenFailure(
+                                        msg.arg1, generateHistoryString(cameraId));
                             }
                         } else {
                             Log.w(TAG, "Cannot handle message " + msg.what + ", mCamera is null.");
@@ -1469,11 +1493,11 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
-        public void onDeviceOpenFailure(final int cameraId) {
+        public void onDeviceOpenFailure(final int cameraId, final String info) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onDeviceOpenFailure(cameraId);
+                    mCallback.onDeviceOpenFailure(cameraId, info);
                 }
             });
         }
