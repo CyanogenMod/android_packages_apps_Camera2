@@ -527,8 +527,6 @@ CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_hidden">Mode list closed</string>
     <!-- Announcement when the mode list becomes shown on screen [CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_shown">Mode list open</string>
-    <!-- Announcement when the mode switcher, on startup, is temporarily on screen as visual hint, then moves off left [CHAR LIMIT=NONE] -->
-    <string name="accessibility_mode_list_shimmy">Press left to toggle mode list</string>
     <!-- Announcement when a capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
     <string name="accessibility_peek">Capture taken</string>
     <!-- Description for the lock icon in Secure Camera filmstrip that when clicked, brings user to lock screen then full Camera [CHAR LIMIT=NONE] -->
@@ -538,6 +536,18 @@ CHAR LIMIT=NONE] -->
     <string name="media_date_content_description">Media from %s</string>
     <!-- Content description for media items in filmstrip which are still in the middle of processing [CHAR LIMIT=NONE] -->
     <string name="media_processing_content_description">Media processing</string>
+
+    <!-- Content description of the button that toggles the on screen list of camera mode. [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_list_toggle">Toggle mode list</string>
+
+    <!-- Text on the button that toggles the on screen list of camera mode. [CHAR LIMIT=20] -->
+    <string name="btn_mode_list_toggle">Mode list</string>
+
+    <!-- Content description of the button that toggles the filmstrip. [CHAR LIMIT=NONE] -->
+    <string name="accessibility_filmstrip_toggle">Toggle filmstrip</string>
+
+    <!-- Text on the button that toggles the filmstrip. [CHAR LIMIT=20] -->
+    <string name="btn_filmstrip_toggle">Filmstrip</string>
 
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>

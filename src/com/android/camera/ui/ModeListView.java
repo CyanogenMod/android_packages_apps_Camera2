@@ -733,8 +733,6 @@ public class ModeListView extends FrameLayout
 
         @Override
         public void onCurrentState() {
-          announceForAccessibility(
-                  getContext().getResources().getString(R.string.accessibility_mode_list_shimmy));
         }
 
     }
