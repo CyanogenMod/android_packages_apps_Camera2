@@ -92,6 +92,10 @@
     <string name="pref_camera_selectablezoneaf_entry_centerweighted">Center weighted</string>
     <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame average</string>
 
+    <!-- The message is shown in toast when HDR or scene mode is enabled -->
+    <string name="hdr_enable_message">HDR is enabled, only Auto scene mode is supported</string>
+    <string name="scene_enable_message">HDR is not supported in the scene mode other than Auto</string>
+
     <!-- Settings screen, setting title text for Video HDR-->
     <string name="pref_camera_video_hdr_title">Video HDR</string>
     <string name="pref_camera_video_hdr_default" translatable="false">off</string>
