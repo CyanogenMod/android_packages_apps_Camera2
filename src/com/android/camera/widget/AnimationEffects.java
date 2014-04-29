@@ -68,4 +68,11 @@ public abstract class AnimationEffects {
      * canceled as well, to make sure all the states are properly set.
      */
     public abstract void endAnimation();
+
+    /**
+     * Returns whether super should be drawn when the animation is going on.
+     */
+    public boolean shouldDrawSuper() {
+        return true;
+    }
 }
