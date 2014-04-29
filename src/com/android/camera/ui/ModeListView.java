@@ -1379,10 +1379,13 @@ public class ModeListView extends FrameLayout
     @Override
     public void draw(Canvas canvas) {
         ModeListState currentState = mCurrentStateManager.getCurrentState();
-        if (currentState.getCurrentAnimationEffects() != null) {
-            currentState.getCurrentAnimationEffects().drawBackground(canvas);
-            super.draw(canvas);
-            currentState.getCurrentAnimationEffects().drawForeground(canvas);
+        AnimationEffects currentEffects = currentState.getCurrentAnimationEffects();
+        if (currentEffects != null) {
+            currentEffects.drawBackground(canvas);
+            if (currentEffects.shouldDrawSuper()) {
+                super.draw(canvas);
+            }
+            currentEffects.drawForeground(canvas);
         } else {
             super.draw(canvas);
         }
@@ -1954,6 +1957,13 @@ public class ModeListView extends FrameLayout
                 }
                 canvas.drawBitmap(mBackgroundOverlay, 0, 0, null);
             }
+        }
+
+        @Override
+        public boolean shouldDrawSuper() {
+            // No need to draw super when mBackgroundOverlay is being drawn, as
+            // background overlay already contains what's drawn in super.
+            return (mBackground == null || mBackgroundOverlay == null);
         }
 
         @Override
