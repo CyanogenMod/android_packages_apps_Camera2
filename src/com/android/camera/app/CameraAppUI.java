@@ -33,6 +33,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
 
 import com.android.camera.AnimationManager;
@@ -514,6 +515,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private View mModeOptionsToggle;
     private final PeekView mPeekView;
     private final CaptureLayoutHelper mCaptureLayoutHelper;
+    private boolean mAccessibilityEnabled;
+    private View mAccessiblityAffordances;
 
     /**
      * Provides current preview frame and the controls/overlay from the module that
@@ -697,6 +700,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPeekView = (PeekView) appRootView.findViewById(R.id.peek_view);
         mAppRootView.setNonDecorWindowSizeChangedListener(mCaptureLayoutHelper);
         initDisplayListener();
+        mAccessiblityAffordances = mAppRootView.findViewById(R.id.accessibility_affordances);
+        View modeListToggle = mAppRootView.findViewById(R.id.accessibility_mode_toggle_button);
+        modeListToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mModeListView.onMenuPressed();
+            }
+        });
+        View filmstripToggle = mAppRootView.findViewById(
+                R.id.accessibility_filmstrip_toggle_button);
+        filmstripToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFilmstripLayout.showFilmstrip();
+            }
+        });
     }
 
     /**
@@ -863,6 +882,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         // Hide action bar first since we are in full screen mode first, and
         // switch the system UI to lights-out mode.
         mFilmstripPanel.hide();
+
+        AccessibilityManager accessibilityManager = (AccessibilityManager) mController
+                .getAndroidContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+        mAccessibilityEnabled = accessibilityManager.isEnabled();
+        mAccessiblityAffordances.setVisibility(mAccessibilityEnabled ? View.VISIBLE : View.GONE);
+
     }
 
     /**
@@ -900,6 +925,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeCoverState = COVER_HIDDEN;
         if (mCoverHiddenTime < 0) {
             mCoverHiddenTime = System.currentTimeMillis();
+        }
+    }
+
+
+    public void onPreviewVisiblityChanged(int visibility) {
+        if (visibility == ModuleController.VISIBILITY_HIDDEN) {
+            setIndicatorBottomBarWrapperVisible(false);
+            mAccessiblityAffordances.setVisibility(View.GONE);
+        } else {
+            setIndicatorBottomBarWrapperVisible(true);
+            if (mAccessibilityEnabled) {
+                mAccessiblityAffordances.setVisibility(View.VISIBLE);
+            } else {
+                mAccessiblityAffordances.setVisibility(View.GONE);
+            }
         }
     }
 

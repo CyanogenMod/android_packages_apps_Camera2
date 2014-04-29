@@ -66,4 +66,26 @@
     </FrameLayout>
 
     <include layout="@layout/mode_list_layout" />
+
+    <LinearLayout
+        android:id="@+id/accessibility_affordances"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="top|left"
+        android:visibility="gone">
+        <Button
+            android:id="@+id/accessibility_mode_toggle_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_mode_list_toggle"
+            android:contentDescription="@string/accessibility_mode_list_toggle"/>
+        <Button
+            android:id="@+id/accessibility_filmstrip_toggle_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_filmstrip_toggle"
+            android:contentDescription="@string/accessibility_filmstrip_toggle"/>/>
+    </LinearLayout>
+
 </FrameLayout>
