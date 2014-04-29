@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CountdownTimerPopup;
@@ -53,6 +54,7 @@ public class PhotoMenu extends PieController
     private int mPopupStatus;
 
     private CameraActivity mActivity;
+    private boolean mHdrOn = false;
 
     public PhotoMenu(CameraActivity activity, PhotoUI ui, PieRenderer pie) {
         super(activity, pie);
@@ -356,10 +358,18 @@ public class PhotoMenu extends PieController
             setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             setPreference(CameraSettings.KEY_ASD, mSettingOff);
             disableBurstMode();
+            Toast.makeText(mActivity, R.string.hdr_enable_message,
+                            Toast.LENGTH_LONG).show();
+            mHdrOn = true;
         } else if (notSame(pref, CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO) ||
                    notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
             setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
+            if (mHdrOn) {
+                Toast.makeText(mActivity, R.string.scene_enable_message,
+                            Toast.LENGTH_LONG).show();
+            }
+            mHdrOn = false;
             if (!notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
                 setPreference(CameraSettings.KEY_ASD, mSettingOff);
             }
