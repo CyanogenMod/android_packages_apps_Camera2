@@ -22,7 +22,7 @@ import android.content.Context;
  * A helper class to load the metadata of
  * {@link com.android.camera.data.LocalData}.
  */
-class MetadataLoader {
+public class MetadataLoader {
 
     private static final String KEY_METADATA_CACHED = "metadata_cached";
 
@@ -36,7 +36,7 @@ class MetadataLoader {
      * @param data The data to update metadata for.
      * @return true if any metadata was added to the data, false otherwise.
      */
-    static boolean loadMetadata(final Context context, final LocalData data) {
+    public static boolean loadMetadata(final Context context, final LocalData data) {
         boolean metadataAdded = false;
         if (data.getLocalDataType() == LocalData.LOCAL_IMAGE) {
             PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getUri(),

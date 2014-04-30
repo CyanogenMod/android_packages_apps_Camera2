@@ -91,6 +91,7 @@ import com.android.camera.data.LocalMediaData;
 import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.LocalSessionData;
 import com.android.camera.data.MediaDetails;
+import com.android.camera.data.MetadataLoader;
 import com.android.camera.data.PanoramaMetadataLoader;
 import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
@@ -1054,29 +1055,43 @@ public class CameraActivity extends Activity
         updateStorageSpaceAndHint(null);
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
+        LocalData newData = null;
         if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
             sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-            LocalData newData = LocalMediaData.VideoData.fromContentUri(getContentResolver(), uri);
+            newData = LocalMediaData.VideoData.fromContentUri(getContentResolver(), uri);
             if (newData == null) {
                 Log.e(TAG, "Can't find video data in content resolver:" + uri);
                 return;
             }
-            if (mDataAdapter.addData(newData)) {
-                startPeekAnimation(newData);
-            }
         } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
             CameraUtil.broadcastNewPicture(mAppContext, uri);
-            LocalData newData = LocalMediaData.PhotoData.fromContentUri(getContentResolver(), uri);
+            newData = LocalMediaData.PhotoData.fromContentUri(getContentResolver(), uri);
             if (newData == null) {
                 Log.e(TAG, "Can't find photo data in content resolver:" + uri);
                 return;
             }
-            if (mDataAdapter.addData(newData)) {
-                startPeekAnimation(newData);
-            }
         } else {
             Log.w(TAG, "Unknown new media with MIME type:" + mimeType + ", uri:" + uri);
+            return;
         }
+        // We are preloading the metadata for new video since we need the
+        // rotation info for the thumbnail.
+        new AsyncTask<LocalData, Void, LocalData>() {
+
+            @Override
+            protected LocalData doInBackground(LocalData... params) {
+                LocalData data = params[0];
+                MetadataLoader.loadMetadata(getAndroidContext(), data);
+                return data;
+            }
+
+            @Override
+            protected void onPostExecute(LocalData data) {
+                if (mDataAdapter.addData(data)) {
+                    startPeekAnimation(data);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, newData);
     }
 
     @Override
