@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Handler;
@@ -62,9 +63,9 @@ public class OnScreenHint {
      *                 {@link android.app.Application} or
      *                 {@link android.app.Activity} object.
      */
-    private OnScreenHint(Context context) {
-        mWM = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        mY = context.getResources().getDimensionPixelSize(
+    private OnScreenHint(Activity activity) {
+        mWM = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        mY = activity.getResources().getDimensionPixelSize(
                 R.dimen.hint_y_offset);
 
         mParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -103,11 +104,11 @@ public class OnScreenHint {
      * @param text     The text to show.  Can be formatted text.
      *
      */
-    public static OnScreenHint makeText(Context context, CharSequence text) {
-        OnScreenHint result = new OnScreenHint(context);
+    public static OnScreenHint makeText(Activity activity, CharSequence text) {
+        OnScreenHint result = new OnScreenHint(activity);
 
         LayoutInflater inflate =
-                (LayoutInflater) context.getSystemService(
+                (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         View v = inflate.inflate(R.layout.on_screen_hint, null);
         TextView tv = (TextView) v.findViewById(R.id.message);
@@ -188,4 +189,3 @@ public class OnScreenHint {
         }
     };
 }
-
