@@ -611,7 +611,7 @@ public class PhotoModule
         mFirstTimeInitialized = true;
         addIdleHandler();
 
-        mActivity.updateStorageSpaceAndHint();
+        mActivity.updateStorageSpaceAndHint(null);
     }
 
     // If the activity is paused and resumed, this method will be called in
@@ -840,7 +840,7 @@ public class PhotoModule
             // latency. It's true that someone else could write to the SD card
             // in the mean time and fill it, but that could have happened
             // between the shutter press and saving the JPEG too.
-            mActivity.updateStorageSpaceAndHint();
+            mActivity.updateStorageSpaceAndHint(null);
 
             long now = System.currentTimeMillis();
             mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;

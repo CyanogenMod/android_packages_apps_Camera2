@@ -332,6 +332,8 @@ public class VideoModule extends CameraModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
 
+        mActivity.updateStorageSpaceAndHint(null);
+
         /*
          * To reduce startup time, we start the preview in another thread.
          * We make sure the preview is started at the end of onCreate.
@@ -355,7 +357,6 @@ public class VideoModule extends CameraModule
 
         mShutterIconId = CameraUtil.getCameraShutterIconId(
                 mAppController.getCurrentModuleIndex(), mAppController.getAndroidContext());
-
     }
 
     @Override
@@ -1198,7 +1199,7 @@ public class VideoModule extends CameraModule
         if (what == MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN) {
             // We may have run out of space on the sdcard.
             stopVideoRecording();
-            mActivity.updateStorageSpaceAndHint();
+            mActivity.updateStorageSpaceAndHint(null);
         }
     }
 
@@ -1241,57 +1242,60 @@ public class VideoModule extends CameraModule
         mUI.showFocusUI(false);
         mUI.showVideoRecordingHints(false);
 
-        mActivity.updateStorageSpaceAndHint();
-        if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
-            Log.w(TAG, "Storage issue, ignore the start request");
-            return;
-        }
+        mActivity.updateStorageSpaceAndHint(new CameraActivity.OnStorageUpdateDoneListener() {
+            @Override
+            public void onStorageUpdateDone(long bytes) {
+                if (bytes <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
+                    Log.w(TAG, "Storage issue, ignore the start request");
+                } else {
+                    //??
+                    //if (!mCameraDevice.waitDone()) return;
+                    mCurrentVideoUri = null;
 
-        //??
-        //if (!mCameraDevice.waitDone()) return;
-        mCurrentVideoUri = null;
+                    initializeRecorder();
+                    if (mMediaRecorder == null) {
+                        Log.e(TAG, "Fail to initialize media recorder");
+                        return;
+                    }
 
-        initializeRecorder();
-        if (mMediaRecorder == null) {
-            Log.e(TAG, "Fail to initialize media recorder");
-            return;
-        }
+                    pauseAudioPlayback();
 
-        pauseAudioPlayback();
+                    try {
+                        mMediaRecorder.start(); // Recording is now started
+                    } catch (RuntimeException e) {
+                        Log.e(TAG, "Could not start media recorder. ", e);
+                        releaseMediaRecorder();
+                        // If start fails, frameworks will not lock the camera for us.
+                        mCameraDevice.lock();
+                        return;
+                    }
+                    mAppController.getCameraAppUI().setSwipeEnabled(false);
 
-        try {
-            mMediaRecorder.start(); // Recording is now started
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Could not start media recorder. ", e);
-            releaseMediaRecorder();
-            // If start fails, frameworks will not lock the camera for us.
-            mCameraDevice.lock();
-            return;
-        }
-        mAppController.getCameraAppUI().setSwipeEnabled(false);
+                    // The parameters might have been altered by MediaRecorder already.
+                    // We need to force mCameraDevice to refresh before getting it.
+                    mCameraDevice.refreshParameters();
+                    // The parameters may have been changed by MediaRecorder upon starting
+                    // recording. We need to alter the parameters if we support camcorder
+                    // zoom. To reduce latency when setting the parameters during zoom, we
+                    // update mParameters here once.
+                    mParameters = mCameraDevice.getParameters();
 
-        // The parameters might have been altered by MediaRecorder already.
-        // We need to force mCameraDevice to refresh before getting it.
-        mCameraDevice.refreshParameters();
-        // The parameters may have been changed by MediaRecorder upon starting
-        // recording. We need to alter the parameters if we support camcorder
-        // zoom. To reduce latency when setting the parameters during zoom, we
-        // update mParameters here once.
-        mParameters = mCameraDevice.getParameters();
+                    mMediaRecorderRecording = true;
+                    mActivity.lockOrientation();
+                    mRecordingStartTime = SystemClock.uptimeMillis();
 
-        mMediaRecorderRecording = true;
-        mActivity.lockOrientation();
-        mRecordingStartTime = SystemClock.uptimeMillis();
+                    // A special case of mode options closing: during capture it should
+                    // not be possible to change mode state.
+                    mAppController.getCameraAppUI().hideModeOptions();
+                    mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
+                    mUI.showRecordingUI(true);
 
-        // A special case of mode options closing: during capture it should
-        // not be possible to change mode state.
-        mAppController.getCameraAppUI().hideModeOptions();
-        mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
-        mUI.showRecordingUI(true);
-
-        setFocusParameters();
-        updateRecordingTime();
-        mActivity.enableKeepScreenOn(true);
+                    setFocusParameters();
+                    updateRecordingTime();
+                    mActivity.enableKeepScreenOn(true);
+                }
+            }
+        });
     }
 
     private Bitmap getVideoThumbnail() {
@@ -1394,8 +1398,11 @@ public class VideoModule extends CameraModule
             mParameters = mCameraDevice.getParameters();
         }
 
-        // Redo storage space calculation so it's accurate for the next video recording.
-        mActivity.updateStorageSpaceAndHint();
+        // Check this in advance of each shot so we don't add to shutter
+        // latency. It's true that someone else could write to the SD card
+        // in the mean time and fill it, but that could have happened
+        // between the shutter press and saving the file too.
+        mActivity.updateStorageSpaceAndHint(null);
 
         return fail;
     }

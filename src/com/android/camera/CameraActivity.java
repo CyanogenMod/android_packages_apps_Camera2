@@ -1054,6 +1054,7 @@ public class CameraActivity extends Activity
 
     @Override
     public void notifyNewMedia(Uri uri) {
+        updateStorageSpaceAndHint(null);
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
         if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
@@ -1482,6 +1483,7 @@ public class CameraActivity extends Activity
         Log.v(TAG, "Build info: " + Build.DISPLAY);
 
         mPaused = false;
+        updateStorageSpaceAndHint(null);
 
         mLastLayoutOrientation = getResources().getConfiguration().orientation;
 
@@ -1772,27 +1774,42 @@ public class CameraActivity extends Activity
         }
     }
 
-    protected void updateStorageSpaceAndHint() {
+    protected interface OnStorageUpdateDoneListener {
+        public void onStorageUpdateDone(long bytes);
+    }
+
+    protected void updateStorageSpaceAndHint(final OnStorageUpdateDoneListener callback) {
         /*
          * We execute disk operations on a background thread in order to
          * free up the UI thread.  Synchronizing on the lock below ensures
          * that when getStorageSpaceBytes is called, the main thread waits
          * until this method has completed.
+         *
+         * However, .execute() does not ensure this execution block will be
+         * run right away (.execute() schedules this AsyncTask for sometime
+         * in the future. executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+         * tries to execute the task in parellel with other AsyncTasks, but
+         * there's still no guarantee).
+         * e.g. don't call this then immediately call getStorageSpaceBytes().
+         * Instead, pass in an OnStorageUpdateDoneListener.
          */
-        (new AsyncTask<Void, Void, Void>() {
+        (new AsyncTask<Void, Void, Long>() {
             @Override
-            protected Void doInBackground(Void ... arg) {
+            protected Long doInBackground(Void ... arg) {
                 synchronized (mStorageSpaceLock) {
                     mStorageSpaceBytes = Storage.getAvailableSpace();
+                    return mStorageSpaceBytes;
                 }
-                return null;
             }
 
             @Override
-            protected void onPostExecute(Void ignore) {
-                updateStorageHint(getStorageSpaceBytes());
+            protected void onPostExecute(Long bytes) {
+                updateStorageHint(bytes);
+                if (callback != null) {
+                    callback.onStorageUpdateDone(bytes);
+                }
             }
-        }).execute();
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     protected void updateStorageHint(long storageSpace) {
