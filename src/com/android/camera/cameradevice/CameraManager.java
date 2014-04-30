@@ -28,7 +28,7 @@ import android.view.SurfaceHolder;
 /**
  * An interface which provides possible camera device operations.
  *
- * The client should call {@code CameraManager.cameraOpen} to get an instance
+ * The client should call {@code CameraManager.openCamera} to get an instance
  * of {@link CameraManager.CameraProxy} to control the camera. Classes
  * implementing this interface should have its own one unique {@code Thread}
  * other than the main thread for camera operations. Camera device callbacks
@@ -113,7 +113,7 @@ public interface CameraManager {
     }
 
     /**
-     * An interface to be called for any exception caught when opening the
+     * An interface to be called for any events when opening or closing the
      * camera device. This error callback is different from the one defined
      * in the framework, {@link android.hardware.Camera.ErrorCallback}, which
      * is used after the camera is opened.
@@ -146,7 +146,7 @@ public interface CameraManager {
          *
          * @param cameraId The camera which is causing the open error.
          */
-        public void onDeviceOpenedAlready(int cameraId);
+        public void onDeviceOpenedAlready(int cameraId, String info);
 
         /**
          * Callback when {@link java.io.IOException} is caught during
@@ -155,7 +155,7 @@ public interface CameraManager {
          * @param mgr The {@link CameraManager}
          *            with the reconnect failure.
          */
-        public void onReconnectionFailure(CameraManager mgr);
+        public void onReconnectionFailure(CameraManager mgr, String info);
     }
 
     /**
@@ -166,10 +166,19 @@ public interface CameraManager {
      *
      * @param handler The {@link android.os.Handler} in which the callback
      *                was handled.
-     * @param callback The callback when any error happens.
+     * @param callback The callback for the result.
      * @param cameraId The camera ID to open.
      */
-    public void cameraOpen(Handler handler, int cameraId, CameraOpenCallback callback);
+    public void openCamera(Handler handler, int cameraId, CameraOpenCallback callback);
+
+
+    /**
+     * Closes the camera device.
+     *
+     * @param camera The camera to close. {@code null} means all.
+     * @param synced Whether this call should be synchronous.
+     */
+    public void closeCamera(CameraProxy camera, boolean synced);
 
     /**
      * An interface that takes camera operation requests and post messages to the
@@ -193,16 +202,6 @@ public interface CameraManager {
          * @return
          */
         public int getCameraId();
-
-        /**
-         * Releases the camera device synchronously.
-         * This function must be synchronous so the caller knows exactly when the camera
-         * is released and can continue on.
-         * TODO: make this package-private after this interface is refactored under app.
-         *
-         * @param synchronous Whether this call should be synchronous.
-         */
-        public void release(boolean synchronous);
 
         /**
          * Reconnects to the camera device. On success, the camera device will
@@ -434,4 +433,10 @@ public interface CameraManager {
      */
     public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
             Handler handler);
+
+    /**
+     * Recycles the resources used by this instance. CameraManager will be in
+     * an unusable state after calling this.
+     */
+    public void recycle();
 }

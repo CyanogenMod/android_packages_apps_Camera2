@@ -135,11 +135,9 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
     }
 
-    /**
-     * Recycles the resources used by this instance. CameraManager will be in
-     * an unusable state after calling this.
-     */
+    @Override
     public void recycle() {
+        closeCamera(null, true);
         mDispatchThread.end();
     }
 
@@ -240,6 +238,7 @@ class AndroidCameraManagerImpl implements CameraManager {
     private class CameraHandler extends Handler {
 
         private Camera mCamera;
+        private int mCameraId;
 
         private LinkedList<Integer> mMsgHistory;
 
@@ -346,12 +345,13 @@ class AndroidCameraManagerImpl implements CameraManager {
                         final CameraOpenCallback openCallback = (CameraOpenCallback) msg.obj;
                         final int cameraId = msg.arg1;
                         if (mCameraState.getState() != CAMERA_UNOPENED) {
-                            openCallback.onDeviceOpenedAlready(cameraId);
+                            openCallback.onDeviceOpenedAlready(cameraId, generateHistoryString(cameraId));
                             break;
                         }
 
                         mCamera = android.hardware.Camera.open(cameraId);
                         if (mCamera != null) {
+                            mCameraId = cameraId;
                             mParametersIsDirty = true;
 
                             // Get a instance of Camera.Parameters for later use.
@@ -373,9 +373,13 @@ class AndroidCameraManagerImpl implements CameraManager {
                     }
 
                     case RELEASE: {
-                        mCamera.release();
-                        mCameraState.setState(CAMERA_UNOPENED);
-                        mCamera = null;
+                        if (mCamera != null) {
+                            mCamera.release();
+                            mCameraState.setState(CAMERA_UNOPENED);
+                            mCamera = null;
+                        } else {
+                            Log.w(TAG, "Releasing camera without any camera opened.");
+                        }
                         break;
                     }
 
@@ -387,7 +391,8 @@ class AndroidCameraManagerImpl implements CameraManager {
                             mCamera.reconnect();
                         } catch (IOException ex) {
                             if (cbForward != null) {
-                                cbForward.onReconnectionFailure(AndroidCameraManagerImpl.this);
+                                cbForward.onReconnectionFailure(AndroidCameraManagerImpl.this,
+                                        generateHistoryString(mCameraId));
                             }
                             break;
                         }
@@ -623,7 +628,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                     runJob(job);
                     waitLock.wait();
                 } catch (InterruptedException ex) {
-                    Log.v(TAG, "Job interrupted");
+                    Log.w(TAG, "Job interrupted");
                     if (SystemClock.uptimeMillis() > timeoutBound) {
                         // Timeout.
                         Log.w(TAG, "Timeout waiting camera operation:" + jobMsg);
@@ -661,7 +666,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                         try {
                             mJobQueue.wait();
                         } catch (InterruptedException ex) {
-                            Log.v(TAG, "Dispatcher thread wait() interrupted, exiting");
+                            Log.w(TAG, "Dispatcher thread wait() interrupted, exiting");
                             break;
                         }
                     }
@@ -701,8 +706,8 @@ class AndroidCameraManagerImpl implements CameraManager {
     }
 
     @Override
-    public void cameraOpen(final Handler handler, final int cameraId,
-            final CameraOpenCallback callback) {
+    public void openCamera(final Handler handler, final int cameraId,
+                           final CameraOpenCallback callback) {
         mDispatchThread.runJob(new Runnable() {
             @Override
             public void run() {
@@ -710,6 +715,29 @@ class AndroidCameraManagerImpl implements CameraManager {
                         CameraOpenCallbackForward.getNewInstance(handler, callback)).sendToTarget();
             }
         });
+    }
+
+    @Override
+    public void closeCamera(CameraProxy camera, boolean synced) {
+        if (synced) {
+            final WaitDoneBundle bundle = new WaitDoneBundle();
+
+            mDispatchThread.runJobSync(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraHandler.obtainMessage(RELEASE).sendToTarget();
+                    mCameraHandler.post(bundle.mUnlockRunnable);
+                }
+            }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "camera release");
+        } else {
+            mDispatchThread.runJob(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraHandler.removeCallbacksAndMessages(null);
+                    mCameraHandler.obtainMessage(RELEASE).sendToTarget();
+                }
+            });
+        }
     }
 
     /**
@@ -734,31 +762,6 @@ class AndroidCameraManagerImpl implements CameraManager {
         @Override
         public int getCameraId() {
             return mCameraId;
-        }
-
-        // TODO: Make this package private.
-        @Override
-        public void release(boolean sync) {
-            Log.v(TAG, "camera manager release");
-            if (sync) {
-                final WaitDoneBundle bundle = new WaitDoneBundle();
-
-                mDispatchThread.runJobSync(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCameraHandler.sendEmptyMessage(RELEASE);
-                        mCameraHandler.post(bundle.mUnlockRunnable);
-                    }
-                }, bundle.mWaitLock, CAMERA_OPERATION_TIMEOUT_MS, "camera release");
-            } else {
-                mDispatchThread.runJob(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCameraHandler.removeCallbacksAndMessages(null);
-                        mCameraHandler.sendEmptyMessage(RELEASE);
-                    }
-                });
-            }
         }
 
         @Override
@@ -975,7 +978,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                 @Override
                 public void onPictureTaken(final byte[] data, Camera camera) {
                     if (mCameraState.getState() != CAMERA_CAPTURING) {
-                        Log.v(TAG, "picture callback returning when not capturing");
+                        Log.w(TAG, "picture callback returning when not capturing");
                     } else {
                         mCameraState.setState(CAMERA_IDLE);
                     }
@@ -1503,21 +1506,21 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
-        public void onDeviceOpenedAlready(final int cameraId) {
+        public void onDeviceOpenedAlready(final int cameraId, final String info) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onDeviceOpenedAlready(cameraId);
+                    mCallback.onDeviceOpenedAlready(cameraId, info);
                 }
             });
         }
 
         @Override
-        public void onReconnectionFailure(final CameraManager mgr) {
+        public void onReconnectionFailure(final CameraManager mgr, final String info) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onReconnectionFailure(mgr);
+                    mCallback.onReconnectionFailure(mgr, info);
                 }
             });
         }

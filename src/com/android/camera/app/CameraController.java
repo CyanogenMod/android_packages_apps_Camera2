@@ -130,11 +130,12 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
-        mCameraProxy = camera;
-        if (mRequestingCameraId == EMPTY_REQUEST) {
-            // Not requesting any camera.
+        Log.v(TAG, "onCameraOpened");
+        if (mRequestingCameraId != camera.getCameraId()) {
+            // Not requesting any camera or not waiting for this one.
             return;
         }
+        mCameraProxy = camera;
         mRequestingCameraId = EMPTY_REQUEST;
         if (mCallbackReceiver != null) {
             mCallbackReceiver.onCameraOpened(camera);
@@ -156,16 +157,16 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
-    public void onDeviceOpenedAlready(int cameraId) {
+    public void onDeviceOpenedAlready(int cameraId, String info) {
         if (mCallbackReceiver != null) {
-            mCallbackReceiver.onDeviceOpenedAlready(cameraId);
+            mCallbackReceiver.onDeviceOpenedAlready(cameraId, info);
         }
     }
 
     @Override
-    public void onReconnectionFailure(CameraManager mgr) {
+    public void onReconnectionFailure(CameraManager mgr, String info) {
         if (mCallbackReceiver != null) {
-            mCallbackReceiver.onReconnectionFailure(mgr);
+            mCallbackReceiver.onReconnectionFailure(mgr, info);
         }
     }
 
@@ -188,11 +189,11 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
             checkAndOpenCamera(mContext, mCameraManager, id, mCallbackHandler, this);
         } else if (mCameraProxy.getCameraId() != id) {
             // Already has another camera opened.
-            mCameraProxy.release(false);
-            mCameraProxy = null;
+            mCameraManager.closeCamera(mCameraProxy, false);
             checkAndOpenCamera(mContext, mCameraManager, id, mCallbackHandler, this);
         } else {
             // The same camera, just do a reconnect.
+            Log.v(TAG, "reconnecting to use the existing camera");
             mCameraProxy.reconnect(mCallbackHandler, this);
             mCameraProxy = null;
         }
@@ -228,13 +229,10 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
      * Closes the opened camera device.
      * TODO: Make this method package private.
      */
-    public void closeCamera() {
+    public void closeCamera(boolean synced) {
         Log.v(TAG, "closing camera");
-        if (mCameraProxy == null) {
-            return;
-        }
-        mCameraProxy.release(true);
         mCameraProxy = null;
+        mCameraManager.closeCamera(mCameraProxy, synced);
         mRequestingCameraId = EMPTY_REQUEST;
     }
 
@@ -242,7 +240,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
             final int cameraId, Handler handler, final CameraManager.CameraOpenCallback cb) {
         try {
             CameraUtil.throwIfCameraDisabled(context);
-            cameraManager.cameraOpen(handler, cameraId, cb);
+            cameraManager.openCamera(handler, cameraId, cb);
         } catch (CameraDisabledException ex) {
             handler.post(new Runnable() {
                 @Override

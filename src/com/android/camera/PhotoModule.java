@@ -48,6 +48,7 @@ import android.view.View;
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.app.CameraProvider;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
@@ -254,6 +255,13 @@ public class PhotoModule
                     }
                 }
             };
+
+    private final Runnable mResumeTaskRunnable = new Runnable() {
+        @Override
+        public void run() {
+            onResumeTasks();
+        }
+    };
 
     private void checkDisplayRotation() {
         // Set the display orientation if display rotation has changed.
@@ -1179,8 +1187,16 @@ public class PhotoModule
     }
 
     private void onResumeTasks() {
+        if (mPaused) {
+            return;
+        }
         Log.v(TAG, "Executing onResumeTasks.");
-        mActivity.getCameraProvider().requestCamera(mCameraId);
+        CameraProvider camProvider = mActivity.getCameraProvider();
+        if (camProvider == null) {
+            // No camera provider, the Activity is destroyed already.
+            return;
+        }
+        camProvider.requestCamera(mCameraId);
 
         mJpegPictureCallbackTime = 0;
         mZoomValue = 0;
@@ -1262,12 +1278,7 @@ public class PhotoModule
             Log.v(TAG, "On resume, from lock screen.");
             // Note: onPauseAfterSuper() will delete this runnable, so we will
             // at most have 1 copy queued up.
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onResumeTasks();
-                }
-            }, ON_RESUME_TASKS_DELAY_MSEC);
+            mHandler.postDelayed(mResumeTaskRunnable, ON_RESUME_TASKS_DELAY_MSEC);
         } else {
             Log.v(TAG, "On resume.");
             onResumeTasks();
@@ -1280,6 +1291,7 @@ public class PhotoModule
     public void pause() {
         getServices().getRemoteShutterListener().onModuleExit();
         mPaused = true;
+        mHandler.removeCallbacks(mResumeTaskRunnable);
         SessionStatsCollector.instance().sessionActive(false);
 
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
