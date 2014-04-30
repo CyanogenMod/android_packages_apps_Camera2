@@ -393,7 +393,11 @@ public class VideoModule extends CameraModule
 
     private void takeASnapshot() {
         // Only take snapshots if video snapshot is supported by device
-        if (CameraUtil.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
+        if(!mParameters.isVideoSnapshotSupported()) {
+            Log.w(TAG, "Cannot take a video snapshot - not supported by hardware");
+            return;
+        }
+        if (!mIsVideoCaptureIntent) {
             if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress
                     || !mAppController.isShutterEnabled()) {
                 return;
