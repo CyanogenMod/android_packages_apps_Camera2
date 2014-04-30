@@ -221,11 +221,18 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ໂຕເລືອກ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"ປິດລາຍ​ຊື່​ໂໝດແລ້ວ"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"​ເປີດ​ລາຍ​ຊື່​ໂໝດ​ແລ້ວ"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"​ກົດ​​​ປຸ່ມ​ລູກ​ສອນ​ຊ້າຍ​ເພື່ອ​​ສະ​ລັບ​ລາຍ​ຊື່​ໂໝດ"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"​ຈັບ​ພາບ​ແລ້ວ"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"​​ປົດ​ລັອກ​ໃຫ້​ກ້ອງ​ຖ່າຍ​ຮູບ"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"ໄຟ​ລ໌​ຈາກ %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"​ກຳ​ລັງ​ປະ​ມວນ​ຜົນ​ໄຟ​ລ໌"</string>
+    <!-- no translation found for accessibility_mode_list_toggle (4784230103566918645) -->
+    <skip />
+    <!-- no translation found for btn_mode_list_toggle (3986242443098400164) -->
+    <skip />
+    <!-- no translation found for accessibility_filmstrip_toggle (6966978483643396442) -->
+    <skip />
+    <!-- no translation found for btn_filmstrip_toggle (3666693972882351490) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"ເປີດ"</string>
     <string name="capital_off" msgid="3020696135020167263">"ປິດ"</string>
     <string name="video_control_play" msgid="6895236811408921715">"ຫຼິ້ນ​ວິ​ດີ​ໂອ"</string>
