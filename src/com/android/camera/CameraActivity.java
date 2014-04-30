@@ -1823,8 +1823,9 @@ public class CameraActivity extends Activity
         }
 
         if (message != null) {
+            Log.w(TAG, "Storage warning: " + message);
             if (mStorageHint == null) {
-                mStorageHint = OnScreenHint.makeText(mAppContext, message);
+                mStorageHint = OnScreenHint.makeText(CameraActivity.this, message);
             } else {
                 mStorageHint.setText(message);
             }
@@ -1832,7 +1833,7 @@ public class CameraActivity extends Activity
         } else if (mStorageHint != null) {
             mStorageHint.cancel();
             mStorageHint = null;
-        }
+       }
     }
 
     protected void setResultEx(int resultCode) {
