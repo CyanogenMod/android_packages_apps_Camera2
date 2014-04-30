@@ -324,15 +324,13 @@ public class VideoModule extends CameraModule
         // rid of passing in the activity directly.
         mAppController = mActivity;
 
-        mActivity.updateStorageSpaceAndHint();
+        mActivity.updateStorageSpaceAndHint(null);
 
         mUI = new VideoUI(mActivity, this,  mActivity.getModuleLayoutRoot());
         mActivity.setPreviewStatusListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
-
-        mActivity.updateStorageSpaceAndHint(null);
 
         /*
          * To reduce startup time, we start the preview in another thread.
