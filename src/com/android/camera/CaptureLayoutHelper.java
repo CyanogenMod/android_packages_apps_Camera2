@@ -325,6 +325,26 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
             }
             rotate.mapRect(config.mBottomBarRect);
         }
+
+        // Round the rect first to avoid rounding errors later on.
+        round(config.mBottomBarRect);
+        round(config.mPreviewRect);
+
         return config;
+    }
+
+    /**
+     * Round the float coordinates in the given rect, and store the rounded value
+     * back in the rect.
+     */
+    public static void round(RectF rect) {
+        if (rect == null) {
+            return;
+        }
+        float left = Math.round(rect.left);
+        float top = Math.round(rect.top);
+        float right = Math.round(rect.right);
+        float bottom = Math.round(rect.bottom);
+        rect.set(left, top, right, bottom);
     }
 }
