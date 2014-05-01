@@ -967,7 +967,7 @@ public class CameraSettings {
     }
 
     public static List<String> getSupportedSlowShutter(Parameters params) {
-        String p = params.get("slow-shutter-values");
+        String p = params.get("exposure-time-values");
         if (p != null) {
             return Arrays.asList(p.split(","));
         }
@@ -976,13 +976,13 @@ public class CameraSettings {
 
     public static void setSlowShutter(Parameters params, String value) {
         if (getSupportedSlowShutter(params) != null) {
-            params.set("slow-shutter", value);
+            params.set("exposure-time", value);
         }
     }
 
     public static boolean isSlowShutterEnabled(Parameters params) {
         return (getSupportedSlowShutter(params) != null) &&
-                !"slow-shutter-off".equals(params.get("slow-shutter"));
+                !"0".equals(params.get("exposure-time"));
     }
 
     public static boolean useZSLBurst(Parameters params) {
