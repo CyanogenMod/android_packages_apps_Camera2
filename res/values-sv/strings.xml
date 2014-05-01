@@ -63,7 +63,7 @@
     <string name="location" msgid="564326205780827668">"Plats"</string>
     <string name="path" msgid="5927003361865586353">"Sökväg"</string>
     <string name="width" msgid="7045750687833828758">"Bredd"</string>
-    <string name="height" msgid="5186001199353423689">"Längd"</string>
+    <string name="height" msgid="5186001199353423689">"Höjd"</string>
     <string name="orientation" msgid="3883761294106680270">"Orientering"</string>
     <string name="duration" msgid="5316211067383665008">"Längd"</string>
     <string name="mimetype" msgid="6415940055077963944">"MIME-typ"</string>
@@ -221,11 +221,18 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Alternativ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Lägeslistan har stängts"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lägeslistan har öppnats"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Tryck till vänster om du vill visa/dölja lägeslistan"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"En bild har tagits"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås upp till Kamera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Media från %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Bearbetar media"</string>
+    <!-- no translation found for accessibility_mode_list_toggle (4784230103566918645) -->
+    <skip />
+    <!-- no translation found for btn_mode_list_toggle (3986242443098400164) -->
+    <skip />
+    <!-- no translation found for accessibility_filmstrip_toggle (6966978483643396442) -->
+    <skip />
+    <!-- no translation found for btn_filmstrip_toggle (3666693972882351490) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"PÅ"</string>
     <string name="capital_off" msgid="3020696135020167263">"AV"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Spela upp video"</string>
