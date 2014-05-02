@@ -45,20 +45,35 @@ public class SettingsUtil {
         public Size medium;
         public Size small;
 
-        public Size getFromSetting(String sizeSetting) {
-            // Sanitize the value to be either small, medium or large. Default
-            // to the latter.
-            if (!SIZE_SMALL.equals(sizeSetting) && !SIZE_MEDIUM.equals(sizeSetting)) {
-                sizeSetting = SIZE_LARGE;
-            }
-
+        /**
+         * This takes a string preference describing the desired resolution and
+         * returns the camera size it represents. <br/>
+         * It supports historical values of SIZE_LARGE, SIZE_MEDIUM, and
+         * SIZE_SMALL as well as resolutions separated by an x i.e. "1024x576" <br/>
+         * If it fails to parse the string, it will return the old SIZE_LARGE
+         * value.
+         * 
+         * @param sizeSetting the preference string to convert to a size
+         * @param supportedSizes all possible camera sizes that are supported
+         * @return the size that this setting represents
+         */
+        public Size getFromSetting(String sizeSetting, List<Size> supportedSizes) {
             if (SIZE_LARGE.equals(sizeSetting)) {
                 return large;
             } else if (SIZE_MEDIUM.equals(sizeSetting)) {
                 return medium;
-            } else {
+            } else if (SIZE_SMALL.equals(sizeSetting)) {
                 return small;
+            } else if (sizeSetting != null && sizeSetting.split("x").length == 2) {
+                String[] parts = sizeSetting.split("x");
+                for (Size size : supportedSizes) {
+                    if (size.width() == Integer.valueOf(parts[0]) &&
+                            size.height() == Integer.valueOf(parts[1])) {
+                        return size;
+                    }
+                }
             }
+            return large;
         }
 
         @Override
@@ -159,7 +174,8 @@ public class SettingsUtil {
      */
     private static Size getCameraPictureSize(String sizeSetting, List<Size> supported,
             int cameraId) {
-        return getSelectedCameraPictureSizes(supported, cameraId).getFromSetting(sizeSetting);
+        return getSelectedCameraPictureSizes(supported, cameraId).getFromSetting(sizeSetting,
+                supported);
     }
 
     /**
@@ -346,6 +362,16 @@ public class SettingsUtil {
             }
         }
         return closestMatchIndex;
+    }
+
+    /**
+     * This is used to serialize a size to a string for storage in settings
+     * 
+     * @param size The size to serialize.
+     * @return the string to be saved in preferences
+     */
+    public static String sizeToSetting(Size size) {
+        return ((Integer) size.width()).toString() + "x" + ((Integer) size.height()).toString();
     }
 
     /**

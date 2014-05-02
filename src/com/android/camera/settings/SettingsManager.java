@@ -960,16 +960,14 @@ public class SettingsManager {
     }
     public static Setting getPictureSizeBackSetting(Context context) {
         String defaultValue = null;
-        String[] values = context.getResources().getStringArray(
-                R.array.pref_camera_picturesize_entryvalues);
+        String[] values = null;
         return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE_BACK,
                 values, FLUSH_OFF);
     }
 
     public static Setting getPictureSizeFrontSetting(Context context) {
         String defaultValue = null;
-        String[] values = context.getResources().getStringArray(
-                R.array.pref_camera_picturesize_entryvalues);
+        String[] values = null;
         return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue, KEY_PICTURE_SIZE_FRONT,
                 values, FLUSH_OFF);
     }
