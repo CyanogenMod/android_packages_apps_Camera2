@@ -84,8 +84,10 @@ public class CameraSettingsActivity extends FragmentActivity {
         private String[] mCamcorderProfileNames;
 
         // Selected resolutions for the different cameras and sizes.
-        private SelectedPictureSizes mPictureSizesBack;
-        private SelectedPictureSizes mPictureSizesFront;
+        private SelectedPictureSizes mOldPictureSizesBack;
+        private SelectedPictureSizes mOldPictureSizesFront;
+        private List<Size> mPictureSizesBack;
+        private List<Size> mPictureSizesFront;
         private SelectedVideoQualities mVideoQualitiesBack;
         private SelectedVideoQualities mVideoQualitiesFront;
 
@@ -284,9 +286,9 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             ListPreference listPreference = (ListPreference) preference;
             if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_BACK)) {
-                setSummaryForSelection(mPictureSizesBack, listPreference);
+                setSummaryForSelection(mOldPictureSizesBack, mPictureSizesBack, listPreference);
             } else if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_FRONT)) {
-                setSummaryForSelection(mPictureSizesFront, listPreference);
+                setSummaryForSelection(mOldPictureSizesFront, mPictureSizesFront, listPreference);
             } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_BACK)) {
                 setSummaryForSelection(mVideoQualitiesBack, listPreference);
             } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_FRONT)) {
@@ -303,23 +305,21 @@ public class CameraSettingsActivity extends FragmentActivity {
          *            choose from.
          * @param preference The preference to set the entries for.
          */
-        private void setEntriesForSelection(SelectedPictureSizes selectedSizes,
+        private void setEntriesForSelection(List<Size> selectedSizes,
                 ListPreference preference) {
             if (selectedSizes == null) {
                 return;
             }
 
-            // Avoid adding double entries at the bottom of the list which
-            // indicates that not at least 3 sizes are supported.
-            ArrayList<String> entries = new ArrayList<String>();
-            entries.add(getSizeSummaryString(selectedSizes.large));
-            if (selectedSizes.medium != selectedSizes.large) {
-                entries.add(getSizeSummaryString(selectedSizes.medium));
+            String[] entries = new String[selectedSizes.size()];
+            String[] entryValues = new String[selectedSizes.size()];
+            for (int i = 0; i < selectedSizes.size(); i++) {
+                Size size = selectedSizes.get(i);
+                entries[i] = getSizeSummaryString(size);
+                entryValues[i] = SettingsUtil.sizeToSetting(size);
             }
-            if (selectedSizes.small != selectedSizes.medium) {
-                entries.add(getSizeSummaryString(selectedSizes.small));
-            }
-            preference.setEntries(entries.toArray(new String[0]));
+            preference.setEntries(entries);
+            preference.setEntryValues(entryValues);
         }
 
         /**
@@ -351,16 +351,19 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Sets the summary for the given list preference.
          *
-         * @param selectedSizes The selected picture sizes.
+         * @param oldPictureSizes The old selected picture sizes for small medium and large
+         * @param displayableSizes The human readable preferred sizes
          * @param preference The preference for which to set the summary.
          */
-        private void setSummaryForSelection(SelectedPictureSizes selectedSizes,
-                ListPreference preference) {
-            if (selectedSizes == null) {
+        private void setSummaryForSelection(SelectedPictureSizes oldPictureSizes,
+                List<Size> displayableSizes, ListPreference preference) {
+            if (oldPictureSizes == null) {
                 return;
             }
 
-            Size selectedSize = selectedSizes.getFromSetting(preference.getValue());
+            String setting = preference.getValue();
+            Size selectedSize = oldPictureSizes.getFromSetting(setting, displayableSizes);
+
             preference.setSummary(getSizeSummaryString(selectedSize));
         }
 
@@ -390,17 +393,13 @@ public class CameraSettingsActivity extends FragmentActivity {
             // Back camera.
             int backCameraId = getCameraId(CameraInfo.CAMERA_FACING_BACK);
             if (backCameraId >= 0) {
-                // Check whether we cached the sizes:
-                mPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(null, backCameraId);
-                if (mPictureSizesBack == null) {
-                    Camera backCamera = Camera.open(backCameraId);
-                    if (backCamera != null) {
-                        List<Size> sizes = Size.buildListFromCameraSizes(
-                                backCamera.getParameters().getSupportedPictureSizes());
-                        backCamera.release();
-                        mPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(sizes,
-                                backCameraId);
-                    }
+                Camera backCamera = Camera.open(backCameraId);
+                if (backCamera != null) {
+                    List<Size> sizes = Size.buildListFromCameraSizes(backCamera.getParameters().getSupportedPictureSizes());
+                    backCamera.release();
+                    mOldPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(sizes,
+                            backCameraId);
+                    mPictureSizesBack = ResolutionUtil.getDisplayableSizesFromSupported(sizes);
                 }
                 mVideoQualitiesBack = SettingsUtil.getSelectedVideoQualities(backCameraId);
             } else {
@@ -411,17 +410,14 @@ public class CameraSettingsActivity extends FragmentActivity {
             // Front camera.
             int frontCameraId = getCameraId(CameraInfo.CAMERA_FACING_FRONT);
             if (frontCameraId >= 0) {
-                mPictureSizesFront = SettingsUtil.getSelectedCameraPictureSizes(null,
-                        frontCameraId);
-                if (mPictureSizesFront == null) {
-                    Camera frontCamera = Camera.open(frontCameraId);
-                    if (frontCamera != null) {
-                        List<Size> sizes = Size.buildListFromCameraSizes(
-                                frontCamera.getParameters().getSupportedPictureSizes());
-                        frontCamera.release();
-                        mPictureSizesFront = SettingsUtil.getSelectedCameraPictureSizes(sizes,
-                                frontCameraId);
-                    }
+                Camera frontCamera = Camera.open(frontCameraId);
+                if (frontCamera != null) {
+                    List<Size> sizes = Size.buildListFromCameraSizes(frontCamera.getParameters().getSupportedPictureSizes());
+                    frontCamera.release();
+                    mOldPictureSizesFront= SettingsUtil.getSelectedCameraPictureSizes(sizes,
+                            frontCameraId);
+                    mPictureSizesFront =
+                            ResolutionUtil.getDisplayableSizesFromSupported(sizes);
                 }
                 mVideoQualitiesFront = SettingsUtil.getSelectedVideoQualities(frontCameraId);
             } else {
@@ -456,8 +452,9 @@ public class CameraSettingsActivity extends FragmentActivity {
          *         picture size in megapixels.
          */
         private String getSizeSummaryString(Size size) {
+            String aspectRatio = ResolutionUtil.aspectRatioDescription(size);
             String megaPixels = sMegaPixelFormat.format((size.width() * size.height()) / 1e6);
-            return getResources().getString(R.string.setting_summary_x_megapixels, megaPixels);
+            return "(" + aspectRatio + ") " + getResources().getString(R.string.setting_summary_x_megapixels, megaPixels);
         }
     }
 }
