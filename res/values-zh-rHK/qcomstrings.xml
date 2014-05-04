@@ -21,6 +21,8 @@
     limitations under the License.
 -->
 <resources>
+  <string name="pref_camera_powermode_entry_lp">低電量</string>
+  <string name="pref_camera_powermode_entry_np">正常電量</string>
   <string name="pref_camera_video_duration_entry_10">10 分鐘</string>
   <string name="pref_camera_video_duration_entry_30">30 分鐘</string>
   <string name="pref_camera_zsl_entry_off">關閉</string>

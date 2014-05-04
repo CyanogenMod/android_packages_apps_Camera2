@@ -18,6 +18,9 @@
 <resources>
   <string name="pref_camera_scenemode_entry_dark">深色</string>
   <string name="pref_camera_scenemode_entry_supernight">漆黑深夜</string>
+  <string name="pref_camera_coloreffect_entry_point_blue">點藍</string>
+  <string name="pref_camera_coloreffect_entry_point_green">點綠</string>
+  <string name="pref_camera_coloreffect_entry_point_red_yellow">點紅黃</string>
   <string name="pref_camera_burst_entry_off">關閉</string>
   <string name="pref_camera_slow_shutter_entry_off">關閉</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 秒</string>
