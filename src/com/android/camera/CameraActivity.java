@@ -439,6 +439,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCameraOpened(CameraManager.CameraProxy camera) {
+        if (mPaused) {
+            return;
+        }
         /**
          * The current UI requires that the flash option visibility in front-facing
          * camera be
@@ -459,7 +462,7 @@ public class CameraActivity extends Activity
 
         if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {
             // We shouldn't be here. Just close the camera and leave.
-            camera.release(false);
+            mCameraController.closeCamera(false);
             throw new IllegalStateException("Camera opened but the module shouldn't be " +
                     "requesting");
         }
@@ -482,28 +485,31 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCameraDisabled(int cameraId) {
-        UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.SECURITY, null);
-        CameraUtil.showErrorAndFinish(this,
-                R.string.camera_disabled);
+        UsageStatistics.instance().cameraFailure(eventprotos.CameraFailure.FailureReason.SECURITY,
+                null);
+        Log.w(TAG, "Camera disabled: " + cameraId);
+        CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
     }
 
     @Override
     public void onDeviceOpenFailure(int cameraId, String info) {
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, info);
+        Log.w(TAG, "Camera open failure: " + info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
     @Override
-    public void onDeviceOpenedAlready(int cameraId) {
+    public void onDeviceOpenedAlready(int cameraId, String info) {
+        Log.w(TAG, "Camera open already: " + cameraId + "," + info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
     @Override
-    public void onReconnectionFailure(CameraManager mgr) {
+    public void onReconnectionFailure(CameraManager mgr, String info) {
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null);
+        Log.w(TAG, "Camera reconnection failure:" + info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
 
@@ -1472,7 +1478,7 @@ public class CameraActivity extends Activity
         mCurrentModule.pause();
         mOrientationManager.pause();
         // Close the camera and wait for the operation done.
-        mCameraController.closeCamera();
+        mCameraController.closeCamera(true);
         mPanoramaViewHelper.onPause();
 
         mLocalImagesObserver.setForegroundChangeListener(null);
@@ -1942,7 +1948,7 @@ public class CameraActivity extends Activity
             return;
         }
         if (!agent.requestAppForCamera()) {
-            mCameraController.closeCamera();
+            mCameraController.closeCamera(true);
         }
         mCurrentModeIndex = agent.getModuleId();
         mCurrentModule = (CameraModule) agent.createModule(this);
