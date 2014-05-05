@@ -47,4 +47,6 @@
     <bool name="enableHDRWithZSL">false</bool>
     <!-- Enable histogram support -->
     <bool name="enableHistogram">false</bool>
+    <!-- Restart preview on video quality change -->
+    <bool name="restartPreviewOnVideoQualityChange">false</bool>
 </resources>

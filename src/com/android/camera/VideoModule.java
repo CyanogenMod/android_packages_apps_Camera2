@@ -199,6 +199,9 @@ public class VideoModule implements CameraModule,
     // The preview window is on focus
     private boolean mPreviewFocused = false;
 
+    // Detecting when the user changes the video quality changes
+    private int mCurrentVideoQuality = -1;
+
     private final MediaSaveService.OnMediaSavedListener mOnVideoSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
                 @Override
@@ -2210,11 +2213,25 @@ public class VideoModule implements CameraModule,
             }
 
             readVideoPreferences();
+
+            // Detect if the video quality changed; some devices need a preview restart
+            boolean restartPreview = false;
+            if (mActivity.getResources().getBoolean(R.bool.restartPreviewOnVideoQualityChange)) {
+                String videoQualityStr = mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY, null);
+                if (videoQualityStr != null) {
+                    int videoQuality = Integer.parseInt(videoQualityStr);
+                    if (mCurrentVideoQuality == -1 || mCurrentVideoQuality != videoQuality)
+                        restartPreview = true;
+                    mCurrentVideoQuality = videoQuality;
+                }
+            }
+
             mUI.showTimeLapseUI(mCaptureTimeLapse);
             // We need to restart the preview if preview size is changed.
             Size size = mParameters.getPreviewSize();
             if (size.width != mDesiredPreviewWidth
-                    || size.height != mDesiredPreviewHeight) {
+                    || size.height != mDesiredPreviewHeight
+                    || restartPreview) {
 
                 stopPreview();
                 resizeForPreviewAspectRatio();
