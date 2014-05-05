@@ -475,6 +475,7 @@ public class VideoModule extends CameraModule
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
         }
+        mUI.onOrientationChanged(orientation);
 
     }
 
