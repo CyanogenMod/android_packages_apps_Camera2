@@ -55,12 +55,6 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void release(boolean synchronous) {
-        log("release " + (synchronous ? "sync" : "async"));
-        mProxy.release(synchronous);
-    }
-
-    @Override
     public void reconnect(Handler handler, CameraManager.CameraOpenCallback cb) {
         log("reconnect");
         mProxy.reconnect(handler, cb);
