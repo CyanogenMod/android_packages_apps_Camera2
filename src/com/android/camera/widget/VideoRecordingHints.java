@@ -20,12 +20,13 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.OrientationEventListener;
 import android.view.View;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 /**
@@ -48,12 +49,14 @@ public class VideoRecordingHints extends View {
     private final Drawable mRotateArrows;
     private final Drawable mPhoneGraphic;
     private final int mPhoneGraphicHalfHeight;
+    private final boolean mIsDefaultToPortrait;
     private float mRotation = INITIAL_ROTATION;
     private final ValueAnimator mRotationAnimation;
     private final ObjectAnimator mAlphaAnimator;
     private boolean mIsInLandscape = false;
     private int mCenterX = UNSET;
     private int mCenterY = UNSET;
+    private int mLastOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
     public VideoRecordingHints(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -135,7 +138,7 @@ public class VideoRecordingHints extends View {
                 // Do nothing.
             }
         });
-
+        mIsDefaultToPortrait = CameraUtil.isDefaultToPortrait(context);
     }
 
     /**
@@ -154,24 +157,12 @@ public class VideoRecordingHints extends View {
     @Override
     public void onVisibilityChanged(View v, int visibility) {
         super.onVisibilityChanged(v, visibility);
-        if (getVisibility() == VISIBLE && getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_PORTRAIT) {
+        if (getVisibility() == VISIBLE && !isInLandscape()) {
             continueRotationAnimation();
         } else if (getVisibility() != VISIBLE) {
             mRotationAnimation.cancel();
             mRotation = 0;
         }
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (getVisibility() == VISIBLE && getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_PORTRAIT) {
-            continueRotationAnimation();
-        }
-        mIsInLandscape = getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_LANDSCAPE;
     }
 
     @Override
@@ -185,24 +176,6 @@ public class VideoRecordingHints extends View {
         mPhoneGraphic.setBounds(mCenterX - mPhoneGraphicHalfWidth, mCenterY - mPhoneGraphicHalfHeight,
                 mCenterX + mPhoneGraphicHalfWidth, mCenterY + mPhoneGraphicHalfHeight);
         invalidate();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        if (getVisibility() == VISIBLE) {
-            if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                mRotationAnimation.cancel();
-                // Start fading out.
-                if (mAlphaAnimator.isRunning()) {
-                    return;
-                }
-                mAlphaAnimator.start();
-            } else {
-                continueRotationAnimation();
-            }
-        }
-        mIsInLandscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     @Override
@@ -226,4 +199,42 @@ public class VideoRecordingHints extends View {
         }
     }
 
+    /**
+     * Handles orientation change by starting/stopping the video hint based on the
+     * new orientation.
+     */
+    public void onOrientationChanged(int orientation) {
+        if (mLastOrientation == orientation) {
+            return;
+        }
+        mLastOrientation = orientation;
+        if (mLastOrientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            return;
+        }
+
+        mIsInLandscape = isInLandscape();
+        if (getVisibility() == VISIBLE) {
+            if (mIsInLandscape) {
+                // Landscape.
+                mRotationAnimation.cancel();
+                // Start fading out.
+                if (mAlphaAnimator.isRunning()) {
+                    return;
+                }
+                mAlphaAnimator.start();
+            } else {
+                // Portrait.
+                continueRotationAnimation();
+            }
+        }
+    }
+
+    /**
+     * Returns whether the device is in landscape based on the natural orientation
+     * and rotation from natural orientation.
+     */
+    private boolean isInLandscape() {
+        return (mLastOrientation % 180 == 90 && mIsDefaultToPortrait)
+                || (mLastOrientation % 180 == 0 && !mIsDefaultToPortrait);
+    }
 }
