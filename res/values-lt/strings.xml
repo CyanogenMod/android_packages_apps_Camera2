@@ -225,14 +225,10 @@
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Atrakinti ir naudoti Fotoaparato programą"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Medija nuo %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Medija apdorojama"</string>
-    <!-- no translation found for accessibility_mode_list_toggle (4784230103566918645) -->
-    <skip />
-    <!-- no translation found for btn_mode_list_toggle (3986242443098400164) -->
-    <skip />
-    <!-- no translation found for accessibility_filmstrip_toggle (6966978483643396442) -->
-    <skip />
-    <!-- no translation found for btn_filmstrip_toggle (3666693972882351490) -->
-    <skip />
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Perjungti režimų sąrašą"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Režimų sąrašas"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Perjungti diafilmą"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Diafilmas"</string>
     <string name="capital_on" msgid="1118214824959797269">"ĮJUNGTI"</string>
     <string name="capital_off" msgid="3020696135020167263">"IŠJUNGTI"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Leisti vaizdo įrašą"</string>

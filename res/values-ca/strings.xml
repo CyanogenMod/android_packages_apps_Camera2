@@ -225,14 +225,10 @@
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloqueja i vés a la Càmera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Fitxers multimèdia de: %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Processament de fitxers multimèdia"</string>
-    <!-- no translation found for accessibility_mode_list_toggle (4784230103566918645) -->
-    <skip />
-    <!-- no translation found for btn_mode_list_toggle (3986242443098400164) -->
-    <skip />
-    <!-- no translation found for accessibility_filmstrip_toggle (6966978483643396442) -->
-    <skip />
-    <!-- no translation found for btn_filmstrip_toggle (3666693972882351490) -->
-    <skip />
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activa la llista de modes"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Llista de modes"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Activa la tira de vídeo"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de vídeo"</string>
     <string name="capital_on" msgid="1118214824959797269">"ACTIVA"</string>
     <string name="capital_off" msgid="3020696135020167263">"DESACTIVA"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Reprodueix el vídeo"</string>
