@@ -139,7 +139,10 @@ public class ModeOptionsOverlay extends FrameLayout
      * depending on orientation.
      */
     private void checkOrientation(int orientation) {
-        final boolean isPortrait = Configuration.ORIENTATION_PORTRAIT == orientation;
+        final boolean isPortrait = (Configuration.ORIENTATION_PORTRAIT == orientation);
+
+        final int modeOptionsDimension = (int) getResources()
+            .getDimension(R.dimen.mode_options_height);
 
         FrameLayout.LayoutParams modeOptionsParams
             = (FrameLayout.LayoutParams) mModeOptions.getLayoutParams();
@@ -147,27 +150,19 @@ public class ModeOptionsOverlay extends FrameLayout
             = (FrameLayout.LayoutParams) mModeOptionsToggle.getLayoutParams();
 
         if (isPortrait) {
-            modeOptionsParams.height = modeOptionsParams.width;
+            modeOptionsParams.height = modeOptionsDimension;
             modeOptionsParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            if (modeOptionsParams.gravity != Gravity.BOTTOM) {
-                modeOptionsParams.gravity = Gravity.BOTTOM;
-            }
+            modeOptionsParams.gravity = Gravity.BOTTOM;
 
-            if (modeOptionsToggleParams.gravity != BOTTOM_RIGHT) {
-                modeOptionsToggleParams.gravity = BOTTOM_RIGHT;
-            }
+            modeOptionsToggleParams.gravity = BOTTOM_RIGHT;
 
             mThreeDots.setImageResource(R.drawable.ic_options_port);
-        } else if (!isPortrait) {
-            modeOptionsParams.width = modeOptionsParams.height;
+        } else {
+            modeOptionsParams.width = modeOptionsDimension;
             modeOptionsParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            if (modeOptionsParams.gravity != Gravity.RIGHT) {
-                modeOptionsParams.gravity = Gravity.RIGHT;
-            }
+            modeOptionsParams.gravity = Gravity.RIGHT;
 
-            if (modeOptionsToggleParams.gravity != TOP_RIGHT) {
-                modeOptionsToggleParams.gravity = TOP_RIGHT;
-            }
+            modeOptionsToggleParams.gravity = TOP_RIGHT;
 
             mThreeDots.setImageResource(R.drawable.ic_options_land);
         }
