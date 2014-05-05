@@ -33,6 +33,7 @@ import com.android.camera.ui.FocusOverlay;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
+import com.android.camera.widget.VideoRecordingHints;
 import com.android.camera2.R;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class VideoUI implements PreviewStatusListener {
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
-    private View mVideoHints;
+    private VideoRecordingHints mVideoHints;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
     private View mTimeLapseLabel;
@@ -108,7 +109,7 @@ public class VideoUI implements PreviewStatusListener {
         initializeMiscControls();
         mAnimationManager = new AnimationManager();
         mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
-        mVideoHints = mRootView.findViewById(R.id.video_shooting_hints);
+        mVideoHints = (VideoRecordingHints) mRootView.findViewById(R.id.video_shooting_hints);
     }
 
     public void setPreviewSize(int width, int height) {
@@ -274,6 +275,10 @@ public class VideoUI implements PreviewStatusListener {
      */
     public Point getPreviewScreenSize() {
         return new Point(mRootView.getMeasuredWidth(), mRootView.getMeasuredHeight());
+    }
+
+    public void onOrientationChanged(int orientation) {
+        mVideoHints.onOrientationChanged(orientation);
     }
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {

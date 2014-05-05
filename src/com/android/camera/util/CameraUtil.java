@@ -410,11 +410,12 @@ public class CameraUtil {
     /**
      * Calculate the default orientation of the device based on the width and
      * height of the display when rotation = 0 (i.e. natural width and height)
-     * @param activity the activity context
+     * @param context current context
      * @return whether the default orientation of the device is portrait
      */
-    public static boolean isDefaultToPortrait(Activity activity) {
-        Display currentDisplay = activity.getWindowManager().getDefaultDisplay();
+    public static boolean isDefaultToPortrait(Context context) {
+        Display currentDisplay = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
         Point displaySize = new Point();
         currentDisplay.getSize(displaySize);
         int orientation = currentDisplay.getRotation();
