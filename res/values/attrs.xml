@@ -46,4 +46,7 @@
         <attr name="imageIds" format="reference" />
         <attr name="contentDescriptionIds" format="reference" />
     </declare-styleable>
+    <declare-styleable name="RadioOptions">
+        <attr name="selected_drawable" format="reference" />
+    </declare-styleable>
 </resources>
