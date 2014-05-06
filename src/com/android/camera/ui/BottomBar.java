@@ -88,7 +88,6 @@ public class BottomBar extends FrameLayout {
     private float mCenterX;
     private float mCenterY;
     private final RectF mRect = new RectF();
-    private final RectF mPreviewArea = new RectF();
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
     public BottomBar(Context context, AttributeSet attrs) {
@@ -163,10 +162,10 @@ public class BottomBar extends FrameLayout {
                     mCancelLayout.setBackgroundColor(mBackgroundPressedColor);
                 } else if (MotionEvent.ACTION_UP == event.getActionMasked() ||
                         MotionEvent.ACTION_CANCEL == event.getActionMasked()) {
-                    mCancelLayout.setBackgroundColor(mBackgroundColor);
+                    mCancelLayout.setBackgroundColor(mCircleColor);
                 } else if (MotionEvent.ACTION_MOVE == event.getActionMasked()) {
                     if (!mRect.contains(event.getX(), event.getY())) {
-                        mCancelLayout.setBackgroundColor(mBackgroundColor);
+                        mCancelLayout.setBackgroundColor(mCircleColor);
                     }
                 }
                 return false;
@@ -205,6 +204,7 @@ public class BottomBar extends FrameLayout {
     public void transitionToCancel() {
         mCaptureLayout.setVisibility(View.INVISIBLE);
         mIntentReviewLayout.setVisibility(View.INVISIBLE);
+        mCancelLayout.setBackgroundColor(mCircleColor);
         mCancelLayout.setVisibility(View.VISIBLE);
         mMode = MODE_CANCEL;
     }

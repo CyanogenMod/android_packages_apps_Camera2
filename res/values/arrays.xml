@@ -457,6 +457,12 @@
       <item>@string/grid_lines_on_desc</item>
     </array>
 
+    <array name="countdown_duration_descriptions" translatable="false">
+        <item>@string/countdown_timer_off</item>
+        <item>@string/countdown_timer_duration_3s</item>
+        <item>@string/countdown_timer_duration_10s</item>
+    </array>
+
     <string-array name="pref_camera_pano_orientation_entryvalues">
       <item>@string/pano_orientation_horizontal</item>
       <item>@string/pano_orientation_vertical</item>
@@ -473,6 +479,24 @@
       <item>@string/settings_open_desc</item>
       <item>@string/settings_close_desc</item>
     </array>
+
+    <array name="countdown_duration_icons" translatable="false">
+        <item>@drawable/ic_timer_off_normal</item>
+        <item>@drawable/ic_timer_3s_normal</item>
+        <item>@drawable/ic_timer_10s_normal</item>
+    </array>
+
+    <array name="pref_camera_countdown_indicators" translatable="false">
+        <item>@drawable/ic_timer_off_indicator</item>
+        <item>@drawable/ic_timer_3s_indicator</item>
+        <item>@drawable/ic_timer_10s_indicator</item>
+    </array>
+
+    <string-array name="pref_countdown_duration" translatable="false">
+        <item>0</item>
+        <item>3</item>
+        <item>10</item>
+    </string-array>
 
 
     <!--Index of camera modes. -->

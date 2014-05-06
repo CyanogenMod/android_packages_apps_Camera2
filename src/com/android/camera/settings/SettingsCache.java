@@ -137,6 +137,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
         mKeyMap.put(SettingsManager.KEY_USER_SELECTED_ASPECT_RATIO,
                 SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO);
+        mKeyMap.put(SettingsManager.KEY_COUNTDOWN_DURATION,
+                SettingsManager.SETTING_COUNTDOWN_DURATION);
     }
 
     /**
@@ -225,6 +227,8 @@ public class SettingsCache {
                 return SettingsManager.getManualExposureCompensationSetting(mContext);
             case SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO:
                 return SettingsManager.getUserSelectedAspectRatioSetting(mContext);
+            case SettingsManager.SETTING_COUNTDOWN_DURATION:
+                return SettingsManager.getCountDownDurationSetting(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }

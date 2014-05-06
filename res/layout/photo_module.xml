@@ -32,4 +32,18 @@
         android:clickable="true"
         android:background="@android:color/black"
         android:scaleType="fitCenter"/>
+    <com.android.camera.ui.CountDownView
+         android:id="@+id/count_down_view"
+         android:visibility="invisible"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent" >
+        <TextView android:id="@+id/remaining_seconds"
+              android:layout_width="200dp"
+              android:layout_height="200dp"
+              android:textSize="160dp"
+              android:textColor="@android:color/white"
+              android:layout_gravity="top|left"
+              android:gravity="center"/>
+    </com.android.camera.ui.CountDownView>
+
 </FrameLayout>

@@ -32,7 +32,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.media.AudioManager;
 import android.media.CameraProfile;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -73,6 +75,7 @@ import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
+import com.android.camera.ui.CountDownView;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -102,7 +105,8 @@ public class PhotoModule
         FocusOverlayManager.Listener,
         SensorEventListener,
         SettingsManager.OnSettingChangedListener,
-        RemoteCameraModule {
+        RemoteCameraModule,
+        CountDownView.OnCountDownStatusListener {
 
     private static final Log.Tag TAG = new Log.Tag("PhotoModule");
 
@@ -243,6 +247,7 @@ public class PhotoModule
     private FocusOverlayManager mFocusManager;
 
     private final int mGcamModeIndex;
+    private final CountdownSoundPlayer mCountdownSoundPlayer = new CountdownSoundPlayer();
 
     private String mSceneMode;
 
@@ -432,6 +437,25 @@ public class PhotoModule
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
+        mUI.setCountdownFinishedListener(this);
+
+        // TODO: Make this a part of app controller API.
+        View cancelButton = mActivity.findViewById(R.id.shutter_cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelCountDown();
+            }
+        });
+    }
+
+    private void cancelCountDown() {
+        if (mUI.isCountingDown()) {
+            // Cancel on-going countdown.
+            mUI.cancelCountDown();
+        }
+        mAppController.getCameraAppUI().transitionToCapture();
+        mAppController.getCameraAppUI().showModeOptions();
     }
 
     @Override
@@ -618,6 +642,7 @@ public class PhotoModule
         if (mPaused) {
             return;
         }
+        cancelCountDown();
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         Log.i(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
@@ -750,6 +775,8 @@ public class PhotoModule
             bottomBarSpec.exposureCompensationStep =
                 mCameraCapabilities.getExposureCompensationStep();
         }
+
+        bottomBarSpec.enableSelfTimer = true;
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
@@ -1437,6 +1464,20 @@ public class PhotoModule
         }
         Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
+        int countDownDuration = Integer.parseInt(mActivity.getSettingsManager()
+                .get(SettingsManager.SETTING_COUNTDOWN_DURATION));
+        if (countDownDuration > 0) {
+            // Start count down.
+            mAppController.getCameraAppUI().transitionToCancel();
+            mAppController.getCameraAppUI().hideModeOptions();
+            mUI.startCountdown(countDownDuration);
+            return;
+        } else {
+            focusAndCapture();
+        }
+    }
+
+    private void focusAndCapture() {
         if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
             mUI.setSwipingEnabled(false);
         }
@@ -1454,6 +1495,21 @@ public class PhotoModule
 
         mSnapshotOnIdle = false;
         mFocusManager.focusAndCapture();
+    }
+
+    @Override
+    public void onRemainingSecondsChanged(int remainingSeconds) {
+        mCountdownSoundPlayer.onRemainingSecondsChanged(remainingSeconds);
+    }
+
+    @Override
+    public void onCountDownFinished() {
+        mAppController.getCameraAppUI().transitionToCapture();
+        mAppController.getCameraAppUI().showModeOptions();
+        if (mPaused) {
+            return;
+        }
+        focusAndCapture();
     }
 
     private void onResumeTasks() {
@@ -1526,6 +1582,7 @@ public class PhotoModule
     @Override
     public void resume() {
         mPaused = false;
+        mCountdownSoundPlayer.loadSounds();
         if (mFocusManager != null) {
             // If camera is not open when resume is called, focus manager will
             // not
@@ -1533,11 +1590,7 @@ public class PhotoModule
             // preview area size change later in the initialization.
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
-
-        if (mUI.getPreviewAreaSizeChangedListener() != null) {
-            mAppController.addPreviewAreaSizeChangedListener(
-                    mUI.getPreviewAreaSizeChangedListener());
-        }
+        mAppController.addPreviewAreaSizeChangedListener(mUI);
 
         // Add delay on resume from lock screen only, in order to to speed up
         // the onResume --> onPause --> onResume cycle from lock screen.
@@ -1584,9 +1637,10 @@ public class PhotoModule
         // and startPreview hasn't been called, then this is a no-op.
         // (e.g. onResume -> onPause -> onResume).
         stopPreview();
+        cancelCountDown();
+        mCountdownSoundPlayer.release();
 
         mNamedImages = null;
-
         // If we are in an image capture intent and has taken
         // a picture, we just clear it in onPause.
         mJpegImageData = null;
@@ -1604,10 +1658,7 @@ public class PhotoModule
         }
         getServices().getMemoryManager().removeListener(this);
         mAppController.removePreviewAreaSizeChangedListener(mFocusManager);
-        if (mUI.getPreviewAreaSizeChangedListener() != null) {
-            mAppController.removePreviewAreaSizeChangedListener(
-                    mUI.getPreviewAreaSizeChangedListener());
-        }
+        mAppController.removePreviewAreaSizeChangedListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
         settingsManager.removeListener(this);
@@ -2257,5 +2308,39 @@ public class PhotoModule
     @Override
     public void onRemoteShutterPress() {
         capture();
+    }
+
+    /**
+     * This class manages the loading/releasing/playing of the sounds needed for
+     * countdown timer.
+     */
+    private class CountdownSoundPlayer {
+        private SoundPool mSoundPool;
+        private int mBeepOnce;
+        private int mBeepTwice;
+
+        void loadSounds() {
+            // Load the beeps.
+            mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
+            mBeepOnce = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_once, 1);
+            mBeepTwice = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_twice, 1);
+        }
+
+        void onRemainingSecondsChanged(int newVal) {
+            if (mSoundPool == null) {
+                Log.e(TAG, "Cannot play sound - they have not been loaded.");
+                return;
+            }
+            if (newVal == 1) {
+                mSoundPool.play(mBeepTwice, 1.0f, 1.0f, 0, 0, 1.0f);
+            } else if (newVal == 2 || newVal == 3) {
+                mSoundPool.play(mBeepOnce, 1.0f, 1.0f, 0, 0, 1.0f);
+            }
+        }
+
+        void release() {
+            mSoundPool.release();
+            mSoundPool = null;
+        }
     }
 }

@@ -441,6 +441,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public int minExposureCompensation;
         public int maxExposureCompensation;
         public float exposureCompensationStep;
+
+        /**
+         * Whether or not timer should show.
+         */
+        public boolean enableSelfTimer = false;
     }
 
 
@@ -1731,6 +1736,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 buttonManager.disableButton(ButtonManager.BUTTON_GRID_LINES);
                 hideGridLines();
             }
+        }
+
+        if (bottomBarSpec.enableSelfTimer) {
+            buttonManager.initializeButton(ButtonManager.BUTTON_COUNTDOWN, null);
+        } else {
+            buttonManager.hideButton(ButtonManager.BUTTON_COUNTDOWN);
         }
 
         if (bottomBarSpec.enablePanoOrientation
