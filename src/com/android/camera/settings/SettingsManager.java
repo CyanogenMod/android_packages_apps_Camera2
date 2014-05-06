@@ -958,6 +958,7 @@ public class SettingsManager {
         return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue,
                 KEY_EXPOSURE_COMPENSATION_ENABLED, values, FLUSH_OFF);
     }
+
     public static Setting getPictureSizeBackSetting(Context context) {
         String defaultValue = null;
         String[] values = null;
