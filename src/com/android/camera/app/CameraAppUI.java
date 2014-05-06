@@ -1693,6 +1693,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             .getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
         if (enableExposureCompensation) {
             buttonManager.initializePushButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION, null);
+            buttonManager.setExposureCompensationParameters(
+                bottomBarSpec.minExposureCompensation,
+                bottomBarSpec.maxExposureCompensation,
+                bottomBarSpec.exposureCompensationStep);
+
             buttonManager.setExposureCompensationCallback(
                     bottomBarSpec.exposureCompensationSetCallback);
             buttonManager.updateExposureButtons();
@@ -1700,11 +1705,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);
             buttonManager.setExposureCompensationCallback(null);
         }
-
-        buttonManager.setExposureCompensationParameters(
-                bottomBarSpec.minExposureCompensation,
-                bottomBarSpec.maxExposureCompensation,
-                bottomBarSpec.exposureCompensationStep);
 
         /** Intent UI */
         if (bottomBarSpec.showCancel) {
