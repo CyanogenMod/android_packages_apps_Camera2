@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<com.android.camera.widget.ModeOptions
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:camera="http://schemas.android.com/apk/res/com.android.camera2"
+    android:id="@+id/mode_options"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mode_options_height"
+    android:layout_gravity="bottom"
+    android:visibility="invisible"
+    android:background="#00000000" >
+    <com.android.camera.ui.RadioOptions
+        android:id="@+id/mode_options_exposure"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@null"
+        camera:selected_drawable="@drawable/button_background_selected_photo"
+        android:visibility="invisible" >
+        <ImageButton
+            android:id="@+id/exposure_n2"
+            style="@style/ModeOption"
+            android:tag="-2"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_n2" />
+        <ImageButton
+            android:id="@+id/exposure_n1"
+            style="@style/ModeOption"
+            android:tag="-1"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_n1" />
+        <ImageButton
+            android:id="@+id/exposure_0"
+            style="@style/ModeOption"
+            android:tag="0"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_0" />
+        <ImageButton
+            android:id="@+id/exposure_p1"
+            style="@style/ModeOption"
+            android:tag="1"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_p1" />
+        <ImageButton
+            android:id="@+id/exposure_p2"
+            style="@style/ModeOption"
+            android:tag="2"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_p2" />
+    </com.android.camera.ui.RadioOptions>
+
+    <com.android.camera.ui.RadioOptions
+        android:id="@+id/mode_options_pano"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@null"
+        camera:selected_drawable="@drawable/button_background_selected_pano"
+        android:visibility="invisible" >
+        <!-- pano image buttons, ids, and descriptions are added at runtime -->
+    </com.android.camera.ui.RadioOptions>
+
+    <com.android.camera.ui.TopRightWeightedLayout
+        android:id="@+id/mode_options_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="visible"
+        android:background="@null"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:alpha="0.0" >
+        <ImageButton
+            android:id="@+id/exposure_button"
+            style="@style/ModeOption"
+            android:background="@null"
+            android:src="@drawable/ic_exposure" />
+        <com.android.camera.MultiToggleImageButton
+            android:id="@+id/grid_lines_toggle_button"
+            style="@style/ModeOption"
+            camera:imageIds="@array/grid_lines_icons"
+            camera:contentDescriptionIds="@array/grid_lines_descriptions" />
+        <com.android.camera.MultiToggleImageButton
+            android:id="@+id/hdr_plus_toggle_button"
+            style="@style/ModeOption"
+            camera:imageIds="@array/pref_camera_hdr_plus_icons"
+            camera:contentDescriptionIds="@array/hdr_plus_descriptions" />
+        <com.android.camera.MultiToggleImageButton
+            android:id="@+id/flash_toggle_button"
+            style="@style/ModeOption"
+            camera:imageIds="@array/camera_flashmode_icons"
+            camera:contentDescriptionIds="@array/camera_flash_descriptions" />
+        <com.android.camera.MultiToggleImageButton
+            android:id="@+id/camera_toggle_button"
+            style="@style/ModeOption"
+            camera:imageIds="@array/camera_id_icons"
+            camera:contentDescriptionIds="@array/camera_id_descriptions" />
+    </com.android.camera.ui.TopRightWeightedLayout>
+</com.android.camera.widget.ModeOptions>

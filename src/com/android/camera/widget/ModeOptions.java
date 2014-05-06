@@ -22,6 +22,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Paint;
@@ -34,6 +35,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.util.AttributeSet;
 
+import com.android.camera.ui.RadioOptions;
 import com.android.camera.ui.TopRightWeightedLayout;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
@@ -47,7 +49,8 @@ public class ModeOptions extends FrameLayout {
     private RectF mAnimateFrom = new RectF();
     private View mViewToShowHide;
     private TopRightWeightedLayout mModeOptionsButtons;
-    private TopRightWeightedLayout mModeOptionsExposure;
+    private RadioOptions mModeOptionsPano;
+    private RadioOptions mModeOptionsExposure;
 
     private AnimatorSet mVisibleAnimator;
     private AnimatorSet mHiddenAnimator;
@@ -57,6 +60,12 @@ public class ModeOptions extends FrameLayout {
     private static final int SHOW_ALPHA_ANIMATION_TIME = 350;
     private static final int HIDE_ALPHA_ANIMATION_TIME = 200;
     private static final int PADDING_ANIMATION_TIME = 350;
+
+    private ViewGroup mMainBar;
+    private ViewGroup mActiveBar;
+    public static final int BAR_INVALID = -1;
+    public static final int BAR_STANDARD = 0;
+    public static final int BAR_PANO = 1;
 
     private int mParentSize;
     private boolean mIsPortrait;
@@ -77,32 +86,44 @@ public class ModeOptions extends FrameLayout {
         mPaint.setAntiAlias(true);
         mPaint.setColor(mBackgroundColor);
         mModeOptionsButtons = (TopRightWeightedLayout) findViewById(R.id.mode_options_buttons);
+        mModeOptionsPano = (RadioOptions) findViewById(R.id.mode_options_pano);
+        mModeOptionsExposure = (RadioOptions) findViewById(R.id.mode_options_exposure);
+        mMainBar = mActiveBar = mModeOptionsButtons;
 
-        mModeOptionsExposure = (TopRightWeightedLayout) findViewById(R.id.mode_options_exposure);
         ImageButton exposureButton = (ImageButton) findViewById(R.id.exposure_button);
         exposureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mModeOptionsButtons.setVisibility(View.INVISIBLE);
-                mModeOptionsExposure.setVisibility(View.VISIBLE);
+                mActiveBar = mModeOptionsExposure;
+                mMainBar.setVisibility(View.INVISIBLE);
+                mActiveBar.setVisibility(View.VISIBLE);
             }
         });
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-
-        FrameLayout.LayoutParams params =
-            (FrameLayout.LayoutParams) mModeOptionsButtons.getLayoutParams();
-
-        if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            params.gravity = Gravity.RIGHT;
-        } else {
-            params.gravity = Gravity.TOP;
+    public void setMainBar(int b) {
+        for (int i = 0; i < getChildCount(); i++) {
+            getChildAt(i).setVisibility(View.INVISIBLE);
         }
+        switch (b) {
+        case BAR_STANDARD:
+            mMainBar = mActiveBar = mModeOptionsButtons;
+            break;
+        case BAR_PANO:
+            mMainBar = mActiveBar = mModeOptionsPano;
+            break;
+        }
+        mMainBar.setVisibility(View.VISIBLE);
+    }
 
-        mModeOptionsButtons.setLayoutParams(params);
+    public int getMainBar() {
+        if (mMainBar == mModeOptionsButtons) {
+            return BAR_STANDARD;
+        }
+        if (mMainBar == mModeOptionsPano) {
+            return BAR_PANO;
+        }
+        return BAR_INVALID;
     }
 
     @Override
@@ -111,9 +132,11 @@ public class ModeOptions extends FrameLayout {
         if (visibility != VISIBLE && !mIsHiddenOrHiding) {
             // Collapse mode options when window is not visible.
             setVisibility(INVISIBLE);
-            if (mModeOptionsButtons != null) {
-                mModeOptionsButtons.setVisibility(VISIBLE);
-                mModeOptionsExposure.setVisibility(INVISIBLE);
+            if (mMainBar != null) {
+                mMainBar.setVisibility(VISIBLE);
+            }
+            if (mActiveBar != null && mActiveBar != mMainBar) {
+                mActiveBar.setVisibility(INVISIBLE);
             }
             if (mViewToShowHide != null) {
                 mViewToShowHide.setVisibility(VISIBLE);
@@ -121,7 +144,6 @@ public class ModeOptions extends FrameLayout {
             mIsHiddenOrHiding = true;
         }
     }
-
 
     @Override
     public void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -204,47 +226,46 @@ public class ModeOptions extends FrameLayout {
             alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mModeOptionsButtons.setAlpha((Float) animation.getAnimatedValue());
+                    mActiveBar.setAlpha((Float) animation.getAnimatedValue());
                 }
             });
             alphaAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mModeOptionsButtons.setAlpha(1.0f);
+                    mActiveBar.setAlpha(1.0f);
                 }
             });
 
             final int deltaX = getResources()
                 .getDimensionPixelSize(R.dimen.mode_options_buttons_anim_delta_x);
-            int childCount = ((ViewGroup) mModeOptionsButtons).getChildCount();
+            int childCount = mActiveBar.getChildCount();
             ArrayList<Animator> paddingAnimators = new ArrayList<Animator>();
             for (int i = 0; i < childCount; i++) {
                 final View button;
                 if (mIsPortrait) {
-                    button = ((ViewGroup) mModeOptionsButtons).getChildAt(i);
+                    button = mActiveBar.getChildAt(i);
                 } else {
-                    button = ((ViewGroup) mModeOptionsButtons).getChildAt(childCount-1-i);
+                    button = mActiveBar.getChildAt(childCount-1-i);
                 }
 
-                if (button.getVisibility() == View.VISIBLE) {
-                    final ValueAnimator paddingAnimator =
-                        ValueAnimator.ofFloat((float) (deltaX*(childCount-i)), 0.0f);
-                    paddingAnimator.setDuration(PADDING_ANIMATION_TIME);
-                    paddingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            if (mIsPortrait) {
-                                button.setTranslationX((Float) animation.getAnimatedValue());
-                            } else {
-                                button.setTranslationY(-((Float) animation.getAnimatedValue()));
-                            }
-                            invalidate();
+                final ValueAnimator paddingAnimator =
+                    ValueAnimator.ofFloat((float) (deltaX*(childCount-i)), 0.0f);
+                paddingAnimator.setDuration(PADDING_ANIMATION_TIME);
+                paddingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if (mIsPortrait) {
+                            button.setTranslationX((Float) animation.getAnimatedValue());
+                        } else {
+                            button.setTranslationY(-((Float) animation.getAnimatedValue()));
                         }
-                    });
+                        invalidate();
+                    }
+                });
 
-                    paddingAnimators.add(paddingAnimator);
-                }
+                paddingAnimators.add(paddingAnimator);
             }
+
             AnimatorSet paddingAnimatorSet = new AnimatorSet();
             paddingAnimatorSet.playTogether(paddingAnimators);
 
@@ -285,8 +306,7 @@ public class ModeOptions extends FrameLayout {
             alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    mModeOptionsButtons.setAlpha((Float) animation.getAnimatedValue());
-                    mModeOptionsExposure.setAlpha((Float) animation.getAnimatedValue());
+                    mActiveBar.setAlpha((Float) animation.getAnimatedValue());
                     invalidate();
                 }
             });
@@ -294,10 +314,13 @@ public class ModeOptions extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     setVisibility(View.INVISIBLE);
-                    mModeOptionsButtons.setAlpha(1.0f);
-                    mModeOptionsButtons.setVisibility(View.VISIBLE);
-                    mModeOptionsExposure.setVisibility(View.INVISIBLE);
-                    mModeOptionsExposure.setAlpha(1.0f);
+                    if (mActiveBar != mMainBar) {
+                        mActiveBar.setAlpha(1.0f);
+                        mActiveBar.setVisibility(View.INVISIBLE);
+                    }
+                    mMainBar.setAlpha(1.0f);
+                    mMainBar.setVisibility(View.VISIBLE);
+                    mActiveBar = mMainBar;
                     invalidate();
                 }
             });
