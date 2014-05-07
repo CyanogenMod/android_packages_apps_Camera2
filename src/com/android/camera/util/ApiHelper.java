@@ -54,6 +54,8 @@ public class ApiHelper {
 
     public static final boolean HAS_HIDEYBARS = isKitKatOrHigher();
 
+    public static final boolean IS_NEXUS_5 = Build.DEVICE.equals("hammerhead");
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {

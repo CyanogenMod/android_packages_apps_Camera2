@@ -22,6 +22,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -66,6 +67,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.remote.RemoteCameraModule;
+import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.ApiHelper;
@@ -77,6 +79,7 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -255,6 +258,7 @@ public class PhotoModule
                     }
                 }
             };
+    private boolean mShouldResizeTo16x9 = false;
 
     private final Runnable mResumeTaskRunnable = new Runnable() {
         @Override
@@ -715,6 +719,53 @@ public class PhotoModule
         }
     }
 
+    private static class ResizeBundle {
+        byte[] jpegData;
+        float targetAspectRatio;
+        ExifInterface exif;
+    }
+
+    /**
+     * @return Cropped image if the target aspect ratio is larger than the jpeg
+     *         aspect ratio on the long axis. The original jpeg otherwise.
+     */
+    private ResizeBundle cropJpegDataToAspectRatio(ResizeBundle dataBundle) {
+
+        final byte[] jpegData = dataBundle.jpegData;
+        final ExifInterface exif = dataBundle.exif;
+        float targetAspectRatio = dataBundle.targetAspectRatio;
+
+        Bitmap original = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+        int originalWidth = original.getWidth();
+        int originalHeight = original.getHeight();
+        int newWidth;
+        int newHeight;
+
+        if (originalWidth > originalHeight) {
+            newHeight = (int) (originalWidth / targetAspectRatio);
+            newWidth = originalWidth;
+        } else {
+            newWidth = (int) (originalHeight / targetAspectRatio);
+            newHeight = originalHeight;
+        }
+        int xOffset = (originalWidth - newWidth)/2;
+        int yOffset = (originalHeight - newHeight)/2;
+
+        if (xOffset < 0 || yOffset < 0) {
+            return dataBundle;
+        }
+
+        Bitmap resized = Bitmap.createBitmap(original,xOffset,yOffset,newWidth, newHeight);
+        exif.setTagValue(ExifInterface.TAG_PIXEL_X_DIMENSION, new Integer(newWidth));
+        exif.setTagValue(ExifInterface.TAG_PIXEL_Y_DIMENSION, new Integer(newHeight));
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        resized.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+        dataBundle.jpegData = stream.toByteArray();
+        return dataBundle;
+    }
+
     private final class JpegPictureCallback
             implements CameraPictureCallback {
         Location mLocation;
@@ -724,7 +775,7 @@ public class PhotoModule
         }
 
         @Override
-        public void onPictureTaken(final byte[] jpegData, CameraProxy camera) {
+        public void onPictureTaken(final byte[] originalJpegData, final CameraProxy camera) {
             mAppController.setShutterEnabled(true);
             if (mPaused) {
                 return;
@@ -759,7 +810,38 @@ public class PhotoModule
                 setupPreview();
             }
 
-            ExifInterface exif = Exif.getExif(jpegData);
+            long now = System.currentTimeMillis();
+            mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
+            Log.v(TAG, "mJpegCallbackFinishTime = " + mJpegCallbackFinishTime + "ms");
+            mJpegPictureCallbackTime = 0;
+
+            final ExifInterface exif = Exif.getExif(originalJpegData);
+
+            if (mShouldResizeTo16x9) {
+                final ResizeBundle dataBundle = new ResizeBundle();
+                dataBundle.jpegData = originalJpegData;
+                dataBundle.targetAspectRatio = ResolutionUtil.NEXUS_5_LARGE_16_BY_9_ASPECT_RATIO;
+                dataBundle.exif = exif;
+                new AsyncTask<ResizeBundle, Void, ResizeBundle>() {
+
+                    @Override
+                    protected ResizeBundle doInBackground(ResizeBundle... resizeBundles) {
+                        return cropJpegDataToAspectRatio(resizeBundles[0]);
+                    }
+
+                    @Override
+                    protected void onPostExecute(ResizeBundle result) {
+                        saveFinalPhoto(result.jpegData, result.exif, camera);
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataBundle);
+
+            } else {
+                saveFinalPhoto(originalJpegData, exif, camera);
+            }
+        }
+
+        void saveFinalPhoto(final byte[] jpegData, final ExifInterface exif, CameraProxy camera) {
+
             int orientation = Exif.getOrientation(exif);
 
             float zoomValue = 0f;
@@ -770,6 +852,7 @@ public class PhotoModule
                     zoomValue = 0.01f * zoomRatios.get(zoomIndex);
                 }
             }
+
             boolean hdrOn = CameraUtil.SCENE_MODE_HDR.equals(mSceneMode);
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
@@ -778,14 +861,22 @@ public class PhotoModule
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
-                Size s = new Size(mParameters.getPictureSize());
+                Integer exifWidth = exif.getTagIntValue(ExifInterface.TAG_PIXEL_X_DIMENSION);
+                Integer exifHeight = exif.getTagIntValue(ExifInterface.TAG_PIXEL_Y_DIMENSION);
                 int width, height;
-                if ((mJpegRotation + orientation) % 180 == 0) {
-                    width = s.width();
-                    height = s.height();
+                if (mShouldResizeTo16x9 && exifWidth != null && exifHeight != null) {
+                    width = exifWidth;
+                    height = exifHeight;
                 } else {
-                    width = s.height();
-                    height = s.width();
+                    Size s;
+                    s = new Size(mParameters.getPictureSize());
+                    if ((mJpegRotation + orientation) % 180 == 0) {
+                        width = s.width();
+                        height = s.height();
+                    } else {
+                        width = s.height();
+                        height = s.width();
+                    }
                 }
                 NamedEntity name = mNamedImages.getNextNameEntity();
                 String title = (name == null) ? null : name.title;
@@ -849,11 +940,6 @@ public class PhotoModule
             // in the mean time and fill it, but that could have happened
             // between the shutter press and saving the JPEG too.
             mActivity.updateStorageSpaceAndHint(null);
-
-            long now = System.currentTimeMillis();
-            mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
-            Log.v(TAG, "mJpegCallbackFinishTime = " + mJpegCallbackFinishTime + "ms");
-            mJpegPictureCallbackTime = 0;
         }
     }
 
@@ -1674,7 +1760,16 @@ public class PhotoModule
         List<Size> supported = Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
         SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters,
                 mCameraDevice.getCameraId());
-        Size size = new Size(mParameters.getPictureSize());
+
+        Size size = SettingsUtil.getPhotoSize(pictureSize, supported,
+                mCameraDevice.getCameraId());
+        if (ApiHelper.IS_NEXUS_5) {
+            if (ResolutionUtil.NEXUS_5_LARGE_16_BY_9.equals(pictureSize)) {
+                mShouldResizeTo16x9 = true;
+            } else {
+                mShouldResizeTo16x9 = false;
+            }
+        }
 
         // Set a preview size that is closest to the viewfinder height and has
         // the right aspect ratio.

@@ -161,6 +161,24 @@ public class SettingsUtil {
     }
 
     /**
+     * Based on the selected size, this method selects the matching concrete
+     * resolution and sets it as the picture size.
+     *
+     * @param sizeSetting The setting selected by the user. One of "large",
+     *            "medium, "small".
+     * @param supported The list of supported resolutions.
+     * @param cameraId This is used for caching the results for finding the
+     *            different sizes.
+     */
+    public static Size getPhotoSize(String sizeSetting, List<Size> supported, int cameraId) {
+        if (ResolutionUtil.NEXUS_5_LARGE_16_BY_9.equals(sizeSetting)) {
+            return ResolutionUtil.NEXUS_5_LARGE_16_BY_9_SIZE;
+        }
+        Size selectedSize = getCameraPictureSize(sizeSetting, supported, cameraId);
+        return selectedSize;
+    }
+
+    /**
      * Based on the selected size (large, medium or small), and the list of
      * supported resolutions, this method selects and returns the best matching
      * picture size.
