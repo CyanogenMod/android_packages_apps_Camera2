@@ -54,6 +54,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
+import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager.CameraAFCallback;
 import com.android.camera.cameradevice.CameraManager.CameraAFMoveCallback;
 import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
@@ -123,6 +124,7 @@ public class PhotoModule
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
     private int mCameraId;
+    private CameraCapabilities mCameraCapabilities;
     private Parameters mParameters;
     private boolean mPaused;
 
@@ -563,9 +565,9 @@ public class PhotoModule
                 setExposureCompensation(value);
             }
         };
-        bottomBarSpec.minExposureCompensation = mParameters.getMinExposureCompensation();
-        bottomBarSpec.maxExposureCompensation = mParameters.getMaxExposureCompensation();
-        bottomBarSpec.exposureCompensationStep = mParameters.getExposureCompensationStep();
+        bottomBarSpec.minExposureCompensation = mCameraCapabilities.getMinExposureCompensation();
+        bottomBarSpec.maxExposureCompensation = mCameraCapabilities.getMaxExposureCompensation();
+        bottomBarSpec.exposureCompensationStep = mCameraCapabilities.getExposureCompensationStep();
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
@@ -650,7 +652,7 @@ public class PhotoModule
         if (mFaceDetectionStarted) {
             return;
         }
-        if (mParameters.getMaxNumDetectedFaces() > 0) {
+        if (mCameraCapabilities.getMaxNumOfFacesSupported() > 0) {
             mFaceDetectionStarted = true;
             mUI.onStartFaceDetection(mDisplayOrientation, isCameraFrontFacing());
             mCameraDevice.setFaceDetectionCallback(mHandler, mUI);
@@ -664,7 +666,7 @@ public class PhotoModule
         if (!mFaceDetectionStarted) {
             return;
         }
-        if (mParameters.getMaxNumDetectedFaces() > 0) {
+        if (mCameraCapabilities.getMaxNumOfFacesSupported() > 0) {
             mFaceDetectionStarted = false;
             mCameraDevice.setFaceDetectionCallback(null, null);
             mCameraDevice.stopFaceDetection();
@@ -845,7 +847,7 @@ public class PhotoModule
             int orientation = Exif.getOrientation(exif);
 
             float zoomValue = 0f;
-            if (mParameters.isZoomSupported()) {
+            if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
                 int zoomIndex = mParameters.getZoom();
                 List<Integer> zoomRatios = mParameters.getZoomRatios();
                 if (zoomRatios != null && zoomIndex < zoomRatios.size()) {
@@ -1119,7 +1121,7 @@ public class PhotoModule
         if (mFocusManager == null) {
             initializeFocusManager();
         }
-        mFocusManager.setParameters(mInitialParams);
+        mFocusManager.setParameters(mInitialParams, mCameraCapabilities);
 
         // Do camera parameter dependent initialization.
         mParameters = mCameraDevice.getParameters();
@@ -1669,7 +1671,7 @@ public class PhotoModule
     private void updateCameraParametersInitialize() {
         // Reset preview frame rate to the maximum because it may be lowered by
         // video camera application.
-        int[] fpsRange = CameraUtil.getPhotoPreviewFpsRange(mParameters);
+        int[] fpsRange = CameraUtil.getPhotoPreviewFpsRange(mCameraCapabilities);
         if (fpsRange != null && fpsRange.length > 0) {
             mParameters.setPreviewFpsRange(
                     fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
@@ -1688,7 +1690,7 @@ public class PhotoModule
 
     private void updateCameraParametersZoom() {
         // Set zoom.
-        if (mParameters.isZoomSupported()) {
+        if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
             mParameters.setZoom(mZoomValue);
         }
     }
@@ -1808,8 +1810,8 @@ public class PhotoModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
         if (settingsManager.getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED)) {
             int value = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE));
-            int max = mParameters.getMaxExposureCompensation();
-            int min = mParameters.getMinExposureCompensation();
+            int max = mCameraCapabilities.getMaxExposureCompensation();
+            int min = mCameraCapabilities.getMinExposureCompensation();
             if (value >= min && value <= max) {
                 mParameters.setExposureCompensation(value);
             } else {
@@ -1826,7 +1828,8 @@ public class PhotoModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
-        if (CameraUtil.isSupported(mSceneMode, mParameters.getSupportedSceneModes())) {
+        if (mCameraCapabilities
+                .supports(mCameraCapabilities.getStringifier().sceneModeFromString(mSceneMode))) {
             if (!mParameters.getSceneMode().equals(mSceneMode)) {
                 mParameters.setSceneMode(mSceneMode);
 
@@ -1859,8 +1862,8 @@ public class PhotoModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         String flashMode = settingsManager.get(SettingsManager.SETTING_FLASH_MODE);
-        List<String> supportedFlash = mParameters.getSupportedFlashModes();
-        if (CameraUtil.isSupported(flashMode, supportedFlash)) {
+        if (mCameraCapabilities
+                .supports(mCameraCapabilities.getStringifier().flashModeFromString(flashMode))) {
             mParameters.setFlashMode(flashMode);
         }
     }
@@ -1881,8 +1884,8 @@ public class PhotoModule
      * @param value exposure compensation value to be set
      */
     public void setExposureCompensation(int value) {
-        int max = mParameters.getMaxExposureCompensation();
-        int min = mParameters.getMinExposureCompensation();
+        int max = mCameraCapabilities.getMaxExposureCompensation();
+        int min = mCameraCapabilities.getMinExposureCompensation();
         if (value >= min && value <= max) {
             mParameters.setExposureCompensation(value);
             SettingsManager settingsManager = mActivity.getSettingsManager();
@@ -1956,10 +1959,11 @@ public class PhotoModule
 
     private void initializeCapabilities() {
         mInitialParams = mCameraDevice.getParameters();
-        mFocusAreaSupported = CameraUtil.isFocusAreaSupported(mInitialParams);
-        mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(mInitialParams);
-        mAeLockSupported = CameraUtil.isAutoExposureLockSupported(mInitialParams);
-        mAwbLockSupported = CameraUtil.isAutoWhiteBalanceLockSupported(mInitialParams);
+        mCameraCapabilities = mCameraDevice.getCapabilities();
+        mFocusAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
+        mMeteringAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
+        mAeLockSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.AUTO_EXPOSURE_LOCK);
+        mAwbLockSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.AUTO_WHITE_BALANCE_LOCK);
         mContinuousFocusSupported = mInitialParams.getSupportedFocusModes().contains(
                 CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
     }

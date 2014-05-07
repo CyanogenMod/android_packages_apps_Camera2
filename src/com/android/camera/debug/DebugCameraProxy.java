@@ -21,6 +21,7 @@ import android.hardware.Camera;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
+import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager;
 
 /**
@@ -52,6 +53,12 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     public int getCameraId() {
         log("getCameraId: " + mProxy.getCameraId());
         return mProxy.getCameraId();
+    }
+
+    @Override
+    public CameraCapabilities getCapabilities() {
+        log("getCapabilities");
+        return mProxy.getCapabilities();
     }
 
     @Override
