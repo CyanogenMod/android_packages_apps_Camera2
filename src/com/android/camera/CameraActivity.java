@@ -346,8 +346,7 @@ public class CameraActivity extends Activity
                             NavigationChange.InteractionCause.BUTTON);
                     // If applicable, show release information before this item
                     // is shared.
-                    if (PanoramaMetadataLoader.isPanorama(data)
-                            || RgbzMetadataLoader.hasRGBZData(data)) {
+                    if (ReleaseDialogHelper.shouldShowReleaseInfoDialogOnShare(data)) {
                         ReleaseDialogHelper.showReleaseInfoDialog(CameraActivity.this,
                                 new Callback<Void>() {
                                     @Override
