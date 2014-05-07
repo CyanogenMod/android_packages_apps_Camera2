@@ -78,12 +78,7 @@ public class SettingsUtil {
 
         @Override
         public String toString() {
-            return "SelectedPictureSizes: " + sizeToString(large) + ", " + sizeToString(medium)
-                    + ", " + sizeToString(small);
-        }
-
-        private static String sizeToString(Size size) {
-            return size.width() + "x" + size.height();
+            return "SelectedPictureSizes: " + large + ", " + medium + ", " + small;
         }
     }
 

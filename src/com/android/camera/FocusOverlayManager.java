@@ -27,12 +27,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.android.camera.cameradevice.CameraCapabilities;
+import com.android.camera.cameradevice.CameraCapabilitiesFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.UsageStatistics;
-import com.google.common.logging.eventprotos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +88,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private final String[] mDefaultFocusModes;
     private String mOverrideFocusMode;
     private Parameters mParameters;
+    private CameraCapabilities mCapabilities;
     private final SettingsManager mSettingsManager;
     private final Handler mHandler;
     Listener mListener;
@@ -141,23 +142,25 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
         mDefaultFocusModes = defaultFocusModes;
-        setParameters(parameters);
+        // TODO: Pass in the capabilities directly.
+        setParameters(parameters, CameraCapabilitiesFactory.createFrom(parameters));
         mListener = listener;
         setMirror(mirror);
         mUI = ui;
     }
 
-    public void setParameters(Parameters parameters) {
+    public void setParameters(Parameters parameters, CameraCapabilities capabilities) {
         // parameters can only be null when onConfigurationChanged is called
         // before camera is open. We will just return in this case, because
         // parameters will be set again later with the right parameters after
         // camera is open.
         if (parameters == null) return;
         mParameters = parameters;
-        mFocusAreaSupported = CameraUtil.isFocusAreaSupported(parameters);
-        mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(parameters);
-        mLockAeAwbNeeded = (CameraUtil.isAutoExposureLockSupported(mParameters) ||
-                CameraUtil.isAutoWhiteBalanceLockSupported(mParameters));
+        mCapabilities = capabilities;
+        mFocusAreaSupported = mCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
+        mMeteringAreaSupported = mCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
+        mLockAeAwbNeeded = (mCapabilities.supports(CameraCapabilities.Feature.AUTO_EXPOSURE_LOCK)
+                || mCapabilities.supports(CameraCapabilities.Feature.AUTO_WHITE_BALANCE_LOCK));
     }
 
     /** This setter should be the only way to mutate mPreviewRect. */
