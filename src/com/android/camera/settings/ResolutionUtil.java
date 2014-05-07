@@ -16,6 +16,7 @@
 
 package com.android.camera.settings;
 
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 import java.math.BigInteger;
@@ -35,6 +36,10 @@ import java.util.List;
  * user with so many options.
  */
 public class ResolutionUtil {
+
+    public static final String NEXUS_5_LARGE_16_BY_9 = "1836x3264";
+    public static final float NEXUS_5_LARGE_16_BY_9_ASPECT_RATIO = 16f / 9f;
+    public static Size NEXUS_5_LARGE_16_BY_9_SIZE = new Size(1836, 3264);
 
     /**
      * These are the preferred aspect ratios for the settings. We will take HAL
@@ -223,6 +228,9 @@ public class ResolutionUtil {
                 aspectRatioToBuckets.put(aspectRatio, bucket);
             }
             bucket.add(size);
+        }
+        if (ApiHelper.IS_NEXUS_5) {
+            aspectRatioToBuckets.get(16 / 9.0f).add(NEXUS_5_LARGE_16_BY_9_SIZE);
         }
         List<ResolutionBucket> sortedBuckets = new ArrayList<ResolutionBucket>(
                 aspectRatioToBuckets.values());
