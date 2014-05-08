@@ -278,6 +278,25 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
                     config.mBottomBarRect.set(width / 2 - previewShorterEdge / 2, height - barSize,
                             width / 2 + previewShorterEdge / 2, height);
                 }
+            } else if (previewAspectRatio > 14f / 9f) {
+                // If the preview aspect ratio is large enough, simply offset the
+                // preview to the bottom/right.
+                // TODO: This logic needs some refinement.
+                barSize = mBottomBarOptimalHeight;
+                previewShorterEdge = shorterEdge;
+                previewLongerEdge = shorterEdge * previewAspectRatio;
+                config.mBottomBarOverlay = true;
+                if (landscape) {
+                    float right = width;
+                    float left = right - previewLongerEdge;
+                    config.mPreviewRect.set(left, 0, right, previewShorterEdge);
+                    config.mBottomBarRect.set(width - barSize, 0, width, height);
+                } else {
+                    float bottom = height;
+                    float top = bottom - previewLongerEdge;
+                    config.mPreviewRect.set(0, top, previewShorterEdge, bottom);
+                    config.mBottomBarRect.set(0, height - barSize, width, height);
+                }
             } else if (remainingSpaceAlongLongerEdge <= mBottomBarMinHeight) {
                 // Need to scale down the preview to fit in the space excluding the bottom bar.
                 previewLongerEdge = longerEdge - mBottomBarMinHeight;
@@ -320,9 +339,8 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
             // Rotate 180 degrees.
             Matrix rotate = new Matrix();
             rotate.setRotate(180, width / 2, height / 2);
-            if (!config.mBottomBarOverlay) {
-                rotate.mapRect(config.mPreviewRect);
-            }
+
+            rotate.mapRect(config.mPreviewRect);
             rotate.mapRect(config.mBottomBarRect);
         }
 
