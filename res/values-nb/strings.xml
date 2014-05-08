@@ -225,9 +225,9 @@
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås opp og gå til Google Kamera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Media fra %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Media under behandling …"</string>
-    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Aktiver eller deaktiver modusliste"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Vis eller skjul modusliste"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Modusliste"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Aktiver eller deaktiver filmstripe"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Vis eller skjul filmstripe"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Filmstripe"</string>
     <string name="capital_on" msgid="1118214824959797269">"PÅ"</string>
     <string name="capital_off" msgid="3020696135020167263">"AV"</string>
