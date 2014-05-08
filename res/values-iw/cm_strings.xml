@@ -40,6 +40,7 @@
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">הפחתת טשטוש תנועה</string>
+  <string name="pref_camera_scenemode_entry_aqua">אקווה</string>
   <string name="pref_camera_scenemode_entry_ar">מציאות מוגברת</string>
   <string name="pref_camera_scenemode_entry_asd">תמונה מיטבית</string>
   <string name="pref_camera_scenemode_entry_baby">תינוק</string>
@@ -59,6 +60,7 @@
   <string name="pref_camera_scenemode_entry_fallcolor">צבעי סתיו</string>
   <string name="pref_camera_scenemode_entry_fireworks">זיקוקים</string>
   <string name="pref_camera_scenemode_entry_flowers">פרחים</string>
+  <string name="pref_camera_scenemode_entry_handheldtwilight">דמדומים</string>
   <string name="pref_camera_scenemode_entry_highsensitivity">רגישות גבוהה</string>
   <string name="pref_camera_scenemode_entry_indoor">בתוך מבנים</string>
   <string name="pref_camera_scenemode_entry_landscape">נוף</string>
@@ -75,6 +77,7 @@
   <string name="pref_camera_scenemode_entry_spotlight">זרקורים</string>
   <string name="pref_camera_scenemode_entry_steadyphoto">צילום יציב</string>
   <string name="pref_camera_scenemode_entry_supernight">לילה אפל</string>
+  <string name="pref_camera_scenemode_entry_sweepstitch">Sweep stitch</string>
   <string name="pref_camera_scenemode_entry_text">טקסט</string>
   <string name="pref_camera_scenemode_entry_theatre">תיאטרון</string>
   <string name="pref_camera_scenemode_entry_whiteboard">לוח ציור</string>
@@ -84,7 +87,10 @@
   <string name="pref_camera_focusmode_entry_facepriority">עדיפות לפנים</string>
   <string name="pref_camera_focusmode_entry_fixed">קבוע</string>
   <string name="pref_camera_focusmode_entry_portrait">דיוקן</string>
+  <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
   <string name="pref_camera_coloreffect_entry_washed">שטוף</string>
+  <string name="pref_camera_coloreffect_entry_vintage_warm">וינטאיג\' חם</string>
+  <string name="pref_camera_coloreffect_entry_vintage_cold">וינטאיג\' קר</string>
   <string name="pref_camera_coloreffect_entry_point_blue">הצבע הכחול</string>
   <string name="pref_camera_coloreffect_entry_point_green">הצבע הירוק</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">הצבע האדום-צהוב</string>
@@ -95,6 +101,8 @@
   <string name="pref_camera_burst_entry_10">10 צילומים</string>
   <string name="pref_camera_burst_entry_15">15 צילומים</string>
   <string name="pref_camera_burst_entry_20">20 צילומים</string>
+  <string name="pref_camera_focustime_title">משך פוקוס</string>
+  <string name="pref_camera_focustime_summary">בחר משך פוקוס</string>
   <string name="pref_camera_focustime_entry_5">5ש</string>
   <string name="pref_camera_focustime_entry_10">10ש</string>
   <string name="pref_camera_focustime_entry_15">15ש</string>
@@ -113,4 +121,12 @@
   <string name="pref_camera_slow_shutter_entry_4s">4 שניות</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 שניות</string>
   <string name="pref_camera_storage_title">זיכרון</string>
+  <string name="camera_menu_enhance_label">שפר</string>
+  <string name="camera_menu_slow_shutter_label">צמצם איטי</string>
+  <string name="camera_menu_beauty_mode_label">יפייף</string>
+  <string name="camera_menu_colorize_label">צבעוני</string>
+  <string name="camera_menu_effects_label">אפקטים</string>
+  <string name="camera_menu_asd_label">סצנה חכמה</string>
+  <string name="pref_camera_power_shutter_title">לחצן צילום</string>
+  <string name="pref_superzoom_title">SuperZoom</string>
 </resources>
