@@ -761,6 +761,11 @@ CHAR LIMIT=NONE] -->
     <string name="grid_lines_off_desc">Grid lines off</string>
     <string name="grid_lines_on_desc">Grid lines on</string>
 
+    <!-- Accessibility text for countdown timer toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="countdown_timer_off">Countdown timer is off</string>
+    <string name="countdown_timer_duration_3s">Countdown timer duration is set to 3 seconds</string>
+    <string name="countdown_timer_duration_10s">Countdown timer duration is set to 10 seconds</string>
+
     <!-- Accessibility text for More Options button [CHAR_LIMIT=NONE] -->
     <string name="more_options_desc">More Options</string>
 
@@ -881,4 +886,14 @@ CHAR LIMIT=NONE] -->
     <string name="pref_category_advanced">Advanced</string>
     <!-- Title of a preference for enabling manual exposure compensation. [CHAR LIMIT=20] -->
     <string name="pref_camera_exposure_compensation">Manual exposure</string>
+
+    <!-- Text shown next to the settings button to explain what is in settings menu. [CHAR LIMIT=120] !-->
+    <string name="settings_cling_text">In Settings, change resolution and quality, or try advanced features.</string>
+
+    <!-- Title on the startup screen that lets user select photo aspect ratio. [CHAR LIMIT=40]-->
+    <string name="photo_size_selection_title">Choose photo size</string>
+
+    <!-- Text on the photo aspect ratio selection screen. [CHAR LIMIT=120] -->
+    <string name="photo_aspect_ratio_selection_content">You can change this later in Settings.</string>
+
  </resources>
