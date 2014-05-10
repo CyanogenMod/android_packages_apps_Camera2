@@ -158,7 +158,7 @@
 
     <!-- Slow shutter modes -->
     <string name="pref_camera_slow_shutter_title">Slow shutter</string>
-    <string name="pref_camera_slow_shutter_default" translatable="false">slow-shutter-off</string>
+    <string name="pref_camera_slow_shutter_default" translatable="false">0</string>
     <string name="pref_camera_slow_shutter_entry_off">Off</string>
     <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
     <string name="pref_camera_slow_shutter_entry_half_second">&#189; second</string>
