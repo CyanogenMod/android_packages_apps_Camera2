@@ -16,23 +16,23 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixels</string>
-  <string name="pref_camera_picturesize_entry_18mp">18M pixels</string>
-  <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixels</string>
-  <string name="pref_camera_picturesize_entry_12_7mp">12.7M pixels</string>
-  <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
-  <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
-  <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
-  <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels (4x3)</string>
-  <string name="pref_camera_picturesize_entry_6_4mp">6.4M pixels</string>
-  <string name="pref_camera_picturesize_entry_6mp">6M pixels</string>
-  <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixels</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3.7M pixels</string>
-  <string name="pref_camera_picturesize_entry_2_5mp">2.5M pixels</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1M pixels</string>
-  <string name="pref_camera_picturesize_entry_1_9mp">1.9M pixels</string>
+  <string name="pref_camera_picturesize_entry_20_7mp">20.7 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_18mp">18 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_12_8mp">12.8 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_12_7mp">12.7 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_11_5mp">11.5 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_10_4mp">10.4 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_10mp">10 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_9mp">9 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_8_2mp">8.2 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7.7 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_6_4mp">6.4 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_6mp">6 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_4_5mp">4.5 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_3_7mp">3.7 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_2_5mp">2.5 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_2_1mp">2.1 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_1_9mp">1.9 M pieksels</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
