@@ -780,6 +780,19 @@ CHAR LIMIT=NONE] -->
     <!-- Accessibility text for filmstrip delete button [CHAR_LIMIT=NONE] -->
     <string name="delete_button_description">Delete</string>
 
+    <!-- Accessibility text for manual exposure compensation button [CHAR_LIMIT=NONE] -->
+    <string name="manual_exposure_compensation_desc">Manual Exposure Compensation</string>
+    <!-- Accessibility text for exposure compensation -2 button [CHAR_LIMIT=NONE] -->
+    <string name="exposure_compensation_desc_n2">Exposure Compensation -2</string>
+    <!-- Accessibility text for exposure compensation -1 button [CHAR_LIMIT=NONE] -->
+    <string name="exposure_compensation_desc_n1">Exposure Compensation -1</string>
+    <!-- Accessibility text for exposure compensation 0 button [CHAR_LIMIT=NONE] -->
+    <string name="exposure_compensation_desc_0">Exposure Compensation 0</string>
+    <!-- Accessibility text for exposure compensation +1 button [CHAR_LIMIT=NONE] -->
+    <string name="exposure_compensation_desc_p1">Exposure Compensation +1</string>
+    <!-- Accessibility text for exposure compensation +2 button [CHAR_LIMIT=NONE] -->
+    <string name="exposure_compensation_desc_p2">Exposure Compensation +2</string>
+
     <!-- Accessibility announcement when option button changes on screen after tap, e.g. from flash auto to flash off [CHAR_LIMIT=NONE] -->
     <string name="button_change_announcement">Button is now %s</string>
 
