@@ -798,7 +798,7 @@ CHAR LIMIT=NONE] -->
     <!-- Text shown in camera settings list for selecting the camera mode that will be used by default when the app starts [CHAR LIMIT=25] -->
     <string name="setting_default_camera">Default Camera</string>
     <!-- Text shown in camera settings list for sending user feedback to the app publisher [CHAR LIMIT=25] -->
-    <string name="setting_send_feedback">Send Feedback</string>
+    <string name="setting_send_feedback">Send feedback</string>
 
     <!-- TODO: don't ship with these. -->
     <string name="focus_ring_toggle" translatable="false">FR</string>
@@ -824,7 +824,7 @@ CHAR LIMIT=NONE] -->
     <string name="tag_enabled_id" translatable="false">enabled_id</string>
 
     <!-- Title of a dialog showing open source licenses used in the app. [CHAR LIMIT=30] -->
-    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="open_source_licenses">Open source licenses</string>
 
     <!-- Default number of times to play peek animation. -->
     <string name="pref_filmstrip_peek_anim_play_times" translatable="false">20</string>
@@ -833,7 +833,7 @@ CHAR LIMIT=NONE] -->
     <string name="pref_category_general">General Settings</string>
 
     <!--  Title of a preference group which contains settings for changing capture resolution and quality. [CHAR LIMIT=30]  -->
-    <string name="pref_category_resolution_quality">Resolution &amp; Quality</string>
+    <string name="pref_category_resolution_quality">Resolution &amp; quality</string>
 
     <!--  Title of a preference group which contains information about the app. [CHAR LIMIT=30]  -->
     <string name="pref_category_about">About</string>
@@ -862,7 +862,7 @@ CHAR LIMIT=NONE] -->
     <string name="setting_summary_x_megapixels">%1$s megapixels</string>
 
     <!-- Text shown above the button that opens to editor for images created from lens blur mode. [CHAR LIMIT=60] -->
-    <string name="cling_text_for_refocus_editor_button">Click here to edit the lens blur image.</string>
+    <string name="cling_text_for_refocus_editor_button">To refocus, touch here</string>
 
     <!-- Title of a preference group for advanced preferences. [CHAR LIMIT=30] -->
     <string name="pref_category_advanced">Advanced</string>
