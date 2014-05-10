@@ -196,7 +196,7 @@ public class VideoUI implements PieRenderer.PieListener,
         initializePauseButton();
         mAnimationManager = new AnimationManager();
         mOrientationResize = false;
-        mPrevOrientationResize = false;        
+        mPrevOrientationResize = false; 
     }
 
     public void cameraOrientationPreviewResize(boolean orientation){
