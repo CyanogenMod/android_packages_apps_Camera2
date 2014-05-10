@@ -16,23 +16,23 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_18mp">18M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_12_7mp">12.7M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_10mp">10M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_9mp">9M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixeliä (4:3)</string>
-  <string name="pref_camera_picturesize_entry_6_4mp">6.4M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_6mp">6M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3.7M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_2_5mp">2.5M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1M pixeliä</string>
-  <string name="pref_camera_picturesize_entry_1_9mp">1.9M pixeliä</string>
+  <string name="pref_camera_picturesize_entry_20_7mp">20,7 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_18mp">18 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_12_7mp">12,7 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_11_5mp">11,5 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_10_4mp">10,4 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_10mp">10 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_9mp">9 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_8_2mp">8,2 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7,7 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_6_4mp">6,4 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_6mp">6 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_4_5mp">4,5 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_3_7mp">3,7 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_2_5mp">2,5 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_2_1mp">2,1 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_1_9mp">1,9 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>

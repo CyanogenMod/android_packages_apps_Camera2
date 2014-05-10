@@ -25,7 +25,7 @@
   <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
   <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels (4:3)</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4M pixels</string>
   <string name="pref_camera_picturesize_entry_6mp">6M pixels</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixels</string>
