@@ -128,6 +128,7 @@ public class VideoUI implements PieRenderer.PieListener,
         @Override
         public void onLayoutChange(View v, int left, int top, int right,
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
             int width = right - left;
             int height = bottom - top;
             // Full-screen screennail
@@ -195,7 +196,7 @@ public class VideoUI implements PieRenderer.PieListener,
         initializePauseButton();
         mAnimationManager = new AnimationManager();
         mOrientationResize = false;
-        mPrevOrientationResize = false;
+        mPrevOrientationResize = false;        
     }
 
     public void cameraOrientationPreviewResize(boolean orientation){
