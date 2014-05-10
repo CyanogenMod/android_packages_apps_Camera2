@@ -26,14 +26,17 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
@@ -554,6 +557,33 @@ public class FilmstripView extends ViewGroup {
                     + "\n\t view Size = " + mView.getWidth() + ',' + mView.getHeight()
                     + "\n\t view scale = " + mView.getScaleX();
         }
+    }
+
+    @Override
+    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
+        super.onInitializeAccessibilityNodeInfo(info);
+
+        info.setClassName(FilmstripView.class.getName());
+        info.setScrollable(true);
+        info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+        info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
+    }
+
+    @Override
+    public boolean performAccessibilityAction(int action, Bundle args) {
+        if (!mController.isScrolling()) {
+            switch (action) {
+                case AccessibilityNodeInfo.ACTION_SCROLL_FORWARD: {
+                    mController.goToNextItem();
+                    return true;
+                }
+                case AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD: {
+                    mController.goToPreviousItem();
+                    return true;
+                }
+            }
+        }
+        return super.performAccessibilityAction(action, args);
     }
 
     /** Constructor. */
@@ -2204,6 +2234,7 @@ public class FilmstripView extends ViewGroup {
             if (inFullScreen()) {
                 return;
             }
+
             scaleTo(FULL_SCREEN_SCALE, GEOMETRY_ADJUST_TIME_MS);
         }
 
