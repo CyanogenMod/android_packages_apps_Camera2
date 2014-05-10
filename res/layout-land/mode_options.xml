@@ -33,35 +33,40 @@
         camera:selected_drawable="@drawable/button_background_selected_photo"
         android:visibility="invisible" >
         <ImageButton
-            android:id="@+id/exposure_n2"
+            android:id="@+id/exposure_p2"
             style="@style/ModeOption"
-            android:tag="-2"
+            android:tag="2"
             android:background="@null"
-            android:src="@drawable/ic_exposure_n2" />
-        <ImageButton
-            android:id="@+id/exposure_n1"
-            style="@style/ModeOption"
-            android:tag="-1"
-            android:background="@null"
-            android:src="@drawable/ic_exposure_n1" />
-        <ImageButton
-            android:id="@+id/exposure_0"
-            style="@style/ModeOption"
-            android:tag="0"
-            android:background="@null"
-            android:src="@drawable/ic_exposure_0" />
+            android:src="@drawable/ic_exposure_p2"
+            android:contentDescription="@string/exposure_compensation_desc_p2" />
         <ImageButton
             android:id="@+id/exposure_p1"
             style="@style/ModeOption"
             android:tag="1"
             android:background="@null"
-            android:src="@drawable/ic_exposure_p1" />
+            android:src="@drawable/ic_exposure_p1"
+            android:contentDescription="@string/exposure_compensation_desc_p1" />
         <ImageButton
-            android:id="@+id/exposure_p2"
+            android:id="@+id/exposure_0"
             style="@style/ModeOption"
-            android:tag="2"
+            android:tag="0"
             android:background="@null"
-            android:src="@drawable/ic_exposure_p2" />
+            android:src="@drawable/ic_exposure_0"
+            android:contentDescription="@string/exposure_compensation_desc_0" />
+        <ImageButton
+            android:id="@+id/exposure_n1"
+            style="@style/ModeOption"
+            android:tag="-1"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_n1"
+            android:contentDescription="@string/exposure_compensation_desc_n1" />
+        <ImageButton
+            android:id="@+id/exposure_n2"
+            style="@style/ModeOption"
+            android:tag="-2"
+            android:background="@null"
+            android:src="@drawable/ic_exposure_n2"
+            android:contentDescription="@string/exposure_compensation_desc_n2" />
     </com.android.camera.ui.RadioOptions>
 
     <com.android.camera.ui.RadioOptions
@@ -111,6 +116,7 @@
             android:id="@+id/exposure_button"
             style="@style/ModeOption"
             android:background="@null"
-            android:src="@drawable/ic_exposure" />
+            android:src="@drawable/ic_exposure"
+            android:contentDescription="@string/manual_exposure_compensation_desc" />
     </com.android.camera.ui.TopRightWeightedLayout>
 </com.android.camera.widget.ModeOptions>
