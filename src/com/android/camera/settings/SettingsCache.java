@@ -135,6 +135,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING);
         mKeyMap.put(SettingsManager.KEY_EXPOSURE_COMPENSATION_ENABLED,
                 SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
+        mKeyMap.put(SettingsManager.KEY_USER_SELECTED_ASPECT_RATIO,
+                SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO);
     }
 
     /**
@@ -192,7 +194,7 @@ public class SettingsCache {
             case SettingsManager.SETTING_VIDEO_EFFECT:
                 return SettingsManager.getVideoEffectSetting(mContext);
             case SettingsManager.SETTING_CAMERA_ID:
-                return SettingsManager.getDefaultCameraIdSetting(mContext, mCapabilities);
+                return SettingsManager.getDefaultCameraIdSetting(mContext);
             case SettingsManager.SETTING_CAMERA_HDR:
                 return SettingsManager.getHdrSetting(mContext);
             case SettingsManager.SETTING_CAMERA_HDR_PLUS:
@@ -221,6 +223,8 @@ public class SettingsCache {
                 return SettingsManager.getShouldShowRefocusViewerCling(mContext);
             case SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED:
                 return SettingsManager.getManualExposureCompensationSetting(mContext);
+            case SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO:
+                return SettingsManager.getUserSelectedAspectRatioSetting(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }

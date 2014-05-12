@@ -1387,6 +1387,14 @@ public class CameraActivity extends Activity
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
             modeIndex = mSettingsManager.getInt(
                 SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
+
+            // For upgraders who have not seen the aspect ratio selection screen,
+            // we need to drop them back in the photo module and have them select
+            // aspect ratio.
+            // TODO: Move this to SettingsManager as an upgrade procedure.
+            if (!mSettingsManager.getBoolean(SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO)) {
+                modeIndex = photoIndex;
+            }
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes

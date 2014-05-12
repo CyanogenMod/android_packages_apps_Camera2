@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
@@ -77,6 +78,7 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.SessionStatsCollector;
 import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
+import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 
@@ -269,6 +271,48 @@ public class PhotoModule
         }
     };
 
+    /**
+     * This callback gets called when user select whether or not to
+     * turn on geo-tagging.
+     */
+    public interface LocationDialogCallback {
+        /**
+         * Gets called after user selected/unselected geo-tagging feature.
+         *
+         * @param selected whether or not geo-tagging feature is selected
+         */
+        public void onLocationTaggingSelected(boolean selected);
+    }
+
+    /**
+     * This callback defines the text that is shown in the aspect ratio selection
+     * dialog, provides the current aspect ratio, and gets notified when user changes
+     * aspect ratio selection in the dialog.
+     */
+    public interface AspectRatioDialogCallback {
+        /**
+         * Returns text to show for 4:3 aspect ratio.
+         */
+        public String get4x3AspectRatioText();
+
+        /**
+         * Returns text to show for 16:9 aspect ratio.
+         */
+        public String get16x9AspectRatioText();
+
+        /**
+         * Returns current aspect ratio that is being used to set as default.
+         */
+        public AspectRatioSelector.AspectRatio getCurrentAspectRatio();
+
+        /**
+         * Gets notified when user has made the aspect ratio selection.
+         *
+         * @param newAspectRatio aspect ratio that user has selected
+         */
+        public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio);
+    }
+
     private void checkDisplayRotation() {
         // Set the display orientation if display rotation has changed.
         // Sometimes this happens when the device is held upside
@@ -361,6 +405,13 @@ public class PhotoModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
         mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
 
+        // TODO: Move this to SettingsManager as a part of upgrade procedure.
+        if (!settingsManager.getBoolean(SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO)) {
+            // Switch to back camera to set aspect ratio.
+            mCameraId = Integer.parseInt(settingsManager
+                    .getDefaultCameraIdSetting(activity).getDefault());
+        }
+
         mContentResolver = mActivity.getContentResolver();
 
         // Surface texture is from camera screen nail and startPreview needs it.
@@ -390,27 +441,137 @@ public class PhotoModule
         mAppController.onPreviewStarted();
         setCameraState(IDLE);
         startFaceDetection();
-        locationFirstRun();
+        settingsFirstRun();
     }
 
-    // Prompt the user to pick to record location for the very first run of
-    // camera only
-    private void locationFirstRun() {
-        SettingsManager settingsManager = mActivity.getSettingsManager();
+    /**
+     * Prompt the user to pick to record location and choose aspect ratio for the
+     * very first run of camera only.
+     */
+    private void settingsFirstRun() {
+        final SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        if (settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
+        if (mActivity.isSecureCamera() || isImageCaptureIntent()) {
             return;
         }
-        if (mActivity.isSecureCamera()) {
+
+        boolean locationPrompt = !settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION);
+        boolean aspectRatioPrompt = !settingsManager.getBoolean(
+                SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO);
+        if (!locationPrompt && !aspectRatioPrompt) {
             return;
         }
+
         // Check if the back camera exists
         int backCameraId = mAppController.getCameraProvider().getFirstBackCameraId();
         if (backCameraId == -1) {
             // If there is no back camera, do not show the prompt.
             return;
         }
-        mUI.showLocationDialog();
+
+        if (locationPrompt) {
+            // Show both location and aspect ratio selection dialog.
+            mUI.showLocationAndAspectRatioDialog(new LocationDialogCallback(){
+                public void onLocationTaggingSelected(boolean selected) {
+                    settingsManager.setLocation(selected, mActivity.getLocationManager());
+                }
+            }, createAspectRatioDialogCallback());
+        } else {
+            // App upgrade. Only show aspect ratio selection.
+            mUI.showAspectRatioDialog(createAspectRatioDialogCallback());
+        }
+    }
+
+    private AspectRatioDialogCallback createAspectRatioDialogCallback() {
+        Size currentSize = new Size(mParameters.getPictureSize());
+        float aspectRatio = (float) currentSize.width() / (float) currentSize.height();
+        if (aspectRatio < 1f) {
+            aspectRatio = 1 / aspectRatio;
+        }
+        final AspectRatioSelector.AspectRatio currentAspectRatio;
+        if (Math.abs(aspectRatio - 4f / 3f) <= 0.1f) {
+            currentAspectRatio = AspectRatioSelector.AspectRatio.ASPECT_RATIO_4x3;
+        } else if (Math.abs(aspectRatio - 16f / 9f) <= 0.1f) {
+            currentAspectRatio = AspectRatioSelector.AspectRatio.ASPECT_RATIO_16x9;
+        } else {
+            // TODO: Log error and not show dialog.
+            return null;
+        }
+
+        List<Size> sizes = Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
+        List<Size> pictureSizes = ResolutionUtil
+                .getDisplayableSizesFromSupported(sizes, true);
+
+        // This logic below finds the largest resolution for each aspect ratio.
+        // TODO: Move this somewhere that can be shared with SettingsActivity
+        int aspectRatio4x3Resolution = 0;
+        int aspectRatio16x9Resolution = 0;
+        Size largestSize4x3 = new Size(0, 0);
+        Size largestSize16x9 = new Size(0, 0);
+        for (Size size : pictureSizes) {
+            float pictureAspectRatio = (float) size.width() / (float) size.height();
+            pictureAspectRatio = pictureAspectRatio < 1 ?
+                    1f / pictureAspectRatio : pictureAspectRatio;
+            int resolution = size.width() * size.height();
+            if (Math.abs(pictureAspectRatio - 4f / 3f) < 0.1f) {
+                if (resolution > aspectRatio4x3Resolution) {
+                    aspectRatio4x3Resolution = resolution;
+                    largestSize4x3 = size;
+                }
+            } else if (Math.abs(pictureAspectRatio - 16f / 9f) < 0.1f) {
+                if (resolution > aspectRatio16x9Resolution) {
+                    aspectRatio16x9Resolution = resolution;
+                    largestSize16x9 = size;
+                }
+            }
+        }
+        aspectRatio16x9Resolution /= 1000000;
+        aspectRatio4x3Resolution /= 1000000;
+
+        final String largestSize4x3Text = SettingsUtil.sizeToSetting(largestSize4x3);
+        final String largestSize16x9Text = SettingsUtil.sizeToSetting(largestSize16x9);
+
+        Resources res = mAppController.getAndroidContext().getResources();
+        final String aspectRatio4x3Text = res.getString(R.string.megapixel_text_for_4x3_aspect_ratio,
+                aspectRatio4x3Resolution);
+        final String aspectRatio16x9Text = res.getString(R.string.megapixel_text_for_16x9_aspect_ratio,
+                aspectRatio16x9Resolution);
+
+        AspectRatioDialogCallback callback = new AspectRatioDialogCallback() {
+            @Override
+            public String get4x3AspectRatioText() {
+                return aspectRatio4x3Text;
+            }
+
+            @Override
+            public String get16x9AspectRatioText() {
+                return aspectRatio16x9Text;
+            }
+
+            @Override
+            public AspectRatioSelector.AspectRatio getCurrentAspectRatio() {
+                return currentAspectRatio;
+            }
+
+            @Override
+            public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio) {
+                if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_4x3) {
+                    mActivity.getSettingsManager().set(SettingsManager.SETTING_PICTURE_SIZE_BACK,
+                            largestSize4x3Text);
+                } else if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_16x9) {
+                    mActivity.getSettingsManager().set(SettingsManager.SETTING_PICTURE_SIZE_BACK,
+                            largestSize16x9Text);
+                }
+                mActivity.getSettingsManager().setBoolean(
+                        SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO, true);
+                if (newAspectRatio != currentAspectRatio) {
+                    // TODO: Need to re-introduce the mode cover here to avoid jank.
+                    stopPreview();
+                    startPreview();
+                }
+            }
+        };
+        return callback;
     }
 
     @Override
