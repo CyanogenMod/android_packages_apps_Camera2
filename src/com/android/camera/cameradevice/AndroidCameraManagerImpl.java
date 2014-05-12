@@ -240,7 +240,7 @@ class AndroidCameraManagerImpl implements CameraManager {
         private Camera mCamera;
         private int mCameraId;
 
-        private LinkedList<Integer> mMsgHistory;
+        private final LinkedList<Integer> mMsgHistory;
 
         private class CaptureCallbacks {
             public final ShutterCallback mShutter;
@@ -355,9 +355,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                             mParametersIsDirty = true;
 
                             // Get a instance of Camera.Parameters for later use.
-                            if (mParamsToSet == null) {
-                                mParamsToSet = mCamera.getParameters();
-                            }
+                            mParamsToSet = mCamera.getParameters();
 
                             mCameraState.setState(CAMERA_IDLE);
                             if (openCallback != null) {
