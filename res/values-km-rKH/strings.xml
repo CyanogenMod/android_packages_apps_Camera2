@@ -26,7 +26,7 @@
     <item quantity="one" msgid="8811352590292754044">"លុប​ធាតុ​ដែល​បាន​ជ្រើស?"</item>
     <item quantity="other" msgid="5075283252850066610">"លុប​ធាតុ​ដែល​បាន​ជ្រើស?"</item>
   </plurals>
-    <string name="share" msgid="8581089487762243115">"ចែក​រំលែក"</string>
+    <string name="share" msgid="8581089487762243115">"ចែក​រំលែក​"</string>
     <string name="share_panorama" msgid="3558466186935359444">"ចែករំលែក​ទេសភាព"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"ចែករំលែក​ជា​រូបថត"</string>
     <string name="deleted" msgid="2036165115527228127">"បាន​លុប"</string>
@@ -219,7 +219,7 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"បាន​ពិនិត្យ​រួចរាល់"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"ពិនិត្យ​ឡើងវិញ"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ជម្រើស"</string>
-    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប​"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"បាន​បើក​បញ្ជី​របៀប"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"ចាប់​យក"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ដោះ​សោ​ដើម្បី​ប្រើ​ម៉ាស៊ីន​ថត"</string>
@@ -272,9 +272,9 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"១២ ម៉ោង"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"១៥ ម៉ោង"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"២៤ ម៉ោង"</string>
-    <string name="time_lapse_seconds" msgid="7319683099532506270">"វិនាទី"</string>
-    <string name="time_lapse_minutes" msgid="5325447383033224679">"នាទី"</string>
-    <string name="time_lapse_hours" msgid="5294001144133261436">"ម៉ោង"</string>
+    <string name="time_lapse_seconds" msgid="7319683099532506270">"វិនាទី​"</string>
+    <string name="time_lapse_minutes" msgid="5325447383033224679">"នាទី​"</string>
+    <string name="time_lapse_hours" msgid="5294001144133261436">"ម៉ោង​"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"រួចរាល់"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"កំណត់​ចន្លោះ​ពេល"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"បាន​បិទ​​លក្ខណៈ​ពេលវេលា​កន្លង​ទៅ។ បើក​វា​ ដើម្បី​កំណត់​ចន្លោះ​ពេល។"</string>
@@ -297,7 +297,7 @@
     <string name="setting_wallpaper" msgid="2397759659347872725">"​កំណត់​ផ្ទាំង​រូបភាព"</string>
     <string name="mode_settings" msgid="2021937261522670921">"ការ​កំណត់"</string>
     <string name="mode_camera" msgid="279763925715250603">"ម៉ាស៊ីន​ថត"</string>
-    <string name="mode_video" msgid="8633929034048169139">"វីដេអូ"</string>
+    <string name="mode_video" msgid="8633929034048169139">"វីដេអូ​"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"រូបថត​វិល​ជុំ"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"ពេលវេលា​កន្លងទៅ"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"មុំ​ពេញ"</string>
@@ -328,14 +328,23 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"ម៉ាស៊ីន​ថត​ខាងមុខ"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"បិទ​ក្រឡា"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"បើក​ក្រឡា"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"កម្មវិធី​កំណត់​ម៉ោង​​រាប់​ថយក្រោយ​​គឺ​បិទ"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"ថិរវេលា​កម្មវិធី​កំណត់​ម៉ោង​រាប់​ថយក្រោយ​ត្រូវ​បាន​កំណត់ ៣​​វិនាទី"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"ថិរវេលា​កម្មវិធី​កំណត់​ម៉ោង​រាប់​ថយក្រោយ​ត្រូវ​បាន​កំណត់ ១០​វិនាទី"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ជម្រើស​​ច្រើន​ទៀត"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"បោះបង់"</string>
     <string name="done_button_description" msgid="1334963435441544592">"រួចរាល់"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ថត​ឡើងវិញ"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"ចែករំលែក"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"ចែករំលែក​"</string>
     <string name="view_button_description" msgid="4985768837891362075">"មើល"</string>
     <string name="edit_button_description" msgid="98550816724901925">"កែសម្រួល"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"លុប"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"ការ​កែ​តម្រូវ​ពន្លឺ​ដោយ​ដៃ"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"ការ​កែ​តម្រូវ​ពន្លឺ -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"ការ​កែ​តម្រូវ​ពន្លឺ -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"ការ​កែតម្រូវ​ពន្លឺ 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"ការ​កែ​តម្រូវ​ពន្លឺ +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"ការ​កែ​តម្រូវ​ពន្លឺ +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ប៊ូតុង​ឥឡូវ​គឺ %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"ទីកន្លែង"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"រូបថតម៉ាស៊ីនថតខាងក្រោយ"</string>
@@ -343,17 +352,20 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"រូបថតម៉ាស៊ីនថតខាងមុខ"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"វីដេអូម៉ាស៊ីនថតខាងមុខ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ម៉ាស៊ីន​ថត​លំនាំដើម"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"ផ្ញើ​មតិ​ត្រឡប់"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"ផ្ញើ​មតិ​ត្រឡប់"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"កំពុង​ដំណើរការ HDR+ …"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"អាជ្ញាប័ណ្ណ​កម្មវិធី​កូដ​ចំហ"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"អាជ្ញាប័ណ្ណ​កម្មវិធី​​​​ប្រភព​កូដ​ចំហ"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"ការ​កំណត់​ទូទៅ"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"គុណភាព​បង្ហាញ &amp; គុណភាព"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"គុណភាព​បង្ហាញ &amp; គុណភាព"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"អំពី"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"កំណែ​បង្កើត"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ទាប"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"ខ្ពស់"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s មេហ្គាភីកសែល"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"ចុច​ទីនេះ ដើម្បី​កែ​រូបភាព​ដែល​ព្រិល។"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ដើម្បី​ផ្ដោត​ ប៉ះ​ទីនេះ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"កម្រិត​ខ្ពស់"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"កែតម្រូវពន្លឺដោយដៃ"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"នៅ​ក្នុង​ការ​កំណត់ ប្ដូរ​គុណភាព​បង្ហាញ និង​គុណភាព ឬ​​សាកល្បង​លក្ខណៈ​កម្រិត​ខ្ពស់។"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"ជ្រើស​ទំហំ​រូបថត"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"អ្នក​អាច​ប្ដូរ​វា​ពេល​ក្រោយ​ក្នុង​ការ​កំណត់។"</string>
 </resources>

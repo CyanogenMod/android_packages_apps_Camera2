@@ -328,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"دوربین جلو"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"خطوط شطرنجی غیرفعال"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"خطوط شطرنجی فعال"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"تایمر شمارش معکوس خاموش است"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"مدت زمان تایمر شمارش معکوس روی ٣ ثانیه تنظیم شده است"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"مدت زمان تایمر شمارش معکوس روی ۱۰ ثانیه تنظیم شده است"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"گزینه‌های بیشتر"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"لغو"</string>
     <string name="done_button_description" msgid="1334963435441544592">"انجام شد"</string>
@@ -336,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"مشاهده"</string>
     <string name="edit_button_description" msgid="98550816724901925">"ویرایش"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"حذف"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"جبران نوردهی دستی"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"جبران نوردهی ۲-"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"جبران نوردهی ۱-"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"جبران نوردهی ۰"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"جبران نوردهی ۱+"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"جبران نوردهی ۲+"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"‏اکنون دکمه %s است"</string>
     <string name="setting_location" msgid="4459859689227893838">"مکان"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"عکس دوربین پشت"</string>
@@ -343,17 +352,20 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"عکس دوربین جلو"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"ویدیوی دوربین جلو"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"دوربین پیش‌فرض"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"ارسال بازخورد"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"ارسال بازخورد"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"‏در حال پردازش +HDR ..."</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"مجوزهای منبع آزاد"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"مجوزهای منبع باز"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"تنظیمات عمومی"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"وضوح و کیفیت"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"وضوح تصویر و کیفیت"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"درباره"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"نسخه ساخت"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"پایین"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"بالا"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"‏%1$s مگاپیکسل"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"‏برای ویرایش تصویر Lens Blur اینجا را کلیک کنید."</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"برای فوکوس مجدد، اینجا را لمس کنید"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"پیشرفته"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"نوردهی دستی"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"در تنظیمات، وضوح تصویر و کیفیت را تغییر دهید یا قابلیت‌های پیشرفته را امتحان کنید."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"انتخاب اندازه عکس"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"می‌توانید بعداً این مورد را در تنظیمات تغییر دهید."</string>
 </resources>
