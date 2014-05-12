@@ -195,11 +195,11 @@ public class PieRenderer extends OverlayRenderer
         mCircleSize = mRadius - res.getDimensionPixelSize(R.dimen.focus_radius_offset);
         mTouchOffset = (int) res.getDimensionPixelSize(R.dimen.pie_touch_offset);
         mSelectedPaint = new Paint();
-        mSelectedPaint.setColor(Color.argb(255, 51, 181, 229));
+        mSelectedPaint.setColor(res.getColor(R.color.selectedpaint_color));
         mSelectedPaint.setAntiAlias(true);
         mSubPaint = new Paint();
         mSubPaint.setAntiAlias(true);
-        mSubPaint.setColor(Color.argb(200, 250, 230, 128));
+        mSubPaint.setColor(res.getColor(R.color.subpaint_color));
         mFocusPaint = new Paint();
         mFocusPaint.setAntiAlias(true);
         mFocusPaint.setColor(Color.WHITE);
@@ -220,7 +220,7 @@ public class PieRenderer extends OverlayRenderer
         mDown = new Point();
         mMenuArcPaint = new Paint();
         mMenuArcPaint.setAntiAlias(true);
-        mMenuArcPaint.setColor(Color.argb(140, 255, 255, 255));
+        mMenuArcPaint.setColor(res.getColor(R.color.menuarcpaint_color));
         mMenuArcPaint.setStrokeWidth(10);
         mMenuArcPaint.setStyle(Paint.Style.STROKE);
         mSliceRadius = res.getDimensionPixelSize(R.dimen.pie_item_radius);
