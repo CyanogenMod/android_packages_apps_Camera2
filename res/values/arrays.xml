@@ -460,6 +460,8 @@
     <string-array name="pref_camera_pano_orientation_entryvalues">
       <item>@string/pano_orientation_horizontal</item>
       <item>@string/pano_orientation_vertical</item>
+      <item>@string/pano_orientation_wide</item>
+      <item>@string/pano_orientation_fisheye</item>
     </string-array>
 
     <array name="settings_toggle_icons" translatable="false">
