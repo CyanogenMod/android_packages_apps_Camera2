@@ -399,7 +399,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                     backCamera.release();
                     mOldPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(sizes,
                             backCameraId);
-                    mPictureSizesBack = ResolutionUtil.getDisplayableSizesFromSupported(sizes);
+                    mPictureSizesBack = ResolutionUtil
+                            .getDisplayableSizesFromSupported(sizes, true);
                 }
                 mVideoQualitiesBack = SettingsUtil.getSelectedVideoQualities(backCameraId);
             } else {
@@ -417,7 +418,7 @@ public class CameraSettingsActivity extends FragmentActivity {
                     mOldPictureSizesFront= SettingsUtil.getSelectedCameraPictureSizes(sizes,
                             frontCameraId);
                     mPictureSizesFront =
-                            ResolutionUtil.getDisplayableSizesFromSupported(sizes);
+                            ResolutionUtil.getDisplayableSizesFromSupported(sizes, false);
                 }
                 mVideoQualitiesFront = SettingsUtil.getSelectedVideoQualities(frontCameraId);
             } else {

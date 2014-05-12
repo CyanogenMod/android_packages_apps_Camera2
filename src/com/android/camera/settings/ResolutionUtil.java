@@ -101,11 +101,12 @@ public class ResolutionUtil {
      * aspect ratios from above;
      * 
      * @param sizes A super set of all sizes to be displayed
+     * @param isBackCamera true if these are sizes for the back camera
      * @return The list of sizes to display grouped first by aspect ratio
      *         (sorted by maximum area), and sorted within aspect ratio by area)
      */
-    public static List<Size> getDisplayableSizesFromSupported(List<Size> sizes) {
-        List<ResolutionBucket> buckets = parseAvailableSizes(sizes);
+    public static List<Size> getDisplayableSizesFromSupported(List<Size> sizes, boolean isBackCamera) {
+        List<ResolutionBucket> buckets = parseAvailableSizes(sizes, isBackCamera);
 
         List<Float> sortedDesiredAspectRatios = new ArrayList<Float>();
         // We want to make sure we support the maximum pixel aspect ratio, even
@@ -211,9 +212,10 @@ public class ResolutionUtil {
      * that are close to the sDesiredAspectRatios in to the same bucket.
      * 
      * @param sizes all supported sizes for a camera
+     * @param isBackCamera true if these are sizes for the back camera
      * @return all of the sizes grouped by their closest aspect ratio
      */
-    private static List<ResolutionBucket> parseAvailableSizes(List<Size> sizes) {
+    private static List<ResolutionBucket> parseAvailableSizes(List<Size> sizes, boolean isBackCamera) {
         HashMap<Float, ResolutionBucket> aspectRatioToBuckets = new HashMap<Float, ResolutionBucket>();
 
         for (Size size : sizes) {
@@ -229,7 +231,7 @@ public class ResolutionUtil {
             }
             bucket.add(size);
         }
-        if (ApiHelper.IS_NEXUS_5) {
+        if (ApiHelper.IS_NEXUS_5 && isBackCamera) {
             aspectRatioToBuckets.get(16 / 9.0f).add(NEXUS_5_LARGE_16_BY_9_SIZE);
         }
         List<ResolutionBucket> sortedBuckets = new ArrayList<ResolutionBucket>(
