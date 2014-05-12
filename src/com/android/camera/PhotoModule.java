@@ -557,17 +557,22 @@ public class PhotoModule
         bottomBarSpec.enableHdr = true;
         bottomBarSpec.hdrCallback = mHdrPlusCallback;
         bottomBarSpec.enableGridLines = true;
-        bottomBarSpec.enableExposureCompensation = true;
-        bottomBarSpec.exposureCompensationSetCallback =
-            new CameraAppUI.BottomBarUISpec.ExposureCompensationSetCallback() {
-            @Override
-            public void setExposure(int value) {
-                setExposureCompensation(value);
-            }
-        };
-        bottomBarSpec.minExposureCompensation = mCameraCapabilities.getMinExposureCompensation();
-        bottomBarSpec.maxExposureCompensation = mCameraCapabilities.getMaxExposureCompensation();
-        bottomBarSpec.exposureCompensationStep = mCameraCapabilities.getExposureCompensationStep();
+        if (mCameraCapabilities != null) {
+            bottomBarSpec.enableExposureCompensation = true;
+            bottomBarSpec.exposureCompensationSetCallback =
+                new CameraAppUI.BottomBarUISpec.ExposureCompensationSetCallback() {
+                @Override
+                public void setExposure(int value) {
+                    setExposureCompensation(value);
+                }
+            };
+            bottomBarSpec.minExposureCompensation =
+                mCameraCapabilities.getMinExposureCompensation();
+            bottomBarSpec.maxExposureCompensation =
+                mCameraCapabilities.getMaxExposureCompensation();
+            bottomBarSpec.exposureCompensationStep =
+                mCameraCapabilities.getExposureCompensationStep();
+        }
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;
