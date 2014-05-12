@@ -315,7 +315,8 @@ public class CameraActivity extends Activity
                     final int currentDataId = getCurrentDataId();
                     UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
                             MediaInteraction.InteractionType.EDIT,
-                            NavigationChange.InteractionCause.BUTTON);
+                            NavigationChange.InteractionCause.BUTTON,
+                            fileAgeFromDataID(currentDataId));
                     launchEditor(data);
                 }
 
@@ -333,7 +334,8 @@ public class CameraActivity extends Activity
                     final int currentDataId = getCurrentDataId();
                     UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
                             MediaInteraction.InteractionType.DELETE,
-                            NavigationChange.InteractionCause.BUTTON);
+                            NavigationChange.InteractionCause.BUTTON,
+                            fileAgeFromDataID(currentDataId));
                     removeData(currentDataId);
                 }
 
@@ -343,7 +345,8 @@ public class CameraActivity extends Activity
                     final int currentDataId = getCurrentDataId();
                     UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
                             MediaInteraction.InteractionType.SHARE,
-                            NavigationChange.InteractionCause.BUTTON);
+                            NavigationChange.InteractionCause.BUTTON,
+                            fileAgeFromDataID(currentDataId));
                     // If applicable, show release information before this item
                     // is shared.
                     if (ReleaseDialogHelper.shouldShowReleaseInfoDialogOnShare(data)) {
@@ -546,6 +549,13 @@ public class CameraActivity extends Activity
         return localFile.getName();
     }
 
+    private float fileAgeFromDataID(int dataID) {
+        final LocalData localData = mDataAdapter.getLocalData(dataID);
+
+        File localFile = new File(localData.getPath());
+        return 0.001f * (System.currentTimeMillis() - localFile.lastModified());
+    }
+
     private final FilmstripContentPanel.Listener mFilmstripListener =
             new FilmstripContentPanel.Listener() {
 
@@ -590,7 +600,7 @@ public class CameraActivity extends Activity
                 public void onFocusedDataPromoted(int dataID) {
                     UsageStatistics.instance().mediaInteraction(fileNameFromDataID(dataID),
                             MediaInteraction.InteractionType.DELETE,
-                            NavigationChange.InteractionCause.SWIPE_UP);
+                            NavigationChange.InteractionCause.SWIPE_UP, fileAgeFromDataID(dataID));
                     removeData(dataID);
                 }
 
@@ -598,7 +608,8 @@ public class CameraActivity extends Activity
                 public void onFocusedDataDemoted(int dataID) {
                     UsageStatistics.instance().mediaInteraction(fileNameFromDataID(dataID),
                             MediaInteraction.InteractionType.DELETE,
-                            NavigationChange.InteractionCause.SWIPE_DOWN);
+                            NavigationChange.InteractionCause.SWIPE_DOWN,
+                            fileAgeFromDataID(dataID));
                     removeData(dataID);
                 }
 
@@ -784,7 +795,7 @@ public class CameraActivity extends Activity
         }
         UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
                 MediaInteraction.InteractionType.SHARE,
-                NavigationChange.InteractionCause.BUTTON);
+                NavigationChange.InteractionCause.BUTTON, fileAgeFromDataID(currentDataId));
         // TODO add intent.getComponent().getPackageName()
         return true;
     }
@@ -1484,6 +1495,9 @@ public class CameraActivity extends Activity
         mLocalVideosObserver.setActivityPaused(true);
         mPreloader.cancelAllLoads();
         resetScreenOn();
+
+        UsageStatistics.instance().backgrounded();
+
         super.onPause();
     }
 
@@ -1851,10 +1865,11 @@ public class CameraActivity extends Activity
                 mStorageHint.setText(message);
             }
             mStorageHint.show();
+            UsageStatistics.instance().storageWarning(storageSpace);
         } else if (mStorageHint != null) {
             mStorageHint.cancel();
             mStorageHint = null;
-       }
+        }
     }
 
     protected void setResultEx(int resultCode) {
@@ -2522,7 +2537,7 @@ public class CameraActivity extends Activity
         detailDialog.show();
         UsageStatistics.instance().mediaInteraction(
                 fileNameFromDataID(dataId), MediaInteraction.InteractionType.DETAILS,
-                NavigationChange.InteractionCause.BUTTON);
+                NavigationChange.InteractionCause.BUTTON, fileAgeFromDataID(dataId));
     }
 
     /**

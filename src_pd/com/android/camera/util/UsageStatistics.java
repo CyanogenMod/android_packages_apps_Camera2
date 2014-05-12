@@ -35,10 +35,16 @@ public class UsageStatistics {
     public void initialize(Context context) {
     }
 
-    public void mediaInteraction(String ref, int interactionType, int cause) {
+    public void mediaInteraction(String ref, int interactionType, int cause, float age) {
     }
 
     public void foregrounded(int source, int mode) {
+    }
+
+    public void backgrounded(int source, int mode) {
+    }
+
+    public void storageWarning(long storageSpace) {
     }
 
     public void videoCaptureDoneEvent(String ref, long durationMsec, boolean front, int width,
