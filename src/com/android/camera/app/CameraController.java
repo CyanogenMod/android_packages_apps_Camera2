@@ -21,6 +21,7 @@ import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.camera.CameraDisabledException;
+import com.android.camera.cameradevice.CameraDeviceInfo;
 import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.cameradevice.CameraManager.CameraExceptionCallback;
 import com.android.camera.debug.Log;
@@ -38,10 +39,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     private CameraManager.CameraOpenCallback mCallbackReceiver;
     private final Handler mCallbackHandler;
     private final CameraManager mCameraManager;
-    private final Camera.CameraInfo[] mCameraInfos;
-    private final int mNumberOfCameras;
-    private final int mFirstBackCameraId;
-    private final int mFirstFrontCameraId;
+    private CameraDeviceInfo mInfo;
 
     private CameraManager.CameraProxy mCameraProxy;
     private int mRequestingCameraId = EMPTY_REQUEST;
@@ -61,27 +59,10 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         mCallbackReceiver = callbackReceiver;
         mCallbackHandler = handler;
         mCameraManager = cameraManager;
-        mNumberOfCameras = Camera.getNumberOfCameras();
-        mCameraInfos = new Camera.CameraInfo[mNumberOfCameras];
-        for (int i = 0; i < mNumberOfCameras; i++) {
-            mCameraInfos[i] = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, mCameraInfos[i]);
+        mInfo = mCameraManager.getCameraDeviceInfo();
+        if (mInfo == null && mCallbackReceiver != null) {
+            mCallbackReceiver.onDeviceOpenFailure(-1, "GETTING_CAMERA_INFO");
         }
-
-        int firstFront = -1;
-        int firstBack = -1;
-        // Get the first (smallest) back and first front camera id.
-        for (int i = mNumberOfCameras - 1; i >= 0; i--) {
-            if (mCameraInfos[i].facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                firstBack = i;
-            } else {
-                if (mCameraInfos[i].facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    firstFront = i;
-                }
-            }
-        }
-        mFirstBackCameraId = firstBack;
-        mFirstFrontCameraId = firstFront;
     }
 
     @Override
@@ -92,40 +73,58 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
 
     @Override
     public Camera.CameraInfo[] getCameraInfo() {
-        return mCameraInfos;
+        if (mInfo == null) {
+            return null;
+        }
+        return mInfo.getCameraInfos();
     }
 
     @Override
     public int getNumberOfCameras() {
-        return mNumberOfCameras;
+        if (mInfo == null) {
+            return 0;
+        }
+        return mInfo.getNumberOfCameras();
     }
 
     @Override
     public int getFirstBackCameraId() {
-        return mFirstBackCameraId;
+        if (mInfo == null) {
+            return -1;
+        }
+        return mInfo.getFirstBackCameraId();
     }
 
     @Override
     public int getFirstFrontCameraId() {
-        return mFirstFrontCameraId;
+        if (mInfo == null) {
+            return -1;
+        }
+        return mInfo.getFirstFrontCameraId();
     }
 
     @Override
     public boolean isFrontFacingCamera(int id) {
-        if (id >= mCameraInfos.length || mCameraInfos[id] == null) {
+        if (mInfo == null) {
+            return false;
+        }
+        if (id >= mInfo.getCameraInfos().length || mInfo.getCameraInfos()[id] == null) {
             Log.e(TAG, "Camera info not available:" + id);
             return false;
         }
-        return (mCameraInfos[id].facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
+        return (mInfo.getCameraInfos()[id].facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
     }
 
     @Override
     public boolean isBackFacingCamera(int id) {
-        if (id >= mCameraInfos.length || mCameraInfos[id] == null) {
+        if (mInfo == null) {
+            return false;
+        }
+        if (id >= mInfo.getCameraInfos().length || mInfo.getCameraInfos()[id] == null) {
             Log.e(TAG, "Camera info not available:" + id);
             return false;
         }
-        return (mCameraInfos[id].facing == Camera.CameraInfo.CAMERA_FACING_BACK);
+        return (mInfo.getCameraInfos()[id].facing == Camera.CameraInfo.CAMERA_FACING_BACK);
     }
 
     @Override
@@ -181,6 +180,9 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         // (T, F): Already requested the same camera. No-op. Return.
         // (F, T): Nothing is going on. Continue.
         if (mRequestingCameraId != EMPTY_REQUEST || mRequestingCameraId == id) {
+            return;
+        }
+        if (mInfo == null) {
             return;
         }
         mRequestingCameraId = id;

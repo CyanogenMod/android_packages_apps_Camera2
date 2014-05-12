@@ -141,6 +141,77 @@ class AndroidCameraManagerImpl implements CameraManager {
         mDispatchThread.end();
     }
 
+    @Override
+    public CameraDeviceInfo getCameraDeviceInfo() {
+        return AndroidCameraDeviceInfo.create();
+    }
+
+    private static class AndroidCameraDeviceInfo implements CameraDeviceInfo {
+        private final Camera.CameraInfo[] mCameraInfos;
+        private final int mNumberOfCameras;
+        private final int mFirstBackCameraId;
+        private final int mFirstFrontCameraId;
+
+        private AndroidCameraDeviceInfo(Camera.CameraInfo[] info, int numberOfCameras,
+                int firstBackCameraId, int firstFrontCameraId) {
+
+            mCameraInfos = info;
+            mNumberOfCameras = numberOfCameras;
+            mFirstBackCameraId = firstBackCameraId;
+            mFirstFrontCameraId = firstFrontCameraId;
+        }
+
+        public static AndroidCameraDeviceInfo create() {
+            int numberOfCameras;
+            Camera.CameraInfo[] cameraInfos;
+            try {
+                numberOfCameras = Camera.getNumberOfCameras();
+                cameraInfos = new Camera.CameraInfo[numberOfCameras];
+                for (int i = 0; i < numberOfCameras; i++) {
+                    cameraInfos[i] = new Camera.CameraInfo();
+                    Camera.getCameraInfo(i, cameraInfos[i]);
+                }
+            } catch (RuntimeException ex) {
+                return null;
+            }
+
+            int firstFront = NO_DEVICE;
+            int firstBack = NO_DEVICE;
+            // Get the first (smallest) back and first front camera id.
+            for (int i = numberOfCameras - 1; i >= 0; i--) {
+                if (cameraInfos[i].facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                    firstBack = i;
+                } else {
+                    if (cameraInfos[i].facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                        firstFront = i;
+                    }
+                }
+            }
+
+            return new AndroidCameraDeviceInfo(cameraInfos, numberOfCameras, firstBack, firstFront);
+        }
+
+        @Override
+        public Camera.CameraInfo[] getCameraInfos() {
+            return mCameraInfos;
+        }
+
+        @Override
+        public int getNumberOfCameras() {
+            return mNumberOfCameras;
+        }
+
+        @Override
+        public int getFirstBackCameraId() {
+            return mFirstBackCameraId;
+        }
+
+        @Override
+        public int getFirstFrontCameraId() {
+            return mFirstFrontCameraId;
+        }
+    }
+
     private static class CameraStateHolder {
         private int mState;
 
