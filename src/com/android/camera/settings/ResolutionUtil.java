@@ -260,4 +260,33 @@ public class ResolutionUtil {
 
         return numerator + "x" + denominator;
     }
+
+    /**
+     * Given a size return the numerator of its aspect ratio
+     * 
+     * @param size the size to measure
+     * @return the numerator
+     */
+    public static int aspectRatioNumerator(Size size) {
+        BigInteger width = BigInteger.valueOf(size.width());
+        BigInteger height = BigInteger.valueOf(size.height());
+        BigInteger gcd = width.gcd(height);
+        int numerator = Math.max(width.intValue(), height.intValue()) / gcd.intValue();
+        return numerator;
+    }
+
+    /**
+     * Given a size return the numerator of its aspect ratio
+     * 
+     * @param size
+     * @return the denominator
+     */
+    public static int aspectRatioDenominator(Size size) {
+        BigInteger width = BigInteger.valueOf(size.width());
+        BigInteger height = BigInteger.valueOf(size.height());
+        BigInteger gcd = width.gcd(height);
+        int denominator = Math.min(width.intValue(), height.intValue()) / gcd.intValue();
+        return denominator;
+    }
+
 }
