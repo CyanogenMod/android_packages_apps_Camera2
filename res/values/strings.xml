@@ -838,6 +838,8 @@ CHAR LIMIT=NONE] -->
 
     <string name="pano_orientation_horizontal" translatable="false">pano_horizontal</string>
     <string name="pano_orientation_vertical" translatable="false">pano_vertical</string>
+    <string name="pano_orientation_wide" translatable="false">pano_wide</string>
+    <string name="pano_orientation_fisheye" translatable="false">pano_fisheye</string>
 
     <string name="tag_enabled_id" translatable="false">enabled_id</string>
 
