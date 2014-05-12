@@ -881,6 +881,9 @@ CHAR LIMIT=NONE] -->
     <!-- Message shown in the settings summary for how many megapixels have been selected. [CHAR LIMIT=24]-->
     <string name="setting_summary_x_megapixels">%1$s megapixels</string>
 
+    <!-- Message shown in the settings summary that includes the the aspect ratio of the selected resolution i.e. (4:3) and the size of the selected resolution in megapixels. [CHAR LIMIT=24]-->
+    <string name="setting_summary_aspect_ratio_and_megapixels">(%1$d:%2$d) %3$s megapixels</string>
+
     <!-- Text shown above the button that opens to editor for images created from lens blur mode. [CHAR LIMIT=60] -->
     <string name="cling_text_for_refocus_editor_button">To refocus, touch here</string>
 
