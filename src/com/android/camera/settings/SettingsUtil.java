@@ -33,6 +33,7 @@ import com.android.camera2.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -200,17 +201,18 @@ public class SettingsUtil {
      *         duplicates.
      */
     static SelectedPictureSizes getSelectedCameraPictureSizes(List<Size> supported, int cameraId) {
+        List<Size> supportedCopy = new LinkedList<Size>(supported);
         if (sCachedSelectedPictureSizes.get(cameraId) != null) {
             return sCachedSelectedPictureSizes.get(cameraId);
         }
-        if (supported == null) {
+        if (supportedCopy == null) {
             return null;
         }
 
         SelectedPictureSizes selectedSizes = new SelectedPictureSizes();
 
         // Sort supported sizes by total pixel count, descending.
-        Collections.sort(supported, new Comparator<Size>() {
+        Collections.sort(supportedCopy, new Comparator<Size>() {
             @Override
             public int compare(Size lhs, Size rhs) {
                 int leftArea = lhs.width() * lhs.height();
@@ -220,7 +222,7 @@ public class SettingsUtil {
         });
         if (DEBUG) {
             Log.d(TAG, "Supported Sizes:");
-            for (Size size : supported) {
+            for (Size size : supportedCopy) {
                 Log.d(TAG, " --> " + size.width() + "x" + size.height() + "  "
                         + ((size.width() * size.height()) / 1000000f) + " - "
                         + (size.width() / (float) size.height()));
@@ -228,7 +230,7 @@ public class SettingsUtil {
         }
 
         // Large size is always the size with the most pixels reported.
-        selectedSizes.large = supported.remove(0);
+        selectedSizes.large = supportedCopy.remove(0);
 
         // If possible we want to find medium and small sizes with the same
         // aspect ratio as 'large'.
@@ -238,7 +240,7 @@ public class SettingsUtil {
         // Create a list of sizes with the same aspect ratio as "large" which we
         // will search in primarily.
         ArrayList<Size> aspectRatioMatches = new ArrayList<Size>();
-        for (Size size : supported) {
+        for (Size size : supportedCopy) {
             float aspectRatio = size.width() / (float) size.height();
             // Allow for small rounding errors in aspect ratio.
             if (Math.abs(aspectRatio - targetAspectRatio) < 0.01) {
@@ -250,7 +252,7 @@ public class SettingsUtil {
         // aspect ratio, use that list to find small and medium sizes. If not,
         // use the full list with any aspect ratio.
         final List<Size> searchList = (aspectRatioMatches.size() >= 2) ? aspectRatioMatches
-                : supported;
+                : supportedCopy;
 
         // Edge cases: If there are no further supported resolutions, use the
         // only one we have.
