@@ -756,12 +756,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                         public void onOptionClicked(View v) {
                             if (cb != null) {
                                 int state = Integer.parseInt((String)v.getTag());
-                                // TODO Remove this if when wide-angle and fisheye are ready to go
-                                if (state == 2) {
-                                    throw new RuntimeException("TODO: implement pano wide angle");
-                                } else if (state == 3) {
-                                    throw new RuntimeException("TODO: implement pano fisheye");
-                                }
                                 mSettingsManager.setStringValueIndex(
                                     SettingsManager.SETTING_CAMERA_PANO_ORIENTATION, state);
                                 cb.onStateChanged(state);
