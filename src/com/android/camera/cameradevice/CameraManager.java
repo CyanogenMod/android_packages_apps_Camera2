@@ -112,6 +112,16 @@ public interface CameraManager {
     }
 
     /**
+     * An interface to be called when the camera preview has started.
+     */
+    public interface CameraStartPreviewCallback {
+        /**
+         * Callback when the preview starts.
+         */
+        public void onPreviewStarted();
+    }
+
+    /**
      * An interface to be called for any events when opening or closing the
      * camera device. This error callback is different from the one defined
      * in the framework, {@link android.hardware.Camera.ErrorCallback}, which
@@ -170,7 +180,6 @@ public interface CameraManager {
      */
     public void openCamera(Handler handler, int cameraId, CameraOpenCallback callback);
 
-
     /**
      * Closes the camera device.
      *
@@ -178,6 +187,24 @@ public interface CameraManager {
      * @param synced Whether this call should be synchronous.
      */
     public void closeCamera(CameraProxy camera, boolean synced);
+
+    /**
+     * Sets a callback for handling camera api runtime exceptions on
+     * a handler.
+     */
+    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
+            Handler handler);
+
+    /**
+     * Recycles the resources used by this instance. CameraManager will be in
+     * an unusable state after calling this.
+     */
+    public void recycle();
+
+    /**
+     * @return The camera devices info.
+     */
+    public CameraDeviceInfo getCameraDeviceInfo();
 
     /**
      * An interface that takes camera operation requests and post messages to the
@@ -419,27 +446,4 @@ public interface CameraManager {
          */
         public void enableShutterSound(boolean enable);
     }
-
-    /**
-     * An interface to be called when the camera preview has started.
-     */
-    public interface CameraStartPreviewCallback {
-        /**
-         * Callback when the preview starts.
-         */
-        public void onPreviewStarted();
-    }
-
-    /**
-     * Sets a callback for handling camera api runtime exceptions on
-     * a handler.
-     */
-    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
-            Handler handler);
-
-    /**
-     * Recycles the resources used by this instance. CameraManager will be in
-     * an unusable state after calling this.
-     */
-    public void recycle();
 }
