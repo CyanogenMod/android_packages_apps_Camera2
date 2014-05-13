@@ -35,6 +35,7 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
@@ -112,8 +113,6 @@ public class FilmstripView extends ViewGroup {
 
     private boolean mFullScreenUIHidden = false;
     private final SparseArray<Queue<View>> recycledViews = new SparseArray<Queue<View>>();
-
-    private CameraAppUI mCameraAppUI;
 
     /**
      * A helper class to tract and calculate the view coordination.
@@ -415,6 +414,10 @@ public class FilmstripView extends ViewGroup {
             return r;
         }
 
+        private View getView() {
+            return mView;
+        }
+
         /**
          * Layouts the view in the area assuming the center of the area is at a
          * specific point of the whole filmstrip.
@@ -560,37 +563,6 @@ public class FilmstripView extends ViewGroup {
         }
     }
 
-    @Override
-    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
-        super.onInitializeAccessibilityNodeInfo(info);
-
-        info.setClassName(FilmstripView.class.getName());
-        info.setScrollable(true);
-        info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
-        info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
-    }
-
-    @Override
-    public boolean performAccessibilityAction(int action, Bundle args) {
-        if (!mController.isScrolling()) {
-            switch (action) {
-                case AccessibilityNodeInfo.ACTION_SCROLL_FORWARD: {
-                    mController.goToNextItem();
-                    return true;
-                }
-                case AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD: {
-                    boolean wentToPrevious = mController.goToPreviousItem();
-                    if (!wentToPrevious) {
-                        // at beginning of filmstrip, hide and go back to preview
-                        mActivity.getCameraAppUI().hideFilmstrip();
-                    }
-                    return true;
-                }
-            }
-        }
-        return super.performAccessibilityAction(action, args);
-    }
-
     /** Constructor. */
     public FilmstripView(Context context) {
         super(context);
@@ -635,6 +607,45 @@ public class FilmstripView extends ViewGroup {
             mOverScaleFactor = 1f;
         }
 
+        setAccessibilityDelegate(new AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+
+                info.setClassName(FilmstripView.class.getName());
+                info.setScrollable(true);
+                info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+                info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
+            }
+
+            @Override
+            public boolean performAccessibilityAction(View host, int action, Bundle args) {
+                if (!mController.isScrolling()) {
+                    switch (action) {
+                        case AccessibilityNodeInfo.ACTION_SCROLL_FORWARD: {
+                            mController.goToNextItem();
+                            return true;
+                        }
+                        case AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD: {
+                            boolean wentToPrevious = mController.goToPreviousItem();
+                            if (!wentToPrevious) {
+                                // at beginning of filmstrip, hide and go back to preview
+                                mActivity.getCameraAppUI().hideFilmstrip();
+                            }
+                            return true;
+                        }
+                        case AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS: {
+                            // Prevent the view group itself from being selected.
+                            // Instead, select the item in the center
+                            final ViewItem currentItem = mViewItem[mCurrentItem];
+                            currentItem.getView().performAccessibilityAction(action, args);
+                            return true;
+                        }
+                    }
+                }
+                return super.performAccessibilityAction(host, action, args);
+            }
+        });
     }
 
     private void recycleView(View view, int dataId) {
