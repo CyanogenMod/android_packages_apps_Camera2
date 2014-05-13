@@ -41,7 +41,7 @@ public class UsageStatistics {
     public void foregrounded(int source, int mode) {
     }
 
-    public void backgrounded(int source, int mode) {
+    public void backgrounded() {
     }
 
     public void storageWarning(long storageSpace) {
