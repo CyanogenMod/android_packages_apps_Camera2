@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
@@ -731,7 +732,19 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 descriptionIds = mAppController
                     .getAndroidContext().getResources().obtainTypedArray(resIdDescriptions);
                 mModeOptionsPano.removeAllViews();
-                for (int i = 0; i < imageIds.length(); i++) {
+                final boolean isHorizontal =
+                    (mModeOptionsPano.getOrientation() == LinearLayout.HORIZONTAL);
+                final int numImageIds = imageIds.length();
+                for (int index = 0; index < numImageIds; index++) {
+                    int i;
+                    // if in portrait orientation (pano bar horizonal), order buttons normally
+                    // if in landscape orientation (pano bar vertical), reverse button order
+                    if (isHorizontal) {
+                        i = index;
+                    } else {
+                        i = numImageIds - index - 1;
+                    }
+
                     int imageId = imageIds.getResourceId(i, 0);
                     if (imageId > 0) {
                         ImageButton imageButton = (ImageButton) LayoutInflater
