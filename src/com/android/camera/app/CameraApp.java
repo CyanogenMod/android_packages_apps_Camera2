@@ -53,6 +53,8 @@ public class CameraApp extends Application implements CameraServices {
         Context context = getApplicationContext();
         LogHelper.initialize(context);
 
+        // It is important that this gets called early in execution before the app has had
+        // the opportunity to create any shared preferences.
         UsageStatistics.instance().initialize(this);
         SessionStatsCollector.instance().initialize(this);
         CameraUtil.initialize(this);
