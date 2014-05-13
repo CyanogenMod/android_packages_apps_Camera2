@@ -71,8 +71,6 @@ import android.widget.ShareActionProvider;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraManagerFactory;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.LocationManager;
@@ -81,12 +79,14 @@ import com.android.camera.app.MemoryQuery;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
+import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraManagerFactory;
 import com.android.camera.data.CameraDataAdapter;
-import com.android.camera.data.LocalDataViewType;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalDataUtil;
+import com.android.camera.data.LocalDataViewType;
 import com.android.camera.data.LocalMediaData;
 import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.LocalSessionData;
@@ -388,6 +388,8 @@ public class CameraActivity extends Activity
                 private Intent getShareIntentByData(final LocalData data) {
                     Intent intent = null;
                     final Uri contentUri = data.getUri();
+                    final String msgShareTo = getResources().getString(R.string.share_to);
+
                     if (PanoramaMetadataLoader.isPanorama360(data) &&
                             data.getUri() != Uri.EMPTY) {
                         intent = new Intent(Intent.ACTION_SEND);
@@ -400,7 +402,7 @@ public class CameraActivity extends Activity
                             intent.putExtra(Intent.EXTRA_STREAM, contentUri);
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         }
-                        intent = Intent.createChooser(intent, null);
+                        intent = Intent.createChooser(intent, msgShareTo);
                     }
                     return intent;
                 }
@@ -1344,6 +1346,7 @@ public class CameraActivity extends Activity
         mMemoryManager = getServices().getMemoryManager();
 
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
             public void run() {
                 HashMap memoryData = mMemoryManager.queryMemory();
                 UsageStatistics.instance().reportMemoryConsumed(memoryData,
@@ -2016,7 +2019,8 @@ public class CameraActivity extends Activity
         try {
             launchActivityByIntent(intent);
         } catch (ActivityNotFoundException e) {
-            launchActivityByIntent(Intent.createChooser(intent, null));
+            final String msgEditWith = getResources().getString(R.string.edit_with);
+            launchActivityByIntent(Intent.createChooser(intent, msgEditWith));
         }
     }
 

@@ -901,4 +901,9 @@ CHAR LIMIT=NONE] -->
     <!-- Text on the photo aspect ratio selection screen. [CHAR LIMIT=120] -->
     <string name="photo_aspect_ratio_selection_content">You can change this later in Settings.</string>
 
+    <!-- Shown above the intent chooser when the user is about to share an item. [CHAR LIMIT=20] -->
+    <string name="share_to">Share to</string>
+    <!-- Shown above the intent chooser when the user is about to edit an item. [CHAR LIMIT=20] -->
+    <string name="edit_with">Edit with</string>
+
  </resources>
