@@ -29,14 +29,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.view.accessibility.AccessibilityNodeInfo;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
@@ -111,7 +110,7 @@ public class FilmstripView extends ViewGroup {
     private float mOverScaleFactor = 1f;
 
     private boolean mFullScreenUIHidden = false;
-    private SparseArray<Queue<View>> recycledViews = new SparseArray<Queue<View>>();
+    private final SparseArray<Queue<View>> recycledViews = new SparseArray<Queue<View>>();
 
 
     /**
@@ -746,8 +745,9 @@ public class FilmstripView extends ViewGroup {
 
         for (int itemID = nearest + 1; itemID < BUFFER_SIZE && mViewItem[itemID] != null; itemID++) {
             // Not measured yet.
-            if (mViewItem[itemID].getLeftPosition() == -1)
+            if (mViewItem[itemID].getLeftPosition() == -1) {
                 continue;
+            }
 
             int c = mViewItem[itemID].getCenterX();
             int dist = Math.abs(pointX - c);
@@ -904,8 +904,9 @@ public class FilmstripView extends ViewGroup {
      */
     private void adjustChildZOrder() {
         for (int i = BUFFER_SIZE - 1; i >= 0; i--) {
-            if (mViewItem[i] == null)
+            if (mViewItem[i] == null) {
                 continue;
+            }
             mViewItem[i].bringViewToFront();
         }
         // ZoomView is a special case to always be in the front.
@@ -1468,7 +1469,7 @@ public class FilmstripView extends ViewGroup {
 
     private void setDataAdapter(DataAdapter adapter) {
         mDataAdapter = adapter;
-        int maxEdge = (int) ((float) Math.max(this.getHeight(), this.getWidth())
+        int maxEdge = (int) (Math.max(this.getHeight(), this.getWidth())
                 * FILM_STRIP_SCALE);
         mDataAdapter.suggestViewSizeBound(maxEdge, maxEdge);
         mDataAdapter.setListener(new DataAdapter.Listener() {
@@ -2278,9 +2279,11 @@ public class FilmstripView extends ViewGroup {
          */
         private float getCurrentDataMaxScale(boolean allowOverScale) {
             ViewItem curr = mViewItem[mCurrentItem];
+            if (curr == null) {
+                return FULL_SCREEN_SCALE;
+            }
             ImageData imageData = mDataAdapter.getImageData(curr.getId());
-            if (curr == null || !imageData
-                    .isUIActionSupported(ImageData.ACTION_ZOOM)) {
+            if (imageData == null || !imageData.isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return FULL_SCREEN_SCALE;
             }
             float imageWidth = imageData.getWidth();
