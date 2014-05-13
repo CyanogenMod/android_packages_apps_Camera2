@@ -393,6 +393,7 @@ public class SettingsManager {
     public static final int SETTING_REQUEST_RETURN_HDR_PLUS = 30;
     public static final int SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING = 31;
     public static final int SETTING_EXPOSURE_COMPENSATION_ENABLED = 32;
+    public static final int SETTING_USER_SELECTED_ASPECT_RATIO = 33;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -431,6 +432,7 @@ public class SettingsManager {
             "pref_should_show_refocus_viewer_cling";
     public static final String KEY_EXPOSURE_COMPENSATION_ENABLED =
             "pref_camera_exposure_compensation_key";
+    public static final String KEY_USER_SELECTED_ASPECT_RATIO = "pref_user_selected_aspect_ratio";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -952,6 +954,13 @@ public class SettingsManager {
                 values, FLUSH_OFF);
     }
 
+    public static Setting getUserSelectedAspectRatioSetting(Context context) {
+        String defaultValue = context.getString(R.string.setting_off_value);
+        String[] values = null;
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue,
+                KEY_USER_SELECTED_ASPECT_RATIO, values, FLUSH_OFF);
+    }
+
     public static Setting getManualExposureCompensationSetting(Context context) {
         String defaultValue = context.getString(R.string.setting_off_value);
         String[] values = null;
@@ -973,8 +982,7 @@ public class SettingsManager {
                 values, FLUSH_OFF);
     }
 
-    public static Setting getDefaultCameraIdSetting(Context context,
-            SettingsCapabilities capabilities) {
+    public static Setting getDefaultCameraIdSetting(Context context) {
         String defaultValue = context.getString(R.string.pref_camera_id_default);
         String[] values = context.getResources().getStringArray(
                 R.array.camera_id_entryvalues);
@@ -1215,6 +1223,10 @@ public class SettingsManager {
     public void setLocation(boolean on, LocationManager locationManager) {
         setBoolean(SettingsManager.SETTING_RECORD_LOCATION, on);
         locationManager.recordLocation(on);
+    }
+
+    public void setAspectRatioSelected() {
+        setBoolean(SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO, true);
     }
 
     public void setManualExposureCompensation(boolean on) {

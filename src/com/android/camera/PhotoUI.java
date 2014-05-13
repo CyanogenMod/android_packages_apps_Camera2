@@ -16,7 +16,8 @@
 
 package com.android.camera;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -35,6 +36,9 @@ import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.widget.AspectRatioDialogLayout;
+import com.android.camera.widget.AspectRatioSelector;
+import com.android.camera.widget.LocationDialogLayout;
 import com.android.camera2.R;
 
 import java.util.List;
@@ -52,6 +56,7 @@ public class PhotoUI implements PreviewStatusListener,
     private final PhotoController mController;
 
     private final View mRootView;
+    private Dialog mDialog = null;
 
     // TODO: Remove face view logic if UX does not bring it back within a month.
     private FaceView mFaceView = null;
@@ -70,6 +75,13 @@ public class PhotoUI implements PreviewStatusListener,
         public boolean onSingleTapUp(MotionEvent ev) {
             mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
             return true;
+        }
+    };
+    private final DialogInterface.OnDismissListener mOnDismissListener
+            = new DialogInterface.OnDismissListener() {
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog = null;
         }
     };
 
@@ -237,9 +249,71 @@ public class PhotoUI implements PreviewStatusListener,
         // Removes pie menu.
     }
 
-    public void showLocationDialog() {
-        AlertDialog alert = mActivity.getFirstTimeLocationAlert();
-        alert.show();
+    public void showLocationAndAspectRatioDialog(
+            final PhotoModule.LocationDialogCallback locationCallback,
+            final PhotoModule.AspectRatioDialogCallback aspectRatioDialogCallback) {
+        setDialog(new Dialog(mActivity,
+                android.R.style.Theme_Black_NoTitleBar_Fullscreen));
+        final LocationDialogLayout locationDialogLayout = (LocationDialogLayout) mActivity
+                .getLayoutInflater().inflate(R.layout.location_dialog_layout, null);
+        locationDialogLayout.setLocationTaggingSelectionListener(
+                new LocationDialogLayout.LocationTaggingSelectionListener() {
+            @Override
+            public void onLocationTaggingSelected(boolean selected) {
+                // Update setting.
+                locationCallback.onLocationTaggingSelected(selected);
+                // Go to next page.
+                showAspectRatioDialog(aspectRatioDialogCallback, mDialog);
+            }
+        });
+        mDialog.setContentView(locationDialogLayout, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mDialog.show();
+    }
+
+    /**
+     * Dismisses previous dialog if any, sets current dialog to the given dialog,
+     * and set the on dismiss listener for the given dialog.
+     * @param dialog dialog to show
+     */
+    private void setDialog(Dialog dialog) {
+        if (mDialog != null) {
+            mDialog.setOnDismissListener(null);
+            mDialog.dismiss();
+        }
+        mDialog = dialog;
+        if (mDialog != null) {
+            mDialog.setOnDismissListener(mOnDismissListener);
+        }
+    }
+
+    public void showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback) {
+        setDialog(new Dialog(mActivity, android.R.style.Theme_Black_NoTitleBar_Fullscreen));
+        showAspectRatioDialog(callback, mDialog);
+    }
+
+    private void showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback,
+            final Dialog aspectRatioDialog) {
+        if (aspectRatioDialog == null) {
+            Log.e(TAG, "Dialog for aspect ratio is null.");
+            return;
+        }
+        final AspectRatioDialogLayout aspectRatioDialogLayout =
+                (AspectRatioDialogLayout) mActivity
+                .getLayoutInflater().inflate(R.layout.aspect_ratio_dialog_layout, null);
+        aspectRatioDialogLayout.initialize(
+                new AspectRatioDialogLayout.AspectRatioChangedListener() {
+                    @Override
+                    public void onAspectRatioChanged(AspectRatioSelector.AspectRatio aspectRatio) {
+                        aspectRatioDialog.dismiss();
+                        // callback to set picture size.
+                        callback.onAspectRatioSelected(aspectRatio);
+                    }
+                }, callback.get4x3AspectRatioText(), callback.get16x9AspectRatioText(),
+                callback.getCurrentAspectRatio());
+        aspectRatioDialog.setContentView(aspectRatioDialogLayout, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        aspectRatioDialog.show();
     }
 
     public void initializeZoom(Camera.Parameters params) {
@@ -313,6 +387,9 @@ public class PhotoUI implements PreviewStatusListener,
 
     public void onPause() {
         if (mFaceView != null) mFaceView.clear();
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
     }
 
     public void clearFaces() {
