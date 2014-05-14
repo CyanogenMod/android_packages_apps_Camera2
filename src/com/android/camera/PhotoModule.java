@@ -309,8 +309,12 @@ public class PhotoModule
          * Gets notified when user has made the aspect ratio selection.
          *
          * @param newAspectRatio aspect ratio that user has selected
+         * @param dialogHandlingFinishedRunnable runnable to run when the operations
+         *                                       needed to handle changes from dialog
+         *                                       are finished.
          */
-        public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio);
+        public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio,
+                Runnable dialogHandlingFinishedRunnable);
     }
 
     private void checkDisplayRotation() {
@@ -528,14 +532,15 @@ public class PhotoModule
         aspectRatio16x9Resolution /= 1000000;
         aspectRatio4x3Resolution /= 1000000;
 
-        final String largestSize4x3Text = SettingsUtil.sizeToSetting(largestSize4x3);
-        final String largestSize16x9Text = SettingsUtil.sizeToSetting(largestSize16x9);
+        // Use the largest 4x3 and 16x9 sizes as candidates for picture size selection.
+        final Size size4x3ToSelect = largestSize4x3;
+        final Size size16x9ToSelect = largestSize16x9;
 
         Resources res = mAppController.getAndroidContext().getResources();
-        final String aspectRatio4x3Text = res.getString(R.string.megapixel_text_for_4x3_aspect_ratio,
-                aspectRatio4x3Resolution);
-        final String aspectRatio16x9Text = res.getString(R.string.megapixel_text_for_16x9_aspect_ratio,
-                aspectRatio16x9Resolution);
+        final String aspectRatio4x3Text = res.getString(
+                R.string.megapixel_text_for_4x3_aspect_ratio, aspectRatio4x3Resolution);
+        final String aspectRatio16x9Text = res.getString(
+                R.string.megapixel_text_for_16x9_aspect_ratio, aspectRatio16x9Resolution);
 
         AspectRatioDialogCallback callback = new AspectRatioDialogCallback() {
             @Override
@@ -554,20 +559,25 @@ public class PhotoModule
             }
 
             @Override
-            public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio) {
+            public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio,
+                    Runnable dialogHandlingFinishedRunnable) {
                 if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_4x3) {
+                    String largestSize4x3Text = SettingsUtil.sizeToSetting(size4x3ToSelect);
                     mActivity.getSettingsManager().set(SettingsManager.SETTING_PICTURE_SIZE_BACK,
                             largestSize4x3Text);
                 } else if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_16x9) {
+                    String largestSize16x9Text = SettingsUtil.sizeToSetting(size16x9ToSelect);
                     mActivity.getSettingsManager().set(SettingsManager.SETTING_PICTURE_SIZE_BACK,
                             largestSize16x9Text);
                 }
                 mActivity.getSettingsManager().setBoolean(
                         SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO, true);
                 if (newAspectRatio != currentAspectRatio) {
-                    // TODO: Need to re-introduce the mode cover here to avoid jank.
                     stopPreview();
                     startPreview();
+                    mUI.setRunnableForNextFrame(dialogHandlingFinishedRunnable);
+                } else {
+                    mHandler.post(dialogHandlingFinishedRunnable);
                 }
             }
         };
