@@ -207,4 +207,8 @@
     <style name="Theme.CameraSettings" parent="@android:style/Theme.Holo.Light">
        <item name="android:windowFullscreen">true</item>
     </style>
+    <style name="start_up_dialog_content">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
 </resources>
