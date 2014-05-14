@@ -93,7 +93,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public int getItemViewType(int dataId) {
-        if (dataId > mImages.size() || dataId < 0) {
+        if (dataId < 0 || dataId >= mImages.size()) {
             return -1;
         }
 
