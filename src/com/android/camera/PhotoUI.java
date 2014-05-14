@@ -84,6 +84,7 @@ public class PhotoUI implements PreviewStatusListener,
             mDialog = null;
         }
     };
+    private Runnable mRunnableForNextFrame = null;
 
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
@@ -119,6 +120,13 @@ public class PhotoUI implements PreviewStatusListener,
     @Override
     public void onPreviewFlipped() {
         mController.updateCameraOrientation();
+    }
+
+    /**
+     * Sets the runnable to run when the next frame comes in.
+     */
+    public void setRunnableForNextFrame(Runnable runnable) {
+        mRunnableForNextFrame = runnable;
     }
 
     private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
@@ -215,6 +223,10 @@ public class PhotoUI implements PreviewStatusListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        if (mRunnableForNextFrame != null) {
+            mRootView.post(mRunnableForNextFrame);
+            mRunnableForNextFrame = null;
+        }
     }
 
     public View getRootView() {
@@ -305,9 +317,15 @@ public class PhotoUI implements PreviewStatusListener,
                 new AspectRatioDialogLayout.AspectRatioChangedListener() {
                     @Override
                     public void onAspectRatioChanged(AspectRatioSelector.AspectRatio aspectRatio) {
-                        aspectRatioDialog.dismiss();
                         // callback to set picture size.
-                        callback.onAspectRatioSelected(aspectRatio);
+                        callback.onAspectRatioSelected(aspectRatio, new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDialog != null) {
+                                    mDialog.dismiss();
+                                }
+                            }
+                        });
                     }
                 }, callback.get4x3AspectRatioText(), callback.get16x9AspectRatioText(),
                 callback.getCurrentAspectRatio());
