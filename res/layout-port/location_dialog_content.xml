@@ -15,11 +15,9 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/start_up_dialog_content"
               android:orientation="vertical"
-              android:gravity="center_horizontal"
-              android:background="@color/start_up_dialog_background_color"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:gravity="center_horizontal">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

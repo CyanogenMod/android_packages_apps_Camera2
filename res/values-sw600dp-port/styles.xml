@@ -14,10 +14,10 @@
      limitations under the License.
 -->
 
-<com.android.camera.widget.LocationDialogLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="@color/start_up_dialog_background_color">
-    <include layout="@layout/location_dialog_content"/>
-</com.android.camera.widget.LocationDialogLayout>
+<resources>
+    <style name="start_up_dialog_content">
+        <item name="android:layout_width">360dp</item>
+        <item name="android:layout_height">640dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+</resources>
