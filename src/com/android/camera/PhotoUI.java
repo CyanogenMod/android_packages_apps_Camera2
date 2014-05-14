@@ -74,7 +74,7 @@ public class PhotoUI implements PieListener,
 
     private static final String TAG = "CAM_UI";
     private static final String PERSIST_LONG_ENABLE = "persist.camera.longshot.enable";
-    private static final int DOWN_SAMPLE_FACTOR = 4;
+    private int mDownSampleFactor = 4;
     private final AnimationManager mAnimationManager;
     private CameraActivity mActivity;
     private PhotoController mController;
@@ -176,7 +176,7 @@ public class PhotoUI implements PieListener,
         @Override
         protected Bitmap doInBackground(Void... params) {
             // Decode image in background.
-            Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
+            Bitmap bitmap = CameraUtil.downSample(mData, mDownSampleFactor);
             if ((mOrientation != 0 || mMirror) && (bitmap != null)) {
                 Matrix m = new Matrix();
                 if (mMirror) {
@@ -278,6 +278,10 @@ public class PhotoUI implements PieListener,
 
         mOrientationResize = false;
         mPrevOrientationResize = false;
+    }
+
+    public void setDownFactor(int factor) {
+        mDownSampleFactor = factor;
     }
 
      public void cameraOrientationPreviewResize(boolean orientation){

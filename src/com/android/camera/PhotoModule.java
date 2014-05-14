@@ -1213,6 +1213,12 @@ public class PhotoModule
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
                 if (!mBurstShotInProgress && mCameraState != LONGSHOT) {
+                    Size pic_size = mParameters.getPictureSize();
+                    if ((pic_size.width <= 352) && (pic_size.height <= 288)) {
+                        mUI.setDownFactor(2); //Downsample by 2 for CIF & below
+                    } else {
+                        mUI.setDownFactor(4);
+                    }
                     mUI.animateCapture(jpegData, orientation, mMirror,
                             (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) &&
                             (mSceneMode != CameraUtil.SCENE_MODE_HDR));
