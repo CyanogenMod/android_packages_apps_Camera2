@@ -303,6 +303,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean enableTorchFlash;
 
         /**
+         * Set true if the HDR+ flash option should be enabled.
+         * Same disable rules apply as the photo flash option.
+         */
+        public boolean enableHdrPlusFlash;
+
+        /**
          * Set true if flash should not be visible, regardless of
          * hardware limitations.
          */
@@ -1701,9 +1707,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         } else {
             if (hardwareSpec.isFlashSupported()) {
                 if (bottomBarSpec.enableFlash) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_FLASH, bottomBarSpec.flashCallback);
+                    buttonManager.initializeButton(ButtonManager.BUTTON_FLASH,
+                        bottomBarSpec.flashCallback);
                 } else if (bottomBarSpec.enableTorchFlash) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_TORCH, bottomBarSpec.flashCallback);
+                    buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
+                        bottomBarSpec.flashCallback);
+                } else if (bottomBarSpec.enableHdrPlusFlash) {
+                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_TORCH,
+                        bottomBarSpec.flashCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
                 }
@@ -1715,14 +1726,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         if (bottomBarSpec.hideHdr || mIsCaptureIntent) {
             // Force hide hdr or hdr plus icon.
-            buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+            buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
         } else {
             if (hardwareSpec.isHdrPlusSupported()) {
                 if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_HDRPLUS,
+                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
                             bottomBarSpec.hdrCallback);
                 } else {
-                    buttonManager.disableButton(ButtonManager.BUTTON_HDRPLUS);
+                    buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
                 }
             } else if (hardwareSpec.isHdrSupported()) {
                 if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
@@ -1733,7 +1744,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 }
             } else {
                 // Hide hdr plus or hdr icon if neither are supported.
-                buttonManager.hideButton(ButtonManager.BUTTON_HDRPLUS);
+                buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
             }
         }
 

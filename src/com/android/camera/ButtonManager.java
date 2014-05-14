@@ -44,16 +44,17 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
     public static final int BUTTON_FLASH = 0;
     public static final int BUTTON_TORCH = 1;
-    public static final int BUTTON_CAMERA = 2;
-    public static final int BUTTON_HDRPLUS = 3;
-    public static final int BUTTON_HDR = 4;
+    public static final int BUTTON_HDR_PLUS_TORCH = 2;
+    public static final int BUTTON_CAMERA = 3;
+    public static final int BUTTON_HDR_PLUS = 4;
+    public static final int BUTTON_HDR = 5;
     public static final int BUTTON_CANCEL = 6;
     public static final int BUTTON_DONE = 7;
     public static final int BUTTON_RETAKE = 8;
     public static final int BUTTON_REVIEW = 9;
-    public static final int BUTTON_GRID_LINES = 11;
-    public static final int BUTTON_EXPOSURE_COMPENSATION = 12;
-    public static final int BUTTON_COUNTDOWN = 13;
+    public static final int BUTTON_GRID_LINES = 10;
+    public static final int BUTTON_EXPOSURE_COMPENSATION = 11;
+    public static final int BUTTON_COUNTDOWN = 12;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -194,6 +195,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 button = getButtonOrError(BUTTON_TORCH);
                 break;
             }
+            case SettingsManager.SETTING_HDR_PLUS_FLASH_MODE: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_HDR_PLUS_TORCH);
+                break;
+            }
             case SettingsManager.SETTING_CAMERA_ID: {
                 index = mSettingsManager.getStringValueIndex(id);
                 button = getButtonOrError(BUTTON_CAMERA);
@@ -201,7 +207,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
             case SettingsManager.SETTING_CAMERA_HDR_PLUS: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_HDRPLUS);
+                button = getButtonOrError(BUTTON_HDR_PLUS);
                 break;
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
@@ -241,7 +247,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
     /**
      * A callback executed in the state listener of a button.
-
+     *
      * Used by a module to set specific behavior when a button's
      * state changes.
      */
@@ -262,8 +268,13 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 }
                 return mButtonFlash;
             case BUTTON_TORCH:
-                if (mButtonFlash== null) {
+                if (mButtonFlash == null) {
                     throw new IllegalStateException("Torch button could not be found.");
+                }
+                return mButtonFlash;
+            case BUTTON_HDR_PLUS_TORCH:
+                if (mButtonFlash == null) {
+                    throw new IllegalStateException("Hdr plus torch button could not be found.");
                 }
                 return mButtonFlash;
             case BUTTON_CAMERA:
@@ -271,7 +282,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Camera button could not be found.");
                 }
                 return mButtonCamera;
-            case BUTTON_HDRPLUS:
+            case BUTTON_HDR_PLUS:
                 if (mButtonHdr == null) {
                     throw new IllegalStateException("Hdr plus button could not be found.");
                 }
@@ -347,10 +358,13 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case BUTTON_TORCH:
                 initializeTorchButton(button, cb, R.array.video_flashmode_icons);
                 break;
+            case BUTTON_HDR_PLUS_TORCH:
+                initializeHdrPlusTorchButton(button, cb, R.array.camera_flashmode_icons);
+                break;
             case BUTTON_CAMERA:
                 initializeCameraButton(button, cb, R.array.camera_id_icons);
                 break;
-            case BUTTON_HDRPLUS:
+            case BUTTON_HDR_PLUS:
                 initializeHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
                 break;
             case BUTTON_HDR:
@@ -617,7 +631,34 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             public void stateChanged(View view, int state) {
                 mSettingsManager.setStringValueIndex(
                         SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE, state);
-                if(cb != null) {
+                if (cb != null) {
+                    cb.onStateChanged(state);
+                }
+            }
+        });
+    }
+
+    /**
+     * Initialize hdr plus torch button
+     */
+    private void initializeHdrPlusTorchButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+        button.overrideContentDescriptions(R.array.hdr_plus_flash_descriptions);
+
+        int index = mSettingsManager.getStringValueIndex(
+                SettingsManager.SETTING_HDR_PLUS_FLASH_MODE);
+        button.setState(index >= 0 ? index : 0, false);
+
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(
+                        SettingsManager.SETTING_HDR_PLUS_FLASH_MODE, state);
+                if (cb != null) {
                     cb.onStateChanged(state);
                 }
             }

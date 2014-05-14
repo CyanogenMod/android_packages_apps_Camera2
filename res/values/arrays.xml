@@ -200,6 +200,12 @@
         <item>on</item>
     </string-array>
 
+    <string-array name="pref_camera_hdr_plus_flashmode_entryvalues" translatable="false">
+        <item>off</item>
+        <item>auto</item>
+        <item>on</item>
+    </string-array>
+
     <array name="camera_flashmode_icons" translatable="false">
         <item>@drawable/ic_flash_off</item>
         <item>@drawable/ic_flash_auto</item>
@@ -210,6 +216,12 @@
       <item>@string/flash_off_desc</item>
       <item>@string/flash_auto_desc</item>
       <item>@string/flash_on_desc</item>
+    </array>
+
+    <array name="hdr_plus_flash_descriptions" translatable="false">
+      <item>@string/hdr_plus_flash_off_desc</item>
+      <item>@string/hdr_plus_flash_auto_desc</item>
+      <item>@string/hdr_plus_flash_on_desc</item>
     </array>
 
     <array name="camera_flashmode_largeicons" translatable="false">
