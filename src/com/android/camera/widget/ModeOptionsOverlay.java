@@ -109,7 +109,7 @@ public class ModeOptionsOverlay extends FrameLayout
      * of milliseconds.  If the options menu is already closed, nothing is
      * scheduled.
      */
-    private void closeModeOptions() {
+    public void closeModeOptions() {
         mModeOptions.animateHidden();
     }
 
