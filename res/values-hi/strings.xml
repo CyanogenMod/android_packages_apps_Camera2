@@ -362,10 +362,17 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"निम्न"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"उच्च"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s मेगापिक्सेल"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s मेगापिक्सेल"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"फिर से फ़ोकस करने के लिए, यहां स्पर्श करें"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"उन्नत"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"मैन्युअल एक्सपोज़र"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"सेटिंग में, रिज़ॉल्यूशन और गुणवत्ता बदलें, या उन्नत सुविधाओं को आज़माएं."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"फ़ोटो आकार चुनें"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"आप इसे बाद में सेटिंग में बदल सकते हैं."</string>
+    <string name="share_to" msgid="5144911209144798122">"इनसे साझा करें:"</string>
+    <string name="edit_with" msgid="615569327230783971">"इससे संपादित करें:"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"अगला"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"ठीक है, समझ लिया"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d मेगापिक्सल \n(4:3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d मेगापिक्सल \n(16:9)"</string>
 </resources>

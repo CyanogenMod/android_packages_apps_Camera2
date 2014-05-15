@@ -328,12 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Caméra frontale"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Masquer le quadrillage"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Afficher le quadrillage"</string>
-    <!-- no translation found for countdown_timer_off (1663008439564495948) -->
-    <skip />
-    <!-- no translation found for countdown_timer_duration_3s (7435393834886072664) -->
-    <skip />
-    <!-- no translation found for countdown_timer_duration_10s (9085308782250002795) -->
-    <skip />
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Le retardateur est désactivé."</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"La durée du retardateur est définie sur 3 secondes."</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"La durée du retardateur est définie sur 10 secondes."</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Plus d\'options"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Annuler"</string>
     <string name="done_button_description" msgid="1334963435441544592">"OK"</string>
@@ -342,18 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Afficher"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Modifier"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Supprimer"</string>
-    <!-- no translation found for manual_exposure_compensation_desc (5595219532556566042) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_n2 (8957966533506294324) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_n1 (3035027224866688267) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_0 (2820273752287040523) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_p1 (2328275401634452554) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_p2 (4555277824096107142) -->
-    <skip />
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Correction d\'exposition manuelle"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Correction d\'exposition -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Correction d\'exposition -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Correction d\'exposition 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Correction d\'exposition +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Correction d\'exposition +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Nouveau bouton : %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Lieu"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Photo (caméra arrière)"</string>
@@ -361,27 +352,27 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Photo (caméra frontale)"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Vidéo (caméra frontale)"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Appareil photo par défaut"</string>
-    <!-- no translation found for setting_send_feedback (6637165939344951380) -->
-    <skip />
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Envoyer des commentaires"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Traitement HDR+ en cours…"</string>
-    <!-- no translation found for open_source_licenses (2169711954264883060) -->
-    <skip />
+    <string name="open_source_licenses" msgid="2169711954264883060">"Licences Open Source"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Paramètres généraux"</string>
-    <!-- no translation found for pref_category_resolution_quality (6641462402321962896) -->
-    <skip />
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Résolution et qualité"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"À propos"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Version de build"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Faible"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Élevée"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s mégapixels"</string>
-    <!-- no translation found for cling_text_for_refocus_editor_button (4785017397116829802) -->
-    <skip />
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s mégapixels"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Pour effectuer une nouvelle mise au point, appuyez ici."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avancé"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposition manuelle"</string>
-    <!-- no translation found for settings_cling_text (5368054627268181292) -->
-    <skip />
-    <!-- no translation found for photo_size_selection_title (2789753590719172645) -->
-    <skip />
-    <!-- no translation found for photo_aspect_ratio_selection_content (6668224437962196229) -->
-    <skip />
+    <string name="settings_cling_text" msgid="5368054627268181292">"Dans les paramètres, modifiez la résolution et la qualité, ou essayez les fonctionnalités avancées."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Sélectionner la taille de la photo"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Vous pourrez modifier le format plus tard dans les paramètres."</string>
+    <string name="share_to" msgid="5144911209144798122">"Partager sur"</string>
+    <string name="edit_with" msgid="615569327230783971">"Modifier avec"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"SUIVANT"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"OK"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d mégapixels \n(4:3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d mégapixels \n(16:9)"</string>
 </resources>

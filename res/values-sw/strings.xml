@@ -330,12 +330,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Kamera ya mbele"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Mistari ya gridi imezimwa"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Mistari ya gridi imewashwa"</string>
-    <!-- no translation found for countdown_timer_off (1663008439564495948) -->
-    <skip />
-    <!-- no translation found for countdown_timer_duration_3s (7435393834886072664) -->
-    <skip />
-    <!-- no translation found for countdown_timer_duration_10s (9085308782250002795) -->
-    <skip />
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Kipima muda kimezimwa"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Kipima muda kimewekwa sekunde 3"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Kipima muda kimewekwa sekunde 10"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Chaguo zaidi"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Ghairi"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Nimemaliza"</string>
@@ -344,18 +341,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Angalia"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Badilisha"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Futa"</string>
-    <!-- no translation found for manual_exposure_compensation_desc (5595219532556566042) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_n2 (8957966533506294324) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_n1 (3035027224866688267) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_0 (2820273752287040523) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_p1 (2328275401634452554) -->
-    <skip />
-    <!-- no translation found for exposure_compensation_desc_p2 (4555277824096107142) -->
-    <skip />
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Nyongeza ya Mwanga ya Kujiwekea"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Nyongeza ya Mwanga  -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Nyongeza ya Mwanga -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Nyongeza ya Mwanga ni 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Nyongeza ya Mwanga +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Nyongeza ya Mwanga +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Kitufe sasa ni %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Mahali"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Picha ya kamera ya nyuma"</string>
@@ -363,27 +354,33 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Picha ya kamera ya mbele"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video ya kamera ya mbele"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Kamera ya chaguo-msingi"</string>
-    <!-- no translation found for setting_send_feedback (6637165939344951380) -->
-    <skip />
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Tuma maoni"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Inachakata HDR+ ..."</string>
-    <!-- no translation found for open_source_licenses (2169711954264883060) -->
-    <skip />
+    <string name="open_source_licenses" msgid="2169711954264883060">"Leseni za programu huria"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Mipangilio ya Kawaida"</string>
-    <!-- no translation found for pref_category_resolution_quality (6641462402321962896) -->
-    <skip />
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Ubora"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Kuhusu"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Toleo la muundo"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Chini"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Juu"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"Megapikseli %1$s"</string>
-    <!-- no translation found for cling_text_for_refocus_editor_button (4785017397116829802) -->
-    <skip />
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"Megapikseli (%1$d:%2$d) %3$s"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Ili ulenge tena, gusa hapa"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Mahiri"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Mwanga wa kujiwekea"</string>
-    <!-- no translation found for settings_cling_text (5368054627268181292) -->
+    <string name="settings_cling_text" msgid="5368054627268181292">"Katika Mipangilio, badilisha ubora, au ujaribu vipengee mahiri."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Chagua ukubwa wa picha"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Unaweza kubadilisha hii baadaye katika Mipangilio."</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
     <skip />
-    <!-- no translation found for photo_size_selection_title (2789753590719172645) -->
+    <!-- no translation found for edit_with (615569327230783971) -->
     <skip />
-    <!-- no translation found for photo_aspect_ratio_selection_content (6668224437962196229) -->
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
     <skip />
 </resources>
