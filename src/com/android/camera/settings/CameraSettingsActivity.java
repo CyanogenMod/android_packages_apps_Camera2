@@ -453,9 +453,10 @@ public class CameraSettingsActivity extends FragmentActivity {
          *         picture size in megapixels.
          */
         private String getSizeSummaryString(Size size) {
+            Size approximateSize = ResolutionUtil.getApproximateSize(size);
             String megaPixels = sMegaPixelFormat.format((size.width() * size.height()) / 1e6);
-            int numerator = ResolutionUtil.aspectRatioNumerator(size);
-            int denominator = ResolutionUtil.aspectRatioDenominator(size);
+            int numerator = ResolutionUtil.aspectRatioNumerator(approximateSize);
+            int denominator = ResolutionUtil.aspectRatioDenominator(approximateSize);
             String result = getResources().getString(
                     R.string.setting_summary_aspect_ratio_and_megapixels, numerator, denominator,
                     megaPixels);
