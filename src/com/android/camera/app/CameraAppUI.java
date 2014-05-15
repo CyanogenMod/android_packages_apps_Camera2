@@ -1689,6 +1689,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
 
         boolean enableExposureCompensation = bottomBarSpec.enableExposureCompensation &&
+            !(bottomBarSpec.minExposureCompensation == 0 && bottomBarSpec.maxExposureCompensation == 0) &&
             mController.getSettingsManager()
             .getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
         if (enableExposureCompensation) {

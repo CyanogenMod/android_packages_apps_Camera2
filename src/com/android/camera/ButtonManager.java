@@ -499,12 +499,28 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         mMinExposureCompensation = min;
         mExposureCompensationStep = step;
 
-        mExposureN2.setEnabled(Math.round(min * step) <= -2);
-        mExposureN1.setEnabled(Math.round(min * step) <= -1);
-        mExposureP1.setEnabled(Math.round(max * step) >= 1);
-        mExposureP1.setEnabled(Math.round(max * step) >= 2);
+
+        setVisible(mExposureN2, (Math.round(min * step) <= -2));
+        setVisible(mExposureN1, (Math.round(min * step) <= -1));
+        setVisible(mExposureP1, (Math.round(max * step) >= 1));
+        setVisible(mExposureP2, (Math.round(max * step) >= 2));
 
         updateExposureButtons();
+    }
+
+    private static void setVisible(View v, boolean visible) {
+        if (visible) {
+            v.setVisibility(View.VISIBLE);
+        } else {
+            v.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * @return The exposure compensation step value.
+     **/
+    public float getExposureCompensationStep() {
+        return mExposureCompensationStep;
     }
 
     /**
