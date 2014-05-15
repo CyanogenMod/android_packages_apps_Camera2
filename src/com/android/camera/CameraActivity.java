@@ -1767,7 +1767,7 @@ public class CameraActivity extends Activity
             } else if (keyCode == KeyEvent.KEYCODE_MENU
                     || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 // Let the mode list view consume the event.
-                mModeListView.onMenuPressed();
+                mCameraAppUI.openModeList();
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 mCameraAppUI.showFilmstrip();
