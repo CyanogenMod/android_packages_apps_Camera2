@@ -241,10 +241,11 @@ public class IndicatorIconController
 
             String compString = mController.getSettingsManager().get(
                     SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
-            int comp = Integer.parseInt(compString);
+            int comp = Math.round(
+                    Integer.parseInt(compString) * buttonManager.getExposureCompensationStep());
+
             // Turn on the appropriate indicator.
-            // Each integer compensation represent 1/6 of a stop.
-            switch (comp / 6) {
+            switch (comp) {
                 case -2:
                     changeVisibility(mExposureIndicatorN2, View.VISIBLE);
                     break;
