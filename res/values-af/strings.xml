@@ -362,10 +362,23 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Laag"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Hoog"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapieksels"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixels"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Om te herfokus, raak hier"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Gevorderd"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Handmatige beligting"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Verander resolusie en kwaliteit in Instellings, of probeer gevorderde kenmerke."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Kies fotogrootte"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Jy kan dit later in Instellings verander."</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>

@@ -362,10 +362,17 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ຕ່ຳ"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"ສູງ"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s ເມ​ກາ​ພິກ​ເຊວ"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s ​ລ້ານ​ພິກ​ເຊວ"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"​ເພື່ອ​ປັບ​ໂຟ​ກັດ​ໃໝ່​, ໃຫ້​ແຕະ​ບ່ອນ​ນີ້"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"ຂັ້ນສູງ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"​ຊົດ​ເຊີຍ​ແສງ​ດ້ວຍຕົນເອງ"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"​ໃນ​ການ​ຕັ້ງ​ຄ່າ, ໃຫ້​ປ່ຽນ​ຄວາມ​ລະ​ອຽດ ແລ​ະ​ຄຸນ​ນະ​ພາບ ຫຼື​ລອງ​ໃຊ້​ຄຸນ​ສົມ​ບັດ​ຂັ້ນ​ສູງ."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"​ເລືອກ​ຂະ​ໜາດ​ຮູບ"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"​ທ່ານ​ສາ​ມາດ​ປ່ຽນ​ຄ່າ​ນີ້​​ໄດ້ພາຍຫຼັງ​ໃນ​ການ​ຕັ້ງ​ຄ່າ"</string>
+    <string name="share_to" msgid="5144911209144798122">"ແບ່ງ​​ປັນໄປ"</string>
+    <string name="edit_with" msgid="615569327230783971">"​ແກ້​ໄຂ​ໃນ"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"​ຕໍ່​ໄປ"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"ໂອເຄ, ເຂົ້າໃຈແລ້ວ"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d ​ລ້ານ​ພິກ​ເຊວ \n(4:3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d ລ້ານ​ພິກ​ເຊວ \n(16:9)"</string>
 </resources>
