@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"አማራጮች"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"የሁነታ ዝርዝር ተዘግቷል"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"የሁነታ ዝርዝር ክፍት ነው"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"የሁነታ ዝርዝርን ለመቀያየር ግራን ይጫኑ"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"ቀረጻ ተወስዷል"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ወደ ካሜራ ይክፈቱ"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"ማህደረ መረጃ ከ%s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"ማህደረ መረጃ በመካሄድ ላይ"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"የሁነታ ዝርዝር ቀያይር"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"የሁነታ ዝርዝር"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"ድርድር ፊል ቀያይር"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"ድርድር ፊልም"</string>
     <string name="capital_on" msgid="1118214824959797269">"በርቷል"</string>
     <string name="capital_off" msgid="3020696135020167263">"ጠፍቷል"</string>
     <string name="video_control_play" msgid="6895236811408921715">"ቪዲዮ ያጫውቱ"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"የፊት ካሜራ"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"የፍርግርግ መስመሮች ጠፍተዋል"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"የፍርግርግ መስመሮች በርተዋል"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"የሰዓት ቆጣሪ ጠፍቷል"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"የሰዓት ቆጣሪ ወደ 3 ሰከንዶች ተዘጋጅቷል"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"የሰዓት ቆጣሪ ወደ 10 ሰከንዶች ተዘጋጅቷል"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ተጨማሪ አማራጮች"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"ይቅር"</string>
     <string name="done_button_description" msgid="1334963435441544592">"ተከናውኗል"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"እይታ"</string>
     <string name="edit_button_description" msgid="98550816724901925">"አርትዕ"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ሰርዝ"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"እራስ የሚደረግ የተጋላጭነት ማካካሻ"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"የተጋላጭነት ማካካሻ -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"የተጋላጭነት ማካካሻ -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"የተጋላጭነት ማካካሻ 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"የተጋላጭነት ማካካሻ +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"የተጋላጭነት ማካካሻ +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"አዝራር አሁን %s ነው"</string>
     <string name="setting_location" msgid="4459859689227893838">"አካባቢ"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"የኋላ ካሜራ ፎቶ"</string>
@@ -340,17 +352,33 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"የፊት ካሜራ ፎቶ"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"የፊት ካሜራ ቪዲዮ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ነባሪ ካሜራ"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"ግብረመልስ ይላኩ"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"ግብረመልስ ይላኩ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ በማስኬድ ላይ …"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"የክፍት ምንጭ ፍቃዶች"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"የክፍት ምንጭ ፍቃዶች"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"አጠቃላይ ቅንብሮች"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"ጥራት እና ተመራጭነት"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"ጥራት"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"ስለ"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"የግንብ ሥሪት"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ዝቅተኛ"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"ከፍተኛ"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s ሜጋፒክሰል"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"የካሜራ መስታወት ድብዘዛ ምስሉን አርትዕ ለማድረግ እዚህ ጋር ጠቅ ያድርጉ።"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s ሜጋፒክስሎች"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ዳግም ለማተኮር እዚህ ይንኩ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"የላቀ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"እራስዎ ተጋላጭነትን ማስተካከል"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"በቅንብሮች ውስጥ ጥራት ይቀይሩ ወይም የላቁ ባህሪያትን ይሞክሩ።"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"የፎቶ መጠን ይምረጡ"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ይህን በኋላ በቅንብሮች ውስጥ መቀየር ይችላሉ።"</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>

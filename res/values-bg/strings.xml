@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Опции"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Списъкът с режими е затворен"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Списъкът с режими е отворен"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Натиснете отляво, за да превключите списъка с режими"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Снимката е направена"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Отключване към Камера"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Мултимедия от %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Мултимедията се обработва"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Превключване на списъка с режими"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Списък с режими"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Превключване на филмовата лента"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Филмова лента"</string>
     <string name="capital_on" msgid="1118214824959797269">"ВКЛ."</string>
     <string name="capital_off" msgid="3020696135020167263">"ИЗКЛ."</string>
     <string name="video_control_play" msgid="6895236811408921715">"Пускане на видеоклипа"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Предна камера"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Помощната мрежа е изключена"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Помощната мрежа е включена"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Таймерът за обратно отброяване е изключен"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"За таймера за обратно отброяване е зададена продължителност от 3 секунди"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"За таймера за обратно отброяване е зададена продължителност от 10 секунди"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Още опции"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Отказ"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Готово"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Изглед"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Редактиране"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Изтриване"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Ръчна компенсация на експозицията"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Компенсация на експозицията: -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Компенсация на експозицията: -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Компенсация на експозицията: 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Компенсация на експозицията: +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Компенсация на експозицията: +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Бутонът вече е %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Местоположение"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Снимка със задната камера"</string>
@@ -340,17 +352,33 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Снимка с предната камера"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Клип с предната камера"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Камера по подразбиране"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"Изпращане на отзиви"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Изпращане на отзиви"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ се обработва…"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"Лицензи за отворен код"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Лицензи за отворен код"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Общи настройки"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Раздел. способност и качество"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Раздел. способност и качество"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Информация"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Версия"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ниско"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Високо"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s мегапиксела"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Кликнете за редакт. на изобр. от „Замъгляване на обектива“."</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s мегапиксела"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Докоснете тук за повторно фокусиране"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Разширени"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ръчна експонация"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"От „Настройки“ променете разделителната способност и качеството или изпробвайте разширените функции."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Избиране на размер на снимката"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Можете да промените това по-късно от „Настройки“."</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>

@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"विकल्प"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"मोड सूची बंद हो गई"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"मोड सूची खुल गई"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"मोड सूची टॉगल करने के लिए बाएं दबाएं"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"फ़ोटो खींच लिया गया"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"कैमरे पर अनलॉक करें"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"%s का मीडिया"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"मीडिया प्रोसेस हो रहा है"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"मोड सूची टॉगल करें"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"मोड सूची"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"फ़िल्म-स्ट्रिप टॉगल करें"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"फ़िल्म-स्ट्रिप"</string>
     <string name="capital_on" msgid="1118214824959797269">"चालू"</string>
     <string name="capital_off" msgid="3020696135020167263">"बंद"</string>
     <string name="video_control_play" msgid="6895236811408921715">"वीडियो चलाएं"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"सामने वाला कैमरा"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"ग्रिड लाइन बंद हैं"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"ग्रिड लाइन चालू हैं"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"काउंटडाउन टाइमर बंद है"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"काउंटडाउन टाइमर अवधि 3 सेकंड पर सेट है"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"काउंटडाउन टाइमर अवधि 10 सेकंड पर सेट है"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"अधिक विकल्प"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"रद्द करें"</string>
     <string name="done_button_description" msgid="1334963435441544592">"पूर्ण"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"देखें"</string>
     <string name="edit_button_description" msgid="98550816724901925">"संपादित करें"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"हटाएं"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"मैन्युअल एक्सपोज़र कंपन्सेशन"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"एक्सपोज़र कंपन्सेशन -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"एक्सपोज़र कंपन्सेशन -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"एक्सपोज़र कंपन्सेशन 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"एक्सपोज़र कंपन्सेशन +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"एक्सपोज़र कंपन्सेशन +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"बटन अब %s है"</string>
     <string name="setting_location" msgid="4459859689227893838">"स्थान"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"पीछे वाले कैमरे की फ़ोटो"</string>
@@ -340,17 +352,27 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"सामने वाले कैमरे की फ़ोटो"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"सामने वाले कैमरे का वीडियो"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"डिफ़ॉल्ट कैमरा"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"फ़ीडबैक भेजें"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"फ़ीडबैक भेजें"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ प्रोसेस हो रहा है…"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"ओपन सोर्स लाइसेंस"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"ओपन सोर्स लाइसेंस"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"सामान्य सेटिंग"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"रिज़ॉल्यूशन और गुणवत्ता"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"रिज़ॉल्यूशन और गुणवत्ता"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"संक्षिप्त विवरण"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"बिल्ड संस्करण"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"निम्न"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"उच्च"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s मेगापिक्सेल"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"लेंस ब्लर चित्र संपादित करने के लिए यहां क्लिक करें."</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s मेगापिक्सेल"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"फिर से फ़ोकस करने के लिए, यहां स्पर्श करें"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"उन्नत"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"मैन्युअल एक्सपोज़र"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"सेटिंग में, रिज़ॉल्यूशन और गुणवत्ता बदलें, या उन्नत सुविधाओं को आज़माएं."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"फ़ोटो आकार चुनें"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"आप इसे बाद में सेटिंग में बदल सकते हैं."</string>
+    <string name="share_to" msgid="5144911209144798122">"इनसे साझा करें:"</string>
+    <string name="edit_with" msgid="615569327230783971">"इससे संपादित करें:"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"अगला"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"ठीक है, समझ लिया"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d मेगापिक्सल \n(4:3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d मेगापिक्सल \n(16:9)"</string>
 </resources>

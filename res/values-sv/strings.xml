@@ -63,7 +63,7 @@
     <string name="location" msgid="564326205780827668">"Plats"</string>
     <string name="path" msgid="5927003361865586353">"Sökväg"</string>
     <string name="width" msgid="7045750687833828758">"Bredd"</string>
-    <string name="height" msgid="5186001199353423689">"Längd"</string>
+    <string name="height" msgid="5186001199353423689">"Höjd"</string>
     <string name="orientation" msgid="3883761294106680270">"Orientering"</string>
     <string name="duration" msgid="5316211067383665008">"Längd"</string>
     <string name="mimetype" msgid="6415940055077963944">"MIME-typ"</string>
@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Alternativ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Lägeslistan har stängts"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lägeslistan har öppnats"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Tryck till vänster om du vill visa/dölja lägeslistan"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"En bild har tagits"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås upp till Kamera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Media från %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Bearbetar media"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Visa/dölja lista över lägen"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista över lägen"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Visa/dölj filmrulle"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Filmrulle"</string>
     <string name="capital_on" msgid="1118214824959797269">"PÅ"</string>
     <string name="capital_off" msgid="3020696135020167263">"AV"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Spela upp video"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Främre kamera"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Linjer i rutnät har inaktiverats"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Linjer i rutnät har aktiverats"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Nedräkningstimern är avstängd"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Tiden för nedräkningstimern är 3 sekunder"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Tiden för nedräkningstimern är 10 sekunder"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Fler alternativ"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Avbryt"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Klar"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Visa"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Redigera"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Ta bort"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Manuell exponeringskompensation"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Exponeringskompensation -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Exponeringskompensation -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Exponeringskompensation 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Exponeringskompensation +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Exponeringskompensation +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Knappen är nu %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Plats"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Bakre kamera – foto"</string>
@@ -340,17 +352,27 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Frontkamera – foto"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Frontkamera – video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"Skicka feedback"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Skicka feedback"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Bearbetar HDR+ ..."</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"Licenser för öppen källkod"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Licenser, öppen källkod"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Allmänna inställningar"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Upplösning och kvalitet"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Upplösning och kvalitet"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Om"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Programversion"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Låg"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Hög"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klicka här om du vill redigera bilder med linsoskärpa."</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixlar"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Tryck här om du vill ändra fokus"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avancerat"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manuell exponering"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"Under Inställningar ändrar du upplösning och kvalitet, eller testar avancerade funktioner."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Välj fotostorlek"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Det här kan ändras senare under Inställningar."</string>
+    <string name="share_to" msgid="5144911209144798122">"Dela på"</string>
+    <string name="edit_with" msgid="615569327230783971">"Redigera med"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"NÄSTA"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"OK, JAG FÖRSTÅR"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d megapixel \n(4:3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d megapixel \n(16:9)"</string>
 </resources>

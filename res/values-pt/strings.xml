@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Opções"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Lista de modos fechada"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lista de modos aberta"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Pressione à esquerda para abrir ou fechar a lista de modos"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Imagem capturada"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloquear e abrir a Câmera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Mídia de %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Mídia em processamento"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alternar lista de modos"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista de modos"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alternar película fotográfica"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Película fotográfica"</string>
     <string name="capital_on" msgid="1118214824959797269">"ATIVADO"</string>
     <string name="capital_off" msgid="3020696135020167263">"DESATIVADO"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Reproduzir vídeo"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Câmera frontal"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Linhas de grade desativadas"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Linhas de grade ativadas"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Temporizador desativado"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Duração do temporizador definida como 3 segundos"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Duração do temporizador definida como 10 segundos"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Mais opções"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Cancelar"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Concluído"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Visualizar"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Editar"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Excluir"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Compensação de exposição manual"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Compensação de exposição -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Compensação de exposição -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Compensação de exposição 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Compensação de exposição +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Compensação de exposição +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"O botão agora está %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Local"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto da câmera traseira"</string>
@@ -340,17 +352,33 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto da câmera frontal"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo da câmera frontal"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Câmera padrão"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"Enviar feedback"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Enviar comentários"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Processando HDR+…"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"Licenças de código aberto"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Licenças de código aberto"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Configurações gerais"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Resolução e qualidade"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Resolução e qualidade"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Sobre"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Versão"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Baixa"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Alta"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixels"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Clique aqui para editar a imagem com Efeito foco."</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s MP"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Toque aqui para mudar o foco"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avançadas"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposição manual"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"Em \"Configurações\", altere a resolução e a qualidade ou explore os recursos avançados."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolher tamanho da foto"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Você pode alterar isto mais tarde em \"Configurações\"."</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>

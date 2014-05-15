@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ໂຕເລືອກ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"ປິດລາຍ​ຊື່​ໂໝດແລ້ວ"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"​ເປີດ​ລາຍ​ຊື່​ໂໝດ​ແລ້ວ"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"​ກົດ​​​ປຸ່ມ​ລູກ​ສອນ​ຊ້າຍ​ເພື່ອ​​ສະ​ລັບ​ລາຍ​ຊື່​ໂໝດ"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"​ຈັບ​ພາບ​ແລ້ວ"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"​​ປົດ​ລັອກ​ໃຫ້​ກ້ອງ​ຖ່າຍ​ຮູບ"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"ໄຟ​ລ໌​ຈາກ %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"​ກຳ​ລັງ​ປະ​ມວນ​ຜົນ​ໄຟ​ລ໌"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"ສະລັບລາຍຊື່ໂໝດ"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"ລາຍຊື່ໂໝດ"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"ສະລັບແຜ່ນຟີມ"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"ແຜ່ນຟີມ"</string>
     <string name="capital_on" msgid="1118214824959797269">"ເປີດ"</string>
     <string name="capital_off" msgid="3020696135020167263">"ປິດ"</string>
     <string name="video_control_play" msgid="6895236811408921715">"ຫຼິ້ນ​ວິ​ດີ​ໂອ"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"ກ້ອງຫນ້າ"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"ປິດເສັ້ນຕາໜ່າງ"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"ເປີດເສັ້ນຕາໜ່າງ"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"ປິດ​ໂຕ​ນັບ​ເວ​ລາ​ຖອຍຫຼັງ​ແລ້ວ"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"​ໄລ​ຍະ​ເວ​ລາ​ນັບ​ຖອຍຫຼັງ​ຖືກ​ປັບ​ເປັນ 3 ວິນ​າ​ທີ​ແລ້ວ"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"​ໄລ​ຍະ​ເວ​ລາ​ນັບ​ຖອຍຫຼັງ​ຖືກ​ປັບ​ເປັນ 10 ວິນ​າ​ທີ​ແລ້ວ"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ໂຕເລືອກເພີ່ມເຕີມ"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"ຍົກເລີກ"</string>
     <string name="done_button_description" msgid="1334963435441544592">"ແລ້ວໆ"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"ວິວ"</string>
     <string name="edit_button_description" msgid="98550816724901925">"ແກ້ໄຂ"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ລຶບ"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"ປັບການ​ຊົດ​ເຊີຍ​ແສງເອງ"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"ການ​ຊົດ​ເຊີຍ​ແສງ -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"ການ​ຊົດ​ເຊີຍ​ແສງ -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"ການ​ຊົດ​ເຊີຍ​ແສງ 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"ການ​ຊົດ​ເຊີຍ​ແສງ +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"ການ​ຊົດ​ເຊີຍ​ແສງ +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ຕອນນີ້ປຸ່ມແມ່ນ %s ແລ້ວ"</string>
     <string name="setting_location" msgid="4459859689227893838">"ສະຖານທີ່"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"​ຮູບ​ກ້ອງຫຼັງ"</string>
@@ -340,17 +352,27 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"​ຮູບ​ກ້ອງ​ໜ້າ"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"​ວິ​ດີ​ໂອ​ກ້ອງ​ໜ້າ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ກ້ອງຖ່າຍຮູບໃນຕ້ອນຕົ້ນ"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"ສົ່ງຄຳຕິຊົມ"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"​ສົ່ງ​ຄຳ​ຕິ​ຊົມ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"ກໍາລັງປະມວນຜົນ HDR+ …"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"ລິຂະສິດໂອເພນຊອດ"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"​ລິ​ຂະ​ສິດ​ໂອ​ເພນ​ຊອດ"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"ການຕັ້ງຄ່າທົ່ວໄປ"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"ຄວາມ​ລະ​ອຽດ &amp; ຄຸນ​ນະ​ພາບ"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"ຄວາມ​ລະ​ອຽດ &amp; ຄຸນ​ນະ​ພາບ"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"ກ່ຽວກັບ"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"ເວີຊັນສ້າງ"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ຕ່ຳ"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"ສູງ"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s ເມ​ກາ​ພິກ​ເຊວ"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"ຄ​ລິກ​ບ່ອນ​ນີ້​ເພື່ອ​ແກ້​ໄຂ​ຮູບ Lens Blur"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s ​ລ້ານ​ພິກ​ເຊວ"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"​ເພື່ອ​ປັບ​ໂຟ​ກັດ​ໃໝ່​, ໃຫ້​ແຕະ​ບ່ອນ​ນີ້"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"ຂັ້ນສູງ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"​ຊົດ​ເຊີຍ​ແສງ​ດ້ວຍຕົນເອງ"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"​ໃນ​ການ​ຕັ້ງ​ຄ່າ, ໃຫ້​ປ່ຽນ​ຄວາມ​ລະ​ອຽດ ແລ​ະ​ຄຸນ​ນະ​ພາບ ຫຼື​ລອງ​ໃຊ້​ຄຸນ​ສົມ​ບັດ​ຂັ້ນ​ສູງ."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"​ເລືອກ​ຂະ​ໜາດ​ຮູບ"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"​ທ່ານ​ສາ​ມາດ​ປ່ຽນ​ຄ່າ​ນີ້​​ໄດ້ພາຍຫຼັງ​ໃນ​ການ​ຕັ້ງ​ຄ່າ"</string>
+    <string name="share_to" msgid="5144911209144798122">"ແບ່ງ​​ປັນໄປ"</string>
+    <string name="edit_with" msgid="615569327230783971">"​ແກ້​ໄຂ​ໃນ"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"​ຕໍ່​ໄປ"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"ໂອເຄ, ເຂົ້າໃຈແລ້ວ"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d ​ລ້ານ​ພິກ​ເຊວ \n(4:3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d ລ້ານ​ພິກ​ເຊວ \n(16:9)"</string>
 </resources>

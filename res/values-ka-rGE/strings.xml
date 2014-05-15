@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"პარამეტრები"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"რეჟიმის სია დახურულია"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"რეჟიმის სია ღიაა"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"დააჭირეთ მარცხნივ რეჟიმის სიის შესანაცვლებლად"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"ანაბეჭდი გადაღებულია"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"განბლოკვა კამერაზე გადასასვლელად"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"მედია %s-იდან"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"მედიის დამუშავება"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"რეჟიმის სიის გადართვა"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"რეჟიმის სია"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"ფოტოფირის გადართვა"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"ფოტოფირი"</string>
     <string name="capital_on" msgid="1118214824959797269">"ჩართულია"</string>
     <string name="capital_off" msgid="3020696135020167263">"გამორთულია"</string>
     <string name="video_control_play" msgid="6895236811408921715">"ვიდეოს დაკვრა"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"წინა კამერა"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"ბადის ხაზების გამორთვა"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"ბადის ხაზების ჩართვა"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"ტაიმერი გამორთულია"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"ტაიმერის ხანგრძლივობა დაყენებულია 3 წამზე"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"ტაიმერის ხანგრძლივობა დაყენებულია 10 წამზე"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"სხვა ვარიანტები"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"გაუქმება"</string>
     <string name="done_button_description" msgid="1334963435441544592">"დასრულება"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"ნახვა"</string>
     <string name="edit_button_description" msgid="98550816724901925">"რედაქტირება"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"წაშლა"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"ექსპოზიციის კომპენსაციის ხელითი რეჟიმი"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"ექსპოზიციის კომპენსაცია -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"ექსპოზიციის კომპენსაცია -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"ექსპოზიციის კომპენსაცია 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"ექსპოზიციის კომპენსაცია +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"ექსპოზიციის კომპენსაცია +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ღილაკი ამჟამად არის %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"მდებარეობა"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"უკანა კამერის ფოტო"</string>
@@ -340,17 +352,34 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"წინა კამერის ფოტო"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"წინა კამერის ვიდეო"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ნაგულისხმევი კამერა"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"გამოხმაურება"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"უკუკავშირის გაგზავნა"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ დამუშავება …"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"ღია კოდის ლიცენზიები"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"ღია კოდის ლიცენზიები"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"ძირითადი პარამეტრები"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"გარჩევადობის &amp; ხარისხი"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"გარჩევადობის &amp; ხარისხი"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"შესახებ"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"ანაწყობის ვერსია"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"დაბალი"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"მაღალი"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s მეგაპიქსელი"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"დააწკაპუნეთ აქ დაბინდული ობიექტივის სურათის შესაცვლელად."</string>
+    <!-- no translation found for setting_summary_aspect_ratio_and_megapixels (5828440902461064821) -->
+    <skip />
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ხელახლა ფოკუსირებისათვის, შეეხეეთ აქ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"გაფართოებული"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ექსპოზიცია ხელით"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"პარამეტრებში, შეცვალეთ გარჩევადობა და ხარისხი, ან სცადეთ გაფართოებული ფუნქციები."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"აირჩიეთ ფოტოს ზომა"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ამის შეცვლა შეგიძლიათ მოგვიანებით პარამეტრებიდან."</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>
