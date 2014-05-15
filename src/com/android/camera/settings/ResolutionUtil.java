@@ -50,6 +50,10 @@ public class ResolutionUtil {
             16.0f / 9.0f, 4.0f / 3.0f
     };
 
+    private static Size[] sDesiredAspectRatioSizes = {
+            new Size(16, 9), new Size(4, 3)
+    };
+
     private static final float RATIO_TOLERANCE = .05f;
 
     /**
@@ -252,13 +256,24 @@ public class ResolutionUtil {
      * @return a string description of the aspect ratio
      */
     public static String aspectRatioDescription(Size size) {
-        BigInteger width = BigInteger.valueOf(size.width());
-        BigInteger height = BigInteger.valueOf(size.height());
+        Size aspectRatio = reduce(size);
+        return aspectRatio.width() + "x" + aspectRatio.height();
+    }
+
+    /**
+     * Reduce an aspect ratio to its lowest common denominator. The ratio of the
+     * input and output sizes is guaranteed to be the same.
+     * 
+     * @param aspectRatio the aspect ratio to reduce
+     * @return The reduced aspect ratio which may equal the original.
+     */
+    public static Size reduce(Size aspectRatio) {
+        BigInteger width = BigInteger.valueOf(aspectRatio.width());
+        BigInteger height = BigInteger.valueOf(aspectRatio.height());
         BigInteger gcd = width.gcd(height);
         int numerator = Math.max(width.intValue(), height.intValue()) / gcd.intValue();
         int denominator = Math.min(width.intValue(), height.intValue()) / gcd.intValue();
-
-        return numerator + "x" + denominator;
+        return new Size(numerator, denominator);
     }
 
     /**
@@ -268,11 +283,26 @@ public class ResolutionUtil {
      * @return the numerator
      */
     public static int aspectRatioNumerator(Size size) {
-        BigInteger width = BigInteger.valueOf(size.width());
-        BigInteger height = BigInteger.valueOf(size.height());
-        BigInteger gcd = width.gcd(height);
-        int numerator = Math.max(width.intValue(), height.intValue()) / gcd.intValue();
-        return numerator;
+        Size aspectRatio = reduce(size);
+        return aspectRatio.width();
+    }
+
+    /**
+     * Given a size, return the closest aspect ratio that falls close to the
+     * given size.
+     * 
+     * @param size the size to approximate
+     * @return the closest desired aspect ratio, or the original aspect ratio if
+     *         none were close enough
+     */
+    public static Size getApproximateSize(Size size) {
+        Size aspectRatio = reduce(size);
+        float fuzzy = fuzzAspectRatio(size.width() / (float) size.height());
+        int index = Arrays.asList(sDesiredAspectRatios).indexOf(fuzzy);
+        if (index != -1) {
+            aspectRatio = new Size(sDesiredAspectRatioSizes[index]);
+        }
+        return aspectRatio;
     }
 
     /**
