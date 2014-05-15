@@ -40,6 +40,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.FilmstripController;
@@ -112,6 +113,7 @@ public class FilmstripView extends ViewGroup {
     private boolean mFullScreenUIHidden = false;
     private final SparseArray<Queue<View>> recycledViews = new SparseArray<Queue<View>>();
 
+    private CameraAppUI mCameraAppUI;
 
     /**
      * A helper class to tract and calculate the view coordination.
@@ -577,7 +579,11 @@ public class FilmstripView extends ViewGroup {
                     return true;
                 }
                 case AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD: {
-                    mController.goToPreviousItem();
+                    boolean wentToPrevious = mController.goToPreviousItem();
+                    if (!wentToPrevious) {
+                        // at beginning of filmstrip, hide and go back to preview
+                        mActivity.getCameraAppUI().hideFilmstrip();
+                    }
                     return true;
                 }
             }
@@ -628,6 +634,7 @@ public class FilmstripView extends ViewGroup {
         if (mOverScaleFactor < 1f) {
             mOverScaleFactor = 1f;
         }
+
     }
 
     private void recycleView(View view, int dataId) {
