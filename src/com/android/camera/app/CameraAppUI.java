@@ -23,7 +23,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.display.DisplayManager;
 import android.util.CameraPerformanceTracker;
 import android.view.GestureDetector;
@@ -516,7 +515,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final PeekView mPeekView;
     private final CaptureLayoutHelper mCaptureLayoutHelper;
     private boolean mAccessibilityEnabled;
-    private View mAccessiblityAffordances;
+    private final View mAccessibilityAffordances;
 
     /**
      * Provides current preview frame and the controls/overlay from the module that
@@ -700,12 +699,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPeekView = (PeekView) appRootView.findViewById(R.id.peek_view);
         mAppRootView.setNonDecorWindowSizeChangedListener(mCaptureLayoutHelper);
         initDisplayListener();
-        mAccessiblityAffordances = mAppRootView.findViewById(R.id.accessibility_affordances);
+        mAccessibilityAffordances = mAppRootView.findViewById(R.id.accessibility_affordances);
         View modeListToggle = mAppRootView.findViewById(R.id.accessibility_mode_toggle_button);
         modeListToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mModeListView.onMenuPressed();
+                openModeList();
             }
         });
         View filmstripToggle = mAppRootView.findViewById(
@@ -713,7 +712,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         filmstripToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFilmstripLayout.showFilmstrip();
+                showFilmstrip();
             }
         });
     }
@@ -886,8 +885,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         AccessibilityManager accessibilityManager = (AccessibilityManager) mController
                 .getAndroidContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
         mAccessibilityEnabled = accessibilityManager.isEnabled();
-        mAccessiblityAffordances.setVisibility(mAccessibilityEnabled ? View.VISIBLE : View.GONE);
+        mAccessibilityAffordances.setVisibility(mAccessibilityEnabled ? View.VISIBLE : View.GONE);
+    }
 
+    /**
+     * Opens the mode list (e.g. because of the menu button being pressed) and
+     * adapts the rest of the UI.
+     */
+    public void openModeList() {
+        mModeOptionsOverlay.closeModeOptions();
+        mModeListView.onMenuPressed();
     }
 
     /**
@@ -932,13 +939,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onPreviewVisiblityChanged(int visibility) {
         if (visibility == ModuleController.VISIBILITY_HIDDEN) {
             setIndicatorBottomBarWrapperVisible(false);
-            mAccessiblityAffordances.setVisibility(View.GONE);
+            mAccessibilityAffordances.setVisibility(View.GONE);
         } else {
             setIndicatorBottomBarWrapperVisible(true);
             if (mAccessibilityEnabled) {
-                mAccessiblityAffordances.setVisibility(View.VISIBLE);
+                mAccessibilityAffordances.setVisibility(View.VISIBLE);
             } else {
-                mAccessiblityAffordances.setVisibility(View.GONE);
+                mAccessibilityAffordances.setVisibility(View.GONE);
             }
         }
     }
@@ -1737,6 +1744,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     /***************************Filmstrip api *****************************/
 
     public void showFilmstrip() {
+        mModeListView.onBackPressed();
         mFilmstripLayout.showFilmstrip();
     }
 
