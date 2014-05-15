@@ -344,12 +344,12 @@ public class FilmstripView extends ViewGroup {
             if (indexOfChild(mView) < 0) {
                 mData.prepare();
                 addView(mView);
-            } else {
-                setVisibility(View.VISIBLE);
-                setAlpha(1f);
-                setTranslationX(0);
-                setTranslationY(0);
             }
+
+            setVisibility(View.VISIBLE);
+            setAlpha(1f);
+            setTranslationX(0);
+            setTranslationY(0);
         }
 
         /**
