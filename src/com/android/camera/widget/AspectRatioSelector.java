@@ -40,6 +40,7 @@ public class AspectRatioSelector extends LinearLayout {
         super(context, attrs);
     }
 
+    @Override
     public void onFinishInflate() {
         mAspectRatio4x3Button = findViewById(R.id.aspect_ratio_4x3_button);
         mAspectRatio4x3Button.setOnClickListener(new OnClickListener() {
@@ -83,6 +84,8 @@ public class AspectRatioSelector extends LinearLayout {
 
     public void setTexts(String text4x3, String text16x9) {
         mAspectRatio4x3Text.setText(text4x3);
+        mAspectRatio4x3Button.setContentDescription(text4x3);
         mAspectRatio16x9Text.setText(text16x9);
+        mAspectRatio16x9Button.setContentDescription(text16x9);
     }
 }

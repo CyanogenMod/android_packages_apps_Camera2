@@ -72,16 +72,6 @@ public class LocationDialogLayout extends FrameLayout {
             }
         });
 
-        View checkBoxTouchDelegate = findViewById(R.id.check_box_touch_delegate);
-        if (checkBoxTouchDelegate != null) {
-            checkBoxTouchDelegate.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Toggle check box.
-                    mCheckBox.setChecked(!mCheckBox.isChecked());
-                }
-            });
-        }
         mConfirmButton = findViewById(R.id.confirm_button);
         mConfirmButton.setOnClickListener(new OnClickListener() {
             @Override

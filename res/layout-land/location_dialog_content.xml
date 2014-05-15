@@ -49,28 +49,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical">
-        <CheckBox
-            android:id="@+id/check_box"
-            android:layout_width="44dp"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/check_box_touch_delegate"
-            android:layout_width="match_parent"
-            android:layout_height="141dp"
-            android:layout_marginLeft="44dp"
-            android:layout_marginBottom="104dp"
-            android:text="@string/remember_location_prompt"
-            android:textSize="16sp"
-            android:textColor="@color/dialog_text_color"/>
-        <Button
-            android:id="@+id/confirm_button"
-            android:layout_width="144dp"
-            android:layout_height="48dp"
-            android:text="@string/startup_dialog_button_next"
-            android:textColor="@android:color/white"
-            android:background="@color/dialog_button_color"
-            android:layout_gravity="bottom|center_horizontal" />
+            <CheckBox
+                android:id="@+id/check_box"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_marginBottom="104dp"
+                android:gravity="top"
+                android:paddingLeft="10dp"
+                android:text="@string/remember_location_prompt"
+                android:textColor="@color/dialog_text_color"
+                android:textSize="16sp" />
+            <Button
+                android:id="@+id/confirm_button"
+                android:layout_width="144dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@color/dialog_button_color"
+                android:text="@string/startup_dialog_button_next"
+                android:textColor="@android:color/white" />
         </FrameLayout>
-    </FrameLayout>
+</FrameLayout>
 
 </LinearLayout>
