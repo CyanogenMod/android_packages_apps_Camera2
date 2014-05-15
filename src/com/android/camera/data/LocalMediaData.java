@@ -200,9 +200,8 @@ public abstract class LocalMediaData implements LocalData {
     protected ImageView fillImageView(Context context, ImageView v,
             int decodeWidth, int decodeHeight, int placeHolderResourceId,
             LocalDataAdapter adapter, boolean isInProgress) {
-
         SizedImageViewTarget target = (SizedImageViewTarget) v.getTag();
-        if (target != null) {
+        if (target == null) {
             target = new SizedImageViewTarget(v);
             v.setTag(target);
         }
@@ -296,7 +295,7 @@ public abstract class LocalMediaData implements LocalData {
         return mediaDetails;
     }
 
-    private String getReadableDate(long dateInSeconds) {
+    private static String getReadableDate(long dateInSeconds) {
         DateFormat dateFormatter = DateFormat.getDateTimeInstance();
         return dateFormatter.format(new Date(dateInSeconds * 1000));
     }
@@ -510,6 +509,11 @@ public abstract class LocalMediaData implements LocalData {
                 final int decodeHeight, int placeHolderResourceId, LocalDataAdapter adapter,
                 boolean isInProgress) {
             loadImage(context, v, decodeWidth, decodeHeight, placeHolderResourceId, false);
+
+            v.setContentDescription(context.getResources().getString(
+                    R.string.media_date_content_description,
+                    getReadableDate(mDateModifiedInSeconds)));
+
             return v;
         }
 
@@ -840,6 +844,10 @@ public abstract class LocalMediaData implements LocalData {
                     .placeholder(placeHolderResourceId)
                     .fitCenter()
                     .into(target);
+
+            v.setContentDescription(context.getResources().getString(
+                    R.string.media_date_content_description,
+                    getReadableDate(mDateModifiedInSeconds)));
 
             return v;
         }
