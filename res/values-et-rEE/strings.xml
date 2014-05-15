@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Valikud"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Režiimiloend on suletud"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Režiimiloend on avatud"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Režiimiloendi sisse- või väljalülitamiseks vajutage vasakul"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Jäädvustatud"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Kaamera avamine"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Meedia alates kuupäevast %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Meedia töötlemine"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Režiimide loend sisse/välja"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Režiimide loend"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Filmiriba sisse/välja"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Filmiriba"</string>
     <string name="capital_on" msgid="1118214824959797269">"SEES"</string>
     <string name="capital_off" msgid="3020696135020167263">"VÄLJAS"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Video esitamine"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Esikaamera"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Ruudustiku jooned on välja lülitatud"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Ruudustiku jooned on sisse lülitatud"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Loendustaimer on välja lülitatud"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Loendustaimeri kestus on määratud 3 sekundile"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Loendustaimeri kestus on määratud 10 sekundile"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Rohkem valikuid"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Tühista"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Valmis"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Kuva"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Muuda"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Kustuta"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Särikompensatsiooni käsitsi seadistamine"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Särikompensatsioon on –2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Särikompensatsioon on –1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Särikompensatsioon on 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Särikompensatsioon on 1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Särikompensatsioon on 2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Nupp on nüüd %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Asukoht"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Tagakaamera foto"</string>
@@ -340,17 +352,27 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Esikaamera foto"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Esikaamera video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Vaikekaamera"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"Tagasiside saatmine"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Tagasiside saatmine"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ töötlemine …"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"Avatud allika litsentsid"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Avatud lähtekoodi litsentsid"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Üldised seaded"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Eraldusvõime ja kvaliteet"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Eraldusvõime ja kvaliteet"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Teave"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Järguversioon"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Madal"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Kõrge"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapikslit"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Klõpsake siin teravussügavuse kujutise muutmiseks."</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s MP"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Fookuse muutmiseks puudutage siin"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Täpsemad"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manuaalsäritus"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"Muutke seadetes eraldusvõimet ja kvaliteeti või proovige täpsemaid funktsioone."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Foto suuruse valimine"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Võite seda hiljem muuta menüüs Seaded."</string>
+    <string name="share_to" msgid="5144911209144798122">"Jagamiskoht:"</string>
+    <string name="edit_with" msgid="615569327230783971">"Muutmine:"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"JÄRGMINE"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"OK, SELGE"</string>
+    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%d MP \n(4 : 3)"</string>
+    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%d MP \n(16 : 9)"</string>
 </resources>

@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Ընտրանքներ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Ռեժիմի ցուցակը փակ է"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Ռեժիմի ցուցակը բաց է"</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"Սեղմեք ձախ մասում՝ ռեժիմի ցուցակին փոխարկելու համար"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"Լուսանկարված է"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Ապակողպել և բացել տեսախցիկը"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Մեդիա՝ %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Մեդիայի մշակում"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Ցուցադրել կամ թաքցնել ռեժիմների ցանկը"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Ռեժիմների ցանկ"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Ցուցադրել կամ թաքցնել տեսաժապավենը"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Տեսաժապավեն"</string>
     <string name="capital_on" msgid="1118214824959797269">"Միացված"</string>
     <string name="capital_off" msgid="3020696135020167263">"Անջատված"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Նվագարկել տեսանյութը"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Առջևի տեսախցիկ"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Ցանցային գծերն անջատված են"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Ցանցային գծերը միացված են"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Հետհաշվարկի ժամաչափն անջատված է"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Հետհաշվարկի ժամաչափի տևողությունը սահմանված է 3 վայրկյան"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Հետհաշվարկի ժամաչափի տևողությունը սահմանված է 10 վայրկյան"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Լրացուցիչ ընտրանքներ"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Չեղարկել"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Պատրաստ է"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Դիտել"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Փոփոխել"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Ջնջել"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Լուսավորման կարգավորում ձեռքով"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Լուսավորման կարգավորում -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Լուսավորման կարգավորում -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Լուսավորման կարգավորում 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Լուսավորման կարգավորում +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Լուսավորման կարգավորում +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Կոճակը հիմա՝ %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Տեղադրություն"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Հետևի տեսախցիկ` լուսանկար"</string>
@@ -340,17 +352,34 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Առջևի տեսախցիկ` լուսանկար"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Առջևի տեսախցիկ` տեսանյութ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Լռելյայն տեսախցիկը"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"Ուղարկել կարծիք"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"Ուղարկել կարծիք"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Մշակվում է HDR+..."</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"Բաց աղբյուրով արտոնագրեր"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Բաց աղբյուրով արտոնագրեր"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Հիմնական կարգավորումներ"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"Լուծաչափ և որակ"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Լուծաչափ և որակ"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Ծրագրի մասին"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Պատրաստման տարբերակը"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ցածր"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Բարձր"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s մեգապիքսել"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Սեղմեք այստեղ՝ ետնապատկերի լղոզումով նկարը փոխելու համար:"</string>
+    <!-- no translation found for setting_summary_aspect_ratio_and_megapixels (5828440902461064821) -->
+    <skip />
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Կրկնաֆոկուսի համար հպել այստեղ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Ընդլայնված"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ձեռքով ընդգրկում"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"Կարգավորումներից փոխեք լուծաչափը և որակը կամ փորձեք ընդլայնված գործառույթները:"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Ընտրեք լուսանկարի չափը"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Դուք կարող եք սա հետագայում հեշտությամբ փոխել Կարգավորումներում:"</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>

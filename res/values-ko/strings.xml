@@ -221,11 +221,14 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"옵션"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"모드 목록이 닫혔습니다."</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"모드 목록이 열렸습니다."</string>
-    <string name="accessibility_mode_list_shimmy" msgid="7715776181458722316">"왼쪽을 누르면 모드 목록이 전환됩니다."</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"캡처했습니다."</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"잠금 해제 시 카메라로 이동"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"%s의 미디어"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"미디어 처리 중"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"모드 목록 전환"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"모드 목록"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"슬라이드 전환"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"슬라이드"</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
     <string name="video_control_play" msgid="6895236811408921715">"동영상 재생"</string>
@@ -325,6 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"전면 카메라"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"그리드 선 사용 중지"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"그리드 선 사용"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"카운트다운 타이머 사용 중지"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"카운트다운 타이머 시간을 3초로 설정"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"카운트다운 타이머 시간을 10초로 설정"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"옵션 더보기"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"취소"</string>
     <string name="done_button_description" msgid="1334963435441544592">"완료"</string>
@@ -333,6 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"보기"</string>
     <string name="edit_button_description" msgid="98550816724901925">"수정"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"삭제"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"수동 노출 보정"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"노출 보정 -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"노출 보정 -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"노출 보정 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"노출 보정 +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"노출 보정 +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"현재 버튼: %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"위치"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"후면 카메라 사진"</string>
@@ -340,17 +352,33 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"전면 카메라 사진"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"전면 카메라 동영상"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"기본 카메라"</string>
-    <string name="setting_send_feedback" msgid="1327616762665878557">"의견 보내기"</string>
+    <string name="setting_send_feedback" msgid="6637165939344951380">"의견 보내기"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ 처리 중…"</string>
-    <string name="open_source_licenses" msgid="1767642450539610653">"오픈소스 라이선스"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"오픈소스 라이선스"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"일반 설정"</string>
-    <string name="pref_category_resolution_quality" msgid="3659535822878143175">"해상도 및 품질"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"해상도 및 화질"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"정보"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"빌드 버전"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"낮음"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"높음"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s메가픽셀"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"아웃포커스 이미지를 수정하려면 여기를 클릭하세요."</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s메가픽셀"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"포커스를 재조정하려면 여기를 터치하세요."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"고급"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"수동 노출"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"설정에서 해상도와 화질을 변경하거나 고급 기능을 사용해 보세요."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"사진 크기 선택"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"나중에 설정에서 변경할 수 있습니다."</string>
+    <!-- no translation found for share_to (5144911209144798122) -->
+    <skip />
+    <!-- no translation found for edit_with (615569327230783971) -->
+    <skip />
+    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
+    <skip />
+    <!-- no translation found for confirm_button_text (7389949384482206814) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
+    <skip />
+    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <skip />
 </resources>
