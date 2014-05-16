@@ -89,6 +89,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Vector;
 
@@ -122,6 +123,8 @@ public class PhotoModule
     private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
+
+    private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
 
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
@@ -476,6 +479,7 @@ public class PhotoModule
         if (locationPrompt) {
             // Show both location and aspect ratio selection dialog.
             mUI.showLocationAndAspectRatioDialog(new LocationDialogCallback(){
+                @Override
                 public void onLocationTaggingSelected(boolean selected) {
                     settingsManager.setLocation(selected, mActivity.getLocationManager());
                 }
@@ -529,8 +533,6 @@ public class PhotoModule
                 }
             }
         }
-        aspectRatio16x9Resolution /= 1000000;
-        aspectRatio4x3Resolution /= 1000000;
 
         // Use the largest 4x3 and 16x9 sizes as candidates for picture size selection.
         final Size size4x3ToSelect = largestSize4x3;
@@ -538,9 +540,11 @@ public class PhotoModule
 
         Resources res = mAppController.getAndroidContext().getResources();
         final String aspectRatio4x3Text = res.getString(
-                R.string.megapixel_text_for_4x3_aspect_ratio, aspectRatio4x3Resolution);
+                R.string.megapixel_text_for_4x3_aspect_ratio,
+                sMegaPixelFormat.format(aspectRatio4x3Resolution / 1e6));
         final String aspectRatio16x9Text = res.getString(
-                R.string.megapixel_text_for_16x9_aspect_ratio, aspectRatio16x9Resolution);
+                R.string.megapixel_text_for_16x9_aspect_ratio,
+                sMegaPixelFormat.format(aspectRatio16x9Resolution / 1e6));
 
         AspectRatioDialogCallback callback = new AspectRatioDialogCallback() {
             @Override
