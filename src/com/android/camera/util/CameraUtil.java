@@ -333,13 +333,18 @@ public class CameraUtil {
         };
         TypedValue out = new TypedValue();
         activity.getTheme().resolveAttribute(android.R.attr.alertDialogIcon, out, true);
-        new AlertDialog.Builder(activity)
-                .setCancelable(false)
-                .setTitle(R.string.camera_error_title)
-                .setMessage(msgId)
-                .setNeutralButton(R.string.dialog_ok, buttonListener)
-                .setIcon(out.resourceId)
-                .show();
+        // some crash reports indicate users leave app prior to this dialog appearing,
+        // so check to ensure that the activity is not shutting down before attempting
+        // to attach a dialog to the window manager.
+        if (!activity.isFinishing()) {
+            new AlertDialog.Builder(activity)
+                    .setCancelable(false)
+                    .setTitle(R.string.camera_error_title)
+                    .setMessage(msgId)
+                    .setNeutralButton(R.string.dialog_ok, buttonListener)
+                    .setIcon(out.resourceId)
+                    .show();
+        }
     }
 
     public static <T> T checkNotNull(T object) {
