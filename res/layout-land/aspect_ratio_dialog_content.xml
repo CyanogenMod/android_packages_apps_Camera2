@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1">
-        <include layout="@layout/aspect_ratio_selector"/>
+        <include layout="@layout/aspect_ratio_selector" />
     </FrameLayout>
     <LinearLayout
         android:layout_width="0dp"
@@ -49,13 +49,10 @@
         android:textSize="20sp"
         android:textColor="@color/dialog_text_color"
         android:gravity="center_horizontal"
-        android:text="@string/photo_aspect_ratio_selection_content"/>
+        android:text="@string/photo_aspect_ratio_selection_content" />
     <Button
         android:id="@+id/confirm_button"
-        android:layout_width="144dp"
-        android:layout_height="48dp"
-        android:background="@color/dialog_button_color"
-        android:text="@string/confirm_button_text"
-        android:textColor="@android:color/white"/>
+        style="@style/BlueButton"
+        android:text="@string/confirm_button_text" />
     </LinearLayout>
 </LinearLayout>

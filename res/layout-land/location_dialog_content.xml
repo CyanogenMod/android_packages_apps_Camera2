@@ -61,12 +61,9 @@
                 android:textSize="16sp" />
             <Button
                 android:id="@+id/confirm_button"
-                android:layout_width="144dp"
-                android:layout_height="48dp"
+                style="@style/BlueButton"
                 android:layout_gravity="bottom|center_horizontal"
-                android:background="@color/dialog_button_color"
-                android:text="@string/startup_dialog_button_next"
-                android:textColor="@android:color/white" />
+                android:text="@string/startup_dialog_button_next" />
         </FrameLayout>
 </FrameLayout>
 

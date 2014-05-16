@@ -28,7 +28,7 @@
         android:textColor="@color/dialog_text_color"
         android:layout_marginTop="28dp"
         android:layout_marginBottom="56dp" />
-    <include layout="@layout/aspect_ratio_selector"/>
+    <include layout="@layout/aspect_ratio_selector" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -39,14 +39,11 @@
         android:layout_marginRight="28dp"
         android:textColor="@color/dialog_text_color"
         android:gravity="center_horizontal"
-        android:text="@string/photo_aspect_ratio_selection_content"/>
+        android:text="@string/photo_aspect_ratio_selection_content" />
     <Button
         android:id="@+id/confirm_button"
-        android:layout_width="144dp"
-        android:layout_height="48dp"
+        style="@style/BlueButton"
         android:layout_marginTop="28dp"
         android:layout_marginBottom="28dp"
-        android:background="@color/dialog_button_color"
-        android:text="@string/confirm_button_text"
-        android:textColor="@android:color/white"/>
+        android:text="@string/confirm_button_text" />
 </LinearLayout>
