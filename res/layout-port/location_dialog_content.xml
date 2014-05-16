@@ -51,11 +51,8 @@
 
     <Button
         android:id="@+id/confirm_button"
-        android:layout_width="144dp"
-        android:layout_height="48dp"
+        style="@style/BlueButton"
         android:text="@string/startup_dialog_button_next"
-        android:textColor="@android:color/white"
-        android:background="@color/dialog_button_color"
         android:layout_marginBottom="28dp"
         android:layout_marginTop="28dp"/>
 </LinearLayout>
