@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -47,6 +46,10 @@ public class LocalSessionData implements LocalData {
         mUri = uri;
         mMetaData = new Bundle();
         mDateTaken = new Date().getTime();
+        refreshSize(uri);
+    }
+
+    private void refreshSize(Uri uri) {
         Point size = Storage.getSizeForSession(uri);
         mWidth = size.x;
         mHeight = size.y;
@@ -144,6 +147,7 @@ public class LocalSessionData implements LocalData {
 
     @Override
     public LocalData refresh(Context context) {
+        refreshSize(mUri);
         return this;
     }
 
