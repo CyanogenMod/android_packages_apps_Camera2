@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
@@ -296,16 +295,6 @@ public class PhotoModule
      */
     public interface AspectRatioDialogCallback {
         /**
-         * Returns text to show for 4:3 aspect ratio.
-         */
-        public String get4x3AspectRatioText();
-
-        /**
-         * Returns text to show for 16:9 aspect ratio.
-         */
-        public String get16x9AspectRatioText();
-
-        /**
          * Returns current aspect ratio that is being used to set as default.
          */
         public AspectRatioSelector.AspectRatio getCurrentAspectRatio();
@@ -540,24 +529,7 @@ public class PhotoModule
         final Size size4x3ToSelect = largestSize4x3;
         final Size size16x9ToSelect = largestSize16x9;
 
-        Resources res = mAppController.getAndroidContext().getResources();
-        final String aspectRatio4x3Text = res.getString(
-                R.string.megapixel_text_for_4x3_aspect_ratio,
-                sMegaPixelFormat.format(aspectRatio4x3Resolution / 1e6));
-        final String aspectRatio16x9Text = res.getString(
-                R.string.megapixel_text_for_16x9_aspect_ratio,
-                sMegaPixelFormat.format(aspectRatio16x9Resolution / 1e6));
-
         AspectRatioDialogCallback callback = new AspectRatioDialogCallback() {
-            @Override
-            public String get4x3AspectRatioText() {
-                return aspectRatio4x3Text;
-            }
-
-            @Override
-            public String get16x9AspectRatioText() {
-                return aspectRatio16x9Text;
-            }
 
             @Override
             public AspectRatioSelector.AspectRatio getCurrentAspectRatio() {
