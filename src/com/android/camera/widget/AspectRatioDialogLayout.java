@@ -29,8 +29,6 @@ public class AspectRatioDialogLayout extends FrameLayout {
     private AspectRatioSelector mAspectRatioSelector;
     private int mLastOrientation;
     private AspectRatioChangedListener mListener;
-    private String mText16x9;
-    private String mText4x3;
     private boolean mInitialized;
     private AspectRatioSelector.AspectRatio mAspectRatio;
 
@@ -61,7 +59,6 @@ public class AspectRatioDialogLayout extends FrameLayout {
         });
         if (mInitialized) {
             mAspectRatioSelector.setAspectRatio(mAspectRatio);
-            mAspectRatioSelector.setTexts(mText4x3, mText16x9);
         }
     }
 
@@ -82,16 +79,13 @@ public class AspectRatioDialogLayout extends FrameLayout {
         mAspectRatioSelector.setAspectRatio(aspectRatio);
     }
 
-    public void initialize(AspectRatioChangedListener listener, String text4x3, String text16x9,
-                           AspectRatioSelector.AspectRatio aspectRatio) {
+    public void initialize(AspectRatioChangedListener listener,
+            AspectRatioSelector.AspectRatio aspectRatio) {
         mInitialized = true;
         mListener = listener;
-        mText4x3 = text4x3;
-        mText16x9 = text16x9;
         mAspectRatio = aspectRatio;
         if (mAspectRatioSelector != null) {
             mAspectRatioSelector.setAspectRatio(mAspectRatio);
-            mAspectRatioSelector.setTexts(mText4x3, mText16x9);
         }
     }
 }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.android.camera2.R;
 
@@ -31,8 +30,6 @@ public class AspectRatioSelector extends LinearLayout {
     };
 
     private AspectRatio mAspectRatio = AspectRatio.ASPECT_RATIO_4x3;
-    private TextView mAspectRatio4x3Text;
-    private TextView mAspectRatio16x9Text;
     private View mAspectRatio4x3Button;
     private View mAspectRatio16x9Button;
 
@@ -56,8 +53,6 @@ public class AspectRatioSelector extends LinearLayout {
                 setAspectRatio(AspectRatio.ASPECT_RATIO_16x9);
             }
         });
-        mAspectRatio4x3Text = (TextView) findViewById(R.id.text_4x3);
-        mAspectRatio16x9Text = (TextView) findViewById(R.id.text_16x9);
     }
 
     public void setAspectRatio(AspectRatio aspectRatio) {
@@ -80,12 +75,5 @@ public class AspectRatioSelector extends LinearLayout {
 
     public AspectRatio getAspectRatio() {
         return mAspectRatio;
-    }
-
-    public void setTexts(String text4x3, String text16x9) {
-        mAspectRatio4x3Text.setText(text4x3);
-        mAspectRatio4x3Button.setContentDescription(text4x3);
-        mAspectRatio16x9Text.setText(text16x9);
-        mAspectRatio16x9Button.setContentDescription(text16x9);
     }
 }

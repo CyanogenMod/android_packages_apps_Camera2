@@ -340,8 +340,7 @@ public class PhotoUI implements PreviewStatusListener,
                             }
                         });
                     }
-                }, callback.get4x3AspectRatioText(), callback.get16x9AspectRatioText(),
-                callback.getCurrentAspectRatio());
+                }, callback.getCurrentAspectRatio());
         aspectRatioDialog.setContentView(aspectRatioDialogLayout, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         aspectRatioDialog.show();
