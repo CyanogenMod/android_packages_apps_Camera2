@@ -16,6 +16,7 @@
 
 package com.android.camera.app;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -65,6 +66,8 @@ import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.ModeOptionsOverlay;
 import com.android.camera.widget.PeekView;
 import com.android.camera2.R;
+
+import java.util.List;
 
 /**
  * CameraAppUI centralizes control of views shared across modules. Whereas module
@@ -883,10 +886,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         // switch the system UI to lights-out mode.
         mFilmstripPanel.hide();
 
+        // Show UI that is meant to only be used when spoken feedback is
+        // enabled.
+        mAccessibilityEnabled = isSpokenFeedbackAccessibilityEnabled();
+        mAccessibilityAffordances.setVisibility(mAccessibilityEnabled ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * @return Whether any spoken feedback accessibility feature is currently
+     *         enabled.
+     */
+    private boolean isSpokenFeedbackAccessibilityEnabled() {
         AccessibilityManager accessibilityManager = (AccessibilityManager) mController
                 .getAndroidContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
-        mAccessibilityEnabled = accessibilityManager.isEnabled();
-        mAccessibilityAffordances.setVisibility(mAccessibilityEnabled ? View.VISIBLE : View.GONE);
+        List<AccessibilityServiceInfo> infos = accessibilityManager
+                .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+        return infos != null && !infos.isEmpty();
     }
 
     /**
