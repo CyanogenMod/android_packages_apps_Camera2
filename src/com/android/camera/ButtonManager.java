@@ -53,6 +53,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int BUTTON_REVIEW = 9;
     public static final int BUTTON_GRID_LINES = 11;
     public static final int BUTTON_EXPOSURE_COMPENSATION = 12;
+    public static final int BUTTON_COUNTDOWN = 13;
 
     /** For two state MultiToggleImageButtons, the off index. */
     public static final int OFF = 0;
@@ -67,6 +68,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     private MultiToggleImageButton mButtonFlash;
     private MultiToggleImageButton mButtonHdr;
     private MultiToggleImageButton mButtonGridlines;
+    private MultiToggleImageButton mButtonCountdown;
 
     /** Intent UI buttons. */
     private ImageButton mButtonCancel;
@@ -172,6 +174,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         mModeOptionsPano = (RadioOptions) root.findViewById(R.id.mode_options_pano);
         mModeOptionsButtons = root.findViewById(R.id.mode_options_buttons);
         mModeOptions = (ModeOptions) root.findViewById(R.id.mode_options);
+
+        mButtonCountdown = (MultiToggleImageButton) root.findViewById(R.id.countdown_toggle_button);
     }
 
     @Override
@@ -216,6 +220,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
             case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE: {
                 updateExposureButtons();
+                break;
+            }
+            case SettingsManager.SETTING_COUNTDOWN_DURATION: {
+                index = mSettingsManager.getStringValueIndex(id);
+                button = getButtonOrError(BUTTON_COUNTDOWN);
                 break;
             }
             default: {
@@ -277,6 +286,11 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Grid lines button could not be found.");
                 }
                 return mButtonGridlines;
+            case BUTTON_COUNTDOWN:
+                if (mButtonCountdown == null) {
+                    throw new IllegalStateException("Countdown button could not be found.");
+                }
+                return mButtonCountdown;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
@@ -344,6 +358,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 break;
             case BUTTON_GRID_LINES:
                 initializeGridLinesButton(button, cb, R.array.grid_lines_icons);
+                break;
+            case BUTTON_COUNTDOWN:
+                initializeCountdownButton(button, cb, R.array.countdown_duration_icons);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -683,6 +700,31 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             public void stateChanged(View view, int state) {
                 mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
                 if (cb != null) {
+                    cb.onStateChanged(state);
+                }
+            }
+        });
+    }
+
+    /**
+     * Initialize a countdown timer button.
+     */
+    private void initializeCountdownButton(MultiToggleImageButton button,
+            final ButtonCallback cb, int resIdImages) {
+        if (resIdImages > 0) {
+            button.overrideImageIds(resIdImages);
+        }
+
+        int index = mSettingsManager.getStringValueIndex(
+                SettingsManager.SETTING_COUNTDOWN_DURATION);
+        button.setState(index >= 0 ? index : 0, false);
+
+        button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+            @Override
+            public void stateChanged(View view, int state) {
+                mSettingsManager.setStringValueIndex(
+                        SettingsManager.SETTING_COUNTDOWN_DURATION, state);
+                if(cb != null) {
                     cb.onStateChanged(state);
                 }
             }

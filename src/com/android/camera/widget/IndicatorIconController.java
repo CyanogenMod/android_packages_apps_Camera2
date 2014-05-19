@@ -45,6 +45,7 @@ public class IndicatorIconController
     private ImageView mFlashIndicator;
     private ImageView mHdrIndicator;
     private ImageView mPanoIndicator;
+    private ImageView mCountdownTimerIndicator;
 
     private ImageView mExposureIndicatorN2;
     private ImageView mExposureIndicatorN1;
@@ -56,6 +57,7 @@ public class IndicatorIconController
     private TypedArray mHdrPlusIndicatorIcons;
     private TypedArray mHdrIndicatorIcons;
     private TypedArray mPanoIndicatorIcons;
+    private TypedArray mCountdownTimerIndicatorIcons;
 
     private AppController mController;
 
@@ -81,6 +83,10 @@ public class IndicatorIconController
             mPanoIndicatorIcons =
                 context.getResources().obtainTypedArray(panoIndicatorArrayId);
         }
+
+        mCountdownTimerIndicator = (ImageView) root.findViewById(R.id.countdown_timer_indicator);
+        mCountdownTimerIndicatorIcons = context.getResources().obtainTypedArray(
+                R.array.pref_camera_countdown_indicators);
 
         mExposureIndicatorN2 = (ImageView) root.findViewById(R.id.exposure_n2_indicator);
         mExposureIndicatorN1 = (ImageView) root.findViewById(R.id.exposure_n1_indicator);
@@ -139,6 +145,7 @@ public class IndicatorIconController
         syncHdrIndicator();
         syncPanoIndicator();
         syncExposureIndicator();
+        syncCountdownTimerIndicator();
     }
 
     /**
@@ -264,6 +271,19 @@ public class IndicatorIconController
         }
     }
 
+    private void syncCountdownTimerIndicator() {
+        ButtonManager buttonManager = mController.getButtonManager();
+
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_COUNTDOWN)
+                && buttonManager.isVisible(ButtonManager.BUTTON_COUNTDOWN)) {
+                setIndicatorState(mController.getSettingsManager(),
+                        SettingsManager.SETTING_COUNTDOWN_DURATION,
+                        mCountdownTimerIndicator, mCountdownTimerIndicatorIcons, false);
+        } else {
+            changeVisibility(mCountdownTimerIndicator, View.GONE);
+        }
+    }
+
     /**
      * Sets the image resource and visibility of the indicator
      * based on the indicator's corresponding setting state.
@@ -326,9 +346,13 @@ public class IndicatorIconController
                 syncExposureIndicator();
                 break;
             }
+            case SettingsManager.SETTING_COUNTDOWN_DURATION:
+                syncCountdownTimerIndicator();
+                break;
             default: {
                 // Do nothing.
             }
         }
     }
+
 }

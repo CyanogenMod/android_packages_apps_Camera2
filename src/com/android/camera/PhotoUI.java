@@ -20,6 +20,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.debug.Log;
+import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -45,7 +47,7 @@ import com.android.camera2.R;
 import java.util.List;
 
 public class PhotoUI implements PreviewStatusListener,
-    CameraManager.CameraFaceDetectionCallback {
+    CameraManager.CameraFaceDetectionCallback, PreviewStatusListener.PreviewAreaChangedListener {
 
     private static final Log.Tag TAG = new Log.Tag("PhotoUI");
     private static final int DOWN_SAMPLE_FACTOR = 4;
@@ -86,6 +88,7 @@ public class PhotoUI implements PreviewStatusListener,
         }
     };
     private Runnable mRunnableForNextFrame = null;
+    private CountDownView mCountdownView;
 
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
@@ -128,6 +131,44 @@ public class PhotoUI implements PreviewStatusListener,
      */
     public void setRunnableForNextFrame(Runnable runnable) {
         mRunnableForNextFrame = runnable;
+    }
+
+    /**
+     * Starts the countdown timer.
+     *
+     * @param sec seconds to countdown
+     */
+    public void startCountdown(int sec) {
+        mCountdownView.startCountDown(sec);
+    }
+
+    /**
+     * Sets a listener that gets notified when the countdown is finished.
+     */
+    public void setCountdownFinishedListener(CountDownView.OnCountDownStatusListener listener) {
+        mCountdownView.setCountDownStatusListener(listener);
+    }
+
+    /**
+     * Returns whether the countdown is on-going.
+     */
+    public boolean isCountingDown() {
+        return mCountdownView.isCountingDown();
+    }
+
+    /**
+     * Cancels the on-going countdown, if any.
+     */
+    public void cancelCountDown() {
+        mCountdownView.cancelCountDown();
+    }
+
+    @Override
+    public void onPreviewAreaChanged(RectF previewArea) {
+        if (mFaceView != null) {
+            mFaceView.onPreviewAreaChanged(previewArea);
+        }
+        mCountdownView.onPreviewAreaChanged(previewArea);
     }
 
     private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
@@ -184,6 +225,7 @@ public class PhotoUI implements PreviewStatusListener,
         initIndicators();
         mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
+        mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
     }
 
     public FocusUI getFocusUI() {
@@ -468,14 +510,6 @@ public class PhotoUI implements PreviewStatusListener,
         if (mFaceView != null) {
             mFaceView.setFaces(faces);
         }
-    }
-
-    /**
-     * Returns a {@link com.android.camera.ui.PreviewStatusListener.PreviewAreaChangedListener}
-     * that should be registered to listen to preview area change.
-     */
-    public PreviewAreaChangedListener getPreviewAreaSizeChangedListener() {
-        return mFaceView;
     }
 
 }

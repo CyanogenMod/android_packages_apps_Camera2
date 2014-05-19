@@ -48,6 +48,9 @@
         android:id="@+id/hdr_indicator"
         style="@style/IndicatorIcon" />
     <ImageView
+        android:id="@+id/countdown_timer_indicator"
+        style="@style/IndicatorIcon" />
+    <ImageView
         android:id="@+id/flash_indicator"
         style="@style/IndicatorIcon" />
     <ImageView
