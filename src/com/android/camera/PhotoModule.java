@@ -1037,10 +1037,13 @@ public class PhotoModule
             }
 
             boolean hdrOn = CameraUtil.SCENE_MODE_HDR.equals(mSceneMode);
+            String flashSetting =
+                    mActivity.getSettingsManager().get(SettingsManager.SETTING_FLASH_MODE);
+            boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                     mNamedImages.mQueue.lastElement().title + ".jpg", exif,
-                    isCameraFrontFacing(), hdrOn, zoomValue);
+                    isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn);
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.

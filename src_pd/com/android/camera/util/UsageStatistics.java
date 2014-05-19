@@ -47,12 +47,14 @@ public class UsageStatistics {
     public void storageWarning(long storageSpace) {
     }
 
-    public void videoCaptureDoneEvent(String ref, long durationMsec, boolean front, int width,
-                                      int height, long size) {
+    public void videoCaptureDoneEvent(String ref, long durationMsec, boolean front,
+                                      float zoom, int width, int height, long size,
+                                      String flashSetting, boolean gridLinesOn) {
     }
 
     public void photoCaptureDoneEvent(int mode, String fileRef, ExifInterface exifRef,
-                                      boolean front, boolean isHDR, float zoom) {
+                                      boolean front, boolean isHDR, float zoom,
+                                      String flashSetting, boolean gridLinesOn) {
     }
 
     public void cameraFailure(int cause, String info) {
