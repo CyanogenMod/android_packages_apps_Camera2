@@ -49,7 +49,7 @@ public class ModeOptionsOverlay extends FrameLayout
     private final static int TOP_RIGHT = Gravity.TOP | Gravity.RIGHT;
 
     private ModeOptions mModeOptions;
-    // need a reference to set the onClickLIstener and fix the layout gravity on orientation change
+    // need a reference to set the onClickListener and fix the layout gravity on orientation change
     private LinearLayout mModeOptionsToggle;
     // need a reference to fix the rotation on orientation change
     private ImageView mThreeDots;
@@ -64,6 +64,10 @@ public class ModeOptionsOverlay extends FrameLayout
      */
     public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
         mCaptureLayoutHelper = helper;
+    }
+
+    public void setToggleClickable(boolean clickable) {
+        mModeOptionsToggle.setClickable(clickable);
     }
 
     @Override

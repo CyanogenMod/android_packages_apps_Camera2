@@ -81,7 +81,8 @@ import com.android.camera2.R;
 public class CameraAppUI implements ModeListView.ModeSwitchListener,
                                     TextureView.SurfaceTextureListener,
                                     ModeListView.ModeListOpenListener,
-                                    SettingsManager.OnSettingChangedListener {
+                                    SettingsManager.OnSettingChangedListener,
+                                    ShutterButton.OnShutterButtonListener {
 
     /**
      * The bottom controls on the filmstrip.
@@ -1105,6 +1106,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mShutterButton = (ShutterButton) mCameraRootView.findViewById(R.id.shutter_button);
         addShutterListener(mController.getCurrentModuleController());
         addShutterListener(mModeOptionsOverlay);
+        addShutterListener(this);
 
         mGridLines = (GridLines) mCameraRootView.findViewById(R.id.grid_lines);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mGridLines);
@@ -1206,6 +1208,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mModeCoverState == COVER_SHOWN) {
             mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
         }
+        enableModeOptions();
     }
 
     /**
@@ -1215,6 +1218,43 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
         hideModeCover();
         mModeCoverState = COVER_HIDDEN;
+    }
+
+    /**
+     * Set the mode options toggle clickable.
+     */
+    public void enableModeOptions() {
+        /*
+         * For modules using camera 1 api, this gets called in
+         * onSurfaceTextureUpdated whenever the preview gets stopped and
+         * started after each capture.  This also takes care of the
+         * case where the mode options might be unclickable when we
+         * switch modes
+         *
+         * For modules using camera 2 api, they're required to call this
+         * method when a capture is "completed".  Unfortunately this differs
+         * per module implementation.
+         */
+        mModeOptionsOverlay.setToggleClickable(true);
+    }
+
+    @Override
+    public void onShutterButtonClick() {
+        /*
+         * Set the mode options toggle unclickable, generally
+         * throughout the app, whenever the shutter button is clicked.
+         *
+         * This could be done in the OnShutterButtonListener of the
+         * ModeOptionsOverlay, but since it is very important that we
+         * can clearly see when the toggle becomes clickable again,
+         * keep all of that logic at this level.
+         */
+        mModeOptionsOverlay.setToggleClickable(false);
+    }
+
+    @Override
+    public void onShutterButtonFocus(boolean pressed) {
+        // noop
     }
 
     /**
@@ -1343,6 +1383,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureAvailable(surface, width, height);
         }
+        enableModeOptions();
     }
 
     @Override
@@ -1423,6 +1464,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Set the mode options visible.
      */
     public void showModeOptions() {
+        /* Make mode options clickable. */
+        enableModeOptions();
         mModeOptionsOverlay.setVisibility(View.VISIBLE);
     }
 
