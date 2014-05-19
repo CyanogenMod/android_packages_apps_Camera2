@@ -394,6 +394,7 @@ public class SettingsManager {
     public static final int SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING = 31;
     public static final int SETTING_EXPOSURE_COMPENSATION_ENABLED = 32;
     public static final int SETTING_USER_SELECTED_ASPECT_RATIO = 33;
+    public static final int SETTING_COUNTDOWN_DURATION = 34;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -433,6 +434,7 @@ public class SettingsManager {
     public static final String KEY_EXPOSURE_COMPENSATION_ENABLED =
             "pref_camera_exposure_compensation_key";
     public static final String KEY_USER_SELECTED_ASPECT_RATIO = "pref_user_selected_aspect_ratio";
+    public static final String KEY_COUNTDOWN_DURATION = "pref_camera_countdown_duration_key";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -966,6 +968,13 @@ public class SettingsManager {
         String[] values = null;
         return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, defaultValue,
                 KEY_EXPOSURE_COMPENSATION_ENABLED, values, FLUSH_OFF);
+    }
+
+    public static Setting getCountDownDurationSetting(Context context) {
+        String defaultValue = Integer.toString(0);
+        String[] values = context.getResources().getStringArray(R.array.pref_countdown_duration);
+        return new Setting(SOURCE_DEFAULT, TYPE_STRING, defaultValue,
+                KEY_COUNTDOWN_DURATION, values, FLUSH_OFF);
     }
 
     public static Setting getPictureSizeBackSetting(Context context) {
