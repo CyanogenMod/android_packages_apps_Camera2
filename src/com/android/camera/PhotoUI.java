@@ -24,6 +24,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,7 +60,7 @@ public class PhotoUI implements PreviewStatusListener,
     private Dialog mDialog = null;
 
     // TODO: Remove face view logic if UX does not bring it back within a month.
-    private FaceView mFaceView = null;
+    private final FaceView mFaceView = null;
     private DecodeImageForReview mDecodeTaskForReview = null;
 
     private int mZoomMax;
@@ -274,8 +275,18 @@ public class PhotoUI implements PreviewStatusListener,
             public void onLocationTaggingSelected(boolean selected) {
                 // Update setting.
                 locationCallback.onLocationTaggingSelected(selected);
-                // Go to next page.
-                showAspectRatioDialog(aspectRatioDialogCallback, mDialog);
+
+                if (showAspectRatioDialogOnThisDevice()) {
+                    // Go to next page.
+                    showAspectRatioDialog(aspectRatioDialogCallback, mDialog);
+                } else {
+                    // If we don't want to show the aspect ratio dialog,
+                    // dismiss the dialog right after the user chose the
+                    // location setting.
+                    if (mDialog != null) {
+                        mDialog.dismiss();
+                    }
+                }
             }
         });
         mDialog.setContentView(locationDialogLayout, new ViewGroup.LayoutParams(
@@ -300,8 +311,10 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     public void showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback) {
-        setDialog(new Dialog(mActivity, android.R.style.Theme_Black_NoTitleBar_Fullscreen));
-        showAspectRatioDialog(callback, mDialog);
+        if (showAspectRatioDialogOnThisDevice()) {
+            setDialog(new Dialog(mActivity, android.R.style.Theme_Black_NoTitleBar_Fullscreen));
+            showAspectRatioDialog(callback, mDialog);
+        }
     }
 
     private void showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback,
@@ -334,8 +347,19 @@ public class PhotoUI implements PreviewStatusListener,
         aspectRatioDialog.show();
     }
 
+    /**
+     * @return Whether this is a device that we should show the aspect ratio
+     *         intro dialog on.
+     */
+    private boolean showAspectRatioDialogOnThisDevice() {
+        // We only want to show that dialog on N4 and N5
+        return "hammerhead".equals(Build.DEVICE) || "mako".equals(Build.DEVICE);
+    }
+
     public void initializeZoom(Camera.Parameters params) {
-        if ((params == null) || !params.isZoomSupported()) return;
+        if ((params == null) || !params.isZoomSupported()) {
+            return;
+        }
         mZoomMax = params.getMaxZoom();
         mZoomRatios = params.getZoomRatios();
         // Currently we use immediate zoom for fast zooming to get better UX and
@@ -404,7 +428,9 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     public void onPause() {
-        if (mFaceView != null) mFaceView.clear();
+        if (mFaceView != null) {
+            mFaceView.clear();
+        }
         if (mDialog != null) {
             mDialog.dismiss();
         }
@@ -417,11 +443,15 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     public void pauseFaceDetection() {
-        if (mFaceView != null) mFaceView.pause();
+        if (mFaceView != null) {
+            mFaceView.pause();
+        }
     }
 
     public void resumeFaceDetection() {
-        if (mFaceView != null) mFaceView.resume();
+        if (mFaceView != null) {
+            mFaceView.resume();
+        }
     }
 
     public void onStartFaceDetection(int orientation, boolean mirror) {
