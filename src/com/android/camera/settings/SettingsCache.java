@@ -139,6 +139,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO);
         mKeyMap.put(SettingsManager.KEY_COUNTDOWN_DURATION,
                 SettingsManager.SETTING_COUNTDOWN_DURATION);
+        mKeyMap.put(SettingsManager.KEY_HDR_PLUS_FLASH_MODE,
+                SettingsManager.SETTING_HDR_PLUS_FLASH_MODE);
     }
 
     /**
@@ -229,6 +231,8 @@ public class SettingsCache {
                 return SettingsManager.getUserSelectedAspectRatioSetting(mContext);
             case SettingsManager.SETTING_COUNTDOWN_DURATION:
                 return SettingsManager.getCountDownDurationSetting(mContext);
+            case SettingsManager.SETTING_HDR_PLUS_FLASH_MODE:
+                return SettingsManager.getHdrPlusFlashSetting(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }

@@ -118,7 +118,7 @@ public class IndicatorIconController
                 syncFlashIndicator();
                 break;
             }
-            case ButtonManager.BUTTON_HDRPLUS: {
+            case ButtonManager.BUTTON_HDR_PLUS: {
                 syncHdrIndicator();
                 break;
             }
@@ -175,6 +175,11 @@ public class IndicatorIconController
                 setIndicatorState(mController.getSettingsManager(),
                                   SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE,
                                   mFlashIndicator, mFlashIndicatorVideoIcons, false);
+            } else if (modeIndex == mController.getAndroidContext().getResources()
+                    .getInteger(R.integer.camera_mode_gcam)) {
+                setIndicatorState(mController.getSettingsManager(),
+                                  SettingsManager.SETTING_HDR_PLUS_FLASH_MODE,
+                                  mFlashIndicator, mFlashIndicatorPhotoIcons, false);
             } else {
                 setIndicatorState(mController.getSettingsManager(),
                                   SettingsManager.SETTING_FLASH_MODE,
@@ -192,8 +197,8 @@ public class IndicatorIconController
         ButtonManager buttonManager = mController.getButtonManager();
         // If hdr isn't an enabled and visible option,
         // do not show the indicator.
-        if (buttonManager.isEnabled(ButtonManager.BUTTON_HDRPLUS)
-                && buttonManager.isVisible(ButtonManager.BUTTON_HDRPLUS)) {
+        if (buttonManager.isEnabled(ButtonManager.BUTTON_HDR_PLUS)
+                && buttonManager.isVisible(ButtonManager.BUTTON_HDR_PLUS)) {
             setIndicatorState(mController.getSettingsManager(),
                               SettingsManager.SETTING_CAMERA_HDR_PLUS,
                               mHdrIndicator, mHdrPlusIndicatorIcons, false);

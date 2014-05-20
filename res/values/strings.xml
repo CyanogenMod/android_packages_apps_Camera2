@@ -282,10 +282,16 @@
     <string name="pref_camera_focusmode_label_infinity">INFINITY</string>
     <string name="pref_camera_focusmode_label_macro">MACRO</string>
 
-    <!-- Default flash mode setting.-->
+    <!-- Default flash mode setting. -->
     <string name="pref_camera_flashmode_default" translatable="false">auto</string>
 
-    <!-- Value for flash off setting-->
+    <!-- Default videocamera flash mode setting. -->
+    <string name="pref_camera_video_flashmode_default" translatable="false">off</string>
+
+    <!-- Default HDR+ flash mode setting. -->
+    <string name="pref_camera_hdr_plus_flashmode_default" translatable="false">auto</string>
+
+    <!-- Value for flash off setting -->
     <string name="pref_camera_flashmode_no_flash" translatable="false">no_flash</string>
 
     <!-- Settings screen, Flash mode title -->
@@ -304,9 +310,6 @@
     <string name="pref_camera_flashmode_label_auto">FLASH AUTO</string>
     <string name="pref_camera_flashmode_label_on">FLASH ON</string>
     <string name="pref_camera_flashmode_label_off">FLASH OFF</string>
-
-    <!-- Default videocamera flash mode setting.-->
-    <string name="pref_camera_video_flashmode_default" translatable="false">off</string>
 
     <!-- Default white balance setting. -->
     <string name="pref_camera_whitebalance_default" translatable="false">auto</string>
@@ -748,6 +751,11 @@ CHAR LIMIT=NONE] -->
     <string name="flash_off_desc">Flash off</string>
     <string name="flash_auto_desc">Flash auto</string>
     <string name="flash_on_desc">Flash on</string>
+
+    <!-- Accessibility text for HDR+ flash toggle button states [CHAR_LIMIT=NONE] -->
+    <string name="hdr_plus_flash_off_desc">HDR+ torch off</string>
+    <string name="hdr_plus_flash_auto_desc">HDR+ torch auto</string>
+    <string name="hdr_plus_flash_on_desc">HDR+ torch on</string>
 
     <!-- Accessibility text for vide torch (flash) toggle button states [CHAR_LIMIT=NONE] -->
     <string name="torch_on_desc">Torch on</string>
