@@ -35,13 +35,11 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
-import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.FilmstripController;
@@ -1610,6 +1608,7 @@ public class FilmstripView extends ViewGroup {
         }
         newItem.copyAttributes(item);
         mViewItem[itemID] = newItem;
+        mZoomView.resetDecoder();
 
         boolean stopScroll = clampCenterX();
         if (stopScroll) {
