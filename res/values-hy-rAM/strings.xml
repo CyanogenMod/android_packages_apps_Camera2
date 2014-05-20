@@ -339,12 +339,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"Դիտել"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Փոփոխել"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Ջնջել"</string>
-    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Լուսավորման կարգավորում ձեռքով"</string>
-    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Լուսավորման կարգավորում -2"</string>
-    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Լուսավորման կարգավորում -1"</string>
-    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Լուսավորման կարգավորում 0"</string>
-    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Լուսավորման կարգավորում +1"</string>
-    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Լուսավորման կարգավորում +2"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Լուսակայման կարգավորում ձեռքով"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Լուսակայման կարգավորում -2"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Լուսակայման կարգավորում -1"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"Լուսակայման կարգավորում 0"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Լուսակայման կարգավորում +1"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Լուսակայման կարգավորում +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Կոճակը հիմա՝ %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Տեղադրություն"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Հետևի տեսախցիկ` լուսանկար"</string>
@@ -362,24 +362,19 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ցածր"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Բարձր"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s մեգապիքսել"</string>
-    <!-- no translation found for setting_summary_aspect_ratio_and_megapixels (5828440902461064821) -->
-    <skip />
-    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Կրկնաֆոկուսի համար հպել այստեղ"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s մեգապիքսել"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Ֆոկուսը փոխելու համար հպեք այստեղ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Ընդլայնված"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ձեռքով ընդգրկում"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Կարգավորումներից փոխեք լուծաչափը և որակը կամ փորձեք ընդլայնված գործառույթները:"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Ընտրեք լուսանկարի չափը"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Դուք կարող եք սա հետագայում հեշտությամբ փոխել Կարգավորումներում:"</string>
-    <!-- no translation found for share_to (5144911209144798122) -->
+    <string name="share_to" msgid="5144911209144798122">"Տարածել"</string>
+    <string name="edit_with" msgid="615569327230783971">"Խմբագրել ծրագրով՝"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"ՀԱՋՈՐԴԸ"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"ԼԱՎ, ՀԱՍԿԱՑԱ"</string>
+    <!-- no translation found for full_sensor_4x3_aspect_ratio (1270461419743888925) -->
     <skip />
-    <!-- no translation found for edit_with (615569327230783971) -->
-    <skip />
-    <!-- no translation found for startup_dialog_button_next (1011831256978228993) -->
-    <skip />
-    <!-- no translation found for confirm_button_text (7389949384482206814) -->
-    <skip />
-    <!-- no translation found for megapixel_text_for_4x3_aspect_ratio (6975319610522670241) -->
-    <skip />
-    <!-- no translation found for megapixel_text_for_16x9_aspect_ratio (2855896529748779201) -->
+    <!-- no translation found for cropped_sensor_16x9_aspect_ratio (4742161537633251795) -->
     <skip />
 </resources>
