@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Størrelse på videosnapshot er mindre end videoens størrelse, loftet er videostørrelsen. Vælg en opløsning højere eller magen til den aktuelle videostørrelse.</string>
   <string name="snapshotsize_low_powermode">Skift af billedstørrelse understøttes ikke i Lav strømtilstand, et snapshot i videostørrelsen vil blive taget. Vælg Normal strømtilstand for at tillade ændring af billedstørrelse.</string>
   <string name="snapshot_qcif_and_d1">Kun størrelsen på videosnapshot understøttes for denne opløsning.</string>
-  <string name="pref_camera_hfr_title">HFR-video</string>
+  <string name="pref_camera_hfr_title">Slowmotion (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Fra</string>
   <string name="pref_camera_hfr_entry_2x">60 fps</string>
   <string name="pref_camera_hfr_entry_3x">90 fps</string>

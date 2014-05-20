@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_18mp">18 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 ميغا بكسل</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">مصراع بطيئة</string>
   <string name="pref_camera_slow_shutter_entry_off">مغلق</string>
   <string name="pref_camera_slow_shutter_entry_auto">تلقائي</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 ثانية</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ ثانية</string>
   <string name="pref_camera_slow_shutter_entry_1s">الثانية 1</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 ثانية</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 ثوان</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">آثار</string>
   <string name="camera_menu_asd_label">المشهد الذكية</string>
   <string name="pref_camera_power_shutter_title">مصراع قوي</string>
-  <string name="pref_superzoom_title">زوم خارق</string>
+  <string name="pref_superzoom_title">تكبير</string>
 </resources>

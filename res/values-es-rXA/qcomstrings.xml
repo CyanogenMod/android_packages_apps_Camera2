@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">El tamañu d\'instantánea ye menor que\'l tamañu de videu. Por favor, seleiciona una resolución igual o mayor al tamañu actual de videu.</string>
   <string name="snapshotsize_low_powermode">Nun ta disponible la resolución d\'imaxe pal mou d\'aforru d\'enerxía. Va capturase una instantánea a la resolución de videu. Por favor, seleiciona\'l mou normal pa usar el tamañu d\'imaxe.</string>
   <string name="snapshot_qcif_and_d1">Namái tán sofitaes les captures de tamañu de videu pa esta resolución.</string>
-  <string name="pref_camera_hfr_title">Videu d\'alta velocidá</string>
+  <string name="pref_camera_hfr_title">Cámara lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Desactiváu</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

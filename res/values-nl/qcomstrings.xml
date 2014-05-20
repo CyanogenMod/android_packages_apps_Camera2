@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Resolutie momentopname is kleiner dan die van de video. Momentopname wordt gemaakt ter grootte van de video. Kies een hogere of gelijke resolutie als de huidige videoresolutie.</string>
   <string name="snapshotsize_low_powermode">Resolutie wordt niet ondersteund in laag-energieverbruik-stand. Momentopname wordt gemaakt ter grootte van de video. Kies normaal-energieverbruik-stand voor deze resolutie.</string>
   <string name="snapshot_qcif_and_d1">Alleen momentopname ter grootte van de video ondersteund voor deze resolutie.</string>
-  <string name="pref_camera_hfr_title">Hoge beeldsnelheid (HFR)</string>
+  <string name="pref_camera_hfr_title">Slowmotion (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Uit</string>
   <string name="pref_camera_hfr_entry_2x">60 fps</string>
   <string name="pref_camera_hfr_entry_3x">90 fps</string>

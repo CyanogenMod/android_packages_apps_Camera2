@@ -26,6 +26,8 @@
   <string name="pref_camera_powermode_entry_np">正常电源</string>
   <string name="pref_camera_autoexposure_title">自动曝光模式</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">平均帧</string>
+  <string name="pref_camera_autoexposure_entry_centerweighted">中心测光</string>
+  <string name="pref_camera_autoexposure_entry_spotmetering">点测光</string>
   <string name="pref_camera_videoencoder_title">视频编码</string>
   <string name="pref_camera_videoencoder_dialogtitle">视频编码</string>
   <string name="pref_camera_audioencoder_title">音频编码</string>
@@ -36,13 +38,17 @@
   <string name="pref_camera_skinToneEnhancement_title">皮肤色调增强</string>
   <string name="pref_camera_skinToneEnhancement_entry_enable">启用</string>
   <string name="pref_camera_skinToneEnhancement_entry_disable">禁用</string>
+  <string name="pref_camera_zsl_title">零快门时滞 (ZSL)</string>
   <string name="pref_camera_selectablezoneaf_title">自动对焦区域</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">自动</string>
+  <string name="pref_camera_selectablezoneaf_entry_spotmetering">点测光</string>
+  <string name="pref_camera_selectablezoneaf_entry_centerweighted">中心测光</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">平均帧</string>
   <string name="pref_camera_zsl_entry_off">关闭</string>
   <string name="pref_camera_zsl_entry_on">开启</string>
   <string name="pref_camera_video_hdr_entry_off">关闭</string>
   <string name="pref_camera_video_hdr_entry_on">开启</string>
+  <string name="pref_camera_video_hdr_title">视频 HDR</string>
   <string name="pref_camera_facedetection_title">人脸检测</string>
   <string name="pref_camera_facedetection_entry_off">关闭</string>
   <string name="pref_camera_facedetection_entry_on">开启</string>
@@ -62,7 +68,7 @@
   <string name="snapshot_lower_than_video">视频快照的大小低于视频的大小，以视频大小为上限。请选择高于或等于当前视频大小的分辨率。</string>
   <string name="snapshotsize_low_powermode">不支持在低功耗模式下改变图片大小，将捕获视频大小的快照。请选择正常功耗模式以允许改变图片大小。</string>
   <string name="snapshot_qcif_and_d1">此分辨率只支持视频尺寸的快照。</string>
-  <string name="pref_camera_hfr_title">高帧率视频</string>
+  <string name="pref_camera_hfr_title">慢动作 (高帧率)</string>
   <string name="pref_camera_hfr_entry_off">关闭</string>
   <string name="pref_camera_hfr_entry_2x">60 帧/秒</string>
   <string name="pref_camera_hfr_entry_3x">90 帧/秒</string>
@@ -90,6 +96,7 @@
   <string name="pref_camera_coloreffect_entry_negative">负片</string>
   <string name="pref_camera_coloreffect_entry_solarize">过度曝光</string>
   <string name="pref_camera_coloreffect_entry_posterize">色调分离</string>
+  <string name="pref_camera_coloreffect_entry_aqua">水底</string>
   <string name="pref_camera_coloreffect_entry_emboss">浮雕</string>
   <string name="pref_camera_coloreffect_entry_sketch">素描</string>
   <string name="pref_camera_coloreffect_entry_neon">霓虹灯</string>
@@ -98,8 +105,10 @@
   <string name="pref_camera_coloreffect_entry_redtint">红色调</string>
   <string name="pref_camera_coloreffect_entry_bluetint">蓝色调</string>
   <string name="pref_camera_coloreffect_entry_greentint">绿色调</string>
+  <string name="pref_camera_touchafaec_title">触摸 AF/AEC</string>
   <string name="pref_camera_touchafaec_entry_off">关闭</string>
   <string name="pref_camera_touchafaec_entry_on">开启</string>
+  <string name="pref_camera_dis_title">数码影像稳定</string>
   <string name="pref_camera_dis_entry_off">关闭</string>
   <string name="pref_camera_dis_entry_on">开启</string>
   <string name="pref_camera_facerc_title">人脸识别</string>

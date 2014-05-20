@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Videó pillanatfelvétel mérete kisebb, mint a videó mérete. Határérték módosítva a videó méretére. Válasszon egyenlő vagy nagyobb felbontást a jelenlegi videó mérethez.</string>
   <string name="snapshotsize_low_powermode">Nem támogatjuk a képfelbontás módosítását alacsony akkumulátor módban. Videó pillanatfelvétel fog készülni. Válassza a normál akkumlátor módot ehhez a képmérethez.</string>
   <string name="snapshot_qcif_and_d1">Csak a videó pillanatfelvétel méret támogatott ennél a felbontásnál.</string>
-  <string name="pref_camera_hfr_title">Képkockasebesség</string>
+  <string name="pref_camera_hfr_title">Lassú mozgás (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Ki</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

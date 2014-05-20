@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Video kitsblik grootte laer as video grootte. Beperking tot Video grootte. Kies \'n resolusie hoër of gelyk aan die huidige video grootte.</string>
   <string name="snapshotsize_low_powermode">Ons ondersteun nie die foto resolusie in Lae Krag Modus. Video grootte kitsblik sal geneem word. Kies Hoë krag modus vir die foto grootte.</string>
   <string name="snapshot_qcif_and_d1">Slegs Video grootte kitsblik ondersteuning vir huidige resolusie.</string>
-  <string name="pref_camera_hfr_title">Video hoë foto raam snelheid</string>
+  <string name="pref_camera_hfr_title">Stadige aksie (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Af</string>
   <string name="pref_camera_hfr_entry_2x">60 rps</string>
   <string name="pref_camera_hfr_entry_3x">90 rps</string>

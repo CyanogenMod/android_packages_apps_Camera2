@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 MP</string>
   <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 MP</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Ilgas išlaikymas</string>
   <string name="pref_camera_slow_shutter_entry_off">Išjungtas</string>
   <string name="pref_camera_slow_shutter_entry_auto">Matinis</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1 / 2 sekundės</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ sekundės</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 sekundė</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 sekundės</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekundės</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFEKTAI</string>
   <string name="camera_menu_asd_label">SUMANI SCENA</string>
   <string name="pref_camera_power_shutter_title">Fotografavimo mygtukas</string>
-  <string name="pref_superzoom_title">Labai priartintas</string>
+  <string name="pref_superzoom_title">Padidinti</string>
 </resources>

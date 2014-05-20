@@ -64,12 +64,16 @@
   <string name="pref_camera_ae_bracket_hdr_title">תיחום חשיפה אוטומטי</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">פועל</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">כבוי</string>
+  <string name="err_app_unsupport_ae_bracket_code">תיחום AE עדיין לא נתמך</string>
+  <string name="snapshot_lower_than_video">גודל תמונת וידאו נמוך יותר מאשר גודל וידאו, ממיצוי גודל הווידאו. בחר ברזולוציה גבוהה או שווה לגודל הווידאו הנוכחי.</string>
   <string name="snapshotsize_low_powermode">שינוי גודל התמונה אינה נתמכת במצב צריכת חשמל נמוכה, נא בחר מצב צריכת חשמל רגיל כדי לאפשר שינוי גודל התמונה.</string>
-  <string name="pref_camera_hfr_title">וידאו עם קצב פריים מהיר</string>
+  <string name="snapshot_qcif_and_d1">רק גודל בזק הווידאו נתמך לרזולוציה זו.</string>
+  <string name="pref_camera_hfr_title">הילוך איטי (HFR)</string>
   <string name="pref_camera_hfr_entry_off">כבוי</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
+  <string name="pref_camera_denoise_title">מצב Wavelet Denoise</string>
   <string name="pref_camera_denoise_entry_off">כבוי</string>
   <string name="pref_camera_denoise_entry_on">פועל</string>
   <string name="pref_camera_iso_title">ISO</string>
@@ -80,6 +84,7 @@
   <string name="pref_camera_iso_entry_iso400">ISO400</string>
   <string name="pref_camera_iso_entry_iso800">ISO800</string>
   <string name="pref_camera_iso_entry_iso1600">ISO1600</string>
+  <string name="pref_camera_antibanding_title">Antibanding</string>
   <string name="pref_camera_antibanding_entry_0">כבוי</string>
   <string name="pref_camera_antibanding_entry_1">50 הרץ</string>
   <string name="pref_camera_antibanding_entry_2">60 הרץ</string>
@@ -87,8 +92,12 @@
   <string name="pref_camera_coloreffect_title">אפקט צבע</string>
   <string name="pref_camera_coloreffect_entry_none">ללא</string>
   <string name="pref_camera_coloreffect_entry_mono">מונו</string>
+  <string name="pref_camera_coloreffect_entry_sepia">ספיה</string>
   <string name="pref_camera_coloreffect_entry_negative">נגטיבי</string>
+  <string name="pref_camera_coloreffect_entry_solarize">סולריזציה</string>
+  <string name="pref_camera_coloreffect_entry_posterize">פוסטריזציה</string>
   <string name="pref_camera_coloreffect_entry_aqua">אקווה</string>
+  <string name="pref_camera_coloreffect_entry_emboss">אמבוס</string>
   <string name="pref_camera_coloreffect_entry_sketch">סקיצה</string>
   <string name="pref_camera_coloreffect_entry_neon">נאון</string>
   <string name="pref_camera_coloreffect_entry_pastel">פסטל</string>
@@ -96,6 +105,7 @@
   <string name="pref_camera_coloreffect_entry_redtint">גוון אדום</string>
   <string name="pref_camera_coloreffect_entry_bluetint">גוון כחול</string>
   <string name="pref_camera_coloreffect_entry_greentint">גוון ירוק</string>
+  <string name="pref_camera_touchafaec_title">מגע AF/AEC</string>
   <string name="pref_camera_touchafaec_entry_off">כבוי</string>
   <string name="pref_camera_touchafaec_entry_on">דלוק</string>
   <string name="pref_camera_dis_title">מייצב תמונה דיגיטלי</string>
@@ -144,6 +154,7 @@
   <string name="pref_camera_jpegquality_entry_3">85% (איכותי מאוד)</string>
   <string name="pref_camera_jpegquality_entry_4">95%</string>
   <string name="pref_camera_jpegquality_entry_5">100%</string>
+  <string name="pref_camera_histogram_title">היסטוגרמה</string>
   <string name="pref_camera_histogram_entry_enable">הפעל</string>
   <string name="pref_camera_histogram_entry_disable">השבת</string>
   <string name="pref_camera_picturesize_entry_1920x1080">1080p</string>
@@ -153,4 +164,5 @@
   <string name="pref_camera_scenedetect_title">זיהוי סצינה אוטומטי</string>
   <string name="pref_camera_scenedetect_entry_off">כבוי</string>
   <string name="pref_camera_scenedetect_entry_on">פועל</string>
+  <string name="time_lapse_error">גודל וידאו לא חוקי למשך זמן ההקלטה.</string>
 </resources>

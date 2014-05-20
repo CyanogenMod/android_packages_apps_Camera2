@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 MP</string>
   <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 MP</string>
@@ -44,7 +44,7 @@
   <string name="pref_camera_scenemode_entry_ar">Realidad aumentada</string>
   <string name="pref_camera_scenemode_entry_asd">Mejor disparo</string>
   <string name="pref_camera_scenemode_entry_baby">Bebé</string>
-  <string name="pref_camera_scenemode_entry_backgroundblur">Fondo desenfocado</string>
+  <string name="pref_camera_scenemode_entry_backgroundblur">Desenfocar fondo</string>
   <string name="pref_camera_scenemode_entry_backlight">Contraluz</string>
   <string name="pref_camera_scenemode_entry_backlightportrait">Retrato a contraluz</string>
   <string name="pref_camera_scenemode_entry_barcode">Código de barras</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Obturador lento</string>
   <string name="pref_camera_slow_shutter_entry_off">Apagado</string>
   <string name="pref_camera_slow_shutter_entry_auto">Automático</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">0,5 segundos</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ segundo</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 segundo</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 segundos</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 segundos</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFECTOS</string>
   <string name="camera_menu_asd_label">ESCENA INTELIGENTE</string>
   <string name="pref_camera_power_shutter_title">Disparador alternativo</string>
-  <string name="pref_superzoom_title">SuperZoom</string>
+  <string name="pref_superzoom_title">Zoom</string>
 </resources>

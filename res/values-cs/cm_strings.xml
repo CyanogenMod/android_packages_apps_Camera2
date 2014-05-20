@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 Mpx</string>
   <string name="pref_camera_picturesize_entry_18mp">18 Mpx</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mpx</string>
@@ -33,6 +33,12 @@
   <string name="pref_camera_picturesize_entry_2_5mp">2,5 Mpx</string>
   <string name="pref_camera_picturesize_entry_2_1mp">2,1 Mpx</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1,9 Mpx</string>
+  <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
+  <string name="pref_camera_picturesize_entry_xga">XGA</string>
+  <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
+  <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">Redukce rozmazání</string>
   <string name="pref_camera_scenemode_entry_aqua">Voda</string>
   <string name="pref_camera_scenemode_entry_ar">Rozšířená realita</string>
@@ -97,6 +103,11 @@
   <string name="pref_camera_burst_entry_20">20 snímků</string>
   <string name="pref_camera_focustime_title">Trvání ostření dotykem</string>
   <string name="pref_camera_focustime_summary">Zvolte dobu po kterou bude aktivní dotykové ostření</string>
+  <string name="pref_camera_focustime_entry_5">5s</string>
+  <string name="pref_camera_focustime_entry_10">10s</string>
+  <string name="pref_camera_focustime_entry_15">15s</string>
+  <string name="pref_camera_focustime_entry_20">20s</string>
+  <string name="pref_camera_focustime_entry_30">30s</string>
   <string name="pref_camera_focustime_entry_infinite">Nekonečný</string>
   <string name="pref_camera_flashmode_entry_redeye">Červené oči</string>
   <string name="pref_camera_flashmode_label_redeye">ČERVENÉ OČI</string>
@@ -104,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Pomalá závěrka</string>
   <string name="pref_camera_slow_shutter_entry_off">Vypnuto</string>
   <string name="pref_camera_slow_shutter_entry_auto">Automaticky</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 sekundy</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ sekundy</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 sekunda</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 sekundy</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekundy</string>
@@ -117,4 +128,5 @@
   <string name="camera_menu_effects_label">EFEKTY</string>
   <string name="camera_menu_asd_label">CHYTRÁ SCÉNA</string>
   <string name="pref_camera_power_shutter_title">Spoušť tlačítkem vypnutí</string>
+  <string name="pref_superzoom_title">Zvětšit</string>
 </resources>
