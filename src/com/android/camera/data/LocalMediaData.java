@@ -58,6 +58,8 @@ public abstract class LocalMediaData implements LocalData {
     static final int QUERY_ALL_MEDIA_ID = -1;
     private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
     private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
+    private static final int TAG_KEY_TARGET = 0;
+    private static final int TAG_KEY_VIEWTYPE = 1;
 
     protected final long mContentId;
     protected final String mTitle;
@@ -200,10 +202,10 @@ public abstract class LocalMediaData implements LocalData {
     protected ImageView fillImageView(Context context, ImageView v,
             int decodeWidth, int decodeHeight, int placeHolderResourceId,
             LocalDataAdapter adapter, boolean isInProgress) {
-        SizedImageViewTarget target = (SizedImageViewTarget) v.getTag();
+        SizedImageViewTarget target = (SizedImageViewTarget) v.getTag(R.id.mediadata_tag_target);
         if (target == null) {
             target = new SizedImageViewTarget(v);
-            v.setTag(target);
+            v.setTag(R.id.mediadata_tag_target, target);
         }
 
         Glide.with(context)
@@ -227,6 +229,7 @@ public abstract class LocalMediaData implements LocalData {
             imageView = (ImageView) recycled;
         } else {
             imageView = new ImageView(context);
+            imageView.setTag(R.id.mediadata_tag_viewtype, LocalDataViewType.PHOTO.ordinal());
         }
 
         return fillImageView(context, imageView, decodeWidth, decodeHeight,
@@ -519,10 +522,10 @@ public abstract class LocalMediaData implements LocalData {
 
         private void loadImage(Context context, ImageView imageView, int decodeWidth,
                 int decodeHeight, int placeHolderResourceId, boolean full) {
-            ThumbTarget thumbTarget = (ThumbTarget) imageView.getTag();
+            ThumbTarget thumbTarget = (ThumbTarget) imageView.getTag(R.id.mediadata_tag_target);
             if (thumbTarget == null) {
                 thumbTarget = new ThumbTarget(imageView);
-                imageView.setTag(thumbTarget);
+                imageView.setTag(R.id.mediadata_tag_target, thumbTarget);
             }
             // Make sure we've reset all state related to showing thumb and full whenever
             // we load a thumbnail because loading a thumbnail only happens when we're changing
@@ -543,7 +546,7 @@ public abstract class LocalMediaData implements LocalData {
         public void recycle(View view) {
             super.recycle(view);
             if (view != null) {
-                ThumbTarget thumbTarget = (ThumbTarget) view.getTag();
+                ThumbTarget thumbTarget = (ThumbTarget) view.getTag(R.id.mediadata_tag_target);
                 thumbTarget.clearTargets();
             }
         }
@@ -831,10 +834,11 @@ public abstract class LocalMediaData implements LocalData {
         protected ImageView fillImageView(Context context, final ImageView v, final int decodeWidth,
                 final int decodeHeight, int placeHolderResourceId, LocalDataAdapter adapter,
                 boolean isInProgress) {
-            SizedImageViewTarget target = (SizedImageViewTarget) v.getTag();
+            SizedImageViewTarget target =
+                    (SizedImageViewTarget) v.getTag(R.id.mediadata_tag_target);
             if (target == null) {
                 target = new SizedImageViewTarget(v);
-                v.setTag(target);
+                v.setTag(R.id.mediadata_tag_target, target);
             }
             target.setSize(decodeWidth, decodeHeight);
 
@@ -861,13 +865,14 @@ public abstract class LocalMediaData implements LocalData {
             final View result;
             if (recycled != null) {
                 result = recycled;
-                viewHolder = (VideoViewHolder) recycled.getTag();
+                viewHolder = (VideoViewHolder) recycled.getTag(R.id.mediadata_tag_target);
             } else {
                 result = LayoutInflater.from(context).inflate(R.layout.filmstrip_video, null);
+                result.setTag(R.id.mediadata_tag_viewtype, LocalDataViewType.VIDEO.ordinal());
                 ImageView videoView = (ImageView) result.findViewById(R.id.video_view);
                 ImageView playButton = (ImageView) result.findViewById(R.id.play_button);
                 viewHolder = new VideoViewHolder(videoView, playButton);
-                result.setTag(viewHolder);
+                result.setTag(R.id.mediadata_tag_target, viewHolder);
             }
 
             fillImageView(context, viewHolder.mVideoView, decodeWidth, decodeHeight,
@@ -889,8 +894,9 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public void recycle(View view) {
             super.recycle(view);
-            VideoViewHolder videoViewHolder = (VideoViewHolder) view.getTag();
-            Target target = (Target) videoViewHolder.mVideoView.getTag();
+            VideoViewHolder videoViewHolder =
+                    (VideoViewHolder) view.getTag(R.id.mediadata_tag_target);
+            Target target = (Target) videoViewHolder.mVideoView.getTag(R.id.mediadata_tag_target);
             Glide.cancel(target);
         }
 
