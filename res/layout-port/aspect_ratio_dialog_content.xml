@@ -32,13 +32,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginBottom="-20dp"
         android:layout_weight="1"
         android:textSize="20sp"
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
         android:textColor="@color/dialog_text_color"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:text="@string/photo_aspect_ratio_selection_content" />
     <Button
         android:id="@+id/confirm_button"
