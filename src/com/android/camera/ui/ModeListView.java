@@ -60,7 +60,8 @@ import java.util.List;
  * with an animation. To dismiss this list, simply swipe left or select a mode.
  */
 public class ModeListView extends FrameLayout
-        implements ModeSelectorItem.VisibleWidthChangedListener {
+        implements ModeSelectorItem.VisibleWidthChangedListener,
+        PreviewStatusListener.PreviewAreaChangedListener {
 
     private static final Log.Tag TAG = new Log.Tag("ModeListView");
 
@@ -1340,6 +1341,16 @@ public class ModeListView extends FrameLayout
      */
     public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
         mCaptureLayoutHelper = helper;
+    }
+
+    @Override
+    public void onPreviewAreaChanged(RectF previewArea) {
+        if (getVisibility() == View.VISIBLE && !hasWindowFocus()) {
+            // When the preview area has changed, to avoid visual disruption we
+            // only make corresponding UI changes when mode list does not have
+            // window focus.
+            updateModeListLayout();
+        }
     }
 
     private void updateModeListLayout() {
