@@ -606,6 +606,25 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.updateAspectRatio(aspectRatio);
     }
 
+
+    /**
+     * Updates the preview matrix without altering it. Assumes a fullscreen
+     * aspect ratio.
+     * 
+     * @param matrix
+     */
+    public void updatePreviewTransformFullscreen(Matrix matrix) {
+        mTextureViewHelper.updateTransformFullScreen(matrix);
+    }
+
+    /**
+     * @return the rect that will display the preview.
+     */
+    public RectF getFullscreenRect() {
+        return mTextureViewHelper.getFullscreenRect();
+    }
+
+
     /**
      * This is to support modules that calculate their own transform matrix because
      * they need to use a transform matrix to rotate the preview.

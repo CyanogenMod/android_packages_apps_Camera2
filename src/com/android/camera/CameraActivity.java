@@ -35,6 +35,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -963,6 +964,16 @@ public class CameraActivity extends Activity
     @Override
     public void updatePreviewAspectRatio(float aspectRatio) {
         mCameraAppUI.updatePreviewAspectRatio(aspectRatio);
+    }
+
+    @Override
+    public void updatePreviewTransformFullscreen(Matrix matrix) {
+        mCameraAppUI.updatePreviewTransformFullscreen(matrix);
+    }
+
+    @Override
+    public RectF getFullscreenRect() {
+        return mCameraAppUI.getFullscreenRect();
     }
 
     @Override
