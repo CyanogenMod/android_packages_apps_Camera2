@@ -1170,6 +1170,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     }
                 });
 
+        mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeListView);
         mTextureViewHelper.addAspectRatioChangedListener(
                 new PreviewStatusListener.PreviewAspectRatioChangedListener() {
                     @Override
