@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.view.View;
@@ -169,11 +170,27 @@ public interface AppController extends CurrentModuleProvider {
     public void updatePreviewAspectRatio(float aspectRatio);
 
     /**
-     * Gets called from module when the module needs to change the transform matrix
-     * of the preview TextureView. It is encouraged to use
-     * {@link #updatePreviewAspectRatio(float)} over this function, unless the module
-     * needs to rotate the surface texture using transform matrix.
-     *
+     * Gets called from module when the module needs to change the transform
+     * matrix of the preview TextureView. It does not modify the matrix before
+     * applying it.
+     * 
+     * @param matrix transform matrix to be set on preview TextureView
+     */
+    public void updatePreviewTransformFullscreen(Matrix matrix);
+
+    /**
+     * Call this to find the full rect available for a full screen preview
+     * 
+     * @return the rect of the full screen minus any decor.
+     */
+    public RectF getFullscreenRect();
+
+    /**
+     * Gets called from module when the module needs to change the transform
+     * matrix of the preview TextureView. It is encouraged to use
+     * {@link #updatePreviewAspectRatio(float)} over this function, unless the
+     * module needs to rotate the surface texture using transform matrix.
+     * 
      * @param matrix transform matrix to be set on preview TextureView
      */
     public void updatePreviewTransform(Matrix matrix);

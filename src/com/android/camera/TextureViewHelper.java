@@ -145,6 +145,35 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         }
     }
 
+
+    /**
+     * This returns the rect that is available to display the preview, and
+     * capture buttons
+     *
+     * @return the rect.
+     */
+    public RectF getFullscreenRect() {
+        return mCaptureLayoutHelper.getFullscreenRect();
+    }
+
+    /**
+     * This takes a matrix to apply to the texture view and uses the screen
+     * aspect ratio as the target aspect ratio
+     * 
+     * @param matrix the matrix to apply
+     */
+    public void updateTransformFullScreen(Matrix matrix) {
+        RectF previewAreaBasedOnAspectRatio = getFullscreenRect();
+        float aspectRatio = previewAreaBasedOnAspectRatio.height()/ previewAreaBasedOnAspectRatio.width();
+        aspectRatio = aspectRatio < 1 ? 1 / aspectRatio : aspectRatio;
+        if (aspectRatio != mAspectRatio) {
+            setAspectRatio(aspectRatio);
+        }
+
+        mPreview.setTransform(matrix);
+        updatePreviewArea(matrix);
+    }
+
     public void updateTransform(Matrix matrix) {
         RectF previewRect = new RectF(0, 0, mWidth, mHeight);
         matrix.mapRect(previewRect);
