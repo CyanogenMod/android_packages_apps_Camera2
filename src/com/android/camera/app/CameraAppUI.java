@@ -446,9 +446,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public float exposureCompensationStep;
 
         /**
-         * Whether or not timer should show.
+         * Whether self-timer is enabled.
          */
         public boolean enableSelfTimer = false;
+
+        /**
+         * Whether the option for self-timer should show. If true and
+         * {@link #enableSelfTimer} is false, then the option should be shown
+         * disabled.
+         */
+        public boolean showSelfTimer = false;
     }
 
 
@@ -1756,7 +1763,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (bottomBarSpec.enableSelfTimer) {
             buttonManager.initializeButton(ButtonManager.BUTTON_COUNTDOWN, null);
         } else {
-            buttonManager.hideButton(ButtonManager.BUTTON_COUNTDOWN);
+            if (bottomBarSpec.showSelfTimer) {
+                buttonManager.disableButton(ButtonManager.BUTTON_COUNTDOWN);
+            } else {
+                buttonManager.hideButton(ButtonManager.BUTTON_COUNTDOWN);
+            }
         }
 
         if (bottomBarSpec.enablePanoOrientation
