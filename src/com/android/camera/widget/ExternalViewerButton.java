@@ -90,11 +90,20 @@ public class ExternalViewerButton extends ImageButton {
      */
     public void setState(int state) {
         mState = state;
+        int newVisibility;
         if (state == CameraAppUI.BottomPanel.VIEWER_NONE) {
-            setVisibility(View.GONE);
+            newVisibility = View.GONE;
         } else {
             setImageResource(getViewButtonResource(state));
-            setVisibility(View.VISIBLE);
+            newVisibility = View.VISIBLE;
+        }
+
+        if (newVisibility != getVisibility()) {
+            setVisibility(newVisibility);
+        } else if (newVisibility == View.VISIBLE){
+            // If visibility has changed, cling visibility was updated already,
+            // so only need to update it when visibility has not changed.
+            updateClingVisibility();
         }
     }
 
@@ -126,13 +135,12 @@ public class ExternalViewerButton extends ImageButton {
      * shown.
      */
     private void updateClingVisibility() {
+        hideClings();
         if (isShown()) {
             View cling = mClingMap.get(mState);
             if (cling != null) {
                 cling.setVisibility(View.VISIBLE);
             }
-        } else {
-            hideClings();
         }
     }
 }
