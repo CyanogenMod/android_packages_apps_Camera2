@@ -328,9 +328,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Frontkamera"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Gitterlinjer fra"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Gitterlinjer til"</string>
-    <string name="countdown_timer_off" msgid="1663008439564495948">"Nedtælling er slået fra"</string>
-    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Nedtællingen er indstillet til 3 sekunder"</string>
-    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Nedtællingen er indstillet til 10 sekunder"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Nedtællingsuret er slået fra"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Nedtællingsuret er indstillet til 3 sekunder"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Nedtællingsuret er indstillet til 10 sekunder"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Flere valgmuligheder"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Annuller"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Udfør"</string>
@@ -363,7 +363,7 @@
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Høj"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s MP"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Tryk her, hvis du vil fokusere igen"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Tryk her for at skifte fokus"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avanceret"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manuel eksponering"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"I Indstillinger kan du ændre opløsningen og kvaliteten eller prøve avancerede funktioner."</string>
@@ -373,6 +373,6 @@
     <string name="edit_with" msgid="615569327230783971">"Rediger med"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"NÆSTE"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, FORSTÅET"</string>
-    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%s megapixel \n(4:3)"</string>
-    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%s megapixel \n(16:9)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Fuld sensor \n (4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Beskåret sensor \n (16:9)"</string>
 </resources>
