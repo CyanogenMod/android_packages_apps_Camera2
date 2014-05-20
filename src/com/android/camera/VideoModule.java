@@ -836,6 +836,21 @@ public class VideoModule extends CameraModule
         mAppController.updatePreviewAspectRatio(aspectRatio);
     }
 
+    /**
+     * Returns current Zoom value, with 1.0 as the value for no zoom.
+     */
+    private float currentZoomValue() {
+        float zoomValue = 1.0f;
+        if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
+            int zoomIndex = mParameters.getZoom();
+            List<Integer> zoomRatios = mParameters.getZoomRatios();
+            if (zoomRatios != null && zoomIndex < zoomRatios.size()) {
+                zoomValue = 0.01f * zoomRatios.get(zoomIndex);
+            }
+        }
+        return zoomValue;
+    }
+
     @Override
     public int onZoomChanged(int index) {
         // Not useful to change zoom value when the activity is paused.
@@ -1173,6 +1188,18 @@ public class VideoModule extends CameraModule
         Log.v(TAG, "New video filename: " + mVideoFilename);
     }
 
+    private void logVideoCapture(long duration) {
+        String flashSetting = mActivity.getSettingsManager()
+                .get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
+        boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
+        int width = (Integer) mCurrentVideoValues.get(Video.Media.WIDTH);
+        int height = (Integer) mCurrentVideoValues.get(Video.Media.HEIGHT);
+        long size = new File(mCurrentVideoFilename).length();
+        String name = new File(mCurrentVideoValues.getAsString(Video.Media.DATA)).getName();
+        UsageStatistics.instance().videoCaptureDoneEvent(name, duration, isCameraFrontFacing(),
+                currentZoomValue(), width, height, size, flashSetting, gridLinesOn);
+    }
+
     private void saveVideo() {
         if (mVideoFileDescriptor == null) {
             long duration = SystemClock.uptimeMillis() - mRecordingStartTime;
@@ -1183,9 +1210,11 @@ public class VideoModule extends CameraModule
             } else {
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
+            mCurrentVideoValues.put(Video.Media.SIZE, new File(mCurrentVideoFilename).length());
+            mCurrentVideoValues.put(Video.Media.DURATION, duration);
             getServices().getMediaSaver().addVideo(mCurrentVideoFilename,
-                    duration, isCameraFrontFacing(), mCurrentVideoValues,
-                    mOnVideoSavedListener, mContentResolver);
+                    mCurrentVideoValues, mOnVideoSavedListener, mContentResolver);
+            logVideoCapture(duration);
         }
         mCurrentVideoValues = null;
     }
@@ -1807,11 +1836,12 @@ public class VideoModule extends CameraModule
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
 
-        int zoomIndex = mParameters.getZoom();
-        float zoomValue = 0.01f * mParameters.getZoomRatios().get(zoomIndex);
+        String flashSetting =
+                mActivity.getSettingsManager().get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
+        Boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
         UsageStatistics.instance().photoCaptureDoneEvent(
                 eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
-                isCameraFrontFacing(), false, zoomValue);
+                isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn);
 
         getServices().getMediaSaver().addImage(
                 data, title, dateTaken, loc, orientation,

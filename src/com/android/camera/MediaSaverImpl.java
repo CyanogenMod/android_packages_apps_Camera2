@@ -27,7 +27,6 @@ import android.provider.MediaStore.Video;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
-import com.android.camera.util.UsageStatistics;
 
 import java.io.File;
 
@@ -90,11 +89,11 @@ public class MediaSaverImpl implements MediaSaver {
     }
 
     @Override
-    public void addVideo(String path, long duration, boolean isFrontCamera, ContentValues values,
-                         OnMediaSavedListener l, ContentResolver resolver) {
+    public void addVideo(String path, ContentValues values, OnMediaSavedListener l,
+                         ContentResolver resolver) {
         // We don't set a queue limit for video saving because the file
         // is already in the storage. Only updating the database.
-        new VideoSaveTask(path, duration, isFrontCamera, values, l, resolver).execute();
+        new VideoSaveTask(path, values, l, resolver).execute();
     }
 
     @Override
@@ -174,17 +173,13 @@ public class MediaSaverImpl implements MediaSaver {
 
     private class VideoSaveTask extends AsyncTask <Void, Void, Uri> {
         private String path;
-        private final long duration;
-        private final boolean isFrontCamera;
         private final ContentValues values;
         private final OnMediaSavedListener listener;
         private final ContentResolver resolver;
 
-        public VideoSaveTask(String path, long duration, boolean isFrontCamera,
-                             ContentValues values, OnMediaSavedListener l, ContentResolver r) {
+        public VideoSaveTask(String path, ContentValues values, OnMediaSavedListener l,
+                             ContentResolver r) {
             this.path = path;
-            this.duration = duration;
-            this.isFrontCamera = isFrontCamera;
             this.values = new ContentValues(values);
             this.listener = l;
             this.resolver = r;
@@ -192,8 +187,6 @@ public class MediaSaverImpl implements MediaSaver {
 
         @Override
         protected Uri doInBackground(Void... v) {
-            values.put(Video.Media.SIZE, new File(path).length());
-            values.put(Video.Media.DURATION, duration);
             Uri uri = null;
             try {
                 Uri videoTable = Uri.parse(VIDEO_BASE_URI);
@@ -208,12 +201,6 @@ public class MediaSaverImpl implements MediaSaver {
                     path = finalName;
                 }
                 resolver.update(uri, values, null, null);
-
-                int width = (Integer) values.get(Video.Media.WIDTH);
-                int height = (Integer) values.get(Video.Media.HEIGHT);
-                long size = (Long) values.get(Video.Media.SIZE);
-                UsageStatistics.instance().videoCaptureDoneEvent(finalFile.getName(), duration,
-                        isFrontCamera, width, height, size);
             } catch (Exception e) {
                 // We failed to insert into the database. This can happen if
                 // the SD card is unmounted.
