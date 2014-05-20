@@ -144,11 +144,22 @@ public class CaptureLayoutHelper implements CameraAppUI.NonDecorWindowSizeChange
     }
 
     /**
-     * Returns the sub-rect of the preview that is not being blocked by the bottom
-     * bar. This can be used to lay out mode options, settings button, etc. If not
-     * enough info has been provided to calculate this, return an empty rect. Note
-     * that the rect returned is relative to the content layout of the activity.
-     * It may need to be translated based on the parent view's location.
+     * This returns the rect that is available to display the preview, and
+     * capture buttons
+     * 
+     * @return the rect.
+     */
+    public RectF getFullscreenRect() {
+        return new RectF(0, 0, mWindowWidth, mWindowHeight);
+    }
+
+    /**
+     * Returns the sub-rect of the preview that is not being blocked by the
+     * bottom bar. This can be used to lay out mode options, settings button,
+     * etc. If not enough info has been provided to calculate this, return an
+     * empty rect. Note that the rect returned is relative to the content layout
+     * of the activity. It may need to be translated based on the parent view's
+     * location.
      */
     public RectF getUncoveredPreviewRect() {
         if (mPositionConfiguration == null) {

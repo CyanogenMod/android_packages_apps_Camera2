@@ -66,12 +66,9 @@ public class SettingsUtil {
             } else if (SIZE_SMALL.equals(sizeSetting)) {
                 return small;
             } else if (sizeSetting != null && sizeSetting.split("x").length == 2) {
-                String[] parts = sizeSetting.split("x");
-                for (Size size : supportedSizes) {
-                    if (size.width() == Integer.valueOf(parts[0]) &&
-                            size.height() == Integer.valueOf(parts[1])) {
-                        return size;
-                    }
+                Size desiredSize = sizeFromString(sizeSetting);
+                if (supportedSizes.contains(desiredSize)) {
+                    return desiredSize;
                 }
             }
             return large;
@@ -387,6 +384,21 @@ public class SettingsUtil {
      */
     public static String sizeToSetting(Size size) {
         return ((Integer) size.width()).toString() + "x" + ((Integer) size.height()).toString();
+    }
+
+    /**
+     * This parses a setting string and returns the representative size.
+     * 
+     * @param sizeSetting The string to parse.
+     * @return the represented Size.
+     */
+    static public Size sizeFromString(String sizeSetting) {
+        String[] parts = sizeSetting.split("x");
+        if (parts.length == 2) {
+            return new Size(Integer.valueOf(parts[0]), Integer.valueOf(parts[1]));
+        } else {
+            return null;
+        }
     }
 
     /**
