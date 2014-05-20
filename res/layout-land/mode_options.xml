@@ -112,16 +112,16 @@
             style="@style/ModeOption"
             camera:imageIds="@array/grid_lines_icons"
             camera:contentDescriptionIds="@array/grid_lines_descriptions" />
+        <com.android.camera.MultiToggleImageButton
+            android:id="@+id/countdown_toggle_button"
+            style="@style/ModeOption"
+            camera:imageIds="@array/countdown_duration_icons"
+            camera:contentDescriptionIds="@array/countdown_duration_descriptions" />
         <ImageButton
             android:id="@+id/exposure_button"
             style="@style/ModeOption"
             android:background="@null"
             android:src="@drawable/ic_exposure"
             android:contentDescription="@string/manual_exposure_compensation_desc" />
-        <com.android.camera.MultiToggleImageButton
-            android:id="@+id/countdown_toggle_button"
-            style="@style/ModeOption"
-            camera:imageIds="@array/countdown_duration_icons"
-            camera:contentDescriptionIds="@array/countdown_duration_descriptions" />
     </com.android.camera.ui.TopRightWeightedLayout>
 </com.android.camera.widget.ModeOptions>
