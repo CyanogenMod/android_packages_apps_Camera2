@@ -175,8 +175,9 @@ public interface AppController extends CurrentModuleProvider {
      * applying it.
      * 
      * @param matrix transform matrix to be set on preview TextureView
+     * @param aspectRatio the desired aspect ratio of the preview
      */
-    public void updatePreviewTransformFullscreen(Matrix matrix);
+    public void updatePreviewTransformFullscreen(Matrix matrix, float aspectRatio);
 
     /**
      * Call this to find the full rect available for a full screen preview
