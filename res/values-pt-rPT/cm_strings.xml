@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7 MP</string>
   <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 MP</string>
@@ -51,7 +51,7 @@
   <string name="pref_camera_scenemode_entry_beach">Praia</string>
   <string name="pref_camera_scenemode_entry_beauty">Beleza</string>
   <string name="pref_camera_scenemode_entry_candlelight">Luz das velas</string>
-  <string name="pref_camera_scenemode_entry_cine">Cine</string>
+  <string name="pref_camera_scenemode_entry_cine">Cinema</string>
   <string name="pref_camera_scenemode_entry_closeup">Perto</string>
   <string name="pref_camera_scenemode_entry_dark">Escuro</string>
   <string name="pref_camera_scenemode_entry_dish">Prato</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Disparo lento</string>
   <string name="pref_camera_slow_shutter_entry_off">Desligado</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 segundo</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">0,5 segundos</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 segundo</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 segundos</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 segundos</string>
@@ -124,9 +124,9 @@
   <string name="camera_menu_enhance_label">MELHORAR</string>
   <string name="camera_menu_slow_shutter_label">DISPARO LENTO</string>
   <string name="camera_menu_beauty_mode_label">EMBELEZAR</string>
-  <string name="camera_menu_colorize_label">COLORIZAR</string>
+  <string name="camera_menu_colorize_label">COLORIR</string>
   <string name="camera_menu_effects_label">EFEITOS</string>
   <string name="camera_menu_asd_label">CENA INTELIGENTE</string>
   <string name="pref_camera_power_shutter_title">Disparar com botão de ligar</string>
-  <string name="pref_superzoom_title">SuperZoom</string>
+  <string name="pref_superzoom_title">Ampliar</string>
 </resources>

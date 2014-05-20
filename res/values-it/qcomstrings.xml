@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Le dimensioni dello snapshot sono inferiori a quelle del video, e sono state adattate. Si prega di selezionare una risoluzione maggiore o uguale a quella del video.</string>
   <string name="snapshotsize_low_powermode">La modifica delle dimensioni dell\'immagine non è supportata in modalità basso consumo; saranno utilizzate le dimensioni del video. Si prega di selezionare la modalità consumo normale per consentire la modifica delle dimensioni dell\'immagine.</string>
   <string name="snapshot_qcif_and_d1">Per questa risoluzione è consentito mantenere per gli snapshot solo la dimensione del video.</string>
-  <string name="pref_camera_hfr_title">Video ad alto framerate</string>
+  <string name="pref_camera_hfr_title">Rallentatore (HFR)</string>
   <string name="pref_camera_hfr_entry_off">OFF</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">حجم لقطة الفيديو أقل من حجم الفيديو، وضع حد أقصى لحجم الفيديو. الرجاء تحديد دقة أعلى أو مساوياً لحجم الفيديو الحالي.</string>
   <string name="snapshotsize_low_powermode">تغيير حجم الصورة غير معتمد في وضع \"الطاقة المنخفضة\"، وسوف تؤخذ لقطة حجم الفيديو. الرجاء تحديد وضع \"الطاقة العادية\" لسماح بتغيير حجم الصورة.</string>
   <string name="snapshot_qcif_and_d1">فقط حجم لقطة الفيديو مدعون لهاذا القرار.</string>
-  <string name="pref_camera_hfr_title">ارتفاع معدل الإطارات الفيديو</string>
+  <string name="pref_camera_hfr_title">حركة بطيئة (HFR)</string>
   <string name="pref_camera_hfr_entry_off">مغلق</string>
   <string name="pref_camera_hfr_entry_2x">60 إطارا في الثانية</string>
   <string name="pref_camera_hfr_entry_3x">90 إطارا في الثانية</string>

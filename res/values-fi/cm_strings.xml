@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_18mp">18 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapikseliä</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Hidas suljin</string>
   <string name="pref_camera_slow_shutter_entry_off">Pois päältä</string>
   <string name="pref_camera_slow_shutter_entry_auto">Automaattinen</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 sekuntia</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ sekuntia</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 sekunti</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 sekuntia</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekuntia</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFEKTIT</string>
   <string name="camera_menu_asd_label">ÄLYKÄS KOHTAUS</string>
   <string name="pref_camera_power_shutter_title">Kuvaus virtanäppäimellä</string>
-  <string name="pref_superzoom_title">SuperZoom</string>
+  <string name="pref_superzoom_title">Suurenna</string>
 </resources>

@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixels</string>
   <string name="pref_camera_picturesize_entry_18mp">18M pixels</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixels</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Obturador lentu</string>
   <string name="pref_camera_slow_shutter_entry_off">Apagáu</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 segundu</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ segundu</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 segundu</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 segundos</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 segundos</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFEUTOS</string>
   <string name="camera_menu_asd_label">ESCENA INTELIXENTE</string>
   <string name="pref_camera_power_shutter_title">Disparador c/botón d\'encendíu</string>
-  <string name="pref_superzoom_title">SuperZoom</string>
+  <string name="pref_superzoom_title">Ampliar</string>
 </resources>

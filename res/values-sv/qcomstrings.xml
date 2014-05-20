@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Storleken på videostillbilden är mindre än videostorleken, med tak vid videostorlek. Var god välj en upplösning som är högre eller lika med nuvarande videostorlek.</string>
   <string name="snapshotsize_low_powermode">Byte av bildstorlek fungerar inte med lågenergiläge, en videostillbild kommer att tas. Var god välj normalenergiläge för att tillåta byte av bildstorlek.</string>
   <string name="snapshot_qcif_and_d1">Endast stillbilder med videostorlek fungerar med denna upplösning.</string>
-  <string name="pref_camera_hfr_title">Hög bildfrekvens</string>
+  <string name="pref_camera_hfr_title">Slow Motion (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Av</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

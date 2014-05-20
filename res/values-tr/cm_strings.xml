@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7M piksel</string>
   <string name="pref_camera_picturesize_entry_18mp">18M piksel</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8M piksel</string>
@@ -89,8 +89,8 @@
   <string name="pref_camera_focusmode_entry_portrait">Portre</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hiperodaklı</string>
   <string name="pref_camera_coloreffect_entry_washed">Soluk</string>
-  <string name="pref_camera_coloreffect_entry_vintage_warm">Eski ılık</string>
-  <string name="pref_camera_coloreffect_entry_vintage_cold">Eskı soğuk</string>
+  <string name="pref_camera_coloreffect_entry_vintage_warm">Eski sıcak</string>
+  <string name="pref_camera_coloreffect_entry_vintage_cold">Eski soğuk</string>
   <string name="pref_camera_coloreffect_entry_point_blue">Nokta mavi</string>
   <string name="pref_camera_coloreffect_entry_point_green">Nokta yeşil</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Nokta kırmızı-sarı</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Yavaş enstantane</string>
   <string name="pref_camera_slow_shutter_entry_off">Kapalı</string>
   <string name="pref_camera_slow_shutter_entry_auto">Oto</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 saniye</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ saniye</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 saniye</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 saniye</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 saniye</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFEKTLER</string>
   <string name="camera_menu_asd_label">AKILLI SAHNE</string>
   <string name="pref_camera_power_shutter_title">Güç tuşuyla çek</string>
-  <string name="pref_superzoom_title">SüperYakınlaştırma</string>
+  <string name="pref_superzoom_title">Büyüt</string>
 </resources>

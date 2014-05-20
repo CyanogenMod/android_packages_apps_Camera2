@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Vaizdo fotografijos dydis yra mažesnis už vaizdo dydį. Prašome pasirinkti rezoliuciją didesnę arba lygią, dabartiniam vaizdo dydžiui.</string>
   <string name="snapshotsize_low_powermode">Nuotraukos dydžio keitimas nepalaikomas energijos taupymo režime. Vaizdo dydžio fotografija bus užfiksuota. Prašome pasirinkti normalų energijos režimą norėdami pakeisti nuotraukos dydį.</string>
   <string name="snapshot_qcif_and_d1">Tik vaizdo dydžio fotografija yra palaikoma su šia rezoliucija.</string>
-  <string name="pref_camera_hfr_title">Daug kadrų per sekundę (HFR)</string>
+  <string name="pref_camera_hfr_title">Sulėtinimas (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Išjungta</string>
   <string name="pref_camera_hfr_entry_2x">60 kadrų / sek.</string>
   <string name="pref_camera_hfr_entry_3x">90 kadrų / sek.</string>

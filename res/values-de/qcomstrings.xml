@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Die Auflösung des Schnappschusses ist geringer als die Videoauflösung. Bitte wählen Sie die gleiche oder eine höhere Auflösung wie die Videoauflösung</string>
   <string name="snapshotsize_low_powermode">Ändern der Bildgröße wird im Energiesparmodus nicht unterstützt. Wählen Sie den Normalen Energiemodus um die Bildgröße einstellen zu können</string>
   <string name="snapshot_qcif_and_d1">Schnappschüsse werden nur in der Videoauflösung unterstützt</string>
-  <string name="pref_camera_hfr_title">Video (Hohe Bildrate)</string>
+  <string name="pref_camera_hfr_title">Zeitlupe (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Aus</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
