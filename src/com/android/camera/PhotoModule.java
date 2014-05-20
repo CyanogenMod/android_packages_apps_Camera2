@@ -136,7 +136,7 @@ public class PhotoModule
     private CameraCapabilities mCameraCapabilities;
     private Parameters mParameters;
     private boolean mPaused;
-    private boolean mPreviewFirstRunInCurrentModule = true;
+    private boolean mShouldSetPreviewCallbacks = ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK;
 
     private PhotoUI mUI;
 
@@ -1833,10 +1833,8 @@ public class PhotoModule
         // callback streams lingering around when they should have been removed.
         // These preview callback streams are the cause for distorted preview.
         // For more details, see b/12210027
-        if (mPreviewFirstRunInCurrentModule && ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK) {
-            // Only apply this workaround on the first entry of camera mode from
-            // other modes.
-            mPreviewFirstRunInCurrentModule = false;
+        if (mShouldSetPreviewCallbacks) {
+            mShouldSetPreviewCallbacks = false;
             Size previewSize = new Size(mCameraDevice.getParameters().getPreviewSize());
             mCameraDevice.setPreviewDataCallbackWithBuffer(mHandler,
                     new CameraManager.CameraPreviewDataCallback() {
@@ -2004,6 +2002,16 @@ public class PhotoModule
                 (double) size.width() / size.height());
         Size original = new Size(mParameters.getPreviewSize());
         if (!original.equals(optimalSize)) {
+            if (ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK) {
+                // Compare the aspect ratio.
+                if ((original.width() * optimalSize.height())
+                        != (original.height() * optimalSize.width())) {
+                    // If aspect ratio has changed, set preview callback again, so
+                    // that the old preview callback stream will be forced to update.
+                    // This is a workaround for b/12210027, which was fixed in Kitkat MR2.
+                    mShouldSetPreviewCallbacks = true;
+                }
+            }
             mParameters.setPreviewSize(optimalSize.width(), optimalSize.height());
 
             // Zoom related settings will be changed for different preview
