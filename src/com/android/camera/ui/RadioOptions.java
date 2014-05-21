@@ -97,7 +97,7 @@ public class RadioOptions extends TopRightWeightedLayout {
 
     /**
      * Sets a child {@link android.view.View} as selected by tag.
-     * @param tag Tag that identifies a child {@link android.view.View}.
+     * @param tag Tag that identifies a child {@link android.view.View}. No effect if view not found.
      */
     public void setSelectedOptionByTag(Object tag) {
         View button = findViewWithTag(tag);
@@ -106,7 +106,7 @@ public class RadioOptions extends TopRightWeightedLayout {
 
     /**
      * Sets a child {@link android.view.View} as selected by id.
-     * @param id Resource ID  that identifies a child {@link android.view.View}.
+     * @param id Resource ID  that identifies a child {@link android.view.View}. No effect if view not found.
      */
     public void setSeletedOptionById(int id) {
         View button = findViewById(id);
@@ -114,15 +114,17 @@ public class RadioOptions extends TopRightWeightedLayout {
     }
 
     private void setSelectedOptionByView(View view) {
-        // Reset all button states.
-        for (int i = 0; i < getChildCount(); i++) {
-            getChildAt(i).setBackground(null);
-        }
+        if (view != null) {
+            // Reset all button states.
+            for (int i = 0; i < getChildCount(); i++) {
+                getChildAt(i).setBackground(null);
+            }
 
-        // Highlight the appropriate button.
-        view.setBackground(mBackground);
-        if (mOnOptionClickListener != null) {
-            mOnOptionClickListener.onOptionClicked(view);
+            // Highlight the appropriate button.
+            view.setBackground(mBackground);
+            if (mOnOptionClickListener != null) {
+                mOnOptionClickListener.onOptionClicked(view);
+            }
         }
     }
 }
