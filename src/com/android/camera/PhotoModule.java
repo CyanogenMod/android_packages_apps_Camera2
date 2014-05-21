@@ -152,6 +152,7 @@ public class PhotoModule
     private static final int SCREEN_DELAY = 2 * 60 * 1000;
 
     private int mZoomValue; // The current zoom value.
+    private int mTimerDuration;
 
     private Parameters mInitialParams;
     private boolean mFocusAreaSupported;
@@ -1044,7 +1045,8 @@ public class PhotoModule
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                     mNamedImages.mQueue.lastElement().title + ".jpg", exif,
-                    isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn);
+                    isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn,
+                    (float) mTimerDuration);
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
@@ -1442,6 +1444,7 @@ public class PhotoModule
 
         int countDownDuration = Integer.parseInt(mActivity.getSettingsManager()
                 .get(SettingsManager.SETTING_COUNTDOWN_DURATION));
+        mTimerDuration = countDownDuration;
         if (countDownDuration > 0) {
             // Start count down.
             mAppController.getCameraAppUI().transitionToCancel();
