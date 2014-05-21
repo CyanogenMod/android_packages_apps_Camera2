@@ -863,18 +863,18 @@ CHAR LIMIT=NONE] -->
     <string name="pref_video_quality_entry_low">Low</string>
     <!-- Video quality setting entry. Videos will be recorded in the highest quality available on the device. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_high">High</string>
-    <!-- Video quality setting entry. Videos will be recorded in quarter CIF quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_qcif" translatable="false">QCIF</string>
-    <!-- Video quality setting entry. Videos will be recorded in CIF quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_cif" translatable="false">CIF</string>
+    <!-- Video quality setting entry. Videos will be recorded in quarter CIF quality. Details on CIF: http://goo.gl/3jDK [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_qcif">QCIF</string>
+    <!-- Video quality setting entry. Videos will be recorded in CIF quality. Details on CIF: http://goo.gl/3jDK [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_cif">CIF</string>
     <!-- Video quality setting entry. Videos will be recorded in 480p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_480p" translatable="false">SD 480p</string>
+    <string name="pref_video_quality_entry_480p">SD 480p</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_720p" translatable="false">HD 720p</string>
+    <string name="pref_video_quality_entry_720p">HD 720p</string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_1080p" translatable="false">HD 1080p</string>
+    <string name="pref_video_quality_entry_1080p">HD 1080p</string>
     <!-- Video quality setting entry. Videos will be recorded in quarter VGA quality. [CHAR LIMIT=24] -->
-    <string name="pref_video_quality_entry_qvga" translatable="false">QVGA</string>
+    <string name="pref_video_quality_entry_qvga">QVGA</string>
 
     <!-- Message shown in the settings summary for how many megapixels have been selected. [CHAR LIMIT=24]-->
     <string name="setting_summary_x_megapixels">%1$s megapixels</string>
