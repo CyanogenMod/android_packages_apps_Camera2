@@ -1841,7 +1841,7 @@ public class VideoModule extends CameraModule
         Boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
         UsageStatistics.instance().photoCaptureDoneEvent(
                 eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
-                isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn);
+                isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn, null);
 
         getServices().getMediaSaver().addImage(
                 data, title, dateTaken, loc, orientation,
