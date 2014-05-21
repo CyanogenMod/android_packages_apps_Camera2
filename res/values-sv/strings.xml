@@ -63,7 +63,7 @@
     <string name="location" msgid="564326205780827668">"Plats"</string>
     <string name="path" msgid="5927003361865586353">"Sökväg"</string>
     <string name="width" msgid="7045750687833828758">"Bredd"</string>
-    <string name="height" msgid="5186001199353423689">"Längd"</string>
+    <string name="height" msgid="5186001199353423689">"Höjd"</string>
     <string name="orientation" msgid="3883761294106680270">"Orientering"</string>
     <string name="duration" msgid="5316211067383665008">"Längd"</string>
     <string name="mimetype" msgid="6415940055077963944">"MIME-typ"</string>
