@@ -17,17 +17,17 @@
 -->
 <resources>
   <string name="pref_camera_picturesize_entry_20_7mp">20.7 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_18mp">18 ميجا بكسل</string>
+  <string name="pref_camera_picturesize_entry_18mp">18 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_10mp">10 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_9mp">9  ميغابكسل</string>
+  <string name="pref_camera_picturesize_entry_9mp">9 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7 ميغا بكسل (4:3)</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4 ميغا بكسل</string>
-  <string name="pref_camera_picturesize_entry_6mp">6 ميجا بكسل</string>
+  <string name="pref_camera_picturesize_entry_6mp">6 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_3_7mp">3.7 ميغا بكسل</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2.5 ميغا بكسل</string>

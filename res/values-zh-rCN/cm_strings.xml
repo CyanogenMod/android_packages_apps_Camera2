@@ -16,23 +16,23 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_20_7mp">2070 万像素</string>
-  <string name="pref_camera_picturesize_entry_18mp">1800 万像素</string>
-  <string name="pref_camera_picturesize_entry_12_8mp">1280 万像素</string>
-  <string name="pref_camera_picturesize_entry_12_7mp">1270 万像素</string>
-  <string name="pref_camera_picturesize_entry_11_5mp">1150 万像素</string>
-  <string name="pref_camera_picturesize_entry_10_4mp">1040 万像素</string>
-  <string name="pref_camera_picturesize_entry_10mp">1000 万像素</string>
-  <string name="pref_camera_picturesize_entry_9mp">900 万像素</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">820 万像素</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">770 万像素 (4:3)</string>
-  <string name="pref_camera_picturesize_entry_6_4mp">640 万像素</string>
-  <string name="pref_camera_picturesize_entry_6mp">600 万像素</string>
-  <string name="pref_camera_picturesize_entry_4_5mp">450 万像素</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">370 万像素</string>
-  <string name="pref_camera_picturesize_entry_2_5mp">250 万像素</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">210 万像素</string>
-  <string name="pref_camera_picturesize_entry_1_9mp">190 万像素</string>
+  <string name="pref_camera_picturesize_entry_20_7mp">2070万像素</string>
+  <string name="pref_camera_picturesize_entry_18mp">1800万像素</string>
+  <string name="pref_camera_picturesize_entry_12_8mp">1280万像素</string>
+  <string name="pref_camera_picturesize_entry_12_7mp">1270万像素</string>
+  <string name="pref_camera_picturesize_entry_11_5mp">1150万像素</string>
+  <string name="pref_camera_picturesize_entry_10_4mp">1040万像素</string>
+  <string name="pref_camera_picturesize_entry_10mp">1000万像素</string>
+  <string name="pref_camera_picturesize_entry_9mp">900万像素</string>
+  <string name="pref_camera_picturesize_entry_8_2mp">820万像素</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">770万像素</string>
+  <string name="pref_camera_picturesize_entry_6_4mp">640万像素</string>
+  <string name="pref_camera_picturesize_entry_6mp">600万像素</string>
+  <string name="pref_camera_picturesize_entry_4_5mp">450万像素</string>
+  <string name="pref_camera_picturesize_entry_3_7mp">370万像素</string>
+  <string name="pref_camera_picturesize_entry_2_5mp">250万像素</string>
+  <string name="pref_camera_picturesize_entry_2_1mp">210万像素</string>
+  <string name="pref_camera_picturesize_entry_1_9mp">190万像素</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>

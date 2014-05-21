@@ -16,23 +16,23 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_20_7mp">20.7 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_18mp">18 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_12_8mp">12.8 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_12_7mp">12.7 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_11_5mp">11.5 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_10_4mp">10.4 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_10mp">10 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_9mp">9 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8.2 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_7_7mp">7.7 מגה פיקסלים (4:3)</string>
-  <string name="pref_camera_picturesize_entry_6_4mp">6.4 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_6mp">6 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_4_5mp">4.5 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3.7 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_2_5mp">2.5 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1 מגה פיקסלים</string>
-  <string name="pref_camera_picturesize_entry_1_9mp">1.9 מגה פיקסלים</string>
+  <string name="pref_camera_picturesize_entry_20_7mp">20.7 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_18mp">18 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_12_8mp">12.8 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_12_7mp">12.7 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_11_5mp">11.5 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_10_4mp">10.4 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_10mp">10 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_9mp">9 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_8_2mp">8.2 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_7_7mp">7.7 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_6_4mp">6.4 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_6mp">6 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_4_5mp">4.5 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_3_7mp">3.7 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_2_5mp">2.5 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_2_1mp">2.1 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_1_9mp">1.9 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>

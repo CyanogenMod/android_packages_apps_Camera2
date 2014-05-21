@@ -216,7 +216,7 @@
     <string name="pref_camera_hfr_default" translatable="false">off</string>
 
     <!-- Settings screen, Select hfr title -->
-    <string name="pref_camera_hfr_title">High FrameRate video</string>
+    <string name="pref_camera_hfr_title">Slow Motion (HFR)</string>
 
     <!-- Settings screen, hfr radio button choices -->
     <string name="pref_camera_hfr_entry_off">Off</string>

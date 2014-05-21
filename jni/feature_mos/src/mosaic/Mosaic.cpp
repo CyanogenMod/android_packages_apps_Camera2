@@ -39,7 +39,7 @@ Mosaic::Mosaic()
 
 Mosaic::~Mosaic()
 {
-    for (int i = 0; i < frames_size; i++)
+    for (int i = 0; i < max_frames; i++)
     {
         if (frames[i])
             delete frames[i];
@@ -77,7 +77,9 @@ int Mosaic::initialize(int blendingType, int stripType, int width, int height, i
     imageMosaicYVU = NULL;
 
     frames = new MosaicFrame *[max_frames];
+    memset(frames, 0, sizeof(MosaicFrame *) * max_frames);
     rframes = new MosaicFrame *[max_frames];
+    memset(rframes, 0, sizeof(MosaicFrame *) * max_frames);
 
     if(nframes>-1)
     {

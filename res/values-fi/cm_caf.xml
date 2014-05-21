@@ -16,5 +16,5 @@
      limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_picturesize_entry_12mp">12M pixeliä</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 megapikseliä</string>
 </resources>

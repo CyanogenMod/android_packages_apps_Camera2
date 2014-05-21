@@ -290,6 +290,7 @@ public class WideAnglePanoramaUI implements
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mReviewControl.removeAllViews();
+        ((ViewGroup) mReviewControl).clearDisappearingChildren();
         inflater.inflate(R.layout.pano_review_control, mReviewControl, true);
 
         mRootView.bringChildToFront(mCameraControls);
