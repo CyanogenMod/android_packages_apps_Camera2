@@ -58,8 +58,6 @@ public abstract class LocalMediaData implements LocalData {
     static final int QUERY_ALL_MEDIA_ID = -1;
     private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
     private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
-    private static final int TAG_KEY_TARGET = 0;
-    private static final int TAG_KEY_VIEWTYPE = 1;
 
     protected final long mContentId;
     protected final String mTitle;
@@ -229,7 +227,7 @@ public abstract class LocalMediaData implements LocalData {
             imageView = (ImageView) recycled;
         } else {
             imageView = new ImageView(context);
-            imageView.setTag(R.id.mediadata_tag_viewtype, LocalDataViewType.PHOTO.ordinal());
+            imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 
         return fillImageView(context, imageView, decodeWidth, decodeHeight,
@@ -868,7 +866,7 @@ public abstract class LocalMediaData implements LocalData {
                 viewHolder = (VideoViewHolder) recycled.getTag(R.id.mediadata_tag_target);
             } else {
                 result = LayoutInflater.from(context).inflate(R.layout.filmstrip_video, null);
-                result.setTag(R.id.mediadata_tag_viewtype, LocalDataViewType.VIDEO.ordinal());
+                result.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
                 ImageView videoView = (ImageView) result.findViewById(R.id.video_view);
                 ImageView playButton = (ImageView) result.findViewById(R.id.play_button);
                 viewHolder = new VideoViewHolder(videoView, playButton);

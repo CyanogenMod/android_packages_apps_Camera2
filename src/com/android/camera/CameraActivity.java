@@ -1334,6 +1334,7 @@ public class CameraActivity extends Activity
             // 0.
             ImageView v = (ImageView) getLayoutInflater().inflate(
                     R.layout.secure_album_placeholder, null);
+            v.setTag(R.id.mediadata_tag_viewtype, LocalDataViewType.SECURE_ALBUM_PLACEHOLDER.ordinal());
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
