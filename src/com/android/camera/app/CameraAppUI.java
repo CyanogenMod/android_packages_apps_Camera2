@@ -27,6 +27,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.util.CameraPerformanceTracker;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TextureView;
@@ -503,6 +504,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
     private ShutterButton mShutterButton;
+    private View mLetterBoxer1;
+    private View mLetterBoxer2;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
     private IndicatorIconController mIndicatorIconController;
@@ -615,13 +618,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
 
     /**
-     * Updates the preview matrix without altering it. Assumes a fullscreen
-     * aspect ratio.
-     *
+     * Updates the preview matrix without altering it.
+     * 
      * @param matrix
+     * @param aspectRatio the desired aspect ratio for the preview.
      */
-    public void updatePreviewTransformFullscreen(Matrix matrix) {
-        mTextureViewHelper.updateTransformFullScreen(matrix);
+    public void updatePreviewTransformFullscreen(Matrix matrix, float aspectRatio) {
+        mTextureViewHelper.updateTransformFullScreen(matrix, aspectRatio);
     }
 
     /**
@@ -1160,6 +1163,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         addShutterListener(mModeOptionsOverlay);
         addShutterListener(this);
 
+        mLetterBoxer1 = mCameraRootView.findViewById(R.id.leftLetterBoxer1);
+        mLetterBoxer2 = mCameraRootView.findViewById(R.id.leftLetterBoxer2);
+
         mGridLines = (GridLines) mCameraRootView.findViewById(R.id.grid_lines);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mGridLines);
 
@@ -1633,6 +1639,49 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void addShutterListener(ShutterButton.OnShutterButtonListener listener) {
         mShutterButton.addOnShutterButtonListener(listener);
+    }
+
+
+    /**
+     * This adds letterboxing around the preview, one on each side
+     * 
+     * @param width the width in pixels of each letterboxing cover
+     */
+    public void addLetterboxing(int width) {
+        FrameLayout.LayoutParams params1 = (FrameLayout.LayoutParams) mLetterBoxer1
+                .getLayoutParams();
+        FrameLayout.LayoutParams params2 = (FrameLayout.LayoutParams) mLetterBoxer2
+                .getLayoutParams();
+
+        if (mCameraRootView.getWidth() < mCameraRootView.getHeight()) {
+            params1.width = width;
+            params1.height = mCameraRootView.getHeight();
+            params1.gravity = Gravity.LEFT;
+            mLetterBoxer1.setVisibility(View.VISIBLE);
+
+            params2.width = width;
+            params2.height = mCameraRootView.getHeight();
+            params2.gravity = Gravity.RIGHT;
+            mLetterBoxer2.setVisibility(View.VISIBLE);
+        } else {
+            params1.height = width;
+            params1.width = mCameraRootView.getWidth();
+            params1.gravity = Gravity.TOP;
+            mLetterBoxer1.setVisibility(View.VISIBLE);
+
+            params2.height = width;
+            params2.width = mCameraRootView.getWidth();
+            params2.gravity = Gravity.BOTTOM;
+            mLetterBoxer2.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Remove the letter boxing strips if they happen to be present.
+     */
+    public void hideLetterboxing() {
+        mLetterBoxer1.setVisibility(View.GONE);
+        mLetterBoxer2.setVisibility(View.GONE);
     }
 
     /**
