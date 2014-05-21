@@ -63,6 +63,7 @@ public class LocalSessionData implements LocalData {
             imageView = (ImageView) recycled;
         } else {
             imageView = new ImageView(context);
+            imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 
         byte[] jpegData = Storage.getJpegForSession(mUri);
