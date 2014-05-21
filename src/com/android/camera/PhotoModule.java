@@ -71,6 +71,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.remote.RemoteCameraModule;
+import com.android.camera.settings.CameraPictureSizesCacher;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
@@ -1991,6 +1992,8 @@ public class PhotoModule
                         : SettingsManager.SETTING_PICTURE_SIZE_BACK);
 
         List<Size> supported = Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
+        CameraPictureSizesCacher.updateSizesForCamera(mAppController.getAndroidContext(),
+                mCameraDevice.getCameraId(), supported);
         SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters,
                 mCameraDevice.getCameraId());
 

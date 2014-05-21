@@ -18,6 +18,7 @@ package com.android.camera.util;
 
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
  * An immutable simple size container.
  */
 public class Size {
+    public static final String DELIMITER = ",";
 
     /**
      * An helper method to build a list of this class from a list of
@@ -38,6 +40,38 @@ public class Size {
         ArrayList<Size> list = new ArrayList<Size>(cameraSizes.size());
         for (Camera.Size cameraSize : cameraSizes) {
             list.add(new Size(cameraSize));
+        }
+        return list;
+    }
+
+    /**
+     * Encode List of this class as comma-separated list of integers.
+     *
+     * @param sizes List of this class to encode.
+     * @return encoded string.
+     */
+    public static String listToString(List<Size> sizes) {
+        ArrayList<Integer> flatSizes = new ArrayList<>();
+        for (Size s : sizes) {
+            flatSizes.add(s.width());
+            flatSizes.add(s.height());
+        }
+        return TextUtils.join(DELIMITER, flatSizes);
+    }
+
+    /**
+     * Decode comma-separated even-length list of integers into a List of this class.
+     *
+     * @param encodedSizes encoded string.
+     * @return List of this class.
+     */
+    public static List<Size> stringToList(String encodedSizes) {
+        String[] flatSizes = TextUtils.split(encodedSizes, DELIMITER);
+        ArrayList<Size> list = new ArrayList<>();
+        for (int i = 0; i < flatSizes.length; i += 2) {
+            int width = Integer.parseInt(flatSizes[i]);
+            int height = Integer.parseInt(flatSizes[i + 1]);
+            list.add(new Size(width,height));
         }
         return list;
     }
