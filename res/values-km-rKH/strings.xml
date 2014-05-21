@@ -354,7 +354,7 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"ម៉ាស៊ីន​ថត​លំនាំដើម"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"ផ្ញើ​មតិ​ត្រឡប់"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"កំពុង​ដំណើរការ HDR+ …"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"អាជ្ញាប័ណ្ណ​កម្មវិធី​​​​ប្រភព​កូដ​ចំហ"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"អាជ្ញាប័ណ្ណកម្មវិធីប្រភពកូដចំហ"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"ការ​កំណត់​ទូទៅ"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"គុណភាព​បង្ហាញ &amp; គុណភាព"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"អំពី"</string>
@@ -369,10 +369,12 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"នៅ​ក្នុង​ការ​កំណត់ ប្ដូរ​គុណភាព​បង្ហាញ និង​គុណភាព ឬ​​សាកល្បង​លក្ខណៈ​កម្រិត​ខ្ពស់។"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ជ្រើស​ទំហំ​រូបថត"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"អ្នក​អាច​ប្ដូរ​វា​ពេល​ក្រោយ​ក្នុង​ការ​កំណត់។"</string>
-    <string name="share_to" msgid="5144911209144798122">"ចែក​រំលែក"</string>
+    <string name="share_to" msgid="5144911209144798122">"ចែករំលែក"</string>
     <string name="edit_with" msgid="615569327230783971">"កែសម្រួល​ជាមួយ"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"បន្ទាប់"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"យល់​ហើយ"</string>
-    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%s មេហ្គាភីកសែល \n(4:3)"</string>
-    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%s មេហ្គាភីកសែល \n(16:9)"</string>
+    <!-- no translation found for full_sensor_4x3_aspect_ratio (1270461419743888925) -->
+    <skip />
+    <!-- no translation found for cropped_sensor_16x9_aspect_ratio (4742161537633251795) -->
+    <skip />
 </resources>

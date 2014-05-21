@@ -373,6 +373,6 @@
     <string name="edit_with" msgid="615569327230783971">"Επεξεργασία με"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ΕΠΟΜΕΝΟ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ΤΟ ΚΑΤΑΛΑΒΑ"</string>
-    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%s Megapixel \n(4:3)"</string>
-    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%s Megapixel \n(16:9)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Αισθητήρας πλήρους προβ. \n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Αισθητ. προβ. με περικ. \n(16:9)"</string>
 </resources>
