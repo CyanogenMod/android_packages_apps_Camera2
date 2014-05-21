@@ -495,6 +495,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final static int COVER_WILL_HIDE_AT_NEXT_FRAME = 2;
     private static final int COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE = 3;
 
+    /**
+     * Preview down-sample rate when taking a screenshot.
+     */
+    private final static int DOWN_SAMPLE_RATE_FOR_SCREENSHOT = 2;
+
     // App level views:
     private final FrameLayout mCameraRootView;
     private final ModeTransitionView mModeTransitionView;
@@ -564,6 +569,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          *         the preview drawn into a bitmap with no scaling applied.
          */
         public Bitmap getPreviewOverlayAndControls();
+
+        /**
+         * Returns a bitmap containing the current screenshot.
+         *
+         * @param previewDownSampleFactor the downsample factor applied on the
+         *                                preview frame when taking the screenshot
+         */
+        public Bitmap getScreenShot(int previewDownSampleFactor);
     }
 
     /**
@@ -596,6 +609,23 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     Canvas canvas = new Canvas(overlays);
                     mCameraRootView.draw(canvas);
                     return overlays;
+                }
+
+                @Override
+                public Bitmap getScreenShot(int previewDownSampleFactor) {
+                    Bitmap screenshot = Bitmap.createBitmap(mCameraRootView.getWidth(),
+                            mCameraRootView.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(screenshot);
+                    canvas.drawARGB(255, 0, 0, 0);
+                    Bitmap preview = getPreviewFrame(previewDownSampleFactor);
+                    if (preview != null) {
+                        canvas.drawBitmap(preview, null, mTextureViewHelper.getPreviewArea(), null);
+                    }
+                    Bitmap overlay = getPreviewOverlayAndControls();
+                    if (overlay != null) {
+                        canvas.drawBitmap(overlay, 0f, 0f, null);
+                    }
+                    return screenshot;
                 }
             };
 
@@ -759,6 +789,23 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 showFilmstrip();
             }
         });
+    }
+
+
+    /**
+     * Freeze what is currently shown on screen until the next preview frame comes
+     * in.
+     */
+    public void freezeScreenUntilPreviewReady() {
+        mModeTransitionView.setupModeCover(mCameraModuleScreenShotProvider
+                .getScreenShot(DOWN_SAMPLE_RATE_FOR_SCREENSHOT));
+        mHideCoverRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mModeTransitionView.hideImageCover();
+            }
+        };
+        mModeCoverState = COVER_SHOWN;
     }
 
     /**

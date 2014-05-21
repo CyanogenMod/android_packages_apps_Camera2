@@ -128,6 +128,14 @@ public interface AppController extends CurrentModuleProvider {
 
     /********************** UI / Camera preview **********************/
 
+
+    /**
+     * Freeze what is currently shown on screen until the next preview frame comes
+     * in. This can be used for camera switch to hide the UI changes underneath
+     * until preview is ready.
+     */
+    public void freezeScreenUntilPreviewReady();
+
     /**
      * Returns the {@link android.graphics.SurfaceTexture} used by the preview
      * UI.

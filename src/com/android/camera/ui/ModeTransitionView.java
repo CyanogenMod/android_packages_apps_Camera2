@@ -21,6 +21,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -55,6 +56,7 @@ public class ModeTransitionView extends View {
     private static final int PULL_DOWN_SHADE = 2;
     private static final int PEEP_HOLE_ANIMATION = 3;
     private static final int FADE_OUT = 4;
+    private static final int SHOW_STATIC_IMAGE = 5;
 
     private static final float SCROLL_DISTANCE_MULTIPLY_FACTOR = 2f;
     private static final int ALPHA_FULLY_TRANSPARENT = 0;
@@ -82,6 +84,7 @@ public class ModeTransitionView extends View {
     private final Paint mShadePaint = new Paint();
     private CameraAppUI.AnimationFinishedListener mAnimationFinishedListener;
     private float mScrollTrend;
+    private Bitmap mBackgroundBitmap;
 
     public ModeTransitionView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -176,6 +179,12 @@ public class ModeTransitionView extends View {
             canvas.drawPath(mShadePath, mShadePaint);
         } else if (mAnimationType == IDLE || mAnimationType == FADE_OUT) {
             canvas.drawColor(mBackgroundColor);
+        } else if (mAnimationType == SHOW_STATIC_IMAGE) {
+            // TODO: These different animation types need to be refactored into
+            // different animation effects.
+            canvas.drawBitmap(mBackgroundBitmap, 0, 0, null);
+            super.onDraw(canvas);
+            return;
         }
         super.onDraw(canvas);
         mIconDrawable.draw(canvas);
@@ -476,6 +485,7 @@ public class ModeTransitionView extends View {
      * @param modeIconResourceId resource id of the icon drawable
      */
     public void setupModeCover(int colorId, int modeIconResourceId) {
+        mBackgroundBitmap = null;
         // Stop ongoing animation.
         if (mPeepHoleAnimator != null && mPeepHoleAnimator.isRunning()) {
             mPeepHoleAnimator.cancel();
@@ -547,6 +557,25 @@ public class ModeTransitionView extends View {
         int alphaScaled = (int) (255f * getAlpha());
         mBackgroundColor = (mBackgroundColor & 0xFFFFFF) | (alphaScaled << 24);
         mIconDrawable.setAlpha(alphaScaled);
+    }
+
+    /**
+     * Setup the mode cover with a screenshot.
+     */
+    public void setupModeCover(Bitmap screenShot) {
+        mBackgroundBitmap = screenShot;
+        setVisibility(VISIBLE);
+        mAnimationType = SHOW_STATIC_IMAGE;
+    }
+
+    /**
+     * Hide the mode cover without animation.
+     */
+    // TODO: Refactor this and define how cover should be hidden during cover setup
+    public void hideImageCover() {
+        mBackgroundBitmap = null;
+        setVisibility(GONE);
+        mAnimationType = IDLE;
     }
 }
 
