@@ -967,8 +967,8 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void updatePreviewTransformFullscreen(Matrix matrix) {
-        mCameraAppUI.updatePreviewTransformFullscreen(matrix);
+    public void updatePreviewTransformFullscreen(Matrix matrix, float aspectRatio) {
+        mCameraAppUI.updatePreviewTransformFullscreen(matrix, aspectRatio);
     }
 
     @Override
@@ -1955,6 +1955,7 @@ public class CameraActivity extends Activity
 
         mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);
         mCameraAppUI.addShutterListener(mCurrentModule);
+        mCameraAppUI.hideLetterboxing();
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera

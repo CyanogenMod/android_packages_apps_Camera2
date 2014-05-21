@@ -161,10 +161,9 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * aspect ratio as the target aspect ratio
      * 
      * @param matrix the matrix to apply
+     * @param aspectRatio the aspectRatio that the preview should be
      */
-    public void updateTransformFullScreen(Matrix matrix) {
-        RectF previewAreaBasedOnAspectRatio = getFullscreenRect();
-        float aspectRatio = previewAreaBasedOnAspectRatio.height()/ previewAreaBasedOnAspectRatio.width();
+    public void updateTransformFullScreen(Matrix matrix, float aspectRatio) {
         aspectRatio = aspectRatio < 1 ? 1 / aspectRatio : aspectRatio;
         if (aspectRatio != mAspectRatio) {
             setAspectRatio(aspectRatio);
