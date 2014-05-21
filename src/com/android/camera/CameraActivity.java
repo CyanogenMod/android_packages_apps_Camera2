@@ -1982,6 +1982,11 @@ public class CameraActivity extends Activity
         startActivity(intent);
     }
 
+    @Override
+    public void freezeScreenUntilPreviewReady() {
+        mCameraAppUI.freezeScreenUntilPreviewReady();
+    }
+
     /**
      * Sets the mCurrentModuleIndex, creates a new module instance for the given
      * index an sets it as mCurrentModule.

@@ -616,6 +616,8 @@ public class PhotoModule
             return;
         }
         cancelCountDown();
+
+        mAppController.freezeScreenUntilPreviewReady();
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         Log.i(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
