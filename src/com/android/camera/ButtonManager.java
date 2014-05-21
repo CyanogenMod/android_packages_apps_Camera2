@@ -874,6 +874,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                             }
                         }
                     });
+                updatePanoButtons();
             } finally {
                 if (imageIds != null) {
                     imageIds.recycle();
@@ -881,7 +882,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 if (descriptionIds != null) {
                     descriptionIds.recycle();
                 }
-                updatePanoButtons();
             }
         }
     }
