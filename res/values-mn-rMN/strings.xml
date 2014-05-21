@@ -277,7 +277,7 @@
     <string name="time_lapse_hours" msgid="5294001144133261436">"цаг"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"Дууссан"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"Хугацааны интервал тохируулах"</string>
-    <string name="set_time_interval_help" msgid="64145154088021389">"Цагын урсгал идэвхгүй. Хугацааны интервалыг тохируулах бол идэвхтэй болгоно уу."</string>
+    <string name="set_time_interval_help" msgid="64145154088021389">"Цагийн урсгал идэвхгүй. Хугацааны интервалыг тохируулах бол идэвхтэй болгоно уу."</string>
     <string name="set_duration" msgid="1638453882581604341">"Үргэлжлэх хугацааг секундээр тохируулах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Зураг авахаар цаг тоолж байна"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Зургийн байршлыг санаж байна уу?"</string>
@@ -373,6 +373,6 @@
     <string name="edit_with" msgid="615569327230783971">"Засварлах"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ДАРААХ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ТИЙМ, ОЙЛГОЛОО"</string>
-    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%s Мегапиксел \n(4:3)"</string>
-    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%s Мегапиксел \n(16:9)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Бүрэн мэдрэгч \n (4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Тайруулсан мэдрэгч \n (16:9)"</string>
 </resources>

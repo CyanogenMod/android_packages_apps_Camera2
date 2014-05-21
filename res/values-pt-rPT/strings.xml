@@ -347,7 +347,7 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Compensação de exposição +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"O botão está agora %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Localização"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografia câm. posterior"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografia câmara posterior"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo da câmara posterior"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografia câmara frontal"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo da câmara frontal"</string>
@@ -373,6 +373,6 @@
     <string name="edit_with" msgid="615569327230783971">"Editar com"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"SEGUINTE"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, JÁ PERCEBI"</string>
-    <string name="megapixel_text_for_4x3_aspect_ratio" msgid="6975319610522670241">"%s Megapíxel \n(4:3)"</string>
-    <string name="megapixel_text_for_16x9_aspect_ratio" msgid="2855896529748779201">"%s Megapíxel \n(16:9)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Sensor completo \n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Sensor recortado \n(16:9)"</string>
 </resources>
