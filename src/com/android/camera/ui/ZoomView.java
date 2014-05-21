@@ -44,12 +44,19 @@ public class ZoomView extends ImageView {
     private int mViewportHeight = 0;
 
     private BitmapRegionDecoder mRegionDecoder;
+    // This is null when there's no decoding going on.
     private DecodePartialBitmap mPartialDecodingTask;
 
     private Uri mUri;
     private int mOrientation;
 
     private class DecodePartialBitmap extends AsyncTask<RectF, Void, Bitmap> {
+        BitmapRegionDecoder mDecoder;
+
+        @Override
+        protected void onPreExecute() {
+            mDecoder = mRegionDecoder;
+        }
 
         @Override
         protected Bitmap doInBackground(RectF... params) {
@@ -129,23 +136,23 @@ public class ZoomView extends ImageView {
                 options.inSampleSize = getSampleFactor(region.height(), region.width());
             }
 
-            if (mRegionDecoder == null) {
+            if (mDecoder == null) {
                 InputStream is = getInputStream();
                 if (is == null) {
                     return null;
                 }
 
                 try {
-                    mRegionDecoder = BitmapRegionDecoder.newInstance(is, false);
+                    mDecoder = BitmapRegionDecoder.newInstance(is, false);
                     is.close();
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to instantiate region decoder");
                 }
             }
-            if (mRegionDecoder == null) {
+            if (mDecoder == null) {
                 return null;
             }
-            Bitmap b = mRegionDecoder.decodeRegion(region, options);
+            Bitmap b = mDecoder.decodeRegion(region, options);
             if (isCancelled()) {
                 return null;
             }
@@ -156,12 +163,15 @@ public class ZoomView extends ImageView {
 
         @Override
         protected void onPostExecute(Bitmap b) {
-            if (b == null) {
-                return;
-            }
-            setImageBitmap(b);
-            showPartiallyDecodedImage(true);
             mPartialDecodingTask = null;
+            if (mDecoder != mRegionDecoder) {
+                // This decoder will no longer be used, recycle it.
+                mDecoder.recycle();
+            }
+            if (b != null) {
+                setImageBitmap(b);
+                showPartiallyDecodedImage(true);
+            }
         }
     }
 
@@ -182,11 +192,22 @@ public class ZoomView extends ImageView {
         });
     }
 
+    public void resetDecoder() {
+        if (mRegionDecoder != null) {
+            cancelPartialDecodingTask();
+            if (mPartialDecodingTask == null) {
+                // No ongoing decoding task, safe to recycle the decoder.
+                mRegionDecoder.recycle();
+            }
+            mRegionDecoder = null;
+        }
+    }
+
     public void loadBitmap(Uri uri, int orientation, RectF imageRect) {
         if (!uri.equals(mUri)) {
+            resetDecoder();
             mUri = uri;
             mOrientation = orientation;
-            mRegionDecoder = null;
         }
         startPartialDecodingTask(imageRect);
     }
@@ -197,7 +218,6 @@ public class ZoomView extends ImageView {
         } else {
             setVisibility(View.GONE);
         }
-        mPartialDecodingTask = null;
     }
 
     public void cancelPartialDecodingTask() {
@@ -205,7 +225,6 @@ public class ZoomView extends ImageView {
             mPartialDecodingTask.cancel(true);
             setVisibility(GONE);
         }
-        mPartialDecodingTask = null;
     }
 
     /**
