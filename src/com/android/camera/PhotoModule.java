@@ -749,6 +749,7 @@ public class PhotoModule
         }
 
         bottomBarSpec.enableSelfTimer = true;
+        bottomBarSpec.showSelfTimer = true;
 
         if (isImageCaptureIntent()) {
             bottomBarSpec.showCancel = true;

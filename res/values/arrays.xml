@@ -493,9 +493,9 @@
     </array>
 
     <array name="countdown_duration_icons" translatable="false">
-        <item>@drawable/ic_timer_off_normal</item>
-        <item>@drawable/ic_timer_3s_normal</item>
-        <item>@drawable/ic_timer_10s_normal</item>
+        <item>@drawable/ic_timer_off</item>
+        <item>@drawable/ic_timer_3s</item>
+        <item>@drawable/ic_timer_10s</item>
     </array>
 
     <array name="pref_camera_countdown_indicators" translatable="false">
