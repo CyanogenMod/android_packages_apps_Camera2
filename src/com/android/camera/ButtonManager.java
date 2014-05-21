@@ -44,7 +44,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
 
     public static final int BUTTON_FLASH = 0;
     public static final int BUTTON_TORCH = 1;
-    public static final int BUTTON_HDR_PLUS_TORCH = 2;
+    public static final int BUTTON_HDR_PLUS_FLASH = 2;
     public static final int BUTTON_CAMERA = 3;
     public static final int BUTTON_HDR_PLUS = 4;
     public static final int BUTTON_HDR = 5;
@@ -197,7 +197,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
             case SettingsManager.SETTING_HDR_PLUS_FLASH_MODE: {
                 index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_HDR_PLUS_TORCH);
+                button = getButtonOrError(BUTTON_HDR_PLUS_FLASH);
                 break;
             }
             case SettingsManager.SETTING_CAMERA_ID: {
@@ -272,7 +272,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                     throw new IllegalStateException("Torch button could not be found.");
                 }
                 return mButtonFlash;
-            case BUTTON_HDR_PLUS_TORCH:
+            case BUTTON_HDR_PLUS_FLASH:
                 if (mButtonFlash == null) {
                     throw new IllegalStateException("Hdr plus torch button could not be found.");
                 }
@@ -358,8 +358,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             case BUTTON_TORCH:
                 initializeTorchButton(button, cb, R.array.video_flashmode_icons);
                 break;
-            case BUTTON_HDR_PLUS_TORCH:
-                initializeHdrPlusTorchButton(button, cb, R.array.camera_flashmode_icons);
+            case BUTTON_HDR_PLUS_FLASH:
+                initializeHdrPlusFlashButton(button, cb, R.array.camera_flashmode_icons);
                 break;
             case BUTTON_CAMERA:
                 initializeCameraButton(button, cb, R.array.camera_id_icons);
@@ -639,9 +639,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Initialize hdr plus torch button
+     * Initialize hdr plus flash button
      */
-    private void initializeHdrPlusTorchButton(MultiToggleImageButton button,
+    private void initializeHdrPlusFlashButton(MultiToggleImageButton button,
             final ButtonCallback cb, int resIdImages) {
 
         if (resIdImages > 0) {

@@ -743,9 +743,9 @@ CHAR LIMIT=NONE] -->
     <string name="flash_on_desc">Flash on</string>
 
     <!-- Accessibility text for HDR+ flash toggle button states [CHAR_LIMIT=NONE] -->
-    <string name="hdr_plus_flash_off_desc">HDR+ torch off</string>
-    <string name="hdr_plus_flash_auto_desc">HDR+ torch auto</string>
-    <string name="hdr_plus_flash_on_desc">HDR+ torch on</string>
+    <string name="hdr_plus_flash_off_desc">HDR+ flash off</string>
+    <string name="hdr_plus_flash_auto_desc">HDR+ flash auto</string>
+    <string name="hdr_plus_flash_on_desc">HDR+ flash on</string>
 
     <!-- Accessibility text for vide torch (flash) toggle button states [CHAR_LIMIT=NONE] -->
     <string name="torch_on_desc">Torch on</string>

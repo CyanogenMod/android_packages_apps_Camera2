@@ -610,7 +610,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     /**
      * Updates the preview matrix without altering it. Assumes a fullscreen
      * aspect ratio.
-     * 
+     *
      * @param matrix
      */
     public void updatePreviewTransformFullscreen(Matrix matrix) {
@@ -1733,7 +1733,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
                         bottomBarSpec.flashCallback);
                 } else if (bottomBarSpec.enableHdrPlusFlash) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_TORCH,
+                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
                         bottomBarSpec.flashCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
