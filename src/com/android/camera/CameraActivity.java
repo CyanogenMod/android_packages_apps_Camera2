@@ -701,10 +701,17 @@ public class CameraActivity extends Activity
             new LocalDataAdapter.LocalDataListener() {
                 @Override
                 public void onMetadataUpdated(List<Integer> updatedData) {
+                    if (mPaused) {
+                        // Callback after the activity is paused.
+                        return;
+                    }
                     int currentDataId = mFilmstripController.getCurrentId();
                     for (Integer dataId : updatedData) {
                         if (dataId == currentDataId) {
                             updateBottomControlsByData(mDataAdapter.getLocalData(dataId));
+                            // Currently we have only 1 data can be matched.
+                            // No need to look for more, break.
+                            break;
                         }
                     }
                 }
