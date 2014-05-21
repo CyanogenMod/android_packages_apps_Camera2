@@ -15,6 +15,5 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_scenemode_entry_hdr">HDR</string>
-  <string name="pref_camera_hdr_label">HDR</string>
+  <string name="delete">நீக்கு</string>
 </resources>
