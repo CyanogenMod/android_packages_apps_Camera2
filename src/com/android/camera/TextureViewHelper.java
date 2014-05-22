@@ -279,8 +279,8 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         RectF previewArea = getPreviewArea();
         Bitmap preview = mPreview.getBitmap((int) textureArea.width() / downsample,
                 (int) textureArea.height() / downsample);
-        int xOffset = (int) ((textureArea.width() - previewArea.width()) / 2 / downsample);
-        int yOffset = (int) ((textureArea.height() - previewArea.height()) / 2 / downsample);
+        int xOffset = (int) ((textureArea.width() - previewArea.width()) / (2 * downsample));
+        int yOffset = (int) ((textureArea.height() - previewArea.height()) / (2 * downsample));
         int newWidth = (int) (previewArea.width() / downsample);
         int newHeight = (int) (previewArea.height() / downsample);
 
