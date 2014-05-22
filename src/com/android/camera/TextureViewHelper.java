@@ -160,7 +160,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     /**
      * This takes a matrix to apply to the texture view and uses the screen
      * aspect ratio as the target aspect ratio
-     * 
+     *
      * @param matrix the matrix to apply
      * @param aspectRatio the aspectRatio that the preview should be
      */

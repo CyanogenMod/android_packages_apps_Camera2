@@ -1349,6 +1349,7 @@ public class PhotoModule
             return;
         }
         mUI.hidePostCaptureAlert();
+        mUI.hideIntentReviewImageView();
         setupPreview();
     }
 
