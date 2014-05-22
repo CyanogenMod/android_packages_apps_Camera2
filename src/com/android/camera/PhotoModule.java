@@ -382,6 +382,8 @@ public class PhotoModule
             ButtonManager buttonManager = mActivity.getButtonManager();
             buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
 
+            mAppController.getCameraAppUI().freezeScreenUntilPreviewReady();
+
             // Do not post this to avoid this module switch getting interleaved with
             // other button callbacks.
             mActivity.onModeSelected(mGcamModeIndex);
