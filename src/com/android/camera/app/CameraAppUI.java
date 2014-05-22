@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
@@ -588,11 +589,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     if (mCameraRootView == null || mTextureView == null) {
                         return null;
                     }
-                    RectF previewArea = mTextureViewHelper.getPreviewArea();
                     // Gets the bitmap from the preview TextureView.
-                    Bitmap preview = mTextureView.getBitmap(
-                            (int) previewArea.width() / downSampleFactor,
-                            (int) previewArea.height() / downSampleFactor);
+                    Bitmap preview = mTextureViewHelper.getPreviewBitmap(downSampleFactor);
                     return preview;
                 }
 
@@ -611,7 +609,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                             mCameraRootView.getHeight(), Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(screenshot);
                     canvas.drawARGB(255, 0, 0, 0);
-                    Bitmap preview = getPreviewFrame(previewDownSampleFactor);
+                    Bitmap preview = mTextureViewHelper.getPreviewBitmap(previewDownSampleFactor);
                     if (preview != null) {
                         canvas.drawBitmap(preview, null, mTextureViewHelper.getPreviewArea(), null);
                     }
