@@ -393,7 +393,7 @@ public class CameraSettingsActivity extends FragmentActivity {
          */
         private void loadSizes() {
             // Back camera.
-            int backCameraId = getCameraId(CameraInfo.CAMERA_FACING_BACK);
+            int backCameraId = SettingsUtil.getCameraId(CameraInfo.CAMERA_FACING_BACK);
             if (backCameraId >= 0) {
                 List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(backCameraId,
                         this.getActivity().getApplicationContext());
@@ -410,7 +410,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             }
 
             // Front camera.
-            int frontCameraId = getCameraId(CameraInfo.CAMERA_FACING_FRONT);
+            int frontCameraId = SettingsUtil.getCameraId(CameraInfo.CAMERA_FACING_FRONT);
             if (frontCameraId >= 0) {
                 List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(frontCameraId,
                         this.getActivity().getApplicationContext());
@@ -425,26 +425,6 @@ public class CameraSettingsActivity extends FragmentActivity {
                 mPictureSizesFront = null;
                 mVideoQualitiesFront = null;
             }
-        }
-
-        /**
-         * Gets the first camera facing the given direction.
-         *
-         * @param facing Either {@link CameraInfo#CAMERA_FACING_BACK} or
-         *            {@link CameraInfo#CAMERA_FACING_FRONT}.
-         * @return The ID of the first camera matching the given direction, or
-         *         -1, if no camera with the given facing was found.
-         */
-        private static int getCameraId(int facing) {
-            int numCameras = Camera.getNumberOfCameras();
-            for (int i = 0; i < numCameras; ++i) {
-                CameraInfo info = new CameraInfo();
-                Camera.getCameraInfo(i, info);
-                if (info.facing == facing) {
-                    return i;
-                }
-            }
-            return -1;
         }
 
         /**
