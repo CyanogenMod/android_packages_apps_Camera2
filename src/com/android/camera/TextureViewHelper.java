@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -170,7 +171,9 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         }
 
         mPreview.setTransform(matrix);
-        updatePreviewArea(matrix);
+        mPreviewArea = mCaptureLayoutHelper.getPreviewRect();
+        onPreviewAreaChanged(mPreviewArea);
+
     }
 
     public void updateTransform(Matrix matrix) {
@@ -254,6 +257,37 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      */
     public RectF getPreviewArea() {
         return new RectF(mPreviewArea);
+    }
+
+    /**
+     * Returns a copy of the area of the whole preview, including bits clipped
+     * by the view
+     */
+    public RectF getTextureArea() {
+
+        if (mPreview == null) {
+            return new RectF();
+        }
+        Matrix matrix = new Matrix();
+        RectF area = new RectF(0, 0, mWidth, mHeight);
+        mPreview.getTransform(matrix).mapRect(area);
+        return area;
+    }
+
+    public Bitmap getPreviewBitmap(int downsample) {
+        RectF textureArea = getTextureArea();
+        RectF previewArea = getPreviewArea();
+        Bitmap preview = mPreview.getBitmap((int) textureArea.width() / downsample,
+                (int) textureArea.height() / downsample);
+        int xOffset = (int) ((textureArea.width() - previewArea.width()) / 2 / downsample);
+        int yOffset = (int) ((textureArea.height() - previewArea.height()) / 2 / downsample);
+        int newWidth = (int) (previewArea.width() / downsample);
+        int newHeight = (int) (previewArea.height() / downsample);
+
+        if (xOffset != 0 || yOffset != 0) {
+            return Bitmap.createBitmap(preview, xOffset, yOffset, newWidth, newHeight);
+        }
+        return preview;
     }
 
     /**
