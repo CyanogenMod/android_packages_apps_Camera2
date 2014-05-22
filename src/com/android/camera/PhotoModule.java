@@ -733,7 +733,9 @@ public class PhotoModule
 
         bottomBarSpec.enableCamera = true;
         bottomBarSpec.cameraCallback = mCameraCallback;
-        bottomBarSpec.enableFlash = true;
+        bottomBarSpec.enableFlash = !SettingsManager.VALUE_ON
+                .equals(mAppController.getSettingsManager()
+                        .get(SettingsManager.SETTING_CAMERA_HDR));
         bottomBarSpec.enableHdr = true;
         bottomBarSpec.hdrCallback = mHdrPlusCallback;
         bottomBarSpec.enableGridLines = true;
@@ -1890,6 +1892,15 @@ public class PhotoModule
         switch (id) {
             case SettingsManager.SETTING_FLASH_MODE: {
                 updateParametersFlashMode();
+                break;
+            }
+            case SettingsManager.SETTING_CAMERA_HDR: {
+                String val = settingsManager.get(id);
+                if (SettingsManager.VALUE_ON.equals(val)) {
+                    mAppController.getButtonManager().disableButton(ButtonManager.BUTTON_FLASH);
+                } else {
+                    mAppController.getButtonManager().enableButton(ButtonManager.BUTTON_FLASH);
+                }
                 break;
             }
             default: {
