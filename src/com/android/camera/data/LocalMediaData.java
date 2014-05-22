@@ -62,7 +62,7 @@ public abstract class LocalMediaData implements LocalData {
     protected final long mContentId;
     protected final String mTitle;
     protected final String mMimeType;
-    protected final long mDateTakenInSeconds;
+    protected final long mDateTakenInMilliSeconds;
     protected final long mDateModifiedInSeconds;
     protected final String mPath;
     // width and height should be adjusted according to orientation.
@@ -80,13 +80,13 @@ public abstract class LocalMediaData implements LocalData {
     protected Boolean mUsing = false;
 
     public LocalMediaData(long contentId, String title, String mimeType,
-            long dateTakenInSeconds, long dateModifiedInSeconds, String path,
+            long dateTakenInMilliSeconds, long dateModifiedInSeconds, String path,
             int width, int height, long sizeInBytes, double latitude,
             double longitude) {
         mContentId = contentId;
         mTitle = title;
         mMimeType = mimeType;
-        mDateTakenInSeconds = dateTakenInSeconds;
+        mDateTakenInMilliSeconds = dateTakenInMilliSeconds;
         mDateModifiedInSeconds = dateModifiedInSeconds;
         mPath = path;
         mWidth = width;
@@ -128,7 +128,7 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public long getDateTaken() {
-        return mDateTakenInSeconds;
+        return mDateTakenInMilliSeconds;
     }
 
     @Override
@@ -373,10 +373,10 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         public PhotoData(long id, String title, String mimeType,
-                long dateTakenInSeconds, long dateModifiedInSeconds,
+                long dateTakenInMilliSeconds, long dateModifiedInSeconds,
                 String path, int orientation, int width, int height,
                 long sizeInBytes, double latitude, double longitude) {
-            super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
+            super(id, title, mimeType, dateTakenInMilliSeconds, dateModifiedInSeconds,
                     path, width, height, sizeInBytes, latitude, longitude);
             mOrientation = orientation;
             mSignature = mimeType + orientation + dateModifiedInSeconds;
@@ -391,7 +391,7 @@ public abstract class LocalMediaData implements LocalData {
             long id = c.getLong(COL_ID);
             String title = c.getString(COL_TITLE);
             String mimeType = c.getString(COL_MIME_TYPE);
-            long dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
+            long dateTakenInMilliSeconds = c.getLong(COL_DATE_TAKEN);
             long dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
             String path = c.getString(COL_DATA);
             int orientation = c.getInt(COL_ORIENTATION);
@@ -426,7 +426,7 @@ public abstract class LocalMediaData implements LocalData {
             long sizeInBytes = c.getLong(COL_SIZE);
             double latitude = c.getDouble(COL_LATITUDE);
             double longitude = c.getDouble(COL_LONGITUDE);
-            PhotoData result = new PhotoData(id, title, mimeType, dateTakenInSeconds,
+            PhotoData result = new PhotoData(id, title, mimeType, dateTakenInMilliSeconds,
                     dateModifiedInSeconds, path, orientation, width, height,
                     sizeInBytes, latitude, longitude);
             return result;
@@ -441,7 +441,7 @@ public abstract class LocalMediaData implements LocalData {
         public String toString() {
             return "Photo:" + ",data=" + mPath + ",mimeType=" + mMimeType
                     + "," + mWidth + "x" + mHeight + ",orientation=" + mOrientation
-                    + ",date=" + new Date(mDateTakenInSeconds);
+                    + ",date=" + new Date(mDateTakenInMilliSeconds);
         }
 
         @Override
@@ -674,10 +674,10 @@ public abstract class LocalMediaData implements LocalData {
         private final String mSignature;
 
         public VideoData(long id, String title, String mimeType,
-                long dateTakenInSeconds, long dateModifiedInSeconds,
+                long dateTakenInMilliSeconds, long dateModifiedInSeconds,
                 String path, int width, int height, long sizeInBytes,
                 double latitude, double longitude, long durationInSeconds) {
-            super(id, title, mimeType, dateTakenInSeconds, dateModifiedInSeconds,
+            super(id, title, mimeType, dateTakenInMilliSeconds, dateModifiedInSeconds,
                     path, width, height, sizeInBytes, latitude, longitude);
             mDurationInSeconds = durationInSeconds;
             mSignature = mimeType + dateModifiedInSeconds;
@@ -738,7 +738,7 @@ public abstract class LocalMediaData implements LocalData {
             long id = c.getLong(COL_ID);
             String title = c.getString(COL_TITLE);
             String mimeType = c.getString(COL_MIME_TYPE);
-            long dateTakenInSeconds = c.getLong(COL_DATE_TAKEN);
+            long dateTakenInMilliSeconds = c.getLong(COL_DATE_TAKEN);
             long dateModifiedInSeconds = c.getLong(COL_DATE_MODIFIED);
             String path = c.getString(COL_DATA);
             int width = c.getInt(COL_WIDTH);
@@ -759,7 +759,7 @@ public abstract class LocalMediaData implements LocalData {
             double latitude = c.getDouble(COL_LATITUDE);
             double longitude = c.getDouble(COL_LONGITUDE);
             long durationInSeconds = c.getLong(COL_DURATION) / 1000;
-            VideoData d = new VideoData(id, title, mimeType, dateTakenInSeconds,
+            VideoData d = new VideoData(id, title, mimeType, dateTakenInMilliSeconds,
                     dateModifiedInSeconds, path, width, height, sizeInBytes,
                     latitude, longitude, durationInSeconds);
             return d;
@@ -768,7 +768,7 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public String toString() {
             return "Video:" + ",data=" + mPath + ",mimeType=" + mMimeType
-                    + "," + mWidth + "x" + mHeight + ",date=" + new Date(mDateTakenInSeconds);
+                    + "," + mWidth + "x" + mHeight + ",date=" + new Date(mDateTakenInMilliSeconds);
         }
 
         @Override

@@ -103,7 +103,7 @@ public interface LocalData extends ImageData {
 
     /**
      * Gets the date when this data is created. The returned date is also used
-     * for sorting data.
+     * for sorting data. Value is epoch milliseconds.
      *
      * @return The date when this data is created.
      * @see {@link NewestFirstComparator}
@@ -112,7 +112,7 @@ public interface LocalData extends ImageData {
 
     /**
      * Gets the date when this data is modified. The returned date is also used
-     * for sorting data.
+     * for sorting data. Value is epoch seconds.
      *
      * @return The date when this data is modified.
      * @see {@link NewestFirstComparator}
