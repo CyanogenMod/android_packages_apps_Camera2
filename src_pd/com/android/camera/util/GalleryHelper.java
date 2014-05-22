@@ -25,9 +25,9 @@ import android.net.Uri;
  * A helper class to provide Gallery related info.
  */
 public class GalleryHelper {
-    private static final String GALLERY_PACKAGE_NAME = "com.android.gallery3d";
+    private static final String GALLERY_PACKAGE_NAME = "com.google.android.apps.plus";
     private static final String GALLERY_ACTIVITY_CLASS =
-            "com.android.gallery3d.app.GalleryActivity";
+        "com.google.android.apps.photos.phone.PhotosLauncherActivity";
 
     public static void setGalleryIntentClassName(Intent intent) {
         intent.setClassName(GALLERY_PACKAGE_NAME, GALLERY_ACTIVITY_CLASS);

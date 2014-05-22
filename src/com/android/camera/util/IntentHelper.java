@@ -30,26 +30,36 @@ public class IntentHelper {
     private static final Log.Tag TAG = new Log.Tag("IntentHelper");
 
     public static Intent getDefaultGalleryIntent(Context context) {
+        return getGalleryIntent(context, true);
+    }
+
+    public static Intent getPhotosGalleryIntent(Context context) {
+        return getGalleryIntent(context, false);
+    }
+
+    public static Intent getGalleryIntent(Context context, boolean failoverToDefaultGallery) {
         PackageManager pm = context.getPackageManager();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         GalleryHelper.setGalleryIntentClassName(intent);
-        List<ResolveInfo> resolveInfos =
-                pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (resolveInfos.size() == 0) {
-            // No matching activities.
-            intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_APP_GALLERY);
-            resolveInfos = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (failoverToDefaultGallery) {
+            List<ResolveInfo> resolveInfos =
+                    pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
             if (resolveInfos.size() == 0) {
-                return null;
+                // No matching activities.
+                intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_APP_GALLERY);
+                resolveInfos = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                if (resolveInfos.size() == 0) {
+                    return null;
+                }
+                ResolveInfo firstPackage = resolveInfos.get(0);
+                intent.setClassName(firstPackage.activityInfo.packageName,
+                                    firstPackage.activityInfo.name);
             }
-            ResolveInfo firstPackage = resolveInfos.get(0);
-            intent.setClassName(firstPackage.activityInfo.packageName,
-                    firstPackage.activityInfo.name);
-        }
-        for (ResolveInfo info : resolveInfos) {
-            Log.v(TAG, info.resolvePackageName + ':' + info.activityInfo.packageName +
-                    ":" + info.activityInfo.name + ',' + info.activityInfo.enabled);
+            for (ResolveInfo info : resolveInfos) {
+                Log.v(TAG, info.resolvePackageName + ':' + info.activityInfo.packageName +
+                      ":" + info.activityInfo.name + ',' + info.activityInfo.enabled);
+            }
         }
         return intent;
     }

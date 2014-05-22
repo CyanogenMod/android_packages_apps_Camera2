@@ -1580,14 +1580,8 @@ public class CameraActivity extends Activity
                     currentUserInterfaceMode());
         }
 
-        Drawable galleryLogo;
-        if (mSecureCamera) {
-            mGalleryIntent = null;
-            galleryLogo = null;
-        } else {
-            mGalleryIntent = IntentHelper.getDefaultGalleryIntent(mAppContext);
-            galleryLogo = IntentHelper.getGalleryIcon(mAppContext, mGalleryIntent);
-        }
+        mGalleryIntent = IntentHelper.getPhotosGalleryIntent(mAppContext);
+        Drawable galleryLogo = IntentHelper.getGalleryIcon(mAppContext, mGalleryIntent);
         if (galleryLogo == null) {
             try {
                 galleryLogo = getPackageManager().getActivityLogo(getComponentName());
