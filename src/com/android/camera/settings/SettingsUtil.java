@@ -138,7 +138,7 @@ public class SettingsUtil {
      * resolution and sets it as the picture size.
      *
      * @param sizeSetting The setting selected by the user. One of "large",
-     *            "medium, "small".
+     *            "medium, "small" or two integers separated by "x".
      * @param supported The list of supported resolutions.
      * @param parameters The Camera parameters to set the selected picture
      *            resolution on.
@@ -154,8 +154,8 @@ public class SettingsUtil {
     }
 
     /**
-     * Based on the selected size, this method selects the matching concrete
-     * resolution and sets it as the picture size.
+     * Based on the selected size, this method returns the matching concrete
+     * resolution.
      *
      * @param sizeSetting The setting selected by the user. One of "large",
      *            "medium, "small".
@@ -477,5 +477,25 @@ public class SettingsUtil {
                         });
 
         return builder;
+    }
+
+    /**
+     * Gets the first camera facing the given direction.
+     *
+     * @param facing Either {@link android.hardware.Camera.CameraInfo#CAMERA_FACING_BACK} or
+     *            {@link android.hardware.Camera.CameraInfo#CAMERA_FACING_FRONT}.
+     * @return The ID of the first camera matching the given direction, or
+     *         -1, if no camera with the given facing was found.
+     */
+    public static int getCameraId(int facing) {
+        int numCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numCameras; ++i) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == facing) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

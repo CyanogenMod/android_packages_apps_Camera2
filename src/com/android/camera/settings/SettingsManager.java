@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.hardware.Camera;
 import android.preference.PreferenceManager;
 import android.util.SparseArray;
 
@@ -28,6 +29,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.SettingsHelper;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
@@ -57,7 +59,20 @@ public class SettingsManager {
      * strictly on app upgrades, when the upgrade behavior differs from the general,
      * lazy upgrade strategies.
      */
-    private static final int STRICT_UPGRADE_VERSION = 2;
+    private static final int STRICT_UPGRADE_VERSION = 3;
+
+    /**
+     * With this version everyone was forced to choose their location
+     * settings again.
+     */
+    private static final int FORCE_LOCATION_CHOICE_VERSION = 2;
+
+    /**
+     * With this version, the camera size setting changed from a "small",
+     * "medium" and "default" to strings representing the actual resolutions, i.e.
+     * "1080x1776".
+     */
+    private static final int CAMERA_SIZE_SETTING_UPGRADE_VERSION = 3;
 
     /**
      * A List of OnSettingChangedListener's, maintained to compare to new
@@ -88,7 +103,7 @@ public class SettingsManager {
         // Check for a strict version upgrade.
         int version = getInt(SETTING_STRICT_UPGRADE_VERSION);
         if (STRICT_UPGRADE_VERSION != version) {
-            upgrade(STRICT_UPGRADE_VERSION);
+            upgrade(version);
         }
         setInt(SETTING_STRICT_UPGRADE_VERSION, STRICT_UPGRADE_VERSION);
     }
@@ -121,34 +136,65 @@ public class SettingsManager {
      *  This can be done in the strict upgrade callback.  The strict upgrade callback
      *  should be idempotent, so it is important to leave removal code in the upgrade
      *  callback so the key/value pairs are removed even if a user skips a version.
+     *
+     * @param version the version number that we are upgrading from.
      */
     private void upgrade(int version) {
-        // Show the location dialog on upgrade if
-        //  (a) the user has never set this option (status quo).
-        //  (b) the user opt'ed out previously.
-        if (this.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
-            // Location is set in the source file defined for this setting.
-            // Remove the setting if the value is false to launch the dialog.
-            if (!this.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
-                this.remove(SettingsManager.SETTING_RECORD_LOCATION);
-            }
-        } else {
-            // Location is not set, check to see if we're upgrading from
-            // a different source file.
-            if (this.isSet(SettingsManager.SETTING_RECORD_LOCATION,
-                                      SettingsManager.SOURCE_GLOBAL)) {
-                boolean location = this.getBoolean(
-                    SettingsManager.SETTING_RECORD_LOCATION,
-                    SettingsManager.SOURCE_GLOBAL);
-                if (location) {
-                    // Set the old setting only if the value is true, to prevent
-                    // launching the dialog.
-                    this.setBoolean(
-                        SettingsManager.SETTING_RECORD_LOCATION, location);
+
+        if (version < FORCE_LOCATION_CHOICE_VERSION) {
+            // Show the location dialog on upgrade if
+            //  (a) the user has never set this option (status quo).
+            //  (b) the user opt'ed out previously.
+            if (this.isSet(SettingsManager.SETTING_RECORD_LOCATION)) {
+                // Location is set in the source file defined for this setting.
+                // Remove the setting if the value is false to launch the dialog.
+                if (!this.getBoolean(SettingsManager.SETTING_RECORD_LOCATION)) {
+                    this.remove(SettingsManager.SETTING_RECORD_LOCATION);
+                }
+            } else {
+                // Location is not set, check to see if we're upgrading from
+                // a different source file.
+                if (this.isSet(SettingsManager.SETTING_RECORD_LOCATION,
+                                          SettingsManager.SOURCE_GLOBAL)) {
+                    boolean location = this.getBoolean(
+                        SettingsManager.SETTING_RECORD_LOCATION,
+                        SettingsManager.SOURCE_GLOBAL);
+                    if (location) {
+                        // Set the old setting only if the value is true, to prevent
+                        // launching the dialog.
+                        this.setBoolean(
+                            SettingsManager.SETTING_RECORD_LOCATION, location);
+                    }
                 }
             }
         }
+
+        if (version < CAMERA_SIZE_SETTING_UPGRADE_VERSION) {
+            upgradeCameraSizeSetting(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            upgradeCameraSizeSetting(Camera.CameraInfo.CAMERA_FACING_BACK);
+        }
+
         this.remove(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
+    }
+
+    private void upgradeCameraSizeSetting(int facing) {
+        int setting;
+        if (facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            setting = SETTING_PICTURE_SIZE_FRONT;
+        } else {
+            setting = SETTING_PICTURE_SIZE_BACK;
+        }
+
+        String pictureSize = this.get(setting);
+        int camera = SettingsUtil.getCameraId(facing);
+        if (camera != -1) {
+            List<Size> supported = CameraPictureSizesCacher.getSizesForCamera(camera,
+                    mContext);
+            if (supported != null) {
+                Size size = SettingsUtil.getPhotoSize(pictureSize, supported, camera);
+                this.set(setting, SettingsUtil.sizeToSetting(size));
+            }
+        }
     }
 
     /**
