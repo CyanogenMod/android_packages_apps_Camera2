@@ -203,4 +203,7 @@
     <dimen name="video_hint_phone_graphic_height">66dp</dimen>
     <dimen name="video_hint_phone_graphic_width">36dp</dimen>
     <dimen name="default_cling_width">120dp</dimen>
+    <dimen name="settings_cling_width">160dp</dimen>
+    <dimen name="settings_cling_triangle_height">15dp</dimen>
+    <dimen name="settings_cling_triangle_width">20dp</dimen>
 </resources>

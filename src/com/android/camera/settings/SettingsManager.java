@@ -442,6 +442,7 @@ public class SettingsManager {
     public static final int SETTING_USER_SELECTED_ASPECT_RATIO = 33;
     public static final int SETTING_COUNTDOWN_DURATION = 34;
     public static final int SETTING_HDR_PLUS_FLASH_MODE = 35;
+    public static final int SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING = 36;
 
     // Shared preference keys.
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
@@ -483,6 +484,8 @@ public class SettingsManager {
     public static final String KEY_USER_SELECTED_ASPECT_RATIO = "pref_user_selected_aspect_ratio";
     public static final String KEY_COUNTDOWN_DURATION = "pref_camera_countdown_duration_key";
     public static final String KEY_HDR_PLUS_FLASH_MODE = "pref_hdr_plus_flash_mode";
+    public static final String KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING =
+            "pref_should_show_settings_button_cling";
 
     public static final int WHITE_BALANCE_DEFAULT_INDEX = 2;
 
@@ -1226,6 +1229,11 @@ public class SettingsManager {
                 R.array.pref_camera_hdr_plus_flashmode_entryvalues);
         return new Setting(SOURCE_MODULE, TYPE_STRING, defaultValue, KEY_HDR_PLUS_FLASH_MODE,
                 values, FLUSH_OFF);
+    }
+
+    public static Setting getShouldShowSettingsButtonCling(Context context) {
+        return new Setting(SOURCE_DEFAULT, TYPE_BOOLEAN, VALUE_ON,
+                KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING, null, FLUSH_OFF);
     }
 
     // Utilities.

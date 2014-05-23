@@ -141,6 +141,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_COUNTDOWN_DURATION);
         mKeyMap.put(SettingsManager.KEY_HDR_PLUS_FLASH_MODE,
                 SettingsManager.SETTING_HDR_PLUS_FLASH_MODE);
+        mKeyMap.put(SettingsManager.KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING,
+                SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING);
     }
 
     /**
@@ -233,6 +235,8 @@ public class SettingsCache {
                 return SettingsManager.getCountDownDurationSetting(mContext);
             case SettingsManager.SETTING_HDR_PLUS_FLASH_MODE:
                 return SettingsManager.getHdrPlusFlashSetting(mContext);
+            case SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING:
+                return SettingsManager.getShouldShowSettingsButtonCling(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }
