@@ -283,6 +283,12 @@ public class PhotoModule
     };
 
     /**
+     * We keep the flash setting before entering scene modes (HDR)
+     * and restore it after HDR is off.
+     */
+    private String mFlashModeBeforeSceneMode;
+
+    /**
      * This callback gets called when user select whether or not to
      * turn on geo-tagging.
      */
@@ -1895,10 +1901,19 @@ public class PhotoModule
                 break;
             }
             case SettingsManager.SETTING_CAMERA_HDR: {
-                String val = settingsManager.get(id);
+                String val = settingsManager.get(SettingsManager.SETTING_CAMERA_HDR);
                 if (SettingsManager.VALUE_ON.equals(val)) {
+                    // HDR is on.
                     mAppController.getButtonManager().disableButton(ButtonManager.BUTTON_FLASH);
+                    mFlashModeBeforeSceneMode = settingsManager.get(SettingsManager
+                            .SETTING_FLASH_MODE);
                 } else {
+                    if (mFlashModeBeforeSceneMode != null) {
+                        settingsManager.set(SettingsManager.SETTING_FLASH_MODE,
+                                mFlashModeBeforeSceneMode);
+                        updateParametersFlashMode();
+                        mFlashModeBeforeSceneMode = null;
+                    }
                     mAppController.getButtonManager().enableButton(ButtonManager.BUTTON_FLASH);
                 }
                 break;
