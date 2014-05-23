@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Tamanho da captura do vídeo é menor que o tamanho do vídeo, sendo aumentado para o tamanho do vídeo. Por favor selecione uma resolução maior ou igual que o tamanho do vídeo atual.</string>
   <string name="snapshotsize_low_powermode">Mudando o tamanho da imagem não é suportado no modo de pouca energia, capturas do tamanho do vídeo serão usadas. Por favor selecione o modo de energia normal para permitir mudar o tamanho da imagem.</string>
   <string name="snapshot_qcif_and_d1">Só capturas do tamanho do vídeo são permitidas nessa resolução.</string>
-  <string name="pref_camera_hfr_title">Vídeo de alta frame-rate</string>
+  <string name="pref_camera_hfr_title">Câmara lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Desligar</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

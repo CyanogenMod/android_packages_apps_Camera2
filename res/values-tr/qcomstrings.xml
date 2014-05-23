@@ -28,9 +28,9 @@
   <string name="pref_camera_autoexposure_entry_frameaverage">Çerçeve ortalaması</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">Orta ağırlıklı</string>
   <string name="pref_camera_autoexposure_entry_spotmetering">Nokta Ölçümü</string>
-  <string name="pref_camera_videoencoder_title">Video Kodlayıcı</string>
-  <string name="pref_camera_videoencoder_dialogtitle">Video Kodlayıcı</string>
-  <string name="pref_camera_audioencoder_title">Ses Kodlayıcı</string>
+  <string name="pref_camera_videoencoder_title">Video kodlayıcı</string>
+  <string name="pref_camera_videoencoder_dialogtitle">Video kodlayıcı</string>
+  <string name="pref_camera_audioencoder_title">Ses kodlayıcı</string>
   <string name="pref_camera_video_duration_title">Video süresi</string>
   <string name="pref_camera_video_duration_entry_mms">30 saniye (MMS)</string>
   <string name="pref_camera_video_duration_entry_10">10 dakika</string>
@@ -68,12 +68,12 @@
   <string name="snapshot_lower_than_video">Video resim boyutu video boyutundan küçük ve video boyutuyla sınırlı olmalıdır. Lütfen şu anki video boyutunu eşit ya da daha küçük bir çözünürlük seçin.</string>
   <string name="snapshotsize_low_powermode">Düşük güç modunda resim boyutunu düzenleme desteklenmiyor. Video boyutunda görüntü çekilecek. Lütfen resim boyutunu değiştirmek için Normal Güç moduna geçin.</string>
   <string name="snapshot_qcif_and_d1">Bu çözünürlükte sadece video boyutunda fotoğraf desteklenmekte.</string>
-  <string name="pref_camera_hfr_title">Yüksek FrameRate video</string>
+  <string name="pref_camera_hfr_title">Ağır Çekim (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Kapalı</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
-  <string name="pref_camera_denoise_title">Wavelet gürültü giderme modu</string>
+  <string name="pref_camera_denoise_title">Wavelet Gürültü giderme modu</string>
   <string name="pref_camera_denoise_entry_off">Kapalı</string>
   <string name="pref_camera_denoise_entry_on">Açık</string>
   <string name="pref_camera_iso_title">ISO</string>

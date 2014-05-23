@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Rozmiar zrzutu jest mniejszy niż rozmiar wideo. Proszę ustawić rozdzielczość większą bądź równą aktualnej wielkości wideo.</string>
   <string name="snapshotsize_low_powermode">Zmiana rozmiaru obrazka w trybie małej mocy nie jest wspierana, zrzut o wielkości wideo zostanie wykonany. By zmienić rozmiar obrazka proszę wybrać tryb normalnej mocy.</string>
   <string name="snapshot_qcif_and_d1">Tylko zrzut wideo jest wspierany dla tej rozdzielczości.</string>
-  <string name="pref_camera_hfr_title">Wideo o dużej liczbie FPS</string>
+  <string name="pref_camera_hfr_title">Zwolnione tempo (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Wył.</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

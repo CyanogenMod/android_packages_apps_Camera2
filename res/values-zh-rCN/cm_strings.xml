@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">2070万像素</string>
   <string name="pref_camera_picturesize_entry_18mp">1800万像素</string>
   <string name="pref_camera_picturesize_entry_12_8mp">1280万像素</string>
@@ -75,19 +75,25 @@
   <string name="pref_camera_scenemode_entry_softskin">柔软肌肤</string>
   <string name="pref_camera_scenemode_entry_sports">体育</string>
   <string name="pref_camera_scenemode_entry_spotlight">聚光灯</string>
+  <string name="pref_camera_scenemode_entry_steadyphoto">稳定照片</string>
   <string name="pref_camera_scenemode_entry_supernight">黑夜</string>
+  <string name="pref_camera_scenemode_entry_sweepstitch">扫描线迹</string>
   <string name="pref_camera_scenemode_entry_text">文本</string>
   <string name="pref_camera_scenemode_entry_theatre">剧场</string>
   <string name="pref_camera_scenemode_entry_whiteboard">白板</string>
   <string name="pref_camera_focusmode_entry_continuouspicture">连拍图片</string>
+  <string name="pref_camera_focusmode_entry_extended">广角</string>
   <string name="pref_camera_focusmode_entry_facedetect">人脸识别</string>
   <string name="pref_camera_focusmode_entry_facepriority">人脸优先</string>
+  <string name="pref_camera_focusmode_entry_fixed">固定</string>
   <string name="pref_camera_focusmode_entry_portrait">肖像</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">超焦距</string>
   <string name="pref_camera_coloreffect_entry_washed">冲蚀</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">暖色仿古</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">冷色仿古</string>
+  <string name="pref_camera_coloreffect_entry_point_blue">点蓝色</string>
   <string name="pref_camera_coloreffect_entry_point_green">点绿色</string>
+  <string name="pref_camera_coloreffect_entry_point_red_yellow">点红黄色</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">卡通</string>
   <string name="pref_camera_burst_title">连拍模式</string>
   <string name="pref_camera_burst_entry_off">关闭</string>
@@ -109,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">低速快门</string>
   <string name="pref_camera_slow_shutter_entry_off">关闭</string>
   <string name="pref_camera_slow_shutter_entry_auto">自动</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">0.5 s</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">0.5 秒</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 s</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 s</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 s</string>
@@ -122,5 +128,5 @@
   <string name="camera_menu_effects_label">效果</string>
   <string name="camera_menu_asd_label">智能场景</string>
   <string name="pref_camera_power_shutter_title">电源键快门</string>
-  <string name="pref_superzoom_title">超级变焦</string>
+  <string name="pref_superzoom_title">放大</string>
 </resources>

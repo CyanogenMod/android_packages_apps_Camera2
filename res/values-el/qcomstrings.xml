@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Το μέγεθος στιγμιότυπου βίντεο είναι μικρότερο από το μέγεθος βίντεο, κλείδωμα στο μέγεθος βίντεο. Παρακαλώ επιλέξτε ένα μέγεθος μεγαλύτερο ή ίσο με το τρέχον μέγεθος βίντεο.</string>
   <string name="snapshotsize_low_powermode">Δεν υποστηρίζεται η αλλαγή μεγέθους φωτογραφίας κατά την λειτουργία Χαμηλής ισχύος, θα ληφθεί στιγμιότυπο στο μέγεθος του βίντεο. Παρακαλώ επιλέξτε την λειτουργία Κανονικής ισχύος για να μπορείτε να αλλάξετε το μέγεθος της εικόνας.</string>
   <string name="snapshot_qcif_and_d1">Υποστηρίζεται μόνο στιγμιότυπο στο μέγεθος του βίντεο για αυτή την ανάλυση.</string>
-  <string name="pref_camera_hfr_title">Βίντεο υψηλού ρυθμού καρέ</string>
+  <string name="pref_camera_hfr_title">Αργή κίνηση (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Ανενεργό</string>
   <string name="pref_camera_hfr_entry_2x">60 fps</string>
   <string name="pref_camera_hfr_entry_3x">90 fps</string>

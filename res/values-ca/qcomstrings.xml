@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">La mida de la captura de vídeo és més baixa que la mida del vídeo. Redimensionant a la mida del vídeo. Si us plau selecciona una resolució més gran o igual a la mida del vídeo actual.</string>
   <string name="snapshotsize_low_powermode">No està suportada aquesta resolució de fotografia en el mode d\'estalvi energètic. Es prendrà una captura\nde la mida del vídeo. Si us plau selecciona el mode d\'alt rendiment per aquesta mida de fotografia.</string>
   <string name="snapshot_qcif_and_d1">Només estan suportats les captures en la mida de vídeo per aquesta resolució</string>
-  <string name="pref_camera_hfr_title">Vídeo d\'alt rati de fotogrames, HFR</string>
+  <string name="pref_camera_hfr_title">Càmera lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Desactivat</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

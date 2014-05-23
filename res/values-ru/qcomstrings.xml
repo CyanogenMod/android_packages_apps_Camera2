@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Разрешение фотоснимка меньше, чем разрешение видеосъёмки. Выберите разрешение выше или равное разрешению видеосъёмки.</string>
   <string name="snapshotsize_low_powermode">Изменение разрешения изображения невозможно в режиме пониженного энергопотребления. Переключитесь в режим обычного энергопотребления для использования этой функции.</string>
   <string name="snapshot_qcif_and_d1">Для этого разрешения поддерживается только снимок с текущим разрешением видеосъёмки.</string>
-  <string name="pref_camera_hfr_title">Ускоренная съёмка</string>
+  <string name="pref_camera_hfr_title">Ускоренная съёмка (замедл. движ.)</string>
   <string name="pref_camera_hfr_entry_off">Выкл.</string>
   <string name="pref_camera_hfr_entry_2x">60 кадр/с</string>
   <string name="pref_camera_hfr_entry_3x">90 кадр/с</string>

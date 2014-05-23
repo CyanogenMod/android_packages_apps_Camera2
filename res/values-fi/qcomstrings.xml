@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">Videon pikakuvan koko on pienempi kuin videon koko, Valitse suurempi tai yhtä suuri resloluutio kuin videossa.</string>
   <string name="snapshotsize_low_powermode">Kuvan koon muuttamista ei tueta virransäästötilassa, videon kokoinen kuva otetaan. Valitse normaali virrankulutus-tila muuttaaksesi kuvan kokoa.</string>
   <string name="snapshot_qcif_and_d1">Vain videon kokoista pikakuvaa tuetaan tällä resoluutiolla.</string>
-  <string name="pref_camera_hfr_title">Korkea kehysten määrä sekunnissa videossa (HFR)</string>
+  <string name="pref_camera_hfr_title">Hidastus (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Pois käytöstä</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

@@ -68,7 +68,7 @@
   <string name="snapshot_lower_than_video">La taille de capture vidéo est inférieure à la taille de la vidéo.  Veuillez sélectionner une résolution supérieure ou égale à la taille actuelle de la vidéo.</string>
   <string name="snapshotsize_low_powermode">Changer la taille de l\'image n\'est pas supporté en mode basse consommation, un cliché de la taille de la vidéo va être pris. Merci de sélectionner le mode de consommation standard pour permettre de changer la taille de l\'image.</string>
   <string name="snapshot_qcif_and_d1">Seul un cliché de la taille de la vidéo est pris en charge pour cette résolution.</string>
-  <string name="pref_camera_hfr_title">Vidéo HFR</string>
+  <string name="pref_camera_hfr_title">Vidéo au ralenti (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Désactivé</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>

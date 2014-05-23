@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 Mpx</string>
   <string name="pref_camera_picturesize_entry_18mp">18 Mpx</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mpx</string>
@@ -40,7 +40,7 @@
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">Redukcia rozmazania pohybu</string>
-  <string name="pref_camera_scenemode_entry_aqua">Pod vodou</string>
+  <string name="pref_camera_scenemode_entry_aqua">Voda</string>
   <string name="pref_camera_scenemode_entry_ar">Rozšírená realita</string>
   <string name="pref_camera_scenemode_entry_asd">Najlepší záber</string>
   <string name="pref_camera_scenemode_entry_baby">Dieťa</string>
@@ -93,7 +93,7 @@
   <string name="pref_camera_coloreffect_entry_vintage_cold">Chladné staré</string>
   <string name="pref_camera_coloreffect_entry_point_blue">Bodovo modrá</string>
   <string name="pref_camera_coloreffect_entry_point_green">Bodovo zelená</string>
-  <string name="pref_camera_coloreffect_entry_point_red_yellow">Bodovo červeno-žltá</string>
+  <string name="pref_camera_coloreffect_entry_point_red_yellow">Bodovo červenožltá</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Kreslené</string>
   <string name="pref_camera_burst_title">Sekvenčné snímanie</string>
   <string name="pref_camera_burst_entry_off">Vypnuté</string>
@@ -103,11 +103,11 @@
   <string name="pref_camera_burst_entry_20">20 záberov</string>
   <string name="pref_camera_focustime_title">Trvanie zaostrenia dotykom</string>
   <string name="pref_camera_focustime_summary">Trvanie zaostrenia dotykom</string>
-  <string name="pref_camera_focustime_entry_5">5s</string>
-  <string name="pref_camera_focustime_entry_10">10s</string>
-  <string name="pref_camera_focustime_entry_15">15s</string>
-  <string name="pref_camera_focustime_entry_20">20s</string>
-  <string name="pref_camera_focustime_entry_30">30s</string>
+  <string name="pref_camera_focustime_entry_5">5 sekúnd</string>
+  <string name="pref_camera_focustime_entry_10">10 sekúnd</string>
+  <string name="pref_camera_focustime_entry_15">15 sekúnd</string>
+  <string name="pref_camera_focustime_entry_20">20 sekúnd</string>
+  <string name="pref_camera_focustime_entry_30">30 sekúnd</string>
   <string name="pref_camera_focustime_entry_infinite">Nekonečno</string>
   <string name="pref_camera_flashmode_entry_redeye">Červené oči</string>
   <string name="pref_camera_flashmode_label_redeye">ČERVENÉ OČI</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Pomalá uzávierka</string>
   <string name="pref_camera_slow_shutter_entry_off">Vypnuté</string>
   <string name="pref_camera_slow_shutter_entry_auto">Automaticky</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">1/2 sekundy</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ sekundy</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 sekunda</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 sekundy</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekundy</string>
@@ -128,5 +128,5 @@
   <string name="camera_menu_effects_label">EFEKTY</string>
   <string name="camera_menu_asd_label">INTELIGENTNÁ SCÉNA</string>
   <string name="pref_camera_power_shutter_title">Uzávierka tlačidlom vypnutia</string>
-  <string name="pref_superzoom_title">SuperZoom</string>
+  <string name="pref_superzoom_title">Zväčšenie</string>
 </resources>
