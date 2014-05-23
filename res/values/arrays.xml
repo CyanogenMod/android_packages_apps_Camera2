@@ -598,12 +598,12 @@
     <array name="camcorder_profile_names">
         <item>@string/pref_video_quality_entry_low</item>
         <item>@string/pref_video_quality_entry_high</item>
-        <item>@string/pref_video_quality_entry_qcif</item>
-        <item>@string/pref_video_quality_entry_cif</item>
-        <item>@string/pref_video_quality_entry_480p</item>
-        <item>@string/pref_video_quality_entry_720p</item>
-        <item>@string/pref_video_quality_entry_1080p</item>
-        <item>@string/pref_video_quality_entry_qvga</item>
+        <item>@string/pref_video_quality_entry_qcif_notrans</item>
+        <item>@string/pref_video_quality_entry_cif_notrans</item>
+        <item>@string/pref_video_quality_entry_480p_notrans</item>
+        <item>@string/pref_video_quality_entry_720p_notrans</item>
+        <item>@string/pref_video_quality_entry_1080p_notrans</item>
+        <item>@string/pref_video_quality_entry_qvga_notrans</item>
     </array>
 
 </resources>
