@@ -139,6 +139,8 @@ public class SettingsCache {
                 SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO);
         mKeyMap.put(SettingsManager.KEY_COUNTDOWN_DURATION,
                 SettingsManager.SETTING_COUNTDOWN_DURATION);
+        mKeyMap.put(SettingsManager.KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING,
+                SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING);
     }
 
     /**
@@ -229,6 +231,8 @@ public class SettingsCache {
                 return SettingsManager.getUserSelectedAspectRatioSetting(mContext);
             case SettingsManager.SETTING_COUNTDOWN_DURATION:
                 return SettingsManager.getCountDownDurationSetting(mContext);
+            case SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING:
+                return SettingsManager.getShouldShowSettingsButtonCling(mContext);
             default:
                 return mExtraSettings.settingFromId(id, mContext);
         }

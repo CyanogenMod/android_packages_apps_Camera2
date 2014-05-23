@@ -46,6 +46,7 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AnimationEffects;
+import com.android.camera.widget.SettingsCling;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
 
@@ -134,6 +135,7 @@ public class ModeListView extends FrameLayout
     private float mVelocityX; // Unit: pixel/ms.
     private long mLastDownTime = 0;
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
+    private SettingsCling mSettingsCling = null;
 
     private class CurrentStateManager {
         private ModeListState mCurrentState;
@@ -163,6 +165,7 @@ public class ModeListView extends FrameLayout
          */
         public void onCurrentState() {
             // Do nothing.
+            showSettingsClingIfEnabled(false);
         }
 
         /**
@@ -404,8 +407,9 @@ public class ModeListView extends FrameLayout
 
         @Override
         public void onCurrentState() {
-          announceForAccessibility(
-                  getContext().getResources().getString(R.string.accessibility_mode_list_hidden));
+            super.onCurrentState();
+            announceForAccessibility(
+                    getContext().getResources().getString(R.string.accessibility_mode_list_hidden));
         }
 
     }
@@ -525,8 +529,9 @@ public class ModeListView extends FrameLayout
 
         @Override
         public void onCurrentState() {
-          announceForAccessibility(
-                  getContext().getResources().getString(R.string.accessibility_mode_list_shown));
+            announceForAccessibility(
+                    getContext().getResources().getString(R.string.accessibility_mode_list_shown));
+            showSettingsClingIfEnabled(true);
         }
 
     }
@@ -730,10 +735,6 @@ public class ModeListView extends FrameLayout
         public void hide() {
             cancelAnimation();
             mCurrentStateManager.setCurrentState(new FullyHiddenState());
-        }
-
-        @Override
-        public void onCurrentState() {
         }
 
     }
@@ -1383,6 +1384,9 @@ public class ModeListView extends FrameLayout
             mSettingsButton.setTranslationY(uncoveredPreviewArea.bottom - mSettingsButtonMargin
                     - mSettingsButton.getMeasuredHeight());
         }
+        if (mSettingsCling != null) {
+            mSettingsCling.updatePosition(mSettingsButton);
+        }
     }
 
     @Override
@@ -1397,6 +1401,40 @@ public class ModeListView extends FrameLayout
             currentEffects.drawForeground(canvas);
         } else {
             super.draw(canvas);
+        }
+    }
+
+    /**
+     * Sets whether a cling for settings button should be shown. If not, remove
+     * the cling from view hierarchy if any. If a cling should be shown, inflate
+     * the cling into this view group.
+     *
+     * @param show whether the cling needs to be shown.
+     */
+    public void setShouldShowSettingsCling(boolean show) {
+        if (show) {
+            if (mSettingsCling == null) {
+                inflate(getContext(), R.layout.settings_cling, this);
+                mSettingsCling = (SettingsCling) findViewById(R.id.settings_cling);
+            }
+        } else {
+            if (mSettingsCling != null) {
+                // Remove settings cling from view hierarchy.
+                removeView(mSettingsCling);
+                mSettingsCling = null;
+            }
+        }
+    }
+
+    /**
+     * Show or hide cling for settings button. The cling will only be shown if
+     * settings button has never been clicked. Otherwise, cling will be null,
+     * and will not show even if this method is called to show it.
+     */
+    private void showSettingsClingIfEnabled(boolean show) {
+        if (mSettingsCling != null) {
+            int visibility = show ? VISIBLE : INVISIBLE;
+            mSettingsCling.setVisibility(visibility);
         }
     }
 

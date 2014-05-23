@@ -758,6 +758,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mModeListView.setModeListOpenListener(this);
             mModeListView.setCameraModuleScreenShotProvider(mCameraModuleScreenShotProvider);
             mModeListView.setCaptureLayoutHelper(mCaptureLayoutHelper);
+            boolean shouldShowSettingsCling = mController.getSettingsManager().getBoolean(
+                    SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING);
+            mModeListView.setShouldShowSettingsCling(shouldShowSettingsCling);
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
@@ -1381,6 +1384,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSettingsSelected() {
+        mController.getSettingsManager()
+                .setBoolean(SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING, false);
+        mModeListView.setShouldShowSettingsCling(false);
         mController.onSettingsSelected();
     }
 
