@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class Storage {
     public static final String DCIM =
@@ -122,11 +123,15 @@ public class Storage {
             long date, Location location, int orientation, int jpegLength,
             String path, int width, int height, String mimeType) {
 
+        File file = new File(path);
+        long dateModifiedSeconds = TimeUnit.MILLISECONDS.toSeconds(file.lastModified());
+
         ContentValues values = new ContentValues(11);
         values.put(ImageColumns.TITLE, title);
         values.put(ImageColumns.DISPLAY_NAME, title + JPEG_POSTFIX);
         values.put(ImageColumns.DATE_TAKEN, date);
         values.put(ImageColumns.MIME_TYPE, mimeType);
+        values.put(ImageColumns.DATE_MODIFIED, dateModifiedSeconds);
         // Clockwise rotation in degrees. 0, 90, 180, or 270.
         values.put(ImageColumns.ORIENTATION, orientation);
         values.put(ImageColumns.DATA, path);
