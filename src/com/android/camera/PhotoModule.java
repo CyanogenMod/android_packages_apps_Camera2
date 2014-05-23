@@ -1763,6 +1763,13 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonLongClick() {
+        // Do not take the picture if there is not enough storage.
+        if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
+            Log.i(TAG, "Not enough space or storage not ready. remaining="
+                    + mActivity.getStorageSpaceBytes());
+            return;
+        }
+
         if ((null != mCameraDevice) && ((mCameraState == IDLE) || (mCameraState == FOCUSING))) {
             //Add on/off Menu for longshot
             String longshot_enable = mPreferences.getString(
