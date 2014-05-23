@@ -868,6 +868,14 @@ CHAR LIMIT=NONE] -->
     <!-- Video quality setting entry. Videos will be recorded in quarter VGA quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_qvga">QVGA</string>
 
+    <!--  The strings below will not be translated. We're using them until the above translations are sane. -->
+    <string name="pref_video_quality_entry_qcif_notrans" translatable="false">QCIF</string>
+    <string name="pref_video_quality_entry_cif_notrans" translatable="false">CIF</string>
+    <string name="pref_video_quality_entry_480p_notrans" translatable="false">SD 480p</string>
+    <string name="pref_video_quality_entry_720p_notrans" translatable="false">HD 720p</string>
+    <string name="pref_video_quality_entry_1080p_notrans" translatable="false">HD 1080p</string>
+    <string name="pref_video_quality_entry_qvga_notrans" translatable="false">QVGA</string>
+
     <!-- Message shown in the settings summary for how many megapixels have been selected. [CHAR LIMIT=24]-->
     <string name="setting_summary_x_megapixels">%1$s megapixels</string>
 
