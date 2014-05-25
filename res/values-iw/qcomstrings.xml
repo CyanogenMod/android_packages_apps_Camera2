@@ -23,11 +23,11 @@
 <resources>
   <string name="pref_camera_powermode_title">מצב צריכת חשמל</string>
   <string name="pref_camera_powermode_entry_lp">צריכת חשמל נמוכה</string>
-  <string name="pref_camera_powermode_entry_np">כוח רגיל</string>
+  <string name="pref_camera_powermode_entry_np">צריכה רגילה</string>
   <string name="pref_camera_autoexposure_title">מצב חשיפה אוטומטי</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">מסגרת ממוצעת</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">ממורכז</string>
-  <string name="pref_camera_autoexposure_entry_spotmetering">Spot metering</string>
+  <string name="pref_camera_autoexposure_entry_spotmetering">אזור מדידה</string>
   <string name="pref_camera_videoencoder_title">קידוד וידאו</string>
   <string name="pref_camera_videoencoder_dialogtitle">קידוד וידאו</string>
   <string name="pref_camera_audioencoder_title">קידוד שמע</string>

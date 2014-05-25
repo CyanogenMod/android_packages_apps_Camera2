@@ -49,7 +49,7 @@
   <string name="pref_camera_scenemode_entry_backlightportrait">逆光ポートレート</string>
   <string name="pref_camera_scenemode_entry_barcode">バーコード</string>
   <string name="pref_camera_scenemode_entry_beach">ビーチ</string>
-  <string name="pref_camera_scenemode_entry_beauty">美肌</string>
+  <string name="pref_camera_scenemode_entry_beauty">ビューティー</string>
   <string name="pref_camera_scenemode_entry_candlelight">キャンドルライト</string>
   <string name="pref_camera_scenemode_entry_cine">シネマ</string>
   <string name="pref_camera_scenemode_entry_closeup">クローズアップ</string>
@@ -67,7 +67,7 @@
   <string name="pref_camera_scenemode_entry_mix_illuminant">混光照明</string>
   <string name="pref_camera_scenemode_entry_mood">ムード</string>
   <string name="pref_camera_scenemode_entry_nightportrait">夜のポートレート</string>
-  <string name="pref_camera_scenemode_entry_nightindoor">暗い室内</string>
+  <string name="pref_camera_scenemode_entry_nightindoor">夜の室内</string>
   <string name="pref_camera_scenemode_entry_oldfilm">古いフィルム</string>
   <string name="pref_camera_scenemode_entry_pet">ペット</string>
   <string name="pref_camera_scenemode_entry_portrait">ポートレート</string>
@@ -81,7 +81,7 @@
   <string name="pref_camera_scenemode_entry_text">テキスト</string>
   <string name="pref_camera_scenemode_entry_theatre">劇場</string>
   <string name="pref_camera_scenemode_entry_whiteboard">ホワイトボード</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">連写撮影</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">コンティニュアス</string>
   <string name="pref_camera_focusmode_entry_extended">拡張</string>
   <string name="pref_camera_focusmode_entry_facedetect">顔認識</string>
   <string name="pref_camera_focusmode_entry_facepriority">顔優先</string>
@@ -101,8 +101,8 @@
   <string name="pref_camera_burst_entry_10">10枚</string>
   <string name="pref_camera_burst_entry_15">15枚</string>
   <string name="pref_camera_burst_entry_20">20枚</string>
-  <string name="pref_camera_focustime_title">タッチフォーカスの持続時間</string>
-  <string name="pref_camera_focustime_summary">タッチフォーカスの持続時間を選択</string>
+  <string name="pref_camera_focustime_title">タッチフォーカスの継続時間</string>
+  <string name="pref_camera_focustime_summary">タッチフォーカスの継続時間を選択</string>
   <string name="pref_camera_focustime_entry_5">5秒</string>
   <string name="pref_camera_focustime_entry_10">10秒</string>
   <string name="pref_camera_focustime_entry_15">15秒</string>
@@ -114,7 +114,7 @@
   <string name="pref_camera_beauty_mode_title">ビューティーモード</string>
   <string name="pref_camera_slow_shutter_title">スローシャッター</string>
   <string name="pref_camera_slow_shutter_entry_off">OFF</string>
-  <string name="pref_camera_slow_shutter_entry_auto">自動</string>
+  <string name="pref_camera_slow_shutter_entry_auto">オート</string>
   <string name="pref_camera_slow_shutter_entry_half_second">0.5秒</string>
   <string name="pref_camera_slow_shutter_entry_1s">1秒</string>
   <string name="pref_camera_slow_shutter_entry_2s">2秒</string>
@@ -123,10 +123,10 @@
   <string name="pref_camera_storage_title">ストレージ</string>
   <string name="camera_menu_enhance_label">補正</string>
   <string name="camera_menu_slow_shutter_label">スローシャッター</string>
-  <string name="camera_menu_beauty_mode_label">美肌化</string>
+  <string name="camera_menu_beauty_mode_label">ビューティー化</string>
   <string name="camera_menu_colorize_label">カラー化</string>
   <string name="camera_menu_effects_label">効果</string>
   <string name="camera_menu_asd_label">スマートシーン</string>
-  <string name="pref_camera_power_shutter_title">電源シャッター</string>
+  <string name="pref_camera_power_shutter_title">パワーシャッター</string>
   <string name="pref_superzoom_title">拡大</string>
 </resources>

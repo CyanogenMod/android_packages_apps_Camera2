@@ -64,7 +64,7 @@
   <string name="pref_camera_ae_bracket_hdr_title">オートブラケット</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">ON</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">OFF</string>
-  <string name="err_app_unsupport_ae_bracket_code">オートブラケットはまだサポートされていません</string>
+  <string name="err_app_unsupport_ae_bracket_code">オートブラケットはサポートされていません</string>
   <string name="snapshot_lower_than_video">動画スナップショットのサイズが動画のサイズよりも低く設定されています。今の動画のサイズと同等以上の解像度を選択してください。</string>
   <string name="snapshotsize_low_powermode">低電力モードでは解像度の変更はサポートされていません。動画のサイズのスナップショットが撮影されます。画像のサイズの変更を許可するには通常電力モードを選択してください。</string>
   <string name="snapshot_qcif_and_d1">この解像度では動画のサイズのスナップショットのみがサポートされています。</string>
@@ -147,7 +147,7 @@
   <string name="pref_camera_contrast_title">コントラスト</string>
   <string name="pref_camera_saturation_title">彩度</string>
   <string name="pref_camera_picture_format_title">画像のフォーマット</string>
-  <string name="pref_camera_jpegquality_title">画像の品質</string>
+  <string name="pref_camera_jpegquality_title">画質</string>
   <string name="pref_camera_jpegquality_entry_0">55%</string>
   <string name="pref_camera_jpegquality_entry_1">65%</string>
   <string name="pref_camera_jpegquality_entry_2">75%</string>
