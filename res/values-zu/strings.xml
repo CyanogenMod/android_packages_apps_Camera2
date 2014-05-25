@@ -126,8 +126,8 @@
     <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1.5M amaphikiseli"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1.3M amaphikiseli"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1M amaphikiseli"</string>
-    <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"I-VGA"</string>
-    <string name="pref_camera_picturesize_entry_qvga" msgid="6134562622041084167">"I-QVGA"</string>
+    <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
+    <string name="pref_camera_picturesize_entry_qvga" msgid="6134562622041084167">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"Imodi yefokhasi"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"Okuzenzakalelayo"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3887667853236656322">"Kwaphakade"</string>
