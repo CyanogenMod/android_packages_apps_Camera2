@@ -305,14 +305,9 @@
     <string name="mode_wideangle" msgid="1099640345041696830">"Pembe Pana"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
     <string name="mode_refocus" msgid="172192967119469061">"Kuangazia Shabaha"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Fungua Mipangilio"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Badili hadi Hali ya Kamera"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Badili hadi Kamera ya Video"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Badili hadi Hali ya Photo Sphere"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Badili hadi Hali Mahiri ya Kamera"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Badili hadi Hali Mahiri ya Kamera"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Badili hadi Hali ya Mabadiliko ya Muda"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Badili hadi Hali ya Pembe pana"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Badili hadi Hali ya Panorama"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Badili hadi Hali ya Kuangazia Shabaha"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Fungua mipangilio"</string>
@@ -324,6 +319,9 @@
     <string name="flash_off_desc" msgid="7151559466286106797">"Mmweko umezimwa"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"Mmweko otomatiki"</string>
     <string name="flash_on_desc" msgid="930372145324854699">"Mmweko umewashwa"</string>
+    <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"Mmweko wa HDR+ umezimwa"</string>
+    <string name="hdr_plus_flash_auto_desc" msgid="4812200236263011537">"Mmweko wa HDR+ wa kiotomatiki"</string>
+    <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"Mmweko wa HDR+ umewashwa"</string>
     <string name="torch_on_desc" msgid="3069836196559213365">"Kurunzi imewashwa"</string>
     <string name="torch_off_desc" msgid="8304675202998742618">"Kurunzi imezimwa"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Kamera ya nyuma"</string>
@@ -363,14 +361,20 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"Toleo la muundo"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Chini"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Juu"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD p480"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD p720"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD p1080"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"Megapikseli %1$s"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"Megapikseli (%1$d:%2$d) %3$s"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Ili ulenge tena, gusa hapa"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"Mahiri"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"Mipangilio Ya Kina"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Mwanga wa kujiwekea"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Katika Mipangilio, badilisha ubora, au ujaribu vipengee mahiri."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Chagua ukubwa wa picha"</string>
-    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Unaweza kubadilisha hii baadaye katika Mipangilio."</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Unaweza kubadilisha ukubwa huu baadaye katika Mipangilio."</string>
     <string name="share_to" msgid="5144911209144798122">"Shiriki kwa"</string>
     <string name="edit_with" msgid="615569327230783971">"Badilisha kwa"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"INAYOFUATA"</string>
