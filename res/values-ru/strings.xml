@@ -303,14 +303,9 @@
     <string name="mode_wideangle" msgid="1099640345041696830">"Широкоугольная съемка"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
     <string name="mode_refocus" msgid="172192967119469061">"Размытие"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Открыть настройки."</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Перейти в обычный режим."</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Включить режим видео."</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Включить режим Photo Sphere."</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Включить расширенные возможности."</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Включить расширенные возможности."</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Включить режим замедленной съемки."</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Включить режим широкоэкранной съемки."</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Включить режим панорамы."</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Сделать снимок с размытием"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Открыть настройки."</string>
@@ -361,6 +356,12 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"Версия сборки"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Низкое"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Высокое"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD 480p"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s Мпикс."</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s Мпикс."</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Чтобы сменить фокус, нажмите здесь"</string>
@@ -373,8 +374,6 @@
     <string name="edit_with" msgid="615569327230783971">"Выберите приложение"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ДАЛЕЕ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OК"</string>
-    <!-- no translation found for full_sensor_4x3_aspect_ratio (1270461419743888925) -->
-    <skip />
-    <!-- no translation found for cropped_sensor_16x9_aspect_ratio (4742161537633251795) -->
-    <skip />
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Полный размер\n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Кадрирование\n(16:9)"</string>
 </resources>

@@ -303,14 +303,9 @@
     <string name="mode_wideangle" msgid="1099640345041696830">"廣角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"全景相片"</string>
     <string name="mode_refocus" msgid="172192967119469061">"鏡頭模糊"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"開啟設定"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"切換至相機模式"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"切換至攝影機"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"切換至全景相片模式"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"切換至進階相機模式"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"切換至進階相機模式"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"切換至延時攝影模式"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"切換至廣角模式"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"切換至全景模式"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"切換至鏡頭模糊模式"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"開啟設定"</string>
@@ -361,6 +356,12 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"型號版本"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"低"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"高"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"標清畫質 (480p)"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"高清畫質 (720p)"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"高清畫質 (1080p)"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s 百萬像素"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s 百萬像素"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"如要重新對焦，請輕觸這裡"</string>
@@ -373,8 +374,6 @@
     <string name="edit_with" msgid="615569327230783971">"使用以下選擇器編輯："</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"下一頁"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"好，我明白了"</string>
-    <!-- no translation found for full_sensor_4x3_aspect_ratio (1270461419743888925) -->
-    <skip />
-    <!-- no translation found for cropped_sensor_16x9_aspect_ratio (4742161537633251795) -->
-    <skip />
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"原尺寸感應器 \n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"已裁剪感應器 \n(16:9)"</string>
 </resources>

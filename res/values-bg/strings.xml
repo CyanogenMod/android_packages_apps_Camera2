@@ -303,14 +303,9 @@
     <string name="mode_wideangle" msgid="1099640345041696830">"Широкоъгълен"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
     <string name="mode_refocus" msgid="172192967119469061">"Замъгляване на обектива"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Отваряне на настройките"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Превключване към режима за фотоапарат"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Превключване към видеокамерата"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Превключване към режима Photo Sphere"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Превключване към разширения режим за фотоапарат"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Превключване към разширения режим за фотоапарат"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Превключване към режима за цайтрафер"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Превключване към широкоъгълния режим"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Превключване към панорамния режим"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Превключване към режим „Замъгляване на обектива“"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Отваряне на настройките"</string>
@@ -361,6 +356,12 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"Версия"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Ниско"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Високо"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD при 480p"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD при 720p"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD при 1080p"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s мегапиксела"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s мегапиксела"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Докоснете тук за повторно фокусиране"</string>
@@ -373,8 +374,6 @@
     <string name="edit_with" msgid="615569327230783971">"Редактиране със:"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"НАПРЕД"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ДОБРЕ, РАЗБРАХ"</string>
-    <!-- no translation found for full_sensor_4x3_aspect_ratio (1270461419743888925) -->
-    <skip />
-    <!-- no translation found for cropped_sensor_16x9_aspect_ratio (4742161537633251795) -->
-    <skip />
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Без подрязване \n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"С подрязване \n(16:9)"</string>
 </resources>

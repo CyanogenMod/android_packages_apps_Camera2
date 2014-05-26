@@ -298,19 +298,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"Postavke"</string>
     <string name="mode_camera" msgid="279763925715250603">"Fotoaparat"</string>
     <string name="mode_video" msgid="8633929034048169139">"Videozapis"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Fotosfera"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Protek vremena"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokokutno"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
     <string name="mode_refocus" msgid="172192967119469061">"Efekt s izoštrenim objektom"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Otvaranje postavki"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Prelazak na način fotoaparata"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Prelazak na videokameru"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prelazak na način Photo Sphere"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Prelazak na napredni način fotoaparata"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Prelazak na napredni način fotoaparata"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Prelazak na način protoka vremena"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Prelazak na širokokutni način"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prelazak na način fotosfere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Prelazak na panoramski način"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Prijeđite na efekt s izoštrenim objektom"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Otvaranje postavki"</string>
@@ -347,9 +342,9 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Kompenzacija ekspozicije +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Gumb se promijenio u %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Lokacija"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotograf. stražnje kamere"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografija stražnje kamere"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Video stražnje kamere"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotograf. prednje kamere"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografija prednje kamere"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video prednje kamere"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Zadani fotoaparat"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"Slanje povr. informacija"</string>
@@ -361,6 +356,12 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"Trenutačna međuverzija"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Niska"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Visoka"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD 480 p"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720 p"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080 p"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapiksela"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s MP"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Za refokusiranje dodirnite ovdje"</string>

@@ -280,8 +280,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funkcia časozberného videa je vypnutá. Zapnite ju a a nastavte časový interval."</string>
     <string name="set_duration" msgid="1638453882581604341">"Nastavte dobu trvania v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítavanie spúšte fotoaparátu"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Zapamätať si, kde boli fotky vytvorené?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridajte k fotkám a videám polohy, kde boli zaznamenané.\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Pamätať si, kde boli fotky vytvorené?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridávať k fotkám a videám označenia miest, kde boli zaznamenané\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, nemám záujem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Áno"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ĎALŠIE MOŽNOSTI"</string>
@@ -303,14 +303,9 @@
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoráma"</string>
     <string name="mode_refocus" msgid="172192967119469061">"Efekt zaostrenia"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"Otvoriť nastavenia"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Prepnutie na režim fotoaparátu"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Prepnúť na režim videokamery"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prepnúť do režimu Photo Sphere"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"Prepnúť na rozšírený režim fotoaparátu"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Prepnúť na rozšírený režim fotoaparátu"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"Prepnúť na režim časozberného snímania"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"Prepnúť na širokouhlý režim"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Prepnúť na panoramatický režim"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Prepnúť do režimu efektu zaostrenia"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Otvoriť nastavenia"</string>
@@ -361,6 +356,12 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"Verzia zostavy"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Nízka"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Vysoká"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD 480p"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1 080p"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s MPx"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s Mpx"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Klepnutím tu môžete obrázky znova zaostriť"</string>
@@ -368,13 +369,11 @@
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ručná expozícia"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"V sekcii Nastavenia zmeňte rozlíšenie a kvalitu alebo skúste použiť pokročilé funkcie."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Výber veľkosti fotky"</string>
-    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Pomer strán môžete neskôr zmeniť v sekcii Nastavenia."</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Pomer strán môžete neskôr zmeniť v Nastaveniach."</string>
     <string name="share_to" msgid="5144911209144798122">"Zdieľať na stránkach"</string>
     <string name="edit_with" msgid="615569327230783971">"Upraviť pomocou"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ĎALEJ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, ROZUMIEM"</string>
-    <!-- no translation found for full_sensor_4x3_aspect_ratio (1270461419743888925) -->
-    <skip />
-    <!-- no translation found for cropped_sensor_16x9_aspect_ratio (4742161537633251795) -->
-    <skip />
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Úplný obraz \n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Orezaný obraz \n(16:9)"</string>
 </resources>
