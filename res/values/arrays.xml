@@ -562,7 +562,7 @@
         <item>@string/mode_refocus</item>
         <item>@string/mode_photosphere</item>
         <item>@string/mode_panorama</item>
-        <item>@string/mode_timelapse</item>
+        <item>""</item>
         <item>""</item>
     </string-array>
 
@@ -572,7 +572,7 @@
         <item>@string/mode_refocus_desc</item>
         <item>@string/mode_photosphere_desc</item>
         <item>@string/mode_panorama_desc</item>
-        <item>@string/mode_timelapse_desc</item>
+        <item>""</item>
         <item>""</item>
     </string-array>
 
