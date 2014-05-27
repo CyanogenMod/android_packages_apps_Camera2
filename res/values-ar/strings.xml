@@ -357,7 +357,7 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"منخفضة"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"مرتفعة"</string>
     <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"ربع التنسيق المتوسط الشائع"</string>
-    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"التنسيق المتوسط الشائع"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
     <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"دقة قياسية 480 بكسل"</string>
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"دقة عالية 720 بكسل"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"دقة عالية 1080 بكسل"</string>
