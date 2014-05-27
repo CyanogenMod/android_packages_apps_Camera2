@@ -44,8 +44,8 @@
                 android:id="@+id/graph_view"
                 android:layout_width="200dip"
                 android:layout_height="200dip"
-                android:layout_marginTop="15dip"
-                android:layout_marginLeft="75dip" />
+                android:layout_marginTop="60dip"
+                android:layout_marginLeft="90dip" />
             <TableLayout
                 android:id="@+id/relative_seek"
                 android:layout_width="match_parent"
