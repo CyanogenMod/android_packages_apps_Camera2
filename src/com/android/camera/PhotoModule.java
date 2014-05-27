@@ -2341,9 +2341,11 @@ public class PhotoModule
 
         void loadSounds() {
             // Load the beeps.
-            mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
-            mBeepOnce = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_once, 1);
-            mBeepTwice = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_twice, 1);
+            if (mSoundPool == null) {
+                mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
+                mBeepOnce = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_once, 1);
+                mBeepTwice = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_twice, 1);
+            }
         }
 
         void onRemainingSecondsChanged(int newVal) {
@@ -2359,8 +2361,10 @@ public class PhotoModule
         }
 
         void release() {
-            mSoundPool.release();
-            mSoundPool = null;
+            if (mSoundPool != null) {
+                mSoundPool.release();
+                mSoundPool = null;
+            }
         }
     }
 }
