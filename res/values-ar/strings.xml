@@ -303,14 +303,9 @@
     <string name="mode_wideangle" msgid="1099640345041696830">"زاوية واسعة"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"بانوراما"</string>
     <string name="mode_refocus" msgid="172192967119469061">"تركيز العدسة"</string>
-    <string name="mode_settings_desc" msgid="1189966170303887131">"فتح الإعدادات"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"التبديل إلى وضع الكاميرا"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"التبديل إلى كاميرا الفيديو"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"التبديل إلى وضع بانوراما 360 درجة"</string>
-    <string name="mode_craft_desc" msgid="8411543408424448562">"التبديل إلى وضع الكاميرا المتقدم"</string>
-    <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"التبديل إلى وضع الكاميرا المتقدم"</string>
-    <string name="mode_timelapse_desc" msgid="6713275294166788276">"التبديل إلى وضع لقطات متتابعة"</string>
-    <string name="mode_wideangle_desc" msgid="5924237384871288501">"التبديل إلى وضع زاوية عريضة"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"التبديل إلى الوضع بانوراما"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"التبديل إلى وضع تركيز العدسة"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"فتح الإعدادات"</string>
@@ -322,6 +317,9 @@
     <string name="flash_off_desc" msgid="7151559466286106797">"إيقاف الفلاش"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"فلاش تلقائي"</string>
     <string name="flash_on_desc" msgid="930372145324854699">"تشغيل الفلاش"</string>
+    <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"إيقاف الفلاش للنطاق عالي الديناميكية+"</string>
+    <string name="hdr_plus_flash_auto_desc" msgid="4812200236263011537">"فلاش تلقائي للنطاق عالي الديناميكية+"</string>
+    <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"تشغيل الفلاش للنطاق عالي الديناميكية+"</string>
     <string name="torch_on_desc" msgid="3069836196559213365">"تشغيل الكشاف"</string>
     <string name="torch_off_desc" msgid="8304675202998742618">"إيقاف الكشاف"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"الكاميرا الخلفية"</string>
@@ -361,6 +359,12 @@
     <string name="pref_title_build_version" msgid="481489988124832651">"نسخة الإصدار"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"منخفضة"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"مرتفعة"</string>
+    <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"ربع التنسيق المتوسط الشائع"</string>
+    <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"التنسيق المتوسط الشائع"</string>
+    <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"دقة قياسية 480 بكسل"</string>
+    <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"دقة عالية 720 بكسل"</string>
+    <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"دقة عالية 1080 بكسل"</string>
+    <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"‏%1$s ميغابكسل"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"‏%1$d:%2$d ،%3$s ميغابكسل"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"لإعادة التركيز، المس هنا"</string>
@@ -372,7 +376,7 @@
     <string name="share_to" msgid="5144911209144798122">"مشاركة مع"</string>
     <string name="edit_with" msgid="615569327230783971">"تعديل باستخدام"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"التالي"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"حسنًا، استوعبت الأمر"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"حسنًا، موافق"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"استشعار إطار كامل \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"استشعار اقتصاص \n(16:9)"</string>
 </resources>
