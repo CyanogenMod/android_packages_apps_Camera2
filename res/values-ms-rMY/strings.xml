@@ -317,9 +317,9 @@
     <string name="flash_off_desc" msgid="7151559466286106797">"Denyar dimatikan"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"Denyar auto"</string>
     <string name="flash_on_desc" msgid="930372145324854699">"Denyar dihidupkan"</string>
-    <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"HDR + denyar dimatikan"</string>
+    <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"HDR+ denyar dimatikan"</string>
     <string name="hdr_plus_flash_auto_desc" msgid="4812200236263011537">"HDR+ auto denyar"</string>
-    <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"HDR + denyar dihidupkan"</string>
+    <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"HDR+ denyar dihidupkan"</string>
     <string name="torch_on_desc" msgid="3069836196559213365">"Lampu suluh dihidupkan"</string>
     <string name="torch_off_desc" msgid="8304675202998742618">"Lampu suluh dimatikan"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"Kamera belakang"</string>
