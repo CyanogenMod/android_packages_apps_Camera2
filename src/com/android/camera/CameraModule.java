@@ -97,4 +97,9 @@ public abstract class CameraModule implements ModuleController {
             mCameraProvider.releaseCamera(backCameraId);
         }
     }
+
+    /**
+     * @return An accessibility String to be announced during the peek animation.
+     */
+    public abstract String getPeekAccessibilityString();
 }
