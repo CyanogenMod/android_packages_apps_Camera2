@@ -548,6 +548,7 @@ public class PhotoModule
         mFocusManager.onPreviewStarted();
         startFaceDetection();
         locationFirstRun();
+        mUI.enableShutter(true);
     }
 
     // Prompt the user to pick to record location for the very first run of
