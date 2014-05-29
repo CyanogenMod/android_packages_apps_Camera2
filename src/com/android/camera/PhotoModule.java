@@ -532,6 +532,7 @@ public class PhotoModule
         setCameraState(IDLE);
         startFaceDetection();
         locationFirstRun();
+        mUI.enableShutter(true);
     }
 
     // Prompt the user to pick to record location for the very first run of
