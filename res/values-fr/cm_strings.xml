@@ -46,7 +46,7 @@
   <string name="pref_camera_scenemode_entry_baby">Bébé</string>
   <string name="pref_camera_scenemode_entry_backgroundblur">Arrière-plan flou</string>
   <string name="pref_camera_scenemode_entry_backlight">Contre-jour</string>
-  <string name="pref_camera_scenemode_entry_backlightportrait">Contre-jour portrait</string>
+  <string name="pref_camera_scenemode_entry_backlightportrait">Portrait contre-jour</string>
   <string name="pref_camera_scenemode_entry_barcode">Code barres</string>
   <string name="pref_camera_scenemode_entry_beach">Plage</string>
   <string name="pref_camera_scenemode_entry_beauty">Beauté</string>

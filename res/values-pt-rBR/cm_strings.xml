@@ -95,7 +95,7 @@
   <string name="pref_camera_coloreffect_entry_point_green">Ponto verde</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Ponto vermelho-amarelo</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Cartoon</string>
-  <string name="pref_camera_burst_title">Disparado rápido</string>
+  <string name="pref_camera_burst_title">Disparo rápido</string>
   <string name="pref_camera_burst_entry_off">Desligado</string>
   <string name="pref_camera_burst_entry_5">5 disparos</string>
   <string name="pref_camera_burst_entry_10">10 disparos</string>
@@ -115,7 +115,7 @@
   <string name="pref_camera_slow_shutter_title">Disparador devagar</string>
   <string name="pref_camera_slow_shutter_entry_off">Desligado</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
-  <string name="pref_camera_slow_shutter_entry_half_second">&#189; segundo</string>
+  <string name="pref_camera_slow_shutter_entry_half_second">½ segundo</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 segundo</string>
   <string name="pref_camera_slow_shutter_entry_2s">2 segundos</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 segundos</string>

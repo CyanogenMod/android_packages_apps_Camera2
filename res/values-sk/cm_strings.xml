@@ -87,7 +87,7 @@
   <string name="pref_camera_focusmode_entry_facepriority">Priorita tváre</string>
   <string name="pref_camera_focusmode_entry_fixed">Pevné</string>
   <string name="pref_camera_focusmode_entry_portrait">Portrét</string>
-  <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
+  <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfokálne</string>
   <string name="pref_camera_coloreffect_entry_washed">Degradácia</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Teplé staré</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Chladné staré</string>
@@ -102,7 +102,7 @@
   <string name="pref_camera_burst_entry_15">15 záberov</string>
   <string name="pref_camera_burst_entry_20">20 záberov</string>
   <string name="pref_camera_focustime_title">Trvanie zaostrenia dotykom</string>
-  <string name="pref_camera_focustime_summary">Trvanie zaostrenia dotykom</string>
+  <string name="pref_camera_focustime_summary">Vyberte trvanie zaostrenia dotykom</string>
   <string name="pref_camera_focustime_entry_5">5 sekúnd</string>
   <string name="pref_camera_focustime_entry_10">10 sekúnd</string>
   <string name="pref_camera_focustime_entry_15">15 sekúnd</string>

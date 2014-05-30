@@ -60,7 +60,7 @@
   <string name="pref_camera_scenemode_entry_fallcolor">Efterårsfarve</string>
   <string name="pref_camera_scenemode_entry_fireworks">Fyrværkeri</string>
   <string name="pref_camera_scenemode_entry_flowers">Blomster</string>
-  <string name="pref_camera_scenemode_entry_handheldtwilight">Handheld twilight</string>
+  <string name="pref_camera_scenemode_entry_handheldtwilight">Håndholdt tusmørke</string>
   <string name="pref_camera_scenemode_entry_highsensitivity">Høj følsomhed</string>
   <string name="pref_camera_scenemode_entry_indoor">Indendørs</string>
   <string name="pref_camera_scenemode_entry_landscape">Landskab</string>
@@ -94,7 +94,7 @@
   <string name="pref_camera_coloreffect_entry_point_blue">Blå punkter</string>
   <string name="pref_camera_coloreffect_entry_point_green">Grønne punkter</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Rød-gule punkter</string>
-  <string name="pref_camera_coloreffect_entry_cartoonize">Cartoonize</string>
+  <string name="pref_camera_coloreffect_entry_cartoonize">Tegneserie</string>
   <string name="pref_camera_burst_title">Burst-tilstand</string>
   <string name="pref_camera_burst_entry_off">Fra</string>
   <string name="pref_camera_burst_entry_5">5 skud</string>
