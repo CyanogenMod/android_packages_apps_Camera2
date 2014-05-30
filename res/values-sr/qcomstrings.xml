@@ -21,9 +21,9 @@
     limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_powermode_title">Power режим</string>
-  <string name="pref_camera_powermode_entry_lp">Ниска снага</string>
-  <string name="pref_camera_powermode_entry_np">Нормална снага</string>
+  <string name="pref_camera_powermode_title">Режим напајања</string>
+  <string name="pref_camera_powermode_entry_lp">Ниско напајање</string>
+  <string name="pref_camera_powermode_entry_np">Нормално напајање</string>
   <string name="pref_camera_autoexposure_title">Режим аутоматске експозиције</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">Просек оквира</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">Притиснут центар</string>
@@ -58,13 +58,13 @@
   <string name="error_app_unsupported_hfr">HFR није подржан за изабрану резолуцију</string>
   <string name="error_app_unsupported_hfr_codec">Само H.264 видео кодирање је подржано када је HFR укључен</string>
   <string name="error_app_unsupported">Неподржана видео резолуција за овај тип кодека</string>
-  <string name="error_app_unsupported_raw">Raw формат слике није подржан у ZSL режиму</string>
+  <string name="error_app_unsupported_raw">Редни формат слике није подржан у ZSL режиму</string>
   <string name="error_app_unsupported_hdr_zsl">HDR није подржан у ZSL режиму</string>
   <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-држач</string>
   <string name="pref_camera_ae_bracket_hdr_title">Држање аутоматске експозитуре</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Укључено</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Искључено</string>
-  <string name="err_app_unsupport_ae_bracket_code">Држање аутоекспозитуре још увек није подржано </string>
+  <string name="err_app_unsupport_ae_bracket_code">Држање аутоматске експозитуре још увек није подржано </string>
   <string name="snapshot_lower_than_video">Величина snapshot-а је мања од величине видеа, затварања у видео величини. Изаберите резолуцију већу или једнаку тренутној видео величини.</string>
   <string name="snapshotsize_low_powermode">Промена величине слике није подржана у режиму уштеде енергије, величина snapshot-а биће преузета. Молимо изаберите Нормални режим да дозволите промену величине слике.</string>
   <string name="snapshot_qcif_and_d1">Само величине snapshot-а је подржана за ову резолуцију.</string>
@@ -90,7 +90,7 @@
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>
   <string name="pref_camera_antibanding_entry_3">Аутоматски</string>
   <string name="pref_camera_coloreffect_title">Ефекат боја</string>
-  <string name="pref_camera_coloreffect_entry_none">Без ефекта</string>
+  <string name="pref_camera_coloreffect_entry_none">Ниједан</string>
   <string name="pref_camera_coloreffect_entry_mono">Моно</string>
   <string name="pref_camera_coloreffect_entry_sepia">Сепија</string>
   <string name="pref_camera_coloreffect_entry_negative">Негатив</string>
@@ -105,7 +105,7 @@
   <string name="pref_camera_coloreffect_entry_redtint">Црвена нијанса</string>
   <string name="pref_camera_coloreffect_entry_bluetint">Плава нијанса</string>
   <string name="pref_camera_coloreffect_entry_greentint">Зелена нијанса</string>
-  <string name="pref_camera_touchafaec_title">Додир AF/AEC</string>
+  <string name="pref_camera_touchafaec_title">Додирни AF/AEC</string>
   <string name="pref_camera_touchafaec_entry_off">Искључено</string>
   <string name="pref_camera_touchafaec_entry_on">Укључено</string>
   <string name="pref_camera_dis_title">Дигитална стабилизација слике</string>
@@ -116,7 +116,7 @@
   <string name="pref_camera_facerc_entry_on">Укључено</string>
   <string name="pref_camera_sharpness_entry_level0">Ниво 1</string>
   <string name="pref_camera_sharpness_entry_level1">Ниво 1</string>
-  <string name="pref_camera_sharpness_entry_level2">Ниво 2 (подразумевано)</string>
+  <string name="pref_camera_sharpness_entry_level2">Ниво 2 (Подразумевано)</string>
   <string name="pref_camera_sharpness_entry_level3">Ниво 3</string>
   <string name="pref_camera_sharpness_entry_level4">Ниво 4</string>
   <string name="pref_camera_sharpness_entry_level5">Ниво 5</string>
@@ -126,7 +126,7 @@
   <string name="pref_camera_contrast_entry_level2">Ниво 2</string>
   <string name="pref_camera_contrast_entry_level3">Ниво 3</string>
   <string name="pref_camera_contrast_entry_level4">Ниво 4</string>
-  <string name="pref_camera_contrast_entry_level5">Ниво 5 (подразумевано)</string>
+  <string name="pref_camera_contrast_entry_level5">Ниво 5 (Подразумевано)</string>
   <string name="pref_camera_contrast_entry_level6">Ниво 6</string>
   <string name="pref_camera_contrast_entry_level7">Ниво 7</string>
   <string name="pref_camera_contrast_entry_level8">Ниво 8</string>
@@ -137,7 +137,7 @@
   <string name="pref_camera_saturation_entry_level2">Ниво 2</string>
   <string name="pref_camera_saturation_entry_level3">Ниво 3</string>
   <string name="pref_camera_saturation_entry_level4">Ниво 4</string>
-  <string name="pref_camera_saturation_entry_level5">Ниво 5 (подразумевано)</string>
+  <string name="pref_camera_saturation_entry_level5">Ниво 5 (Подразумевано)</string>
   <string name="pref_camera_saturation_entry_level6">Ниво 6</string>
   <string name="pref_camera_saturation_entry_level7">Ниво 7</string>
   <string name="pref_camera_saturation_entry_level8">Ниво 8</string>

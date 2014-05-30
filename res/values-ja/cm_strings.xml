@@ -101,8 +101,8 @@
   <string name="pref_camera_burst_entry_10">10枚</string>
   <string name="pref_camera_burst_entry_15">15枚</string>
   <string name="pref_camera_burst_entry_20">20枚</string>
-  <string name="pref_camera_focustime_title">タッチフォーカスの継続時間</string>
-  <string name="pref_camera_focustime_summary">タッチフォーカスの継続時間を選択</string>
+  <string name="pref_camera_focustime_title">タッチフォーカス継続時間</string>
+  <string name="pref_camera_focustime_summary">タッチフォーカス継続時間を選択</string>
   <string name="pref_camera_focustime_entry_5">5秒</string>
   <string name="pref_camera_focustime_entry_10">10秒</string>
   <string name="pref_camera_focustime_entry_15">15秒</string>
