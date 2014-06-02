@@ -693,22 +693,22 @@ class AndroidCameraManagerImpl implements CameraManager {
          * @param jobMsg The message to log when the job runs timeout.
          * @return Whether the job finishes before timeout.
          */
-        public boolean runJobSync(final Runnable job, Object waitLock, long timeoutMs, String jobMsg) {
+        public void runJobSync(final Runnable job, Object waitLock, long timeoutMs, String jobMsg) {
+            String timeoutMsg = "Timeout waiting " + timeoutMs + "ms for " + jobMsg;
             synchronized (waitLock) {
                 long timeoutBound = SystemClock.uptimeMillis() + timeoutMs;
                 try {
                     runJob(job);
-                    waitLock.wait();
-                } catch (InterruptedException ex) {
-                    Log.w(TAG, "Job interrupted");
+                    waitLock.wait(timeoutMs);
                     if (SystemClock.uptimeMillis() > timeoutBound) {
-                        // Timeout.
-                        Log.w(TAG, "Timeout waiting camera operation:" + jobMsg);
+                        throw new IllegalStateException(timeoutMsg);
                     }
-                    return false;
+                } catch (InterruptedException ex) {
+                    if (SystemClock.uptimeMillis() > timeoutBound) {
+                        throw new IllegalStateException(timeoutMsg);
+                    }
                 }
             }
-            return true;
         }
 
         /**
