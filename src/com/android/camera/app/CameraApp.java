@@ -18,10 +18,12 @@ package com.android.camera.app;
 
 import android.app.Application;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 
 import com.android.camera.MediaSaverImpl;
 import com.android.camera.debug.LogHelper;
+import com.android.camera.app.MotionManager;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
@@ -45,6 +47,7 @@ public class CameraApp extends Application implements CameraServices {
     private MemoryManagerImpl mMemoryManager;
     private PlaceholderManager mPlaceHolderManager;
     private RemoteShutterListener mRemoteShutterListener;
+    private MotionManager mMotionManager;
 
     @Override
     public void onCreate() {
@@ -70,6 +73,8 @@ public class CameraApp extends Application implements CameraServices {
         mRemoteShutterListener = RemoteShutterHelper.create(this);
 
         clearNotifications();
+
+        mMotionManager = new MotionManager(context);
     }
 
     @Override
@@ -80,6 +85,11 @@ public class CameraApp extends Application implements CameraServices {
     @Override
     public MemoryManager getMemoryManager() {
         return mMemoryManager;
+    }
+
+    @Override
+    public MotionManager getMotionManager() {
+        return mMotionManager;
     }
 
     @Override

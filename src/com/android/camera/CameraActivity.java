@@ -78,6 +78,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryQuery;
 import com.android.camera.app.ModuleManagerImpl;
+import com.android.camera.app.MotionManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.cameradevice.CameraManager;
@@ -252,6 +253,7 @@ public class CameraActivity extends Activity
         }
     };
     private MemoryManager mMemoryManager;
+    private MotionManager mMotionManager;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -1383,6 +1385,7 @@ public class CameraActivity extends Activity
                         MemoryQuery.REPORT_LABEL_LAUNCH);
             }
         });
+        mMotionManager = getServices().getMotionManager();
     }
 
     /**
@@ -1526,6 +1529,8 @@ public class CameraActivity extends Activity
         mPreloader.cancelAllLoads();
         resetScreenOn();
 
+        mMotionManager.stop();
+
         UsageStatistics.instance().backgrounded();
 
         super.onPause();
@@ -1667,6 +1672,8 @@ public class CameraActivity extends Activity
 
         final int previewVisibility = getPreviewVisibility();
         updatePreviewRendering(previewVisibility);
+
+        mMotionManager.start();
     }
 
     private void fillTemporarySessions() {
