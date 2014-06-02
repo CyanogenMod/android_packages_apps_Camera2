@@ -306,7 +306,7 @@
     <string name="mode_camera_desc" msgid="3670807361165657278">"Canvia al mode de càmera"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Canvia a càmera de vídeo"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Canvia al mode Photo Sphere"</string>
-    <string name="mode_panorama_desc" msgid="6023020404237519590">"Canvia al mode de panorama"</string>
+    <string name="mode_panorama_desc" msgid="6023020404237519590">"Canvia al mode Panoràmica"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Canvia al mode Efecte d\'enfocament"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Obre la configuració"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Tanca la configuració"</string>
