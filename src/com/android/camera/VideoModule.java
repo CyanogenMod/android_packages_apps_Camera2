@@ -1369,7 +1369,6 @@ public class VideoModule implements CameraModule,
         }
         mMediaRecorder = new MediaRecorder();
 
-        setupMediaRecorderPreviewDisplay();
         // Unlock the camera object before passing it to media recorder.
         mCameraDevice.unlock();
         mMediaRecorder.setCamera(mCameraDevice.getCamera());
@@ -1387,6 +1386,7 @@ public class VideoModule implements CameraModule,
         mProfile.duration = mMaxVideoDurationInMs;
 
         mMediaRecorder.setProfile(mProfile);
+        mMediaRecorder.setVideoSize(mProfile.videoFrameWidth, mProfile.videoFrameHeight);
         mMediaRecorder.setMaxDuration(mMaxVideoDurationInMs);
         if (mCaptureTimeLapse) {
             double fps = 1000 / (double) mTimeBetweenTimeLapseFrameCaptureMs;
@@ -1435,6 +1435,7 @@ public class VideoModule implements CameraModule,
             }
         }
         mMediaRecorder.setOrientationHint(rotation);
+        setupMediaRecorderPreviewDisplay();
 
         try {
             mMediaRecorder.prepare();
@@ -2061,6 +2062,7 @@ public class VideoModule implements CameraModule,
     private void setCameraParameters() {
         Log.d(TAG,"Preview dimension in App->"+mDesiredPreviewWidth+"X"+mDesiredPreviewHeight);
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
+        mParameters.set("video-size", mProfile.videoFrameWidth+"x"+mProfile.videoFrameHeight);
         int[] fpsRange = CameraUtil.getMaxPreviewFpsRange(mParameters);
         if (fpsRange.length > 0) {
             mParameters.setPreviewFpsRange(
@@ -2158,7 +2160,17 @@ public class VideoModule implements CameraModule,
 
         CameraUtil.dumpParameters(mParameters);
 
+        boolean flag = false;
+        if (mPreviewing) {
+            stopPreview();
+            flag = true;
+        }
+
         mCameraDevice.setParameters(mParameters);
+
+        if (flag) {
+            startPreview();
+        }
 
         // Keep preview size up to date.
         mParameters = mCameraDevice.getParameters();

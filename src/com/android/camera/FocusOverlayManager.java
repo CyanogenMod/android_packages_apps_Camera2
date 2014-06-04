@@ -88,7 +88,6 @@ public class FocusOverlayManager {
     private Handler mHandler;
     Listener mListener;
     private boolean mPreviousMoving;
-    private boolean mFocusDefault;
     private boolean mZslEnabled = false;  //QCom Parameter to disable focus for ZSL
     private boolean mIsAFRunning = false;
 
@@ -144,7 +143,6 @@ public class FocusOverlayManager {
         setParameters(parameters);
         mListener = listener;
         setMirror(mirror);
-        mFocusDefault = true;
         mUI = ui;
     }
 
@@ -299,7 +297,7 @@ public class FocusOverlayManager {
             updateFocusUI();
             // If this is triggered by touch focus, cancel focus after a
             // while.
-            if ((!mFocusDefault) && (mFocusTime != 0)) {
+            if ((mFocusArea != null) && (mFocusTime != 0)) {
                 mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, mFocusTime);
             }
             if (shutterButtonPressed) {
@@ -376,12 +374,12 @@ public class FocusOverlayManager {
                 UsageStatistics.ACTION_TOUCH_FOCUS, x + "," + y);
 
         // Let users be able to cancel previous touch focus.
-        if ((!mFocusDefault) && (mState == STATE_FOCUSING ||
+        if ((mFocusArea != null) && (mState == STATE_FOCUSING ||
                     mState == STATE_SUCCESS || mState == STATE_FAIL)) {
             cancelAutoFocus();
         }
         if (mPreviewRect.width() == 0 || mPreviewRect.height() == 0) return;
-        mFocusDefault = false;
+        // Initialize variables.
         // Initialize mFocusArea.
         if (mFocusAreaSupported) {
             initializeFocusAreas(x, y);
@@ -462,7 +460,7 @@ public class FocusOverlayManager {
         if (mParameters == null) return Parameters.FOCUS_MODE_AUTO;
         List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
 
-        if (mFocusAreaSupported && !mFocusDefault
+        if (mFocusAreaSupported && mFocusArea != null
                  && !CameraUtil.noFocusModeChangeForTouch()) {
             // Always use autofocus in tap-to-focus.
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
@@ -508,7 +506,7 @@ public class FocusOverlayManager {
         // Show only focus indicator or face indicator.
 
         if (mState == STATE_IDLE) {
-            if (mFocusDefault) {
+            if (mFocusArea == null) {
                 mUI.clearFocus();
             } else {
                 // Users touch on the preview and the indicator represents the
@@ -531,7 +529,7 @@ public class FocusOverlayManager {
     }
 
     public void restartTouchFocusTimer() {
-        if (mZslEnabled && (!mFocusDefault) && (mFocusTime != 0)) {
+        if (mZslEnabled && (mFocusArea != null) && (mFocusTime != 0)) {
             mHandler.removeMessages(RESET_TOUCH_FOCUS);
             mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, mFocusTime);
         } else {
@@ -548,15 +546,6 @@ public class FocusOverlayManager {
         mFocusArea = null;
         // Initialize mMeteringArea.
         mMeteringArea = null;
-
-        if (mFocusAreaSupported) {
-            initializeFocusAreas(mPreviewRect.centerX(), mPreviewRect.centerY());
-        }
-        // Reset metering area when no specific region is selected.
-        if (mMeteringAreaSupported) {
-            resetMeteringAreas();
-        }
-        mFocusDefault = true;
     }
 
     private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
