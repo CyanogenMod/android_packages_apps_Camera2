@@ -2841,6 +2841,9 @@ public class PhotoModule
     // the subsets actually need updating. The PREFERENCE set needs extra
     // locking because the preference can be changed from GLThread as well.
     private void setCameraParameters(int updateSet) {
+        if (mCameraDevice == null) {
+            return;
+        }
         synchronized (mCameraDevice) {
             boolean doModeSwitch = false;
 
