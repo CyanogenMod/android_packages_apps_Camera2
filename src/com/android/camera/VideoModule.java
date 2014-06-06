@@ -1074,6 +1074,7 @@ public class VideoModule implements CameraModule,
         mCameraDevice.stopPreview();
         mPreviewing = false;
         mStopPrevPending = false;
+        mUI.enableShutter(false);
     }
 
     private void closeCamera() {
