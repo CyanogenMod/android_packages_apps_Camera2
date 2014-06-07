@@ -212,7 +212,7 @@ public class Storage {
     }
 
     public String generateDirectory() {
-        return generateDCIM() + "/Camera";
+        return generateDCIM() + "/100ANDRO";
     }
 
     public String generateRawDirectory() {
@@ -250,17 +250,6 @@ public class Storage {
             Log.i(TAG, "Fail to access external storage", e);
         }
         return UNKNOWN_SIZE;
-    }
-
-    /**
-     * OSX requires plugged-in USB storage to have path /DCIM/NNNAAAAA to be
-     * imported. This is a temporary fix for bug#1655552.
-     */
-    public void ensureOSXCompatible() {
-        File nnnAAAAA = new File(generateDCIM(), "100ANDRO");
-        if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
-            Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
-        }
     }
 
     private static Uri insertImage(ContentResolver resolver, ContentValues values) {
