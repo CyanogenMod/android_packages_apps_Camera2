@@ -16,9 +16,13 @@
 
 package com.android.camera.settings;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
@@ -41,6 +45,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.FeedbackHelper;
+import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera.util.SettingsHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
@@ -77,8 +82,11 @@ public class CameraSettingsActivity extends FragmentActivity {
 
     public static class CameraSettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
+        public static final String PREF_OPEN_SOURCE_LICENSES = "pref_open_source_licenses";
         public static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
         public static final String PREF_CATEGORY_ADVANCED = "pref_category_advanced";
+        public static final String PREF_SEND_FEEDBACK = "pref_send_feedback";
+        public static final String PREF_LAUNCH_HELP = "pref_launch_help";
         private static final String BUILD_VERSION = "build_version";
         private static final Log.Tag TAG = new Log.Tag("SettingsFragment");
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
@@ -106,10 +114,12 @@ public class CameraSettingsActivity extends FragmentActivity {
         @Override
         public void onResume() {
             super.onResume();
+            final Activity activity = this.getActivity();
+
             // Only show open source licenses in GoogleCamera build.
             if (!SettingsHelper.isOpenSourceLicensesShown()) {
-                Preference pref = findPreference("pref_open_source_licenses");
-                getPreferenceScreen().removePreference(pref);
+                Preference pref = findPreference(PREF_OPEN_SOURCE_LICENSES);
+                recursiveDelete(getPreferenceScreen(), pref);
             }
 
             // Load the camera sizes.
@@ -131,7 +141,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             // Set build number.
             try {
-                final PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo(
+                final PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(
                         getActivity().getPackageName(), 0);
                 findPreference(BUILD_VERSION).setSummary(packageInfo.versionName);
             } catch (PackageManager.NameNotFoundException e) {
@@ -141,7 +151,7 @@ public class CameraSettingsActivity extends FragmentActivity {
                     .registerOnSharedPreferenceChangeListener(this);
 
             // Set-Up Feedback entry to launch the feedback flow on click.
-            findPreference("pref_send_feedback").setOnPreferenceClickListener(
+            findPreference(PREF_SEND_FEEDBACK).setOnPreferenceClickListener(
                     new OnPreferenceClickListener() {
 
                         @Override
@@ -150,6 +160,31 @@ public class CameraSettingsActivity extends FragmentActivity {
                             return true;
                         }
                     });
+
+            final Account account = getFirstGoogleAccount();
+            Preference helpPref = findPreference(PREF_LAUNCH_HELP);
+            helpPref.setOnPreferenceClickListener(
+                new OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        GoogleHelpHelper.launchGoogleHelp(activity, account);
+                        return true;
+                    }
+                });
+        }
+
+        /**
+         * Tries to get one Google account for this user,
+         * which is used to customize the GoogleHelp screen.
+         */
+        private Account getFirstGoogleAccount() {
+            Account[] accounts = AccountManager.get(this.getActivity()
+                .getApplicationContext()).getAccountsByType("com.google");
+            if (accounts.length == 0) {
+                return null;
+            } else {
+                return accounts[0];
+            }
         }
 
         /**
