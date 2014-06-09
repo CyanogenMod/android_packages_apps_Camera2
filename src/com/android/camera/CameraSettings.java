@@ -419,6 +419,7 @@ public class CameraSettings {
         ListPreference sceneMode = group.findPreference(KEY_SCENE_MODE);
         ListPreference flashMode = group.findPreference(KEY_FLASH_MODE);
         ListPreference focusMode = group.findPreference(KEY_FOCUS_MODE);
+        ListPreference focusTime = group.findPreference(KEY_FOCUS_TIME);
         IconListPreference exposure =
                 (IconListPreference) group.findPreference(KEY_EXPOSURE);
         IconListPreference cameraIdPref =
@@ -467,6 +468,10 @@ public class CameraSettings {
         if (focusMode != null) {
             filterUnsupportedOptions(group,
                     focusMode, mParameters.getSupportedFocusModes());
+        }
+        if (focusTime != null) {
+            filterUnsupportedOptions(group,
+                    focusTime, mParameters.getSupportedFocusModes());
         }
         if (videoFlashMode != null) {
             filterUnsupportedOptions(group,
