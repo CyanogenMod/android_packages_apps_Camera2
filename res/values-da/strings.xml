@@ -97,7 +97,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Vælg kamera"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Tilbage"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Front"</string>
-    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Lagringsplacering"</string>
+    <string name="pref_camera_recordlocation_title" msgid="3354956161456185749">"Lagerplacering"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"PLACERING"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Nedtællingsur"</string>
   <plurals name="pref_camera_timer_entry">
@@ -119,7 +119,7 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 megapixels"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 megapixels"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 megapixels"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 megapixels"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 megapixels (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 megapixels"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 megapixels"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 megapixels (16:9)"</string>
@@ -188,7 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"FRONTKAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"BAGSIDEKAMERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Der er snart ikke mere plads på dit SD-kort. Rediger indstillingerne for kvalitet, eller slet nogle billeder eller andre filer."</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Der er snart ikke mere plads på dit SD-kort. Skift kvalitetsindstillingen, eller slet nogle billeder eller andre filer."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Størrelsesgrænsen er nået."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"For hurtig"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Panoramabillede forberedes"</string>
