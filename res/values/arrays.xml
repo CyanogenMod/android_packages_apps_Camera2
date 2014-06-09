@@ -196,9 +196,10 @@
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_4_5mp</item>
-        <item>@string/pref_camera_picturesize_entry_4mp</item>
+        <item>@string/pref_camera_picturesize_entry_4mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_4mp</item>
         <item>@string/pref_camera_picturesize_entry_3_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_3mp</item>
         <item>@string/pref_camera_picturesize_entry_3mp</item>
         <item>@string/pref_camera_picturesize_entry_2_5mp</item>
         <item>@string/pref_camera_picturesize_entry_2_1mp</item>
@@ -247,6 +248,7 @@
         <item>2560x1536</item>
         <item>2560x1440</item>
         <item>2048x1536</item>
+        <item>2048x1520</item>
         <item>2048x1232</item>
         <item>1920x1080</item>
         <item>1600x1200</item>

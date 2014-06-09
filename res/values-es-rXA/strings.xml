@@ -116,7 +116,7 @@
   <string name="pref_camera_picturesize_entry_13mp">13 MP</string>
   <string name="pref_camera_picturesize_entry_8mp">18M pixels</string>
   <string name="pref_camera_picturesize_entry_5mp">5M pixels</string>
-  <string name="pref_camera_picturesize_entry_4mp">4M pixels</string>
+  <string name="pref_camera_picturesize_entry_4mp_wide">4M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_3mp">3M pixels</string>
   <string name="pref_camera_picturesize_entry_2mp">2M pixels</string>
   <string name="pref_camera_picturesize_entry_2mp_wide">2M pixels (16:9)</string>
