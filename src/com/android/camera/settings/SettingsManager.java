@@ -29,7 +29,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.SettingsHelper;
-import com.android.camera.util.Size;
+import com.android.camera.cameradevice.Size;
 import com.android.camera2.R;
 
 import java.util.ArrayList;

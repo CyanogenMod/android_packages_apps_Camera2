@@ -19,7 +19,6 @@ package com.android.camera;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera.Parameters;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.camera.cameradevice.CameraCapabilities;
+import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.FocusOverlay;
 import com.android.camera.ui.PreviewOverlay;
@@ -167,7 +168,7 @@ public class VideoUI implements PreviewStatusListener {
         mLabelsLinearLayout = (LinearLayout) mRootView.findViewById(R.id.labels);
     }
 
-    public void updateOnScreenIndicators(Parameters param) {
+    public void updateOnScreenIndicators(CameraSettings settings) {
     }
 
     public void setAspectRatio(float ratio) {
@@ -219,13 +220,14 @@ public class VideoUI implements PreviewStatusListener {
         mReviewImage.setVisibility(View.VISIBLE);
     }
 
-    public void initializeZoom(Parameters param) {
-        mZoomMax = param.getMaxZoom();
-        mZoomRatios = param.getZoomRatios();
+    public void initializeZoom(CameraSettings settings, CameraCapabilities capabilities) {
+        mZoomMax = capabilities.getMaxZoomIndex();
+        mZoomRatios = capabilities.getZoomRatioList();
         // Currently we use immediate zoom for fast zooming to get better UX and
         // there is no plan to take advantage of the smooth zoom.
         // TODO: setup zoom through App UI.
-        mPreviewOverlay.setupZoom(mZoomMax, param.getZoom(), mZoomRatios, new ZoomChangeListener());
+        mPreviewOverlay.setupZoom(mZoomMax, settings.getCurrentZoomIndex(), mZoomRatios,
+                new ZoomChangeListener());
     }
 
     public void setRecordingTime(String text) {

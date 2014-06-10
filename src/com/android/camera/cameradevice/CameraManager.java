@@ -38,7 +38,6 @@ import android.view.SurfaceHolder;
  * TODO: provide callback interfaces for:
  * {@code android.hardware.Camera.ErrorCallback},
  * {@code android.hardware.Camera.OnZoomChangeListener}, and
- * {@code android.hardware.Camera.Parameters}.
  */
 public interface CameraManager {
     public static final long CAMERA_OPERATION_TIMEOUT_MS = 2500;
@@ -537,6 +536,7 @@ public interface CameraManager {
          *
          * @param params The camera parameters to use.
          */
+        @Deprecated
         public void setParameters(Camera.Parameters params);
 
         /**
@@ -545,13 +545,30 @@ public interface CameraManager {
          * the parameters. If the parameters are already cached, it returns
          * immediately.
          */
+        @Deprecated
         public Camera.Parameters getParameters();
 
         /**
-         * Forces {@code CameraProxy} to update the cached version of the camera
-         * parameters regardless of the dirty bit.
+         * Gets the current camera settings synchronously.
+         * <p>This method is synchronous since the caller has to wait for the
+         * camera to return the parameters. If the parameters are already
+         * cached, it returns immediately.</p>
          */
-        public void refreshParameters();
+        public CameraSettings getSettings();
+
+        /**
+         * Applies the settings to the camera device.
+         *
+         * @param settings The settings to use on the device.
+         * @return Whether the settings can be applied.
+         */
+        public boolean applySettings(CameraSettings settings);
+
+        /**
+         * Forces {@code CameraProxy} to update the cached version of the camera
+         * settings regardless of the dirty bit.
+         */
+        public void refreshSettings();
 
         /**
          * Enables/Disables the camera shutter sound.

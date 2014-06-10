@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.util;
+package com.android.camera.cameradevice;
 
 import android.graphics.Point;
 import android.hardware.Camera;

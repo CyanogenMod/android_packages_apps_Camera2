@@ -22,7 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -32,7 +31,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
+import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
@@ -280,8 +281,8 @@ public class PhotoUI implements PreviewStatusListener,
         // TODO init toggle buttons on bottom bar here
     }
 
-    public void onCameraOpened(Camera.Parameters params) {
-        initializeZoom(params);
+    public void onCameraOpened(CameraCapabilities capabilities, CameraSettings settings) {
+        initializeZoom(capabilities, settings);
     }
 
     public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
@@ -296,12 +297,11 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     // called from onResume every other time
-    public void initializeSecondTime(Camera.Parameters params) {
-        initializeZoom(params);
+    public void initializeSecondTime(CameraCapabilities capabilities, CameraSettings settings) {
+        initializeZoom(capabilities, settings);
         if (mController.isImageCaptureIntent()) {
             hidePostCaptureAlert();
         }
-        // Removes pie menu.
     }
 
     public void showLocationAndAspectRatioDialog(
@@ -397,16 +397,18 @@ public class PhotoUI implements PreviewStatusListener,
         return "hammerhead".equals(Build.DEVICE) || "mako".equals(Build.DEVICE);
     }
 
-    public void initializeZoom(Camera.Parameters params) {
-        if ((params == null) || !params.isZoomSupported()) {
+    public void initializeZoom(CameraCapabilities capabilities, CameraSettings settings) {
+        if ((capabilities == null) || settings == null ||
+                !capabilities.supports(CameraCapabilities.Feature.ZOOM)) {
             return;
         }
-        mZoomMax = params.getMaxZoom();
-        mZoomRatios = params.getZoomRatios();
+        mZoomMax = capabilities.getMaxZoomIndex();
+        mZoomRatios = capabilities.getZoomRatioList();
         // Currently we use immediate zoom for fast zooming to get better UX and
         // there is no plan to take advantage of the smooth zoom.
         // TODO: Need to setup a path to AppUI to do this
-        mPreviewOverlay.setupZoom(mZoomMax, params.getZoom(), mZoomRatios, new ZoomChangeListener());
+        mPreviewOverlay.setupZoom(mZoomMax, settings.getCurrentZoomIndex(), mZoomRatios,
+                new ZoomChangeListener());
     }
 
     public void animateFlash() {

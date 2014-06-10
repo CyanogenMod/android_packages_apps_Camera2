@@ -22,7 +22,7 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
-import com.android.camera.util.Size;
+import com.android.camera.cameradevice.Size;
 
 import java.util.List;
 

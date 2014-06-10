@@ -33,13 +33,11 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.view.SurfaceHolder;
 
 import com.android.camera.debug.Log;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.
@@ -49,14 +47,12 @@ class AndroidCameraManagerImpl implements CameraManager {
 
     private Parameters mParameters;
     private boolean mParametersIsDirty;
+    private AndroidCameraCapabilities mCapabilities;
 
     private final CameraHandler mCameraHandler;
     private final HandlerThread mCameraHandlerThread;
     private final CameraStateHolder mCameraState;
     private final DispatchThread mDispatchThread;
-
-    // Used to retain a copy of Parameters for setting parameters.
-    private Parameters mParamsToSet;
 
     private Handler mCameraExceptionCallbackHandler;
     private CameraExceptionCallback mCameraExceptionCallback =
@@ -168,6 +164,8 @@ class AndroidCameraManagerImpl implements CameraManager {
      */
     private class CameraHandler extends HistoryHandler {
 
+        // Used to retain a copy of Parameters for setting parameters.
+        private Parameters mParamsToSet;
         private Camera mCamera;
         private int mCameraId;
 
@@ -268,13 +266,13 @@ class AndroidCameraManagerImpl implements CameraManager {
 
                             // Get a instance of Camera.Parameters for later use.
                             mParamsToSet = mCamera.getParameters();
+                            mCapabilities = new AndroidCameraCapabilities(mParamsToSet);
 
                             mCameraState.setState(CameraStateHolder.CAMERA_IDLE);
                             if (openCallback != null) {
                                 openCallback.onCameraOpened(
                                         new AndroidCameraProxyImpl(cameraId, mCamera,
-                                                new AndroidCameraCapabilities(mParamsToSet))
-                                );
+                                                mCapabilities));
                             }
                         } else {
                             if (openCallback != null) {
@@ -311,8 +309,8 @@ class AndroidCameraManagerImpl implements CameraManager {
 
                         mCameraState.setState(CameraStateHolder.CAMERA_IDLE);
                         if (cbForward != null) {
-                            cbForward.onCameraOpened(new AndroidCameraProxyImpl(cameraId, mCamera,
-                                    new AndroidCameraCapabilities(mParamsToSet)));
+                            cbForward.onCameraOpened(
+                                    new AndroidCameraProxyImpl(cameraId, mCamera, mCapabilities));
                         }
                         break;
                     }
@@ -420,6 +418,14 @@ class AndroidCameraManagerImpl implements CameraManager {
                         break;
                     }
 
+                    case CameraActions.APPLY_SETTINGS: {
+                        mParametersIsDirty = true;
+                        CameraSettings settings = (CameraSettings) msg.obj;
+                        applyToParameters(settings);
+                        mCamera.setParameters(mParamsToSet);
+                        break;
+                    }
+
                     case CameraActions.SET_PARAMETERS: {
                         mParametersIsDirty = true;
                         mParamsToSet.unflatten((String) msg.obj);
@@ -492,6 +498,63 @@ class AndroidCameraManagerImpl implements CameraManager {
                         });
                 }
             }
+        }
+
+        private void applyToParameters(final CameraSettings settings) {
+            final CameraCapabilities.Stringifier stringifier = mCapabilities.getStringifier();
+            Size photoSize = settings.getCurrentPhotoSize();
+            mParamsToSet.setPictureSize(photoSize.width(), photoSize.height());
+            Size previewSize = settings.getCurrentPreviewSize();
+            mParamsToSet.setPreviewSize(previewSize.width(), previewSize.height());
+            if (settings.getPreviewFrameRate() == -1) {
+                mParamsToSet.setPreviewFpsRange(settings.getPreviewFpsRangeMin(),
+                        settings.getPreviewFpsRangeMax());
+            } else {
+                mParamsToSet.setPreviewFrameRate(settings.getPreviewFrameRate());
+            }
+            mParamsToSet.setJpegQuality(settings.getPhotoJpegCompressionQuality());
+            if (mCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
+                // Should use settings.getCurrentZoomRatio() instead here.
+                mParamsToSet.setZoom(settings.getCurrentZoomIndex());
+            }
+            mParamsToSet.setRotation((int) settings.getCurrentPhotoRotationDegrees());
+            mParamsToSet.setExposureCompensation(settings.getExposureCompensationIndex());
+            if (mCapabilities.supports(CameraCapabilities.Feature.AUTO_EXPOSURE_LOCK)) {
+                mParamsToSet.setAutoExposureLock(settings.isAutoExposureLocked());
+            }
+            mParamsToSet.setFocusMode(stringifier.stringify(settings.getCurrentFocusMode()));
+            if (mCapabilities.supports(CameraCapabilities.Feature.AUTO_WHITE_BALANCE_LOCK)) {
+                mParamsToSet.setAutoWhiteBalanceLock(settings.isAutoWhiteBalanceLocked());
+            }
+            if (mCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA)) {
+                mParamsToSet.setFocusAreas(settings.getFocusAreas());
+            }
+            if (mCapabilities.supports(CameraCapabilities.Feature.METERING_AREA)) {
+                mParamsToSet.setMeteringAreas(settings.getMeteringAreas());
+            }
+            if (settings.getCurrentFlashMode() != CameraCapabilities.FlashMode.NO_FLASH) {
+                mParamsToSet.setFlashMode(stringifier.stringify(settings.getCurrentFlashMode()));
+            }
+            if (settings.getCurrentSceneMode() != CameraCapabilities.SceneMode.NO_SCENE_MODE) {
+                mParamsToSet.setSceneMode(stringifier.stringify(settings.getCurrentSceneMode()));
+            }
+
+            CameraSettings.GpsData gpsData = settings.getGpsData();
+            if (gpsData == null) {
+                mParamsToSet.removeGpsData();
+            } else {
+                mParamsToSet.setGpsTimestamp(gpsData.timeStamp);
+                if (gpsData.processingMethod != null) {
+                    // It's a hack since we always use GPS time stamp but does
+                    // not use other fields sometimes. Setting processing
+                    // method to null means the other fields should not be used.
+                    mParamsToSet.setGpsAltitude(gpsData.altitude);
+                    mParamsToSet.setGpsLatitude(gpsData.latitude);
+                    mParamsToSet.setGpsLongitude(gpsData.longitude);
+                    mParamsToSet.setGpsProcessingMethod(gpsData.processingMethod);
+                }
+            }
+
         }
     }
 
@@ -802,12 +865,13 @@ class AndroidCameraManagerImpl implements CameraManager {
                     mCameraState.waitForStates(
                             CameraStateHolder.CAMERA_IDLE | CameraStateHolder.CAMERA_UNLOCKED);
                     mCameraHandler.requestTakePicture(ShutterCallbackForward
-                            .getNewInstance(handler, AndroidCameraProxyImpl.this, shutter),
+                                    .getNewInstance(handler, AndroidCameraProxyImpl.this, shutter),
                             PictureCallbackForward
                                     .getNewInstance(handler, AndroidCameraProxyImpl.this, raw),
                             PictureCallbackForward
                                     .getNewInstance(handler, AndroidCameraProxyImpl.this, post),
-                            jpegCallback);
+                            jpegCallback
+                    );
                 }
             });
         }
@@ -913,7 +977,35 @@ class AndroidCameraManagerImpl implements CameraManager {
         }
 
         @Override
-        public void refreshParameters() {
+        public CameraSettings getSettings() {
+            return new AndroidCameraSettings(mCapabilities, getParameters());
+        }
+
+        @Override
+        public boolean applySettings(final CameraSettings settings) {
+            if (settings == null) {
+                Log.v(TAG, "null parameters in applySettings()");
+                return false;
+            }
+            if (!mCapabilities.supports(settings)) {
+                return false;
+            }
+
+            final CameraSettings copyOfSettings = new CameraSettings(settings);
+            mDispatchThread.runJob(new Runnable() {
+                @Override
+                public void run() {
+                    mCameraState.waitForStates(
+                            CameraStateHolder.CAMERA_IDLE | CameraStateHolder.CAMERA_UNLOCKED);
+                    mCameraHandler.obtainMessage(CameraActions.APPLY_SETTINGS, copyOfSettings)
+                            .sendToTarget();
+                }
+            });
+            return true;
+        }
+
+        @Override
+        public void refreshSettings() {
             mDispatchThread.runJob(new Runnable() {
                 @Override
                 public void run() {

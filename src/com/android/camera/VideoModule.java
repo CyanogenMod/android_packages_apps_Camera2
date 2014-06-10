@@ -60,6 +60,8 @@ import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
 import com.android.camera.cameradevice.CameraManager.CameraProxy;
+import com.android.camera.cameradevice.CameraSettings;
+import com.android.camera.cameradevice.Size;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.hardware.HardwareSpec;
@@ -69,7 +71,6 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.google.common.logging.eventprotos;
@@ -80,6 +81,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class VideoModule extends CameraModule
     implements ModuleController,
@@ -116,7 +118,7 @@ public class VideoModule extends CameraModule
     private boolean mDontResetIntentUiOnResume;
 
     private int mCameraId;
-    private Parameters mParameters;
+    private CameraSettings mCameraSettings;
     private CameraCapabilities mCameraCapabilities;
 
     private boolean mIsInReviewMode;
@@ -207,7 +209,7 @@ public class VideoModule extends CameraModule
             };
     private FocusOverlayManager mFocusManager;
     private boolean mMirror;
-    private Parameters mInitialParams;
+    private Parameters mInitialSettings;
     private boolean mFocusAreaSupported;
     private boolean mMeteringAreaSupported;
 
@@ -408,10 +410,10 @@ public class VideoModule extends CameraModule
             // Set rotation and gps data.
             CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
             int rotation = CameraUtil.getJpegRotation(info, mOrientation);
-            mParameters.setRotation(rotation);
+            mCameraSettings.setPhotoRotationDegrees(rotation);
             Location loc = mLocationManager.getCurrentLocation();
-            CameraUtil.setGpsParameters(mParameters, loc);
-            mCameraDevice.setParameters(mParameters);
+            CameraUtil.setGpsParameters(mCameraSettings, loc);
+            mCameraDevice.applySettings(mCameraSettings);
 
             Log.i(TAG, "Video snapshot start");
             mCameraDevice.takePicture(mHandler,
@@ -427,7 +429,7 @@ public class VideoModule extends CameraModule
             return;
         }
 
-        if (mParameters.getFocusMode().equals(CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+        if (mCameraSettings.getCurrentFocusMode() == CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,
                     (CameraManager.CameraAFMoveCallback) mAutoFocusMoveCallback);
         } else {
@@ -457,8 +459,7 @@ public class VideoModule extends CameraModule
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
             mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
-                    defaultFocusModes,
-                    mInitialParams, this, mMirror,
+                    defaultFocusModes, mInitialSettings, this, mMirror,
                     mActivity.getMainLooper(), mUI.getFocusUI());
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
@@ -533,7 +534,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return (mParameters != null ? new HardwareSpecImpl(mParameters) : null);
+        return (mCameraSettings != null ? new HardwareSpecImpl(mCameraCapabilities) : null);
     }
 
     @Override
@@ -562,21 +563,21 @@ public class VideoModule extends CameraModule
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
         mCameraDevice = cameraProxy;
-        mInitialParams = mCameraDevice.getParameters();
+        mInitialSettings = mCameraDevice.getParameters();
         mCameraCapabilities = mCameraDevice.getCapabilities();
-        mFocusAreaSupported = CameraUtil.isFocusAreaSupported(mInitialParams);
-        mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(mInitialParams);
+        mFocusAreaSupported = CameraUtil.isFocusAreaSupported(mInitialSettings);
+        mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(mInitialSettings);
         readVideoPreferences();
         resizeForPreviewAspectRatio();
         initializeFocusManager();
         // TODO: Having focus overlay manager caching the parameters is prone to error,
         // we should consider passing the parameters to focus overlay to ensure the
         // parameters are up to date.
-        mFocusManager.setParameters(mInitialParams, mCameraCapabilities);
+        mFocusManager.setParameters(mInitialSettings, mCameraCapabilities);
 
         startPreview();
         initializeVideoSnapshot();
-        mUI.initializeZoom(mParameters);
+        mUI.initializeZoom(mCameraSettings, mCameraCapabilities);
         initializeControlByIntent();
     }
 
@@ -743,9 +744,9 @@ public class VideoModule extends CameraModule
         if (mCameraDevice == null) {
             return;
         }
-        mParameters = mCameraDevice.getParameters();
+        mCameraSettings = mCameraDevice.getSettings();
         Point desiredPreviewSize = getDesiredPreviewSize(mAppController.getAndroidContext(),
-                mParameters, mProfile, mUI.getPreviewScreenSize());
+                mCameraSettings, mCameraCapabilities, mProfile, mUI.getPreviewScreenSize());
         mDesiredPreviewWidth = desiredPreviewSize.x;
         mDesiredPreviewHeight = desiredPreviewSize.y;
         mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
@@ -765,17 +766,17 @@ public class VideoModule extends CameraModule
      * @return The preferred preview size or {@code null} if the camera is not
      *         opened yet.
      */
-    private static Point getDesiredPreviewSize(Context context, Parameters parameters,
-            CamcorderProfile profile, Point previewScreenSize) {
-        if (parameters.getSupportedVideoSizes() == null) {
+    private static Point getDesiredPreviewSize(Context context, CameraSettings settings,
+            CameraCapabilities capabilities, CamcorderProfile profile, Point previewScreenSize) {
+        if (capabilities.getSupportedVideoSizes() == null) {
             // Driver doesn't support separate outputs for preview and video.
             return new Point(profile.videoFrameWidth, profile.videoFrameHeight);
         }
 
         final int previewScreenShortSide = (previewScreenSize.x < previewScreenSize.y ?
                 previewScreenSize.x : previewScreenSize.y);
-        List<Size> sizes = Size.buildListFromCameraSizes(parameters.getSupportedPreviewSizes());
-        Size preferred = new Size(parameters.getPreferredPreviewSizeForVideo());
+        List<Size> sizes = capabilities.getSupportedPreviewSizes();
+        Size preferred = capabilities.getPreferredPreviewSizeForVideo();
         final int preferredPreviewSizeShortSide = (preferred.width() < preferred.height() ?
                 preferred.width() : preferred.height());
         if (preferredPreviewSizeShortSide * 2 < previewScreenShortSide) {
@@ -842,8 +843,8 @@ public class VideoModule extends CameraModule
     private float currentZoomValue() {
         float zoomValue = 1.0f;
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-            int zoomIndex = mParameters.getZoom();
-            List<Integer> zoomRatios = mParameters.getZoomRatios();
+            int zoomIndex = mCameraSettings.getCurrentZoomIndex();
+            List<Integer> zoomRatios = mCameraCapabilities.getZoomRatioList();
             if (zoomRatios != null && zoomIndex < zoomRatios.size()) {
                 zoomValue = 0.01f * zoomRatios.get(zoomIndex);
             }
@@ -858,12 +859,12 @@ public class VideoModule extends CameraModule
             return index;
         }
         mZoomValue = index;
-        if (mParameters == null || mCameraDevice == null) {
+        if (mCameraSettings == null || mCameraDevice == null) {
             return index;
         }
         // Set zoom parameters asynchronously
-        mParameters.setZoom(mZoomValue);
-        mCameraDevice.setParameters(mParameters);
+        mCameraSettings.setZoomIndex(mZoomValue);
+        mCameraDevice.applySettings(mCameraSettings);
         Parameters p = mCameraDevice.getParameters();
         if (p != null) {
             return p.getZoom();
@@ -1308,12 +1309,12 @@ public class VideoModule extends CameraModule
 
                     // The parameters might have been altered by MediaRecorder already.
                     // We need to force mCameraDevice to refresh before getting it.
-                    mCameraDevice.refreshParameters();
+                    mCameraDevice.refreshSettings();
                     // The parameters may have been changed by MediaRecorder upon starting
                     // recording. We need to alter the parameters if we support camcorder
                     // zoom. To reduce latency when setting the parameters during zoom, we
-                    // update mParameters here once.
-                    mParameters = mCameraDevice.getParameters();
+                    // update the settings here once.
+                    mCameraSettings = mCameraDevice.getSettings();
 
                     mMediaRecorderRecording = true;
                     mActivity.lockOrientation();
@@ -1430,7 +1431,7 @@ public class VideoModule extends CameraModule
             }
             // Update the parameters here because the parameters might have been altered
             // by MediaRecorder.
-            mParameters = mCameraDevice.getParameters();
+            mCameraSettings = mCameraDevice.getSettings();
         }
 
         // Check this in advance of each shot so we don't add to shutter
@@ -1550,63 +1551,60 @@ public class VideoModule extends CameraModule
     private void setCameraParameters() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
+        mCameraSettings.setPreviewSize(new Size(mDesiredPreviewWidth, mDesiredPreviewHeight));
         // This is required for Samsung SGH-I337 and probably other Samsung S4 versions
         if (Build.BRAND.toLowerCase().contains("samsung")) {
-            mParameters.set("video-size", mProfile.videoFrameWidth + "x" + mProfile.videoFrameHeight);
+            mCameraSettings.setSetting("video-size",
+                    mProfile.videoFrameWidth + "x" + mProfile.videoFrameHeight);
         }
-        int[] fpsRange = CameraUtil.getMaxPreviewFpsRange(mParameters);
+        int[] fpsRange =
+                CameraUtil.getMaxPreviewFpsRange(mCameraCapabilities.getSupportedPreviewFpsRange());
         if (fpsRange.length > 0) {
-            mParameters.setPreviewFpsRange(
-                    fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
+            mCameraSettings.setPreviewFpsRange(fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
                     fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
         } else {
-            mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
+            mCameraSettings.setPreviewFrameRate(mProfile.videoFrameRate);
         }
 
         enableTorchMode(settingsManager.isCameraBackFacing());
 
         // Set zoom.
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-            mParameters.setZoom(mZoomValue);
+            mCameraSettings.setZoomIndex(mZoomValue);
         }
         updateFocusParameters();
 
-        mParameters.set(CameraUtil.RECORDING_HINT, CameraUtil.TRUE);
+        mCameraSettings.setSetting(CameraUtil.RECORDING_HINT, CameraUtil.TRUE);
 
-        // Enable video stabilization. Convenience methods not available in API
-        // level <= 14
-        String vstabSupported = mParameters.get("video-stabilization-supported");
-        if ("true".equals(vstabSupported)) {
-            mParameters.set("video-stabilization", "true");
+        if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_STABILIZATION)) {
+            mCameraSettings.setVideoStabilization(true);
         }
 
         // Set picture size.
         // The logic here is different from the logic in still-mode camera.
         // There we determine the preview size based on the picture size, but
         // here we determine the picture size based on the preview size.
-        List<Size> supported =
-                Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
+        List<Size> supported = mCameraCapabilities.getSupportedPhotoSizes();
         Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
                 (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
-        Size original = new Size(mParameters.getPictureSize());
+        Size original = new Size(mCameraSettings.getCurrentPhotoSize());
         if (!original.equals(optimalSize)) {
-            mParameters.setPictureSize(optimalSize.width(), optimalSize.height());
+            mCameraSettings.setPhotoSize(optimalSize);
         }
         Log.d(TAG, "Video snapshot size is " + optimalSize);
 
         // Set JPEG quality.
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
-        mParameters.setJpegQuality(jpegQuality);
+        mCameraSettings.setPhotoJpegCompressionQuality(jpegQuality);
 
-        mCameraDevice.setParameters(mParameters);
+        mCameraDevice.applySettings(mCameraSettings);
         // Nexus 5 through KitKat 4.4.2 requires a second call to
         // .setParameters() for frame rate settings to take effect.
-        mCameraDevice.setParameters(mParameters);
+        mCameraDevice.applySettings(mCameraSettings);
 
         // Update UI based on the new parameters.
-        mUI.updateOnScreenIndicators(mParameters);
+        mUI.updateOnScreenIndicators(mCameraSettings);
     }
 
     private void updateFocusParameters() {
@@ -1614,20 +1612,22 @@ public class VideoModule extends CameraModule
         // auto focus mode to ensure smooth focusing. Whereas during preview (i.e.
         // before recording starts) we use "continuous-picture" auto focus mode
         // for faster but slightly jittery focusing.
-        List<String> supportedFocus = mParameters.getSupportedFocusModes();
+        Set<CameraCapabilities.FocusMode> supportedFocus = mCameraCapabilities
+                .getSupportedFocusModes();
         if (mMediaRecorderRecording) {
-            if (isSupported(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO, supportedFocus)) {
-                mParameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            if (mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_VIDEO)) {
+                mCameraSettings.setFocusMode(CameraCapabilities.FocusMode.CONTINUOUS_VIDEO);
                 mFocusManager.overrideFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             } else {
                 mFocusManager.overrideFocusMode(null);
             }
         } else {
             mFocusManager.overrideFocusMode(null);
-            if (isSupported(CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE, supportedFocus)) {
-                mParameters.setFocusMode(mFocusManager.getFocusMode());
+            if (mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_PICTURE)) {
+                mCameraSettings.setFocusMode(mCameraCapabilities.getStringifier()
+                        .focusModeFromString(mFocusManager.getFocusMode()));
                 if (mFocusAreaSupported) {
-                    mParameters.setFocusAreas(mFocusManager.getFocusAreas());
+                    mCameraSettings.setFocusAreas(mFocusManager.getFocusAreas());
                 }
             }
         }
@@ -1748,17 +1748,17 @@ public class VideoModule extends CameraModule
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
         mHandler.sendEmptyMessage(MSG_SWITCH_CAMERA_START_ANIMATION);
-        mUI.updateOnScreenIndicators(mParameters);
+        mUI.updateOnScreenIndicators(mCameraSettings);
     }
 
     private void initializeVideoSnapshot() {
-        if (mParameters == null) {
+        if (mCameraSettings == null) {
             return;
         }
     }
 
     void showVideoSnapshotUI(boolean enabled) {
-        if (mParameters == null) {
+        if (mCameraSettings == null) {
             return;
         }
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_SNAPSHOT) &&
@@ -1780,31 +1780,34 @@ public class VideoModule extends CameraModule
      * @param enable Whether torch mode can be enabled.
      */
     private void enableTorchMode(boolean enable) {
-        if (mParameters.getFlashMode() == null) {
+        if (mCameraSettings.getCurrentFlashMode() == null) {
             return;
         }
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        String flashMode;
+        CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
+        CameraCapabilities.FlashMode flashMode;
         if (enable) {
-            flashMode = settingsManager.get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
+            flashMode = stringifier.flashModeFromString(
+                    settingsManager.get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE));
         } else {
-            flashMode = Parameters.FLASH_MODE_OFF;
+            flashMode = CameraCapabilities.FlashMode.OFF;
         }
-        List<String> supportedFlash = mParameters.getSupportedFlashModes();
-        if (isSupported(flashMode, supportedFlash)) {
-            mParameters.setFlashMode(flashMode);
-        } else {
-            flashMode = mParameters.getFlashMode();
+        if (mCameraCapabilities.supports(flashMode)) {
+            mCameraSettings.setFlashMode(flashMode);
+        }
+        /* TODO: Find out how to deal with the following code piece:
+        else {
+            flashMode = mCameraSettings.getCurrentFlashMode();
             if (flashMode == null) {
                 flashMode = mActivity.getString(
                         R.string.pref_camera_flashmode_no_flash);
                 mParameters.setFlashMode(flashMode);
             }
-        }
-        mCameraDevice.setParameters(mParameters);
-        mUI.updateOnScreenIndicators(mParameters);
+        }*/
+        mCameraDevice.applySettings(mCameraSettings);
+        mUI.updateOnScreenIndicators(mCameraSettings);
     }
 
     @Override
@@ -1932,7 +1935,7 @@ public class VideoModule extends CameraModule
     @Override
     public void setFocusParameters() {
         updateFocusParameters();
-        mCameraDevice.setParameters(mParameters);
+        mCameraDevice.applySettings(mCameraSettings);
     }
 
 }

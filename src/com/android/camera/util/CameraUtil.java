@@ -54,6 +54,8 @@ import android.widget.Toast;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.cameradevice.CameraCapabilities;
+import com.android.camera.cameradevice.CameraSettings;
+import com.android.camera.cameradevice.Size;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
@@ -790,41 +792,38 @@ public class CameraUtil {
         return BitmapFactory.decodeByteArray(data, 0, data.length, opts);
     }
 
-    public static void setGpsParameters(Parameters parameters, Location loc) {
+    public static void setGpsParameters(CameraSettings settings, Location loc) {
         // Clear previous GPS location from the parameters.
-        parameters.removeGpsData();
+        settings.clearGpsData();
 
-        // We always encode GpsTimeStamp
-        parameters.setGpsTimestamp(System.currentTimeMillis() / 1000);
-
+        boolean hasLatLon = false;
+        double lat;
+        double lon;
         // Set GPS location.
         if (loc != null) {
-            double lat = loc.getLatitude();
-            double lon = loc.getLongitude();
-            boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
+            lat = loc.getLatitude();
+            lon = loc.getLongitude();
+            hasLatLon = (lat != 0.0d) || (lon != 0.0d);
+        }
 
-            if (hasLatLon) {
-                Log.d(TAG, "Set gps location");
-                parameters.setGpsLatitude(lat);
-                parameters.setGpsLongitude(lon);
-                parameters.setGpsProcessingMethod(loc.getProvider().toUpperCase());
-                if (loc.hasAltitude()) {
-                    parameters.setGpsAltitude(loc.getAltitude());
-                } else {
-                    // for NETWORK_PROVIDER location provider, we may have
-                    // no altitude information, but the driver needs it, so
-                    // we fake one.
-                    parameters.setGpsAltitude(0);
-                }
-                if (loc.getTime() != 0) {
-                    // Location.getTime() is UTC in milliseconds.
-                    // gps-timestamp is UTC in seconds.
-                    long utcTimeSeconds = loc.getTime() / 1000;
-                    parameters.setGpsTimestamp(utcTimeSeconds);
-                }
-            } else {
-                loc = null;
-            }
+        if (!hasLatLon) {
+            // We always encode GpsTimeStamp even if the GPS location is not
+            // available.
+            settings.setGpsData(
+                    new CameraSettings.GpsData(0f, 0f, 0f, System.currentTimeMillis() / 1000, null)
+            );
+        } else {
+            Log.d(TAG, "Set gps location");
+            // for NETWORK_PROVIDER location provider, we may have
+            // no altitude information, but the driver needs it, so
+            // we fake one.
+            // Location.getTime() is UTC in milliseconds.
+            // gps-timestamp is UTC in seconds.
+            long utcTimeSeconds = loc.getTime() / 1000;
+            settings.setGpsData(new CameraSettings.GpsData(loc.getLatitude(), loc.getLongitude(),
+                    (loc.hasAltitude() ? loc.getAltitude() : 0),
+                    (utcTimeSeconds != 0 ? utcTimeSeconds : System.currentTimeMillis()),
+                    loc.getProvider().toUpperCase()));
         }
     }
 
@@ -880,8 +879,7 @@ public class CameraUtil {
         return null;
     }
 
-    public static int[] getMaxPreviewFpsRange(Parameters params) {
-        List<int[]> frameRates = params.getSupportedPreviewFpsRange();
+    public static int[] getMaxPreviewFpsRange(List<int[]> frameRates) {
         if (frameRates != null && frameRates.size() > 0) {
             // The list is sorted. Return the last element.
             return frameRates.get(frameRates.size() - 1);

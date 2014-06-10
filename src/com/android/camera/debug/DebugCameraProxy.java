@@ -23,6 +23,7 @@ import android.view.SurfaceHolder;
 
 import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraSettings;
 
 /**
  * A {@link com.android.camera.cameradevice.CameraManager.CameraProxy} which wraps the
@@ -218,9 +219,21 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void refreshParameters() {
+    public CameraSettings getSettings() {
+        log("getSettings");
+        return mProxy.getSettings();
+    }
+
+    @Override
+    public boolean applySettings(final CameraSettings settings) {
+        log("applySettings");
+        return mProxy.applySettings(settings);
+    }
+
+    @Override
+    public void refreshSettings() {
         log("refreshParameters");
-        mProxy.refreshParameters();
+        mProxy.refreshSettings();
     }
 
     @Override
