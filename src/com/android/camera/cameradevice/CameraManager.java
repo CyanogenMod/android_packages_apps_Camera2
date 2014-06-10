@@ -22,6 +22,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.OnZoomChangeListener;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.SurfaceHolder;
 
 /**
@@ -40,6 +41,120 @@ import android.view.SurfaceHolder;
  * {@code android.hardware.Camera.Parameters}.
  */
 public interface CameraManager {
+    public static final long CAMERA_OPERATION_TIMEOUT_MS = 2500;
+
+    public static class CameraStartPreviewCallbackForward
+            implements CameraStartPreviewCallback {
+        private final Handler mHandler;
+        private final CameraStartPreviewCallback mCallback;
+
+        public static CameraStartPreviewCallbackForward getNewInstance(
+                Handler handler, CameraStartPreviewCallback cb) {
+            if (handler == null || cb == null) {
+                return null;
+            }
+            return new CameraStartPreviewCallbackForward(handler, cb);
+        }
+
+        private CameraStartPreviewCallbackForward(Handler h,
+                CameraStartPreviewCallback cb) {
+            mHandler = h;
+            mCallback = cb;
+        }
+
+        @Override
+        public void onPreviewStarted() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onPreviewStarted();
+                }
+            });
+        }
+    }
+
+    /**
+     * A callback helps to invoke the original callback on another
+     * {@link android.os.Handler}.
+     */
+    public static class CameraOpenCallbackForward implements CameraOpenCallback {
+        private final Handler mHandler;
+        private final CameraOpenCallback mCallback;
+
+        /**
+         * Returns a new instance of {@link FaceDetectionCallbackForward}.
+         *
+         * @param handler The handler in which the callback will be invoked in.
+         * @param cb The callback to be invoked.
+         * @return The instance of the {@link FaceDetectionCallbackForward}, or
+         *         null if any parameter is null.
+         */
+        public static CameraOpenCallbackForward getNewInstance(
+                Handler handler, CameraOpenCallback cb) {
+            if (handler == null || cb == null) {
+                return null;
+            }
+            return new CameraOpenCallbackForward(handler, cb);
+        }
+
+        private CameraOpenCallbackForward(Handler h, CameraOpenCallback cb) {
+            // Given that we are using the main thread handler, we can create it
+            // here instead of holding onto the PhotoModule objects. In this
+            // way, we can avoid memory leak.
+            mHandler = new Handler(Looper.getMainLooper());
+            mCallback = cb;
+        }
+
+        @Override
+        public void onCameraOpened(final CameraProxy camera) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCameraOpened(camera);
+                }
+            });
+        }
+
+        @Override
+        public void onCameraDisabled(final int cameraId) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCameraDisabled(cameraId);
+                }
+            });
+        }
+
+        @Override
+        public void onDeviceOpenFailure(final int cameraId, final String info) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onDeviceOpenFailure(cameraId, info);
+                }
+            });
+        }
+
+        @Override
+        public void onDeviceOpenedAlready(final int cameraId, final String info) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onDeviceOpenedAlready(cameraId, info);
+                }
+            });
+        }
+
+        @Override
+        public void onReconnectionFailure(final CameraManager mgr, final String info) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onReconnectionFailure(mgr, info);
+                }
+            });
+        }
+    }
 
     /**
      * A handler for all camera api runtime exceptions.
