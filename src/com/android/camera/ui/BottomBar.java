@@ -210,14 +210,13 @@ public class BottomBar extends FrameLayout {
     }
 
     /**
-     * Perform a transition to the global intent layout.  The current
-     * layout state of the bottom bar is irrelevant.
+     * Perform a transition to the global intent layout.
+     * The current layout state of the bottom bar is irrelevant.
      */
     public void transitionToIntentCaptureLayout() {
         mIntentReviewLayout.setVisibility(View.INVISIBLE);
         mCaptureLayout.setVisibility(View.VISIBLE);
         mCancelLayout.setVisibility(View.INVISIBLE);
-
 
         mMode = MODE_INTENT;
     }
