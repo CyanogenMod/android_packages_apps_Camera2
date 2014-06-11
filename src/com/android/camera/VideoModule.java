@@ -311,6 +311,12 @@ public class VideoModule extends CameraModule
         super(app);
     }
 
+    @Override
+    public String getPeekAccessibilityString() {
+        return mAppController.getAndroidContext()
+            .getResources().getString(R.string.video_accessibility_peek);
+    }
+
     private String createName(long dateTaken) {
         Date date = new Date(dateTaken);
         SimpleDateFormat dateFormat = new SimpleDateFormat(

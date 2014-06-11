@@ -91,8 +91,11 @@ public class PeekView extends ImageView {
      * @param bitmap The bitmap for the animation.
      * @param strong {@code true} if the animation is the strong version which
      *               shows more portion of the bitmap.
+     * @param accessibilityString An accessibility String to be announced
+                     during the peek animation.
      */
-    public void startPeekAnimation(final Bitmap bitmap, boolean strong) {
+    public void startPeekAnimation(final Bitmap bitmap, boolean strong,
+            String accessibilityString) {
         ValueAnimator.AnimatorUpdateListener updateListener =
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
@@ -149,8 +152,8 @@ public class PeekView extends ImageView {
         mDrawableBound = new Rect(x, y, x + drawDim.x, y + drawDim.y);
         mRotationPivot.set(x, (int) (y + drawDim.y * 1.1));
         mPeekAnimator.start();
-        announceForAccessibility(
-                getContext().getResources().getString(R.string.accessibility_peek));
+
+        announceForAccessibility(accessibilityString);
     }
 
     /**

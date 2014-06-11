@@ -33,6 +33,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.android.camera.Storage;
+import com.android.camera.data.PanoramaMetadataLoader;
+import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
@@ -511,8 +513,19 @@ public abstract class LocalMediaData implements LocalData {
                 boolean isInProgress) {
             loadImage(context, v, decodeWidth, decodeHeight, placeHolderResourceId, false);
 
+            int stringId = R.string.photo_date_content_description;
+            if (PanoramaMetadataLoader.isPanorama(this) ||
+                PanoramaMetadataLoader.isPanorama360(this)) {
+                stringId = R.string.panorama_date_content_description;
+            } else if (PanoramaMetadataLoader.isPanoramaAndUseViewer(this)) {
+                // assume it's a PhotoSphere
+                stringId = R.string.photosphere_date_content_description;
+            } else if (RgbzMetadataLoader.hasRGBZData(this)) {
+                stringId = R.string.refocus_date_content_description;
+            }
+
             v.setContentDescription(context.getResources().getString(
-                    R.string.media_date_content_description,
+                    stringId,
                     getReadableDate(mDateModifiedInSeconds)));
 
             return v;
@@ -847,9 +860,8 @@ public abstract class LocalMediaData implements LocalData {
                     .fitCenter()
                     .into(target);
 
-            v.setContentDescription(context.getResources().getString(
-                    R.string.media_date_content_description,
-                    getReadableDate(mDateModifiedInSeconds)));
+            // Content descriptions applied to parent FrameView
+            // see getView
 
             return v;
         }
@@ -885,6 +897,10 @@ public abstract class LocalMediaData implements LocalData {
                     CameraUtil.playVideo((Activity) context, getUri(), mTitle);
                 }
             });
+
+            result.setContentDescription(context.getResources().getString(
+                    R.string.video_date_content_description,
+                    getReadableDate(mDateModifiedInSeconds)));
 
             return result;
         }

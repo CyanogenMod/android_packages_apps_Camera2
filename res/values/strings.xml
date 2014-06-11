@@ -530,13 +530,29 @@ CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_hidden">Mode list closed</string>
     <!-- Announcement when the mode list becomes shown on screen [CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_list_shown">Mode list open</string>
-    <!-- Announcement when a capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
-    <string name="accessibility_peek">Capture taken</string>
+    <!-- Announcement when a general media capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
+    <string name="media_accessibility_peek">Capture taken</string>
+    <!-- Announcement when a video capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
+    <string name="photo_accessibility_peek">Photo taken</string>
+    <!-- Announcement when a video capture is performed, and visually the capture 'peeks' from right screen [CHAR LIMIT=NONE] -->
+    <string name="video_accessibility_peek">Video taken</string>
+
     <!-- Description for the lock icon in Secure Camera filmstrip that when clicked, brings user to lock screen then full Camera [CHAR LIMIT=NONE] -->
     <string name="accessibility_unlock_to_camera">Unlock to Camera</string>
 
-    <!-- Content description for media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <!-- Content description for general media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
     <string name="media_date_content_description">Media from %s</string>
+    <!-- Content description for photo media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <string name="photo_date_content_description">Photo from %s</string>
+    <!-- Content description for video media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <string name="video_date_content_description">Video from %s</string>
+    <!-- Content description for panorama media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <string name="panorama_date_content_description">Panorama from %s</string>
+    <!-- Content description for photosphere media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <string name="photosphere_date_content_description">Photo Sphere from %s</string>
+    <!-- Content description for refocus media items in filmstrip based on modified date, template will read a file modified time [CHAR LIMIT=NONE] -->
+    <string name="refocus_date_content_description">Lens blur from %s</string>
+
     <!-- Content description for media items in filmstrip which are still in the middle of processing [CHAR LIMIT=NONE] -->
     <string name="media_processing_content_description">Media processing</string>
 

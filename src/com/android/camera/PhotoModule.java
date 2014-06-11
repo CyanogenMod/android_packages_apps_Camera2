@@ -406,6 +406,12 @@ public class PhotoModule
     }
 
     @Override
+    public String getPeekAccessibilityString() {
+        return mAppController.getAndroidContext()
+            .getResources().getString(R.string.photo_accessibility_peek);
+    }
+
+    @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = activity;
         // TODO: Need to look at the controller interface to see if we can get

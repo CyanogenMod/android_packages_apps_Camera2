@@ -881,7 +881,8 @@ public class CameraActivity extends Activity
                     mDataAdapter.refresh(uri);
                     int dataId = mDataAdapter.findDataByContentUri(uri);
                     if (dataId != -1) {
-                        startPeekAnimation(mDataAdapter.getLocalData(dataId));
+                        startPeekAnimation(mDataAdapter.getLocalData(dataId),
+                                mCurrentModule.getPeekAccessibilityString());
                     }
                 }
 
@@ -1069,8 +1070,9 @@ public class CameraActivity extends Activity
      * LocalData#LOCAL_VIDEO} are supported.
      *
      * @param data The data to peek.
+     * @param accessibilityString Accessibility string to announce on peek animation.
      */
-    private void startPeekAnimation(final LocalData data) {
+    private void startPeekAnimation(final LocalData data, final String accessibilityString) {
         if (mFilmstripVisible || mPeekAnimationHandler == null) {
             return;
         }
@@ -1084,7 +1086,7 @@ public class CameraActivity extends Activity
         mPeekAnimationHandler.startDecodingJob(data, new Callback<Bitmap>() {
             @Override
             public void onCallback(Bitmap result) {
-                mCameraAppUI.startPeekAnimation(result, true);
+                mCameraAppUI.startPeekAnimation(result, true, accessibilityString);
             }
         });
     }
@@ -1116,7 +1118,6 @@ public class CameraActivity extends Activity
         // We are preloading the metadata for new video since we need the
         // rotation info for the thumbnail.
         new AsyncTask<LocalData, Void, LocalData>() {
-
             @Override
             protected LocalData doInBackground(LocalData... params) {
                 LocalData data = params[0];
@@ -1127,7 +1128,7 @@ public class CameraActivity extends Activity
             @Override
             protected void onPostExecute(LocalData data) {
                 if (mDataAdapter.addData(data)) {
-                    startPeekAnimation(data);
+                    startPeekAnimation(data, mCurrentModule.getPeekAccessibilityString());
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, newData);

@@ -647,7 +647,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     /**
      * Updates the preview matrix without altering it.
-     * 
+     *
      * @param matrix
      * @param aspectRatio the desired aspect ratio for the preview.
      */
@@ -1413,12 +1413,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * @param bitmap The bitmap to show.
      * @param strong Whether the animation shows more portion of the bitmap or
      *               not.
+     * @param accessibilityString An accessibility String to be announced
+                     during the peek animation.
      */
-    public void startPeekAnimation(Bitmap bitmap, boolean strong) {
+    public void startPeekAnimation(Bitmap bitmap, boolean strong, String accessibilityString) {
         if (mFilmstripLayout.getVisibility() == View.VISIBLE) {
             return;
         }
-        mPeekView.startPeekAnimation(bitmap, strong);
+        mPeekView.startPeekAnimation(bitmap, strong, accessibilityString);
     }
 
     /**
@@ -1695,7 +1697,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     /**
      * This adds letterboxing around the preview, one on each side
-     * 
+     *
      * @param width the width in pixels of each letterboxing cover
      */
     public void addLetterboxing(int width) {
