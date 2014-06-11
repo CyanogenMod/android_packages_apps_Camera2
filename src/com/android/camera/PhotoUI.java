@@ -19,6 +19,7 @@ package com.android.camera;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -30,6 +31,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.cameradevice.CameraManager;
@@ -71,6 +74,8 @@ public class PhotoUI implements PreviewStatusListener,
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
     private float mAspectRatio = UNSET;
+
+    private ImageView mIntentReviewImageView;
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener
             = new GestureDetector.SimpleOnGestureListener() {
@@ -210,6 +215,10 @@ public class PhotoUI implements PreviewStatusListener,
             if (isCancelled()) {
                 return;
             }
+
+            mIntentReviewImageView.setImageBitmap(bitmap);
+            showIntentReviewImageView();
+
             mDecodeTaskForReview = null;
         }
     }
@@ -226,7 +235,51 @@ public class PhotoUI implements PreviewStatusListener,
         mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
+
+        if (mController.isImageCaptureIntent()) {
+            createIntentReviewImageView();
+        }
     }
+
+    private void createIntentReviewImageView() {
+        ViewGroup parentViewGroup = (ViewGroup) mRootView;
+        mIntentReviewImageView = (ImageView) mActivity.getLayoutInflater()
+            .inflate(R.layout.intent_review_imageview, parentViewGroup, false);
+        parentViewGroup.addView(mIntentReviewImageView);
+        mIntentReviewImageView.bringToFront();
+
+        mActivity.getCameraAppUI().addPreviewAreaChangedListener(
+                new PreviewStatusListener.PreviewAreaChangedListener() {
+                    @Override
+                    public void onPreviewAreaChanged(RectF previewArea) {
+                        FrameLayout.LayoutParams params =
+                            (FrameLayout.LayoutParams) mIntentReviewImageView.getLayoutParams();
+                        params.width = (int) previewArea.width();
+                        params.height = (int) previewArea.height();
+                        params.setMargins((int) previewArea.left, (int) previewArea.top, 0, 0);
+                        mIntentReviewImageView.setLayoutParams(params);
+                    }
+                });
+    }
+
+    /**
+     * Show the image review over the live preview for intent captures.
+     */
+    public void showIntentReviewImageView() {
+        if (mIntentReviewImageView != null) {
+            mIntentReviewImageView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Hide the image review over the live preview for intent captures.
+     */
+    public void hideIntentReviewImageView() {
+        if (mIntentReviewImageView != null) {
+            mIntentReviewImageView.setVisibility(View.INVISIBLE);
+        }
+    }
+
 
     public FocusUI getFocusUI() {
         return mFocusUI;
