@@ -16,7 +16,6 @@
 
 package com.android.camera.cameradevice;
 
-import android.graphics.Point;
 import android.hardware.Camera;
 
 import com.android.camera.debug.Log;
@@ -28,7 +27,7 @@ import java.util.List;
 /**
  * The subclass of {@link CameraCapabilities} for Android Camera 1 API.
  */
-public class AndroidCameraCapabilities extends CameraCapabilities {
+class AndroidCameraCapabilities extends CameraCapabilities {
 
     private static Log.Tag TAG = new Log.Tag("AndroidCameraCapabilities");
 
@@ -42,8 +41,12 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
         mExposureCompensationStep = p.getExposureCompensationStep();
         mMaxNumOfFacesSupported = p.getMaxNumDetectedFaces();
         mMaxNumOfMeteringArea = p.getMaxNumMeteringAreas();
+        mPreferredPreviewSizeForVideo = new Size(p.getPreferredPreviewSizeForVideo());
         mSupportedPreviewFormats.addAll(p.getSupportedPreviewFormats());
-        mSupportedPictureFormats.addAll(p.getSupportedPictureFormats());
+        mSupportedPhotoFormats.addAll(p.getSupportedPictureFormats());
+        mMaxZoomIndex = p.getMaxZoom();
+        mZoomRatioList.addAll(p.getZoomRatios());
+        mMaxZoomRatio = mZoomRatioList.get(mMaxZoomIndex);
         buildPreviewFpsRange(p);
         buildPreviewSizes(p);
         buildVideoSizes(p);
@@ -92,7 +95,7 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
         List<Camera.Size> supportedPreviewSizes = p.getSupportedPreviewSizes();
         if (supportedPreviewSizes != null) {
             for (Camera.Size s : supportedPreviewSizes) {
-                mSupportedPreviewSizes.add(new Point(s.width, s.height));
+                mSupportedPreviewSizes.add(new Size(s.width, s.height));
             }
         }
         Collections.sort(mSupportedPreviewSizes, mSizeComparator);
@@ -102,7 +105,7 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
         List<Camera.Size> supportedVideoSizes = p.getSupportedVideoSizes();
         if (supportedVideoSizes != null) {
             for (Camera.Size s : supportedVideoSizes) {
-                mSupportedVideoSizes.add(new Point(s.width, s.height));
+                mSupportedVideoSizes.add(new Size(s.width, s.height));
             }
         }
         Collections.sort(mSupportedVideoSizes, mSizeComparator);
@@ -112,10 +115,10 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
         List<Camera.Size> supportedPictureSizes = p.getSupportedPictureSizes();
         if (supportedPictureSizes != null) {
             for (Camera.Size s : supportedPictureSizes) {
-                mSupportedPictureSizes.add(new Point(s.width, s.height));
+                mSupportedPhotoSizes.add(new Size(s.width, s.height));
             }
         }
-        Collections.sort(mSupportedPictureSizes, mSizeComparator);
+        Collections.sort(mSupportedPhotoSizes, mSizeComparator);
 
     }
 
@@ -164,7 +167,10 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
     private void buildFlashModes(Camera.Parameters p) {
         List<String> supportedFlashModes = p.getSupportedFlashModes();
-        if (supportedFlashModes != null) {
+        if (supportedFlashModes == null) {
+            // Camera 1 will return NULL if no flash mode is supported.
+            mSupportedFlashModes.add(FlashMode.NO_FLASH);
+        } else {
             for (String flash : supportedFlashModes) {
                 if (Camera.Parameters.FLASH_MODE_AUTO.equals(flash)) {
                     mSupportedFlashModes.add(FlashMode.AUTO);
@@ -234,11 +240,12 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
         }
     }
 
-    private static class SizeComparator implements Comparator<Point> {
+    private static class SizeComparator implements Comparator<Size> {
 
         @Override
-        public int compare(Point size1, Point size2) {
-            return (size1.x == size2.x ? size1.y - size2.y : size1.x - size2.x);
+        public int compare(Size size1, Size size2) {
+            return (size1.width() == size2.width() ? size1.height() - size2.height() :
+                    size1.width() - size2.width());
         }
     }
 
@@ -246,6 +253,10 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public String stringify(FocusMode focus) {
+            if (focus == null) {
+                return null;
+            }
+
             switch (focus) {
                 case AUTO:
                     return Camera.Parameters.FOCUS_MODE_AUTO;
@@ -267,19 +278,23 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public FocusMode focusModeFromString(String val) {
-            if (val.equals(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            if (val == null) {
+                return null;
+            }
+
+            if (Camera.Parameters.FOCUS_MODE_AUTO.equals(val)) {
                 return FocusMode.AUTO;
-            } else if (val.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            } else if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(val)) {
                 return FocusMode.CONTINUOUS_PICTURE;
-            } else if (val.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+            } else if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO.equals(val)) {
                 return FocusMode.CONTINUOUS_VIDEO;
-            } else if (val.equals(Camera.Parameters.FOCUS_MODE_EDOF)) {
+            } else if (Camera.Parameters.FOCUS_MODE_EDOF.equals(val)) {
                 return FocusMode.EXTENDED_DOF;
-            } else if (val.equals(Camera.Parameters.FOCUS_MODE_FIXED)) {
+            } else if (Camera.Parameters.FOCUS_MODE_FIXED.equals(val)) {
                 return FocusMode.FIXED;
-            } else if (val.equals(Camera.Parameters.FOCUS_MODE_INFINITY)) {
+            } else if (Camera.Parameters.FOCUS_MODE_INFINITY.equals(val)) {
                 return FocusMode.INFINITY;
-            } else if (val.equals(Camera.Parameters.FOCUS_MODE_MACRO)) {
+            } else if (Camera.Parameters.FOCUS_MODE_MACRO.equals(val)) {
                 return FocusMode.MACRO;
             } else {
                 return null;
@@ -288,7 +303,13 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public String stringify(FlashMode flash) {
+            if (flash == null) {
+                return null;
+            }
+
             switch (flash) {
+                case NO_FLASH:
+                    return null;
                 case AUTO:
                     return Camera.Parameters.FLASH_MODE_AUTO;
                 case OFF:
@@ -305,15 +326,17 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public FlashMode flashModeFromString(String val) {
-            if (val.equals(Camera.Parameters.FLASH_MODE_AUTO)) {
+            if (val == null) {
+                return FlashMode.NO_FLASH;
+            } else if (Camera.Parameters.FLASH_MODE_AUTO.equals(val)) {
                 return FlashMode.AUTO;
-            } else if (val.equals(Camera.Parameters.FLASH_MODE_OFF)) {
+            } else if (Camera.Parameters.FLASH_MODE_OFF.equals(val)) {
                 return FlashMode.OFF;
-            } else if (val.equals(Camera.Parameters.FLASH_MODE_ON)) {
+            } else if (Camera.Parameters.FLASH_MODE_ON.equals(val)) {
                 return FlashMode.ON;
-            } else if (val.equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+            } else if (Camera.Parameters.FLASH_MODE_TORCH.equals(val)) {
                 return FlashMode.TORCH;
-            } else if (val.equals(Camera.Parameters.FLASH_MODE_RED_EYE)) {
+            } else if (Camera.Parameters.FLASH_MODE_RED_EYE.equals(val)) {
                 return FlashMode.RED_EYE;
             } else {
                 return null;
@@ -322,6 +345,10 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public String stringify(SceneMode scene) {
+            if (scene == null) {
+                return null;
+            }
+
             switch (scene) {
                 case AUTO:
                     return Camera.Parameters.SCENE_MODE_AUTO;
@@ -363,39 +390,41 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public SceneMode sceneModeFromString(String val) {
-            if (val.equals(Camera.Parameters.SCENE_MODE_AUTO)) {
+            if (val == null) {
+                return SceneMode.NO_SCENE_MODE;
+            } else if (Camera.Parameters.SCENE_MODE_AUTO.equals(val)) {
                 return SceneMode.AUTO;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_ACTION)) {
+            } else if (Camera.Parameters.SCENE_MODE_ACTION.equals(val)) {
                 return SceneMode.ACTION;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_BARCODE)) {
+            } else if (Camera.Parameters.SCENE_MODE_BARCODE.equals(val)) {
                 return SceneMode.BARCODE;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_BEACH)) {
+            } else if (Camera.Parameters.SCENE_MODE_BEACH.equals(val)) {
                 return SceneMode.BEACH;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_CANDLELIGHT)) {
+            } else if (Camera.Parameters.SCENE_MODE_CANDLELIGHT.equals(val)) {
                 return SceneMode.CANDLELIGHT;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_FIREWORKS)) {
+            } else if (Camera.Parameters.SCENE_MODE_FIREWORKS.equals(val)) {
                 return SceneMode.FIREWORKS;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_HDR)) {
+            } else if (Camera.Parameters.SCENE_MODE_HDR.equals(val)) {
                 return SceneMode.HDR;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_LANDSCAPE)) {
+            } else if (Camera.Parameters.SCENE_MODE_LANDSCAPE.equals(val)) {
                 return SceneMode.LANDSCAPE;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_NIGHT)) {
+            } else if (Camera.Parameters.SCENE_MODE_NIGHT.equals(val)) {
                 return SceneMode.NIGHT;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_NIGHT_PORTRAIT)) {
+            } else if (Camera.Parameters.SCENE_MODE_NIGHT_PORTRAIT.equals(val)) {
                 return SceneMode.NIGHT_PORTRAIT;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_PARTY)) {
+            } else if (Camera.Parameters.SCENE_MODE_PARTY.equals(val)) {
                 return SceneMode.PARTY;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_PORTRAIT)) {
+            } else if (Camera.Parameters.SCENE_MODE_PORTRAIT.equals(val)) {
                 return SceneMode.PORTRAIT;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_SNOW)) {
+            } else if (Camera.Parameters.SCENE_MODE_SNOW.equals(val)) {
                 return SceneMode.SNOW;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_SPORTS)) {
+            } else if (Camera.Parameters.SCENE_MODE_SPORTS.equals(val)) {
                 return SceneMode.SPORTS;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_STEADYPHOTO)) {
+            } else if (Camera.Parameters.SCENE_MODE_STEADYPHOTO.equals(val)) {
                 return SceneMode.STEADYPHOTO;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_SUNSET)) {
+            } else if (Camera.Parameters.SCENE_MODE_SUNSET.equals(val)) {
                 return SceneMode.SUNSET;
-            } else if (val.equals(Camera.Parameters.SCENE_MODE_THEATRE)) {
+            } else if (Camera.Parameters.SCENE_MODE_THEATRE.equals(val)) {
                 return SceneMode.THEATRE;
             } else {
                 return null;
@@ -404,6 +433,10 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public String stringify(WhiteBalance wb) {
+            if (wb == null) {
+                return null;
+            }
+
             switch (wb) {
                 case AUTO:
                     return Camera.Parameters.WHITE_BALANCE_AUTO;
@@ -427,21 +460,25 @@ public class AndroidCameraCapabilities extends CameraCapabilities {
 
         @Override
         public WhiteBalance whiteBalanceFromString(String val) {
-            if (val.equals(Camera.Parameters.WHITE_BALANCE_AUTO)) {
+            if (val == null) {
+                return null;
+            }
+
+            if (Camera.Parameters.WHITE_BALANCE_AUTO.equals(val)) {
                 return WhiteBalance.AUTO;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT.equals(val)) {
                 return WhiteBalance.CLOUDY_DAYLIGHT;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_DAYLIGHT)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_DAYLIGHT.equals(val)) {
                 return WhiteBalance.DAYLIGHT;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_FLUORESCENT)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_FLUORESCENT.equals(val)) {
                 return WhiteBalance.FLUORESCENT;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_INCANDESCENT)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_INCANDESCENT.equals(val)) {
                 return WhiteBalance.INCANDESCENT;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_SHADE)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_SHADE.equals(val)) {
                 return WhiteBalance.SHADE;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_TWILIGHT)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_TWILIGHT.equals(val)) {
                 return WhiteBalance.TWILIGHT;
-            } else if (val.equals(Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT)) {
+            } else if (Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT.equals(val)) {
                 return WhiteBalance.WARM_FLUORESCENT;
             } else {
                 return null;

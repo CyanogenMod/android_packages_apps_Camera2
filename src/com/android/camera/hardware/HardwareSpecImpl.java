@@ -18,6 +18,7 @@ package com.android.camera.hardware;
 
 import android.hardware.Camera;
 
+import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 
@@ -41,6 +42,7 @@ public class HardwareSpecImpl implements HardwareSpec {
      * {@link com.android.camera.hardware.HardwareSpec} methods
      * based on {@link android.hardware.Camera.Parameters}.
      */
+    @Deprecated
     public HardwareSpecImpl(Camera.Parameters parameters) {
         // Cache whether front camera is supported.
         mIsFrontCameraSupported = (Camera.getNumberOfCameras() > 1);
@@ -53,6 +55,26 @@ public class HardwareSpecImpl implements HardwareSpec {
 
         // Cache whether flash is supported.
         mIsFlashSupported = isFlashSupported(parameters);
+    }
+
+    /**
+     * Compute the supported values for all
+     * {@link com.android.camera.hardware.HardwareSpec} methods
+     * based on {@link com.android.camera.cameradevice.CameraCapabilities}.
+     */
+    public HardwareSpecImpl(CameraCapabilities capabilities) {
+        // Cache whether front camera is supported.
+        mIsFrontCameraSupported = (Camera.getNumberOfCameras() > 1);
+
+        // Cache whether hdr is supported.
+        mIsHdrSupported = capabilities.supports(CameraCapabilities.SceneMode.HDR);
+
+        // Cache whether hdr plus is supported.
+        mIsHdrPlusSupported = GcamHelper.hasGcamCapture();
+
+        // Cache whether flash is supported.
+        mIsFlashSupported = capabilities.supports(CameraCapabilities.FlashMode.AUTO) ||
+                capabilities.supports(CameraCapabilities.FlashMode.ON);
     }
 
     @Override

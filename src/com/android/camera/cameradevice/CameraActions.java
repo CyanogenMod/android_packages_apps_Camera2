@@ -36,6 +36,7 @@ class CameraActions {
     public static final int SET_PARAMETERS =     201;
     public static final int GET_PARAMETERS =     202;
     public static final int REFRESH_PARAMETERS = 203;
+    public static final int APPLY_SETTINGS =     204;
     // Focus, Zoom
     public static final int AUTO_FOCUS =                   301;
     public static final int CANCEL_AUTO_FOCUS =            302;

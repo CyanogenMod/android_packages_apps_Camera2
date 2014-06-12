@@ -24,10 +24,11 @@ import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
 import com.android.camera.cameradevice.CameraManager;
+import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.util.Callback;
-import com.android.camera.util.Size;
+import com.android.camera.cameradevice.Size;
 import com.android.camera2.R;
 
 import java.util.ArrayList;
@@ -140,17 +141,17 @@ public class SettingsUtil {
      * @param sizeSetting The setting selected by the user. One of "large",
      *            "medium, "small" or two integers separated by "x".
      * @param supported The list of supported resolutions.
-     * @param parameters The Camera parameters to set the selected picture
+     * @param settings The Camera settings to set the selected picture
      *            resolution on.
      * @param cameraId This is used for caching the results for finding the
      *            different sizes.
      */
     public static void setCameraPictureSize(String sizeSetting, List<Size> supported,
-            Parameters parameters, int cameraId) {
+            CameraSettings settings, int cameraId) {
         Size selectedSize = getCameraPictureSize(sizeSetting, supported, cameraId);
         Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.width() + "x" +
                 selectedSize.height());
-        parameters.setPictureSize(selectedSize.width(), selectedSize.height());
+        settings.setPhotoSize(selectedSize);
     }
 
     /**

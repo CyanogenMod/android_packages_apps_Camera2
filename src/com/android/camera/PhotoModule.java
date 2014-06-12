@@ -63,6 +63,8 @@ import com.android.camera.cameradevice.CameraManager.CameraAFMoveCallback;
 import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
 import com.android.camera.cameradevice.CameraManager.CameraProxy;
 import com.android.camera.cameradevice.CameraManager.CameraShutterCallback;
+import com.android.camera.cameradevice.CameraSettings;
+import com.android.camera.cameradevice.Size;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -80,7 +82,6 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.SessionStatsCollector;
-import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera2.R;
@@ -135,7 +136,7 @@ public class PhotoModule
     private CameraProxy mCameraDevice;
     private int mCameraId;
     private CameraCapabilities mCameraCapabilities;
-    private Parameters mParameters;
+    private CameraSettings mCameraSettings;
     private boolean mPaused;
     private boolean mShouldSetPreviewCallbacks = ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK;
 
@@ -250,7 +251,7 @@ public class PhotoModule
     private final int mGcamModeIndex;
     private final CountdownSoundPlayer mCountdownSoundPlayer = new CountdownSoundPlayer();
 
-    private String mSceneMode;
+    private CameraCapabilities.SceneMode mSceneMode;
 
     private final Handler mHandler = new MainHandler(this);
 
@@ -522,7 +523,7 @@ public class PhotoModule
     }
 
     private AspectRatioDialogCallback createAspectRatioDialogCallback() {
-        Size currentSize = new Size(mParameters.getPictureSize());
+        Size currentSize = mCameraSettings.getCurrentPhotoSize();
         float aspectRatio = (float) currentSize.width() / (float) currentSize.height();
         if (aspectRatio < 1f) {
             aspectRatio = 1 / aspectRatio;
@@ -537,7 +538,7 @@ public class PhotoModule
             return null;
         }
 
-        List<Size> sizes = Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
+        List<Size> sizes = mCameraCapabilities.getSupportedPhotoSizes();
         List<Size> pictureSizes = ResolutionUtil
                 .getDisplayableSizesFromSupported(sizes, true);
 
@@ -700,7 +701,7 @@ public class PhotoModule
                                     Parameters.SCENE_MODE_AUTO);
                         }
                         updateParametersSceneMode();
-                        mCameraDevice.setParameters(mParameters);
+                        mCameraDevice.applySettings(mCameraSettings);
                         updateSceneMode();
                     }
                 }
@@ -736,7 +737,7 @@ public class PhotoModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return (mParameters != null ? new HardwareSpecImpl(mParameters) : null);
+        return (mCameraSettings != null ? new HardwareSpecImpl(mCameraCapabilities) : null);
     }
 
     @Override
@@ -785,7 +786,7 @@ public class PhotoModule
 
     // either open a new camera or switch cameras
     private void openCameraCommon() {
-        mUI.onCameraOpened(mParameters);
+        mUI.onCameraOpened(mCameraCapabilities, mCameraSettings);
         if (mIsImageCaptureIntent) {
             // Set hdr plus to default: off.
             SettingsManager settingsManager = mActivity.getSettingsManager();
@@ -835,7 +836,7 @@ public class PhotoModule
     private void initializeSecondTime() {
         getServices().getMemoryManager().addListener(this);
         mNamedImages = new NamedImages();
-        mUI.initializeSecondTime(mParameters);
+        mUI.initializeSecondTime(mCameraCapabilities, mCameraSettings);
     }
 
     private void addIdleHandler() {
@@ -987,7 +988,7 @@ public class PhotoModule
             if (mIsImageCaptureIntent) {
                 stopPreview();
             }
-            if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
+            if (mSceneMode == CameraCapabilities.SceneMode.HDR) {
                 mUI.setSwipingEnabled(true);
             }
 
@@ -1050,14 +1051,14 @@ public class PhotoModule
 
             float zoomValue = 0f;
             if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-                int zoomIndex = mParameters.getZoom();
-                List<Integer> zoomRatios = mParameters.getZoomRatios();
+                int zoomIndex = mCameraSettings.getCurrentZoomIndex();
+                List<Integer> zoomRatios = mCameraCapabilities.getZoomRatioList();
                 if (zoomRatios != null && zoomIndex < zoomRatios.size()) {
                     zoomValue = 0.01f * zoomRatios.get(zoomIndex);
                 }
             }
 
-            boolean hdrOn = CameraUtil.SCENE_MODE_HDR.equals(mSceneMode);
+            boolean hdrOn = CameraCapabilities.SceneMode.HDR == mSceneMode;
             String flashSetting =
                     mActivity.getSettingsManager().get(SettingsManager.SETTING_FLASH_MODE);
             boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
@@ -1077,7 +1078,7 @@ public class PhotoModule
                     height = exifHeight;
                 } else {
                     Size s;
-                    s = new Size(mParameters.getPictureSize());
+                    s = mCameraSettings.getCurrentPhotoSize();
                     if ((mJpegRotation + orientation) % 180 == 0) {
                         width = s.width();
                         height = s.height();
@@ -1245,7 +1246,7 @@ public class PhotoModule
         mPostViewPictureCallbackTime = 0;
         mJpegImageData = null;
 
-        final boolean animateBefore = (mSceneMode == CameraUtil.SCENE_MODE_HDR);
+        final boolean animateBefore = (mSceneMode == CameraCapabilities.SceneMode.HDR);
 
         if (animateBefore) {
             animateAfterShutter();
@@ -1263,10 +1264,10 @@ public class PhotoModule
         }
         CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
         mJpegRotation = CameraUtil.getJpegRotation(info, orientation);
-        mParameters.setRotation(mJpegRotation);
+        mCameraSettings.setPhotoRotationDegrees(mJpegRotation);
         Location loc = mActivity.getLocationManager().getCurrentLocation();
-        CameraUtil.setGpsParameters(mParameters, loc);
-        mCameraDevice.setParameters(mParameters);
+        CameraUtil.setGpsParameters(mCameraSettings, loc);
+        mCameraDevice.applySettings(mCameraSettings);
 
         // We don't want user to press the button again while taking a
         // multi-second HDR photo.
@@ -1291,15 +1292,18 @@ public class PhotoModule
     private void updateSceneMode() {
         // If scene mode is set, we cannot set flash mode, white balance, and
         // focus mode, instead, we read it from driver
-        if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
-            overrideCameraSettings(mParameters.getFlashMode(), mParameters.getFocusMode());
+        if (CameraCapabilities.SceneMode.AUTO != mSceneMode) {
+            overrideCameraSettings(mCameraSettings.getCurrentFlashMode(),
+                    mCameraSettings.getCurrentFocusMode());
         }
     }
 
-    private void overrideCameraSettings(final String flashMode, final String focusMode) {
+    private void overrideCameraSettings(CameraCapabilities.FlashMode flashMode,
+            CameraCapabilities.FocusMode focusMode) {
+        CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.set(SettingsManager.SETTING_FLASH_MODE, flashMode);
-        settingsManager.set(SettingsManager.SETTING_FOCUS_MODE, focusMode);
+        settingsManager.set(SettingsManager.SETTING_FLASH_MODE, stringifier.stringify(flashMode));
+        settingsManager.set(SettingsManager.SETTING_FOCUS_MODE, stringifier.stringify(focusMode));
     }
 
     @Override
@@ -1330,7 +1334,7 @@ public class PhotoModule
         mFocusManager.setParameters(mInitialParams, mCameraCapabilities);
 
         // Do camera parameter dependent initialization.
-        mParameters = mCameraDevice.getParameters();
+        mCameraSettings = mCameraDevice.getSettings();
         setCameraParameters(UPDATE_PARAM_ALL);
         // Set a listener which updates camera parameters based
         // on changed settings.
@@ -1477,7 +1481,7 @@ public class PhotoModule
     }
 
     private void focusAndCapture() {
-        if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
+        if (mSceneMode == CameraCapabilities.SceneMode.HDR) {
             mUI.setSwipingEnabled(false);
         }
         // If the user wants to do a snapshot while the previous one is still
@@ -1931,7 +1935,7 @@ public class PhotoModule
         }
 
         if (mCameraDevice != null) {
-            mCameraDevice.setParameters(mParameters);
+            mCameraDevice.applySettings(mCameraSettings);
         }
     }
 
@@ -1940,51 +1944,48 @@ public class PhotoModule
         // video camera application.
         int[] fpsRange = CameraUtil.getPhotoPreviewFpsRange(mCameraCapabilities);
         if (fpsRange != null && fpsRange.length > 0) {
-            mParameters.setPreviewFpsRange(
+            mCameraSettings.setPreviewFpsRange(
                     fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
                     fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
         }
 
-        mParameters.set(CameraUtil.RECORDING_HINT, CameraUtil.FALSE);
+        mCameraSettings.setSetting(CameraUtil.RECORDING_HINT, CameraUtil.FALSE);
 
-        // Disable video stabilization. Convenience methods not available in API
-        // level <= 14
-        String vstabSupported = mParameters.get("video-stabilization-supported");
-        if ("true".equals(vstabSupported)) {
-            mParameters.set("video-stabilization", "false");
+        if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_STABILIZATION)) {
+            mCameraSettings.setVideoStabilization(false);
         }
     }
 
     private void updateCameraParametersZoom() {
         // Set zoom.
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-            mParameters.setZoom(mZoomValue);
+            mCameraSettings.setZoomIndex(mZoomValue);
         }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setAutoExposureLockIfSupported() {
         if (mAeLockSupported) {
-            mParameters.setAutoExposureLock(mFocusManager.getAeAwbLock());
+            mCameraSettings.setAutoExposureLock(mFocusManager.getAeAwbLock());
         }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setAutoWhiteBalanceLockIfSupported() {
         if (mAwbLockSupported) {
-            mParameters.setAutoWhiteBalanceLock(mFocusManager.getAeAwbLock());
+            mCameraSettings.setAutoWhiteBalanceLock(mFocusManager.getAeAwbLock());
         }
     }
 
     private void setFocusAreasIfSupported() {
         if (mFocusAreaSupported) {
-            mParameters.setFocusAreas(mFocusManager.getFocusAreas());
+            mCameraSettings.setFocusAreas(mFocusManager.getFocusAreas());
         }
     }
 
     private void setMeteringAreasIfSupported() {
         if (mMeteringAreaSupported) {
-            mParameters.setMeteringAreas(mFocusManager.getMeteringAreas());
+            mCameraSettings.setMeteringAreas(mFocusManager.getMeteringAreas());
         }
     }
 
@@ -1996,7 +1997,8 @@ public class PhotoModule
 
         // Initialize focus mode.
         mFocusManager.overrideFocusMode(null);
-        mParameters.setFocusMode(mFocusManager.getFocusMode());
+        mCameraSettings.setFocusMode(mCameraCapabilities.getStringifier()
+                .focusModeFromString(mFocusManager.getFocusMode()));
         SessionStatsCollector.instance().autofocusActive(
                 mFocusManager.getFocusMode() == CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
 
@@ -2026,10 +2028,10 @@ public class PhotoModule
                 .get(isCameraFrontFacing() ? SettingsManager.SETTING_PICTURE_SIZE_FRONT
                         : SettingsManager.SETTING_PICTURE_SIZE_BACK);
 
-        List<Size> supported = Size.buildListFromCameraSizes(mParameters.getSupportedPictureSizes());
+        List<Size> supported = mCameraCapabilities.getSupportedPhotoSizes();
         CameraPictureSizesCacher.updateSizesForCamera(mAppController.getAndroidContext(),
                 mCameraDevice.getCameraId(), supported);
-        SettingsUtil.setCameraPictureSize(pictureSize, supported, mParameters,
+        SettingsUtil.setCameraPictureSize(pictureSize, supported, mCameraSettings,
                 mCameraDevice.getCameraId());
 
         Size size = SettingsUtil.getPhotoSize(pictureSize, supported,
@@ -2044,11 +2046,11 @@ public class PhotoModule
 
         // Set a preview size that is closest to the viewfinder height and has
         // the right aspect ratio.
-        List<Size> sizes = Size.buildListFromCameraSizes(mParameters.getSupportedPreviewSizes());
+        List<Size> sizes = mCameraCapabilities.getSupportedPreviewSizes();
         Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
                 (double) size.width() / size.height());
-        Size original = new Size(mParameters.getPreviewSize());
-        if (!original.equals(optimalSize)) {
+        Size original = mCameraSettings.getCurrentPreviewSize();
+        if (!optimalSize.equals(original)) {
             if (ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK) {
                 // Compare the aspect ratio.
                 if ((original.width() * optimalSize.height())
@@ -2059,7 +2061,7 @@ public class PhotoModule
                     mShouldSetPreviewCallbacks = true;
                 }
             }
-            mParameters.setPreviewSize(optimalSize.width(), optimalSize.height());
+            mCameraSettings.setPreviewSize(optimalSize);
 
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
@@ -2067,9 +2069,9 @@ public class PhotoModule
                 // On UI thread only, not when camera starts up
                 setupPreview();
             } else {
-                mCameraDevice.setParameters(mParameters);
+                mCameraDevice.applySettings(mCameraSettings);
             }
-            mParameters = mCameraDevice.getParameters();
+            mCameraSettings = mCameraDevice.getSettings();
         }
 
         if (optimalSize.width() != 0 && optimalSize.height() != 0) {
@@ -2082,7 +2084,7 @@ public class PhotoModule
     private void updateParametersPictureQuality() {
         int jpegQuality = CameraProfile.getJpegEncodingQualityParameter(mCameraId,
                 CameraProfile.QUALITY_HIGH);
-        mParameters.setJpegQuality(jpegQuality);
+        mCameraSettings.setPhotoJpegCompressionQuality(jpegQuality);
     }
 
     private void updateParametersExposureCompensation() {
@@ -2092,7 +2094,7 @@ public class PhotoModule
             int max = mCameraCapabilities.getMaxExposureCompensation();
             int min = mCameraCapabilities.getMinExposureCompensation();
             if (value >= min && value <= max) {
-                mParameters.setExposureCompensation(value);
+                mCameraSettings.setExposureCompensationIndex(value);
             } else {
                 Log.w(TAG, "invalid exposure range: " + value);
             }
@@ -2104,52 +2106,56 @@ public class PhotoModule
     }
 
     private void updateParametersSceneMode() {
+        CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        mSceneMode = settingsManager.get(SettingsManager.SETTING_SCENE_MODE);
-        if (mCameraCapabilities
-                .supports(mCameraCapabilities.getStringifier().sceneModeFromString(mSceneMode))) {
-            if (!mParameters.getSceneMode().equals(mSceneMode)) {
-                mParameters.setSceneMode(mSceneMode);
+        mSceneMode = stringifier
+                .sceneModeFromString(settingsManager.get(SettingsManager.SETTING_SCENE_MODE));
+        if (mCameraCapabilities.supports(mSceneMode)) {
+            if (mCameraSettings.getCurrentSceneMode() != mSceneMode) {
+                mCameraSettings.setSceneMode(mSceneMode);
 
                 // Setting scene mode will change the settings of flash mode,
                 // white balance, and focus mode. Here we read back the
                 // parameters, so we can know those settings.
-                mCameraDevice.setParameters(mParameters);
-                mParameters = mCameraDevice.getParameters();
+                mCameraDevice.applySettings(mCameraSettings);
+                mCameraSettings = mCameraDevice.getSettings();
             }
         } else {
-            mSceneMode = mParameters.getSceneMode();
+            mSceneMode = mCameraSettings.getCurrentSceneMode();
             if (mSceneMode == null) {
-                mSceneMode = Parameters.SCENE_MODE_AUTO;
+                mSceneMode = CameraCapabilities.SceneMode.AUTO;
             }
         }
 
-        if (Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
+        if (CameraCapabilities.SceneMode.AUTO == mSceneMode) {
             // Set flash mode.
             updateParametersFlashMode();
 
             // Set focus mode.
             mFocusManager.overrideFocusMode(null);
-            mParameters.setFocusMode(mFocusManager.getFocusMode());
+            mCameraSettings.setFocusMode(mCameraCapabilities.getStringifier()
+                    .focusModeFromString(mFocusManager.getFocusMode()));
         } else {
-            mFocusManager.overrideFocusMode(mParameters.getFocusMode());
+            mFocusManager.overrideFocusMode(mCameraCapabilities.getStringifier()
+                    .stringify(mCameraSettings.getCurrentFocusMode()));
         }
     }
 
     private void updateParametersFlashMode() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        String flashMode = settingsManager.get(SettingsManager.SETTING_FLASH_MODE);
-        if (mCameraCapabilities
-                .supports(mCameraCapabilities.getStringifier().flashModeFromString(flashMode))) {
-            mParameters.setFlashMode(flashMode);
+        CameraCapabilities.FlashMode flashMode = mCameraCapabilities.getStringifier()
+                .flashModeFromString(settingsManager.get(SettingsManager.SETTING_FLASH_MODE));
+        if (mCameraCapabilities.supports(flashMode)) {
+            mCameraSettings.setFlashMode(flashMode);
         }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void updateAutoFocusMoveCallback() {
-        if (mParameters.getFocusMode().equals(CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+        if (mCameraSettings.getCurrentFocusMode() ==
+                CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,
                     (CameraAFMoveCallback) mAutoFocusMoveCallback);
         } else {
@@ -2166,7 +2172,7 @@ public class PhotoModule
         int max = mCameraCapabilities.getMaxExposureCompensation();
         int min = mCameraCapabilities.getMinExposureCompensation();
         if (value >= min && value <= max) {
-            mParameters.setExposureCompensation(value);
+            mCameraSettings.setExposureCompensationIndex(value);
             SettingsManager settingsManager = mActivity.getSettingsManager();
             settingsManager.set(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE, Integer.toString(value));
         } else {
@@ -2190,7 +2196,7 @@ public class PhotoModule
             updateCameraParametersPreference();
         }
 
-        mCameraDevice.setParameters(mParameters);
+        mCameraDevice.applySettings(mCameraSettings);
     }
 
     // If the Camera is idle, update the parameters immediately, otherwise
@@ -2243,8 +2249,8 @@ public class PhotoModule
         mMeteringAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
         mAeLockSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.AUTO_EXPOSURE_LOCK);
         mAwbLockSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.AUTO_WHITE_BALANCE_LOCK);
-        mContinuousFocusSupported = mInitialParams.getSupportedFocusModes().contains(
-                CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
+        mContinuousFocusSupported =
+                mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_PICTURE);
     }
 
     // TODO: Remove this
@@ -2255,12 +2261,12 @@ public class PhotoModule
             return index;
         }
         mZoomValue = index;
-        if (mParameters == null || mCameraDevice == null) {
+        if (mCameraSettings == null || mCameraDevice == null) {
             return index;
         }
         // Set zoom parameters asynchronously
-        mParameters.setZoom(mZoomValue);
-        mCameraDevice.setParameters(mParameters);
+        mCameraSettings.setZoomRatio((float) mZoomValue);
+        mCameraDevice.applySettings(mCameraSettings);
         Parameters p = mCameraDevice.getParameters();
         if (p != null) {
             return p.getZoom();

@@ -82,6 +82,7 @@ import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
 import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.cameradevice.CameraManagerFactory;
+import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
@@ -460,7 +461,7 @@ public class CameraActivity extends Activity
          * can save this flash support value again.
          */
         if (!mSettingsManager.isSet(SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA)) {
-            HardwareSpec hardware = new HardwareSpecImpl(camera.getParameters());
+            HardwareSpec hardware = new HardwareSpecImpl(camera.getCapabilities());
             mSettingsManager.setBoolean(SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA,
                 hardware.isFlashSupported());
         }
@@ -483,9 +484,9 @@ public class CameraActivity extends Activity
 
     private void resetExposureCompensationToDefault(CameraManager.CameraProxy camera) {
         // Reset the exposure compensation before handing the camera to module.
-        Camera.Parameters parameters = camera.getParameters();
-        parameters.setExposureCompensation(0);
-        camera.setParameters(parameters);
+        CameraSettings cameraSettings = camera.getSettings();
+        cameraSettings.setExposureCompensationIndex(0);
+        camera.applySettings(cameraSettings);
     }
 
     @Override

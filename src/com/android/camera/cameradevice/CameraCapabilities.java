@@ -16,8 +16,6 @@
 
 package com.android.camera.cameradevice;
 
-import android.graphics.Point;
-
 import com.android.camera.debug.Log;
 
 import java.util.ArrayList;
@@ -27,31 +25,46 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * This class holds all the static information of a camera's capabilities.
+ * <p>
+ * The design of this class is thread-safe and can be passed around regardless
+ * of which thread using it.
+ * </p>
+ */
 public class CameraCapabilities {
 
-    private static Log.Tag TAG = new Log.Tag("CameraCapabilities");
+    private static Log.Tag TAG = new Log.Tag("CamCapabilities");
+
+    /* All internal states are declared final and should be thread-safe. */
 
     protected final ArrayList<int[]> mSupportedPreviewFpsRange = new ArrayList<int[]>();
-    protected final ArrayList<Point> mSupportedPreviewSizes = new ArrayList<Point>();
+    protected final ArrayList<Size> mSupportedPreviewSizes = new ArrayList<Size>();
     protected final TreeSet<Integer> mSupportedPreviewFormats = new TreeSet<Integer>();
-    protected final ArrayList<Point> mSupportedVideoSizes = new ArrayList<Point>();
-    protected final ArrayList<Point> mSupportedPictureSizes = new ArrayList<Point>();
-    protected final TreeSet<Integer> mSupportedPictureFormats = new TreeSet<Integer>();
+    protected final ArrayList<Size> mSupportedVideoSizes = new ArrayList<Size>();
+    protected final ArrayList<Size> mSupportedPhotoSizes = new ArrayList<Size>();
+    protected final TreeSet<Integer> mSupportedPhotoFormats = new TreeSet<Integer>();
     protected final EnumSet<SceneMode> mSupportedSceneModes = EnumSet.noneOf(SceneMode.class);
     protected final EnumSet<FlashMode> mSupportedFlashModes = EnumSet.noneOf(FlashMode.class);
     protected final EnumSet<FocusMode> mSupportedFocusModes = EnumSet.noneOf(FocusMode.class);
     protected final EnumSet<WhiteBalance> mSupportedWhiteBalances =
             EnumSet.noneOf(WhiteBalance.class);
     protected final EnumSet<Feature> mSupportedFeatures = EnumSet.noneOf(Feature.class);
+    protected Size mPreferredPreviewSizeForVideo;
     protected int mMinExposureCompensation;
     protected int mMaxExposureCompensation;
     protected float mExposureCompensationStep;
     protected int mMaxNumOfFacesSupported;
     protected int mMaxNumOfFocusAreas;
     protected int mMaxNumOfMeteringArea;
+    protected int mMaxZoomRatio;
     private final Stringifier mStringifier;
+    protected final ArrayList<Integer> mZoomRatioList = new ArrayList<Integer>();
+    protected int mMaxZoomIndex;
 
-    // Focus modes.
+    /**
+     * Focus modes.
+     */
     public enum FocusMode {
         /**
          * Continuous auto focus mode intended for taking pictures.
@@ -90,8 +103,14 @@ public class CameraCapabilities {
         MACRO,
     }
 
-    // Flash modes.
+    /**
+     * Flash modes.
+     */
     public enum FlashMode {
+        /**
+         * No flash.
+         */
+        NO_FLASH,
         /**
          * Flash will be fired automatically when required.
          * @see {@link android.hardware.Camera.Parameters#FLASH_MODE_OFF}.
@@ -119,7 +138,14 @@ public class CameraCapabilities {
         RED_EYE,
     }
 
+    /**
+     * Scene modes.
+     */
     public enum SceneMode {
+        /**
+         * No supported scene mode.
+         */
+        NO_SCENE_MODE,
         /**
          * Scene mode is off.
          * @see {@link android.hardware.Camera.Parameters#SCENE_MODE_AUTO}.
@@ -207,7 +233,9 @@ public class CameraCapabilities {
         THEATRE,
     }
 
-    // White balances.
+    /**
+     * White blances.
+     */
     public enum WhiteBalance {
         /**
          * @see {@link android.hardware.Camera.Parameters#WHITE_BALANCE_AUTO}.
@@ -243,6 +271,9 @@ public class CameraCapabilities {
         WARM_FLUORESCENT,
     }
 
+    /**
+     * Features.
+     */
     public enum Feature {
         /**
          * Support zoom-related methods.
@@ -268,6 +299,10 @@ public class CameraCapabilities {
          * Support for automatic white balance lock.
          */
         AUTO_WHITE_BALANCE_LOCK,
+        /**
+         * Support for video stabilization.
+         */
+        VIDEO_STABILIZATION,
     }
 
     /**
@@ -307,7 +342,8 @@ public class CameraCapabilities {
          * abstract representation.
          *
          * @param val The string representation.
-         * @return The flash mode represented by the input string.
+         * @return The flash mode represented by the input string. Can be
+         *         {@code null}.
          */
         FlashMode flashModeFromString(String val);
 
@@ -349,11 +385,11 @@ public class CameraCapabilities {
     }
 
     /**
-     * constructor.
-     * @param mStringifier The stringifier used by this instance.
+     * Constructor.
+     * @param stringifier The API-specific stringifier for this instance.
      */
-    CameraCapabilities(Stringifier mStringifier) {
-        this.mStringifier = mStringifier;
+    CameraCapabilities(Stringifier stringifier) {
+        mStringifier = stringifier;
     }
 
     /**
@@ -365,26 +401,29 @@ public class CameraCapabilities {
         mSupportedPreviewSizes.addAll(src.mSupportedPreviewSizes);
         mSupportedPreviewFormats.addAll(src.mSupportedPreviewFormats);
         mSupportedVideoSizes.addAll(src.mSupportedVideoSizes);
-        mSupportedPictureSizes.addAll(src.mSupportedPictureSizes);
-        mSupportedPictureFormats.addAll(src.mSupportedPictureFormats);
+        mSupportedPhotoSizes.addAll(src.mSupportedPhotoSizes);
+        mSupportedPhotoFormats.addAll(src.mSupportedPhotoFormats);
         mSupportedSceneModes.addAll(src.mSupportedSceneModes);
         mSupportedFlashModes.addAll(src.mSupportedFlashModes);
         mSupportedFocusModes.addAll(src.mSupportedFocusModes);
         mSupportedWhiteBalances.addAll(src.mSupportedWhiteBalances);
         mSupportedFeatures.addAll(src.mSupportedFeatures);
+        mPreferredPreviewSizeForVideo = src.mPreferredPreviewSizeForVideo;
         mMaxExposureCompensation = src.mMaxExposureCompensation;
         mMinExposureCompensation = src.mMinExposureCompensation;
         mExposureCompensationStep = src.mExposureCompensationStep;
         mMaxNumOfFacesSupported = src.mMaxNumOfFacesSupported;
         mMaxNumOfFocusAreas = src.mMaxNumOfFocusAreas;
+        mMaxNumOfMeteringArea = src.mMaxNumOfMeteringArea;
+        mMaxZoomRatio = src.mMaxZoomRatio;
         mStringifier = src.mStringifier;
     }
 
     /**
      * @return the supported picture formats. See {@link android.graphics.ImageFormat}.
      */
-    public Set<Integer> getSupportedPictureFormats() {
-        return new TreeSet<Integer>(mSupportedPictureFormats);
+    public Set<Integer> getSupportedPhotoFormats() {
+        return new TreeSet<Integer>(mSupportedPhotoFormats);
     }
 
     /**
@@ -398,8 +437,8 @@ public class CameraCapabilities {
     /**
      * Gets the supported picture sizes.
      */
-    public List<Point> getSupportedPictureSizes() {
-        return new ArrayList<Point>(mSupportedPictureSizes);
+    public List<Size> getSupportedPhotoSizes() {
+        return new ArrayList<Size>(mSupportedPhotoSizes);
     }
 
 
@@ -413,21 +452,23 @@ public class CameraCapabilities {
     }
 
     /**
-     * @return The supported preview sizes. The width and height are stored in
-     * Point.x and Point.y respectively and the list is sorted by width then
+     * @return The supported preview sizes. The list is sorted by width then
      * height in a descending order.
      */
-    public final List<Point> getSupportedPreviewSizes() {
-        return new ArrayList<Point>(mSupportedPreviewSizes);
+    public final List<Size> getSupportedPreviewSizes() {
+        return new ArrayList<Size>(mSupportedPreviewSizes);
+    }
+
+    public final Size getPreferredPreviewSizeForVideo() {
+        return new Size(mPreferredPreviewSizeForVideo);
     }
 
     /**
      * @return The supported video frame sizes that can be used by MediaRecorder.
-     * The width and height are stored in Point.x and Point.y respectively and
-     * the list is sorted by width then height in a descending order.
+     *         The list is sorted by width then height in a descending order.
      */
-    public final List<Point> getSupportedVideoSizes() {
-        return new ArrayList<Point>(mSupportedVideoSizes);
+    public final List<Size> getSupportedVideoSizes() {
+        return new ArrayList<Size>(mSupportedVideoSizes);
     }
 
     /**
@@ -442,6 +483,15 @@ public class CameraCapabilities {
      */
     public final boolean supports(SceneMode scene) {
         return (scene != null && mSupportedSceneModes.contains(scene));
+    }
+
+    public boolean supports(final CameraSettings settings) {
+        if (zoomCheck(settings) && exposureCheck(settings) && focusCheck(settings) &&
+                flashCheck(settings) && photoSizeCheck(settings) && previewSizeCheck(settings) &&
+                videoStabilizationCheck(settings)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -495,6 +545,24 @@ public class CameraCapabilities {
     }
 
     /**
+     * @return The maximal supported zoom ratio.
+     */
+    public float getMaxZoomRatio() {
+        return mMaxZoomRatio;
+    }
+
+    // We'll replace these old style methods with new ones.
+    @Deprecated
+    public int getMaxZoomIndex() {
+        return mMaxZoomIndex;
+    }
+
+    @Deprecated
+    public List<Integer> getZoomRatioList() {
+        return new ArrayList<Integer>(mZoomRatioList);
+    }
+
+    /**
      * @return The min exposure compensation index. The EV is the compensation
      * index multiplied by the step value. If unsupported, both this method and
      * {@link #getMaxExposureCompensation()} return 0.
@@ -533,5 +601,81 @@ public class CameraCapabilities {
      */
     public Stringifier getStringifier() {
         return mStringifier;
+    }
+
+    private boolean zoomCheck(final CameraSettings settings) {
+        final float ratio = settings.getCurrentZoomRatio();
+        final int index = settings.getCurrentZoomIndex();
+        if (!supports(Feature.ZOOM)) {
+            if (ratio != 1.0f || index != 0) {
+                Log.v(TAG, "Zoom is not supported");
+                return false;
+            }
+        } else {
+            if (settings.getCurrentZoomRatio() > getMaxZoomRatio() ||
+                    index > getMaxZoomIndex()) {
+                Log.v(TAG, "Zoom ratio is not supported: ratio = " +
+                        settings.getCurrentZoomRatio() + ", index = " + index);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean exposureCheck(final CameraSettings settings) {
+        final int index = settings.getExposureCompensationIndex();
+        if (index > getMaxExposureCompensation() || index < getMinExposureCompensation()) {
+            Log.v(TAG, "Exposure compensation index is not supported. Min = " +
+                    getMinExposureCompensation() + ", max = " + getMaxExposureCompensation() + "," +
+                    " setting = " + index);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean focusCheck(final CameraSettings settings) {
+        FocusMode focusMode = settings.getCurrentFocusMode();
+        if (!supports(focusMode)) {
+            Log.v(TAG,
+                    "Focus mode not supported:" + (focusMode != null ? focusMode.name() : "null"));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean flashCheck(final CameraSettings settings) {
+        FlashMode flashMode = settings.getCurrentFlashMode();
+        if (!supports(flashMode)) {
+            Log.v(TAG,
+                    "Flash mode not supported:" + (flashMode != null ? flashMode.name() : "null"));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean photoSizeCheck(final CameraSettings settings) {
+        Size photoSize = settings.getCurrentPhotoSize();
+        if (mSupportedPhotoSizes.contains(photoSize)) {
+            return true;
+        }
+        Log.v(TAG, "Unsupported photo size:" + photoSize);
+        return false;
+    }
+
+    private boolean previewSizeCheck(final CameraSettings settings) {
+        final Size previewSize = settings.getCurrentPreviewSize();
+        if (mSupportedPreviewSizes.contains(previewSize)) {
+            return true;
+        }
+        Log.v(TAG, "Unsupported preview size:" + previewSize);
+        return false;
+    }
+
+    private boolean videoStabilizationCheck(final CameraSettings settings) {
+        if (!settings.isVideoStabilizationEnabled() || supports(Feature.VIDEO_STABILIZATION)) {
+            return true;
+        }
+        Log.v(TAG, "Video stabilization is not supported");
+        return false;
     }
 }

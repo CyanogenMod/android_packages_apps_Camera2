@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -42,7 +41,7 @@ import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.SettingsHelper;
-import com.android.camera.util.Size;
+import com.android.camera.cameradevice.Size;
 import com.android.camera2.R;
 
 import java.text.DecimalFormat;
