@@ -24,7 +24,7 @@
   <string name="pref_camera_powermode_title">Режим напајања</string>
   <string name="pref_camera_powermode_entry_lp">Ниско напајање</string>
   <string name="pref_camera_powermode_entry_np">Нормално напајање</string>
-  <string name="pref_camera_autoexposure_title">Режим аутоматске експозиције</string>
+  <string name="pref_camera_autoexposure_title">Аутоматска експозиција</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">Просек оквира</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">Притиснут центар</string>
   <string name="pref_camera_autoexposure_entry_spotmetering">Мерење места</string>
@@ -32,7 +32,7 @@
   <string name="pref_camera_videoencoder_dialogtitle">Видео кодек</string>
   <string name="pref_camera_audioencoder_title">Аудио кодек</string>
   <string name="pref_camera_video_duration_title">Трајање видеа</string>
-  <string name="pref_camera_video_duration_entry_mms">30 секунде (MMS)</string>
+  <string name="pref_camera_video_duration_entry_mms">30 секунди (MMS)</string>
   <string name="pref_camera_video_duration_entry_10">10 минута</string>
   <string name="pref_camera_video_duration_entry_30">30 минута</string>
   <string name="pref_camera_skinToneEnhancement_title">Унапређење тона коже</string>
@@ -65,15 +65,15 @@
   <string name="pref_camera_ae_bracket_hdr_entry_on">Укључено</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Искључено</string>
   <string name="err_app_unsupport_ae_bracket_code">Држање аутоматске експозитуре још увек није подржано </string>
-  <string name="snapshot_lower_than_video">Величина snapshot-а је мања од величине видеа, затварања у видео величини. Изаберите резолуцију већу или једнаку тренутној видео величини.</string>
-  <string name="snapshotsize_low_powermode">Промена величине слике није подржана у режиму уштеде енергије, величина snapshot-а биће преузета. Молимо изаберите Нормални режим да дозволите промену величине слике.</string>
-  <string name="snapshot_qcif_and_d1">Само величине snapshot-а је подржана за ову резолуцију.</string>
+  <string name="snapshot_lower_than_video">Величина snapshot-а је мања од величине видеа, затварања у видео величини. Изабери резолуцију већу или једнаку тренутној видео величини.</string>
+  <string name="snapshotsize_low_powermode">Промена величине слике није подржана у режиму уштеде енергије, величина snapshot-а биће преузета. Молимо изабери Нормални режим да дозволиш промену величине слике.</string>
+  <string name="snapshot_qcif_and_d1">Само величина snapshot-а је подржана за ову резолуцију.</string>
   <string name="pref_camera_hfr_title">Успорено кретање (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Искључено</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
-  <string name="pref_camera_denoise_title">Wavelet Denoise режим</string>
+  <string name="pref_camera_denoise_title">Смањивање буке</string>
   <string name="pref_camera_denoise_entry_off">Искључено</string>
   <string name="pref_camera_denoise_entry_on">Укључено</string>
   <string name="pref_camera_iso_title">ISO</string>
@@ -84,7 +84,7 @@
   <string name="pref_camera_iso_entry_iso400">ISO400</string>
   <string name="pref_camera_iso_entry_iso800">ISO800</string>
   <string name="pref_camera_iso_entry_iso1600">ISO1600</string>
-  <string name="pref_camera_antibanding_title">Без савијања</string>
+  <string name="pref_camera_antibanding_title">Смањивање трептања</string>
   <string name="pref_camera_antibanding_entry_0">Искључено</string>
   <string name="pref_camera_antibanding_entry_1">50 Hz</string>
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>

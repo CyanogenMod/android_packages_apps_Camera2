@@ -32,9 +32,9 @@
   <string name="pref_camera_videoencoder_dialogtitle">Vaizdo iškodavimas</string>
   <string name="pref_camera_audioencoder_title">Garso iškodavimas</string>
   <string name="pref_camera_video_duration_title">Vaizdo trukmė</string>
-  <string name="pref_camera_video_duration_entry_mms">30 sekundžių (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 minučių</string>
-  <string name="pref_camera_video_duration_entry_30">30 minučių</string>
+  <string name="pref_camera_video_duration_entry_mms">30 sek. (MMS)</string>
+  <string name="pref_camera_video_duration_entry_10">10 min.</string>
+  <string name="pref_camera_video_duration_entry_30">30 min.</string>
   <string name="pref_camera_skinToneEnhancement_title">Odos spalvos tono didinimas</string>
   <string name="pref_camera_skinToneEnhancement_entry_enable">Įjungtas</string>
   <string name="pref_camera_skinToneEnhancement_entry_disable">Išjungtas</string>

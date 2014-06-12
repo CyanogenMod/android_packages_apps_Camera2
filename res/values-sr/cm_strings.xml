@@ -29,6 +29,7 @@
   <string name="pref_camera_picturesize_entry_6_4mp">6.4 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_6mp">6 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5 мегапиксела</string>
+  <string name="pref_camera_picturesize_entry_4mp">4 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_3_7mp">3.7 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2.5 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_2_1mp">2.1 мегапиксела</string>
@@ -60,7 +61,7 @@
   <string name="pref_camera_scenemode_entry_fallcolor">Јесење боје</string>
   <string name="pref_camera_scenemode_entry_fireworks">Ватромет</string>
   <string name="pref_camera_scenemode_entry_flowers">Цвеће</string>
-  <string name="pref_camera_scenemode_entry_handheldtwilight">Сумрак 2</string>
+  <string name="pref_camera_scenemode_entry_handheldtwilight">Ручни сумрак</string>
   <string name="pref_camera_scenemode_entry_highsensitivity">Висока осетљивост</string>
   <string name="pref_camera_scenemode_entry_indoor">Унутра</string>
   <string name="pref_camera_scenemode_entry_landscape">Пејзаж</string>
@@ -81,7 +82,7 @@
   <string name="pref_camera_scenemode_entry_text">Текст</string>
   <string name="pref_camera_scenemode_entry_theatre">Позориште</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Белатабла</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Непрекидна слика</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Континуирана слика</string>
   <string name="pref_camera_focusmode_entry_extended">Проширено</string>
   <string name="pref_camera_focusmode_entry_facedetect">Детекција лица</string>
   <string name="pref_camera_focusmode_entry_facepriority">Приоритет лица</string>
@@ -95,20 +96,20 @@
   <string name="pref_camera_coloreffect_entry_point_green">Тачка зелене</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Тачка црвено-жута</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Цртаћ</string>
-  <string name="pref_camera_burst_title">Бурст режим</string>
+  <string name="pref_camera_burst_title">Непрекидно сликање</string>
   <string name="pref_camera_burst_entry_off">Искључено</string>
   <string name="pref_camera_burst_entry_5">5 снимака</string>
   <string name="pref_camera_burst_entry_10">10 снимака</string>
   <string name="pref_camera_burst_entry_15">15 снимака</string>
   <string name="pref_camera_burst_entry_20">20 снимака</string>
   <string name="pref_camera_focustime_title">Трајање додирног фокуса</string>
-  <string name="pref_camera_focustime_summary">Одаберите трајање за додирни фокус</string>
+  <string name="pref_camera_focustime_summary">Изабери трајање за додирни фокус</string>
   <string name="pref_camera_focustime_entry_5">5с</string>
   <string name="pref_camera_focustime_entry_10">10с</string>
   <string name="pref_camera_focustime_entry_15">15с</string>
   <string name="pref_camera_focustime_entry_20">20с</string>
   <string name="pref_camera_focustime_entry_30">30с</string>
-  <string name="pref_camera_focustime_entry_infinite">Неограничен</string>
+  <string name="pref_camera_focustime_entry_infinite">Неограничено</string>
   <string name="pref_camera_flashmode_entry_redeye">Црвене очи</string>
   <string name="pref_camera_flashmode_label_redeye">ЦРВЕНЕ ОЧИ</string>
   <string name="pref_camera_beauty_mode_title">Режим лепоте</string>
@@ -120,13 +121,13 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 секунде</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 секунде</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 секунди</string>
-  <string name="pref_camera_storage_title">Складиштни простор</string>
-  <string name="camera_menu_enhance_label">Повећавање</string>
+  <string name="pref_camera_storage_title">Складиште</string>
+  <string name="camera_menu_enhance_label">ПОВЕЋАВАЊЕ</string>
   <string name="camera_menu_slow_shutter_label">СПОРИ ОКИДАЧ</string>
   <string name="camera_menu_beauty_mode_label">УЛЕПШАВАЊЕ</string>
   <string name="camera_menu_colorize_label">ОБОЈЕНОСТ</string>
   <string name="camera_menu_effects_label">ЕФЕКТИ</string>
   <string name="camera_menu_asd_label">ПАМЕТНА СЦЕНА</string>
-  <string name="pref_camera_power_shutter_title">Power окидач</string>
+  <string name="pref_camera_power_shutter_title">Алтернативни окидач</string>
   <string name="pref_superzoom_title">Увеличај</string>
 </resources>
