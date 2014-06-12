@@ -137,7 +137,6 @@ public class PhotoModule
     private CameraCapabilities mCameraCapabilities;
     private Parameters mParameters;
     private boolean mPaused;
-    private boolean mShouldSetPreviewCallbacks = ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK;
 
     private PhotoUI mUI;
 
@@ -1849,24 +1848,6 @@ public class PhotoModule
             mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
         }
         setCameraParameters(UPDATE_PARAM_ALL);
-
-        // Workaround for KitKat and KitKat MR1 which leave configured preview
-        // callback streams lingering around when they should have been removed.
-        // These preview callback streams are the cause for distorted preview.
-        // For more details, see b/12210027
-        if (mShouldSetPreviewCallbacks) {
-            mShouldSetPreviewCallbacks = false;
-            Size previewSize = new Size(mCameraDevice.getParameters().getPreviewSize());
-            mCameraDevice.setPreviewDataCallbackWithBuffer(mHandler,
-                    new CameraManager.CameraPreviewDataCallback() {
-                @Override
-                public void onPreviewFrame(byte[] data, CameraProxy camera) {
-                    // Remove callback after the first frame comes in.
-                    mCameraDevice.setPreviewDataCallbackWithBuffer(null, null);
-                }
-            });
-            mCameraDevice.addCallbackBuffer(new byte[previewSize.width() * previewSize.height()]);
-        }
         mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
         Log.i(TAG, "startPreview");
@@ -2043,16 +2024,6 @@ public class PhotoModule
                 (double) size.width() / size.height());
         Size original = new Size(mParameters.getPreviewSize());
         if (!original.equals(optimalSize)) {
-            if (ApiHelper.SHOULD_HARD_RESET_PREVIEW_CALLBACK) {
-                // Compare the aspect ratio.
-                if ((original.width() * optimalSize.height())
-                        != (original.height() * optimalSize.width())) {
-                    // If aspect ratio has changed, set preview callback again, so
-                    // that the old preview callback stream will be forced to update.
-                    // This is a workaround for b/12210027, which was fixed in Kitkat MR2.
-                    mShouldSetPreviewCallbacks = true;
-                }
-            }
             mParameters.setPreviewSize(optimalSize.width(), optimalSize.height());
 
             // Zoom related settings will be changed for different preview
