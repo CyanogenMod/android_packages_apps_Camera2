@@ -16,14 +16,16 @@
 
 package com.android.camera.util;
 
+import android.accounts.Account;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
 public class GoogleHelpHelper {
-    public static Intent getGoogleHelpIntent(Activity activity) {
+    public static Intent getGoogleHelpIntent(Context context, Account googleAccount) {
         return null;
     }
 
-    public static void launchGoogleHelp(Activity activity) {
+    public static void launchGoogleHelp(Activity activity, Account googleAccount) {
     }
 }
