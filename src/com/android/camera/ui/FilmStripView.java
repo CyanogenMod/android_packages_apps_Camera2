@@ -1788,6 +1788,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             }
             int deltaX = (int) (ev.getX() - mDown.getX());
             int deltaY = (int) (ev.getY() - mDown.getY());
+            //TODO: check rotatation and then decide where left is depending on rotation
             if (ev.getActionMasked() == MotionEvent.ACTION_MOVE
                     && deltaX < mSlop * (-1)) {
                 // intercept left swipe
