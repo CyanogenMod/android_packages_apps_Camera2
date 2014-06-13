@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Opções"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Lista de modos fechada"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lista de modos aberta"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"Captura efetuada"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"Captura efetuada"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"Fotografia tirada"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"Vídeo efetuado"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloquear para aceder à câmara"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Dados multimédia de %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"Fotografia tirada à(s) %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"Vídeo efetuado à(s) %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama efetuado à(s) %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Photo Sphere à(s) %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"Desfocagem da lente à(s) %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Dados multimédia em processamento"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alternar lista de modos"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista de modos"</string>

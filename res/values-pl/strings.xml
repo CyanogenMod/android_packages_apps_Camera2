@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Opcje"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Lista trybów zamknięta"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lista trybów otwarta"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"Zdjęcie zrobione"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"Zrobiłeś zdjęcie"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"Zrobiłeś zdjęcie"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"Nagrałeś film"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Włącz aparat z ekranu blokady"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Materiał z: %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"Zdjęcie z %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"Film z %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama z %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Zdjęcie sferyczne z %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"Zdjęcie z rozmyciem soczewkowym z %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Przetwarzane materiały"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Włącz/wyłącz listę trybów"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista trybów"</string>

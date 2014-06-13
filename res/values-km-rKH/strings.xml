@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ជម្រើស"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប​"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"បាន​បើក​បញ្ជី​របៀប"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"ចាប់​យក"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"ចាប់​យក"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"បាន​ថតរូប"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"បាន​ថត​វីដេអូ"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ដោះ​សោ​ដើម្បី​ប្រើ​ម៉ាស៊ីន​ថត"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"មេឌៀ​ពី %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"រូបថត​ពី %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"វីដេអូ​ពី %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"ប៉ាណូរ៉ាម៉ា​ពី %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"រូបថត​វិល​ជុំ​ពី %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"រូបថត​ព្រិលៗ​ពី %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"ដំណើរការ​មេឌៀ"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"បិទ/បើក​បញ្ជី​របៀប"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"បញ្ជី​​របៀប"</string>

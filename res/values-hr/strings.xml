@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Opcije"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Zatvoren je popis načina"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Otvoren je popis načina"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"Snimljeno"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"Snimljeno"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"Snimljena je fotografija"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"Snimljen je videozapis"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Otključavanje i pristup Fotoaparatu"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Mediji: %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"Fotografija, %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"Videozapis, %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama, %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Fotosfera, %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"Efekt s izoštrenim objektom, %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Obrada medija"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Prikazivanje/sakrivanje popisa načina"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Popis načina"</string>
