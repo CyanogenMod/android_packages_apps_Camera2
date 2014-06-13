@@ -18,6 +18,7 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
 import android.view.LayoutInflater;
