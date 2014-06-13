@@ -225,6 +225,7 @@ public class PhotoUI implements PieListener,
 
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                 (ViewGroup) mRootView, true);
+
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
@@ -249,8 +250,8 @@ public class PhotoUI implements PieListener,
         mSpinner = (ProgressBar) mRootView.findViewById(R.id.wait_spinner);
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
         mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
-
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
+
         mAnimationManager = new AnimationManager();
 
         mOrientationResize = false;
@@ -450,7 +451,12 @@ public class PhotoUI implements PieListener,
             mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
             mReviewRetakeButton = mRootView.findViewById(R.id.btn_retake);
             mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
-            mReviewCancelButton.setVisibility(View.VISIBLE);
+
+            try {
+                mReviewCancelButton.setVisibility(View.VISIBLE);
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
+            }
 
             mReviewDoneButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -955,7 +961,7 @@ public class PhotoUI implements PieListener,
     @Override
     public void onDisplayChanged() {
         Log.d(TAG, "Device flip detected.");
-        mCameraControls.checkLayoutFlip();
+        //mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
     }
 
