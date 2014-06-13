@@ -56,7 +56,6 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
-import com.android.camera.app.MotionManager;
 import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.cameradevice.CameraManager.CameraAFCallback;
@@ -1568,10 +1567,6 @@ public class PhotoModule
                     defaultFocusModes,
                     mInitialParams, this, mMirror,
                     mActivity.getMainLooper(), mUI.getFocusUI());
-            MotionManager motionManager = getServices().getMotionManager();
-            if (motionManager != null) {
-                motionManager.addListener(mFocusManager);
-            }
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
     }
