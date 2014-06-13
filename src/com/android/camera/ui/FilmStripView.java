@@ -28,6 +28,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
+import android.provider.Settings;
+import android.content.pm.ActivityInfo;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -891,6 +893,17 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             v.setAlpha(1f);
             v.setTranslationX(0);
             v.setTranslationY(0);
+            if(mActivity.mCurrentModuleName == "WideAnglePanoramaModule")
+            {
+                if (Settings.System.getInt(mActivity.getContentResolver(),		
+                            Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {		
+                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                } else {		
+                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                }
+            } else {
+                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }    
         }
         return item;
     }

@@ -1390,11 +1390,7 @@ public class PhotoModule
         int orientation;
         // We need to be consistent with the framework orientation (i.e. the
         // orientation of the UI.) when the auto-rotate screen setting is on.
-        if (mActivity.isAutoRotateScreen()) {
-            orientation = (360 - mDisplayRotation) % 360;
-        } else {
-            orientation = mOrientation;
-        }
+        orientation = mOrientation;
 
         mJpegRotation = CameraUtil.getJpegRotation(mCameraId, orientation);
 
