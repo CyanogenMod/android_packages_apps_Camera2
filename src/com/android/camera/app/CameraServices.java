@@ -37,12 +37,6 @@ public interface CameraServices {
     public MemoryManager getMemoryManager();
 
     /**
-     * Returns the motion manager which senses when significant motion of the
-     * camera should unlock a locked focus.
-     */
-    public MotionManager getMotionManager();
-
-    /**
      * Returns the media saver instance.
      * <p>
      * Deprecated. Use {@link #getCaptureSessionManager()} whenever possible.
