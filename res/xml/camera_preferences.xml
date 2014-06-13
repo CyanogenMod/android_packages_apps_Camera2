@@ -56,8 +56,9 @@
         </PreferenceScreen>
 
         <!-- Location -->
-        <SwitchPreference
-            android:defaultValue="false"
+        <ListPreference
+            android:defaultValue="@string/pref_boolean_false"
+            android:entryValues="@array/pref_default_boolean_entryvalues"
             android:key="pref_camera_recordlocation_key"
             android:title="@string/pref_camera_save_location_title" />
 
@@ -66,8 +67,9 @@
             android:key="pref_category_advanced"
             android:title="@string/pref_category_advanced" >
 
-            <SwitchPreference
-                android:defaultValue="false"
+            <ListPreference
+                android:defaultValue="@string/pref_boolean_true"
+                android:entryValues="@array/pref_default_boolean_entryvalues"
                 android:key="pref_camera_exposure_compensation_key"
                 android:title="@string/pref_camera_exposure_compensation" />
         </PreferenceScreen>

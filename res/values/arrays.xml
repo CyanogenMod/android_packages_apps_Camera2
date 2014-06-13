@@ -504,11 +504,11 @@
         <item>@drawable/ic_timer_10s_indicator</item>
     </array>
 
-    <string-array name="pref_countdown_duration" translatable="false">
+    <integer-array name="pref_countdown_duration" translatable="false">
         <item>0</item>
         <item>3</item>
         <item>10</item>
-    </string-array>
+    </integer-array>
 
 
     <!--Index of camera modes. -->
@@ -519,6 +519,17 @@
     <integer name="camera_mode_panorama">4</integer>
     <integer name="camera_mode_timelapse">5</integer>
     <integer name="camera_mode_gcam">6</integer>
+
+    <!-- Ordered list of all camera modes. -->
+    <integer-array name="camera_modes">
+        <item>@integer/camera_mode_photo</item>
+        <item>@integer/camera_mode_video</item>
+        <item>@integer/camera_mode_refocus</item>
+        <item>@integer/camera_mode_photosphere</item>
+        <item>@integer/camera_mode_panorama</item>
+        <item>@integer/camera_mode_timelapse</item>
+        <item>@integer/camera_mode_gcam</item>
+    </integer-array>
 
     <!-- An array of camera mode indices in the sequence of their appearance
     in the mode drawer. -->
@@ -618,4 +629,8 @@
         <item>@string/pref_video_quality_entry_qvga_notrans</item>
     </array>
 
+    <array name="pref_default_boolean_entryvalues">
+        <item>@string/pref_boolean_false</item>
+        <item>@string/pref_boolean_true</item>
+    </array>
 </resources>

@@ -47,6 +47,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.BottomBar;
@@ -765,7 +766,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mModeListView.setCameraModuleScreenShotProvider(mCameraModuleScreenShotProvider);
             mModeListView.setCaptureLayoutHelper(mCaptureLayoutHelper);
             boolean shouldShowSettingsCling = mController.getSettingsManager().getBoolean(
-                    SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING);
+                    SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING);
             mModeListView.setShouldShowSettingsCling(shouldShowSettingsCling);
         } else {
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
@@ -1390,8 +1392,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSettingsSelected() {
-        mController.getSettingsManager()
-                .setBoolean(SettingsManager.SETTING_SHOULD_SHOW_SETTINGS_BUTTON_CLING, false);
+        mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                                             Keys.KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING, false);
         mModeListView.setShouldShowSettingsCling(false);
         mController.onSettingsSelected();
     }
@@ -1561,7 +1563,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         return new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
-                if (mController.getSettingsManager().areGridLinesOn()) {
+                if (Keys.areGridLinesOn(mController.getSettingsManager())) {
                     showGridLines();
                 } else {
                     hideGridLines();
@@ -1785,10 +1787,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     @Override
-    public void onSettingChanged(SettingsManager settingsManager, int id) {
+    public void onSettingChanged(SettingsManager settingsManager, String key) {
         // Update the mode options based on the hardware spec,
         // when hdr changes to prevent flash from getting out of sync.
-        if (id == SettingsManager.SETTING_CAMERA_HDR) {
+        if (key.equals(Keys.KEY_CAMERA_HDR)) {
             ModuleController moduleController = mController.getCurrentModuleController();
             applyModuleSpecs(moduleController.getHardwareSpec(),
                              moduleController.getBottomBarSpec());
@@ -1830,7 +1832,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
 
         boolean flashBackCamera = mController.getSettingsManager().getBoolean(
-            SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA);
+            SettingsManager.SCOPE_GLOBAL, Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA);
         if (bottomBarSpec.hideFlash || !flashBackCamera) {
             buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
         } else {
@@ -1858,14 +1860,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
         } else {
             if (hardwareSpec.isHdrPlusSupported()) {
-                if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
+                if (bottomBarSpec.enableHdr && Keys.isCameraBackFacing(settingsManager,
+                                                                       mController.getModuleScope())) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
                             bottomBarSpec.hdrCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
                 }
             } else if (hardwareSpec.isHdrSupported()) {
-                if (bottomBarSpec.enableHdr && settingsManager.isCameraBackFacing()) {
+                if (bottomBarSpec.enableHdr && Keys.isCameraBackFacing(settingsManager,
+                                                                       mController.getModuleScope())) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
                             bottomBarSpec.hdrCallback);
                 } else {
@@ -1910,8 +1914,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         boolean enableExposureCompensation = bottomBarSpec.enableExposureCompensation &&
             !(bottomBarSpec.minExposureCompensation == 0 && bottomBarSpec.maxExposureCompensation == 0) &&
-            mController.getSettingsManager()
-            .getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED);
+            mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_EXPOSURE_COMPENSATION_ENABLED);
         if (enableExposureCompensation) {
             buttonManager.initializePushButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION, null);
             buttonManager.setExposureCompensationParameters(

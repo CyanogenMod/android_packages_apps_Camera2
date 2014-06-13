@@ -75,6 +75,7 @@ import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.LocationManager;
+import com.android.camera.app.ModuleManager;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryQuery;
 import com.android.camera.app.ModuleManagerImpl;
@@ -106,9 +107,11 @@ import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
 import com.android.camera.settings.CameraSettingsActivity;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.settings.SettingsUtil;
+import com.android.camera.settings.Upgrade;
+import com.android.camera.settings.UpgradeAosp;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.DetailsDialog;
@@ -165,6 +168,9 @@ public class CameraActivity extends Activity
     // increment. This is used when switching between camera, camcorder, and
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
+
+    public static final String MODULE_SCOPE_PREFIX = "_preferences_module_";
+    public static final String CAMERA_SCOPE_PREFIX = "_preferences_camera_";
 
     /**
      * Request code from an activity we started that indicated that we do not
@@ -261,6 +267,11 @@ public class CameraActivity extends Activity
         return mCameraAppUI;
     }
 
+    @Override
+    public ModuleManager getModuleManager() {
+        return mModuleManager;
+    }
+
     // close activity when screen turns off
     private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
         @Override
@@ -299,11 +310,10 @@ public class CameraActivity extends Activity
                         mPanoramaViewHelper.showPanorama(CameraActivity.this, contentUri);
                     } else if (RgbzMetadataLoader.hasRGBZData(data)) {
                         mPanoramaViewHelper.showRgbz(contentUri);
-                        if (mSettingsManager.getBoolean(
-                                SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
-                            mSettingsManager.setBoolean(
-                                    SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING,
-                                    false);
+                        if (mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                                Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
+                            mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                                    Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING, false);
                             mCameraAppUI.clearClingForViewer(
                                     CameraAppUI.BottomPanel.VIEWER_REFOCUS);
                         }
@@ -462,10 +472,12 @@ public class CameraActivity extends Activity
          * setting so we default to opening the camera in back facing camera, and
          * can save this flash support value again.
          */
-        if (!mSettingsManager.isSet(SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA)) {
+        if (!mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
+                                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
             HardwareSpec hardware = new HardwareSpecImpl(camera.getCapabilities());
-            mSettingsManager.setBoolean(SettingsManager.SETTING_FLASH_SUPPORTED_BACK_CAMERA,
-                hardware.isFlashSupported());
+            mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                                 Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
+                                 hardware.isFlashSupported());
         }
 
         if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {
@@ -475,9 +487,6 @@ public class CameraActivity extends Activity
                     "requesting");
         }
         if (mCurrentModule != null) {
-            SettingsCapabilities capabilities =
-                    SettingsUtil.getSettingsCapabilities(camera);
-            mSettingsManager.changeCamera(camera.getCameraId(), capabilities);
             resetExposureCompensationToDefault(camera);
             mCurrentModule.onCameraAvailable(camera);
         }
@@ -921,6 +930,24 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public int getCurrentCameraId() {
+        return mCameraController.getCurrentCameraId();
+    }
+
+    @Override
+    public String getModuleScope() {
+        return MODULE_SCOPE_PREFIX + mCurrentModule.getModuleStringIdentifier();
+    }
+
+    @Override
+    public String getCameraScope() {
+        if (getCurrentCameraId() < 0) {
+            throw new IllegalStateException();
+        }
+        return CAMERA_SCOPE_PREFIX + Integer.toString(getCurrentCameraId());
+    }
+
+    @Override
     public ModuleController getCurrentModuleController() {
         return mCurrentModule;
     }
@@ -1224,8 +1251,18 @@ public class CameraActivity extends Activity
 
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
-        mSettingsManager = new SettingsManager(mAppContext, this);
+
+        // TODO: Try to move all the resources allocation to happen as soon as
+        // possible so we can call module.init() at the earliest time.
+        mModuleManager = new ModuleManagerImpl();
         GcamHelper.init(getContentResolver());
+        ModulesInfo.setupModules(mAppContext, mModuleManager);
+
+        mSettingsManager = new SettingsManager(this);
+        Upgrade.executeUpgradeOnVersionChanged(mSettingsManager,
+            Keys.KEY_UPGRADE_VERSION, UpgradeAosp.AOSP_UPGRADE_VERSION,
+            UpgradeAosp.getAospUpgradeSteps(this));
+        Keys.setDefaults(mSettingsManager, mAppContext);
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_main);
@@ -1237,11 +1274,6 @@ public class CameraActivity extends Activity
                         CameraAgentFactory.getAndroidCameraAgent());
         mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
                 mMainHandler);
-
-        // TODO: Try to move all the resources allocation to happen as soon as
-        // possible so we can call module.init() at the earliest time.
-        mModuleManager = new ModuleManagerImpl();
-        ModulesInfo.setupModules(mAppContext, mModuleManager);
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
         mModeListView.init(mModuleManager.getSupportedModeIndexList());
@@ -1310,7 +1342,8 @@ public class CameraActivity extends Activity
                 mDataAdapter);
 
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
-        if (mSettingsManager.getBoolean(SettingsManager.SETTING_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
+        if (mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                                        Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
             mCameraAppUI.setupClingForViewer(CameraAppUI.BottomPanel.VIEWER_REFOCUS);
         }
 
@@ -1409,20 +1442,22 @@ public class CameraActivity extends Activity
                 ||MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
                         .getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            modeIndex = mSettingsManager.getInt(
-                SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
+            modeIndex = mSettingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_CAMERA_MODULE_LAST_USED);
 
             // For upgraders who have not seen the aspect ratio selection screen,
             // we need to drop them back in the photo module and have them select
             // aspect ratio.
             // TODO: Move this to SettingsManager as an upgrade procedure.
-            if (!mSettingsManager.getBoolean(SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO)) {
+            if (!mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_USER_SELECTED_ASPECT_RATIO)) {
                 modeIndex = photoIndex;
             }
         } else {
             // If the activity has not been started using an explicit intent,
             // read the module index from the last time the user changed modes
-            modeIndex = mSettingsManager.getInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX);
+            modeIndex = mSettingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
+                                                    Keys.KEY_STARTUP_MODULE_INDEX);
             if ((modeIndex == gcamIndex &&
                     !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
                 modeIndex = photoIndex;
@@ -1508,7 +1543,8 @@ public class CameraActivity extends Activity
          * ignore the cross-Activity recovery logic in onStart for capture intents.
          */
         if (!isCaptureIntent()) {
-            mSettingsManager.setInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX,
+            mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                                 Keys.KEY_STARTUP_MODULE_INDEX,
                 mCurrentModeIndex);
         }
 
@@ -1936,7 +1972,7 @@ public class CameraActivity extends Activity
     @Override
     public int getPreferredChildModeIndex(int modeIndex) {
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
-            boolean hdrPlusOn = mSettingsManager.isHdrPlusOn();
+            boolean hdrPlusOn = Keys.isHdrPlusOn(mSettingsManager);
             if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
                 modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
             }
@@ -1954,8 +1990,9 @@ public class CameraActivity extends Activity
         // Record last used camera mode for quick switching
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)
                 || modeIndex == getResources().getInteger(R.integer.camera_mode_gcam)) {
-            mSettingsManager.setInt(SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX,
-                    modeIndex);
+            mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                                 Keys.KEY_CAMERA_MODULE_LAST_USED,
+                                 modeIndex);
         }
 
         closeModule(mCurrentModule);
@@ -1971,7 +2008,8 @@ public class CameraActivity extends Activity
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera
         // starts up.
-        mSettingsManager.setInt(SettingsManager.SETTING_STARTUP_MODULE_INDEX, modeIndex);
+        mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                             Keys.KEY_STARTUP_MODULE_INDEX, modeIndex);
     }
 
     /**
@@ -2046,7 +2084,7 @@ public class CameraActivity extends Activity
         builder = SettingsUtil.getFirstTimeLocationAlertBuilder(builder, new Callback<Boolean>() {
             @Override
             public void onCallback(Boolean locationOn) {
-                mSettingsManager.setLocation(locationOn, mLocationManager);
+                Keys.setLocation(mSettingsManager, locationOn, mLocationManager);
             }
         });
         if (builder != null) {
@@ -2331,7 +2369,7 @@ public class CameraActivity extends Activity
      * location manager.
      */
     public void syncLocationManagerSetting() {
-        mSettingsManager.syncLocationManager(mLocationManager);
+        Keys.syncLocationManager(mSettingsManager, mLocationManager);
     }
 
     private void keepScreenOnForAWhile() {

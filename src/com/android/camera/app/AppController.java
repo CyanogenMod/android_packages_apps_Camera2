@@ -70,6 +70,21 @@ public interface AppController extends CurrentModuleProvider {
     public Context getAndroidContext();
 
     /**
+     * @return the current camera id.
+     */
+    public int getCurrentCameraId();
+
+    /**
+     * @return a String scope uniquely identifing the current module.
+     */
+    public String getModuleScope();
+
+    /**
+     * @return a String scope uniquely identifing the current camera id.
+     */
+    public String getCameraScope();
+
+    /**
      * Starts an activity.
      *
      * @param intent Used to start the activity.
@@ -324,11 +339,18 @@ public interface AppController extends CurrentModuleProvider {
     public CameraServices getServices();
 
     /**
-     * Returns the {@link com.android.camera.ui.CameraAppUI}.
+     * Returns the {@link com.android.camera.app.CameraAppUI}.
      *
      * @return {@code null} if not available yet.
      */
     public CameraAppUI getCameraAppUI();
+
+    /**
+     * Returns the {@link com.android.camera.app.ModuleManager}.
+     *
+     * @return {@code null} if not available yet.
+     */
+    public ModuleManager getModuleManager();
 
     /**
      * Returns the {@link com.android.camera.ButtonManager}.

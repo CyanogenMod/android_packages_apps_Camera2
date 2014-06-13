@@ -61,6 +61,7 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.util.ApiHelper;
@@ -90,7 +91,9 @@ public class VideoModule extends CameraModule
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener, FocusOverlayManager.Listener {
 
-    private static final Log.Tag TAG = new Log.Tag("VideoModule");
+    private static final String VIDEO_MODULE_STRING_ID = "VideoModule";
+
+    private static final Log.Tag TAG = new Log.Tag(VIDEO_MODULE_STRING_ID);
 
     // Messages defined for the UI thread handler.
     private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
@@ -328,6 +331,11 @@ public class VideoModule extends CameraModule
     }
 
     @Override
+    public String getModuleStringIdentifier() {
+        return VIDEO_MODULE_STRING_ID;
+    }
+
+    @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = activity;
         // TODO: Need to look at the controller interface to see if we can get
@@ -340,7 +348,8 @@ public class VideoModule extends CameraModule
         mActivity.setPreviewStatusListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
+        mCameraId = settingsManager.getInteger(mAppController.getModuleScope(),
+                                               Keys.KEY_CAMERA_ID);
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -464,7 +473,7 @@ public class VideoModule extends CameraModule
             mMirror = isCameraFrontFacing();
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
-            mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
+            mFocusManager = new FocusOverlayManager(mAppController,
                     defaultFocusModes, mInitialSettings, this, mMirror,
                     mActivity.getMainLooper(), mUI.getFocusUI());
         }
@@ -695,15 +704,20 @@ public class VideoModule extends CameraModule
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (!settingsManager.isSet(SettingsManager.SETTING_VIDEO_QUALITY_BACK)) {
-            settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY_BACK);
+        if (!settingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
+                                   Keys.KEY_VIDEO_QUALITY_BACK)) {
+            settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL,
+                                         Keys.KEY_VIDEO_QUALITY_BACK);
         }
-        if (!settingsManager.isSet(SettingsManager.SETTING_VIDEO_QUALITY_FRONT)) {
-            settingsManager.setDefault(SettingsManager.SETTING_VIDEO_QUALITY_FRONT);
+        if (!settingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
+                                   Keys.KEY_VIDEO_QUALITY_FRONT)) {
+            settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL,
+                                         Keys.KEY_VIDEO_QUALITY_FRONT);
         }
+        String videoQualityKey = isCameraFrontFacing() ? Keys.KEY_VIDEO_QUALITY_FRONT
+            : Keys.KEY_VIDEO_QUALITY_BACK;
         String videoQuality = settingsManager
-                .get(isCameraFrontFacing() ? SettingsManager.SETTING_VIDEO_QUALITY_FRONT
-                        : SettingsManager.SETTING_VIDEO_QUALITY_BACK);
+                .getString(SettingsManager.SCOPE_GLOBAL, videoQualityKey);
         int quality = SettingsUtil.getVideoQuality(videoQuality, mCameraId);
         Log.d(TAG, "Selected video quality for '" + videoQuality + "' is " + quality);
 
@@ -726,7 +740,7 @@ public class VideoModule extends CameraModule
                     intent.getIntExtra(MediaStore.EXTRA_DURATION_LIMIT, 0);
             mMaxVideoDurationInMs = 1000 * seconds;
         } else {
-            mMaxVideoDurationInMs = SettingsManager.getMaxVideoDuration(mActivity
+            mMaxVideoDurationInMs = SettingsUtil.getMaxVideoDuration(mActivity
                     .getAndroidContext());
         }
 
@@ -1197,8 +1211,9 @@ public class VideoModule extends CameraModule
 
     private void logVideoCapture(long duration) {
         String flashSetting = mActivity.getSettingsManager()
-                .get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
-        boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
+                .getString(mAppController.getCameraScope(),
+                           Keys.KEY_VIDEOCAMERA_FLASH_MODE);
+        boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
         int width = (Integer) mCurrentVideoValues.get(Video.Media.WIDTH);
         int height = (Integer) mCurrentVideoValues.get(Video.Media.HEIGHT);
         long size = new File(mCurrentVideoFilename).length();
@@ -1572,7 +1587,7 @@ public class VideoModule extends CameraModule
             mCameraSettings.setPreviewFrameRate(mProfile.videoFrameRate);
         }
 
-        enableTorchMode(settingsManager.isCameraBackFacing());
+        enableTorchMode(Keys.isCameraBackFacing(settingsManager, mAppController.getModuleScope()));
 
         // Set zoom.
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
@@ -1734,7 +1749,8 @@ public class VideoModule extends CameraModule
         Log.d(TAG, "Start to switch camera.");
         mCameraId = mPendingSwitchCameraId;
         mPendingSwitchCameraId = -1;
-        settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
+        settingsManager.set(mAppController.getModuleScope(),
+                            Keys.KEY_CAMERA_ID, mCameraId);
 
         if (mFocusManager != null) {
             mFocusManager.removeMessages();
@@ -1795,8 +1811,9 @@ public class VideoModule extends CameraModule
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         CameraCapabilities.FlashMode flashMode;
         if (enable) {
-            flashMode = stringifier.flashModeFromString(
-                    settingsManager.get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE));
+            flashMode = stringifier
+                .flashModeFromString(settingsManager.getString(mAppController.getCameraScope(),
+                                                               Keys.KEY_VIDEOCAMERA_FLASH_MODE));
         } else {
             flashMode = CameraCapabilities.FlashMode.OFF;
         }
@@ -1845,9 +1862,9 @@ public class VideoModule extends CameraModule
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
 
-        String flashSetting =
-                mActivity.getSettingsManager().get(SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
-        Boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
+        String flashSetting = mActivity.getSettingsManager()
+            .getString(mAppController.getCameraScope(), Keys.KEY_VIDEOCAMERA_FLASH_MODE);
+        Boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
         UsageStatistics.instance().photoCaptureDoneEvent(
                 eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
                 isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn, null);

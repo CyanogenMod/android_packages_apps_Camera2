@@ -66,6 +66,7 @@ import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.CameraPictureSizesCacher;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
@@ -110,7 +111,9 @@ public class PhotoModule
         RemoteCameraModule,
         CountDownView.OnCountDownStatusListener {
 
-    private static final Log.Tag TAG = new Log.Tag("PhotoModule");
+    private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
+
+    private static final Log.Tag TAG = new Log.Tag(PHOTO_MODULE_STRING_ID);
 
     // We number the request code from 1000 to avoid collision with Gallery.
     private static final int REQUEST_CROP = 1000;
@@ -379,8 +382,8 @@ public class PhotoModule
     private void switchToGcamCapture() {
         if (mActivity != null && mGcamModeIndex != 0) {
             SettingsManager settingsManager = mActivity.getSettingsManager();
-            settingsManager.set(SettingsManager.SETTING_CAMERA_HDR_PLUS,
-                SettingsManager.VALUE_ON);
+            settingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                                Keys.KEY_CAMERA_HDR_PLUS, true);
 
             // Disable the HDR+ button to prevent callbacks from being
             // queued before the correct callback is attached to the button
@@ -413,6 +416,11 @@ public class PhotoModule
     }
 
     @Override
+    public String getModuleStringIdentifier() {
+        return PHOTO_MODULE_STRING_ID;
+    }
+
+    @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = activity;
         // TODO: Need to look at the controller interface to see if we can get
@@ -423,13 +431,14 @@ public class PhotoModule
         mActivity.setPreviewStatusListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        mCameraId = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_CAMERA_ID));
+        mCameraId = settingsManager.getInteger(mAppController.getModuleScope(),
+                                               Keys.KEY_CAMERA_ID);
 
         // TODO: Move this to SettingsManager as a part of upgrade procedure.
-        if (!settingsManager.getBoolean(SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO)) {
+        if (!settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                                        Keys.KEY_USER_SELECTED_ASPECT_RATIO)) {
             // Switch to back camera to set aspect ratio.
-            mCameraId = Integer.parseInt(settingsManager
-                    .getDefaultCameraIdSetting(activity).getDefault());
+            mCameraId = settingsManager.getIntegerDefault(Keys.KEY_CAMERA_ID);
         }
 
         mContentResolver = mActivity.getContentResolver();
@@ -494,9 +503,10 @@ public class PhotoModule
             return;
         }
 
-        boolean locationPrompt = !settingsManager.isSet(SettingsManager.SETTING_RECORD_LOCATION);
+        boolean locationPrompt = !settingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
+                                                        Keys.KEY_RECORD_LOCATION);
         boolean aspectRatioPrompt = !settingsManager.getBoolean(
-                SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO);
+            SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
         if (!locationPrompt && !aspectRatioPrompt) {
             return;
         }
@@ -513,7 +523,8 @@ public class PhotoModule
             mUI.showLocationAndAspectRatioDialog(new LocationDialogCallback(){
                 @Override
                 public void onLocationTaggingSelected(boolean selected) {
-                    settingsManager.setLocation(selected, mActivity.getLocationManager());
+                    Keys.setLocation(mActivity.getSettingsManager(), selected,
+                                     mActivity.getLocationManager());
                 }
             }, createAspectRatioDialogCallback());
         } else {
@@ -582,15 +593,21 @@ public class PhotoModule
                     Runnable dialogHandlingFinishedRunnable) {
                 if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_4x3) {
                     String largestSize4x3Text = SettingsUtil.sizeToSetting(size4x3ToSelect);
-                    mActivity.getSettingsManager().set(SettingsManager.SETTING_PICTURE_SIZE_BACK,
-                            largestSize4x3Text);
+                    mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                                                       Keys.KEY_PICTURE_SIZE_BACK,
+                                                       largestSize4x3Text);
                 } else if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_16x9) {
                     String largestSize16x9Text = SettingsUtil.sizeToSetting(size16x9ToSelect);
-                    mActivity.getSettingsManager().set(SettingsManager.SETTING_PICTURE_SIZE_BACK,
-                            largestSize16x9Text);
+                    mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                                                       Keys.KEY_PICTURE_SIZE_BACK,
+                                                       largestSize16x9Text);
                 }
-                mActivity.getSettingsManager().setBoolean(
-                        SettingsManager.SETTING_USER_SELECTED_ASPECT_RATIO, true);
+                mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                                                   Keys.KEY_USER_SELECTED_ASPECT_RATIO, true);
+                String aspectRatio = mActivity.getSettingsManager().getString(
+                    SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_USER_SELECTED_ASPECT_RATIO);
+                Log.e(TAG, "aspect ratio after setting it to true=" + aspectRatio);
                 if (newAspectRatio != currentAspectRatio) {
                     stopPreview();
                     startPreview();
@@ -639,7 +656,7 @@ public class PhotoModule
         Log.i(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
         closeCamera();
         mCameraId = mPendingSwitchCameraId;
-        settingsManager.set(SettingsManager.SETTING_CAMERA_ID, "" + mCameraId);
+        settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID, mCameraId);
         mActivity.getCameraProvider().requestCamera(mCameraId);
         mUI.clearFaces();
         if (mFocusManager != null) {
@@ -665,8 +682,10 @@ public class PhotoModule
                     // If switching to back camera, and HDR+ is still on,
                     // switch back to gcam, otherwise handle callback normally.
                     SettingsManager settingsManager = mActivity.getSettingsManager();
-                    if (settingsManager.isCameraBackFacing()) {
-                        if (settingsManager.requestsReturnToHdrPlus()) {
+                    if (Keys.isCameraBackFacing(settingsManager,
+                                                mAppController.getModuleScope())) {
+                        if (Keys.requestsReturnToHdrPlus(settingsManager,
+                                                         mAppController.getModuleScope())) {
                             switchToGcamCapture();
                             return;
                         }
@@ -690,15 +709,16 @@ public class PhotoModule
                     SettingsManager settingsManager = mActivity.getSettingsManager();
                     if (GcamHelper.hasGcamCapture()) {
                         // Set the camera setting to default backfacing.
-                        settingsManager.setDefault(SettingsManager.SETTING_CAMERA_ID);
+                        settingsManager.setToDefault(mAppController.getModuleScope(),
+                                                     Keys.KEY_CAMERA_ID);
                         switchToGcamCapture();
                     } else {
-                        if (settingsManager.isHdrOn()) {
-                            settingsManager.set(SettingsManager.SETTING_SCENE_MODE,
-                                    CameraUtil.SCENE_MODE_HDR);
+                        if (Keys.isHdrOn(settingsManager)) {
+                            settingsManager.set(mAppController.getCameraScope(),
+                                                Keys.KEY_SCENE_MODE, CameraUtil.SCENE_MODE_HDR);
                         } else {
-                            settingsManager.set(SettingsManager.SETTING_SCENE_MODE,
-                                    Parameters.SCENE_MODE_AUTO);
+                            settingsManager.set(mAppController.getCameraScope(),
+                                                Keys.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
                         }
                         updateParametersSceneMode();
                         mCameraDevice.applySettings(mCameraSettings);
@@ -732,7 +752,7 @@ public class PhotoModule
     @Override
     public void hardResetSettings(SettingsManager settingsManager) {
         // PhotoModule should hard reset HDR+ to off.
-        settingsManager.set(SettingsManager.SETTING_CAMERA_HDR_PLUS, SettingsManager.VALUE_OFF);
+        settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, false);
     }
 
     @Override
@@ -746,9 +766,8 @@ public class PhotoModule
 
         bottomBarSpec.enableCamera = true;
         bottomBarSpec.cameraCallback = mCameraCallback;
-        bottomBarSpec.enableFlash = !SettingsManager.VALUE_ON
-                .equals(mAppController.getSettingsManager()
-                        .get(SettingsManager.SETTING_CAMERA_HDR));
+        bottomBarSpec.enableFlash = !mAppController.getSettingsManager()
+            .getBoolean(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR);
         bottomBarSpec.enableHdr = true;
         bottomBarSpec.hdrCallback = mHdrPlusCallback;
         bottomBarSpec.enableGridLines = true;
@@ -790,7 +809,8 @@ public class PhotoModule
         if (mIsImageCaptureIntent) {
             // Set hdr plus to default: off.
             SettingsManager settingsManager = mActivity.getSettingsManager();
-            settingsManager.setDefault(SettingsManager.SETTING_CAMERA_HDR_PLUS);
+            settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL,
+                                         Keys.KEY_CAMERA_HDR_PLUS);
         }
         updateSceneMode();
     }
@@ -806,7 +826,8 @@ public class PhotoModule
             Log.e(TAG, "Settings manager is null!");
             return;
         }
-        settingsManager.setDefault(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
+        settingsManager.setToDefault(mAppController.getCameraScope(),
+                                     Keys.KEY_EXPOSURE);
     }
 
     // Snapshots can only be taken after this is called. It should be called
@@ -1060,8 +1081,9 @@ public class PhotoModule
 
             boolean hdrOn = CameraCapabilities.SceneMode.HDR == mSceneMode;
             String flashSetting =
-                    mActivity.getSettingsManager().get(SettingsManager.SETTING_FLASH_MODE);
-            boolean gridLinesOn = mActivity.getSettingsManager().areGridLinesOn();
+                    mActivity.getSettingsManager().getString(mAppController.getCameraScope(),
+                                                             Keys.KEY_FLASH_MODE);
+            boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                     mNamedImages.mQueue.lastElement().title + ".jpg", exif,
@@ -1302,8 +1324,10 @@ public class PhotoModule
             CameraCapabilities.FocusMode focusMode) {
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.set(SettingsManager.SETTING_FLASH_MODE, stringifier.stringify(flashMode));
-        settingsManager.set(SettingsManager.SETTING_FOCUS_MODE, stringifier.stringify(focusMode));
+        settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FLASH_MODE,
+                            stringifier.stringify(flashMode));
+        settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FOCUS_MODE,
+                            stringifier.stringify(focusMode));
     }
 
     @Override
@@ -1466,8 +1490,8 @@ public class PhotoModule
         }
         Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
-        int countDownDuration = Integer.parseInt(mActivity.getSettingsManager()
-                .get(SettingsManager.SETTING_COUNTDOWN_DURATION));
+        int countDownDuration = mActivity.getSettingsManager()
+            .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
         mTimerDuration = countDownDuration;
         if (countDownDuration > 0) {
             // Start count down.
@@ -1574,7 +1598,7 @@ public class PhotoModule
             mMirror = isCameraFrontFacing();
             String[] defaultFocusModes = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
-            mFocusManager = new FocusOverlayManager(mActivity.getSettingsManager(),
+            mFocusManager = new FocusOverlayManager(mAppController,
                     defaultFocusModes,
                     mInitialParams, this, mMirror,
                     mActivity.getMainLooper(), mUI.getFocusUI());
@@ -1891,32 +1915,26 @@ public class PhotoModule
     }
 
     @Override
-    public void onSettingChanged(SettingsManager settingsManager, int id) {
-        switch (id) {
-            case SettingsManager.SETTING_FLASH_MODE: {
-                updateParametersFlashMode();
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_HDR: {
-                String val = settingsManager.get(SettingsManager.SETTING_CAMERA_HDR);
-                if (SettingsManager.VALUE_ON.equals(val)) {
-                    // HDR is on.
-                    mAppController.getButtonManager().disableButton(ButtonManager.BUTTON_FLASH);
-                    mFlashModeBeforeSceneMode = settingsManager.get(SettingsManager
-                            .SETTING_FLASH_MODE);
-                } else {
-                    if (mFlashModeBeforeSceneMode != null) {
-                        settingsManager.set(SettingsManager.SETTING_FLASH_MODE,
-                                mFlashModeBeforeSceneMode);
-                        updateParametersFlashMode();
-                        mFlashModeBeforeSceneMode = null;
-                    }
-                    mAppController.getButtonManager().enableButton(ButtonManager.BUTTON_FLASH);
+    public void onSettingChanged(SettingsManager settingsManager, String key) {
+        if (key.equals(Keys.KEY_FLASH_MODE)) {
+            updateParametersFlashMode();
+        }
+        if (key.equals(Keys.KEY_CAMERA_HDR)) {
+            if (settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                                           Keys.KEY_CAMERA_HDR)) {
+                // HDR is on.
+                mAppController.getButtonManager().disableButton(ButtonManager.BUTTON_FLASH);
+                mFlashModeBeforeSceneMode = settingsManager.getString(
+                        mAppController.getCameraScope(), Keys.KEY_FLASH_MODE);
+            } else {
+                if (mFlashModeBeforeSceneMode != null) {
+                    settingsManager.set(mAppController.getCameraScope(),
+                                        Keys.KEY_FLASH_MODE,
+                                        mFlashModeBeforeSceneMode);
+                    updateParametersFlashMode();
+                    mFlashModeBeforeSceneMode = null;
                 }
-                break;
-            }
-            default: {
-                // Do nothing.
+                mAppController.getButtonManager().enableButton(ButtonManager.BUTTON_FLASH);
             }
         }
 
@@ -2010,9 +2028,10 @@ public class PhotoModule
 
     private void updateParametersPictureSize() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        String pictureSize = settingsManager
-                .get(isCameraFrontFacing() ? SettingsManager.SETTING_PICTURE_SIZE_FRONT
-                        : SettingsManager.SETTING_PICTURE_SIZE_BACK);
+        String pictureSizeKey = isCameraFrontFacing() ? Keys.KEY_PICTURE_SIZE_FRONT
+            : Keys.KEY_PICTURE_SIZE_BACK;
+        String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL,
+                                                       pictureSizeKey);
 
         List<Size> supported = mCameraCapabilities.getSupportedPhotoSizes();
         CameraPictureSizesCacher.updateSizesForCamera(mAppController.getAndroidContext(),
@@ -2065,8 +2084,10 @@ public class PhotoModule
 
     private void updateParametersExposureCompensation() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (settingsManager.getBoolean(SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED)) {
-            int value = Integer.parseInt(settingsManager.get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE));
+        if (settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                                       Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)) {
+            int value = settingsManager.getInteger(mAppController.getCameraScope(),
+                                                   Keys.KEY_EXPOSURE);
             int max = mCameraCapabilities.getMaxExposureCompensation();
             int min = mCameraCapabilities.getMinExposureCompensation();
             if (value >= min && value <= max) {
@@ -2085,8 +2106,9 @@ public class PhotoModule
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
-        mSceneMode = stringifier
-                .sceneModeFromString(settingsManager.get(SettingsManager.SETTING_SCENE_MODE));
+        mSceneMode = stringifier.
+            sceneModeFromString(settingsManager.getString(mAppController.getCameraScope(),
+                                                          Keys.KEY_SCENE_MODE));
         if (mCameraCapabilities.supports(mSceneMode)) {
             if (mCameraSettings.getCurrentSceneMode() != mSceneMode) {
                 mCameraSettings.setSceneMode(mSceneMode);
@@ -2122,7 +2144,8 @@ public class PhotoModule
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
         CameraCapabilities.FlashMode flashMode = mCameraCapabilities.getStringifier()
-                .flashModeFromString(settingsManager.get(SettingsManager.SETTING_FLASH_MODE));
+            .flashModeFromString(settingsManager.getString(mAppController.getCameraScope(),
+                                                           Keys.KEY_FLASH_MODE));
         if (mCameraCapabilities.supports(flashMode)) {
             mCameraSettings.setFlashMode(flashMode);
         }
@@ -2150,7 +2173,8 @@ public class PhotoModule
         if (value >= min && value <= max) {
             mCameraSettings.setExposureCompensationIndex(value);
             SettingsManager settingsManager = mActivity.getSettingsManager();
-            settingsManager.set(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE, Integer.toString(value));
+            settingsManager.set(mAppController.getCameraScope(),
+                                Keys.KEY_EXPOSURE, value);
         } else {
             Log.w(TAG, "invalid exposure range: " + value);
         }

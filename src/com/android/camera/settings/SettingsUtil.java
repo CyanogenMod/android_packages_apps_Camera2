@@ -16,6 +16,8 @@
 
 package com.android.camera.settings;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.hardware.Camera;
@@ -24,7 +26,6 @@ import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
 import com.android.camera.debug.Log;
-import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.util.Callback;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
@@ -41,6 +42,18 @@ import java.util.List;
  * Utility functions around camera settings.
  */
 public class SettingsUtil {
+    /**
+     * Returns the maximum video recording duration (in milliseconds).
+     */
+    public static int getMaxVideoDuration(Context context) {
+        int duration = 0; // in milliseconds, 0 means unlimited.
+        try {
+            duration = context.getResources().getInteger(R.integer.max_video_recording_length);
+        } catch (Resources.NotFoundException ex) {
+        }
+        return duration;
+    }
+
     /** The selected Camera sizes. */
     public static class SelectedPictureSizes {
         public Size large;
@@ -400,39 +413,6 @@ public class SettingsUtil {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Determines and returns the capabilities of the given camera.
-     */
-    public static SettingsCapabilities
-            getSettingsCapabilities(CameraAgent.CameraProxy camera) {
-        final Parameters parameters = camera.getParameters();
-        return (new SettingsCapabilities() {
-            @Override
-            public String[] getSupportedExposureValues() {
-                int max = parameters.getMaxExposureCompensation();
-                int min = parameters.getMinExposureCompensation();
-                float step = parameters.getExposureCompensationStep();
-                int maxValue = Math.min(3, (int) Math.floor(max * step));
-                int minValue = Math.max(-3, (int) Math.ceil(min * step));
-                String[] entryValues = new String[maxValue - minValue + 1];
-                for (int i = minValue; i <= maxValue; ++i) {
-                    entryValues[i - minValue] = Integer.toString(Math.round(i / step));
-                }
-                return entryValues;
-            }
-
-            @Override
-            public String[] getSupportedCameraIds() {
-                int numberOfCameras = Camera.getNumberOfCameras();
-                String[] cameraIds = new String[numberOfCameras];
-                for (int i = 0; i < numberOfCameras; i++) {
-                    cameraIds[i] = "" + i;
-                }
-                return cameraIds;
-            }
-        });
     }
 
     /**

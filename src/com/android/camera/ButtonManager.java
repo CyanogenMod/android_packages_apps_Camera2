@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.RadioOptions;
 import com.android.camera.util.PhotoSphereHelper;
@@ -98,7 +99,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     /** An reference to the gcam mode index. */
     private static int sGcamIndex;
 
-    private AppController mAppController;
+    private final AppController mAppController;
 
     /**
      * Get a new global ButtonManager.
@@ -180,66 +181,48 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     @Override
-    public void onSettingChanged(SettingsManager settingsManager, int id) {
+    public void onSettingChanged(SettingsManager settingsManager, String key) {
         MultiToggleImageButton button = null;
         int index = 0;
 
-        switch (id) {
-            case SettingsManager.SETTING_FLASH_MODE: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_FLASH);
-                break;
-            }
-            case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_TORCH);
-                break;
-            }
-            case SettingsManager.SETTING_HDR_PLUS_FLASH_MODE: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_HDR_PLUS_FLASH);
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_ID: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_CAMERA);
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_HDR_PLUS: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_HDR_PLUS);
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_HDR: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_HDR);
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_GRID_LINES: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_GRID_LINES);
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
-                updatePanoButtons();
-                break;
-            }
-            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE: {
-                updateExposureButtons();
-                break;
-            }
-            case SettingsManager.SETTING_COUNTDOWN_DURATION: {
-                index = mSettingsManager.getStringValueIndex(id);
-                button = getButtonOrError(BUTTON_COUNTDOWN);
-                break;
-            }
-            default: {
-                // Do nothing.
-            }
+        if (key.equals(Keys.KEY_FLASH_MODE)) {
+            index = mSettingsManager.getIndexOfCurrentValue(mAppController.getCameraScope(),
+                                                            Keys.KEY_FLASH_MODE);
+            button = getButtonOrError(BUTTON_FLASH);
+        } else if (key.equals(Keys.KEY_VIDEOCAMERA_FLASH_MODE)) {
+            index = mSettingsManager.getIndexOfCurrentValue(mAppController.getCameraScope(),
+                                                            Keys.KEY_VIDEOCAMERA_FLASH_MODE);
+            button = getButtonOrError(BUTTON_TORCH);
+        } else if (key.equals(Keys.KEY_HDR_PLUS_FLASH_MODE)) {
+            index = mSettingsManager.getIndexOfCurrentValue(mAppController.getModuleScope(),
+                                                            Keys.KEY_HDR_PLUS_FLASH_MODE);
+            button = getButtonOrError(BUTTON_HDR_PLUS_FLASH);
+        } else if (key.equals(Keys.KEY_CAMERA_ID)) {
+            index = mSettingsManager.getIndexOfCurrentValue(mAppController.getModuleScope(),
+                                                            Keys.KEY_CAMERA_ID);
+            button = getButtonOrError(BUTTON_CAMERA);
+        } else if (key.equals(Keys.KEY_CAMERA_HDR_PLUS)) {
+            index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_HDR_PLUS);
+            button = getButtonOrError(BUTTON_HDR_PLUS);
+        } else if (key.equals(Keys.KEY_CAMERA_HDR)) {
+            index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_HDR);
+            button = getButtonOrError(BUTTON_HDR);
+        } else if (key.equals(Keys.KEY_CAMERA_GRID_LINES)) {
+            index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_GRID_LINES);
+            button = getButtonOrError(BUTTON_GRID_LINES);
+        } else if (key.equals(Keys.KEY_CAMERA_PANO_ORIENTATION)) {
+            updatePanoButtons();
+        } else if (key.equals(Keys.KEY_EXPOSURE)) {
+            updateExposureButtons();
+        } else if (key.equals(Keys.KEY_COUNTDOWN_DURATION)) {
+            index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_COUNTDOWN_DURATION);
+            button = getButtonOrError(BUTTON_COUNTDOWN);
         }
 
-        // In case SharedPreferences has changed but the button hasn't been toggled,
-        // make sure the toggle state is in sync.
         if (button != null && button.getState() != index) {
             button.setState(Math.max(index, 0), false);
         }
@@ -597,13 +580,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.camera_flash_descriptions);
 
-        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_FLASH_MODE);
+        int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getCameraScope(),
+                                                            Keys.KEY_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_FLASH_MODE, state);
+                mSettingsManager.setValueByIndex(mAppController.getCameraScope(),
+                                                 Keys.KEY_FLASH_MODE, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -622,15 +607,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.video_flash_descriptions);
 
-        int index = mSettingsManager.getStringValueIndex(
-                SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE);
+        int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getCameraScope(),
+                                                            Keys.KEY_VIDEOCAMERA_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(
-                        SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE, state);
+                mSettingsManager.setValueByIndex(mAppController.getCameraScope(),
+                                                 Keys.KEY_VIDEOCAMERA_FLASH_MODE, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -649,15 +634,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.hdr_plus_flash_descriptions);
 
-        int index = mSettingsManager.getStringValueIndex(
-                SettingsManager.SETTING_HDR_PLUS_FLASH_MODE);
+        int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getModuleScope(),
+                                                            Keys.KEY_HDR_PLUS_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(
-                        SettingsManager.SETTING_HDR_PLUS_FLASH_MODE, state);
+                mSettingsManager.setValueByIndex(mAppController.getModuleScope(),
+                                                 Keys.KEY_HDR_PLUS_FLASH_MODE, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -675,15 +660,17 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             button.overrideImageIds(resIdImages);
         }
 
-        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_ID);
+        int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getModuleScope(),
+                                                            Keys.KEY_CAMERA_ID);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_ID, state);
-                int cameraId = Integer.parseInt(mSettingsManager.get(
-                        SettingsManager.SETTING_CAMERA_ID));
+                mSettingsManager.setValueByIndex(mAppController.getModuleScope(),
+                                                 Keys.KEY_CAMERA_ID, state);
+                int cameraId = mSettingsManager.getInteger(mAppController.getModuleScope(),
+                                                           Keys.KEY_CAMERA_ID);
                 // This is a quick fix for ISE in Gcam module which can be
                 // found by rapid pressing camera switch button. The assumption
                 // here is that each time this button is clicked, the listener
@@ -708,13 +695,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.hdr_plus_descriptions);
 
-        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR_PLUS);
+        int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_HDR_PLUS);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR_PLUS, state);
+                mSettingsManager.setValueByIndex(SettingsManager.SCOPE_GLOBAL,
+                                                 Keys.KEY_CAMERA_HDR_PLUS, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -733,13 +722,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.hdr_descriptions);
 
-        int index = mSettingsManager.getStringValueIndex(SettingsManager.SETTING_CAMERA_HDR);
+        int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_HDR);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(SettingsManager.SETTING_CAMERA_HDR, state);
+                mSettingsManager.setValueByIndex(SettingsManager.SCOPE_GLOBAL,
+                                                 Keys.KEY_CAMERA_HDR, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -756,15 +747,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             button.overrideImageIds(resIdImages);
         }
 
-        int index = mSettingsManager.getStringValueIndex(
-                SettingsManager.SETTING_COUNTDOWN_DURATION);
+        int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_COUNTDOWN_DURATION);
         button.setState(index >= 0 ? index : 0, false);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(
-                        SettingsManager.SETTING_COUNTDOWN_DURATION, state);
+                mSettingsManager.setValueByIndex(SettingsManager.SCOPE_GLOBAL,
+                                                 Keys.KEY_COUNTDOWN_DURATION, state);
                 if(cb != null) {
                     cb.onStateChanged(state);
                 }
@@ -776,9 +767,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Update the visual state of the manual exposure buttons
      */
     public void updateExposureButtons() {
-        String compString = mSettingsManager
-            .get(SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
-        int compValue = Integer.parseInt(compString);
+        int compValue = mSettingsManager.getInteger(mAppController.getCameraScope(),
+                                                    Keys.KEY_EXPOSURE);
         if (mExposureCompensationStep != 0.0f) {
             int comp = Math.round(compValue * mExposureCompensationStep);
             mModeOptionsExposure.setSelectedOptionByTag(String.valueOf(comp));
@@ -795,20 +785,21 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             button.overrideImageIds(resIdImages);
         }
         button.overrideContentDescriptions(R.array.grid_lines_descriptions);
+
+        int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_GRID_LINES);
+        button.setState(index >= 0 ? index : 0, false);
+
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
-                mSettingsManager.setStringValueIndex(
-                    SettingsManager.SETTING_CAMERA_GRID_LINES, state);
+                mSettingsManager.setValueByIndex(SettingsManager.SCOPE_GLOBAL,
+                                                 Keys.KEY_CAMERA_GRID_LINES, state);
                 if (cb != null) {
                     cb.onStateChanged(state);
                 }
             }
         });
-
-        int index = mSettingsManager.getStringValueIndex(
-            SettingsManager.SETTING_CAMERA_GRID_LINES);
-        button.setState(index >= 0 ? index : 0, true);
     }
 
     public boolean isPanoEnabled() {
@@ -868,8 +859,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                         public void onOptionClicked(View v) {
                             if (cb != null) {
                                 int state = Integer.parseInt((String)v.getTag());
-                                mSettingsManager.setStringValueIndex(
-                                    SettingsManager.SETTING_CAMERA_PANO_ORIENTATION, state);
+                                mSettingsManager.setValueByIndex(SettingsManager.SCOPE_GLOBAL,
+                                                                 Keys.KEY_CAMERA_PANO_ORIENTATION,
+                                                                 state);
                                 cb.onStateChanged(state);
                             }
                         }
@@ -887,8 +879,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     private void updatePanoButtons() {
-        int modeIndex = mSettingsManager
-            .getStringValueIndex(SettingsManager.SETTING_CAMERA_PANO_ORIENTATION);
+        int modeIndex = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                                Keys.KEY_CAMERA_PANO_ORIENTATION);
         mModeOptionsPano.setSelectedOptionByTag(String.valueOf(modeIndex));
     }
 }

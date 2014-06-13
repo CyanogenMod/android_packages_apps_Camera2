@@ -27,8 +27,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.android.camera.app.AppController;
 import com.android.camera.app.MotionManager;
 import com.android.camera.debug.Log;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
@@ -92,6 +94,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private String mOverrideFocusMode;
     private Parameters mParameters;
     private CameraCapabilities mCapabilities;
+    private final AppController mAppController;
     private final SettingsManager mSettingsManager;
     private final Handler mHandler;
     Listener mListener;
@@ -137,11 +140,12 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
     }
 
-    public FocusOverlayManager(SettingsManager settingsManager,
+    public FocusOverlayManager(AppController appController,
             String[] defaultFocusModes,
             Parameters parameters, Listener listener,
             boolean mirror, Looper looper, FocusUI ui) {
-        mSettingsManager = settingsManager;
+        mAppController = appController;
+        mSettingsManager = appController.getSettingsManager();
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
         mDefaultFocusModes = defaultFocusModes;
@@ -464,7 +468,8 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
         } else {
             // The default is continuous autofocus.
-            mFocusMode = mSettingsManager.get(SettingsManager.SETTING_FOCUS_MODE);
+            mFocusMode = mSettingsManager.getString(mAppController.getCameraScope(),
+                                                    Keys.KEY_FOCUS_MODE);
             // Try to find a supported focus mode from the default list.
             if (mFocusMode == null) {
                 for (int i = 0; i < mDefaultFocusModes.length; i++) {

@@ -58,6 +58,11 @@ public interface CameraProvider {
     public Camera.CameraInfo[] getCameraInfo();
 
     /**
+     * @returns The current camera id.
+     */
+    public int getCurrentCameraId();
+
+    /**
      * Returns the total number of cameras available on the device.
      */
     public int getNumberOfCameras();

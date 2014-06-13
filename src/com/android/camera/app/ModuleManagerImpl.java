@@ -20,6 +20,7 @@ import android.content.Context;
 import android.util.SparseArray;
 
 import com.android.camera.debug.Log;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera2.R;
 
@@ -121,8 +122,8 @@ public class ModuleManagerImpl implements ModuleManager {
             quickSwitchTo = videoModuleId;
         } else if (moduleId == videoModuleId) {
             // Quick switch from video to last used camera (i.e. simple camera or hdr+)
-            quickSwitchTo = settingsManager.getInt(
-                    SettingsManager.SETTING_KEY_CAMERA_MODULE_LAST_USED_INDEX);
+            quickSwitchTo = settingsManager.getInteger(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_MODULE_LAST_USED);
         }
 
         if (mRegisteredModuleAgents.get(quickSwitchTo) != null) {

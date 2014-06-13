@@ -80,6 +80,15 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     }
 
     @Override
+    public int getCurrentCameraId() {
+        if (mCameraProxy != null) {
+            return mCameraProxy.getCameraId();
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
     public int getNumberOfCameras() {
         if (mInfo == null) {
             return 0;

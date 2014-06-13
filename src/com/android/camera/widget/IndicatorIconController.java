@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import com.android.camera.ButtonManager;
 import com.android.camera.app.AppController;
 import com.android.camera.debug.Log;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera2.R;
@@ -172,18 +173,18 @@ public class IndicatorIconController
             int modeIndex = mController.getCurrentModuleIndex();
             if (modeIndex == mController.getAndroidContext().getResources()
                     .getInteger(R.integer.camera_mode_video)) {
-                setIndicatorState(mController.getSettingsManager(),
-                                  SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE,
-                                  mFlashIndicator, mFlashIndicatorVideoIcons, false);
+                setIndicatorState(mController.getCameraScope(),
+                                  Keys.KEY_VIDEOCAMERA_FLASH_MODE, mFlashIndicator,
+                                  mFlashIndicatorVideoIcons, false);
             } else if (modeIndex == mController.getAndroidContext().getResources()
                     .getInteger(R.integer.camera_mode_gcam)) {
-                setIndicatorState(mController.getSettingsManager(),
-                                  SettingsManager.SETTING_HDR_PLUS_FLASH_MODE,
-                                  mFlashIndicator, mFlashIndicatorPhotoIcons, false);
+                setIndicatorState(mController.getCameraScope(),
+                                  Keys.KEY_HDR_PLUS_FLASH_MODE, mFlashIndicator,
+                                  mFlashIndicatorPhotoIcons, false);
             } else {
-                setIndicatorState(mController.getSettingsManager(),
-                                  SettingsManager.SETTING_FLASH_MODE,
-                                  mFlashIndicator, mFlashIndicatorPhotoIcons, false);
+                setIndicatorState(mController.getCameraScope(),
+                                  Keys.KEY_FLASH_MODE, mFlashIndicator,
+                                  mFlashIndicatorPhotoIcons, false);
             }
         } else {
             changeVisibility(mFlashIndicator, View.GONE);
@@ -199,14 +200,14 @@ public class IndicatorIconController
         // do not show the indicator.
         if (buttonManager.isEnabled(ButtonManager.BUTTON_HDR_PLUS)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDR_PLUS)) {
-            setIndicatorState(mController.getSettingsManager(),
-                              SettingsManager.SETTING_CAMERA_HDR_PLUS,
-                              mHdrIndicator, mHdrPlusIndicatorIcons, false);
+            setIndicatorState(SettingsManager.SCOPE_GLOBAL,
+                              Keys.KEY_CAMERA_HDR_PLUS, mHdrIndicator,
+                              mHdrPlusIndicatorIcons, false);
         } else if (buttonManager.isEnabled(ButtonManager.BUTTON_HDR)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDR)) {
-            setIndicatorState(mController.getSettingsManager(),
-                              SettingsManager.SETTING_CAMERA_HDR,
-                              mHdrIndicator, mHdrIndicatorIcons, false);
+            setIndicatorState(SettingsManager.SCOPE_GLOBAL,
+                              Keys.KEY_CAMERA_HDR_PLUS, mHdrIndicator,
+                              mHdrIndicatorIcons, false);
         } else {
             changeVisibility(mHdrIndicator, View.GONE);
         }
@@ -223,9 +224,9 @@ public class IndicatorIconController
 
         ButtonManager buttonManager = mController.getButtonManager();
         if (buttonManager.isPanoEnabled()) {
-            setIndicatorState(mController.getSettingsManager(),
-                              SettingsManager.SETTING_CAMERA_PANO_ORIENTATION,
-                              mPanoIndicator, mPanoIndicatorIcons, true);
+            setIndicatorState(SettingsManager.SCOPE_GLOBAL,
+                              Keys.KEY_CAMERA_HDR_PLUS, mPanoIndicator,
+                              mPanoIndicatorIcons, true);
         } else {
             changeVisibility(mPanoIndicator, View.GONE);
         }
@@ -251,8 +252,8 @@ public class IndicatorIconController
         if (buttonManager.isEnabled(ButtonManager.BUTTON_EXPOSURE_COMPENSATION)
                 && buttonManager.isVisible(ButtonManager.BUTTON_EXPOSURE_COMPENSATION)) {
 
-            String compString = mController.getSettingsManager().get(
-                    SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE);
+            String compString = mController.getSettingsManager().getString(
+                mController.getCameraScope(), Keys.KEY_EXPOSURE);
             int comp = Math.round(
                     Integer.parseInt(compString) * buttonManager.getExposureCompensationStep());
 
@@ -280,10 +281,10 @@ public class IndicatorIconController
         ButtonManager buttonManager = mController.getButtonManager();
 
         if (buttonManager.isEnabled(ButtonManager.BUTTON_COUNTDOWN)
-                && buttonManager.isVisible(ButtonManager.BUTTON_COUNTDOWN)) {
-                setIndicatorState(mController.getSettingsManager(),
-                        SettingsManager.SETTING_COUNTDOWN_DURATION,
-                        mCountdownTimerIndicator, mCountdownTimerIndicatorIcons, false);
+            && buttonManager.isVisible(ButtonManager.BUTTON_COUNTDOWN)) {
+            setIndicatorState(SettingsManager.SCOPE_GLOBAL,
+                              Keys.KEY_COUNTDOWN_DURATION, mCountdownTimerIndicator,
+                              mCountdownTimerIndicatorIcons, false);
         } else {
             changeVisibility(mCountdownTimerIndicator, View.GONE);
         }
@@ -293,12 +294,11 @@ public class IndicatorIconController
      * Sets the image resource and visibility of the indicator
      * based on the indicator's corresponding setting state.
      */
-    private void setIndicatorState(SettingsManager settingsManager, int id,
-            ImageView imageView, TypedArray iconArray, boolean showDefault) {
+    private void setIndicatorState(String scope, String key, ImageView imageView,
+                                   TypedArray iconArray, boolean showDefault) {
+        SettingsManager settingsManager = mController.getSettingsManager();
 
-        // Set the correct image src.
-        String value = settingsManager.get(id);
-        int valueIndex = settingsManager.getStringValueIndex(id);
+        int valueIndex = settingsManager.getIndexOfCurrentValue(scope, key);
         if (valueIndex < 0) {
             // This can happen when the setting is camera dependent
             // and the camera is not yet open.  CameraAppUI.onChangeCamera()
@@ -315,7 +315,7 @@ public class IndicatorIconController
 
         // Set the indicator visible if not in default state.
         boolean visibilityChanged = false;
-        if (!showDefault && settingsManager.isDefault(id)) {
+        if (!showDefault && settingsManager.isDefault(scope, key)) {
             changeVisibility(imageView, View.GONE);
         } else {
             changeVisibility(imageView, View.VISIBLE);
@@ -323,40 +323,35 @@ public class IndicatorIconController
     }
 
     @Override
-    public void onSettingChanged(SettingsManager settingsManager, int id) {
-        switch (id) {
-            case SettingsManager.SETTING_FLASH_MODE: {
-                syncFlashIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_VIDEOCAMERA_FLASH_MODE: {
-                syncFlashIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_HDR_PLUS: {
-                syncHdrIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_HDR: {
-                syncHdrIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_CAMERA_PANO_ORIENTATION: {
-                syncPanoIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_ENABLED:
-                // Fall through to the next case.
-            case SettingsManager.SETTING_EXPOSURE_COMPENSATION_VALUE: {
-                syncExposureIndicator();
-                break;
-            }
-            case SettingsManager.SETTING_COUNTDOWN_DURATION:
-                syncCountdownTimerIndicator();
-                break;
-            default: {
-                // Do nothing.
-            }
+    public void onSettingChanged(SettingsManager settingsManager, String key) {
+        if (key.equals(Keys.KEY_FLASH_MODE)) {
+            syncFlashIndicator();
+            return;
+        }
+        if (key.equals(Keys.KEY_VIDEOCAMERA_FLASH_MODE)) {
+            syncFlashIndicator();
+            return;
+        }
+        if (key.equals(Keys.KEY_CAMERA_HDR_PLUS)) {
+            syncHdrIndicator();
+            return;
+        }
+        if (key.equals(Keys.KEY_CAMERA_HDR)) {
+            syncHdrIndicator();
+            return;
+        }
+        if (key.equals(Keys.KEY_CAMERA_PANO_ORIENTATION)) {
+            syncPanoIndicator();
+            return;
+        }
+        if (key.equals(Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)
+                || key.equals(Keys.KEY_EXPOSURE)) {
+            syncExposureIndicator();
+            return;
+        }
+        if (key.equals(Keys.KEY_COUNTDOWN_DURATION)) {
+            syncCountdownTimerIndicator();
+            return;
         }
     }
 

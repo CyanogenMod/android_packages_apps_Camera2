@@ -43,9 +43,9 @@ import android.view.View.OnClickListener;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
+import com.android.camera.util.CameraSettingsActivityHelper;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GoogleHelpHelper;
-import com.android.camera.util.SettingsHelper;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.Size;
 
@@ -106,7 +106,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             Context context = this.getActivity().getApplicationContext();
             mFeedbackHelper = new FeedbackHelper(context);
             addPreferencesFromResource(R.xml.camera_preferences);
-            SettingsHelper.addAdditionalPreferences(this, context);
+            CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
         }
 
@@ -116,10 +116,13 @@ public class CameraSettingsActivity extends FragmentActivity {
             final Activity activity = this.getActivity();
 
             // Only show open source licenses in GoogleCamera build.
+            // FIXME: SettingsHelper -> CameraSettingsActivityHelper
+            /**
             if (!SettingsHelper.isOpenSourceLicensesShown()) {
                 Preference pref = findPreference(PREF_OPEN_SOURCE_LICENSES);
                 recursiveDelete(getPreferenceScreen(), pref);
             }
+            **/
 
             // Load the camera sizes.
             loadSizes();
@@ -223,15 +226,15 @@ public class CameraSettingsActivity extends FragmentActivity {
                     (PreferenceGroup) findPreference(PREF_CATEGORY_RESOLUTION);
             if (mPictureSizesBack == null) {
                 recursiveDelete(resolutions,
-                        findPreference(SettingsManager.KEY_PICTURE_SIZE_BACK));
+                        findPreference(Keys.KEY_PICTURE_SIZE_BACK));
                 recursiveDelete(resolutions,
-                        findPreference(SettingsManager.KEY_VIDEO_QUALITY_BACK));
+                        findPreference(Keys.KEY_VIDEO_QUALITY_BACK));
             }
             if (mPictureSizesFront == null) {
                 recursiveDelete(resolutions,
-                        findPreference(SettingsManager.KEY_PICTURE_SIZE_FRONT));
+                        findPreference(Keys.KEY_PICTURE_SIZE_FRONT));
                 recursiveDelete(resolutions,
-                        findPreference(SettingsManager.KEY_VIDEO_QUALITY_FRONT));
+                        findPreference(Keys.KEY_VIDEO_QUALITY_FRONT));
             }
         }
 
@@ -300,13 +303,13 @@ public class CameraSettingsActivity extends FragmentActivity {
             }
 
             ListPreference listPreference = (ListPreference) preference;
-            if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_BACK)) {
+            if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_BACK)) {
                 setEntriesForSelection(mPictureSizesBack, listPreference);
-            } else if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_FRONT)) {
+            } else if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_FRONT)) {
                 setEntriesForSelection(mPictureSizesFront, listPreference);
-            } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_BACK)) {
+            } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_BACK)) {
                 setEntriesForSelection(mVideoQualitiesBack, listPreference);
-            } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_FRONT)) {
+            } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_FRONT)) {
                 setEntriesForSelection(mVideoQualitiesFront, listPreference);
             }
         }
@@ -321,13 +324,13 @@ public class CameraSettingsActivity extends FragmentActivity {
             }
 
             ListPreference listPreference = (ListPreference) preference;
-            if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_BACK)) {
+            if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_BACK)) {
                 setSummaryForSelection(mOldPictureSizesBack, mPictureSizesBack, listPreference);
-            } else if (listPreference.getKey().equals(SettingsManager.KEY_PICTURE_SIZE_FRONT)) {
+            } else if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_FRONT)) {
                 setSummaryForSelection(mOldPictureSizesFront, mPictureSizesFront, listPreference);
-            } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_BACK)) {
+            } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_BACK)) {
                 setSummaryForSelection(mVideoQualitiesBack, listPreference);
-            } else if (listPreference.getKey().equals(SettingsManager.KEY_VIDEO_QUALITY_FRONT)) {
+            } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_FRONT)) {
                 setSummaryForSelection(mVideoQualitiesFront, listPreference);
             } else {
                 listPreference.setSummary(listPreference.getEntry());
