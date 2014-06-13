@@ -83,8 +83,20 @@ public class PreviewGestures
             if (mZoomOnly || mMode == MODE_ZOOM) return false;
             int deltaX = (int) (e1.getX() - e2.getX());
             int deltaY = (int) (e1.getY() - e2.getY());
-            if (deltaY > 2 * deltaX && deltaY > -2 * deltaX) {
+            if (deltaY < 2 * deltaX && deltaY < -2 * deltaX) {
+                // Open pie on swipe down
+                if (mPie != null && !mPie.showsItems()) {
+                    openPie();
+                    return true;
+                }
+            } else if (deltaY > 2 * deltaX && deltaY > -2 * deltaX) {
                 // Open pie on swipe up
+                if (mPie != null && !mPie.showsItems()) {
+                    openPie();
+                    return true;
+                }
+            } else if (deltaY > 2 * deltaX && deltaY < -2 * deltaX) {
+                // Open pie on swipe right
                 if (mPie != null && !mPie.showsItems()) {
                     openPie();
                     return true;
