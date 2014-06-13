@@ -527,16 +527,23 @@ class AndroidCameraManagerImpl implements CameraManager {
                 mParamsToSet.setAutoWhiteBalanceLock(settings.isAutoWhiteBalanceLocked());
             }
             if (mCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA)) {
-                mParamsToSet.setFocusAreas(settings.getFocusAreas());
+                if (settings.getFocusAreas().size() != 0) {
+                    mParamsToSet.setFocusAreas(settings.getFocusAreas());
+                }
             }
             if (mCapabilities.supports(CameraCapabilities.Feature.METERING_AREA)) {
-                mParamsToSet.setMeteringAreas(settings.getMeteringAreas());
+                if (settings.getMeteringAreas().size() != 0) {
+                    mParamsToSet.setMeteringAreas(settings.getMeteringAreas());
+                }
             }
             if (settings.getCurrentFlashMode() != CameraCapabilities.FlashMode.NO_FLASH) {
                 mParamsToSet.setFlashMode(stringifier.stringify(settings.getCurrentFlashMode()));
             }
             if (settings.getCurrentSceneMode() != CameraCapabilities.SceneMode.NO_SCENE_MODE) {
-                mParamsToSet.setSceneMode(stringifier.stringify(settings.getCurrentSceneMode()));
+                if (settings.getCurrentSceneMode() != null) {
+                    mParamsToSet
+                            .setSceneMode(stringifier.stringify(settings.getCurrentSceneMode()));
+                }
             }
 
             CameraSettings.GpsData gpsData = settings.getGpsData();
