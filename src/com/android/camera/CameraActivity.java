@@ -1138,10 +1138,15 @@ public class CameraActivity extends Activity
 
         mOrientationListener = new MyOrientationEventListener(this);
         setModuleFromIndex(moduleIndex);
-        mCurrentModule.init(this, mCameraModuleRootView);
 
         if (!mSecureCamera) {
+            try {
+                mCurrentModule.init(this, mCameraModuleRootView);
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
+            }
             mDataAdapter = mWrappedDataAdapter;
+
             mFilmStripView.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
                 mDataAdapter.requestLoad(getContentResolver());
