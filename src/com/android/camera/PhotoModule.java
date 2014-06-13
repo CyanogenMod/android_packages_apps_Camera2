@@ -2718,7 +2718,8 @@ public class PhotoModule
         } else {
             if (hdrOn) {
                 mSceneMode = CameraUtil.SCENE_MODE_HDR;
-                if (!(Parameters.SCENE_MODE_AUTO).equals(mParameters.getSceneMode())) {
+                if (!(Parameters.SCENE_MODE_AUTO).equals(mParameters.getSceneMode())
+                    && !(Parameters.SCENE_MODE_HDR).equals(mParameters.getSceneMode())) {
                     mParameters.setSceneMode(Parameters.SCENE_MODE_AUTO);
                     mCameraDevice.setParameters(mParameters);
                     mParameters = mCameraDevice.getParameters();
