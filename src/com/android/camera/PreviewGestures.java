@@ -32,16 +32,13 @@ import com.android.camera.ui.ZoomRenderer;
 public class PreviewGestures
         implements ScaleGestureDetector.OnScaleGestureListener {
 
-    private static final String TAG = "CAM_gestures";
-
-    private static final int MODE_NONE = 0;
-    private static final int MODE_ZOOM = 2;
-
     public static final int DIR_UP = 0;
     public static final int DIR_DOWN = 1;
     public static final int DIR_LEFT = 2;
     public static final int DIR_RIGHT = 3;
-
+    private static final String TAG = "CAM_gestures";
+    private static final int MODE_NONE = 0;
+    private static final int MODE_ZOOM = 2;
     private SingleTapListener mTapListener;
     private RenderOverlay mOverlay;
     private PieRenderer mPie;
@@ -53,11 +50,9 @@ public class PreviewGestures
     private boolean mZoomEnabled;
     private boolean mEnabled;
     private boolean mZoomOnly;
-    private GestureDetector mGestureDetector;
-
     private GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
-        public void onLongPress (MotionEvent e) {
+        public void onLongPress(MotionEvent e) {
             // Open pie
             if (!mZoomOnly && mPie != null && !mPie.showsItems()) {
                 openPie();
@@ -65,7 +60,7 @@ public class PreviewGestures
         }
 
         @Override
-        public boolean onSingleTapUp (MotionEvent e) {
+        public boolean onSingleTapUp(MotionEvent e) {
             // Tap to focus when pie is not open
             if (mPie == null || !mPie.showsItems()) {
                 mTapListener.onSingleTapUp(null, (int) e.getX(), (int) e.getY());
@@ -75,7 +70,7 @@ public class PreviewGestures
         }
 
         @Override
-        public boolean onScroll (MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (e1 == null) {
                 // e1 can be null if for some cases.
                 return false;
@@ -89,17 +84,20 @@ public class PreviewGestures
                     openPie();
                     return true;
                 }
+            } else if (deltaY > 2 * deltaX && deltaY < -2 * deltaX) {
+                // Open pie on swipe right
+                if (mPie != null && !mPie.showsItems()) {
+                    openPie();
+                    return true;
+                }
             }
             return false;
         }
     };
-
-    public interface SingleTapListener {
-        public void onSingleTapUp(View v, int x, int y);
-    }
+    private GestureDetector mGestureDetector;
 
     public PreviewGestures(CameraActivity ctx, SingleTapListener tapListener,
-            ZoomRenderer zoom, PieRenderer pie) {
+                           ZoomRenderer zoom, PieRenderer pie) {
         mTapListener = tapListener;
         mPie = pie;
         mZoom = zoom;
@@ -113,10 +111,6 @@ public class PreviewGestures
         mOverlay = overlay;
     }
 
-    public void setEnabled(boolean enabled) {
-        mEnabled = enabled;
-    }
-
     public void setZoomEnabled(boolean enable) {
         mZoomEnabled = enable;
     }
@@ -127,6 +121,10 @@ public class PreviewGestures
 
     public boolean isEnabled() {
         return mEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        mEnabled = enabled;
     }
 
     public boolean dispatchTouch(MotionEvent m) {
@@ -201,10 +199,14 @@ public class PreviewGestures
     }
 
     public boolean onScaleStepResize(boolean direction) {
-        if(mZoom != null){
+        if (mZoom != null) {
             return mZoom.onScaleStepResize(direction);
         }
         return false;
+    }
+
+    public interface SingleTapListener {
+        public void onSingleTapUp(View v, int x, int y);
     }
 
 }

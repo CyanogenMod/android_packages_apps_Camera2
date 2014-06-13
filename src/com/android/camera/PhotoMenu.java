@@ -20,7 +20,10 @@ package com.android.camera;
 import android.content.Context;
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CountdownTimerPopup;
@@ -29,7 +32,7 @@ import com.android.camera.ui.MoreSettingPopup;
 import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
-
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.Locale;
@@ -38,25 +41,51 @@ public class PhotoMenu extends PieController
         implements MoreSettingPopup.Listener,
         CountdownTimerPopup.Listener,
         ListPrefSettingPopup.Listener {
-    private static String TAG = "CAM_photomenu";
-
-    private final String mSettingOff;
-
-    private PhotoUI mUI;
-    private String[] mOtherKeys;
-    private AbstractSettingPopup mPopup;
-
     private static final int POPUP_NONE = 0;
     private static final int POPUP_FIRST_LEVEL = 1;
     private static final int POPUP_SECOND_LEVEL = 2;
+    private static String TAG = "CAM_photomenu";
+    private final String mSettingOff;
+    private PhotoUI mUI;
+    private String[] mOtherKeys;
+    private AbstractSettingPopup mPopup;
     private int mPopupStatus;
     private CameraActivity mActivity;
+    private MyOrientationEventListener mOrientationListener;
+
+    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
+    ;
+    private int mOrientationCompensation = 0;
+
+    private boolean mPopupUp = false;
 
     public PhotoMenu(CameraActivity activity, PhotoUI ui, PieRenderer pie) {
         super(activity, pie);
         mUI = ui;
         mSettingOff = activity.getString(R.string.setting_off_value);
         mActivity = activity;
+        mOrientationListener = new MyOrientationEventListener(mActivity);
+        mOrientationListener.enable();
+    }
+
+    // Return true if the preference has the specified key but not the value.
+    private static boolean notSame(ListPreference pref, String key, String value) {
+        return (key.equals(pref.getKey()) && !value.equals(pref.getValue()));
+    }
+
+    public void updateInterfaceOrientation() {
+        Log.i("updateInterfaceOrientation", "called");
+        if (mPopupUp) {
+            if (Settings.System.getInt(mActivity.getContentResolver(),
+                    Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
+                //do nothing
+            } else {
+                //mPopup.animate().rotation(mOrientationCompensation).setDuration(200)
+                //        .setInterpolator(new DecelerateInterpolator()).start();
+                //Using .setRotation(), animate looks bad
+                mPopup.setRotation(mOrientationCompensation);
+            }
+        }
     }
 
     public void initialize(PreferenceGroup group) {
@@ -114,7 +143,7 @@ public class PhotoMenu extends PieController
                 public void onClick(PieItem item) {
                     ListPrefSettingPopup popup =
                             (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                            R.layout.list_pref_setting_popup, null, false);
+                                    R.layout.list_pref_setting_popup, null, false);
                     popup.initialize(colorPref);
                     popup.setSettingChangedListener(PhotoMenu.this);
                     mUI.dismissPopup();
@@ -178,7 +207,7 @@ public class PhotoMenu extends PieController
             public void onClick(PieItem item) {
                 CountdownTimerPopup timerPopup =
                         (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.countdown_setting_popup, null, false);
+                                R.layout.countdown_setting_popup, null, false);
                 timerPopup.initialize(ctpref, beeppref);
                 timerPopup.setSettingChangedListener(PhotoMenu.this);
                 mUI.dismissPopup();
@@ -199,7 +228,7 @@ public class PhotoMenu extends PieController
                 public void onClick(PieItem item) {
                     ListPrefSettingPopup popup =
                             (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                            R.layout.list_pref_setting_popup, null, false);
+                                    R.layout.list_pref_setting_popup, null, false);
                     popup.initialize(sizePref);
                     popup.setSettingChangedListener(PhotoMenu.this);
                     mUI.dismissPopup();
@@ -238,7 +267,7 @@ public class PhotoMenu extends PieController
             enhance.addItem(item);
         }
         // extra settings popup
-        mOtherKeys = new String[] {
+        mOtherKeys = new String[]{
                 CameraSettings.KEY_STORAGE,
                 CameraSettings.KEY_POWER_SHUTTER,
                 CameraSettings.KEY_FOCUS_MODE,
@@ -265,6 +294,7 @@ public class PhotoMenu extends PieController
                     popup.setSettingChangedListener(PhotoMenu.this);
                     mPopup = popup;
                     mPopupStatus = POPUP_FIRST_LEVEL;
+                    mPopupUp = true;
                 }
                 mUI.showPopup(mPopup);
             }
@@ -291,13 +321,9 @@ public class PhotoMenu extends PieController
         if (mPopup != null) {
             if (mPopupStatus == POPUP_SECOND_LEVEL) {
                 mPopup = null;
+                mPopupUp = false;
             }
         }
-    }
-
-    // Return true if the preference has the specified key but not the value.
-    private static boolean notSame(ListPreference pref, String key, String value) {
-        return (key.equals(pref.getKey()) && !value.equals(pref.getValue()));
     }
 
     private void setPreference(String key, String value) {
@@ -320,7 +346,7 @@ public class PhotoMenu extends PieController
             setPreference(CameraSettings.KEY_ASD, mSettingOff);
             disableBurstMode();
         } else if (notSame(pref, CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO) ||
-                   notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
+                notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
             setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             if (!notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
@@ -368,6 +394,42 @@ public class PhotoMenu extends PieController
         mPopup = basic;
         mUI.showPopup(mPopup);
         mPopupStatus = POPUP_SECOND_LEVEL;
+    }
+
+    // This listens to the device orientation, so we can update the compensation.
+    private class MyOrientationEventListener
+            extends OrientationEventListener {
+        public MyOrientationEventListener(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            // We keep the last known orientation. So if the user first orient
+            // the camera then point the camera to floor or sky, we still have
+            // the correct orientation.
+            if (orientation == ORIENTATION_UNKNOWN) {
+                return;
+            }
+
+            mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+
+            int orientationCompensation = mOrientation;
+            if (orientationCompensation == 90)
+                orientationCompensation += 180;
+            else if (orientationCompensation == 270)
+                orientationCompensation -= 180;
+
+            if (mOrientationCompensation != orientationCompensation) {
+                // Avoid turning all around
+                float angleDelta = orientationCompensation - mOrientationCompensation;
+                if (angleDelta >= 270)
+                    orientationCompensation -= 360;
+
+                mOrientationCompensation = orientationCompensation;
+                updateInterfaceOrientation();
+            }
+        }
     }
 
 }

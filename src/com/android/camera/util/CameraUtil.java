@@ -71,7 +71,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 /**
@@ -138,7 +137,9 @@ public class CameraUtil {
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
 
-    /** Has to be in sync with the receiving MovieActivity. */
+    /**
+     * Has to be in sync with the receiving MovieActivity.
+     */
     public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
 
     public static boolean isZSLEnabled() {
@@ -191,7 +192,7 @@ public class CameraUtil {
     public static boolean isFocusAreaSupported(Parameters params) {
         return (params.getMaxNumFocusAreas() > 0
                 && isSupported(Parameters.FOCUS_MODE_AUTO,
-                        params.getSupportedFocusModes()));
+                params.getSupportedFocusModes()));
     }
 
     public static boolean isSupported(Parameters params, String key) {
@@ -346,7 +347,7 @@ public class CameraUtil {
      * request is 3. So we round up the sample size to avoid OOM.
      */
     public static int computeSampleSize(BitmapFactory.Options options,
-            int minSideLength, int maxNumOfPixels) {
+                                        int minSideLength, int maxNumOfPixels) {
         int initialSize = computeInitialSampleSize(options, minSideLength,
                 maxNumOfPixels);
 
@@ -364,7 +365,7 @@ public class CameraUtil {
     }
 
     private static int computeInitialSampleSize(BitmapFactory.Options options,
-            int minSideLength, int maxNumOfPixels) {
+                                                int minSideLength, int maxNumOfPixels) {
         double w = options.outWidth;
         double h = options.outHeight;
 
@@ -372,7 +373,7 @@ public class CameraUtil {
                 (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
         int upperBound = (minSideLength < 0) ? 128 :
                 (int) Math.min(Math.floor(w / minSideLength),
-                Math.floor(h / minSideLength));
+                        Math.floor(h / minSideLength));
 
         if (upperBound < lowerBound) {
             // return the larger one when there is no overlapping zone.
@@ -413,12 +414,12 @@ public class CameraUtil {
     }
 
     public static Bitmap decodeYUV422P(byte[] yuv422p, int width, int height)
-                        throws NullPointerException, IllegalArgumentException {
+            throws NullPointerException, IllegalArgumentException {
         final int frameSize = width * height;
         int[] rgb = new int[frameSize];
         for (int j = 0, yp = 0; j < height; j++) {
-            int up = frameSize + (j * (width/2)), u = 0, v = 0;
-            int vp = ((int)(frameSize*1.5) + (j*(width/2)));
+            int up = frameSize + (j * (width / 2)), u = 0, v = 0;
+            int vp = ((int) (frameSize * 1.5) + (j * (width / 2)));
             for (int i = 0; i < width; i++, yp++) {
                 int y = (0xff & ((int) yuv422p[yp])) - 16;
                 if (y < 0)
@@ -496,11 +497,11 @@ public class CameraUtil {
     public static void showErrorAndFinish(final Activity activity, int msgId) {
         DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                activity.finish();
-            }
-        };
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                };
         TypedValue out = new TypedValue();
         activity.getTheme().resolveAttribute(android.R.attr.alertDialogIcon, out, true);
         new AlertDialog.Builder(activity)
@@ -553,12 +554,31 @@ public class CameraUtil {
         int rotation = activity.getWindowManager().getDefaultDisplay()
                 .getRotation();
         switch (rotation) {
-            case Surface.ROTATION_0: return 0;
-            case Surface.ROTATION_90: return 90;
-            case Surface.ROTATION_180: return 180;
-            case Surface.ROTATION_270: return 270;
+            case Surface.ROTATION_0:
+                return 0;
+            case Surface.ROTATION_90:
+                return 90;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_270:
+                return 270;
         }
         return 0;
+    }
+
+    public static int roundOrientation(int orientation, int orientationHistory) {
+        boolean changeOrientation = false;
+        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            changeOrientation = true;
+        } else {
+            int dist = Math.abs(orientation - orientationHistory);
+            dist = Math.min(dist, 360 - dist);
+            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
+        }
+        if (changeOrientation) {
+            return ((orientation + 45) / 90 * 90) % 360;
+        }
+        return orientationHistory;
     }
 
     public static boolean isScreenRotated(Activity activity) {
@@ -570,6 +590,7 @@ public class CameraUtil {
     /**
      * Calculate the default orientation of the device based on the width and
      * height of the display when rotation = 0 (i.e. natural width and height)
+     *
      * @param activity the activity context
      * @return whether the default orientation of the device is portrait
      */
@@ -610,28 +631,13 @@ public class CameraUtil {
         return info.orientation;
     }
 
-    public static int roundOrientation(int orientation, int orientationHistory) {
-        boolean changeOrientation = false;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            changeOrientation = true;
-        } else {
-            int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min( dist, 360 - dist );
-            changeOrientation = ( dist >= 45 + ORIENTATION_HYSTERESIS );
-        }
-        if (changeOrientation) {
-            return ((orientation + 45) / 90 * 90) % 360;
-        }
-        return orientationHistory;
-    }
-
     private static Point getDefaultDisplaySize(Activity activity, Point size) {
         activity.getWindowManager().getDefaultDisplay().getSize(size);
         return size;
     }
 
     public static Size getOptimalPreviewSize(Activity currentActivity,
-            List<Size> sizes, double targetRatio) {
+                                             List<Size> sizes, double targetRatio) {
 
         Point[] points = new Point[sizes.size()];
 
@@ -645,7 +651,7 @@ public class CameraUtil {
     }
 
     public static int getOptimalPreviewSize(Activity currentActivity,
-            Point[] sizes, double targetRatio) {
+                                            Point[] sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.01;
         if (sizes == null) return -1;
@@ -856,7 +862,7 @@ public class CameraUtil {
     }
 
     public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
-            int viewWidth, int viewHeight) {
+                                     int viewWidth, int viewHeight) {
         // Need mirror for front camera.
         matrix.setScale(mirror ? -1 : 1, 1);
         // This is the value for android.hardware.Camera.setDisplayOrientation.
@@ -939,7 +945,8 @@ public class CameraUtil {
 
     /**
      * Down-samples a jpeg byte array.
-     * @param data a byte array of jpeg data
+     *
+     * @param data             a byte array of jpeg data
      * @param downSampleFactor down-sample factor
      * @return decoded and down-sampled bitmap
      */
@@ -987,8 +994,9 @@ public class CameraUtil {
             }
         }
     }
-   public static String getFilpModeString(int value){
-        switch(value){
+
+    public static String getFilpModeString(int value) {
+        switch (value) {
             case 0:
                 return CameraSettings.FLIP_MODE_OFF;
             case 1:
@@ -1001,6 +1009,7 @@ public class CameraUtil {
                 return null;
         }
     }
+
     /**
      * For still image capture, we need to get the right fps range such that the
      * camera can slow down the framerate to allow for less-noisy/dark
@@ -1008,7 +1017,7 @@ public class CameraUtil {
      *
      * @param params Camera's parameters.
      * @return null if no appropiate fps range can't be found. Otherwise, return
-     *         the right range.
+     * the right range.
      */
     public static int[] getPhotoPreviewFpsRange(Parameters params) {
         return getPhotoPreviewFpsRange(params.getSupportedPreviewFpsRange());
@@ -1095,7 +1104,7 @@ public class CameraUtil {
 
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
-            boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
+            boolean isSecureCamera = ((CameraActivity) activity).isSecureCamera();
             UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                     UsageStatistics.ACTION_PLAY_VIDEO, null);
             if (!isSecureCamera) {
@@ -1120,7 +1129,7 @@ public class CameraUtil {
      * not be found, we use a geo intent as a fallback.
      *
      * @param activity the activity to use for launching the Maps intent.
-     * @param latLong a 2-element array containing {latitude/longitude}.
+     * @param latLong  a 2-element array containing {latitude/longitude}.
      */
     public static void showOnMap(Activity activity, double[] latLong) {
         try {
