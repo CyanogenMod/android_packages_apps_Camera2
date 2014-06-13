@@ -179,7 +179,7 @@ public class VideoUI implements PieRenderer.PieListener,
         mActivity = activity;
         mController = controller;
         mRootView = parent;
-        mActivity.getLayoutInflater().inflate(R.layout.video_module, (ViewGroup) mRootView, true);
+        mActivity.getLayoutInflater().inflate(R.layout.video_module_nav_bar, (ViewGroup) mRootView, true);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
@@ -220,7 +220,7 @@ public class VideoUI implements PieRenderer.PieListener,
             }
         });
 
-        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
+        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls_nav_bar);
         mOnScreenIndicators = new OnScreenIndicators(mActivity,
                 mRootView.findViewById(R.id.on_screen_indicators));
         mOnScreenIndicators.resetToDefault();

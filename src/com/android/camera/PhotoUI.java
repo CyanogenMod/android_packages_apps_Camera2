@@ -221,10 +221,11 @@ public class PhotoUI implements PieListener,
     public PhotoUI(CameraActivity activity, PhotoController controller, View parent) {
         mActivity = activity;
         mController = controller;
-        mRootView = parent;
+        mRootView = parent;        
 
-        mActivity.getLayoutInflater().inflate(R.layout.photo_module,
-                (ViewGroup) mRootView, true);
+        mActivity.getLayoutInflater().inflate(R.layout.photo_module_nav_bar,
+                (ViewGroup) mRootView, true); 
+
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
@@ -249,8 +250,8 @@ public class PhotoUI implements PieListener,
         mSpinner = (ProgressBar) mRootView.findViewById(R.id.wait_spinner);
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
         mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
+        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls_nav_bar);
 
-        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mAnimationManager = new AnimationManager();
 
         mOrientationResize = false;
@@ -479,8 +480,12 @@ public class PhotoUI implements PieListener,
         mSwitcher.closePopup();
     }
 
-    public void showUI() {
-        mCameraControls.setVisibility(View.VISIBLE);
+    public void showUI() {        
+        try {
+            mCameraControls.setVisibility(View.VISIBLE);
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public boolean arePreviewControlsVisible() {

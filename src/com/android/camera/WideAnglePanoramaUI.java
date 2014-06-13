@@ -348,7 +348,7 @@ public class WideAnglePanoramaUI implements
     private void createContentView() {
         LayoutInflater inflator = (LayoutInflater) mActivity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflator.inflate(R.layout.panorama_module, mRootView, true);
+        inflator.inflate(R.layout.panorama_module_nav_bar, mRootView, true);
 
         Resources appRes = mActivity.getResources();
         mIndicatorColor = appRes.getColor(R.color.pano_progress_indication);
@@ -389,7 +389,7 @@ public class WideAnglePanoramaUI implements
         mTextureView = (TextureView) mRootView.findViewById(R.id.pano_preview_textureview);
         mTextureView.setSurfaceTextureListener(this);
         mTextureView.addOnLayoutChangeListener(this);
-        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
+        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls_nav_bar);
 
         mDialogHelper = new DialogHelper();
         setViews(appRes);
