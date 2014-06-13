@@ -832,6 +832,9 @@ CHAR LIMIT=NONE] -->
     <!-- Text shown in camera settings list for sending user feedback to the app publisher [CHAR LIMIT=25] -->
     <string name="setting_send_feedback">Send feedback</string>
 
+    <!-- Text shown in camera settings list for launching Google Help [CHAR LIMIT=25] -->
+    <string name="setting_google_help">Help</string>
+
     <!-- TODO: don't ship with these. -->
     <string name="focus_ring_toggle" translatable="false">FR</string>
     <string name="immediate_capture_toggle" translatable="false">IMM</string>

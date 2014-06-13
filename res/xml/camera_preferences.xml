@@ -88,10 +88,16 @@
                 android:targetClass="com.android.camera.app.LicensesActivity"
                 android:targetPackage="com.google.android.GoogleCamera" />
         </Preference>
+
         <!-- Send Feedback -->
         <Preference
             android:key="pref_send_feedback"
             android:title="@string/setting_send_feedback" />
+
+        <!-- GoogleHelp launcher -->
+        <Preference
+            android:key="pref_launch_help"
+            android:title="@string/setting_google_help" />
     </PreferenceCategory>
 
 </PreferenceScreen>
