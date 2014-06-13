@@ -15,10 +15,16 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Camera resources below -->
-    <style name="SwitcherButton">
-        <item name="android:layout_width">@dimen/switcher_size</item>
-        <item name="android:layout_height">@dimen/switcher_size</item>
-        <item name="android:background">@drawable/circle_bg_pressed_exit_fading</item>
+    <style name="Theme.Camera" parent="Theme.CameraBase">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/black</item>
+        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 </resources>
