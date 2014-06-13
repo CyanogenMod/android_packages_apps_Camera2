@@ -92,6 +92,8 @@ import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
+import android.view.animation.DecelerateInterpolator;
+
 import java.io.File;
 
 import static com.android.camera.CameraManager.CameraOpenErrorCallback;
@@ -164,7 +166,6 @@ public class CameraActivity extends Activity
     private OnScreenHint mStorageHint;
     private String mStoragePath;
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
-    private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
     private boolean mInCameraApp = true;
     // Keep track of powershutter state
@@ -199,6 +200,46 @@ public class CameraActivity extends Activity
     private Intent mVideoShareIntent;
     private Intent mImageShareIntent;
 
+    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;;
+    private int mOrientationCompensation = 0;
+    
+    private View mShutter;
+    private View mSwitcher;
+    private View mMenu;
+    private View mIndicators;
+    private View mPreview;
+    private View mSceneDetect;
+    private View mBurstMode;
+    private View mSpinner;
+
+    public void updateInterfaceOrientation() {
+        mSwitcher = findViewById(R.id.camera_switcher);
+        mShutter = findViewById(R.id.shutter_button);
+        mMenu = findViewById(R.id.menu);
+        mIndicators = findViewById(R.id.on_screen_indicators);
+        mPreview = findViewById(R.id.preview_thumb);
+        mSceneDetect = findViewById(R.id.scene_detect_icon);
+        mBurstMode = findViewById(R.id.burst_mode_icon);
+        mSpinner = findViewById(R.id.wait_spinner);
+
+	setViewRotation(mSwitcher, mOrientationCompensation);	
+	setViewRotation(mShutter, mOrientationCompensation);	
+	setViewRotation(mMenu, mOrientationCompensation);	
+	setViewRotation(mIndicators, mOrientationCompensation);	
+	setViewRotation(mPreview, mOrientationCompensation);	
+	setViewRotation(mSceneDetect, mOrientationCompensation);	
+	setViewRotation(mBurstMode, mOrientationCompensation);	
+	setViewRotation(mSpinner, mOrientationCompensation);	
+	mSwitcher.bringToFront();	
+	mShutter.bringToFront();	
+	mMenu.bringToFront();	
+	mIndicators.bringToFront();	
+	mPreview.bringToFront();	
+	mSceneDetect.bringToFront();	
+	mBurstMode.bringToFront();
+	mSpinner.bringToFront();
+    }
+
     private class MyOrientationEventListener
             extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
@@ -215,8 +256,31 @@ public class CameraActivity extends Activity
             }
             mLastRawOrientation = orientation;
             mCurrentModule.onOrientationChanged(orientation);
+           
+            mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+			
+            int orientationCompensation = mOrientation;
+            if (orientationCompensation == 90)
+		orientationCompensation += 180;
+            else if (orientationCompensation == 270)
+		orientationCompensation -= 180;
+
+            if (mOrientationCompensation != orientationCompensation) {
+		// Avoid turning all around
+		float angleDelta = orientationCompensation - mOrientationCompensation;
+		if (angleDelta >= 270)
+			orientationCompensation -= 360;
+				
+		mOrientationCompensation = orientationCompensation;
+		updateInterfaceOrientation();
+            }
         }
     }
+
+    public static void setViewRotation(View vg, float rotation) {
+        vg.animate().rotation(rotation).setDuration(200).setInterpolator(new DecelerateInterpolator()).start();
+    }
+
 
     private MediaSaveService mMediaSaveService;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -1138,10 +1202,15 @@ public class CameraActivity extends Activity
 
         mOrientationListener = new MyOrientationEventListener(this);
         setModuleFromIndex(moduleIndex);
-        mCurrentModule.init(this, mCameraModuleRootView);
 
         if (!mSecureCamera) {
+            try {
+                mCurrentModule.init(this, mCameraModuleRootView);
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
+            }
             mDataAdapter = mWrappedDataAdapter;
+
             mFilmStripView.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
                 mDataAdapter.requestLoad(getContentResolver());
@@ -1244,17 +1313,6 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
-        // TODO: Handle this in OrientationManager.
-        // Auto-rotate off
-        if (Settings.System.getInt(getContentResolver(),
-                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            mAutoRotateScreen = false;
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-            mAutoRotateScreen = true;
-        }
-
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
@@ -1351,10 +1409,6 @@ public class CameraActivity extends Activity
         } else if (!mCurrentModule.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    public boolean isAutoRotateScreen() {
-        return mAutoRotateScreen;
     }
 
     protected boolean setStoragePath(SharedPreferences prefs) {
