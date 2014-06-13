@@ -29,6 +29,7 @@ import android.os.Message;
 
 import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraCapabilitiesFactory;
+import com.android.camera.app.MotionManager;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
@@ -59,7 +60,8 @@ import java.util.List;
  * (10) The camera has no autofocus and supports metering area. Touch the screen
  *     to change metering area.
  */
-public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaChangedListener {
+public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaChangedListener,
+        MotionManager.MotionListener {
     private static final Log.Tag TAG = new Log.Tag("FocusOverlayMgr");
 
     private static final int RESET_TOUCH_FOCUS = 0;
@@ -93,9 +95,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private final Handler mHandler;
     Listener mListener;
     private boolean mPreviousMoving;
-
     private final FocusUI mUI;
     private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
+    private boolean mFocusLocked;
 
     public  interface FocusUI {
         public boolean hasFaces();
@@ -147,6 +149,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         mListener = listener;
         setMirror(mirror);
         mUI = ui;
+        mFocusLocked = false;
     }
 
     public void setParameters(Parameters parameters, CameraCapabilities capabilities) {
@@ -276,6 +279,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             // If this is triggered by touch focus, cancel focus after a
             // while.
             if (mFocusArea != null) {
+                mFocusLocked = true;
                 mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
             }
             if (shutterButtonPressed) {
@@ -389,13 +393,20 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         onPreviewStopped();
     }
 
+    @Override
+    public void onMoving() {
+        if (mFocusLocked) {
+            Log.d(TAG, "onMoving: Early focus unlock.");
+            cancelAutoFocus();
+        }
+    }
+
     /**
      * Triggers the autofocus and sets the specified state.
      *
      * @param focusingState The state to use when focus is in progress.
      */
     private void autoFocus(int focusingState) {
-        Log.v(TAG, "Start autofocus.");
         mListener.autoFocus();
         mState = focusingState;
         // Pause the face view because the driver will keep sending face
@@ -422,7 +433,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     private void cancelAutoFocus() {
-        Log.v(TAG, "Cancel autofocus.");
+        Log.i(TAG, "Cancel autofocus.");
         // Reset the tap area before calling mListener.cancelAutofocus.
         // Otherwise, focus mode stays at auto and the tap area passed to the
         // driver is not reset.
@@ -430,6 +441,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         mListener.cancelAutoFocus();
         mUI.resumeFaceDetection();
         mState = STATE_IDLE;
+        mFocusLocked = false;
         updateFocusUI();
         mHandler.removeMessages(RESET_TOUCH_FOCUS);
     }
