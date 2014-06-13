@@ -21,6 +21,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.util.Log;
 
 import com.android.camera2.R;
 
@@ -28,7 +29,6 @@ public class CameraControls extends RotatableLayout {
 
     private static final String TAG = "CAM_Controls";
 
-    private View mBackgroundView;
     private View mShutter;
     private View mSwitcher;
     private View mMenu;
@@ -51,7 +51,6 @@ public class CameraControls extends RotatableLayout {
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
-        mBackgroundView = findViewById(R.id.blocker);
         mSwitcher = findViewById(R.id.camera_switcher);
         mShutter = findViewById(R.id.shutter_button);
         mMenu = findViewById(R.id.menu);
@@ -67,7 +66,6 @@ public class CameraControls extends RotatableLayout {
         int orientation = getResources().getConfiguration().orientation;
         int size = getResources().getDimensionPixelSize(R.dimen.camera_controls_size);
         int rotation = getUnifiedRotation();
-        adjustBackground();
         // As l,t,r,b are positions relative to parents, we need to convert them
         // to child's coordinates
         r = r - l;
@@ -97,7 +95,6 @@ public class CameraControls extends RotatableLayout {
         }
         center(mSpinner, new Rect(l, t, r, b), orientation);
         center(mShutter, l, t, r, b, orientation, rotation, shutter);
-        center(mBackgroundView, l, t, r, b, orientation, rotation, new Rect());
         toLeft(mSwitcher, shutter, rotation);
         toRight(mMenu, shutter, rotation);
         toRight(mIndicators, shutter, rotation);
@@ -282,26 +279,4 @@ public class CameraControls extends RotatableLayout {
         int ml = getContext().getResources().getDimensionPixelSize(R.dimen.capture_margin_left);
         v.layout(l + ml, t + mt, l + v.getMeasuredWidth() + ml, t + mt + v.getMeasuredHeight());
     }
-
-    private void adjustBackground() {
-        int rotation = getUnifiedRotation();
-        // remove current drawable and reset rotation
-        mBackgroundView.setBackgroundDrawable(null);
-        mBackgroundView.setRotationX(0);
-        mBackgroundView.setRotationY(0);
-        // if the switcher background is top aligned we need to flip the background
-        // drawable vertically; if left aligned, flip horizontally
-        switch (rotation) {
-            case 180:
-                mBackgroundView.setRotationX(180);
-                break;
-            case 270:
-                mBackgroundView.setRotationY(180);
-                break;
-            default:
-                break;
-        }
-        mBackgroundView.setBackgroundResource(R.drawable.switcher_bg);
-    }
-
 }

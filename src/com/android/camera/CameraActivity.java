@@ -164,7 +164,6 @@ public class CameraActivity extends Activity
     private OnScreenHint mStorageHint;
     private String mStoragePath;
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
-    private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
     private boolean mInCameraApp = true;
     // Keep track of powershutter state
@@ -1138,10 +1137,15 @@ public class CameraActivity extends Activity
 
         mOrientationListener = new MyOrientationEventListener(this);
         setModuleFromIndex(moduleIndex);
-        mCurrentModule.init(this, mCameraModuleRootView);
 
         if (!mSecureCamera) {
+            try {
+                mCurrentModule.init(this, mCameraModuleRootView);
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
+            }
             mDataAdapter = mWrappedDataAdapter;
+
             mFilmStripView.setDataAdapter(mDataAdapter);
             if (!isCaptureIntent()) {
                 mDataAdapter.requestLoad(getContentResolver());
@@ -1244,17 +1248,6 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
-        // TODO: Handle this in OrientationManager.
-        // Auto-rotate off
-        if (Settings.System.getInt(getContentResolver(),
-                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            mAutoRotateScreen = false;
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-            mAutoRotateScreen = true;
-        }
-
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
@@ -1351,10 +1344,6 @@ public class CameraActivity extends Activity
         } else if (!mCurrentModule.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    public boolean isAutoRotateScreen() {
-        return mAutoRotateScreen;
     }
 
     protected boolean setStoragePath(SharedPreferences prefs) {
