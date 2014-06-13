@@ -89,6 +89,12 @@ public class PreviewGestures
                     openPie();
                     return true;
                 }
+            } else if (deltaY > 2 * deltaX && deltaY < -2 * deltaX) {
+                // Open pie on swipe right
+                if (mPie != null && !mPie.showsItems()) {
+                    openPie();
+                    return true;
+                }
             }
             return false;
         }
