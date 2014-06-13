@@ -18,6 +18,7 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,6 +39,10 @@ public class CameraControls extends RotatableLayout {
     private View mBurstMode;
     private View mSpinner;
 
+    private final boolean mHasTranslucentNavigationBar =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    private final Rect mInsets = new Rect();
+
     public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
         setMeasureAllChildren(true);
@@ -46,6 +51,14 @@ public class CameraControls extends RotatableLayout {
     public CameraControls(Context context) {
         super(context);
         setMeasureAllChildren(true);
+    }
+
+    @Override
+    protected boolean fitSystemWindows(Rect insets) {
+        if (mHasTranslucentNavigationBar) {
+            mInsets.set(insets);
+        }
+        return false;
     }
 
     @Override
@@ -70,13 +83,17 @@ public class CameraControls extends RotatableLayout {
         adjustBackground();
         // As l,t,r,b are positions relative to parents, we need to convert them
         // to child's coordinates
-        r = r - l;
-        b = b - t;
+        r = r - l - mInsets.right;
+        b = b - t - mInsets.bottom;
         l = 0;
         t = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
-            v.layout(l, t, r, b);
+            if (v == mBackgroundView) {
+                v.layout(l, t, r + mInsets.right, b + mInsets.bottom);
+            } else {
+                v.layout(l, t, r, b);
+            }
         }
         Rect shutter = new Rect();
         topRight(mPreview, l, t, r, b);
@@ -97,7 +114,8 @@ public class CameraControls extends RotatableLayout {
         }
         center(mSpinner, new Rect(l, t, r, b), orientation);
         center(mShutter, l, t, r, b, orientation, rotation, shutter);
-        center(mBackgroundView, l, t, r, b, orientation, rotation, new Rect());
+        center(mBackgroundView, l, t, r + mInsets.right, b + mInsets.bottom,
+                orientation, rotation, new Rect());
         toLeft(mSwitcher, shutter, rotation);
         toRight(mMenu, shutter, rotation);
         toRight(mIndicators, shutter, rotation);

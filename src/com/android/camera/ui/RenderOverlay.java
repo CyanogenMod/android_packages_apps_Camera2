@@ -18,6 +18,8 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,6 +50,10 @@ public class RenderOverlay extends FrameLayout {
     // reverse list of touch clients
     private List<Renderer> mTouchClients;
     private int[] mPosition = new int[2];
+    private final Rect mInsets = new Rect();
+    private final boolean mHasTranslucentNavigationBar =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
 
     public RenderOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -85,6 +91,29 @@ public class RenderOverlay extends FrameLayout {
 
     public int getClientSize() {
         return mClients.size();
+    }
+
+    @Override
+    protected boolean fitSystemWindows(Rect insets) {
+        if (!mHasTranslucentNavigationBar) {
+            // no adjustment needed
+            return super.fitSystemWindows(insets);
+        }
+
+        if (!mInsets.equals(insets)) {
+            mInsets.set(insets);
+            // Make sure onMeasure will be called to adapt to the new insets.
+            requestLayout();
+        }
+        return false;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // make sure all the children are resized - insets include status bar,
+        // navigation bar, etc, but in this case, we are only concerned with the size of nav bar
+        super.onMeasure(widthMeasureSpec - mInsets.right, heightMeasureSpec - mInsets.bottom);
+        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
