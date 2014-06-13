@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,54 +17,30 @@
     <!-- Ideally, showAsAction for share_panorama and share should be reversed.
          But, if share_panorama is set to never, it doesn't seem to get promoted
          to the action bar and stays on the overflow menu. -->
-    <item android:id="@+id/action_share_panorama"
-            android:icon="@drawable/ic_menu_share_holo_light"
-            android:title="@string/share_panorama"
-            android:visible="false"
-            android:actionProviderClass="android.widget.ShareActionProvider"
-            android:showAsAction="ifRoom" />
-    <item android:id="@+id/action_share"
-            android:icon="@drawable/ic_menu_share_holo_light"
-            android:title="@string/share"
-            android:visible="false"
-            android:actionProviderClass="android.widget.ShareActionProvider"
-            android:showAsAction="never" />
-    <item android:id="@+id/action_delete"
-            android:icon="@drawable/ic_menu_trash_holo_light"
-            android:title="@string/delete"
-            android:visible="false"
-            android:showAsAction="ifRoom" />
-    <item android:id="@+id/action_edit"
-            android:title="@string/edit"
-            android:showAsAction="never"
-            android:visible="false" />
-    <item android:id="@+id/action_trim"
-            android:title="@string/trim_action"
-            android:showAsAction="never"
-            android:visible="false" />
-    <item android:id="@+id/action_rotate_ccw"
-            android:showAsAction="never"
-            android:visible="false"
-            android:title="@string/rotate_left" />
-    <item android:id="@+id/action_rotate_cw"
-            android:showAsAction="never"
-            android:visible="false"
-            android:title="@string/rotate_right" />
-    <item android:id="@+id/action_crop"
-            android:title="@string/crop_action"
-            android:showAsAction="never"
-            android:visible="false" />
-    <item android:id="@+id/action_setas"
-            android:title="@string/set_image"
-            android:showAsAction="never"
-            android:visible="false" />
-    <item android:id="@+id/action_details"
-            android:icon="@drawable/ic_menu_info_details"
-            android:title="@string/details"
-            android:visible="false"
-            android:showAsAction="never" />
-    <item android:id="@+id/action_show_on_map"
-            android:title="@string/show_on_map"
-            android:showAsAction="never"
-            android:visible="false" />
+    <item android:id="@+id/action_share_panorama" android:actionProviderClass="android.widget.ShareActionProvider"
+        android:icon="@drawable/ic_menu_share_holo_light" android:showAsAction="ifRoom"
+        android:title="@string/share_panorama"
+        android:visible="false" />
+    <item android:id="@+id/action_share" android:actionProviderClass="android.widget.ShareActionProvider"
+        android:icon="@drawable/ic_menu_share_holo_light" android:showAsAction="never"
+        android:title="@string/share"
+        android:visible="false" />
+    <item android:id="@+id/action_delete" android:icon="@drawable/ic_menu_trash_holo_light"
+        android:showAsAction="ifRoom" android:title="@string/delete" android:visible="false" />
+    <item android:id="@+id/action_edit" android:showAsAction="never" android:title="@string/edit"
+        android:visible="false" />
+    <item android:id="@+id/action_trim" android:showAsAction="never"
+        android:title="@string/trim_action" android:visible="false" />
+    <item android:id="@+id/action_rotate_ccw" android:showAsAction="never" android:title="@string/rotate_left"
+        android:visible="false" />
+    <item android:id="@+id/action_rotate_cw" android:showAsAction="never" android:title="@string/rotate_right"
+        android:visible="false" />
+    <item android:id="@+id/action_crop" android:showAsAction="never"
+        android:title="@string/crop_action" android:visible="false" />
+    <item android:id="@+id/action_setas" android:showAsAction="never"
+        android:title="@string/set_image" android:visible="false" />
+    <item android:id="@+id/action_details" android:icon="@drawable/ic_menu_info_details"
+        android:showAsAction="never" android:title="@string/details" android:visible="false" />
+    <item android:id="@+id/action_show_on_map" android:showAsAction="never"
+        android:title="@string/show_on_map" android:visible="false" />
 </menu>

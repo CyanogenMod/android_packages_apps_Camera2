@@ -57,25 +57,23 @@ import java.util.List;
  *     to change metering area.
  */
 public class FocusOverlayManager {
-    private static final String TAG = "CAM_FocusManager";
-
-    private static final int RESET_TOUCH_FOCUS = 0;
-
-    private int mState = STATE_IDLE;
     public static final int STATE_IDLE = 0; // Focus is not active.
+    private int mState = STATE_IDLE;
     public static final int STATE_FOCUSING = 1; // Focus is in progress.
     // Focus is in progress and the camera should take a picture after focus finishes.
     public static final int STATE_FOCUSING_SNAP_ON_FINISH = 2;
     public static final int STATE_SUCCESS = 3; // Focus finishes and succeeds.
     public static final int STATE_FAIL = 4; // Focus finishes and fails.
-
+    private static final String TAG = "CAM_FocusManager";
+    private static final int RESET_TOUCH_FOCUS = 0;
+    private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
+    Listener mListener;
     private boolean mInitialized;
     private boolean mFocusAreaSupported;
     private boolean mMeteringAreaSupported;
     private boolean mLockAeAwbNeeded;
     private boolean mAeAwbLock;
     private Matrix mMatrix;
-
     private boolean mMirror; // true if the camera is front-facing.
     private int mDisplayOrientation;
     private List<Object> mFocusArea; // focus area in driver format
@@ -86,56 +84,15 @@ public class FocusOverlayManager {
     private Parameters mParameters;
     private ComboPreferences mPreferences;
     private Handler mHandler;
-    Listener mListener;
     private boolean mPreviousMoving;
     private boolean mZslEnabled = false;  //QCom Parameter to disable focus for ZSL
     private boolean mIsAFRunning = false;
-
     private FocusUI mUI;
-    private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
-
     private int mFocusTime;
 
-    public  interface FocusUI {
-        public boolean hasFaces();
-        public void clearFocus();
-        public void setFocusPosition(int x, int y);
-        public void onFocusStarted();
-        public void onFocusSucceeded(boolean timeOut);
-        public void onFocusFailed(boolean timeOut);
-        public void pauseFaceDetection();
-        public void resumeFaceDetection();
-    }
-
-    public interface Listener {
-        public void autoFocus();
-        public void cancelAutoFocus();
-        public boolean capture();
-        public void startFaceDetection();
-        public void stopFaceDetection();
-        public void setFocusParameters();
-    }
-
-    private class MainHandler extends Handler {
-        public MainHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case RESET_TOUCH_FOCUS: {
-                    cancelAutoFocus();
-                    mListener.startFaceDetection();
-                    break;
-                }
-            }
-        }
-    }
-
     public FocusOverlayManager(ComboPreferences preferences, String[] defaultFocusModes,
-            Parameters parameters, Listener listener,
-            boolean mirror, Looper looper, FocusUI ui) {
+                               Parameters parameters, Listener listener,
+                               boolean mirror, Looper looper, FocusUI ui) {
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
         mPreferences = preferences;
@@ -165,18 +122,22 @@ public class FocusOverlayManager {
         }
     }
 
-    /** This setter should be the only way to mutate mPreviewRect. */
+    /**
+     * Returns a copy of mPreviewRect so that outside class cannot modify preview
+     * rect except deliberately doing so through the setter.
+     */
+    public Rect getPreviewRect() {
+        return new Rect(mPreviewRect);
+    }
+
+    /**
+     * This setter should be the only way to mutate mPreviewRect.
+     */
     public void setPreviewRect(Rect previewRect) {
         if (!mPreviewRect.equals(previewRect)) {
             mPreviewRect.set(previewRect);
             setMatrix();
         }
-    }
-
-    /** Returns a copy of mPreviewRect so that outside class cannot modify preview
-     *  rect except deliberately doing so through the setter. */
-    public Rect getPreviewRect() {
-        return new Rect(mPreviewRect);
     }
 
     public void setMirror(boolean mirror) {
@@ -375,7 +336,7 @@ public class FocusOverlayManager {
 
         // Let users be able to cancel previous touch focus.
         if ((mFocusArea != null) && (mState == STATE_FOCUSING ||
-                    mState == STATE_SUCCESS || mState == STATE_FAIL)) {
+                mState == STATE_SUCCESS || mState == STATE_FAIL)) {
             cancelAutoFocus();
         }
         if (mPreviewRect.width() == 0 || mPreviewRect.height() == 0) return;
@@ -461,7 +422,7 @@ public class FocusOverlayManager {
         List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
 
         if (mFocusAreaSupported && mFocusArea != null
-                 && !CameraUtil.noFocusModeChangeForTouch()) {
+                && !CameraUtil.noFocusModeChangeForTouch()) {
             // Always use autofocus in tap-to-focus.
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
         } else {
@@ -590,17 +551,17 @@ public class FocusOverlayManager {
         mOverrideFocusMode = focusMode;
     }
 
-    public void setAeAwbLock(boolean lock) {
-        mAeAwbLock = lock;
-    }
-
     public boolean getAeAwbLock() {
         return mAeAwbLock;
     }
 
+    public void setAeAwbLock(boolean lock) {
+        mAeAwbLock = lock;
+    }
+
     private boolean needAutoFocusCall() {
         return getFocusMode().equals(Parameters.FOCUS_MODE_AUTO) &&
-            !(mZslEnabled && (mHandler.hasMessages(RESET_TOUCH_FOCUS)));
+                !(mZslEnabled && (mHandler.hasMessages(RESET_TOUCH_FOCUS)));
     }
 
     public void setZslEnable(boolean value) {
@@ -609,5 +570,54 @@ public class FocusOverlayManager {
 
     public boolean isZslEnabled() {
         return mZslEnabled;
+    }
+
+    public interface FocusUI {
+        public boolean hasFaces();
+
+        public void clearFocus();
+
+        public void setFocusPosition(int x, int y);
+
+        public void onFocusStarted();
+
+        public void onFocusSucceeded(boolean timeOut);
+
+        public void onFocusFailed(boolean timeOut);
+
+        public void pauseFaceDetection();
+
+        public void resumeFaceDetection();
+    }
+
+    public interface Listener {
+        public void autoFocus();
+
+        public void cancelAutoFocus();
+
+        public boolean capture();
+
+        public void startFaceDetection();
+
+        public void stopFaceDetection();
+
+        public void setFocusParameters();
+    }
+
+    private class MainHandler extends Handler {
+        public MainHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case RESET_TOUCH_FOCUS: {
+                    cancelAutoFocus();
+                    mListener.startFaceDetection();
+                    break;
+                }
+            }
+        }
     }
 }

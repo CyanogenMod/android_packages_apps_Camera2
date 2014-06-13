@@ -27,26 +27,6 @@ import java.util.LinkedList;
  * Fast access data structure for an ordered LocalData list.
  */
 public class LocalDataList {
-    /**
-     * We use this as a way to compare a Uri to LocalData instances inside a
-     * LinkedList. A linked list in indexOf does a other.equals(get(i)).
-     */
-    private static class UriWrapper {
-        private final Uri mUri;
-
-        public UriWrapper(Uri uri) {
-            mUri = uri;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof LocalData)) {
-                return false;
-            }
-            return mUri.equals(((LocalData) o).getContentUri());
-        }
-    }
-
     private LinkedList<LocalData> mList = new LinkedList<LocalData>();
     private HashMap<Uri, LocalData> mUriMap = new HashMap<Uri, LocalData>();
 
@@ -97,5 +77,25 @@ public class LocalDataList {
             return -1;
         }
         return mList.indexOf(new UriWrapper(uri));
+    }
+
+    /**
+     * We use this as a way to compare a Uri to LocalData instances inside a
+     * LinkedList. A linked list in indexOf does a other.equals(get(i)).
+     */
+    private static class UriWrapper {
+        private final Uri mUri;
+
+        public UriWrapper(Uri uri) {
+            mUri = uri;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof LocalData)) {
+                return false;
+            }
+            return mUri.equals(((LocalData) o).getContentUri());
+        }
     }
 }

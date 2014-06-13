@@ -28,18 +28,16 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.android.camera.util.UsageStatistics;
-
 public class ComboPreferences implements
         SharedPreferences,
         OnSharedPreferenceChangeListener {
+    // TODO: Remove this WeakHashMap in the camera code refactoring
+    private static WeakHashMap<Context, ComboPreferences> sMap =
+            new WeakHashMap<Context, ComboPreferences>();
     private SharedPreferences mPrefGlobal;  // global preferences
     private SharedPreferences mPrefLocal;  // per-camera preferences
     private String mPackageName;
     private CopyOnWriteArrayList<OnSharedPreferenceChangeListener> mListeners;
-    // TODO: Remove this WeakHashMap in the camera code refactoring
-    private static WeakHashMap<Context, ComboPreferences> sMap =
-            new WeakHashMap<Context, ComboPreferences>();
 
     public ComboPreferences(Context context) {
         mPackageName = context.getPackageName();
@@ -78,6 +76,30 @@ public class ComboPreferences implements
         return context.getPackageName() + "_preferences_camera";
     }
 
+    public static String[] getSharedPreferencesNames(Context context) {
+        int numOfCameras = CameraHolder.instance().getNumberOfCameras();
+        String prefNames[] = new String[numOfCameras + 1];
+        prefNames[0] = getGlobalSharedPreferencesName(context);
+        for (int i = 0; i < numOfCameras; i++) {
+            prefNames[i + 1] = getLocalSharedPreferencesName(context, i);
+        }
+        return prefNames;
+    }
+
+    private static boolean isGlobal(String key) {
+        return key.equals(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL)
+                || key.equals(CameraSettings.KEY_CAMERA_ID)
+                || key.equals(CameraSettings.KEY_RECORD_LOCATION)
+                || key.equals(CameraSettings.KEY_CAMERA_FIRST_USE_HINT_SHOWN)
+                || key.equals(CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN)
+                || key.equals(CameraSettings.KEY_VIDEO_EFFECT)
+                || key.equals(CameraSettings.KEY_TIMER)
+                || key.equals(CameraSettings.KEY_TIMER_SOUND_EFFECTS)
+                || key.equals(CameraSettings.KEY_PHOTOSPHERE_PICTURESIZE)
+                || key.equals(CameraSettings.KEY_POWER_SHUTTER)
+                || key.equals(CameraSettings.KEY_STORAGE);
+    }
+
     private void movePrefFrom(
             Map<String, ?> m, String key, SharedPreferences src) {
         if (m.containsKey(key)) {
@@ -109,16 +131,6 @@ public class ComboPreferences implements
         movePrefFrom(prefMap, CameraSettings.KEY_VIDEO_EFFECT, src);
     }
 
-    public static String[] getSharedPreferencesNames(Context context) {
-        int numOfCameras = CameraHolder.instance().getNumberOfCameras();
-        String prefNames[] = new String[numOfCameras + 1];
-        prefNames[0] = getGlobalSharedPreferencesName(context);
-        for (int i = 0; i < numOfCameras; i++) {
-            prefNames[i + 1] = getLocalSharedPreferencesName(context, i);
-        }
-        return prefNames;
-    }
-
     // Sets the camera id and reads its preferences. Each camera has its own
     // preferences.
     public void setLocalId(Context context, int cameraId) {
@@ -142,20 +154,6 @@ public class ComboPreferences implements
     @Override
     public Map<String, ?> getAll() {
         throw new UnsupportedOperationException(); // Can be implemented if needed.
-    }
-
-    private static boolean isGlobal(String key) {
-        return key.equals(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL)
-                || key.equals(CameraSettings.KEY_CAMERA_ID)
-                || key.equals(CameraSettings.KEY_RECORD_LOCATION)
-                || key.equals(CameraSettings.KEY_CAMERA_FIRST_USE_HINT_SHOWN)
-                || key.equals(CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN)
-                || key.equals(CameraSettings.KEY_VIDEO_EFFECT)
-                || key.equals(CameraSettings.KEY_TIMER)
-                || key.equals(CameraSettings.KEY_TIMER_SOUND_EFFECTS)
-                || key.equals(CameraSettings.KEY_PHOTOSPHERE_PICTURESIZE)
-                || key.equals(CameraSettings.KEY_POWER_SHUTTER)
-                || key.equals(CameraSettings.KEY_STORAGE);
     }
 
     @Override
@@ -212,6 +210,34 @@ public class ComboPreferences implements
     @Override
     public boolean contains(String key) {
         return mPrefLocal.contains(key) || mPrefGlobal.contains(key);
+    }
+
+    // Note the remove() and clear() of the returned Editor may not work as
+    // expected because it doesn't touch the global preferences at all.
+    @Override
+    public Editor edit() {
+        return new MyEditor();
+    }
+
+    @Override
+    public void registerOnSharedPreferenceChangeListener(
+            OnSharedPreferenceChangeListener listener) {
+        mListeners.add(listener);
+    }
+
+    @Override
+    public void unregisterOnSharedPreferenceChangeListener(
+            OnSharedPreferenceChangeListener listener) {
+        mListeners.remove(listener);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                          String key) {
+        for (OnSharedPreferenceChangeListener listener : mListeners) {
+            listener.onSharedPreferenceChanged(this, key);
+        }
+        BackupManager.dataChanged(mPackageName);
     }
 
     private class MyEditor implements Editor {
@@ -306,33 +332,5 @@ public class ComboPreferences implements
         public Editor putStringSet(String key, Set<String> values) {
             throw new UnsupportedOperationException();
         }
-    }
-
-    // Note the remove() and clear() of the returned Editor may not work as
-    // expected because it doesn't touch the global preferences at all.
-    @Override
-    public Editor edit() {
-        return new MyEditor();
-    }
-
-    @Override
-    public void registerOnSharedPreferenceChangeListener(
-            OnSharedPreferenceChangeListener listener) {
-        mListeners.add(listener);
-    }
-
-    @Override
-    public void unregisterOnSharedPreferenceChangeListener(
-            OnSharedPreferenceChangeListener listener) {
-        mListeners.remove(listener);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-            String key) {
-        for (OnSharedPreferenceChangeListener listener : mListeners) {
-            listener.onSharedPreferenceChanged(this, key);
-        }
-        BackupManager.dataChanged(mPackageName);
     }
 }

@@ -23,15 +23,15 @@ public class IntentHelper {
 
     private static final String GALLERY_PACKAGE_NAME = "com.android.gallery3d";
     private static final String GALLERY_ACTIVITY_CLASS =
-        "com.android.gallery3d.app.GalleryActivity";
+            "com.android.gallery3d.app.GalleryActivity";
 
     public static Intent getGalleryIntent(Context context) {
         return new Intent(Intent.ACTION_MAIN)
-            .setClassName(GALLERY_PACKAGE_NAME, GALLERY_ACTIVITY_CLASS);
+                .setClassName(GALLERY_PACKAGE_NAME, GALLERY_ACTIVITY_CLASS);
     }
 
     public static Intent getVideoPlayerIntent(Context context, Uri uri) {
         return new Intent(Intent.ACTION_VIEW)
-            .setDataAndType(uri, "video/*");
+                .setDataAndType(uri, "video/*");
     }
 }

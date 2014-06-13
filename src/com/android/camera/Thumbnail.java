@@ -31,7 +31,7 @@ public class Thumbnail {
     }
 
     private static Bitmap createVideoThumbnailBitmap(String filePath, FileDescriptor fd,
-            int targetWidth) {
+                                                     int targetWidth) {
         Bitmap bitmap = null;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {

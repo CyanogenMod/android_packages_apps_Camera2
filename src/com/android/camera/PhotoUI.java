@@ -19,10 +19,8 @@ package com.android.camera;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -31,6 +29,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.os.AsyncTask;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.TextureView;
@@ -44,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.os.SystemProperties;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
@@ -59,7 +57,6 @@ import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
-import com.android.camera.ui.RotateImageView;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
@@ -67,26 +64,25 @@ import com.android.camera2.R;
 import java.util.List;
 
 public class PhotoUI implements PieListener,
-    PreviewGestures.SingleTapListener,
-    FocusUI, TextureView.SurfaceTextureListener,
-    LocationManager.Listener, CameraRootView.MyDisplayListener,
-    CameraManager.CameraFaceDetectionCallback {
+        PreviewGestures.SingleTapListener,
+        FocusUI, TextureView.SurfaceTextureListener,
+        LocationManager.Listener, CameraRootView.MyDisplayListener,
+        CameraManager.CameraFaceDetectionCallback {
 
     private static final String TAG = "CAM_UI";
     private static final String PERSIST_LONG_ENABLE = "persist.camera.longshot.enable";
     private static final int DOWN_SAMPLE_FACTOR = 4;
     private final AnimationManager mAnimationManager;
+    private final Object mSurfaceTextureLock = new Object();
+    public boolean mMenuInitialized = false;
     private CameraActivity mActivity;
     private PhotoController mController;
     private PreviewGestures mGestures;
-
     private View mRootView;
     private SurfaceTexture mSurfaceTexture;
-
     private PopupWindow mPopup;
     private ShutterButton mShutterButton;
     private CountDownView mCountDownView;
-
     private FaceView mFaceView;
     private RenderOverlay mRenderOverlay;
     private View mReviewCancelButton;
@@ -94,56 +90,38 @@ public class PhotoUI implements PieListener,
     private View mReviewRetakeButton;
     private ImageView mReviewImage;
     private DecodeImageForReview mDecodeTaskForReview = null;
-
     private View mMenuButton;
     private PhotoMenu mMenu;
     private ModuleSwitcher mSwitcher;
     private CameraControls mCameraControls;
     private AlertDialog mLocationDialog;
     private ProgressBar mSpinner;
-
     // Small indicators which show the camera settings in the viewfinder.
     private ImageView mSceneDetectView;
-
     private ImageView mBurstModeView;
-
     private OnScreenIndicators mOnScreenIndicators;
-
     private PieRenderer mPieRenderer;
     private ZoomRenderer mZoomRenderer;
     private Toast mNotSelectableToast;
-
     private int mZoomMax;
     private List<Integer> mZoomRatios;
-
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
-    public boolean mMenuInitialized = false;
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
-
     private ImageView mPreviewThumb;
     private View mFlashOverlay;
-
     private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
     private TextureView mTextureView;
     private Matrix mMatrix = null;
     private float mAspectRatio = 4f / 3f;
     private boolean mAspectRatioResize;
-
     private boolean mOrientationResize;
     private boolean mPrevOrientationResize;
-    private View mPreviewCover;
-    private final Object mSurfaceTextureLock = new Object();
-
-    public interface SurfaceTextureSizeChangedListener {
-        public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
-    }
-
     private OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(View v, int left, int top, int right,
-                int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                                   int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
             if (mPreviewWidth != width || mPreviewHeight != height
@@ -158,65 +136,7 @@ public class PhotoUI implements PieListener,
             }
         }
     };
-
-    private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
-        private final byte [] mData;
-        private int mOrientation;
-        private boolean mMirror;
-        private boolean mZsl;
-
-        public DecodeTask(byte[] data, int orientation, boolean mirror,
-                boolean isZsl) {
-            mData = data;
-            mOrientation = orientation;
-            mMirror = mirror;
-            mZsl = isZsl;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Void... params) {
-            // Decode image in background.
-            Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
-            if ((mOrientation != 0 || mMirror) && (bitmap != null)) {
-                Matrix m = new Matrix();
-                if (mMirror) {
-                    // Flip horizontally
-                    m.setScale(-1f, 1f);
-                }
-                m.preRotate(mOrientation);
-                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
-                        false);
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            hideWaitAnimation();
-            mPreviewThumb.setImageBitmap(bitmap);
-            if (mZsl) {
-                mAnimationManager.startFadeAnimation(mPreviewThumb);
-            } else {
-                mAnimationManager.startCaptureAnimation(mPreviewThumb);
-            }
-        }
-    }
-
-    private class DecodeImageForReview extends DecodeTask {
-        public DecodeImageForReview(byte[] data, int orientation, boolean mirror) {
-            super(data, orientation, mirror, false);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (isCancelled()) {
-                return;
-            }
-            mReviewImage.setImageBitmap(bitmap);
-            mReviewImage.setVisibility(View.VISIBLE);
-            mDecodeTaskForReview = null;
-        }
-    }
+    private View mPreviewCover;
 
     public PhotoUI(CameraActivity activity, PhotoController controller, View parent) {
         mActivity = activity;
@@ -225,6 +145,7 @@ public class PhotoUI implements PieListener,
 
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                 (ViewGroup) mRootView, true);
+
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         mPreviewCover = mRootView.findViewById(R.id.preview_cover);
@@ -249,18 +170,18 @@ public class PhotoUI implements PieListener,
         mSpinner = (ProgressBar) mRootView.findViewById(R.id.wait_spinner);
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
         mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
-
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
+
         mAnimationManager = new AnimationManager();
 
         mOrientationResize = false;
         mPrevOrientationResize = false;
     }
 
-     public void cameraOrientationPreviewResize(boolean orientation){
+    public void cameraOrientationPreviewResize(boolean orientation) {
         mPrevOrientationResize = mOrientationResize;
         mOrientationResize = orientation;
-     }
+    }
 
     public void setAspectRatio(float ratio) {
         if (ratio <= 0.0) throw new IllegalArgumentException();
@@ -269,7 +190,7 @@ public class PhotoUI implements PieListener,
             ratio = 1 / ratio;
         }
 
-        Log.d(TAG,"setAspectRatio() ratio["+ratio+"] mAspectRatio["+mAspectRatio+"]");
+        Log.d(TAG, "setAspectRatio() ratio[" + ratio + "] mAspectRatio[" + mAspectRatio + "]");
         mAspectRatio = ratio;
         mAspectRatioResize = true;
         mTextureView.requestLayout();
@@ -283,9 +204,9 @@ public class PhotoUI implements PieListener,
         mMatrix = mTextureView.getTransform(mMatrix);
         float scaleX = 1f, scaleY = 1f;
         float scaledTextureWidth, scaledTextureHeight;
-        if (mOrientationResize){
+        if (mOrientationResize) {
             scaledTextureWidth = height * mAspectRatio;
-            if(scaledTextureWidth > width){
+            if (scaledTextureWidth > width) {
                 scaledTextureWidth = width;
                 scaledTextureHeight = scaledTextureWidth / mAspectRatio;
             } else {
@@ -296,7 +217,7 @@ public class PhotoUI implements PieListener,
                 scaledTextureWidth = Math.max(width,
                         (int) (height * mAspectRatio));
                 scaledTextureHeight = Math.max(height,
-                        (int)(width / mAspectRatio));
+                        (int) (width / mAspectRatio));
             } else {
                 scaledTextureWidth = Math.max(width,
                         (int) (height / mAspectRatio));
@@ -376,7 +297,7 @@ public class PhotoUI implements PieListener,
     }
 
     public void onCameraOpened(PreferenceGroup prefGroup, ComboPreferences prefs,
-            Camera.Parameters params, OnPreferenceChangedListener listener) {
+                               Camera.Parameters params, OnPreferenceChangedListener listener) {
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
             mPieRenderer.setPieListener(this);
@@ -409,7 +330,7 @@ public class PhotoUI implements PieListener,
     }
 
     public void animateCapture(final byte[] jpegData, int orientation, boolean mirror,
-            boolean isZsl) {
+                               boolean isZsl) {
         // Decode jpeg byte array and then animate the jpeg
         DecodeTask task = new DecodeTask(jpegData, orientation, mirror, isZsl);
         task.execute();
@@ -420,7 +341,7 @@ public class PhotoUI implements PieListener,
             // If autofocus is not finished, cancel autofocus so that the
             // subsequent touch can be handled by PreviewGestures
             if (mController.getCameraState() == PhotoController.FOCUSING) {
-                    mController.cancelAutoFocus();
+                mController.cancelAutoFocus();
             }
             mPieRenderer.showInCenter();
         }
@@ -450,7 +371,12 @@ public class PhotoUI implements PieListener,
             mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
             mReviewRetakeButton = mRootView.findViewById(R.id.btn_retake);
             mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
-            mReviewCancelButton.setVisibility(View.VISIBLE);
+
+            try {
+                mReviewCancelButton.setVisibility(View.VISIBLE);
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
+            }
 
             mReviewDoneButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -505,7 +431,7 @@ public class PhotoUI implements PieListener,
     }
 
     // called from onResume but only the first time
-    public  void initializeFirstTime() {
+    public void initializeFirstTime() {
         // Initialize shutter button.
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
         mShutterButton.setOnShutterButtonListener(mController,
@@ -535,14 +461,16 @@ public class PhotoUI implements PieListener,
                                 mController.enableRecordingLocation(true);
                                 mLocationDialog = null;
                             }
-                        })
+                        }
+                )
                 .setNegativeButton(R.string.remember_location_no,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int arg1) {
                                 dialog.cancel();
                             }
-                        })
+                        }
+                )
                 .setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
@@ -569,18 +497,20 @@ public class PhotoUI implements PieListener,
     }
 
     @Override
-    public void showGpsOnScreenIndicator(boolean hasSignal) { }
+    public void showGpsOnScreenIndicator(boolean hasSignal) {
+    }
 
     @Override
-    public void hideGpsOnScreenIndicator() { }
+    public void hideGpsOnScreenIndicator() {
+    }
 
-    public void overrideSettings(final String ... keyvalues) {
+    public void overrideSettings(final String... keyvalues) {
         if (mMenu == null) return;
         mMenu.overrideSettings(keyvalues);
     }
 
     public void updateOnScreenIndicators(Camera.Parameters params,
-            PreferenceGroup group, ComboPreferences prefs) {
+                                         PreferenceGroup group, ComboPreferences prefs) {
         if (params == null || group == null) return;
         mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
@@ -749,8 +679,6 @@ public class PhotoUI implements PieListener,
         }
     }
 
-    // shutter button handling
-
     public boolean isShutterPressed() {
         return mShutterButton.isPressed();
     }
@@ -773,30 +701,7 @@ public class PhotoUI implements PieListener,
         mShutterButton.setPressed(true);
     }
 
-    private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {
-        @Override
-        public void onZoomValueChanged(int index) {
-            int newZoom = mController.onZoomChanged(index);
-            if (mZoomRenderer != null) {
-                mZoomRenderer.setZoomValue(mZoomRatios.get(newZoom));
-            }
-        }
-
-        @Override
-        public void onZoomStart() {
-            if (mPieRenderer != null) {
-                mPieRenderer.hide();
-                mPieRenderer.setBlockFocus(true);
-            }
-        }
-
-        @Override
-        public void onZoomEnd() {
-            if (mPieRenderer != null) {
-                mPieRenderer.setBlockFocus(false);
-            }
-        }
-    }
+    // shutter button handling
 
     @Override
     public void onPieOpened(int centerX, int centerY) {
@@ -824,8 +729,6 @@ public class PhotoUI implements PieListener,
         return mSurfaceTexture;
     }
 
-    // Countdown timer
-
     private void initializeCountDown() {
         mActivity.getLayoutInflater().inflate(R.layout.count_down_to_capture,
                 (ViewGroup) mRootView, true);
@@ -847,6 +750,8 @@ public class PhotoUI implements PieListener,
         if (mCountDownView == null) initializeCountDown();
         mCountDownView.startCountDown(sec, playSound);
     }
+
+    // Countdown timer
 
     public void showPreferencesToast() {
         if (mNotSelectableToast == null) {
@@ -881,8 +786,6 @@ public class PhotoUI implements PieListener,
         ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
-    // focus UI implementation
-
     private FocusIndicator getFocusIndicator() {
         return (mFaceView != null && mFaceView.faceExists()) ? mFaceView : mPieRenderer;
     }
@@ -901,6 +804,8 @@ public class PhotoUI implements PieListener,
         FocusIndicator indicator = getFocusIndicator();
         if (indicator != null) indicator.clear();
     }
+
+    // focus UI implementation
 
     @Override
     public void setFocusPosition(int x, int y) {
@@ -946,7 +851,7 @@ public class PhotoUI implements PieListener,
     }
 
     public boolean onScaleStepResize(boolean direction) {
-        if(mGestures != null){
+        if (mGestures != null) {
             return mGestures.onScaleStepResize(direction);
         }
         return false;
@@ -955,7 +860,7 @@ public class PhotoUI implements PieListener,
     @Override
     public void onDisplayChanged() {
         Log.d(TAG, "Device flip detected.");
-        mCameraControls.checkLayoutFlip();
+        //mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
     }
 
@@ -999,6 +904,94 @@ public class PhotoUI implements PieListener,
                 break;
         }
         mBurstModeView.setVisibility(View.VISIBLE);
+    }
+
+    public interface SurfaceTextureSizeChangedListener {
+        public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight);
+    }
+
+    private class DecodeTask extends AsyncTask<Void, Void, Bitmap> {
+        private final byte[] mData;
+        private int mOrientation;
+        private boolean mMirror;
+        private boolean mZsl;
+
+        public DecodeTask(byte[] data, int orientation, boolean mirror,
+                          boolean isZsl) {
+            mData = data;
+            mOrientation = orientation;
+            mMirror = mirror;
+            mZsl = isZsl;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            // Decode image in background.
+            Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
+            if ((mOrientation != 0 || mMirror) && (bitmap != null)) {
+                Matrix m = new Matrix();
+                if (mMirror) {
+                    // Flip horizontally
+                    m.setScale(-1f, 1f);
+                }
+                m.preRotate(mOrientation);
+                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
+                        false);
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            hideWaitAnimation();
+            mPreviewThumb.setImageBitmap(bitmap);
+            if (mZsl) {
+                mAnimationManager.startFadeAnimation(mPreviewThumb);
+            } else {
+                mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            }
+        }
+    }
+
+    private class DecodeImageForReview extends DecodeTask {
+        public DecodeImageForReview(byte[] data, int orientation, boolean mirror) {
+            super(data, orientation, mirror, false);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (isCancelled()) {
+                return;
+            }
+            mReviewImage.setImageBitmap(bitmap);
+            mReviewImage.setVisibility(View.VISIBLE);
+            mDecodeTaskForReview = null;
+        }
+    }
+
+    private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {
+        @Override
+        public void onZoomValueChanged(int index) {
+            int newZoom = mController.onZoomChanged(index);
+            if (mZoomRenderer != null) {
+                mZoomRenderer.setZoomValue(mZoomRatios.get(newZoom));
+            }
+        }
+
+        @Override
+        public void onZoomStart() {
+            if (mPieRenderer != null) {
+                mPieRenderer.hide();
+                mPieRenderer.setBlockFocus(true);
+            }
+        }
+
+        @Override
+        public void onZoomEnd() {
+            if (mPieRenderer != null) {
+                mPieRenderer.setBlockFocus(false);
+            }
+        }
     }
 }
 

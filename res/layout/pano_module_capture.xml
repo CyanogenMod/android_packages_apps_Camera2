@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,92 +14,61 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/panorama_capture_layout"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:id="@+id/panorama_capture_layout" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- The top bar with capture indication -->
-        <FrameLayout
-            style="@style/PanoViewHorizontalBar"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+        <FrameLayout style="@style/PanoViewHorizontalBar" android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/pano_capture_indicator"
-                android:text="@string/pano_capture_indication"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:layout_gravity="center"
-                android:visibility="gone"
+            <TextView android:id="@+id/pano_capture_indicator"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" android:text="@string/pano_capture_indication"
+                android:textAppearance="?android:textAppearanceMedium" android:visibility="gone" />
         </FrameLayout>
 
-        <FrameLayout
-            android:layout_gravity="center"
-            android:id="@+id/pano_preview_layout"
-            android:layout_weight="@integer/SRI_pano_layout_weight"
-            android:layout_width="match_parent"
-            android:layout_height="0dp">
+        <FrameLayout android:id="@+id/pano_preview_layout" android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center" android:layout_weight="@integer/SRI_pano_layout_weight">
 
-            <TextureView
-                android:id="@+id/pano_preview_textureview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <TextureView android:id="@+id/pano_preview_textureview"
+                android:layout_width="match_parent" android:layout_height="match_parent" />
 
-            <View
-                android:id="@+id/pano_preview_area_border"
-                android:visibility="gone"
-                android:background="@drawable/ic_pan_border_fast"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <View android:id="@+id/pano_preview_area_border" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ic_pan_border_fast" android:visibility="gone" />
         </FrameLayout>
 
         <!-- The bottom bar with progress bar and direction indicators -->
-        <FrameLayout
-            style="@style/PanoViewHorizontalBar"
-            android:paddingTop="20dp"
-            android:gravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+        <FrameLayout style="@style/PanoViewHorizontalBar" android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="1" android:gravity="top"
+            android:paddingTop="20dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <RelativeLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.android.camera.PanoProgressBar
-                    android:id="@+id/pano_pan_progress_bar"
-                    android:visibility="gone"
-                    android:src="@drawable/ic_pan_progression"
-                    android:layout_centerInParent="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <com.android.camera.PanoProgressBar android:id="@+id/pano_pan_progress_bar"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" android:src="@drawable/ic_pan_progression"
+                    android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/pano_pan_left_indicator"
-                    android:src="@drawable/pano_direction_left_indicator"
-                    android:visibility="gone"
+                <ImageView android:id="@+id/pano_pan_left_indicator"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@id/pano_pan_progress_bar"
-                    android:layout_centerVertical="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_toLeftOf="@id/pano_pan_progress_bar" android:src="@drawable/pano_direction_left_indicator"
+                    android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/pano_pan_right_indicator"
-                    android:src="@drawable/pano_direction_right_indicator"
-                    android:visibility="gone"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@id/pano_pan_progress_bar"
+                <ImageView android:id="@+id/pano_pan_right_indicator"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@id/pano_pan_progress_bar" android:src="@drawable/pano_direction_right_indicator"
+                    android:visibility="gone" />
             </RelativeLayout>
         </FrameLayout>
 
@@ -108,12 +76,9 @@
     </LinearLayout>
 
     <!-- The hint for "Too fast" text view -->
-    <TextView
-        android:id="@+id/pano_capture_too_fast_textview"
-        android:text="@string/pano_too_fast_prompt"
-        android:textAppearance="?android:textAppearanceMedium"
+    <TextView android:id="@+id/pano_capture_too_fast_textview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content" android:layout_gravity="center"
+        android:text="@string/pano_too_fast_prompt" android:textAppearance="?android:textAppearanceMedium"
         android:visibility="gone" />
 </FrameLayout>

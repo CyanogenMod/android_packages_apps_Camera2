@@ -33,14 +33,11 @@ import java.util.Map;
 
 public class PieController {
 
-    private static String TAG = "CAM_piecontrol";
-
     protected static final int MODE_PHOTO = 0;
     protected static final int MODE_VIDEO = 1;
-
-    protected static float CENTER = (float) Math.PI / 2;
     protected static final float SWEEP = 0.06f;
-
+    protected static float CENTER = (float) Math.PI / 2;
+    private static String TAG = "CAM_piecontrol";
     protected Activity mActivity;
     protected PreferenceGroup mPreferenceGroup;
     protected OnPreferenceChangedListener mListener;
@@ -49,16 +46,16 @@ public class PieController {
     private Map<IconListPreference, PieItem> mPreferenceMap;
     private Map<IconListPreference, String> mOverrides;
 
-    public void setListener(OnPreferenceChangedListener listener) {
-        mListener = listener;
-    }
-
     public PieController(Activity activity, PieRenderer pie) {
         mActivity = activity;
         mRenderer = pie;
         mPreferences = new ArrayList<IconListPreference>();
         mPreferenceMap = new HashMap<IconListPreference, PieItem>();
         mOverrides = new HashMap<IconListPreference, String>();
+    }
+
+    public void setListener(OnPreferenceChangedListener listener) {
+        mListener = listener;
     }
 
     public void initialize(PreferenceGroup group) {
@@ -236,7 +233,7 @@ public class PieController {
     }
 
     // Scene mode may override other camera settings (ex: flash mode).
-    public void overrideSettings(final String ... keyvalues) {
+    public void overrideSettings(final String... keyvalues) {
         if (keyvalues.length % 2 != 0) {
             throw new IllegalArgumentException();
         }
@@ -245,7 +242,7 @@ public class PieController {
         }
     }
 
-    private void override(IconListPreference pref, final String ... keyvalues) {
+    private void override(IconListPreference pref, final String... keyvalues) {
         mOverrides.remove(pref);
         for (int i = 0; i < keyvalues.length; i += 2) {
             String key = keyvalues[i];

@@ -31,7 +31,7 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Request for loading the local data.
      *
-     * @param resolver  {@link ContentResolver} used for data loading.
+     * @param resolver {@link ContentResolver} used for data loading.
      */
     public void requestLoad(ContentResolver resolver);
 
@@ -46,7 +46,7 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Remove the data in the local camera folder.
      *
-     * @param context       {@link Context} used to remove the data.
+     * @param context {@link Context} used to remove the data.
      * @param dataID  ID of data to be deleted.
      */
     public void removeData(Context context, int dataID);
@@ -54,16 +54,16 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Add new local video data.
      *
-     * @param resolver  {@link ContentResolver} used to add the data.
-     * @param uri       {@link Uri} of the video.
+     * @param resolver {@link ContentResolver} used to add the data.
+     * @param uri      {@link Uri} of the video.
      */
     public void addNewVideo(ContentResolver resolver, Uri uri);
 
     /**
      * Adds new local photo data.
      *
-     * @param resolver  {@link ContentResolver} used to add the data.
-     * @param uri       {@link Uri} of the photo.
+     * @param resolver {@link ContentResolver} used to add the data.
+     * @param uri      {@link Uri} of the photo.
      */
     public void addNewPhoto(ContentResolver resolver, Uri uri);
 
@@ -71,15 +71,15 @@ public interface LocalDataAdapter extends DataAdapter {
      * Refresh the data by {@link Uri}.
      *
      * @param resolver {@link ContentResolver} used to refresh the data.
-     * @param uri The {@link Uri} of the data to refresh.
+     * @param uri      The {@link Uri} of the data to refresh.
      */
     public void refresh(ContentResolver resolver, Uri uri);
 
     /**
      * Finds the {@link LocalData} of the specified content Uri.
      *
-     * @param Uri  The content Uri of the {@link LocalData}.
-     * @return     The index of the data. {@code -1} if not found.
+     * @param Uri The content Uri of the {@link LocalData}.
+     * @return The index of the data. {@code -1} if not found.
      */
     public int findDataByContentUri(Uri uri);
 
@@ -92,8 +92,8 @@ public interface LocalDataAdapter extends DataAdapter {
      * Executes the deletion task. Delete the data waiting in the deletion queue.
      *
      * @param context The {@link Context} from the caller.
-     * @return        {@code true} if task has been executed, {@code false}
-     *                otherwise.
+     * @return {@code true} if task has been executed, {@code false}
+     * otherwise.
      */
     public boolean executeDeletion(Context context);
 
@@ -108,11 +108,13 @@ public interface LocalDataAdapter extends DataAdapter {
     /**
      * Update the data in a specific position.
      *
-     * @param pos The position of the data to be updated.
+     * @param pos  The position of the data to be updated.
      * @param data The new data.
      */
     public void updateData(int pos, LocalData data);
 
-    /** Insert a data. */
+    /**
+     * Insert a data.
+     */
     public void insertData(LocalData data);
 }

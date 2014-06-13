@@ -28,6 +28,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.provider.MediaStore.Video;
 import android.util.Log;
+
 import com.android.camera.PhotoModule;
 import com.android.camera.exif.ExifInterface;
 
@@ -47,20 +48,6 @@ public class MediaSaveService extends Service {
     private Listener mListener;
     // Memory used by the total queued save request, in bytes.
     private long mMemoryUse;
-
-    public interface Listener {
-        public void onQueueStatus(boolean full);
-    }
-
-    public interface OnMediaSavedListener {
-        public void onMediaSaved(Uri uri);
-    }
-
-    class LocalBinder extends Binder {
-        public MediaSaveService getService() {
-            return MediaSaveService.this;
-        }
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -86,8 +73,8 @@ public class MediaSaveService extends Service {
     }
 
     public void addImage(final byte[] data, String title, long date, Location loc,
-            int width, int height, int orientation, ExifInterface exif,
-            OnMediaSavedListener l, ContentResolver resolver, String pictureFormat) {
+                         int width, int height, int orientation, ExifInterface exif,
+                         OnMediaSavedListener l, ContentResolver resolver, String pictureFormat) {
         if (isQueueFull()) {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
@@ -109,17 +96,18 @@ public class MediaSaveService extends Service {
         // When dimensions are unknown, pass 0 as width and height,
         // and decode image for width and height later in a background thread
         addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver,
-                 PhotoModule.PIXEL_FORMAT_JPEG);
+                PhotoModule.PIXEL_FORMAT_JPEG);
     }
+
     public void addImage(final byte[] data, String title, Location loc,
-            int width, int height, int orientation, ExifInterface exif,
-            OnMediaSavedListener l, ContentResolver resolver) {
+                         int width, int height, int orientation, ExifInterface exif,
+                         OnMediaSavedListener l, ContentResolver resolver) {
         addImage(data, title, System.currentTimeMillis(), loc, width, height,
-                orientation, exif, l, resolver,PhotoModule.PIXEL_FORMAT_JPEG);
+                orientation, exif, l, resolver, PhotoModule.PIXEL_FORMAT_JPEG);
     }
 
     public void addVideo(String path, long duration, ContentValues values,
-            OnMediaSavedListener l, ContentResolver resolver) {
+                         OnMediaSavedListener l, ContentResolver resolver) {
         // We don't set a queue limit for video saving because the file
         // is already in the storage. Only updating the database.
         new VideoSaveTask(path, duration, values, l, resolver).execute();
@@ -139,7 +127,21 @@ public class MediaSaveService extends Service {
         if (mListener != null) mListener.onQueueStatus(false);
     }
 
-    private class ImageSaveTask extends AsyncTask <Void, Void, Uri> {
+    public interface Listener {
+        public void onQueueStatus(boolean full);
+    }
+
+    public interface OnMediaSavedListener {
+        public void onMediaSaved(Uri uri);
+    }
+
+    class LocalBinder extends Binder {
+        public MediaSaveService getService() {
+            return MediaSaveService.this;
+        }
+    }
+
+    private class ImageSaveTask extends AsyncTask<Void, Void, Uri> {
         private byte[] data;
         private String title;
         private long date;
@@ -195,7 +197,7 @@ public class MediaSaveService extends Service {
         }
     }
 
-    private class VideoSaveTask extends AsyncTask <Void, Void, Uri> {
+    private class VideoSaveTask extends AsyncTask<Void, Void, Uri> {
         private String path;
         private long duration;
         private ContentValues values;
@@ -203,7 +205,7 @@ public class MediaSaveService extends Service {
         private ContentResolver resolver;
 
         public VideoSaveTask(String path, long duration, ContentValues values,
-                OnMediaSavedListener l, ContentResolver r) {
+                             OnMediaSavedListener l, ContentResolver r) {
             this.path = path;
             this.duration = duration;
             this.values = new ContentValues(values);

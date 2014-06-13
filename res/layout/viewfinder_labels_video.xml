@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2011 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,20 +11,13 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
--->
-<!-- This layout is shared by phone and tablet in portrait or landscape orientation. -->
+--><!-- This layout is shared by phone and tablet in portrait or landscape orientation. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
-    <TextView android:id="@+id/recording_time"
-            style="@style/OnViewfinderLabel"
-            android:gravity="center"
-            android:drawableLeft="@drawable/ic_recording_indicator"
-            android:drawablePadding="5dp"
-            android:visibility="gone" />
-    <TextView android:id="@+id/time_lapse_label"
-            android:text="@string/time_lapse_title"
-            style="@style/OnViewfinderLabel"
-            android:visibility="gone" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView android:id="@+id/recording_time" style="@style/OnViewfinderLabel"
+        android:drawableLeft="@drawable/ic_recording_indicator" android:drawablePadding="5dp"
+        android:gravity="center" android:visibility="gone" />
+    <TextView android:id="@+id/time_lapse_label" style="@style/OnViewfinderLabel"
+        android:text="@string/time_lapse_title" android:visibility="gone" />
 </LinearLayout>

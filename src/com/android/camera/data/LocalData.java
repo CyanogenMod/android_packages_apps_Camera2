@@ -46,23 +46,23 @@ public interface LocalData extends FilmStripView.ImageData {
     /**
      * Constant for denoting a camera preview.
      */
-    public static final int LOCAL_CAMERA_PREVIEW   = 1;
+    public static final int LOCAL_CAMERA_PREVIEW = 1;
     /**
      * Constant for denoting an arbitrary view.
      */
-    public static final int LOCAL_VIEW             = 2;
+    public static final int LOCAL_VIEW = 2;
     /**
      * Constant for denoting a still image.
      */
-    public static final int LOCAL_IMAGE            = 3;
+    public static final int LOCAL_IMAGE = 3;
     /**
      * Constant for denoting a video.
      */
-    public static final int LOCAL_VIDEO            = 4;
+    public static final int LOCAL_VIDEO = 4;
     /**
      * Constant for denoting a still image, with valid PhotoSphere metadata.
      */
-    public static final int LOCAL_PHOTO_SPHERE     = 5;
+    public static final int LOCAL_PHOTO_SPHERE = 5;
     /**
      * Constant for denoting a still image, with valid 360 PhotoSphere metadata.
      */
@@ -75,7 +75,7 @@ public interface LocalData extends FilmStripView.ImageData {
     public static final int LOCAL_IN_PROGRESS_DATA = 7;
 
     View getView(Activity a, int width, int height, Drawable placeHolder,
-            LocalDataAdapter adapter);
+                 LocalDataAdapter adapter);
 
     /**
      * Gets the date when this data is created. The returned date is also used
@@ -95,7 +95,9 @@ public interface LocalData extends FilmStripView.ImageData {
      */
     long getDateModified();
 
-    /** Gets the title of this data */
+    /**
+     * Gets the title of this data
+     */
     String getTitle();
 
     /**
@@ -106,25 +108,28 @@ public interface LocalData extends FilmStripView.ImageData {
      */
     boolean isDataActionSupported(int actions);
 
-    /** Removes the data from the storage if possible. */
+    /**
+     * Removes the data from the storage if possible.
+     */
     boolean delete(Context c);
 
     /**
      * Rotate the image in 90 degrees. This is a no-op for non-image.
      *
-     * @param context Used to update the content provider when rotation is done.
-     * @param adapter Used to update the view.
+     * @param context       Used to update the content provider when rotation is done.
+     * @param adapter       Used to update the view.
      * @param currentDataId Used to update the view.
-     * @param clockwise True if the rotation goes clockwise.
-     *
+     * @param clockwise     True if the rotation goes clockwise.
      * @return Whether the rotation is supported.
      */
     boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise);
+                            int currentDataId, boolean clockwise);
 
     void onFullScreen(boolean fullScreen);
 
-    /** Returns {@code true} if it allows swipe to filmstrip in full screen. */
+    /**
+     * Returns {@code true} if it allows swipe to filmstrip in full screen.
+     */
     boolean canSwipeInFullScreen();
 
     /**
@@ -136,7 +141,7 @@ public interface LocalData extends FilmStripView.ImageData {
 
     /**
      * @return The mimetype of this data item, or null, if this item has no
-     *         mimetype associated with it.
+     * mimetype associated with it.
      */
     String getMimeType();
 
@@ -167,13 +172,20 @@ public interface LocalData extends FilmStripView.ImageData {
      */
     LocalData refresh(ContentResolver resolver);
 
+    /**
+     * @return the {@link android.content.ContentResolver} Id of the data.
+     */
+    long getContentId();
+
     static class NewestFirstComparator implements Comparator<LocalData> {
 
-        /** Compare taken/modified date of LocalData in descent order to make
-         newer data in the front.
-         The negative numbers here are always considered "bigger" than
-         positive ones. Thus, if any one of the numbers is negative, the logic
-         is reversed. */
+        /**
+         * Compare taken/modified date of LocalData in descent order to make
+         * newer data in the front.
+         * The negative numbers here are always considered "bigger" than
+         * positive ones. Thus, if any one of the numbers is negative, the logic
+         * is reversed.
+         */
         private static int compareDate(long v1, long v2) {
             if (v1 >= 0 && v2 >= 0) {
                 return ((v1 < v2) ? 1 : ((v1 > v2) ? -1 : 0));
@@ -193,10 +205,5 @@ public interface LocalData extends FilmStripView.ImageData {
             return cmp;
         }
     }
-
-    /**
-     * @return the {@link android.content.ContentResolver} Id of the data.
-     */
-    long getContentId();
 }
 

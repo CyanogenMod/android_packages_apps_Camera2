@@ -33,18 +33,14 @@ import com.android.camera.util.CameraUtil;
 @SuppressLint("NewApi")
 public class CameraRootView extends FrameLayout {
 
+    private final Rect mCurrentInsets = new Rect(0, 0, 0, 0);
     private int mTopMargin = 0;
     private int mBottomMargin = 0;
     private int mLeftMargin = 0;
     private int mRightMargin = 0;
-    private final Rect mCurrentInsets = new Rect(0, 0, 0, 0);
     private int mOffset = 0;
     private Object mDisplayListener;
     private MyDisplayListener mListener;
-
-    public interface MyDisplayListener {
-        public void onDisplayChanged();
-    }
 
     public CameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -78,7 +74,8 @@ public class CameraRootView extends FrameLayout {
             mDisplayListener = new DisplayListener() {
 
                 @Override
-                public void onDisplayAdded(int arg0) {}
+                public void onDisplayAdded(int arg0) {
+                }
 
                 @Override
                 public void onDisplayChanged(int arg0) {
@@ -88,7 +85,8 @@ public class CameraRootView extends FrameLayout {
                 }
 
                 @Override
-                public void onDisplayRemoved(int arg0) {}
+                public void onDisplayRemoved(int arg0) {
+                }
             };
         }
     }
@@ -106,16 +104,16 @@ public class CameraRootView extends FrameLayout {
         super.onAttachedToWindow();
         if (ApiHelper.HAS_DISPLAY_LISTENER) {
             ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
-            .registerDisplayListener((DisplayListener) mDisplayListener, null);
+                    .registerDisplayListener((DisplayListener) mDisplayListener, null);
         }
     }
 
     @Override
-    public void onDetachedFromWindow () {
+    public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (ApiHelper.HAS_DISPLAY_LISTENER) {
             ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
-            .unregisterDisplayListener((DisplayListener) mDisplayListener);
+                    .unregisterDisplayListener((DisplayListener) mDisplayListener);
         }
     }
 
@@ -196,5 +194,9 @@ public class CameraRootView extends FrameLayout {
                 v.layout(l + mLeftMargin, t + mTopMargin, r - mRightMargin, b - mBottomMargin);
             }
         }
+    }
+
+    public interface MyDisplayListener {
+        public void onDisplayChanged();
     }
 }

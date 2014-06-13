@@ -16,9 +16,6 @@
 
 package com.android.camera;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -32,19 +29,23 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
-import com.android.camera.data.LocalData;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class Storage {
-    private static final String TAG = "CameraStorage";
-
     public static final String JPEG_POSTFIX = ".jpg";
-
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
     public static final long LOW_STORAGE_THRESHOLD_BYTES = 50000000;
+    private static final String TAG = "CameraStorage";
+    private static Storage sStorage;
+    private String mRoot = Environment.getExternalStorageDirectory().toString();
+    private Storage() {
+    }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
@@ -55,11 +56,6 @@ public class Storage {
         }
     }
 
-    private String mRoot = Environment.getExternalStorageDirectory().toString();
-    private static Storage sStorage;
-
-    private Storage() { }
-
     public static Storage getInstance() {
         if (sStorage == null) {
             sStorage = new Storage();
@@ -67,14 +63,29 @@ public class Storage {
         return sStorage;
     }
 
+    private static Uri insertImage(ContentResolver resolver, ContentValues values) {
+        Uri uri = null;
+        try {
+            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+        } catch (Throwable th) {
+            // This can happen when the external volume is already mounted, but
+            // MediaScanner has not notify MediaProvider to add that volume.
+            // The picture is still safe and MediaScanner will find it and
+            // insert it into MediaProvider. The only problem is that the user
+            // cannot click the thumbnail to review the picture.
+            Log.e(TAG, "Failed to write MediaStore" + th);
+        }
+        return uri;
+    }
+
     public void setRoot(String root) {
         mRoot = root;
     }
 
     public void writeFile(String path, byte[] jpeg, ExifInterface exif,
-            String mimeType) {
+                          String mimeType) {
         if (exif != null && (mimeType == null ||
-            mimeType.equalsIgnoreCase("jpeg"))) {
+                mimeType.equalsIgnoreCase("jpeg"))) {
             try {
                 exif.writeExif(jpeg, path);
             } catch (Exception e) {
@@ -82,8 +93,8 @@ public class Storage {
             }
         } else if (jpeg != null) {
             if (!(mimeType.equalsIgnoreCase("jpeg") || mimeType == null)) {
-                 File dir = new File(generateRawDirectory());
-                 dir.mkdirs();
+                File dir = new File(generateRawDirectory());
+                dir.mkdirs();
             }
             writeFile(path, jpeg);
         }
@@ -107,8 +118,8 @@ public class Storage {
 
     // Save the image with a given mimeType and add it the MediaStore.
     public Uri addImage(ContentResolver resolver, String title, long date,
-            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
-            int height, String mimeType) {
+                        Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
+                        int height, String mimeType) {
 
         String path = generateFilepath(title, mimeType);
         writeFile(path, jpeg, exif, mimeType);
@@ -118,8 +129,8 @@ public class Storage {
 
     // Get a ContentValues object for the given photo data
     public ContentValues getContentValuesForData(String title,
-            long date, Location location, int orientation, int jpegLength,
-            String path, int width, int height, String mimeType) {
+                                                 long date, Location location, int orientation, int jpegLength,
+                                                 String path, int width, int height, String mimeType) {
         // Insert into MediaStore.
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
@@ -146,21 +157,21 @@ public class Storage {
 
     // Add the image to media store.
     public Uri addImage(ContentResolver resolver, String title,
-            long date, Location location, int orientation, int jpegLength,
-            String path, int width, int height, String mimeType) {
+                        long date, Location location, int orientation, int jpegLength,
+                        String path, int width, int height, String mimeType) {
         // Insert into MediaStore.
         ContentValues values =
                 getContentValuesForData(title, date, location, orientation, jpegLength, path,
                         width, height, mimeType);
 
-         return insertImage(resolver, values);
+        return insertImage(resolver, values);
     }
 
     // Overwrites the file and updates the MediaStore, or inserts the image if
     // one does not already exist.
     public void updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
-            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
-            int height, String mimeType) {
+                            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
+                            int height, String mimeType) {
         String path = generateFilepath(title, mimeType);
         writeFile(path, jpeg, exif, mimeType);
         updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
@@ -170,8 +181,8 @@ public class Storage {
     // Updates the image values in MediaStore, or inserts the image if one does
     // not already exist.
     public void updateImage(Uri imageUri, ContentResolver resolver, String title,
-            long date, Location location, int orientation, int jpegLength,
-            String path, int width, int height, String mimeType) {
+                            long date, Location location, int orientation, int jpegLength,
+                            String path, int width, int height, String mimeType) {
 
         ContentValues values =
                 getContentValuesForData(title, date, location, orientation, jpegLength, path,
@@ -261,20 +272,5 @@ public class Storage {
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
-    }
-
-    private static Uri insertImage(ContentResolver resolver, ContentValues values) {
-        Uri uri = null;
-        try {
-            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-        } catch (Throwable th)  {
-            // This can happen when the external volume is already mounted, but
-            // MediaScanner has not notify MediaProvider to add that volume.
-            // The picture is still safe and MediaScanner will find it and
-            // insert it into MediaProvider. The only problem is that the user
-            // cannot click the thumbnail to review the picture.
-            Log.e(TAG, "Failed to write MediaStore" + th);
-        }
-        return uri;
     }
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,19 +13,13 @@
      limitations under the License.
 -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:clickable="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<merge xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:clickable="true">
     <include layout="@layout/pano_module_capture" />
-    <View
-        android:id="@+id/preview_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
+    <View android:id="@+id/preview_cover" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:background="@android:color/black"
         android:visibility="gone" />
     <include layout="@layout/pano_module_review" />
-    <include layout="@layout/camera_controls"
-             android:layout_gravity="center"
-             style="@style/CameraControls"/>
+    <include style="@style/CameraControls" layout="@layout/camera_controls"
+        android:layout_gravity="center" />
 </merge>

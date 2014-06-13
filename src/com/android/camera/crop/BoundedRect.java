@@ -62,19 +62,6 @@ public class BoundedRect {
     }
 
     /**
-     * Sets inner, and re-constrains it to fit within the rotated bounding rect.
-     */
-    public void setInner(RectF newInner) {
-        if (inner.equals(newInner))
-            return;
-        inner = newInner;
-        innerRotated = CropMath.getCornersFromRect(inner);
-        rotateInner();
-        if (!isConstrained())
-            reconstrain();
-    }
-
-    /**
      * Sets rotation, and re-constrains inner to fit within the rotated bounding rect.
      */
     public void setRotation(float rotation) {
@@ -97,6 +84,19 @@ public class BoundedRect {
 
     public RectF getInner() {
         return new RectF(inner);
+    }
+
+    /**
+     * Sets inner, and re-constrains it to fit within the rotated bounding rect.
+     */
+    public void setInner(RectF newInner) {
+        if (inner.equals(newInner))
+            return;
+        inner = newInner;
+        innerRotated = CropMath.getCornersFromRect(inner);
+        rotateInner();
+        if (!isConstrained())
+            reconstrain();
     }
 
     public RectF getOuter() {

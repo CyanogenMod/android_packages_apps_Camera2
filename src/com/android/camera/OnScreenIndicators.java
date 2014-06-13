@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -93,32 +92,32 @@ public class OnScreenIndicators {
      * Set the exposure indicator to the given value.
      *
      * @param value Value between -3 and 3. If outside this range, 0 is used by
-     *            default.
+     *              default.
      */
     public void updateExposureOnScreenIndicator(int value) {
         int id = 0;
-        switch(value) {
-        case -3:
-            id = R.drawable.ic_indicator_ev_n3;
-            break;
-        case -2:
-            id = R.drawable.ic_indicator_ev_n2;
-            break;
-        case -1:
-            id = R.drawable.ic_indicator_ev_n1;
-            break;
-        case 0:
-            id = R.drawable.ic_indicator_ev_0;
-            break;
-        case 1:
-            id = R.drawable.ic_indicator_ev_p1;
-            break;
-        case 2:
-            id = R.drawable.ic_indicator_ev_p2;
-            break;
-        case 3:
-            id = R.drawable.ic_indicator_ev_p3;
-            break;
+        switch (value) {
+            case -3:
+                id = R.drawable.ic_indicator_ev_n3;
+                break;
+            case -2:
+                id = R.drawable.ic_indicator_ev_n2;
+                break;
+            case -1:
+                id = R.drawable.ic_indicator_ev_n1;
+                break;
+            case 0:
+                id = R.drawable.ic_indicator_ev_0;
+                break;
+            case 1:
+                id = R.drawable.ic_indicator_ev_p1;
+                break;
+            case 2:
+                id = R.drawable.ic_indicator_ev_p2;
+                break;
+            case 3:
+                id = R.drawable.ic_indicator_ev_p3;
+                break;
         }
         mExposureIndicator.setImageResource(id);
     }
@@ -144,7 +143,7 @@ public class OnScreenIndicators {
      * Set the flash indicator to the given value.
      *
      * @param value One of Parameters.FLASH_MODE_OFF, Parameters.FLASH_MODE_RED_EYE,
-     *            Parameters.FLASH_MODE_AUTO, Parameters.FLASH_MODE_ON.
+     *              Parameters.FLASH_MODE_AUTO, Parameters.FLASH_MODE_ON.
      */
     public void updateFlashOnScreenIndicator(String value) {
         if (mFlashIndicator == null) {
@@ -170,7 +169,7 @@ public class OnScreenIndicators {
      * Set the scene indicator depending on the given scene mode.
      *
      * @param value the current Parameters.SCENE_MODE_* value or
-     *            {@link #SCENE_MODE_HDR_PLUS}.
+     *              {@link #SCENE_MODE_HDR_PLUS}.
      */
     public void updateSceneOnScreenIndicator(String value) {
         if (mSceneIndicator == null) {

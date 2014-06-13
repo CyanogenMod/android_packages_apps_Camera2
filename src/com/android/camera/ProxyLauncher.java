@@ -28,8 +28,8 @@ public class ProxyLauncher extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-                Intent intent = getIntent().getParcelableExtra(Intent.EXTRA_INTENT);
-                startActivityForResult(intent, 0);
+            Intent intent = getIntent().getParcelableExtra(Intent.EXTRA_INTENT);
+            startActivityForResult(intent, 0);
         }
     }
 

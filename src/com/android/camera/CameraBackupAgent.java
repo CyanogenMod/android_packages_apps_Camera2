@@ -23,7 +23,7 @@ import android.content.Context;
 public class CameraBackupAgent extends BackupAgentHelper {
     private static final String CAMERA_BACKUP_KEY = "camera_prefs";
 
-    public void onCreate () {
+    public void onCreate() {
         Context context = getApplicationContext();
         String prefNames[] = ComboPreferences.getSharedPreferencesNames(context);
 

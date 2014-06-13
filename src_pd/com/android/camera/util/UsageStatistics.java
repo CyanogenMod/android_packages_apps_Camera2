@@ -33,12 +33,12 @@ public class UsageStatistics {
     public static final String ACTION_OPEN_FAIL = "OpenFailure";
     public static final String ACTION_SCREEN_CHANGED = "ScreenChanged";
     public static final String ACTION_FILMSTRIP = "Filmstrip";
-    public static final String ACTION_TOUCH_FOCUS= "TouchFocus";
+    public static final String ACTION_TOUCH_FOCUS = "TouchFocus";
     public static final String ACTION_DELETE = "Delete";
     public static final String ACTION_GALLERY = "Gallery";
-    public static final String ACTION_EDIT= "Edit";
-    public static final String ACTION_CROP= "Crop";
-    public static final String ACTION_PLAY_VIDEO= "PlayVideo";
+    public static final String ACTION_EDIT = "Edit";
+    public static final String ACTION_CROP = "Crop";
+    public static final String ACTION_PLAY_VIDEO = "PlayVideo";
 
     public static final String CATEGORY_LIFECYCLE = "AppLifecycle";
     public static final String CATEGORY_BUTTON_PRESS = "ButtonPress";
@@ -47,15 +47,35 @@ public class UsageStatistics {
 
     public static final String ACTION_SHARE = "Share";
 
-    public static void initialize(Context context) {}
-    public static void setPendingTransitionCause(String cause) {}
-    public static void onContentViewChanged(String screenComponent, String screenName) {}
-    public static void onEvent(String category, String action, String label) {};
-    public static void onEvent(String category, String action, String label, long optionalValue) {};
+    public static void initialize(Context context) {
+    }
+
+    public static void setPendingTransitionCause(String cause) {
+    }
+
+    public static void onContentViewChanged(String screenComponent, String screenName) {
+    }
+
+    public static void onEvent(String category, String action, String label) {
+    }
+
+    ;
+
+    public static void onEvent(String category, String action, String label, long optionalValue) {
+    }
+
+    ;
+
     public static void onEvent(String category, String action, String label, long optionalValue,
-                               String fileNameHash) {};
+                               String fileNameHash) {
+    }
+
+    ;
+
     public static void onEvent(String category, String action, String label,
-                               long optionalValue, String fileNameHash, String parameters) {}
+                               long optionalValue, String fileNameHash, String parameters) {
+    }
+
     public static String hashFileName(String fileName) {
         return "";
     }

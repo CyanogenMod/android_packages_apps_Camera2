@@ -35,10 +35,15 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 public class FaceView extends View
-    implements FocusIndicator, Rotatable,
-    PhotoUI.SurfaceTextureSizeChangedListener {
+        implements FocusIndicator, Rotatable,
+        PhotoUI.SurfaceTextureSizeChangedListener {
     private static final String TAG = "CAM FaceView";
+    private static final int MSG_SWITCH_FACES = 1;
+    private static final int SWITCH_DELAY = 70;
     private final boolean LOGV = false;
+    private final int mFocusingColor;
+    private final int mFocusedColor;
+    private final int mFailColor;
     // The value for android.hardware.Camera.setDisplayOrientation.
     private int mDisplayOrientation;
     // The orientation compensation for the face indicator to make it look
@@ -55,26 +60,20 @@ public class FaceView extends View
     private Face[] mFaces;
     private Face[] mPendingFaces;
     private int mColor;
-    private final int mFocusingColor;
-    private final int mFocusedColor;
-    private final int mFailColor;
     private Paint mPaint;
     private volatile boolean mBlocked;
-
     private int mUncroppedWidth;
     private int mUncroppedHeight;
-    private static final int MSG_SWITCH_FACES = 1;
-    private static final int SWITCH_DELAY = 70;
     private boolean mStateSwitchPending = false;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-            case MSG_SWITCH_FACES:
-                mStateSwitchPending = false;
-                mFaces = mPendingFaces;
-                invalidate();
-                break;
+                case MSG_SWITCH_FACES:
+                    mStateSwitchPending = false;
+                    mFaces = mPendingFaces;
+                    invalidate();
+                    break;
             }
         }
     };

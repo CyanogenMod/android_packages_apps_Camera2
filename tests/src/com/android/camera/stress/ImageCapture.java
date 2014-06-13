@@ -16,38 +16,34 @@
 
 package com.android.camera.stress;
 
-import com.android.camera.CameraActivity;
-import com.android.camera.stress.CameraStressTestRunner;
-
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.app.Activity;
+
+import com.android.camera.CameraActivity;
+import com.android.camera.stress.CameraStressTestRunner;
 
 /**
  * Junit / Instrumentation test case for camera test
- *
+ * <p/>
  * Running the test suite:
- *
+ * <p/>
  * adb shell am instrument \
- *    -e class com.android.camera.stress.ImageCapture \
- *    -w com.google.android.camera.tests/android.test.InstrumentationTestRunner
- *
+ * -e class com.android.camera.stress.ImageCapture \
+ * -w com.google.android.camera.tests/android.test.InstrumentationTestRunner
  */
 
-public class ImageCapture extends ActivityInstrumentationTestCase2 <CameraActivity> {
-    private String TAG = "ImageCapture";
+public class ImageCapture extends ActivityInstrumentationTestCase2<CameraActivity> {
     private static final long WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN = 4 * 1000;   //4 seconds
     private static final long WAIT_FOR_SWITCH_CAMERA = 4 * 1000; //4 seconds
-
-    private TestUtil testUtil = new TestUtil();
-
     // Private intent extras.
     private final static String EXTRAS_CAMERA_FACING =
-        "android.intent.extras.CAMERA_FACING";
+            "android.intent.extras.CAMERA_FACING";
+    private String TAG = "ImageCapture";
+    private TestUtil testUtil = new TestUtil();
 
     public ImageCapture() {
         super(CameraActivity.class);

@@ -19,30 +19,42 @@ package com.android.camera;
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraDataCallback;
 import android.hardware.Camera.ErrorCallback;
 import android.hardware.Camera.OnZoomChangeListener;
 import android.hardware.Camera.Parameters;
 import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
-import android.hardware.Camera.CameraDataCallback;
 
 /**
  * An interface which provides possible camera device operations.
- *
+ * <p/>
  * The client should call {@code CameraManager.cameraOpen} to get an instance
  * of {@link CameraManager.CameraProxy} to control the camera. Classes
  * implementing this interface should have its own one unique {@code Thread}
  * other than the main thread for camera operations. Camera device callbacks
  * are wrapped since the client should not deal with
  * {@code android.hardware.Camera} directly.
- *
+ * <p/>
  * TODO: provide callback interfaces for:
  * {@code android.hardware.Camera.ErrorCallback},
  * {@code android.hardware.Camera.OnZoomChangeListener}, and
  * {@code android.hardware.Camera.Parameters}.
  */
 public interface CameraManager {
+
+    /**
+     * Opens the camera of the specified ID synchronously.
+     *
+     * @param handler  The {@link android.os.Handler} in which the callback
+     *                 was handled.
+     * @param callback The callback when any error happens.
+     * @param cameraId The camera ID to open.
+     * @return An instance of {@link CameraProxy} on success. null on failure.
+     */
+    public CameraProxy cameraOpen(
+            Handler handler, int cameraId, CameraOpenErrorCallback callback);
 
     /**
      * An interface which wraps
@@ -92,8 +104,8 @@ public interface CameraManager {
         /**
          * Callback for face detection.
          *
-         * @param faces   Recognized face in the preview.
-         * @param camera  The camera which the preview image comes from.
+         * @param faces  Recognized face in the preview.
+         * @param camera The camera which the preview image comes from.
          */
         public void onFaceDetection(Camera.Face[] faces, CameraProxy camera);
     }
@@ -139,18 +151,6 @@ public interface CameraManager {
     }
 
     /**
-     * Opens the camera of the specified ID synchronously.
-     *
-     * @param handler The {@link android.os.Handler} in which the callback
-     *                was handled.
-     * @param callback The callback when any error happens.
-     * @param cameraId The camera ID to open.
-     * @return   An instance of {@link CameraProxy} on success. null on failure.
-     */
-    public CameraProxy cameraOpen(
-            Handler handler, int cameraId, CameraOpenErrorCallback callback);
-
-    /**
      * An interface that takes camera operation requests and post messages to the
      * camera handler thread. All camera operations made through this interface is
      * asynchronous by default except those mentioned specifically.
@@ -174,12 +174,12 @@ public interface CameraManager {
 
         /**
          * Reconnects to the camera device.
-         * @see android.hardware.Camera#reconnect()
          *
          * @param handler The {@link android.os.Handler} in which the callback
          *                was handled.
-         * @param cb The callback when any error happens.
+         * @param cb      The callback when any error happens.
          * @return {@code false} on errors.
+         * @see android.hardware.Camera#reconnect()
          */
         public boolean reconnect(Handler handler, CameraOpenErrorCallback cb);
 
@@ -192,6 +192,7 @@ public interface CameraManager {
 
         /**
          * Locks the camera device.
+         *
          * @see android.hardware.Camera#lock()
          */
         public void lock();
@@ -225,9 +226,9 @@ public interface CameraManager {
         /**
          * Sets the callback for preview data.
          *
-         * @param handler    The {@link android.os.Handler} in which the callback was handled.
-         * @param cb         The callback to be invoked when the preview data is available.
-         * @see  android.hardware.Camera#setPreviewCallback(android.hardware.Camera.PreviewCallback)
+         * @param handler The {@link android.os.Handler} in which the callback was handled.
+         * @param cb      The callback to be invoked when the preview data is available.
+         * @see android.hardware.Camera#setPreviewCallback(android.hardware.Camera.PreviewCallback)
          */
         public void setPreviewDataCallback(Handler handler, CameraPreviewDataCallback cb);
 
@@ -272,15 +273,15 @@ public interface CameraManager {
         /**
          * Instrument the camera to take a picture.
          *
-         * @param handler   The handler in which the callback will be invoked.
-         * @param shutter   The callback for shutter action, may be null.
-         * @param raw       The callback for uncompressed data, may be null.
-         * @param postview  The callback for postview image data, may be null.
-         * @param jpeg      The callback for jpeg image data, may be null.
+         * @param handler  The handler in which the callback will be invoked.
+         * @param shutter  The callback for shutter action, may be null.
+         * @param raw      The callback for uncompressed data, may be null.
+         * @param postview The callback for postview image data, may be null.
+         * @param jpeg     The callback for jpeg image data, may be null.
          * @see android.hardware.Camera#takePicture(
-         *         android.hardware.Camera.ShutterCallback,
-         *         android.hardware.Camera.PictureCallback,
-         *         android.hardware.Camera.PictureCallback)
+         *android.hardware.Camera.ShutterCallback,
+         * android.hardware.Camera.PictureCallback,
+         * android.hardware.Camera.PictureCallback)
          */
         public void takePicture(
                 Handler handler,
@@ -335,19 +336,19 @@ public interface CameraManager {
         public void setErrorCallback(ErrorCallback cb);
 
         /**
-         * Sets the camera parameters.
-         *
-         * @param params The camera parameters to use.
-         */
-        public void setParameters(Parameters params);
-
-        /**
          * Gets the current camera parameters synchronously. This method is
          * synchronous since the caller has to wait for the camera to return
          * the parameters. If the parameters are already cached, it returns
          * immediately.
          */
         public Parameters getParameters();
+
+        /**
+         * Sets the camera parameters.
+         *
+         * @param params The camera parameters to use.
+         */
+        public void setParameters(Parameters params);
 
         /**
          * Forces {@code CameraProxy} to update the cached version of the camera
@@ -358,27 +359,29 @@ public interface CameraManager {
         /**
          * Enables/Disables the camera shutter sound.
          *
-         * @param enable   {@code true} to enable the shutter sound,
-         *                 {@code false} to disable it.
+         * @param enable {@code true} to enable the shutter sound,
+         *               {@code false} to disable it.
          */
         public void enableShutterSound(boolean enable);
+
         /**
          * Set histogram Mode
          *
-         * @param cb   cameraDataCallback to use
+         * @param cb cameraDataCallback to use
          */
         public void setHistogramMode(CameraDataCallback cb);
+
         /**
          * Send the Histogram Data.
-         *
-        */
+         */
         public void sendHistogramData();
+
         /**
          * Enables/Disables longshot mode.
          *
-         * @param enable   {@code true} to enable longshot mode,
-         *                 {@code false} to disable it.
-        */
+         * @param enable {@code true} to enable longshot mode,
+         *               {@code false} to disable it.
+         */
         public void setLongshot(boolean enable);
     }
 }

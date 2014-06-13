@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010, The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2010, The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,13 +13,11 @@
      limitations under the License.
 -->
 <com.android.camera.ui.MoreSettingPopup xmlns:android="http://schemas.android.com/apk/res/android"
-        style="@style/SettingPopupWindow">
+    style="@style/SettingPopupWindow">
 
-    <FrameLayout
-            android:background="@color/popup_background"
-            android:layout_width="@dimen/big_setting_popup_window_width"
-            android:layout_height="wrap_content">
-        <ListView android:id="@+id/settingList"
-                style="@style/SettingItemList" />
+    <FrameLayout android:layout_width="@dimen/big_setting_popup_window_width"
+        android:layout_height="wrap_content"
+        android:background="@color/popup_background">
+        <ListView android:id="@+id/settingList" style="@style/SettingItemList" />
     </FrameLayout>
 </com.android.camera.ui.MoreSettingPopup>

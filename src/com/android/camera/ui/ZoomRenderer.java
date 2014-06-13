@@ -31,13 +31,10 @@ public class ZoomRenderer extends OverlayRenderer
         implements ScaleGestureDetector.OnScaleGestureListener {
 
     private static final String TAG = "CAM_Zoom";
-
+    private final Handler mHandler = new Handler();
     private int mMaxZoom;
     private int mMinZoom;
     private OnZoomChangedListener mListener;
-
-    private final Handler mHandler = new Handler();
-
     private ScaleGestureDetector mDetector;
     private Paint mPaint;
     private Paint mTextPaint;
@@ -51,13 +48,16 @@ public class ZoomRenderer extends OverlayRenderer
     private int mZoomSig;
     private int mZoomFraction;
     private boolean mInZoom;
+    Runnable mOnZoomEnd = new Runnable() {
+        public void run() {
+            mInZoom = false;
+            setVisible(false);
+            if (mListener != null) {
+                mListener.onZoomEnd();
+            }
+        }
+    };
     private Rect mTextBounds;
-
-    public interface OnZoomChangedListener {
-        void onZoomStart();
-        void onZoomEnd();
-        void onZoomValueChanged(int index);  // only for immediate zoom
-    }
 
     public ZoomRenderer(Context ctx) {
         Resources res = ctx.getResources();
@@ -121,7 +121,7 @@ public class ZoomRenderer extends OverlayRenderer
         mPaint.setStrokeWidth(mOuterStroke);
         canvas.drawCircle((float) mCenterX, (float) mCenterY,
                 (float) mCircleSize, mPaint);
-        String txt = mZoomSig+"."+mZoomFraction+"x";
+        String txt = mZoomSig + "." + mZoomFraction + "x";
         mTextPaint.getTextBounds(txt, 0, txt.length(), mTextBounds);
         canvas.drawText(txt, mCenterX - mTextBounds.centerX(), mCenterY - mTextBounds.centerY(),
                 mTextPaint);
@@ -144,8 +144,8 @@ public class ZoomRenderer extends OverlayRenderer
     public boolean onScaleStepResize(boolean direction) {
         int zoom;
         float circle;
-        float circleStep = (mMaxCircle - mMinCircle)/18;
-        if(direction){
+        float circleStep = (mMaxCircle - mMinCircle) / 18;
+        if (direction) {
             circle = (int) (mCircleSize + circleStep);
         } else {
             circle = (int) (mCircleSize - circleStep);
@@ -153,10 +153,10 @@ public class ZoomRenderer extends OverlayRenderer
         circle = Math.max(mMinCircle, circle);
         circle = Math.min(mMaxCircle, circle);
         if (mListener != null && (int) circle != mCircleSize
-            && ((mMaxCircle - mMinCircle) > 0)) {
+                && ((mMaxCircle - mMinCircle) > 0)) {
             mCircleSize = (int) circle;
             zoom = mMinZoom + (int) ((mCircleSize - mMinCircle)
-                   * (mMaxZoom - mMinZoom) / (mMaxCircle - mMinCircle));
+                    * (mMaxZoom - mMinZoom) / (mMaxCircle - mMinCircle));
             if (mListener != null) {
                 mHandler.removeCallbacks(mOnZoomEnd);
                 if (!mInZoom) {
@@ -174,16 +174,6 @@ public class ZoomRenderer extends OverlayRenderer
         }
     }
 
-    Runnable mOnZoomEnd = new Runnable() {
-        public void run() {
-            mInZoom = false;
-            setVisible(false);
-            if (mListener != null) {
-                mListener.onZoomEnd();
-            }
-        }
-    };
-
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
         setVisible(true);
@@ -200,6 +190,14 @@ public class ZoomRenderer extends OverlayRenderer
         if (mListener != null) {
             mListener.onZoomEnd();
         }
+    }
+
+    public interface OnZoomChangedListener {
+        void onZoomStart();
+
+        void onZoomEnd();
+
+        void onZoomValueChanged(int index);  // only for immediate zoom
     }
 
 }

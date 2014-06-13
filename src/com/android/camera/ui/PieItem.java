@@ -29,13 +29,11 @@ import java.util.List;
  */
 public class PieItem {
 
-    public static interface OnClickListener {
-        void onClick(PieItem item);
-    }
-
+    // Gray out the view when disabled
+    private static final float ENABLED_ALPHA = 1;
+    private static final float DISABLED_ALPHA = (float) 0.3;
     private Drawable mDrawable;
     private int level;
-
     private boolean mSelected;
     private boolean mEnabled;
     private List<PieItem> mItems;
@@ -43,12 +41,7 @@ public class PieItem {
     private OnClickListener mOnClickListener;
     private float mAlpha;
     private CharSequence mLabel;
-
-    // Gray out the view when disabled
-    private static final float ENABLED_ALPHA = 1;
-    private static final float DISABLED_ALPHA = (float) 0.3;
     private boolean mChangeAlphaWhenDisabled = true;
-
     public PieItem(Drawable drawable, int level) {
         mDrawable = drawable;
         this.level = level;
@@ -58,12 +51,12 @@ public class PieItem {
         mEnabled = true;
     }
 
-    public void setLabel(CharSequence txt) {
-        mLabel = txt;
-    }
-
     public CharSequence getLabel() {
         return mLabel;
+    }
+
+    public void setLabel(CharSequence txt) {
+        mLabel = txt;
     }
 
     public boolean hasItems() {
@@ -85,25 +78,25 @@ public class PieItem {
         mItems = null;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public Path getPath() {
+        return mPath;
     }
 
     public void setPath(Path p) {
         mPath = p;
     }
 
-    public Path getPath() {
-        return mPath;
-    }
-
-    public void setChangeAlphaWhenDisabled (boolean enable) {
+    public void setChangeAlphaWhenDisabled(boolean enable) {
         mChangeAlphaWhenDisabled = enable;
     }
 
     public void setAlpha(float alpha) {
         mAlpha = alpha;
         mDrawable.setAlpha((int) (255 * alpha));
+    }
+
+    public boolean isEnabled() {
+        return mEnabled;
     }
 
     public void setEnabled(boolean enabled) {
@@ -117,22 +110,21 @@ public class PieItem {
         }
     }
 
-    public boolean isEnabled() {
-        return mEnabled;
+    public boolean isSelected() {
+        return mSelected;
     }
 
     public void setSelected(boolean s) {
         mSelected = s;
     }
 
-    public boolean isSelected() {
-        return mSelected;
-    }
-
     public int getLevel() {
         return level;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     public void setOnClickListener(OnClickListener listener) {
         mOnClickListener = listener;
@@ -165,6 +157,10 @@ public class PieItem {
         d.setBounds(mDrawable.getBounds());
         mDrawable = d;
         setAlpha(mAlpha);
+    }
+
+    public static interface OnClickListener {
+        void onClick(PieItem item);
     }
 
 }

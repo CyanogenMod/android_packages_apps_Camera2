@@ -24,8 +24,8 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.util.Log;
 
-import com.android.camera2.R;
 import com.android.camera.util.ApiHelper;
+import com.android.camera2.R;
 
 /*
  * This class controls the sound playback according to the API level.
@@ -36,11 +36,6 @@ public class SoundClips {
     public static final int START_VIDEO_RECORDING = 1;
     public static final int STOP_VIDEO_RECORDING = 2;
     public static final int SHUTTER_CLICK = 3;
-
-    public interface Player {
-        public void release();
-        public void play(int action);
-    }
 
     public static Player getPlayer(Context context) {
         if (ApiHelper.HAS_MEDIA_ACTION_SOUND) {
@@ -56,6 +51,12 @@ public class SoundClips {
                 "STREAM_SYSTEM_ENFORCED", null, AudioManager.STREAM_RING);
     }
 
+    public interface Player {
+        public void release();
+
+        public void play(int action);
+    }
+
     /**
      * This class implements SoundClips.Player using MediaActionSound,
      * which exists since API level 16.
@@ -64,14 +65,6 @@ public class SoundClips {
     private static class MediaActionSoundPlayer implements Player {
         private static final String TAG = "MediaActionSoundPlayer";
         private MediaActionSound mSound;
-
-        @Override
-        public void release() {
-            if (mSound != null) {
-                mSound.release();
-                mSound = null;
-            }
-        }
 
         public MediaActionSoundPlayer() {
             mSound = new MediaActionSound();
@@ -82,8 +75,16 @@ public class SoundClips {
         }
 
         @Override
+        public void release() {
+            if (mSound != null) {
+                mSound.release();
+                mSound = null;
+            }
+        }
+
+        @Override
         public synchronized void play(int action) {
-            switch(action) {
+            switch (action) {
                 case FOCUS_COMPLETE:
                     mSound.play(MediaActionSound.FOCUS_COMPLETE);
                     break;
@@ -121,14 +122,14 @@ public class SoundClips {
 
         // Maps a sound action to the id;
         private final int[] mSoundRes = {0, 1, 1, 1};
+        // Sound ID of each sound resources. Given when the sound is loaded.
+        private final int[] mSoundIDs;
+        private final boolean[] mSoundIDReady;
         // Store the context for lazy loading.
         private Context mContext;
         // mSoundPool is created every time load() is called and cleared every
         // time release() is called.
         private SoundPool mSoundPool;
-        // Sound ID of each sound resources. Given when the sound is loaded.
-        private final int[] mSoundIDs;
-        private final boolean[] mSoundIDReady;
         private int mSoundIDToPlay;
 
         public SoundPoolPlayer(Context context) {
@@ -179,7 +180,7 @@ public class SoundClips {
         public void onLoadComplete(SoundPool pool, int soundID, int status) {
             if (status != 0) {
                 Log.e(TAG, "loading sound tracks failed (status=" + status + ")");
-                for (int i = 0; i < mSoundIDs.length; i++ ) {
+                for (int i = 0; i < mSoundIDs.length; i++) {
                     if (mSoundIDs[i] == soundID) {
                         mSoundIDs[i] = ID_NOT_LOADED;
                         break;
@@ -188,7 +189,7 @@ public class SoundClips {
                 return;
             }
 
-            for (int i = 0; i < mSoundIDs.length; i++ ) {
+            for (int i = 0; i < mSoundIDs.length; i++) {
                 if (mSoundIDs[i] == soundID) {
                     mSoundIDReady[i] = true;
                     break;

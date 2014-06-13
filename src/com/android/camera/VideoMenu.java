@@ -17,7 +17,6 @@
 
 package com.android.camera;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 
@@ -37,15 +36,13 @@ public class VideoMenu extends PieController
         ListPrefSettingPopup.Listener,
         TimeIntervalPopup.Listener {
 
-    private static String TAG = "CAM_VideoMenu";
-
-    private VideoUI mUI;
-    private String[] mOtherKeys;
-    private AbstractSettingPopup mPopup;
-
     private static final int POPUP_NONE = 0;
     private static final int POPUP_FIRST_LEVEL = 1;
     private static final int POPUP_SECOND_LEVEL = 2;
+    private static String TAG = "CAM_VideoMenu";
+    private VideoUI mUI;
+    private String[] mOtherKeys;
+    private AbstractSettingPopup mPopup;
     private int mPopupStatus;
     private CameraActivity mActivity;
 
@@ -96,7 +93,7 @@ public class VideoMenu extends PieController
                 public void onClick(PieItem item) {
                     ListPrefSettingPopup popup =
                             (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                            R.layout.list_pref_setting_popup, null, false);
+                                    R.layout.list_pref_setting_popup, null, false);
                     popup.initialize(colorPref);
                     popup.setSettingChangedListener(VideoMenu.this);
                     mUI.dismissPopup();
@@ -151,7 +148,7 @@ public class VideoMenu extends PieController
             public void onClick(PieItem item) {
                 TimeIntervalPopup timeInterval =
                         (TimeIntervalPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.time_interval_popup, null, false);
+                                R.layout.time_interval_popup, null, false);
                 timeInterval.initialize((IconListPreference) tlPref);
                 timeInterval.setSettingChangedListener(VideoMenu.this);
                 mUI.dismissPopup();
@@ -172,7 +169,7 @@ public class VideoMenu extends PieController
                 public void onClick(PieItem item) {
                     ListPrefSettingPopup popup =
                             (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                            R.layout.list_pref_setting_popup, null, false);
+                                    R.layout.list_pref_setting_popup, null, false);
                     popup.initialize(sizePref);
                     popup.setSettingChangedListener(VideoMenu.this);
                     mUI.dismissPopup();
@@ -190,7 +187,7 @@ public class VideoMenu extends PieController
             more.addItem(item);
         }
         // extra settings popup
-        mOtherKeys = new String[] {
+        mOtherKeys = new String[]{
                 CameraSettings.KEY_STORAGE,
                 CameraSettings.KEY_POWER_SHUTTER,
                 CameraSettings.KEY_DIS,

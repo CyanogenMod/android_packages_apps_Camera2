@@ -22,7 +22,7 @@ import android.content.Intent;
 public class HelpUtils {
 
     public static Intent getHelpIntent(Context context) {
-		return null;
-	}
+        return null;
+    }
 
 }

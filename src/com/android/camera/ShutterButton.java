@@ -29,33 +29,8 @@ import android.widget.ImageView;
  */
 public class ShutterButton extends ImageView {
 
-    private class LongClickListener implements View.OnLongClickListener {
-         public boolean onLongClick(View v) {
-             if ( null != mListener ) {
-                 mListener.onShutterButtonLongClick();
-                 return true;
-             }
-             return false;
-         }
-    }
-
     private boolean mTouchEnabled = true;
     private LongClickListener mLongClick = new LongClickListener();
-
-    /**
-     * A callback to be invoked when a ShutterButton's pressed state changes.
-     */
-    public interface OnShutterButtonListener {
-        /**
-         * Called when a ShutterButton has been pressed.
-         *
-         * @param pressed The ShutterButton that was pressed.
-         */
-        void onShutterButtonFocus(boolean pressed);
-        void onShutterButtonClick();
-        void onShutterButtonLongClick();
-    }
-
     private OnShutterButtonListener mListener;
     private boolean mOldPressed;
 
@@ -142,5 +117,31 @@ public class ShutterButton extends ImageView {
             mListener.onShutterButtonClick();
         }
         return result;
+    }
+
+    /**
+     * A callback to be invoked when a ShutterButton's pressed state changes.
+     */
+    public interface OnShutterButtonListener {
+        /**
+         * Called when a ShutterButton has been pressed.
+         *
+         * @param pressed The ShutterButton that was pressed.
+         */
+        void onShutterButtonFocus(boolean pressed);
+
+        void onShutterButtonClick();
+
+        void onShutterButtonLongClick();
+    }
+
+    private class LongClickListener implements View.OnLongClickListener {
+        public boolean onLongClick(View v) {
+            if (null != mListener) {
+                mListener.onShutterButtonLongClick();
+                return true;
+            }
+            return false;
+        }
     }
 }

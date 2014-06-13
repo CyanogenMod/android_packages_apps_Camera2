@@ -41,15 +41,11 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private static final String TAG = "CAM_CameraDataAdapter";
 
     private static final int DEFAULT_DECODE_SIZE = 1600;
-
-    private LocalDataList mImages;
-
-    private Listener mListener;
-    private Drawable mPlaceHolder;
-
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
-
+    private LocalDataList mImages;
+    private Listener mListener;
+    private Drawable mPlaceHolder;
     private LocalData mLocalDataToDelete;
 
     public CameraDataAdapter(Drawable placeHolder) {
@@ -85,7 +81,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void suggestViewSizeBound(int w, int h) {
         if (w <= 0 || h <= 0) {
-            mSuggestedWidth  = mSuggestedHeight = DEFAULT_DECODE_SIZE;
+            mSuggestedWidth = mSuggestedHeight = DEFAULT_DECODE_SIZE;
         } else {
             mSuggestedWidth = (w < DEFAULT_DECODE_SIZE ? w : DEFAULT_DECODE_SIZE);
             mSuggestedHeight = (h < DEFAULT_DECODE_SIZE ? h : DEFAULT_DECODE_SIZE);
@@ -132,7 +128,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     // TODO: put the database query on background thread
     @Override
     public void addNewVideo(ContentResolver cr, Uri uri) {
-        String[] cameraPath = { Storage.getInstance().generateDirectory() + "%" };
+        String[] cameraPath = {Storage.getInstance().generateDirectory() + "%"};
         Cursor c = cr.query(uri,
                 LocalMediaData.VideoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", cameraPath,
@@ -159,7 +155,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
     // TODO: put the database query on background thread
     @Override
     public void addNewPhoto(ContentResolver cr, Uri uri) {
-        String[] cameraPath = { Storage.getInstance().generateDirectory() + "%" };
+        String[] cameraPath = {Storage.getInstance().generateDirectory() + "%"};
         Cursor c = cr.query(uri,
                 LocalMediaData.PhotoData.QUERY_PROJECTION,
                 MediaStore.Images.Media.DATA + " like ? ", cameraPath,
@@ -252,14 +248,17 @@ public class CameraDataAdapter implements LocalDataAdapter {
         int pos = 0;
         Comparator<LocalData> comp = new LocalData.NewestFirstComparator();
         for (; pos < mImages.size()
-                && comp.compare(data, mImages.get(pos)) > 0; pos++);
+                && comp.compare(data, mImages.get(pos)) > 0; pos++)
+            ;
         mImages.add(pos, data);
         if (mListener != null) {
             mListener.onDataInserted(pos, data);
         }
     }
 
-    /** Update all the data */
+    /**
+     * Update all the data
+     */
     private void replaceData(LocalDataList list) {
         if (list.size() == 0 && mImages.size() == 0) {
             return;
@@ -281,7 +280,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
          */
         @Override
         protected LocalDataList doInBackground(ContentResolver... resolver) {
-            String[] cameraPath = { Storage.getInstance().generateDirectory() + "%" };
+            String[] cameraPath = {Storage.getInstance().generateDirectory() + "%"};
             LocalDataList l = new LocalDataList();
             // Photos
             Cursor c = resolver[0].query(

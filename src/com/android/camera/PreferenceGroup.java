@@ -67,8 +67,8 @@ public class PreferenceGroup extends CameraPreference {
         for (CameraPreference pref : list) {
             if (pref instanceof ListPreference) {
                 ListPreference listPref = (ListPreference) pref;
-                if(listPref.getKey().equals(key)) return listPref;
-            } else if(pref instanceof PreferenceGroup) {
+                if (listPref.getKey().equals(key)) return listPref;
+            } else if (pref instanceof PreferenceGroup) {
                 ListPreference listPref =
                         ((PreferenceGroup) pref).findPreference(key);
                 if (listPref != null) return listPref;

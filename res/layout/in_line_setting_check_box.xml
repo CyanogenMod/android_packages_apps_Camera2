@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2011 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,18 +13,14 @@
      limitations under the License.
 -->
 
-<com.android.camera.ui.InLineSettingCheckBox xmlns:android="http://schemas.android.com/apk/res/android"
-        style="@style/SettingRow">
-    <TextView android:id="@+id/title"
-            style="@style/SettingItemTitle" />
+<com.android.camera.ui.InLineSettingCheckBox
+    xmlns:android="http://schemas.android.com/apk/res/android" style="@style/SettingRow">
+    <TextView android:id="@+id/title" style="@style/SettingItemTitle" />
 
     <!-- The Switch widget always aligns to the right, so we have to wrap it in a frame layout. -->
-    <FrameLayout
-            android:layout_width="@dimen/setting_item_text_width"
-            android:layout_height="match_parent">
-        <CheckBox android:id="@+id/setting_check_box"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+    <FrameLayout android:layout_width="@dimen/setting_item_text_width"
+        android:layout_height="match_parent">
+        <CheckBox android:id="@+id/setting_check_box" android:layout_width="wrap_content"
+            android:layout_height="match_parent" android:layout_gravity="center" />
     </FrameLayout>
 </com.android.camera.ui.InLineSettingCheckBox>

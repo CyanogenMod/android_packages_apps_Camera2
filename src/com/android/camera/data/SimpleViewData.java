@@ -121,7 +121,7 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public View getView(Activity activity, int width, int height, Drawable placeHolder,
-            LocalDataAdapter adapter) {
+                        LocalDataAdapter adapter) {
         return mView;
     }
 
@@ -178,7 +178,7 @@ public class SimpleViewData implements LocalData {
 
     @Override
     public boolean rotate90Degrees(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise) {
+                                   int currentDataId, boolean clockwise) {
         // We don't support rotation for SimpleViewData.
         Log.w(TAG, "Unexpected call in rotate90Degrees()");
         return false;

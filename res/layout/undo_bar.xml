@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,26 +11,17 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
--->
-<!-- This layout is shared by phone and tablet in portrait or landscape orientation. -->
+--><!-- This layout is shared by phone and tablet in portrait or landscape orientation. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/camera_undo_deletion_bar"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        android:layout_gravity="bottom"
-        style="@style/UndoBar">
+    android:id="@+id/camera_undo_deletion_bar" style="@style/UndoBar"
+    android:layout_gravity="bottom" android:orientation="horizontal" android:visibility="gone">
 
-    <TextView android:text="@string/deleted"
-            style="@style/UndoBarTextAppearance"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="left|center_vertical" />
+    <TextView style="@style/UndoBarTextAppearance" android:layout_width="0dp"
+        android:layout_height="match_parent" android:layout_weight="1" android:gravity="left|center_vertical"
+        android:text="@string/deleted" />
 
     <View style="@style/UndoBarSeparator" />
 
-    <TextView android:id="@+id/camera_undo_deletion_button"
-            style="@style/UndoButton"
-            android:text="@string/undo"
-            android:drawableLeft="@drawable/ic_menu_revert_holo_dark"/>
+    <TextView android:id="@+id/camera_undo_deletion_button" style="@style/UndoButton"
+        android:drawableLeft="@drawable/ic_menu_revert_holo_dark" android:text="@string/undo" />
 </LinearLayout>

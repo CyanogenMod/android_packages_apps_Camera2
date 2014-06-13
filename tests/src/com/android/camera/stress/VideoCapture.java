@@ -16,37 +16,34 @@
 
 package com.android.camera.stress;
 
-import com.android.camera.CameraActivity;
-import com.android.camera.stress.TestUtil;
-
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.view.KeyEvent;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.stress.CameraStressTestRunner;
+import com.android.camera.stress.TestUtil;
 
 /**
  * Junit / Instrumentation test case for camera test
- *
+ * <p/>
  * Running the test suite:
- *
+ * <p/>
  * adb shell am instrument \
- *    -e class com.android.camera.stress.VideoCapture \
- *    -w com.google.android.camera.tests/android.test.InstrumentationTestRunner
- *
+ * -e class com.android.camera.stress.VideoCapture \
+ * -w com.google.android.camera.tests/android.test.InstrumentationTestRunner
  */
 
-public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivity> {
+public class VideoCapture extends ActivityInstrumentationTestCase2<CameraActivity> {
     private static final long WAIT_FOR_PREVIEW = 4 * 1000; //4 seconds
     private static final long WAIT_FOR_SWITCH_CAMERA = 4 * 1000; //4 seconds
 
     // Private intent extras which control the camera facing.
     private final static String EXTRAS_CAMERA_FACING =
-        "android.intent.extras.CAMERA_FACING";
+            "android.intent.extras.CAMERA_FACING";
 
     private TestUtil testUtil = new TestUtil();
 
@@ -66,7 +63,7 @@ public class VideoCapture extends ActivityInstrumentationTestCase2 <CameraActivi
         super.tearDown();
     }
 
-    public void captureVideos(String reportTag, Instrumentation inst) throws Exception{
+    public void captureVideos(String reportTag, Instrumentation inst) throws Exception {
         boolean memoryResult = false;
         int total_num_of_videos = CameraStressTestRunner.mVideoIterations;
         int video_duration = CameraStressTestRunner.mVideoDuration;

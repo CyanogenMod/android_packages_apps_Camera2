@@ -16,9 +16,6 @@
 
 package com.android.camera;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -30,6 +27,9 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A type of <code>CameraPreference</code> whose number of possible values
  * is limited.
@@ -37,9 +37,8 @@ import com.android.camera2.R;
 public class ListPreference extends CameraPreference {
     private static final String TAG = "ListPreference";
     private final String mKey;
-    private String mValue;
     private final CharSequence[] mDefaultValues;
-
+    private String mValue;
     private CharSequence[] mEntries;
     private CharSequence[] mEntryValues;
     private CharSequence[] mUnfilteredEntryValues;
@@ -85,21 +84,21 @@ public class ListPreference extends CameraPreference {
         return mEntries;
     }
 
-    public CharSequence[] getEntryValues() {
-        return mEntryValues;
-    }
-
-    public CharSequence[] getLabels() {
-        return mLabels;
-    }
-
     public void setEntries(CharSequence entries[]) {
         mEntries = entries == null ? new CharSequence[0] : entries;
+    }
+
+    public CharSequence[] getEntryValues() {
+        return mEntryValues;
     }
 
     public void setEntryValues(CharSequence values[]) {
         mEntryValues = values == null ? new CharSequence[0] : values;
         mUnfilteredEntryValues = values == null ? new CharSequence[0] : values;
+    }
+
+    public CharSequence[] getLabels() {
+        return mLabels;
     }
 
     public void setLabels(CharSequence labels[]) {
@@ -115,6 +114,14 @@ public class ListPreference extends CameraPreference {
         return mValue;
     }
 
+    public void setValue(String value) {
+        if (findIndexOfValue(value) < 0) {
+            value = findSupportedDefaultValue();
+        }
+        mValue = value;
+        persistStringValue(value);
+    }
+
     // Find the first value in mDefaultValues which is supported.
     private String findSupportedDefaultValue() {
         for (int i = 0; i < mDefaultValues.length; i++) {
@@ -127,14 +134,6 @@ public class ListPreference extends CameraPreference {
             }
         }
         return null;
-    }
-
-    public void setValue(String value) {
-        if (findIndexOfValue(value) < 0) {
-            value = findSupportedDefaultValue();
-        }
-        mValue = value;
-        persistStringValue(value);
     }
 
     public void setValueIndex(int index) {

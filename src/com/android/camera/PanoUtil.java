@@ -28,7 +28,7 @@ public class PanoUtil {
 
     // TODO: Add comments about the range of these two arguments.
     public static double calculateDifferenceBetweenAngles(double firstAngle,
-            double secondAngle) {
+                                                          double secondAngle) {
         double difference1 = (secondAngle - firstAngle) % 360;
         if (difference1 < 0) {
             difference1 += 360;

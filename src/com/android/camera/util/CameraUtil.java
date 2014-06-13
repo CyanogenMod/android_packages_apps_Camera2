@@ -71,32 +71,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 /**
  * Collection of utility functions used in this package.
  */
 public class CameraUtil {
-    private static final String TAG = "Util";
-
-    // For calculate the best fps range for still image capture.
-    private final static int MAX_PREVIEW_FPS_TIMES_1000 = 400000;
-    private final static int PREFERRED_PREVIEW_FPS_TIMES_1000 = 30000;
-
     // For creating crop intents.
     public static final String KEY_RETURN_DATA = "return-data";
     public static final String KEY_SHOW_WHEN_LOCKED = "showWhenLocked";
-
     // Orientation hysteresis amount used in rounding, in degrees
     public static final int ORIENTATION_HYSTERESIS = 5;
-
     public static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
     // See android.hardware.Camera.ACTION_NEW_PICTURE.
     public static final String ACTION_NEW_PICTURE = "android.hardware.action.NEW_PICTURE";
     // See android.hardware.Camera.ACTION_NEW_VIDEO.
     public static final String ACTION_NEW_VIDEO = "android.hardware.action.NEW_VIDEO";
-
     // Broadcast Action: The camera application has become active in picture-taking mode.
     public static final String ACTION_CAMERA_STARTED = "com.android.camera.action.CAMERA_STARTED";
     // Broadcast Action: The camera application is no longer in active picture-taking mode.
@@ -106,40 +96,53 @@ public class CameraUtil {
     // pressed the shutter button.
     public static final String ACTION_CAMERA_SHUTTER_CLICK =
             "com.android.camera.action.SHUTTER_CLICK";
-
     // Fields from android.hardware.Camera.Parameters
     public static final String FOCUS_MODE_CONTINUOUS_PICTURE = "continuous-picture";
     public static final String RECORDING_HINT = "recording-hint";
-    private static final String AUTO_EXPOSURE_LOCK_SUPPORTED = "auto-exposure-lock-supported";
-    private static final String AUTO_WHITE_BALANCE_LOCK_SUPPORTED = "auto-whitebalance-lock-supported";
-    private static final String VIDEO_SNAPSHOT_SUPPORTED = "video-snapshot-supported";
     public static final String SCENE_MODE_HDR = "hdr";
     public static final String SCENE_MODE_ASD = "asd";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
-
+    /**
+     * Has to be in sync with the receiving MovieActivity.
+     */
+    public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
+    private static final String TAG = "Util";
+    // For calculate the best fps range for still image capture.
+    private final static int MAX_PREVIEW_FPS_TIMES_1000 = 400000;
+    private final static int PREFERRED_PREVIEW_FPS_TIMES_1000 = 30000;
+    private static final String AUTO_EXPOSURE_LOCK_SUPPORTED = "auto-exposure-lock-supported";
+    private static final String AUTO_WHITE_BALANCE_LOCK_SUPPORTED = "auto-whitebalance-lock-supported";
+    private static final String VIDEO_SNAPSHOT_SUPPORTED = "video-snapshot-supported";
     // Hardware camera key mask
     private static final int KEY_MASK_CAMERA = 0x20;
-
-    private static boolean sEnableZSL;
-
-    // Do not change the focus mode when TTF is used
-    private static boolean sNoFocusModeChangeForTouch;
-
-    private static boolean sCancelAutoFocusOnPreviewStopped;
-
-    private static String[] sASDModes;
-
-    private static boolean sEnableHDRWithZSL;
-
-    private static boolean sEnableHistogram;
-
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
+    // Private intent extras. Test only.
+    private static final String EXTRAS_CAMERA_FACING =
+            "android.intent.extras.CAMERA_FACING";
+    private static boolean sEnableZSL;
+    // Do not change the focus mode when TTF is used
+    private static boolean sNoFocusModeChangeForTouch;
+    private static boolean sCancelAutoFocusOnPreviewStopped;
+    private static String[] sASDModes;
+    private static boolean sEnableHDRWithZSL;
+    private static boolean sEnableHistogram;
+    private static float sPixelDensity = 1;
+    private static ImageFileNamer sImageFileNamer;
+    // Use samsung HDR format
+    private static boolean sSamsungHDRFormat;
+    // Get available hardware keys
+    private static int sDeviceKeysPresent;
+    // Samsung camcorder mode
+    private static boolean sSamsungCamMode;
+    // HTC camcorder mode
+    private static boolean sHTCCamMode;
+    private static int sLocation[] = new int[2];
 
-    /** Has to be in sync with the receiving MovieActivity. */
-    public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
+    private CameraUtil() {
+    }
 
     public static boolean isZSLEnabled() {
         return sEnableZSL;
@@ -191,7 +194,7 @@ public class CameraUtil {
     public static boolean isFocusAreaSupported(Parameters params) {
         return (params.getMaxNumFocusAreas() > 0
                 && isSupported(Parameters.FOCUS_MODE_AUTO,
-                        params.getSupportedFocusModes()));
+                params.getSupportedFocusModes()));
     }
 
     public static boolean isSupported(Parameters params, String key) {
@@ -208,27 +211,6 @@ public class CameraUtil {
             return Integer.valueOf(numSnaps);
         }
         return 1;
-    }
-
-    // Private intent extras. Test only.
-    private static final String EXTRAS_CAMERA_FACING =
-            "android.intent.extras.CAMERA_FACING";
-
-    private static float sPixelDensity = 1;
-    private static ImageFileNamer sImageFileNamer;
-    // Use samsung HDR format
-    private static boolean sSamsungHDRFormat;
-
-    // Get available hardware keys
-    private static int sDeviceKeysPresent;
-
-    // Samsung camcorder mode
-    private static boolean sSamsungCamMode;
-
-    // HTC camcorder mode
-    private static boolean sHTCCamMode;
-
-    private CameraUtil() {
     }
 
     public static void initialize(Context context) {
@@ -346,7 +328,7 @@ public class CameraUtil {
      * request is 3. So we round up the sample size to avoid OOM.
      */
     public static int computeSampleSize(BitmapFactory.Options options,
-            int minSideLength, int maxNumOfPixels) {
+                                        int minSideLength, int maxNumOfPixels) {
         int initialSize = computeInitialSampleSize(options, minSideLength,
                 maxNumOfPixels);
 
@@ -364,7 +346,7 @@ public class CameraUtil {
     }
 
     private static int computeInitialSampleSize(BitmapFactory.Options options,
-            int minSideLength, int maxNumOfPixels) {
+                                                int minSideLength, int maxNumOfPixels) {
         double w = options.outWidth;
         double h = options.outHeight;
 
@@ -372,7 +354,7 @@ public class CameraUtil {
                 (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
         int upperBound = (minSideLength < 0) ? 128 :
                 (int) Math.min(Math.floor(w / minSideLength),
-                Math.floor(h / minSideLength));
+                        Math.floor(h / minSideLength));
 
         if (upperBound < lowerBound) {
             // return the larger one when there is no overlapping zone.
@@ -413,12 +395,12 @@ public class CameraUtil {
     }
 
     public static Bitmap decodeYUV422P(byte[] yuv422p, int width, int height)
-                        throws NullPointerException, IllegalArgumentException {
+            throws NullPointerException, IllegalArgumentException {
         final int frameSize = width * height;
         int[] rgb = new int[frameSize];
         for (int j = 0, yp = 0; j < height; j++) {
-            int up = frameSize + (j * (width/2)), u = 0, v = 0;
-            int vp = ((int)(frameSize*1.5) + (j*(width/2)));
+            int up = frameSize + (j * (width / 2)), u = 0, v = 0;
+            int vp = ((int) (frameSize * 1.5) + (j * (width / 2)));
             for (int i = 0; i < width; i++, yp++) {
                 int y = (0xff & ((int) yuv422p[yp])) - 16;
                 if (y < 0)
@@ -496,11 +478,11 @@ public class CameraUtil {
     public static void showErrorAndFinish(final Activity activity, int msgId) {
         DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                activity.finish();
-            }
-        };
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                };
         TypedValue out = new TypedValue();
         activity.getTheme().resolveAttribute(android.R.attr.alertDialogIcon, out, true);
         new AlertDialog.Builder(activity)
@@ -553,12 +535,31 @@ public class CameraUtil {
         int rotation = activity.getWindowManager().getDefaultDisplay()
                 .getRotation();
         switch (rotation) {
-            case Surface.ROTATION_0: return 0;
-            case Surface.ROTATION_90: return 90;
-            case Surface.ROTATION_180: return 180;
-            case Surface.ROTATION_270: return 270;
+            case Surface.ROTATION_0:
+                return 0;
+            case Surface.ROTATION_90:
+                return 90;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_270:
+                return 270;
         }
         return 0;
+    }
+
+    public static int roundOrientation(int orientation, int orientationHistory) {
+        boolean changeOrientation = false;
+        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            changeOrientation = true;
+        } else {
+            int dist = Math.abs(orientation - orientationHistory);
+            dist = Math.min(dist, 360 - dist);
+            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
+        }
+        if (changeOrientation) {
+            return ((orientation + 45) / 90 * 90) % 360;
+        }
+        return orientationHistory;
     }
 
     public static boolean isScreenRotated(Activity activity) {
@@ -570,6 +571,7 @@ public class CameraUtil {
     /**
      * Calculate the default orientation of the device based on the width and
      * height of the display when rotation = 0 (i.e. natural width and height)
+     *
      * @param activity the activity context
      * @return whether the default orientation of the device is portrait
      */
@@ -610,28 +612,13 @@ public class CameraUtil {
         return info.orientation;
     }
 
-    public static int roundOrientation(int orientation, int orientationHistory) {
-        boolean changeOrientation = false;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            changeOrientation = true;
-        } else {
-            int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min( dist, 360 - dist );
-            changeOrientation = ( dist >= 45 + ORIENTATION_HYSTERESIS );
-        }
-        if (changeOrientation) {
-            return ((orientation + 45) / 90 * 90) % 360;
-        }
-        return orientationHistory;
-    }
-
     private static Point getDefaultDisplaySize(Activity activity, Point size) {
         activity.getWindowManager().getDefaultDisplay().getSize(size);
         return size;
     }
 
     public static Size getOptimalPreviewSize(Activity currentActivity,
-            List<Size> sizes, double targetRatio) {
+                                             List<Size> sizes, double targetRatio) {
 
         Point[] points = new Point[sizes.size()];
 
@@ -645,7 +632,7 @@ public class CameraUtil {
     }
 
     public static int getOptimalPreviewSize(Activity currentActivity,
-            Point[] sizes, double targetRatio) {
+                                            Point[] sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.01;
         if (sizes == null) return -1;
@@ -798,8 +785,6 @@ public class CameraUtil {
         return (intentCameraId == android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK);
     }
 
-    private static int sLocation[] = new int[2];
-
     // This method is not thread-safe.
     public static boolean pointInView(float x, float y, View v) {
         v.getLocationInWindow(sLocation);
@@ -856,7 +841,7 @@ public class CameraUtil {
     }
 
     public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
-            int viewWidth, int viewHeight) {
+                                     int viewWidth, int viewHeight) {
         // Need mirror for front camera.
         matrix.setScale(mirror ? -1 : 1, 1);
         // This is the value for android.hardware.Camera.setDisplayOrientation.
@@ -939,7 +924,8 @@ public class CameraUtil {
 
     /**
      * Down-samples a jpeg byte array.
-     * @param data a byte array of jpeg data
+     *
+     * @param data             a byte array of jpeg data
      * @param downSampleFactor down-sample factor
      * @return decoded and down-sampled bitmap
      */
@@ -987,8 +973,9 @@ public class CameraUtil {
             }
         }
     }
-   public static String getFilpModeString(int value){
-        switch(value){
+
+    public static String getFilpModeString(int value) {
+        switch (value) {
             case 0:
                 return CameraSettings.FLIP_MODE_OFF;
             case 1:
@@ -1001,6 +988,7 @@ public class CameraUtil {
                 return null;
         }
     }
+
     /**
      * For still image capture, we need to get the right fps range such that the
      * camera can slow down the framerate to allow for less-noisy/dark
@@ -1008,7 +996,7 @@ public class CameraUtil {
      *
      * @param params Camera's parameters.
      * @return null if no appropiate fps range can't be found. Otherwise, return
-     *         the right range.
+     * the right range.
      */
     public static int[] getPhotoPreviewFpsRange(Parameters params) {
         return getPhotoPreviewFpsRange(params.getSupportedPreviewFpsRange());
@@ -1062,40 +1050,9 @@ public class CameraUtil {
         return new int[0];
     }
 
-    private static class ImageFileNamer {
-        private final SimpleDateFormat mFormat;
-
-        // The date (in milliseconds) used to generate the last name.
-        private long mLastDate;
-
-        // Number of names generated for the same second.
-        private int mSameSecondCount;
-
-        public ImageFileNamer(String format) {
-            mFormat = new SimpleDateFormat(format);
-        }
-
-        public String generateName(long dateTaken) {
-            Date date = new Date(dateTaken);
-            String result = mFormat.format(date);
-
-            // If the last name was generated for the same second,
-            // we append _1, _2, etc to the name.
-            if (dateTaken / 1000 == mLastDate / 1000) {
-                mSameSecondCount++;
-                result += "_" + mSameSecondCount;
-            } else {
-                mLastDate = dateTaken;
-                mSameSecondCount = 0;
-            }
-
-            return result;
-        }
-    }
-
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
-            boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
+            boolean isSecureCamera = ((CameraActivity) activity).isSecureCamera();
             UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                     UsageStatistics.ACTION_PLAY_VIDEO, null);
             if (!isSecureCamera) {
@@ -1120,7 +1077,7 @@ public class CameraUtil {
      * not be found, we use a geo intent as a fallback.
      *
      * @param activity the activity to use for launching the Maps intent.
-     * @param latLong a 2-element array containing {latitude/longitude}.
+     * @param latLong  a 2-element array containing {latitude/longitude}.
      */
     public static void showOnMap(Activity activity, double[] latLong) {
         try {
@@ -1177,5 +1134,36 @@ public class CameraUtil {
         value ^= (encodedValue[index++] & 0xFF) << Byte.SIZE * 2;
         value ^= (encodedValue[index++] & 0xFF) << Byte.SIZE * 3;
         return value;
+    }
+
+    private static class ImageFileNamer {
+        private final SimpleDateFormat mFormat;
+
+        // The date (in milliseconds) used to generate the last name.
+        private long mLastDate;
+
+        // Number of names generated for the same second.
+        private int mSameSecondCount;
+
+        public ImageFileNamer(String format) {
+            mFormat = new SimpleDateFormat(format);
+        }
+
+        public String generateName(long dateTaken) {
+            Date date = new Date(dateTaken);
+            String result = mFormat.format(date);
+
+            // If the last name was generated for the same second,
+            // we append _1, _2, etc to the name.
+            if (dateTaken / 1000 == mLastDate / 1000) {
+                mSameSecondCount++;
+                result += "_" + mSameSecondCount;
+            } else {
+                mLastDate = dateTaken;
+                mSameSecondCount = 0;
+            }
+
+            return result;
+        }
     }
 }

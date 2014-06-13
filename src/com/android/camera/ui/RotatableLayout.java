@@ -39,9 +39,9 @@ public class RotatableLayout extends FrameLayout {
 
     private static final String TAG = "RotatableLayout";
     private static final int UNKOWN_ORIENTATION = -1;
+    private int mPrevRotation = UNKOWN_ORIENTATION;
     // Initial orientation of the layout (ORIENTATION_PORTRAIT, or ORIENTATION_LANDSCAPE)
     private int mInitialOrientation;
-    private int mPrevRotation = UNKOWN_ORIENTATION;
     private boolean mIsDefaultToPortrait = false;
 
     public RotatableLayout(Context context, AttributeSet attrs, int defStyle) {
@@ -57,117 +57,6 @@ public class RotatableLayout extends FrameLayout {
     public RotatableLayout(Context context) {
         super(context);
         init();
-    }
-
-    private void init() {
-        mInitialOrientation = getResources().getConfiguration().orientation;
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        // Before the first time this view is attached to window, device rotation
-        // will not trigger onConfigurationChanged callback. So in the first run
-        // we need to rotate the view if necessary. After that, onConfigurationChanged
-        // call will track all the subsequent device rotation.
-        if (mPrevRotation == UNKOWN_ORIENTATION) {
-            mIsDefaultToPortrait = CameraUtil.isDefaultToPortrait((Activity) getContext());
-            if (mIsDefaultToPortrait) {
-                // Natural orientation for tablet is landscape
-                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_PORTRAIT ?
-                        0 : 90;
-            } else {
-                // When tablet orientation is 0 or 270 (i.e. getUnifiedOrientation
-                // = 0 or 90), we load the layout resource without any rotation.
-                mPrevRotation =  mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE ?
-                        0 : 270;
-            }
-
-            // check if there is any rotation before the view is attached to window
-            rotateIfNeeded();
-        }
-    }
-
-    private void rotateIfNeeded() {
-        if (mPrevRotation == UNKOWN_ORIENTATION) {
-            return;
-        }
-        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
-        int diff = (rotation - mPrevRotation + 360) % 360;
-        if ( diff == 0) {
-            // No rotation
-            return;
-        } else if (diff == 180) {
-            // 180-degree rotation
-            mPrevRotation = rotation;
-            flipChildren();
-            return;
-        }
-        // 90 or 270-degree rotation
-        boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
-        mPrevRotation = rotation;
-        rotateLayout(clockwise);
-    }
-
-    protected int getUnifiedRotation() {
-        // all the layout code assumes camera device orientation to be portrait
-        // adjust rotation for landscape
-        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
-        if (!mIsDefaultToPortrait) {
-            return (rotation + 90) % 360;
-        }
-        return rotation;
-    }
-
-    public void checkLayoutFlip() {
-        int currentRotation = CameraUtil.getDisplayRotation((Activity) getContext());
-        if ((currentRotation - mPrevRotation + 360) % 360 == 180) {
-            mPrevRotation = currentRotation;
-            flipChildren();
-            requestLayout();
-        }
-    }
-
-    @Override
-    public void onWindowVisibilityChanged(int visibility) {
-        if (visibility == View.VISIBLE) {
-            // Make sure when coming back from onPause, the layout is rotated correctly
-            checkLayoutFlip();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        rotateIfNeeded();
-    }
-
-    protected void rotateLayout(boolean clockwise) {
-        // Change the size of the layout
-        ViewGroup.LayoutParams lp = getLayoutParams();
-        int width = lp.width;
-        int height = lp.height;
-        lp.height = width;
-        lp.width = height;
-        setLayoutParams(lp);
-
-        // rotate all the children
-        rotateChildren(clockwise);
-    }
-
-    protected void rotateChildren(boolean clockwise) {
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-            rotate(child, clockwise);
-        }
-    }
-
-    protected void flipChildren() {
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-            flip(child);
-        }
     }
 
     public static boolean isClockWiseRotation(int prevRotation, int currentRotation) {
@@ -279,5 +168,116 @@ public class RotatableLayout extends FrameLayout {
     public static void flip(View view) {
         rotateClockwise(view);
         rotateClockwise(view);
+    }
+
+    private void init() {
+        mInitialOrientation = getResources().getConfiguration().orientation;
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        // Before the first time this view is attached to window, device rotation
+        // will not trigger onConfigurationChanged callback. So in the first run
+        // we need to rotate the view if necessary. After that, onConfigurationChanged
+        // call will track all the subsequent device rotation.
+        if (mPrevRotation == UNKOWN_ORIENTATION) {
+            mIsDefaultToPortrait = CameraUtil.isDefaultToPortrait((Activity) getContext());
+            if (mIsDefaultToPortrait) {
+                // Natural orientation for tablet is landscape
+                mPrevRotation = mInitialOrientation == Configuration.ORIENTATION_PORTRAIT ?
+                        0 : 90;
+            } else {
+                // When tablet orientation is 0 or 270 (i.e. getUnifiedOrientation
+                // = 0 or 90), we load the layout resource without any rotation.
+                mPrevRotation = mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE ?
+                        0 : 270;
+            }
+
+            // check if there is any rotation before the view is attached to window
+            rotateIfNeeded();
+        }
+    }
+
+    private void rotateIfNeeded() {
+        if (mPrevRotation == UNKOWN_ORIENTATION) {
+            return;
+        }
+        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
+        int diff = (rotation - mPrevRotation + 360) % 360;
+        if (diff == 0) {
+            // No rotation
+            return;
+        } else if (diff == 180) {
+            // 180-degree rotation
+            mPrevRotation = rotation;
+            flipChildren();
+            return;
+        }
+        // 90 or 270-degree rotation
+        boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
+        mPrevRotation = rotation;
+        rotateLayout(clockwise);
+    }
+
+    protected int getUnifiedRotation() {
+        // all the layout code assumes camera device orientation to be portrait
+        // adjust rotation for landscape
+        int rotation = CameraUtil.getDisplayRotation((Activity) getContext());
+        if (!mIsDefaultToPortrait) {
+            return (rotation + 90) % 360;
+        }
+        return rotation;
+    }
+
+    public void checkLayoutFlip() {
+        int currentRotation = CameraUtil.getDisplayRotation((Activity) getContext());
+        if ((currentRotation - mPrevRotation + 360) % 360 == 180) {
+            mPrevRotation = currentRotation;
+            flipChildren();
+            requestLayout();
+        }
+    }
+
+    @Override
+    public void onWindowVisibilityChanged(int visibility) {
+        if (visibility == View.VISIBLE) {
+            // Make sure when coming back from onPause, the layout is rotated correctly
+            checkLayoutFlip();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        rotateIfNeeded();
+    }
+
+    protected void rotateLayout(boolean clockwise) {
+        // Change the size of the layout
+        ViewGroup.LayoutParams lp = getLayoutParams();
+        int width = lp.width;
+        int height = lp.height;
+        lp.height = width;
+        lp.width = height;
+        setLayoutParams(lp);
+
+        // rotate all the children
+        rotateChildren(clockwise);
+    }
+
+    protected void rotateChildren(boolean clockwise) {
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            rotate(child, clockwise);
+        }
+    }
+
+    protected void flipChildren() {
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            flip(child);
+        }
     }
 }

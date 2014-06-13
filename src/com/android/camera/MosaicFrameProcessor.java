@@ -31,40 +31,32 @@ public class MosaicFrameProcessor {
     private static final int Y_COORD_INDEX = 5;
     private static final int HR_TO_LR_DOWNSAMPLE_FACTOR = 4;
     private static final int WINDOW_SIZE = 3;
-
+    private float[] mDeltaX = new float[WINDOW_SIZE];
+    private float[] mDeltaY = new float[WINDOW_SIZE];
+    private static MosaicFrameProcessor sMosaicFrameProcessor; // singleton
     private Mosaic mMosaicer;
     private boolean mIsMosaicMemoryAllocated = false;
     private float mTranslationLastX;
     private float mTranslationLastY;
-
     private int mFillIn = 0;
     private int mTotalFrameCount = 0;
     private int mLastProcessFrameIdx = -1;
     private int mCurrProcessFrameIdx = -1;
     private boolean mFirstRun;
-
     // Panning rate is in unit of percentage of image content translation per
     // frame. Use moving average to calculate the panning rate.
     private float mPanningRateX;
     private float mPanningRateY;
-
-    private float[] mDeltaX = new float[WINDOW_SIZE];
-    private float[] mDeltaY = new float[WINDOW_SIZE];
     private int mOldestIdx = 0;
     private float mTotalTranslationX = 0f;
     private float mTotalTranslationY = 0f;
-
     private ProgressListener mProgressListener;
-
     private int mPreviewWidth;
     private int mPreviewHeight;
     private int mPreviewBufferSize;
 
-    private static MosaicFrameProcessor sMosaicFrameProcessor; // singleton
-
-    public interface ProgressListener {
-        public void onProgress(boolean isFinished, float panningRateX, float panningRateY,
-                float progressX, float progressY);
+    private MosaicFrameProcessor() {
+        mMosaicer = new Mosaic();
     }
 
     public static MosaicFrameProcessor getInstance() {
@@ -72,10 +64,6 @@ public class MosaicFrameProcessor {
             sMosaicFrameProcessor = new MosaicFrameProcessor();
         }
         return sMosaicFrameProcessor;
-    }
-
-    private MosaicFrameProcessor() {
-        mMosaicer = new Mosaic();
     }
 
     public void setProgressListener(ProgressListener listener) {
@@ -196,7 +184,7 @@ public class MosaicFrameProcessor {
     public void calculateTranslationRate() {
         float[] frameData = mMosaicer.setSourceImageFromGPU();
         int ret_code = (int) frameData[MOSAIC_RET_CODE_INDEX];
-        mTotalFrameCount  = (int) frameData[FRAME_COUNT_INDEX];
+        mTotalFrameCount = (int) frameData[FRAME_COUNT_INDEX];
         float translationCurrX = frameData[X_COORD_INDEX];
         float translationCurrY = frameData[Y_COORD_INDEX];
 
@@ -233,5 +221,10 @@ public class MosaicFrameProcessor {
         mTranslationLastX = translationCurrX;
         mTranslationLastY = translationCurrY;
         mOldestIdx = (mOldestIdx + 1) % WINDOW_SIZE;
+    }
+
+    public interface ProgressListener {
+        public void onProgress(boolean isFinished, float panningRateX, float panningRateY,
+                               float progressX, float progressY);
     }
 }

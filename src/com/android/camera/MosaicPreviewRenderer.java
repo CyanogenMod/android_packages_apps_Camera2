@@ -29,19 +29,72 @@ public class MosaicPreviewRenderer {
 
     @SuppressWarnings("unused")
     private static final String TAG = "CAM_MosaicPreviewRenderer";
-
+    private final float[] mTransformMatrix = new float[16];
     private int mWidth; // width of the view in UI
     private int mHeight; // height of the view in UI
-
     private boolean mIsLandscape = true;
-    private final float[] mTransformMatrix = new float[16];
-
     private ConditionVariable mEglThreadBlockVar = new ConditionVariable();
     private HandlerThread mEglThread;
     private MyHandler mHandler;
     private SurfaceTextureRenderer mSTRenderer;
 
     private SurfaceTexture mInputSurfaceTexture;
+
+    /**
+     * Constructor.
+     *
+     * @param tex         The {@link SurfaceTexture} for the final UI output.
+     * @param w           The width of the UI view.
+     * @param h           The height of the UI view.
+     * @param isLandscape The UI orientation. {@code true} if in landscape,
+     *                    false if in portrait.
+     */
+    public MosaicPreviewRenderer(SurfaceTexture tex, int w, int h, boolean isLandscape) {
+        mIsLandscape = isLandscape;
+
+        mEglThread = new HandlerThread("PanoramaRealtimeRenderer");
+        mEglThread.start();
+        mHandler = new MyHandler(mEglThread.getLooper());
+        mWidth = w;
+        mHeight = h;
+
+        SurfaceTextureRenderer.FrameDrawer dummy = new SurfaceTextureRenderer.FrameDrawer() {
+            @Override
+            public void onDrawFrame(GL10 gl) {
+                // nothing, we have our draw functions.
+            }
+        };
+        mSTRenderer = new SurfaceTextureRenderer(tex, mHandler, dummy);
+
+        // We need to sync this because the generation of surface texture for input is
+        // done here and the client will continue with the assumption that the
+        // generation is completed.
+        mHandler.sendMessageSync(MyHandler.MSG_INIT_SYNC);
+    }
+
+    public void release() {
+        mSTRenderer.release();
+        mHandler.sendMessageSync(MyHandler.MSG_RELEASE);
+    }
+
+    public void showPreviewFrameSync() {
+        mHandler.sendMessageSync(MyHandler.MSG_SHOW_PREVIEW_FRAME_SYNC);
+        mSTRenderer.draw(true);
+    }
+
+    public void showPreviewFrame() {
+        mHandler.sendEmptyMessage(MyHandler.MSG_SHOW_PREVIEW_FRAME);
+        mSTRenderer.draw(false);
+    }
+
+    public void alignFrameSync() {
+        mHandler.sendMessageSync(MyHandler.MSG_ALIGN_FRAME_SYNC);
+        mSTRenderer.draw(true);
+    }
+
+    public SurfaceTexture getInputSurfaceTexture() {
+        return mInputSurfaceTexture;
+    }
 
     private class MyHandler extends Handler {
         public static final int MSG_INIT_SYNC = 0;
@@ -123,61 +176,5 @@ public class MosaicPreviewRenderer {
             sendEmptyMessage(msg);
             mEglThreadBlockVar.block();
         }
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param tex The {@link SurfaceTexture} for the final UI output.
-     * @param w The width of the UI view.
-     * @param h The height of the UI view.
-     * @param isLandscape The UI orientation. {@code true} if in landscape,
-     *                    false if in portrait.
-     */
-    public MosaicPreviewRenderer(SurfaceTexture tex, int w, int h, boolean isLandscape) {
-        mIsLandscape = isLandscape;
-
-        mEglThread = new HandlerThread("PanoramaRealtimeRenderer");
-        mEglThread.start();
-        mHandler = new MyHandler(mEglThread.getLooper());
-        mWidth = w;
-        mHeight = h;
-
-        SurfaceTextureRenderer.FrameDrawer dummy = new SurfaceTextureRenderer.FrameDrawer() {
-            @Override
-            public void onDrawFrame(GL10 gl) {
-                // nothing, we have our draw functions.
-            }
-        };
-        mSTRenderer = new SurfaceTextureRenderer(tex, mHandler, dummy);
-
-        // We need to sync this because the generation of surface texture for input is
-        // done here and the client will continue with the assumption that the
-        // generation is completed.
-        mHandler.sendMessageSync(MyHandler.MSG_INIT_SYNC);
-    }
-
-    public void release() {
-        mSTRenderer.release();
-        mHandler.sendMessageSync(MyHandler.MSG_RELEASE);
-    }
-
-    public void showPreviewFrameSync() {
-        mHandler.sendMessageSync(MyHandler.MSG_SHOW_PREVIEW_FRAME_SYNC);
-        mSTRenderer.draw(true);
-    }
-
-    public void showPreviewFrame() {
-        mHandler.sendEmptyMessage(MyHandler.MSG_SHOW_PREVIEW_FRAME);
-        mSTRenderer.draw(false);
-    }
-
-    public void alignFrameSync() {
-        mHandler.sendMessageSync(MyHandler.MSG_ALIGN_FRAME_SYNC);
-        mSTRenderer.draw(true);
-    }
-
-    public SurfaceTexture getInputSurfaceTexture() {
-        return mInputSurfaceTexture;
     }
 }

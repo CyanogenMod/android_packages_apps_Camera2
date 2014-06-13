@@ -16,8 +16,6 @@
 
 package com.android.camera.ui;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,6 +27,8 @@ import android.widget.NumberPicker.OnValueChangeListener;
 
 import com.android.camera.ListPreference;
 import com.android.camera2.R;
+
+import java.util.Locale;
 
 /**
  * This is a popup window that allows users to specify a countdown timer
@@ -46,16 +46,12 @@ public class CountdownTimerPopup extends AbstractSettingPopup {
     private CheckBox mTimerSound;
     private View mSoundTitle;
 
-    static public interface Listener {
-        public void onListPrefChanged(ListPreference pref);
+    public CountdownTimerPopup(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     public void setSettingChangedListener(Listener listener) {
         mListener = listener;
-    }
-
-    public CountdownTimerPopup(Context context, AttributeSet attrs) {
-        super(context, attrs);
     }
 
     public void initialize(ListPreference timer, ListPreference beep) {
@@ -70,7 +66,7 @@ public class CountdownTimerPopup extends AbstractSettingPopup {
         Locale locale = getResources().getConfiguration().locale;
         mDurations[0] = getResources().getString(R.string.setting_off); // Off
         for (int i = 1; i < entries.length; i++)
-            mDurations[i] =  String.format(locale, "%d", Integer.parseInt(entries[i].toString()));
+            mDurations[i] = String.format(locale, "%d", Integer.parseInt(entries[i].toString()));
         int durationCount = mDurations.length;
         mNumberSpinner = (NumberPicker) findViewById(R.id.duration);
         mNumberSpinner.setMinValue(0);
@@ -141,5 +137,9 @@ public class CountdownTimerPopup extends AbstractSettingPopup {
             mListener.onListPrefChanged(mTimer);
             mListener.onListPrefChanged(mBeep);
         }
+    }
+
+    static public interface Listener {
+        public void onListPrefChanged(ListPreference pref);
     }
 }

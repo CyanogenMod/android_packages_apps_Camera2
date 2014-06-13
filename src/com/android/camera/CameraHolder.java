@@ -16,11 +16,8 @@
 
 package com.android.camera;
 
-import static com.android.camera.util.CameraUtil.Assert;
-
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -29,50 +26,78 @@ import android.util.Log;
 
 import com.android.camera.CameraManager.CameraProxy;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.android.camera.util.CameraUtil.Assert;
+
 /**
  * The class is used to hold an {@code android.hardware.Camera} instance.
- *
+ * <p/>
  * <p>The {@code open()} and {@code release()} calls are similar to the ones
  * in {@code android.hardware.Camera}. The difference is if {@code keep()} is
  * called before {@code release()}, CameraHolder will try to hold the {@code
  * android.hardware.Camera} instance for a while, so if {@code open()} is
  * called soon after, we can avoid the cost of {@code open()} in {@code
  * android.hardware.Camera}.
- *
+ * <p/>
  * <p>This is used in switching between different modules.
  */
 public class CameraHolder {
     private static final String TAG = "CameraHolder";
     private static final int KEEP_CAMERA_TIMEOUT = 3000; // 3 seconds
-    private CameraProxy mCameraDevice;
-    private long mKeepBeforeTime;  // Keep the Camera before this time.
-    private final Handler mHandler;
-    private boolean mCameraOpened;  // true if camera is opened
-    private final int mNumberOfCameras;
-    private int mCameraId = -1;  // current camera id
-    private int mBackCameraId = -1;
-    private int mFrontCameraId = -1;
-    private final CameraInfo[] mInfo;
-    private static CameraProxy mMockCamera[];
-    private static CameraInfo mMockCameraInfo[];
-
     /* Debug double-open issue */
     private static final boolean DEBUG_OPEN_RELEASE = true;
-    private static class OpenReleaseState {
-        long time;
-        int id;
-        String device;
-        String[] stack;
-    }
+    private static final int RELEASE_CAMERA = 1;
+    private static CameraProxy mMockCamera[];
+    private static CameraInfo mMockCameraInfo[];
     private static ArrayList<OpenReleaseState> sOpenReleaseStates =
             new ArrayList<OpenReleaseState>();
     private static SimpleDateFormat sDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSS");
+    // Use a singleton.
+    private static CameraHolder sHolder;
+    private final Handler mHandler;
+    private final int mNumberOfCameras;
+    private final CameraInfo[] mInfo;
+    private CameraProxy mCameraDevice;
+    private long mKeepBeforeTime;  // Keep the Camera before this time.
+    private boolean mCameraOpened;  // true if camera is opened
+    private int mCameraId = -1;  // current camera id
+    private int mBackCameraId = -1;
+    private int mFrontCameraId = -1;
+    // We store the camera parameters when we actually open the device,
+    // so we can restore them in the subsequent open() requests by the user.
+    // This prevents the parameters set by PhotoModule used by VideoModule
+    // inadvertently.
+    private Parameters mParameters;
+
+    private CameraHolder() {
+        HandlerThread ht = new HandlerThread("CameraHolder");
+        ht.start();
+        mHandler = new MyHandler(ht.getLooper());
+        if (mMockCameraInfo != null) {
+            mNumberOfCameras = mMockCameraInfo.length;
+            mInfo = mMockCameraInfo;
+        } else {
+            mNumberOfCameras = android.hardware.Camera.getNumberOfCameras();
+            mInfo = new CameraInfo[mNumberOfCameras];
+            for (int i = 0; i < mNumberOfCameras; i++) {
+                mInfo[i] = new CameraInfo();
+                android.hardware.Camera.getCameraInfo(i, mInfo[i]);
+            }
+        }
+
+        // get the first (smallest) back and first front camera id
+        for (int i = 0; i < mNumberOfCameras; i++) {
+            if (mBackCameraId == -1 && mInfo[i].facing == CameraInfo.CAMERA_FACING_BACK) {
+                mBackCameraId = i;
+            } else if (mFrontCameraId == -1 && mInfo[i].facing == CameraInfo.CAMERA_FACING_FRONT) {
+                mFrontCameraId = i;
+            }
+        }
+    }
 
     private static synchronized void collectState(int id, CameraProxy device) {
         OpenReleaseState s = new OpenReleaseState();
@@ -110,14 +135,6 @@ public class CameraHolder {
         }
     }
 
-    // We store the camera parameters when we actually open the device,
-    // so we can restore them in the subsequent open() requests by the user.
-    // This prevents the parameters set by PhotoModule used by VideoModule
-    // inadvertently.
-    private Parameters mParameters;
-
-    // Use a singleton.
-    private static CameraHolder sHolder;
     public static synchronized CameraHolder instance() {
         if (sHolder == null) {
             sHolder = new CameraHolder();
@@ -125,59 +142,10 @@ public class CameraHolder {
         return sHolder;
     }
 
-    private static final int RELEASE_CAMERA = 1;
-    private class MyHandler extends Handler {
-        MyHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch(msg.what) {
-                case RELEASE_CAMERA:
-                    synchronized (CameraHolder.this) {
-                        // In 'CameraHolder.open', the 'RELEASE_CAMERA' message
-                        // will be removed if it is found in the queue. However,
-                        // there is a chance that this message has been handled
-                        // before being removed. So, we need to add a check
-                        // here:
-                        if (!mCameraOpened) release();
-                    }
-                    break;
-            }
-        }
-    }
-
     public static void injectMockCamera(CameraInfo[] info, CameraProxy[] camera) {
         mMockCameraInfo = info;
         mMockCamera = camera;
         sHolder = new CameraHolder();
-    }
-
-    private CameraHolder() {
-        HandlerThread ht = new HandlerThread("CameraHolder");
-        ht.start();
-        mHandler = new MyHandler(ht.getLooper());
-        if (mMockCameraInfo != null) {
-            mNumberOfCameras = mMockCameraInfo.length;
-            mInfo = mMockCameraInfo;
-        } else {
-            mNumberOfCameras = android.hardware.Camera.getNumberOfCameras();
-            mInfo = new CameraInfo[mNumberOfCameras];
-            for (int i = 0; i < mNumberOfCameras; i++) {
-                mInfo[i] = new CameraInfo();
-                android.hardware.Camera.getCameraInfo(i, mInfo[i]);
-            }
-        }
-
-        // get the first (smallest) back and first front camera id
-        for (int i = 0; i < mNumberOfCameras; i++) {
-            if (mBackCameraId == -1 && mInfo[i].facing == CameraInfo.CAMERA_FACING_BACK) {
-                mBackCameraId = i;
-            } else if (mFrontCameraId == -1 && mInfo[i].facing == CameraInfo.CAMERA_FACING_FRONT) {
-                mFrontCameraId = i;
-            }
-        }
     }
 
     public int getNumberOfCameras() {
@@ -242,7 +210,7 @@ public class CameraHolder {
      */
     public synchronized CameraProxy tryOpen(
             Handler handler, int cameraId, CameraManager.CameraOpenErrorCallback cb) {
-            return (!mCameraOpened ? open(handler, cameraId, cb) : null);
+        return (!mCameraOpened ? open(handler, cameraId, cb) : null);
     }
 
     public synchronized void release() {
@@ -294,5 +262,34 @@ public class CameraHolder {
 
     public int getFrontCameraId() {
         return mFrontCameraId;
+    }
+
+    private static class OpenReleaseState {
+        long time;
+        int id;
+        String device;
+        String[] stack;
+    }
+
+    private class MyHandler extends Handler {
+        MyHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case RELEASE_CAMERA:
+                    synchronized (CameraHolder.this) {
+                        // In 'CameraHolder.open', the 'RELEASE_CAMERA' message
+                        // will be removed if it is found in the queue. However,
+                        // there is a chance that this message has been handled
+                        // before being removed. So, we need to add a check
+                        // here:
+                        if (!mCameraOpened) release();
+                    }
+                    break;
+            }
+        }
     }
 }

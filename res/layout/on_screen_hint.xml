@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012, The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,11 +13,10 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content"
-    android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom|right"
-    android:layout_marginRight="8dip"
-    android:layout_marginBottom="8dip"
-    android:background="#80000000" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/on_screen_hint_frame" android:orientation="vertical">
+    <TextView android:id="@+id/message" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="#BB000000"
+        android:shadowRadius="2.75" android:textAppearance="@style/OnScreenHintTextAppearance.Small" android:textColor="#ffffffff" />
+</LinearLayout>

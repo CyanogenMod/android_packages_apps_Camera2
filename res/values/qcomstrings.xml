@@ -60,9 +60,13 @@
     <string name="pref_camera_autoexposure_entry_spotmetering">Spot metering</string>
 
     <!-- Auto exposure entry values. Do not translate. -->
-    <string name="pref_camera_autoexposure_value_frameaverage" translatable="false">frame-average</string>
-    <string name="pref_camera_autoexposure_value_centerweighted" translatable="false">center-weighted</string>
-    <string name="pref_camera_autoexposure_value_spotmetering" translatable="false">spot-metering</string>
+    <string name="pref_camera_autoexposure_value_frameaverage" translatable="false">frame-average
+    </string>
+    <string name="pref_camera_autoexposure_value_centerweighted" translatable="false">
+        center-weighted
+    </string>
+    <string name="pref_camera_autoexposure_value_spotmetering" translatable="false">spot-metering
+    </string>
 
     <!-- Settings screen, Video encoder title -->
     <string name="pref_camera_videoencoder_title">Video codec</string>
@@ -111,7 +115,8 @@
 
     <!-- Skin Tone Enhancement entry values. Do not translate. -->
     <string name="pref_camera_skinToneEnhancement_value_enable" translatable="false">enable</string>
-    <string name="pref_camera_skinToneEnhancement_value_disable" translatable="false">disable</string>
+    <string name="pref_camera_skinToneEnhancement_value_disable" translatable="false">disable
+    </string>
 
     <!-- Settings screen, setting title text for ZSL-->
     <string name="pref_camera_zsl_title">Zero Shutter Lag (ZSL)</string>
@@ -131,9 +136,15 @@
 
     <!-- Auto exposure entry values. Do not translate. -->
     <string name="pref_camera_selectablezoneaf_value_auto" translatable="false">auto</string>
-    <string name="pref_camera_selectablezoneaf_value_spotmetering" translatable="false">spot-metering</string>
-    <string name="pref_camera_selectablezoneaf_value_centerweighted" translatable="false">center-weighted</string>
-    <string name="pref_camera_selectablezoneaf_value_frameaverage" translatable="false">frame-average</string>
+    <string name="pref_camera_selectablezoneaf_value_spotmetering" translatable="false">
+        spot-metering
+    </string>
+    <string name="pref_camera_selectablezoneaf_value_centerweighted" translatable="false">
+        center-weighted
+    </string>
+    <string name="pref_camera_selectablezoneaf_value_frameaverage" translatable="false">
+        frame-average
+    </string>
 
     <!-- Settings screen, ZSL location dialog choices -->
     <string name="pref_camera_zsl_entry_off">Off</string>
@@ -181,19 +192,23 @@
     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported video codec for HFR mode -->
-    <string name="error_app_unsupported_hfr_codec">Only H.264 video encoding is supported when HFR is on</string>
+    <string name="error_app_unsupported_hfr_codec">Only H.264 video encoding is supported when HFR
+        is on
+    </string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
-     <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
+    <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
 
     <!--The message is shown in dialog when the raw snapshot is selected in zsl mode-->
-    <string name="error_app_unsupported_raw">Raw picture format is not supported in ZSL mode</string>
+    <string name="error_app_unsupported_raw">Raw picture format is not supported in ZSL mode
+    </string>
 
     <string name="error_app_unsupported_hdr_zsl">HDR is not supported in ZSL mode</string>
 
     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
     <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
-    <string name="pref_camera_ae_bracket_hdr_value_ae_bracket" translatable="false">AE-Bracket</string>
+    <string name="pref_camera_ae_bracket_hdr_value_ae_bracket" translatable="false">AE-Bracket
+    </string>
 
     <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
     <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
@@ -204,13 +219,19 @@
     <string name="err_app_unsupport_ae_bracket_code">AE Bracketing is not supported yet</string>
 
     <!-- The messsage shown if user selects a snapshot resolution lower than the current video size. -->
-    <string name="snapshot_lower_than_video">Video snapshot size is lower than video size, capping to video size. Please select a resolution higher or equal to the current video size.</string>
+    <string name="snapshot_lower_than_video">Video snapshot size is lower than video size, capping
+        to video size. Please select a resolution higher or equal to the current video size.
+    </string>
 
     <!-- The messsage shown if user selects a snapshot resolution in low power mode. -->
-    <string name="snapshotsize_low_powermode">Changing picture size is not supported in Low Power mode, video size snapshot will be taken. Please select Normal Power mode to allow changing picture size.</string>
+    <string name="snapshotsize_low_powermode">Changing picture size is not supported in Low Power
+        mode, video size snapshot will be taken. Please select Normal Power mode to allow changing
+        picture size.
+    </string>
 
     <!-- The messsage shown if user tries to take snapshot during D1/QCIF resolution. -->
-    <string name="snapshot_qcif_and_d1">Only video size snapshot is supported for this resolution.</string>
+    <string name="snapshot_qcif_and_d1">Only video size snapshot is supported for this resolution.
+    </string>
 
     <!-- Default hfr setting. Do not translate. -->
     <string name="pref_camera_hfr_default" translatable="false">off</string>
@@ -390,148 +411,422 @@
     <!-- Settings screen, picture format dialog radio button choices -->
     <string name="pref_camera_picture_format_entry_jpeg" translatable="false">JPEG</string>
     <string name="pref_camera_picture_format_entry_raw" translatable="false">Raw</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_422_sp" translatable="false">YUV422SP</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yuyv" translatable="false">YUVRaw8YUYV</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yvyu" translatable="false">YUVRaw8YVYU</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_uyvy" translatable="false">YUVRaw8UYVY</string>
-    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_vyuy" translatable="false">YUVRaw8VYUY</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8gbrg" translatable="false">BayerQ8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8grbg" translatable="false">BayerQ8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8rggb" translatable="false">BayerQ8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8bggr" translatable="false">BayerQ8BGRR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10gbrg" translatable="false">BayerQ10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10grbg" translatable="false">BayerQ10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10rggb" translatable="false">BayerQ10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10bggr" translatable="false">BayerQ10BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12gbrg" translatable="false">BayerQ12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12grbg" translatable="false">BayerQ12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12rggb" translatable="false">BayerQ12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12bggr" translatable="false">BayerQ12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8gbrg" translatable="false">BayerM8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8grbg" translatable="false">BayerM8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8rggb" translatable="false">BayerM8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8bggr" translatable="false">BayerM8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10gbrg" translatable="false">BayerM10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10grbg" translatable="false">BayerM10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10rggb" translatable="false">BayerM10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10bggr" translatable="false">BayerM10BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12gbrg" translatable="false">BayerM12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12grbg" translatable="false">BayerM12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12rggb" translatable="false">BayerM12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12bggr" translatable="false">BayerM12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8gbrg" translatable="false">BayerIQ8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8grbg" translatable="false">BayerIQ8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8rggb" translatable="false">BayerIQ8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8bggr" translatable="false">BayerIQ8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10gbrg" translatable="false">BayerIQ10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10grbg" translatable="false">BayerIQ10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10rggb" translatable="false">BayerIQ10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10bggr" translatable="false">BayerIQ10BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12gbrg" translatable="false">BayerIQ12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12grbg" translatable="false">BayerIQ12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12rggb" translatable="false">BayerIQ12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12bggr" translatable="false">BayerIQ12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8gbrg" translatable="false">BayerIM8GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8grbg" translatable="false">BayerIM8GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8rggb" translatable="false">BayerIM8RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8bggr" translatable="false">BayerIM8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10gbrg" translatable="false">BayerIM10GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10grbg" translatable="false">BayerIM10GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10rggb" translatable="false">BayerIM10RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10bggr" translatable="false">BayerIM8BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12gbrg" translatable="false">BayerIM12GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12grbg" translatable="false">BayerIM12GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12rggb" translatable="false">BayerIM12RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12bggr" translatable="false">BayerIM12BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8gbrg" translatable="false">BayerIP88GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8grbg" translatable="false">BayerIP88GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8rggb" translatable="false">BayerIP88RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8bggr" translatable="false">BayerIP88BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8gbrg" translatable="false">BayerIP168GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8grbg" translatable="false">BayerIP168GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8rggb" translatable="false">BayerIP168RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8bggr" translatable="false">BayerIP168BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10gbrg" translatable="false">BayerIP1610GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10grbg" translatable="false">BayerIP1610GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10rggb" translatable="false">BayerIP1610RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10bggr" translatable="false">BayerIP1610BGGR</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12gbrg" translatable="false">BayerIP1612GBRG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12grbg" translatable="false">BayerIP1612GRBG</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb" translatable="false">BayerIP1612RGGB</string>
-    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr" translatable="false">BayerIP1612BGGR</string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_422_sp" translatable="false">YUV422SP
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yuyv" translatable="false">
+        YUVRaw8YUYV
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_yvyu" translatable="false">
+        YUVRaw8YVYU
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_uyvy" translatable="false">
+        YUVRaw8UYVY
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_yuv_8bit_vyuy" translatable="false">
+        YUVRaw8VYUY
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8gbrg" translatable="false">
+        BayerQ8GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8grbg" translatable="false">
+        BayerQ8GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8rggb" translatable="false">
+        BayerQ8RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_8bggr" translatable="false">
+        BayerQ8BGRR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10gbrg" translatable="false">
+        BayerQ10GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10grbg" translatable="false">
+        BayerQ10GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10rggb" translatable="false">
+        BayerQ10RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_10bggr" translatable="false">
+        BayerQ10BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12gbrg" translatable="false">
+        BayerQ12GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12grbg" translatable="false">
+        BayerQ12GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12rggb" translatable="false">
+        BayerQ12RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_qcom_12bggr" translatable="false">
+        BayerQ12BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8gbrg" translatable="false">
+        BayerM8GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8grbg" translatable="false">
+        BayerM8GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8rggb" translatable="false">
+        BayerM8RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_8bggr" translatable="false">
+        BayerM8BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10gbrg" translatable="false">
+        BayerM10GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10grbg" translatable="false">
+        BayerM10GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10rggb" translatable="false">
+        BayerM10RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_10bggr" translatable="false">
+        BayerM10BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12gbrg" translatable="false">
+        BayerM12GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12grbg" translatable="false">
+        BayerM12GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12rggb" translatable="false">
+        BayerM12RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_mipi_12bggr" translatable="false">
+        BayerM12BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8gbrg" translatable="false">
+        BayerIQ8GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8grbg" translatable="false">
+        BayerIQ8GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8rggb" translatable="false">
+        BayerIQ8RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_8bggr" translatable="false">
+        BayerIQ8BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10gbrg"
+        translatable="false">BayerIQ10GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10grbg"
+        translatable="false">BayerIQ10GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10rggb"
+        translatable="false">BayerIQ10RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_10bggr"
+        translatable="false">BayerIQ10BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12gbrg"
+        translatable="false">BayerIQ12GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12grbg"
+        translatable="false">BayerIQ12GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12rggb"
+        translatable="false">BayerIQ12RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_qcom_12bggr"
+        translatable="false">BayerIQ12BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8gbrg" translatable="false">
+        BayerIM8GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8grbg" translatable="false">
+        BayerIM8GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8rggb" translatable="false">
+        BayerIM8RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_8bggr" translatable="false">
+        BayerIM8BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10gbrg"
+        translatable="false">BayerIM10GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10grbg"
+        translatable="false">BayerIM10GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10rggb"
+        translatable="false">BayerIM10RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_10bggr"
+        translatable="false">BayerIM8BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12gbrg"
+        translatable="false">BayerIM12GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12grbg"
+        translatable="false">BayerIM12GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12rggb"
+        translatable="false">BayerIM12RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_mipi_12bggr"
+        translatable="false">BayerIM12BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8gbrg"
+        translatable="false">BayerIP88GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8grbg"
+        translatable="false">BayerIP88GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8rggb"
+        translatable="false">BayerIP88RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain8_8bggr"
+        translatable="false">BayerIP88BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8gbrg"
+        translatable="false">BayerIP168GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8grbg"
+        translatable="false">BayerIP168GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8rggb"
+        translatable="false">BayerIP168RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_8bggr"
+        translatable="false">BayerIP168BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10gbrg"
+        translatable="false">BayerIP1610GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10grbg"
+        translatable="false">BayerIP1610GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10rggb"
+        translatable="false">BayerIP1610RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_10bggr"
+        translatable="false">BayerIP1610BGGR
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12gbrg"
+        translatable="false">BayerIP1612GBRG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12grbg"
+        translatable="false">BayerIP1612GRBG
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb"
+        translatable="false">BayerIP1612RGGB
+    </string>
+    <string name="pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr"
+        translatable="false">BayerIP1612BGGR
+    </string>
 
     <!-- Picture format entry values. Do not translate. -->
     <string name="pref_camera_picture_format_value_jpeg" translatable="false">jpeg</string>
     <string name="pref_camera_picture_format_value_raw" translatable="false">raw</string>
-    <string name="pref_camera_picture_format_value_raw_yuv_422_sp" translatable="false">yuv422sp</string>
-    <string name="pref_camera_picture_format_value_raw_yuv_8bit_yuyv" translatable="false">yuv-raw8-yuyv</string>
-    <string name="pref_camera_picture_format_value_raw_yuv_8bit_yvyu" translatable="false">yuv-raw8-yvyu</string>
-    <string name="pref_camera_picture_format_value_raw_yuv_8bit_uyvy" translatable="false">yuv-raw8-uyvy</string>
-    <string name="pref_camera_picture_format_value_raw_yuv_8bit_vyuy" translatable="false">yuv-raw8-vyuy</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8gbrg" translatable="false">bayer-qcom-8gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8grbg" translatable="false">bayer-qcom-8grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8rggb" translatable="false">bayer-qcom-8rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8bggr" translatable="false">bayer-qcom-8bgrr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10gbrg" translatable="false">bayer-qcom-10gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10grbg" translatable="false">bayer-qcom-10grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10rggb" translatable="false">bayer-qcom-10rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10bggr" translatable="false">bayer-qcom-10bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12gbrg" translatable="false">bayer-qcom-12gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12grbg" translatable="false">bayer-qcom-12grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12rggb" translatable="false">bayer-qcom-12rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12bggr" translatable="false">bayer-qcom-12bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8gbrg" translatable="false">bayer-mipi-8gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8grbg" translatable="false">bayer-mipi-8grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8rggb" translatable="false">bayer-mipi-8rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8bggr" translatable="false">bayer-mipi-8bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10gbrg" translatable="false">bayer-mipi-10gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10grbg" translatable="false">bayer-mipi-10grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10rggb" translatable="false">bayer-mipi-10rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10bggr" translatable="false">bayer-mipi-10bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12gbrg" translatable="false">bayer-mipi-12gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12grbg" translatable="false">bayer-mipi-12grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12rggb" translatable="false">bayer-mipi-12rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12bggr" translatable="false">bayer-mipi-12bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8gbrg" translatable="false">bayer-ideal-qcom-8gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8grbg" translatable="false">bayer-ideal-qcom-8grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8rggb" translatable="false">bayer-ideal-qcom-8rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8bggr" translatable="false">bayer-ideal-qcom-8bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10gbrg" translatable="false">bayer-ideal-qcom-10gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10grbg" translatable="false">bayer-ideal-qcom-10grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10rggb" translatable="false">bayer-ideal-qcom-10rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10bggr" translatable="false">bayer-ideal-qcom-10bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12gbrg" translatable="false">bayer-ideal-qcom-12gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12grbg" translatable="false">bayer-ideal-qcom-12grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12rggb" translatable="false">bayer-ideal-qcom-12rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12bggr" translatable="false">bayer-ideal-qcom-12bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8gbrg" translatable="false">bayer-ideal-mipi-8gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8grbg" translatable="false">bayer-ideal-mipi-8grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8rggb" translatable="false">bayer-ideal-mipi-8rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8bggr" translatable="false">bayer-ideal-mipi-8bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10gbrg" translatable="false">bayer-ideal-mipi-10gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10grbg" translatable="false">bayer-ideal-mipi-10grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10rggb" translatable="false">bayer-ideal-mipi-10rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10bggr" translatable="false">bayer-ideal-mipi-8bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12gbrg" translatable="false">bayer-ideal-mipi-12gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12grbg" translatable="false">bayer-ideal-mipi-12grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12rggb" translatable="false">bayer-ideal-mipi-12rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12bggr" translatable="false">bayer-ideal-mipi-12bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8gbrg" translatable="false">bayer-ideal-plain8-8gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8grbg" translatable="false">bayer-ideal-plain8-8grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8rggb" translatable="false">bayer-ideal-plain8-8rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8bggr" translatable="false">bayer-ideal-plain8-8bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8gbrg" translatable="false">bayer-ideal-plain16-8gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8grbg" translatable="false">bayer-ideal-plain16-8grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8rggb" translatable="false">bayer-ideal-plain16-8rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8bggr" translatable="false">bayer-ideal-plain16-8bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10gbrg" translatable="false">bayer-ideal-plain16-10gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10grbg" translatable="false">bayer-ideal-plain16-10grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10rggb" translatable="false">bayer-ideal-plain16-10rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10bggr" translatable="false">bayer-ideal-plain16-10bggr</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12gbrg" translatable="false">bayer-ideal-plain16-12gbrg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12grbg" translatable="false">bayer-ideal-plain16-12grbg</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12rggb" translatable="false">bayer-ideal-plain16-12rggb</string>
-    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12bggr" translatable="false">bayer-ideal-plain16-12bggr</string>
+    <string name="pref_camera_picture_format_value_raw_yuv_422_sp" translatable="false">yuv422sp
+    </string>
+    <string name="pref_camera_picture_format_value_raw_yuv_8bit_yuyv" translatable="false">
+        yuv-raw8-yuyv
+    </string>
+    <string name="pref_camera_picture_format_value_raw_yuv_8bit_yvyu" translatable="false">
+        yuv-raw8-yvyu
+    </string>
+    <string name="pref_camera_picture_format_value_raw_yuv_8bit_uyvy" translatable="false">
+        yuv-raw8-uyvy
+    </string>
+    <string name="pref_camera_picture_format_value_raw_yuv_8bit_vyuy" translatable="false">
+        yuv-raw8-vyuy
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8gbrg" translatable="false">
+        bayer-qcom-8gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8grbg" translatable="false">
+        bayer-qcom-8grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8rggb" translatable="false">
+        bayer-qcom-8rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_8bggr" translatable="false">
+        bayer-qcom-8bgrr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10gbrg" translatable="false">
+        bayer-qcom-10gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10grbg" translatable="false">
+        bayer-qcom-10grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10rggb" translatable="false">
+        bayer-qcom-10rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_10bggr" translatable="false">
+        bayer-qcom-10bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12gbrg" translatable="false">
+        bayer-qcom-12gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12grbg" translatable="false">
+        bayer-qcom-12grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12rggb" translatable="false">
+        bayer-qcom-12rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_qcom_12bggr" translatable="false">
+        bayer-qcom-12bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8gbrg" translatable="false">
+        bayer-mipi-8gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8grbg" translatable="false">
+        bayer-mipi-8grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8rggb" translatable="false">
+        bayer-mipi-8rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_8bggr" translatable="false">
+        bayer-mipi-8bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10gbrg" translatable="false">
+        bayer-mipi-10gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10grbg" translatable="false">
+        bayer-mipi-10grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10rggb" translatable="false">
+        bayer-mipi-10rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_10bggr" translatable="false">
+        bayer-mipi-10bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12gbrg" translatable="false">
+        bayer-mipi-12gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12grbg" translatable="false">
+        bayer-mipi-12grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12rggb" translatable="false">
+        bayer-mipi-12rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_mipi_12bggr" translatable="false">
+        bayer-mipi-12bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8gbrg" translatable="false">
+        bayer-ideal-qcom-8gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8grbg" translatable="false">
+        bayer-ideal-qcom-8grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8rggb" translatable="false">
+        bayer-ideal-qcom-8rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_8bggr" translatable="false">
+        bayer-ideal-qcom-8bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10gbrg"
+        translatable="false">bayer-ideal-qcom-10gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10grbg"
+        translatable="false">bayer-ideal-qcom-10grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10rggb"
+        translatable="false">bayer-ideal-qcom-10rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_10bggr"
+        translatable="false">bayer-ideal-qcom-10bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12gbrg"
+        translatable="false">bayer-ideal-qcom-12gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12grbg"
+        translatable="false">bayer-ideal-qcom-12grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12rggb"
+        translatable="false">bayer-ideal-qcom-12rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_qcom_12bggr"
+        translatable="false">bayer-ideal-qcom-12bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8gbrg" translatable="false">
+        bayer-ideal-mipi-8gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8grbg" translatable="false">
+        bayer-ideal-mipi-8grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8rggb" translatable="false">
+        bayer-ideal-mipi-8rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_8bggr" translatable="false">
+        bayer-ideal-mipi-8bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10gbrg"
+        translatable="false">bayer-ideal-mipi-10gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10grbg"
+        translatable="false">bayer-ideal-mipi-10grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10rggb"
+        translatable="false">bayer-ideal-mipi-10rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_10bggr"
+        translatable="false">bayer-ideal-mipi-8bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12gbrg"
+        translatable="false">bayer-ideal-mipi-12gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12grbg"
+        translatable="false">bayer-ideal-mipi-12grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12rggb"
+        translatable="false">bayer-ideal-mipi-12rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_mipi_12bggr"
+        translatable="false">bayer-ideal-mipi-12bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8gbrg"
+        translatable="false">bayer-ideal-plain8-8gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8grbg"
+        translatable="false">bayer-ideal-plain8-8grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8rggb"
+        translatable="false">bayer-ideal-plain8-8rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain8_8bggr"
+        translatable="false">bayer-ideal-plain8-8bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8gbrg"
+        translatable="false">bayer-ideal-plain16-8gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8grbg"
+        translatable="false">bayer-ideal-plain16-8grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8rggb"
+        translatable="false">bayer-ideal-plain16-8rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_8bggr"
+        translatable="false">bayer-ideal-plain16-8bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10gbrg"
+        translatable="false">bayer-ideal-plain16-10gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10grbg"
+        translatable="false">bayer-ideal-plain16-10grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10rggb"
+        translatable="false">bayer-ideal-plain16-10rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_10bggr"
+        translatable="false">bayer-ideal-plain16-10bggr
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12gbrg"
+        translatable="false">bayer-ideal-plain16-12gbrg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12grbg"
+        translatable="false">bayer-ideal-plain16-12grbg
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12rggb"
+        translatable="false">bayer-ideal-plain16-12rggb
+    </string>
+    <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12bggr"
+        translatable="false">bayer-ideal-plain16-12bggr
+    </string>
     <!-- Settings screen, Picture quality title -->
     <string name="pref_camera_jpegquality_title">Picture quality</string>
 

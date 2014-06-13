@@ -31,24 +31,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class PlaceholderManager implements ImageTaskManager {
-    private static final String TAG = "PlaceholderManager";
-
     public static final String PLACEHOLDER_MIME_TYPE = "application/placeholder-image";
+    private static final String TAG = "PlaceholderManager";
     private final Context mContext;
 
     final private ArrayList<WeakReference<TaskListener>> mListenerRefs;
-
-    public static class Session {
-        String outputTitle;
-        Uri outputUri;
-        long time;
-
-        Session(String title, Uri uri, long timestamp) {
-            outputTitle = title;
-            outputUri = uri;
-            time = timestamp;
-        }
-    }
 
     public PlaceholderManager(Context context) {
         mContext = context;
@@ -100,36 +87,6 @@ public class PlaceholderManager implements ImageTaskManager {
         };
     }
 
-    private class ListenerIterator implements Iterator<TaskListener> {
-        private int mIndex = 0;
-        private TaskListener mNext = null;
-
-        @Override
-        public boolean hasNext() {
-            while (mNext == null && mIndex < mListenerRefs.size()) {
-                mNext = mListenerRefs.get(mIndex).get();
-                if (mNext == null) {
-                    mListenerRefs.remove(mIndex);
-                }
-            }
-            return mNext != null;
-        }
-
-        @Override
-        public TaskListener next() {
-            hasNext(); // Populates mNext
-            mIndex++;
-            TaskListener next = mNext;
-            mNext = null;
-            return next;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     public Session insertPlaceholder(String title, byte[] placeholder, long timestamp) {
         if (title == null || placeholder == null) {
             throw new IllegalArgumentException("Null argument passed to insertPlaceholder");
@@ -165,7 +122,7 @@ public class PlaceholderManager implements ImageTaskManager {
     }
 
     public void replacePlaceholder(Session session, Location location, int orientation,
-            ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
+                                   ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
 
         Storage.getInstance().updateImage(session.outputUri, mContext.getContentResolver(), session.outputTitle,
                 session.time, location, orientation, exif, jpeg, width, height, mimeType);
@@ -180,6 +137,48 @@ public class PlaceholderManager implements ImageTaskManager {
 
     public void removePlaceholder(Session session) {
         Storage.getInstance().deleteImage(mContext.getContentResolver(), session.outputUri);
+    }
+
+    public static class Session {
+        String outputTitle;
+        Uri outputUri;
+        long time;
+
+        Session(String title, Uri uri, long timestamp) {
+            outputTitle = title;
+            outputUri = uri;
+            time = timestamp;
+        }
+    }
+
+    private class ListenerIterator implements Iterator<TaskListener> {
+        private int mIndex = 0;
+        private TaskListener mNext = null;
+
+        @Override
+        public boolean hasNext() {
+            while (mNext == null && mIndex < mListenerRefs.size()) {
+                mNext = mListenerRefs.get(mIndex).get();
+                if (mNext == null) {
+                    mListenerRefs.remove(mIndex);
+                }
+            }
+            return mNext != null;
+        }
+
+        @Override
+        public TaskListener next() {
+            hasNext(); // Populates mNext
+            mIndex++;
+            TaskListener next = mNext;
+            mNext = null;
+            return next;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

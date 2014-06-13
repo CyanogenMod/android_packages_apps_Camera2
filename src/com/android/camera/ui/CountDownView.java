@@ -16,8 +16,6 @@
 
 package com.android.camera.ui;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -33,10 +31,13 @@ import android.widget.TextView;
 
 import com.android.camera2.R;
 
+import java.util.Locale;
+
 public class CountDownView extends FrameLayout {
 
     private static final String TAG = "CAM_CountDownView";
     private static final int SET_TIMER_TEXT = 1;
+    private final Handler mHandler = new MainHandler();
     private TextView mRemainingSecondsView;
     private int mRemainingSecs = 0;
     private OnCountDownFinishedListener mListener;
@@ -45,7 +46,6 @@ public class CountDownView extends FrameLayout {
     private int mBeepTwice;
     private int mBeepOnce;
     private boolean mPlaySound;
-    private final Handler mHandler = new MainHandler();
 
     public CountDownView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,11 +58,9 @@ public class CountDownView extends FrameLayout {
 
     public boolean isCountingDown() {
         return mRemainingSecs > 0;
-    };
-
-    public interface OnCountDownFinishedListener {
-        public void onCountDownFinished();
     }
+
+    ;
 
     private void remainingSecondsChanged(int newVal) {
         mRemainingSecs = newVal;
@@ -120,11 +118,15 @@ public class CountDownView extends FrameLayout {
         }
     }
 
+    public interface OnCountDownFinishedListener {
+        public void onCountDownFinished();
+    }
+
     private class MainHandler extends Handler {
         @Override
         public void handleMessage(Message message) {
             if (message.what == SET_TIMER_TEXT) {
-                remainingSecondsChanged(mRemainingSecs -1);
+                remainingSecondsChanged(mRemainingSecs - 1);
             }
         }
     }

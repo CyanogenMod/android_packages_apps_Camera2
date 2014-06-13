@@ -27,21 +27,14 @@ import android.util.Log;
  */
 public class LocationManager {
     private static final String TAG = "LocationManager";
-
+    LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListener(android.location.LocationManager.GPS_PROVIDER),
+            new LocationListener(android.location.LocationManager.NETWORK_PROVIDER)
+    };
     private Context mContext;
     private Listener mListener;
     private android.location.LocationManager mLocationManager;
     private boolean mRecordLocation;
-
-    LocationListener [] mLocationListeners = new LocationListener[] {
-            new LocationListener(android.location.LocationManager.GPS_PROVIDER),
-            new LocationListener(android.location.LocationManager.NETWORK_PROVIDER)
-    };
-
-    public interface Listener {
-        public void showGpsOnScreenIndicator(boolean hasSignal);
-        public void hideGpsOnScreenIndicator();
-   }
 
     public LocationManager(Context context, Listener listener) {
         mContext = context;
@@ -118,6 +111,12 @@ public class LocationManager {
         if (mListener != null) mListener.hideGpsOnScreenIndicator();
     }
 
+    public interface Listener {
+        public void showGpsOnScreenIndicator(boolean hasSignal);
+
+        public void hideGpsOnScreenIndicator();
+    }
+
     private class LocationListener
             implements android.location.LocationListener {
         Location mLastLocation;
@@ -161,7 +160,7 @@ public class LocationManager {
         @Override
         public void onStatusChanged(
                 String provider, int status, Bundle extras) {
-            switch(status) {
+            switch (status) {
                 case LocationProvider.OUT_OF_SERVICE:
                 case LocationProvider.TEMPORARILY_UNAVAILABLE: {
                     mValid = false;

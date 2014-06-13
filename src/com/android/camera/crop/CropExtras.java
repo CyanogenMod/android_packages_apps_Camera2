@@ -49,8 +49,8 @@ public class CropExtras {
     private float mSpotlightY = 0;
 
     public CropExtras(int outputX, int outputY, boolean scaleUp, int aspectX, int aspectY,
-            boolean setAsWallpaper, boolean returnData, Uri extraOutput, String outputFormat,
-            boolean showWhenLocked, float spotlightX, float spotlightY) {
+                      boolean setAsWallpaper, boolean returnData, Uri extraOutput, String outputFormat,
+                      boolean showWhenLocked, float spotlightX, float spotlightY) {
         mOutputX = outputX;
         mOutputY = outputY;
         mScaleUp = scaleUp;
