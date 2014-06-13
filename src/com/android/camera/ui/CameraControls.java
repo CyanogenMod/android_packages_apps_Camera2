@@ -28,7 +28,6 @@ public class CameraControls extends RotatableLayout {
 
     private static final String TAG = "CAM_Controls";
 
-    private View mBackgroundView;
     private View mShutter;
     private View mSwitcher;
     private View mMenu;
@@ -51,7 +50,6 @@ public class CameraControls extends RotatableLayout {
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
-        mBackgroundView = findViewById(R.id.blocker);
         mSwitcher = findViewById(R.id.camera_switcher);
         mShutter = findViewById(R.id.shutter_button);
         mMenu = findViewById(R.id.menu);
@@ -67,7 +65,6 @@ public class CameraControls extends RotatableLayout {
         int orientation = getResources().getConfiguration().orientation;
         int size = getResources().getDimensionPixelSize(R.dimen.camera_controls_size);
         int rotation = getUnifiedRotation();
-        adjustBackground();
         // As l,t,r,b are positions relative to parents, we need to convert them
         // to child's coordinates
         r = r - l;
@@ -83,21 +80,20 @@ public class CameraControls extends RotatableLayout {
         if (size > 0) {
             // restrict controls to size
             switch (rotation) {
-            case 0:
-            case 180:
-                l = (l + r - size) / 2;
-                r = l + size;
-                break;
-            case 90:
-            case 270:
-                t = (t + b - size) / 2;
-                b = t + size;
-                break;
+                case 0:
+                case 180:
+                    l = (l + r - size) / 2;
+                    r = l + size;
+                    break;
+                case 90:
+                case 270:
+                    t = (t + b - size) / 2;
+                    b = t + size;
+                    break;
             }
         }
         center(mSpinner, new Rect(l, t, r, b), orientation);
         center(mShutter, l, t, r, b, orientation, rotation, shutter);
-        center(mBackgroundView, l, t, r, b, orientation, rotation, new Rect());
         toLeft(mSwitcher, shutter, rotation);
         toRight(mMenu, shutter, rotation);
         toRight(mIndicators, shutter, rotation);
@@ -117,8 +113,8 @@ public class CameraControls extends RotatableLayout {
                 } else {
                     topLeft(mBurstMode, l, t, r, b);
                     toRight(mSceneDetect, new Rect(mBurstMode.getLeft(),
-                                mBurstMode.getTop(), mBurstMode.getRight(),
-                                mBurstMode.getBottom()), rotation);
+                            mBurstMode.getTop(), mBurstMode.getRight(),
+                            mBurstMode.getBottom()), rotation);
                 }
                 break;
             case 90:
@@ -127,8 +123,8 @@ public class CameraControls extends RotatableLayout {
                 } else {
                     topLeft(mBurstMode, l, t, r, b);
                     toLeft(mSceneDetect, new Rect(mBurstMode.getLeft(),
-                                mBurstMode.getTop(), mBurstMode.getRight(),
-                                mBurstMode.getBottom()), rotation);
+                            mBurstMode.getTop(), mBurstMode.getRight(),
+                            mBurstMode.getBottom()), rotation);
                 }
                 break;
             case 270:
@@ -137,8 +133,8 @@ public class CameraControls extends RotatableLayout {
                 } else {
                     topRight(mBurstMode, l, t, r, b);
                     toRight(mSceneDetect, new Rect(mBurstMode.getLeft(),
-                                mBurstMode.getTop(), mBurstMode.getRight(),
-                                mBurstMode.getBottom()), rotation);
+                            mBurstMode.getTop(), mBurstMode.getRight(),
+                            mBurstMode.getBottom()), rotation);
                 }
                 break;
         }
@@ -149,34 +145,34 @@ public class CameraControls extends RotatableLayout {
         int tw = lp.leftMargin + v.getMeasuredWidth() + lp.rightMargin;
         int th = lp.topMargin + v.getMeasuredHeight() + lp.bottomMargin;
         switch (rotation) {
-        case 0:
-            // phone portrait; controls bottom
-            result.left = (r + l) / 2 - tw / 2 + lp.leftMargin;
-            result.right = (r + l) / 2 + tw / 2 - lp.rightMargin;
-            result.bottom = b - lp.bottomMargin;
-            result.top = b - th + lp.topMargin;
-            break;
-        case 90:
-            // phone landscape: controls right
-            result.right = r - lp.rightMargin;
-            result.left = r - tw + lp.leftMargin;
-            result.top = (b + t) / 2 - th / 2 + lp.topMargin;
-            result.bottom = (b + t) / 2 + th / 2 - lp.bottomMargin;
-            break;
-        case 180:
-            // phone upside down: controls top
-            result.left = (r + l) / 2 - tw / 2 + lp.leftMargin;
-            result.right = (r + l) / 2 + tw / 2 - lp.rightMargin;
-            result.top = t + lp.topMargin;
-            result.bottom = t + th - lp.bottomMargin;
-            break;
-        case 270:
-            // reverse landscape: controls left
-            result.left = l + lp.leftMargin;
-            result.right = l + tw - lp.rightMargin;
-            result.top = (b + t) / 2 - th / 2 + lp.topMargin;
-            result.bottom = (b + t) / 2 + th / 2 - lp.bottomMargin;
-            break;
+            case 0:
+                // phone portrait; controls bottom
+                result.left = (r + l) / 2 - tw / 2 + lp.leftMargin;
+                result.right = (r + l) / 2 + tw / 2 - lp.rightMargin;
+                result.bottom = b - lp.bottomMargin;
+                result.top = b - th + lp.topMargin;
+                break;
+            case 90:
+                // phone landscape: controls right
+                result.right = r - lp.rightMargin;
+                result.left = r - tw + lp.leftMargin;
+                result.top = (b + t) / 2 - th / 2 + lp.topMargin;
+                result.bottom = (b + t) / 2 + th / 2 - lp.bottomMargin;
+                break;
+            case 180:
+                // phone upside down: controls top
+                result.left = (r + l) / 2 - tw / 2 + lp.leftMargin;
+                result.right = (r + l) / 2 + tw / 2 - lp.rightMargin;
+                result.top = t + lp.topMargin;
+                result.bottom = t + th - lp.bottomMargin;
+                break;
+            case 270:
+                // reverse landscape: controls left
+                result.left = l + lp.leftMargin;
+                result.right = l + tw - lp.rightMargin;
+                result.top = (b + t) / 2 - th / 2 + lp.topMargin;
+                result.bottom = (b + t) / 2 + th / 2 - lp.bottomMargin;
+                break;
         }
         v.layout(result.left, result.top, result.right, result.bottom);
     }
@@ -201,34 +197,34 @@ public class CameraControls extends RotatableLayout {
         int cy = (other.top + other.bottom) / 2;
         int l = 0, r = 0, t = 0, b = 0;
         switch (rotation) {
-        case 0:
-            // portrait, to left of anchor at bottom
-            l = other.left - tw + lp.leftMargin;
-            r = other.left - lp.rightMargin;
-            t = cy - th / 2 + lp.topMargin;
-            b = cy + th / 2 - lp.bottomMargin;
-            break;
-        case 90:
-            // phone landscape: below anchor on right
-            l = cx - tw / 2 + lp.leftMargin;
-            r = cx + tw / 2 - lp.rightMargin;
-            t = other.bottom + lp.topMargin;
-            b = other.bottom + th - lp.bottomMargin;
-            break;
-        case 180:
-            // phone upside down: right of anchor at top
-            l = other.right + lp.leftMargin;
-            r = other.right + tw - lp.rightMargin;
-            t = cy - th / 2 + lp.topMargin;
-            b = cy + th / 2 - lp.bottomMargin;
-            break;
-        case 270:
-            // reverse landscape: above anchor on left
-            l = cx - tw / 2 + lp.leftMargin;
-            r = cx + tw / 2 - lp.rightMargin;
-            t = other.top - th + lp.topMargin;
-            b = other.top - lp.bottomMargin;
-            break;
+            case 0:
+                // portrait, to left of anchor at bottom
+                l = other.left - tw + lp.leftMargin;
+                r = other.left - lp.rightMargin;
+                t = cy - th / 2 + lp.topMargin;
+                b = cy + th / 2 - lp.bottomMargin;
+                break;
+            case 90:
+                // phone landscape: below anchor on right
+                l = cx - tw / 2 + lp.leftMargin;
+                r = cx + tw / 2 - lp.rightMargin;
+                t = other.bottom + lp.topMargin;
+                b = other.bottom + th - lp.bottomMargin;
+                break;
+            case 180:
+                // phone upside down: right of anchor at top
+                l = other.right + lp.leftMargin;
+                r = other.right + tw - lp.rightMargin;
+                t = cy - th / 2 + lp.topMargin;
+                b = cy + th / 2 - lp.bottomMargin;
+                break;
+            case 270:
+                // reverse landscape: above anchor on left
+                l = cx - tw / 2 + lp.leftMargin;
+                r = cx + tw / 2 - lp.rightMargin;
+                t = other.top - th + lp.topMargin;
+                b = other.top - lp.bottomMargin;
+                break;
         }
         v.layout(l, t, r, b);
     }
@@ -241,30 +237,30 @@ public class CameraControls extends RotatableLayout {
         int cy = (other.top + other.bottom) / 2;
         int l = 0, r = 0, t = 0, b = 0;
         switch (rotation) {
-        case 0:
-            l = other.right + lp.leftMargin;
-            r = other.right + tw - lp.rightMargin;
-            t = cy - th / 2 + lp.topMargin;
-            b = cy + th / 2 - lp.bottomMargin;
-            break;
-        case 90:
-            l = cx - tw / 2 + lp.leftMargin;
-            r = cx + tw / 2 - lp.rightMargin;
-            t = other.top - th + lp.topMargin;
-            b = other.top - lp.bottomMargin;
-            break;
-        case 180:
-            l = other.left - tw + lp.leftMargin;
-            r = other.left - lp.rightMargin;
-            t = cy - th / 2 + lp.topMargin;
-            b = cy + th / 2 - lp.bottomMargin;
-            break;
-        case 270:
-            l = cx - tw / 2 + lp.leftMargin;
-            r = cx + tw / 2 - lp.rightMargin;
-            t = other.bottom + lp.topMargin;
-            b = other.bottom + th - lp.bottomMargin;
-            break;
+            case 0:
+                l = other.right + lp.leftMargin;
+                r = other.right + tw - lp.rightMargin;
+                t = cy - th / 2 + lp.topMargin;
+                b = cy + th / 2 - lp.bottomMargin;
+                break;
+            case 90:
+                l = cx - tw / 2 + lp.leftMargin;
+                r = cx + tw / 2 - lp.rightMargin;
+                t = other.top - th + lp.topMargin;
+                b = other.top - lp.bottomMargin;
+                break;
+            case 180:
+                l = other.left - tw + lp.leftMargin;
+                r = other.left - lp.rightMargin;
+                t = cy - th / 2 + lp.topMargin;
+                b = cy + th / 2 - lp.bottomMargin;
+                break;
+            case 270:
+                l = cx - tw / 2 + lp.leftMargin;
+                r = cx + tw / 2 - lp.rightMargin;
+                t = other.bottom + lp.topMargin;
+                b = other.bottom + th - lp.bottomMargin;
+                break;
         }
         v.layout(l, t, r, b);
     }
@@ -282,26 +278,4 @@ public class CameraControls extends RotatableLayout {
         int ml = getContext().getResources().getDimensionPixelSize(R.dimen.capture_margin_left);
         v.layout(l + ml, t + mt, l + v.getMeasuredWidth() + ml, t + mt + v.getMeasuredHeight());
     }
-
-    private void adjustBackground() {
-        int rotation = getUnifiedRotation();
-        // remove current drawable and reset rotation
-        mBackgroundView.setBackgroundDrawable(null);
-        mBackgroundView.setRotationX(0);
-        mBackgroundView.setRotationY(0);
-        // if the switcher background is top aligned we need to flip the background
-        // drawable vertically; if left aligned, flip horizontally
-        switch (rotation) {
-            case 180:
-                mBackgroundView.setRotationX(180);
-                break;
-            case 270:
-                mBackgroundView.setRotationY(180);
-                break;
-            default:
-                break;
-        }
-        mBackgroundView.setBackgroundResource(R.drawable.switcher_bg);
-    }
-
 }

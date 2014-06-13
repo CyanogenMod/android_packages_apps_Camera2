@@ -26,8 +26,10 @@ import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
@@ -38,7 +40,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.media.CameraProfile;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,13 +48,14 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.provider.MediaStore;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -85,13 +87,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Vector;
-import java.util.HashMap;
-
-import android.util.AttributeSet;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.SystemProperties;
 
 public class PhotoModule
         implements CameraModule,
@@ -103,24 +98,14 @@ public class PhotoModule
         OnCountDownFinishedListener,
         SensorEventListener {
 
+    public static final String PIXEL_FORMAT_JPEG = "jpeg";
     private static final String TAG = "CAM_PhotoModule";
-
-   //QCom data members
+    //QCom data members
     private static final int MAX_SHARPNESS_LEVEL = 6;
-    private boolean mRestartPreview = false;
-    private int mSnapshotMode;
-    private int mBurstSnapNum = 1;
-    private int mReceivedSnapNum = 0;
-    public boolean mFaceDetectionEnabled = false;
-
-   /*Histogram variables*/
-    private GraphView mGraphView;
     private static final int STATS_DATA = 257;
     public static int statsdata[] = new int[STATS_DATA];
-    public boolean mHiston = false;
     // We number the request code from 1000 to avoid collision with Gallery.
     private static final int REQUEST_CROP = 1000;
-
     private static final int SETUP_PREVIEW = 1;
     private static final int FIRST_TIME_INIT = 2;
     private static final int CLEAR_SCREEN_DELAY = 3;
@@ -137,19 +122,64 @@ public class PhotoModule
     private static final int CONFIGURE_SKIN_TONE_FACTOR = 14;
     private static final int UPDATE_ASD_ICON = 16;
     private static final int CLEAR_ASD_ICON = 17;
-
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
     private static final int UPDATE_PARAM_ZOOM = 2;
     private static final int UPDATE_PARAM_PREFERENCE = 4;
     private static final int UPDATE_PARAM_ALL = -1;
-
     // This is the delay before we execute onResume tasks when coming
     // from the lock screen, to allow time for onPause to execute.
     private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
-
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
-
+    private static final int SCREEN_DELAY = 2 * 60 * 1000;
+    private static final String sTempCropFilename = "crop-temp";
+    private static final String PERSIST_LONG_SAVE = "persist.camera.longshot.save";
+    // Constant from android.hardware.Camera.Parameters
+    private static final String KEY_PICTURE_FORMAT = "picture-format";
+    private static final String KEY_QC_RAW_PICUTRE_SIZE = "raw-size";
+    private static final int MIN_SCE_FACTOR = -10;
+    private static final int MAX_SCE_FACTOR = +10;
+    /**
+     * An unpublished intent flag requesting to return as soon as capturing
+     * is completed.
+     * <p/>
+     * TODO: consider publishing by moving into MediaStore.
+     */
+    private static final String EXTRA_QUICK_CAPTURE =
+            "android.intent.extra.quickCapture";
+    private final PostViewPictureCallback mPostViewPictureCallback =
+            new PostViewPictureCallback();
+    private final RawPictureCallback mRawPictureCallback =
+            new RawPictureCallback();
+    private final AutoFocusCallback mAutoFocusCallback =
+            new AutoFocusCallback();
+    private final Object mAutoFocusMoveCallback =
+            ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK
+                    ? new AutoFocusMoveCallback()
+                    : null;
+    private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
+    private final StatsCallback mStatsCallback = new StatsCallback();
+    private final ASDMetadataCallback mASDCallback = new ASDMetadataCallback();
+    private final Handler mHandler = new MainHandler();
+    public boolean mFaceDetectionEnabled = false;
+    public boolean mHiston = false;
+    // These latency time are for the CameraLatency test.
+    public long mAutoFocusTime;
+    public long mShutterLag;
+    public long mShutterToPictureDisplayedTime;
+    public long mPictureDisplayedToJpegCallbackTime;
+    public long mJpegCallbackFinishTime;
+    public long mCaptureStartTime;
+    // The activity is going to switch to the specified camera id. This is
+    // needed because texture copy is done in GL thread. -1 means camera is not
+    // switching.
+    protected int mPendingSwitchCameraId = -1;
+    private boolean mRestartPreview = false;
+    private int mSnapshotMode;
+    private int mBurstSnapNum = 1;
+    private int mReceivedSnapNum = 0;
+    /*Histogram variables*/
+    private GraphView mGraphView;
     // copied from Camera hierarchy
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
@@ -157,24 +187,13 @@ public class PhotoModule
     private Parameters mParameters;
     private boolean mPaused;
     private View mRootView;
-
     private PhotoUI mUI;
-
-    // The activity is going to switch to the specified camera id. This is
-    // needed because texture copy is done in GL thread. -1 means camera is not
-    // switching.
-    protected int mPendingSwitchCameraId = -1;
     private boolean mOpenCameraFail;
     private boolean mCameraDisabled;
-
     // When setCameraParametersWhenIdle() is called, we accumulate the subsets
     // needed to be updated in mUpdateSet.
     private int mUpdateSet;
-
-    private static final int SCREEN_DELAY = 2 * 60 * 1000;
-
     private int mZoomValue;  // The current zoom value.
-
     private Parameters mInitialParams;
     private boolean mFocusAreaSupported;
     private boolean mMeteringAreaSupported;
@@ -182,60 +201,64 @@ public class PhotoModule
     private boolean mAwbLockSupported;
     private boolean mContinuousFocusSupported;
     private boolean mLongshotSave = false;
-
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
     private ComboPreferences mPreferences;
-
-    private static final String sTempCropFilename = "crop-temp";
-
     private ContentProviderClient mMediaProviderClient;
     private boolean mFaceDetectionStarted = false;
-
-    private static final String PERSIST_LONG_SAVE = "persist.camera.longshot.save";
-
-    // Constant from android.hardware.Camera.Parameters
-    private static final String KEY_PICTURE_FORMAT = "picture-format";
-    private static final String KEY_QC_RAW_PICUTRE_SIZE = "raw-size";
-    public static final String PIXEL_FORMAT_JPEG = "jpeg";
-
-    private static final int MIN_SCE_FACTOR = -10;
-    private static final int MAX_SCE_FACTOR = +10;
     private int SCE_FACTOR_STEP = 10;
     private int mskinToneValue = 0;
-    private boolean mSkinToneSeekBar= false;
+    private OnSeekBarChangeListener mskinToneSeekListener = new OnSeekBarChangeListener() {
+        public void onStartTrackingTouch(SeekBar bar) {
+            // no support
+        }
+
+        public void onProgressChanged(SeekBar bar, int progress, boolean fromtouch) {
+            int value = (progress + MIN_SCE_FACTOR) * SCE_FACTOR_STEP;
+            if (progress > (MAX_SCE_FACTOR - MIN_SCE_FACTOR) / 2) {
+                RightValue.setText(String.valueOf(value));
+                LeftValue.setText("");
+            } else if (progress < (MAX_SCE_FACTOR - MIN_SCE_FACTOR) / 2) {
+                LeftValue.setText(String.valueOf(value));
+                RightValue.setText("");
+            } else {
+                LeftValue.setText("");
+                RightValue.setText("");
+            }
+            if (value != mskinToneValue && mCameraDevice != null) {
+                mskinToneValue = value;
+                Message msg = mHandler.obtainMessage(CONFIGURE_SKIN_TONE_FACTOR, mskinToneValue, 0);
+                mHandler.sendMessage(msg);
+            }
+        }
+
+        public void onStopTrackingTouch(SeekBar bar) {
+            Log.v(TAG, "Set onStopTrackingTouch mskinToneValue = " + mskinToneValue);
+            Editor editor = mPreferences.edit();
+            editor.putString(CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR,
+                    Integer.toString(mskinToneValue));
+            editor.apply();
+        }
+    };
+    private boolean mSkinToneSeekBar = false;
     private boolean mSeekBarInitialized = false;
     private SeekBar skinToneSeekBar;
     private TextView LeftValue;
     private TextView RightValue;
     private TextView Title;
-
     // mCropValue and mSaveUri are used only if isImageCaptureIntent() is true.
     private String mCropValue;
     private Uri mSaveUri;
-
     private Uri mDebugUri;
-
     // We use a queue to generated names of the images to be used later
     // when the image is ready to be saved.
     private NamedImages mNamedImages;
-
     private Runnable mDoSnapRunnable = new Runnable() {
         @Override
         public void run() {
             onShutterButtonClick();
         }
     };
-
-    /**
-     * An unpublished intent flag requesting to return as soon as capturing
-     * is completed.
-     *
-     * TODO: consider publishing by moving into MediaStore.
-     */
-    private static final String EXTRA_QUICK_CAPTURE =
-            "android.intent.extra.quickCapture";
-
     // The display rotation in degrees. This is only valid when mCameraState is
     // not PREVIEW_STOPPED.
     private int mDisplayRotation;
@@ -249,30 +272,10 @@ public class PhotoModule
     private boolean mMirror;
     private boolean mFirstTimeInitialized;
     private boolean mIsImageCaptureIntent;
-
     private int mCameraState = PREVIEW_STOPPED;
     private boolean mSnapshotOnIdle = false;
-
     private ContentResolver mContentResolver;
-
     private LocationManager mLocationManager;
-
-    private final PostViewPictureCallback mPostViewPictureCallback =
-            new PostViewPictureCallback();
-    private final RawPictureCallback mRawPictureCallback =
-            new RawPictureCallback();
-    private final AutoFocusCallback mAutoFocusCallback =
-            new AutoFocusCallback();
-    private final Object mAutoFocusMoveCallback =
-            ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK
-                    ? new AutoFocusMoveCallback()
-                    : null;
-
-    private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
-    private final StatsCallback mStatsCallback = new StatsCallback();
-
-    private final ASDMetadataCallback mASDCallback = new ASDMetadataCallback();
-
     private long mFocusStartTime;
     private long mShutterCallbackTime;
     private long mPostViewPictureCallbackTime;
@@ -280,43 +283,24 @@ public class PhotoModule
     private long mJpegPictureCallbackTime;
     private long mOnResumeTime;
     private byte[] mJpegImageData;
-
-    // These latency time are for the CameraLatency test.
-    public long mAutoFocusTime;
-    public long mShutterLag;
-    public long mShutterToPictureDisplayedTime;
-    public long mPictureDisplayedToJpegCallbackTime;
-    public long mJpegCallbackFinishTime;
-    public long mCaptureStartTime;
-
     // This handles everything about focus.
     private FocusOverlayManager mFocusManager;
-
     private String mSceneMode;
-
-    private final Handler mHandler = new MainHandler();
     private MessageQueue.IdleHandler mIdleHandler = null;
-
     private PreferenceGroup mPreferenceGroup;
-
     // Burst mode
     private int mBurstShotsDone = 0;
     private boolean mBurstShotInProgress = false;
-
     private boolean mQuickCapture;
-
     private boolean mSceneDetection = false;
     private String[] mASDModes;
-
     private SensorManager mSensorManager;
     private float[] mGData = new float[3];
     private float[] mMData = new float[3];
     private float[] mR = new float[16];
     private int mHeading = -1;
-
     // True if all the parameters needed to start preview is ready.
     private boolean mCameraPreviewParamsReady = false;
-
     private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
                 @Override
@@ -345,137 +329,6 @@ public class PhotoModule
             }, 100);
         }
     }
-
-    /**
-     * This Handler is used to post message back onto the main thread of the
-     * application
-     */
-    private class MainHandler extends Handler {
-        public MainHandler() {
-            super(Looper.getMainLooper());
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SETUP_PREVIEW: {
-                    setupPreview();
-                    break;
-                }
-
-                case CLEAR_SCREEN_DELAY: {
-                    mActivity.getWindow().clearFlags(
-                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    break;
-                }
-
-                case FIRST_TIME_INIT: {
-                    initializeFirstTime();
-                    break;
-                }
-
-                case SET_CAMERA_PARAMETERS_WHEN_IDLE: {
-                    setCameraParametersWhenIdle(0);
-                    break;
-                }
-
-                case SHOW_TAP_TO_FOCUS_TOAST: {
-                    showTapToFocusToast();
-                    break;
-                }
-
-                case SWITCH_CAMERA: {
-                    switchCamera();
-                    break;
-                }
-
-                case SWITCH_CAMERA_START_ANIMATION: {
-                    // TODO: Need to revisit
-                    // ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
-                    break;
-                }
-
-                case CAMERA_OPEN_DONE: {
-                    onCameraOpened();
-                    break;
-                }
-
-                case OPEN_CAMERA_FAIL: {
-                    mOpenCameraFail = true;
-                    CameraUtil.showErrorAndFinish(mActivity,
-                            R.string.cannot_connect_camera);
-                    break;
-                }
-
-                case CAMERA_DISABLED: {
-                    mCameraDisabled = true;
-                    CameraUtil.showErrorAndFinish(mActivity,
-                            R.string.camera_disabled);
-                    break;
-                }
-               case SET_SKIN_TONE_FACTOR: {
-                    Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
-                    setSkinToneFactor();
-                    mSeekBarInitialized = true;
-                    // skin tone ie enabled only for party and portrait BSM
-                    // when color effects are not enabled
-                    String colorEffect = mPreferences.getString(
-                        CameraSettings.KEY_COLOR_EFFECT,
-                        mActivity.getString(R.string.pref_camera_coloreffect_default));
-                    if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
-                        Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode))&&
-                        (Parameters.EFFECT_NONE.equals(colorEffect))) {
-                        ;
-                    }
-                    else{
-                        Log.v(TAG, "Skin tone bar: disable");
-                        disableSkinToneSeekBar();
-                    }
-                    break;
-               }
-               case SET_PHOTO_UI_PARAMS: {
-                    setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-                    mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
-                        mPreferences);
-                    break;
-               }
-
-                case SWITCH_TO_GCAM_MODULE: {
-                    mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
-                }
-
-                case CONFIGURE_SKIN_TONE_FACTOR: {
-                     if ((mCameraDevice != null) && isCameraIdle()) {
-                         synchronized (mCameraDevice) {
-                             mParameters = mCameraDevice.getParameters();
-                             mParameters.set("skinToneEnhancement", String.valueOf(msg.arg1));
-                             mCameraDevice.setParameters(mParameters);
-                         }
-                    }
-                    break;
-                }
-                case UPDATE_ASD_ICON: {
-                    if (!mSceneDetection) {
-                        mUI.updateSceneDetectionIcon(null);
-                        break;
-                    }
-                    if (mCameraState == IDLE) {
-                        mCameraDevice.refreshParameters();
-                        String scene = mCameraDevice.getParameters().get("asd-mode");
-                        Log.d(TAG, "detected scene=" + scene + " camstate=" +mCameraState);
-                        mUI.updateSceneDetectionIcon(scene);
-                    }
-                    mHandler.sendEmptyMessageDelayed(UPDATE_ASD_ICON, 2000);
-                    break;
-                }
-                case CLEAR_ASD_ICON: {
-                    mUI.updateSceneDetectionIcon(null);
-                    break;
-                }
-            }
-        }
-    }
-
 
     @Override
     public void init(CameraActivity activity, View parent) {
@@ -509,14 +362,14 @@ public class PhotoModule
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = new LocationManager(mActivity, mUI);
-        mSensorManager = (SensorManager)(mActivity.getSystemService(Context.SENSOR_SERVICE));
+        mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
 
         skinToneSeekBar = (SeekBar) mRootView.findViewById(R.id.skintoneseek);
         skinToneSeekBar.setOnSeekBarChangeListener(mskinToneSeekListener);
         skinToneSeekBar.setVisibility(View.INVISIBLE);
-        Title = (TextView)mRootView.findViewById(R.id.skintonetitle);
-        RightValue = (TextView)mRootView.findViewById(R.id.skintoneright);
-        LeftValue = (TextView)mRootView.findViewById(R.id.skintoneleft);
+        Title = (TextView) mRootView.findViewById(R.id.skintonetitle);
+        RightValue = (TextView) mRootView.findViewById(R.id.skintoneright);
+        LeftValue = (TextView) mRootView.findViewById(R.id.skintoneleft);
 
         mASDModes = mActivity.getResources().getStringArray(R.array.asdModes);
     }
@@ -674,26 +527,26 @@ public class PhotoModule
         }
     }
 
-    void setPreviewFrameLayoutCameraOrientation(){
+    void setPreviewFrameLayoutCameraOrientation() {
         CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
         //if camera mount angle is 0 or 180, we want to resize preview
-        if (info.orientation % 180 == 0){
+        if (info.orientation % 180 == 0) {
             mUI.cameraOrientationPreviewResize(true);
-        } else{
+        } else {
             mUI.cameraOrientationPreviewResize(false);
         }
     }
 
     @Override
     public void resizeForPreviewAspectRatio() {
-        if ( mCameraDevice == null || mParameters == null) {
+        if (mCameraDevice == null || mParameters == null) {
             Log.e(TAG, "Camera not yet initialized");
             return;
         }
         setPreviewFrameLayoutCameraOrientation();
         if (mParameters != null) {
             Size size = mParameters.getPreviewSize();
-            Log.e(TAG,"Width = "+ size.width+ "Height = "+size.height);
+            Log.e(TAG, "Width = " + size.width + "Height = " + size.height);
             mUI.setAspectRatio((float) size.width / size.height);
         }
     }
@@ -733,10 +586,10 @@ public class PhotoModule
         }
 
         mNamedImages = new NamedImages();
-         mGraphView = (GraphView)mRootView.findViewById(R.id.graph_view);
-        if(mGraphView == null){
+        mGraphView = (GraphView) mRootView.findViewById(R.id.graph_view);
+        if (mGraphView == null) {
             Log.e(TAG, "mGraphView is null");
-        } else{
+        } else {
             mGraphView.setPhotoModuleObject(this);
         }
 
@@ -801,7 +654,7 @@ public class PhotoModule
     @Override
     public void startFaceDetection() {
         if (mFaceDetectionEnabled == false
-               || mFaceDetectionStarted || mCameraState != IDLE) return;
+                || mFaceDetectionStarted || mCameraState != IDLE) return;
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = true;
             CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
@@ -821,520 +674,10 @@ public class PhotoModule
             mCameraDevice.stopFaceDetection();
             mHandler.postDelayed(new Runnable() {
                 @Override
-                public void run(){
+                public void run() {
                     mUI.clearFaces();
                 }
             }, 100);
-        }
-    }
-
-    private final class ASDMetadataCallback implements CameraMetadataCallback {
-        @Override
-        public void onCameraMetadata(byte[] data, CameraProxy camera) {
-            if (!mSceneDetection)
-                return;
-
-            if (data != null && data.length >= 8) {
-                int type = CameraUtil.byteArrayToInt(data, 0);
-                switch (type) {
-                    case CameraSettings.META_DATA_ASD:
-                        // ASD result is just a 32-bit integer
-                        if (data.length >= 12) {
-                            int asdMode = CameraUtil.byteArrayToInt(data, 8);
-                            if (asdMode < mASDModes.length) {
-                                Log.d(TAG, "ASD: value=" + asdMode + " asdMode=" + mASDModes[asdMode]);
-                                mUI.updateSceneDetectionIcon(mASDModes[asdMode]);
-                            }
-                        }
-                }
-            }
-        }
-    }
-    private final class LongshotShutterCallback
-            implements CameraShutterCallback {
-
-        @Override
-        public void onShutter(CameraProxy camera) {
-            mShutterCallbackTime = System.currentTimeMillis();
-            mShutterLag = mShutterCallbackTime - mCaptureStartTime;
-            Log.e(TAG, "[KPI Perf] PROFILE_SHUTTER_LAG mShutterLag = " + mShutterLag + "ms");
-            synchronized(mCameraDevice) {
-
-                if (mCameraState != LONGSHOT) {
-                    return;
-                }
-
-                if (mLongshotSave) {
-                    mCameraDevice.takePicture(mHandler,
-                            new LongshotShutterCallback(),
-                            mRawPictureCallback, mPostViewPictureCallback,
-                            new LongshotPictureCallback(null));
-                } else {
-                    mCameraDevice.takePicture(mHandler,new LongshotShutterCallback(),
-                            mRawPictureCallback, mPostViewPictureCallback,
-                            new JpegPictureCallback(null));
-                }
-            }
-        }
-    }
-
-    private final class ShutterCallback
-            implements CameraShutterCallback {
-
-        private boolean mNeedsAnimation;
-
-        public ShutterCallback(boolean needsAnimation) {
-            mNeedsAnimation = needsAnimation;
-        }
-
-        @Override
-        public void onShutter(CameraProxy camera) {
-            mShutterCallbackTime = System.currentTimeMillis();
-            mShutterLag = mShutterCallbackTime - mCaptureStartTime;
-            Log.e(TAG, "[KPI Perf] PROFILE_SHUTTER_LAG mShutterLag = " + mShutterLag + "ms");
-            if (mNeedsAnimation) {
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateAfterShutter();
-                    }
-                });
-            }
-        }
-    }
-    private final class StatsCallback
-           implements android.hardware.Camera.CameraDataCallback {
-            @Override
-        public void onCameraData(int [] data, android.hardware.Camera camera) {
-            //if(!mPreviewing || !mHiston || !mFirstTimeInitialized){
-            if(!mHiston || !mFirstTimeInitialized){
-                return;
-            }
-            /*The first element in the array stores max hist value . Stats data begin from second value*/
-            synchronized(statsdata) {
-                System.arraycopy(data,0,statsdata,0,STATS_DATA);
-            }
-            mActivity.runOnUiThread(new Runnable() {
-                public void run() {
-                    if(mGraphView != null)
-                        mGraphView.PreviewChanged();
-                }
-           });
-        }
-    }
-    private final class PostViewPictureCallback
-            implements CameraPictureCallback {
-        @Override
-        public void onPictureTaken(byte [] data, CameraProxy camera) {
-            mPostViewPictureCallbackTime = System.currentTimeMillis();
-            Log.v(TAG, "mShutterToPostViewCallbackTime = "
-                    + (mPostViewPictureCallbackTime - mShutterCallbackTime)
-                    + "ms");
-        }
-    }
-
-    private final class RawPictureCallback
-            implements CameraPictureCallback {
-        @Override
-        public void onPictureTaken(byte [] rawData, CameraProxy camera) {
-            mRawPictureCallbackTime = System.currentTimeMillis();
-            Log.v(TAG, "mShutterToRawCallbackTime = "
-                    + (mRawPictureCallbackTime - mShutterCallbackTime) + "ms");
-        }
-    }
-
-    private final class LongshotPictureCallback implements CameraPictureCallback {
-        Location mLocation;
-
-        public LongshotPictureCallback(Location loc) {
-            mLocation = loc;
-        }
-
-        @Override
-        public void onPictureTaken(final byte [] jpegData, CameraProxy camera) {
-            if (mPaused) {
-                return;
-            }
-
-            mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
-
-            String jpegFilePath = new String(jpegData);
-            mNamedImages.nameNewImage(mCaptureStartTime);
-            NamedEntity name = mNamedImages.getNextNameEntity();
-            String title = (name == null) ? null : name.title;
-            long date = (name == null) ? -1 : name.date;
-
-            if (title == null) {
-                Log.e(TAG, "Unbalanced name/data pair");
-                return;
-            }
-
-
-            if  (date == -1 ) {
-                Log.e(TAG, "Invalid filename date");
-                return;
-            }
-
-            String dstPath = Storage.getInstance().generateDirectory();
-            File sdCard = android.os.Environment.getExternalStorageDirectory();
-            File dstFile = new File(dstPath);
-            if (dstFile == null) {
-                Log.e(TAG, "Destination file path invalid");
-                return;
-            }
-
-            File srcFile = new File(jpegFilePath);
-            if (srcFile == null) {
-                Log.e(TAG, "Source file path invalid");
-                return;
-            }
-
-            if ( srcFile.renameTo(dstFile) ) {
-                Size s = mParameters.getPictureSize();
-                String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
-                mActivity.getMediaSaveService().addImage(
-                       null, title, date, mLocation, s.width, s.height,
-                       0, null, mOnMediaSavedListener, mContentResolver, pictureFormat);
-            } else {
-                Log.e(TAG, "Failed to move jpeg file");
-            }
-        }
-    }
-
-    private final class JpegPictureCallback
-            implements CameraPictureCallback {
-        Location mLocation;
-
-        public JpegPictureCallback(Location loc) {
-            mLocation = loc;
-        }
-
-        @Override
-        public void onPictureTaken(final byte [] jpegData, CameraProxy camera) {
-            mUI.enableShutter(true);
-            if (mPaused) {
-                return;
-            }
-            if (mIsImageCaptureIntent) {
-                stopPreview();
-            }
-            if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
-                mUI.showSwitcher();
-                mUI.setSwipingEnabled(true);
-            }
-
-            mReceivedSnapNum = mReceivedSnapNum + 1;
-            mJpegPictureCallbackTime = System.currentTimeMillis();
-            if(mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
-                Log.v(TAG, "JpegPictureCallback : in zslmode");
-                mParameters = mCameraDevice.getParameters();
-                mBurstSnapNum = CameraUtil.getNumSnapsPerShutter(mParameters);
-            }
-            Log.v(TAG, "JpegPictureCallback: Received = " + mReceivedSnapNum +
-                      "Burst count = " + mBurstSnapNum);
-
-            // If postview callback has arrived, the captured image is displayed
-            // in postview callback. If not, the captured image is displayed in
-            // raw picture callback.
-            if (mPostViewPictureCallbackTime != 0) {
-                mShutterToPictureDisplayedTime =
-                        mPostViewPictureCallbackTime - mShutterCallbackTime;
-                mPictureDisplayedToJpegCallbackTime =
-                        mJpegPictureCallbackTime - mPostViewPictureCallbackTime;
-            } else {
-                mShutterToPictureDisplayedTime =
-                        mRawPictureCallbackTime - mShutterCallbackTime;
-                mPictureDisplayedToJpegCallbackTime =
-                        mJpegPictureCallbackTime - mRawPictureCallbackTime;
-            }
-            Log.v(TAG, "mPictureDisplayedToJpegCallbackTime = "
-                    + mPictureDisplayedToJpegCallbackTime + "ms");
-
-            mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
-
-            boolean needRestartPreview = !mIsImageCaptureIntent
-                      && (mCameraState != LONGSHOT)
-                      && (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL)
-                      && (mReceivedSnapNum == mBurstSnapNum);
-
-            Log.v(TAG, "needRestartPreview=" + needRestartPreview + " mCameraState=" + mCameraState +
-                       " mReceivedSnapNum= " + mReceivedSnapNum + " mBurstSnapNum=" + mBurstSnapNum);
-
-            if (needRestartPreview) {
-                setupPreview();
-            }else if ((mReceivedSnapNum == mBurstSnapNum)
-                        && (mCameraState != LONGSHOT)) {
-                mFocusManager.restartTouchFocusTimer();
-                if ((CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
-                        mFocusManager.getFocusMode())) && (CameraUtil.cancelAutoFocusOnPreviewStopped()
-                        || mCameraState != PREVIEW_STOPPED)) {
-                    mCameraDevice.cancelAutoFocus();
-                }
-                mUI.resumeFaceDetection();
-                mCameraDevice.startPreview();
-                setCameraState(IDLE);
-            }
-
-            final ExifInterface exif = Exif.getExif(jpegData);
-            final int orientation = Exif.getOrientation(exif);
-            if (!mIsImageCaptureIntent) {
-                // Burst snapshot. Generate new image name.
-                if (mReceivedSnapNum > 1)
-                    mNamedImages.nameNewImage(mCaptureStartTime);
-
-                // Calculate the width and the height of the jpeg.
-                Size s = mParameters.getPictureSize();
-                boolean isSamsungHDR =
-                    (mSceneMode == CameraUtil.SCENE_MODE_HDR && CameraUtil.needSamsungHDRFormat());
-
-                int widths, heights;
-                if ((mJpegRotation + orientation) % 180 == 0 || isSamsungHDR) {
-                    widths = s.width;
-                    heights = s.height;
-                } else {
-                    widths = s.height;
-                    heights = s.width;
-                }
-
-                String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
-                if (pictureFormat != null && !pictureFormat.equalsIgnoreCase(PIXEL_FORMAT_JPEG)) {
-                    // overwrite width and height if raw picture
-                    String pair = mParameters.get(KEY_QC_RAW_PICUTRE_SIZE);
-                    if (pair != null) {
-                        int pos = pair.indexOf('x');
-                        if (pos != -1) {
-                            widths = Integer.parseInt(pair.substring(0, pos));
-                            heights = Integer.parseInt(pair.substring(pos + 1));
-                        }
-                    }
-                }
-                final int width = widths;
-                final int height = heights;
-                NamedEntity name = mNamedImages.getNextNameEntity();
-                String titleTemp = (name == null) ? null : name.title;
-                long date = (name == null) ? -1 : name.date;
-
-                // Handle debug mode outputs
-                if (mDebugUri != null) {
-                    // If using a debug uri, save jpeg there.
-                    saveToDebugUri(jpegData);
-
-                    // Adjust the title of the debug image shown in mediastore.
-                    if (titleTemp != null) {
-                        titleTemp = DEBUG_IMAGE_PREFIX + titleTemp;
-                    }
-                }
-
-                final String title = titleTemp;
-
-                if (title == null) {
-                    Log.e(TAG, "Unbalanced name/data pair");
-                } else {
-                    if (date == -1) date = mCaptureStartTime;
-                    if (mHeading >= 0) {
-                        // heading direction has been updated by the sensor.
-                        ExifTag directionRefTag = exif.buildTag(
-                                ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
-                                ExifInterface.GpsTrackRef.MAGNETIC_DIRECTION);
-                        ExifTag directionTag = exif.buildTag(
-                                ExifInterface.TAG_GPS_IMG_DIRECTION,
-                                new Rational(mHeading, 1));
-                        exif.setTag(directionRefTag);
-                        exif.setTag(directionTag);
-                    }
-                    final String mPictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
-                    if (isSamsungHDR) {
-                        final long finalDate = date;
-                        new Thread(new Runnable() {
-                            public void run() {
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                Bitmap bm = CameraUtil.decodeYUV422P(jpegData, width, height);
-                                if (mJpegRotation != 0) {
-                                    Matrix matrix = new Matrix();
-                                    matrix.postRotate(mJpegRotation);
-                                    bm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
-                                }
-
-                                bm.compress(Bitmap.CompressFormat.JPEG,
-                                            90,
-                                            baos);
-
-                                boolean rotated = (mJpegRotation % 180) != 0;
-
-                                mActivity.getMediaSaveService().addImage(
-                                    baos.toByteArray(), title, finalDate, mLocation,
-                                    rotated ? height : width, rotated ? width : height,
-                                    orientation,  exif, mOnMediaSavedListener, mContentResolver, mPictureFormat);
-                            }
-                        }).start();
-
-                    } else {
-                        mActivity.getMediaSaveService().addImage(
-                            jpegData, title, date, mLocation, width, height,
-                            orientation, exif, mOnMediaSavedListener, mContentResolver, mPictureFormat);
-                    }
-                }
-                // Animate capture with real jpeg data instead of a preview frame.
-                if (!mBurstShotInProgress && mCameraState != LONGSHOT
-                        && (mReceivedSnapNum == mBurstSnapNum)) {
-                    mUI.animateCapture(jpegData, orientation, mMirror,
-                            (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) &&
-                            (mSceneMode != CameraUtil.SCENE_MODE_HDR));
-                }
-            } else {
-                mJpegImageData = jpegData;
-                if (!mQuickCapture) {
-                    mUI.showCapturedImageForReview(jpegData, orientation, mMirror);
-                } else {
-                    onCaptureDone();
-                }
-            }
-
-            // Check this in advance of each shot so we don't add to shutter
-            // latency. It's true that someone else could write to the SD card in
-            // the mean time and fill it, but that could have happened between the
-            // shutter press and saving the JPEG too.
-            mActivity.updateStorageSpaceAndHint();
-
-            long now = System.currentTimeMillis();
-            mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
-            Log.v(TAG, "mJpegCallbackFinishTime = "
-                    + mJpegCallbackFinishTime + "ms");
-
-            if (mReceivedSnapNum == mBurstSnapNum)
-                mJpegPictureCallbackTime = 0;
-
-            if (mHiston && (mSnapshotMode ==CameraInfo.CAMERA_SUPPORT_MODE_ZSL)) {
-                mActivity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        if (mGraphView != null) {
-                            mGraphView.setVisibility(View.VISIBLE);
-                            mGraphView.PreviewChanged();
-                        }
-                    }
-                });
-            }
-            if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL &&
-                mCameraState != LONGSHOT &&
-                mReceivedSnapNum == mBurstSnapNum) {
-                cancelAutoFocus();
-            }
-
-            if (mSnapshotOnIdle && mBurstShotsDone > 0) {
-                mHandler.post(mDoSnapRunnable);
-            }
-        }
-    }
-
-    private OnSeekBarChangeListener mskinToneSeekListener = new OnSeekBarChangeListener() {
-        public void onStartTrackingTouch(SeekBar bar) {
-        // no support
-        }
-
-        public void onProgressChanged(SeekBar bar, int progress, boolean fromtouch) {
-            int value = (progress + MIN_SCE_FACTOR) * SCE_FACTOR_STEP;
-            if(progress > (MAX_SCE_FACTOR - MIN_SCE_FACTOR)/2){
-                RightValue.setText(String.valueOf(value));
-                LeftValue.setText("");
-            } else if (progress < (MAX_SCE_FACTOR - MIN_SCE_FACTOR)/2){
-                LeftValue.setText(String.valueOf(value));
-                RightValue.setText("");
-            } else {
-                LeftValue.setText("");
-                RightValue.setText("");
-            }
-            if (value != mskinToneValue && mCameraDevice != null) {
-                mskinToneValue = value;
-                Message msg = mHandler.obtainMessage(CONFIGURE_SKIN_TONE_FACTOR, mskinToneValue, 0);
-                mHandler.sendMessage(msg);
-            }
-        }
-
-        public void onStopTrackingTouch(SeekBar bar) {
-            Log.v(TAG, "Set onStopTrackingTouch mskinToneValue = " + mskinToneValue);
-            Editor editor = mPreferences.edit();
-            editor.putString(CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR,
-                             Integer.toString(mskinToneValue));
-            editor.apply();
-        }
-    };
-
-    private final class AutoFocusCallback implements CameraAFCallback {
-        @Override
-        public void onAutoFocus(
-                boolean focused, CameraProxy camera) {
-            if (mPaused) return;
-
-            mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
-            Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
-            //don't reset the camera state while capture is in progress
-            //otherwise, it might result in another takepicture
-            switch (mCameraState) {
-                case PhotoController.LONGSHOT:
-                case SNAPSHOT_IN_PROGRESS:
-                    break;
-                default:
-                    setCameraState(IDLE);
-                    break;
-            }
-            mFocusManager.onAutoFocus(focused, mUI.isShutterPressed());
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private final class AutoFocusMoveCallback
-            implements CameraAFMoveCallback {
-        @Override
-        public void onAutoFocusMoving(
-                boolean moving, CameraProxy camera) {
-            mFocusManager.onAutoFocusMoving(moving);
-        }
-    }
-
-    /**
-     * This class is just a thread-safe queue for name,date holder objects.
-     */
-    public static class NamedImages {
-        private Vector<NamedEntity> mQueue;
-
-        public NamedImages() {
-            mQueue = new Vector<NamedEntity>();
-        }
-
-        public void nameNewImage(long date) {
-            NamedEntity r = new NamedEntity();
-            r.title = CameraUtil.createJpegName(date);
-            r.date = date;
-            mQueue.add(r);
-        }
-
-        public NamedEntity getNextNameEntity() {
-            synchronized(mQueue) {
-                if (!mQueue.isEmpty()) {
-                    return mQueue.remove(0);
-                }
-            }
-            return null;
-        }
-
-        public static class NamedEntity {
-            public String title;
-            public long date;
-        }
-    }
-
-    private void setCameraState(int state) {
-        mCameraState = state;
-        switch (state) {
-            case PhotoController.PREVIEW_STOPPED:
-            case PhotoController.SNAPSHOT_IN_PROGRESS:
-            case PhotoController.LONGSHOT:
-            case PhotoController.SWITCHING_CAMERA:
-                mUI.enableGestures(false);
-                break;
-            case PhotoController.IDLE:
-                mUI.enableGestures(true);
-                break;
         }
     }
 
@@ -1362,15 +705,15 @@ public class PhotoModule
         mJpegImageData = null;
 
         final boolean animateBefore = (mSceneMode == CameraUtil.SCENE_MODE_HDR) ||
-                                      (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL);
-        if(mHiston) {
+                (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL);
+        if (mHiston) {
             if (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
                 mHiston = false;
                 mCameraDevice.setHistogramMode(null);
             }
             mActivity.runOnUiThread(new Runnable() {
                 public void run() {
-                    if(mGraphView != null)
+                    if (mGraphView != null)
                         mGraphView.setVisibility(View.INVISIBLE);
                 }
             });
@@ -1390,11 +733,7 @@ public class PhotoModule
         int orientation;
         // We need to be consistent with the framework orientation (i.e. the
         // orientation of the UI.) when the auto-rotate screen setting is on.
-        if (mActivity.isAutoRotateScreen()) {
-            orientation = (360 - mDisplayRotation) % 360;
-        } else {
-            orientation = mOrientation;
-        }
+        orientation = mOrientation;
 
         mJpegRotation = CameraUtil.getJpegRotation(mCameraId, orientation);
 
@@ -1402,7 +741,7 @@ public class PhotoModule
         String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
         Location loc = null;
         if (pictureFormat != null &&
-              PIXEL_FORMAT_JPEG.equalsIgnoreCase(pictureFormat)) {
+                PIXEL_FORMAT_JPEG.equalsIgnoreCase(pictureFormat)) {
             loc = mLocationManager.getCurrentLocation();
         }
         CameraUtil.setGpsParameters(mParameters, loc);
@@ -1417,7 +756,7 @@ public class PhotoModule
         mUI.enableShutter(false);
 
         if (mCameraState == LONGSHOT) {
-            if(mLongshotSave) {
+            if (mLongshotSave) {
                 mCameraDevice.takePicture(mHandler,
                         new LongshotShutterCallback(),
                         mRawPictureCallback, mPostViewPictureCallback,
@@ -1470,7 +809,7 @@ public class PhotoModule
         // If scene mode or slow shutter is set, for flash mode, white balance and focus mode
         // read settings from preferences so we retain user preferences.
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode) ||
-            CameraSettings.isSlowShutterEnabled(mParameters)) {
+                CameraSettings.isSlowShutterEnabled(mParameters)) {
             String flashMode = mPreferences.getString(
                     CameraSettings.KEY_FLASH_MODE,
                     mActivity.getString(R.string.pref_camera_flashmode_default));
@@ -1489,10 +828,10 @@ public class PhotoModule
     }
 
     private void overrideCameraSettings(final String flashMode,
-            final String whiteBalance, final String focusMode,
-            final String exposureMode,
-            final String autoExposure, final String saturation,
-            final String contrast) {
+                                        final String whiteBalance, final String focusMode,
+                                        final String exposureMode,
+                                        final String autoExposure, final String saturation,
+                                        final String contrast) {
         mUI.overrideSettings(
                 CameraSettings.KEY_FLASH_MODE, flashMode,
                 CameraSettings.KEY_WHITE_BALANCE, whiteBalance,
@@ -1501,7 +840,7 @@ public class PhotoModule
                 CameraSettings.KEY_AUTOEXPOSURE, autoExposure,
                 CameraSettings.KEY_SATURATION, saturation,
                 CameraSettings.KEY_CONTRAST, contrast);
-        if (CameraUtil.needSamsungHDRFormat()){
+        if (CameraUtil.needSamsungHDRFormat()) {
             if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
                 mUI.overrideSettings(CameraSettings.KEY_EXPOSURE,
                         String.valueOf(mParameters.getMaxExposureCompensation()));
@@ -1542,8 +881,8 @@ public class PhotoModule
         }
 
         // need to re-initialize mGraphView to show histogram on rotate
-        mGraphView = (GraphView)mRootView.findViewById(R.id.graph_view);
-        if(mGraphView != null){
+        mGraphView = (GraphView) mRootView.findViewById(R.id.graph_view);
+        if (mGraphView != null) {
             mGraphView.setPhotoModuleObject(this);
             mGraphView.PreviewChanged();
         }
@@ -1660,21 +999,21 @@ public class PhotoModule
                 || (mCameraState == SNAPSHOT_IN_PROGRESS)
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
-        synchronized(mCameraDevice) {
-           if (mCameraState == LONGSHOT) {
-               mCameraDevice.setLongshot(false);
-               if (!mFocusManager.isZslEnabled()) {
-                   setupPreview();
-               } else {
-                   setCameraState(IDLE);
-                   mFocusManager.resetTouchFocus();
-                   if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
-                           mFocusManager.getFocusMode())) {
-                       mCameraDevice.cancelAutoFocus();
-                   }
-                   mUI.resumeFaceDetection();
-               }
-           }
+        synchronized (mCameraDevice) {
+            if (mCameraState == LONGSHOT) {
+                mCameraDevice.setLongshot(false);
+                if (!mFocusManager.isZslEnabled()) {
+                    setupPreview();
+                } else {
+                    setCameraState(IDLE);
+                    mFocusManager.resetTouchFocus();
+                    if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
+                            mFocusManager.getFocusMode())) {
+                        mCameraDevice.cancelAutoFocus();
+                    }
+                    mUI.resumeFaceDetection();
+                }
+            }
         }
 
         // Do not do focus if there is not enough storage.
@@ -1713,8 +1052,8 @@ public class PhotoModule
             mUI.setSwipingEnabled(false);
         }
 
-         //Need to disable focus for ZSL mode
-        if(mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
+        //Need to disable focus for ZSL mode
+        if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
             mFocusManager.setZslEnable(true);
         } else {
             mFocusManager.setZslEnable(false);
@@ -1845,8 +1184,7 @@ public class PhotoModule
             return;
         }
 
-        if (mSkinToneSeekBar != true)
-        {
+        if (mSkinToneSeekBar != true) {
             Log.v(TAG, "Send tone bar: mSkinToneSeekBar = " + mSkinToneSeekBar);
             mHandler.sendEmptyMessage(SET_SKIN_TONE_FACTOR);
         }
@@ -2009,7 +1347,7 @@ public class PhotoModule
 
     @Override
     public void cancelAutoFocus() {
-        if (null != mCameraDevice ) {
+        if (null != mCameraDevice) {
             mCameraDevice.cancelAutoFocus();
             setCameraState(IDLE);
             setCameraParameters(UPDATE_PARAM_PREFERENCE);
@@ -2054,7 +1392,7 @@ public class PhotoModule
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (mFirstTimeInitialized && (mUI.mMenuInitialized)) {
-                   if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
+                    if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
                         onShutterButtonFocus(true);
                     } else {
                         mUI.onScaleStepResize(false);
@@ -2155,20 +1493,24 @@ public class PhotoModule
         }
     }
 
-    /** Only called by UI thread. */
+    /**
+     * Only called by UI thread.
+     */
     private void setupPreview() {
         mFocusManager.resetTouchFocus();
         startPreview();
     }
 
-    /** This can run on a background thread, post any view updates to MainHandler. */
+    /**
+     * This can run on a background thread, post any view updates to MainHandler.
+     */
     private void startPreview() {
         if (mPaused || mCameraDevice == null) {
             return;
         }
 
-         // Any decisions we make based on the surface texture state
-         // need to be protected.
+        // Any decisions we make based on the surface texture state
+        // need to be protected.
         SurfaceTexture st = mUI.getSurfaceTexture();
         if (st == null) {
             Log.w(TAG, "startPreview: surfaceTexture is not ready.");
@@ -2325,8 +1667,8 @@ public class PhotoModule
 
         // Set Selectable Zone Af parameter.
         String selectableZoneAf = mPreferences.getString(
-            CameraSettings.KEY_SELECTABLE_ZONE_AF,
-            mActivity.getString(R.string.pref_camera_selectablezoneaf_default));
+                CameraSettings.KEY_SELECTABLE_ZONE_AF,
+                mActivity.getString(R.string.pref_camera_selectablezoneaf_default));
         List<String> str = mParameters.getSupportedSelectableZoneAf();
         if (CameraUtil.isSupported(selectableZoneAf, mParameters.getSupportedSelectableZoneAf())) {
             mParameters.setSelectableZoneAf(selectableZoneAf);
@@ -2334,8 +1676,8 @@ public class PhotoModule
 
         // Set wavelet denoise mode
         if (mParameters.getSupportedDenoiseModes() != null) {
-            String Denoise = mPreferences.getString( CameraSettings.KEY_DENOISE,
-                             mActivity.getString(R.string.pref_camera_denoise_default));
+            String Denoise = mPreferences.getString(CameraSettings.KEY_DENOISE,
+                    mActivity.getString(R.string.pref_camera_denoise_default));
             mParameters.setDenoise(Denoise);
         }
         // Set Redeye Reduction
@@ -2343,7 +1685,7 @@ public class PhotoModule
                 CameraSettings.KEY_REDEYE_REDUCTION,
                 mActivity.getString(R.string.pref_camera_redeyereduction_default));
         if (CameraUtil.isSupported(redeyeReduction,
-            mParameters.getSupportedRedeyeReductionModes())) {
+                mParameters.getSupportedRedeyeReductionModes())) {
             mParameters.setRedeyeReductionMode(redeyeReduction);
         }
         // Set ISO parameter
@@ -2352,7 +1694,7 @@ public class PhotoModule
                 mActivity.getString(R.string.pref_camera_iso_default));
         if (CameraUtil.isSupported(iso,
                 mParameters.getSupportedIsoValues())) {
-                mParameters.setISOValue(iso);
+            mParameters.setISOValue(iso);
         }
         // Set color effect parameter.
         String colorEffect = mPreferences.getString(
@@ -2367,7 +1709,7 @@ public class PhotoModule
         if (saturationStr != null) {
             int saturation = Integer.parseInt(saturationStr);
             Log.v(TAG, "Saturation value =" + saturation);
-            if((0 <= saturation) && (saturation <= mParameters.getMaxSaturation())){
+            if ((0 <= saturation) && (saturation <= mParameters.getMaxSaturation())) {
                 mParameters.setSaturation(saturation);
             }
         }
@@ -2419,8 +1761,8 @@ public class PhotoModule
 
         // Set anti banding parameter.
         String antiBanding = mPreferences.getString(
-                 CameraSettings.KEY_ANTIBANDING,
-                 mActivity.getString(R.string.pref_camera_antibanding_default));
+                CameraSettings.KEY_ANTIBANDING,
+                mActivity.getString(R.string.pref_camera_antibanding_default));
         Log.v(TAG, "antiBanding value =" + antiBanding);
         if (CameraUtil.isSupported(antiBanding, mParameters.getSupportedAntibanding())) {
             mParameters.setAntibanding(antiBanding);
@@ -2441,7 +1783,7 @@ public class PhotoModule
             zsl = false;
         }
 
-        if(zsl) {
+        if (zsl) {
             //Switch on ZSL Camera mode
             mSnapshotMode = CameraInfo.CAMERA_SUPPORT_MODE_ZSL;
             mParameters.setZSLMode("on");
@@ -2457,29 +1799,29 @@ public class PhotoModule
 
         // Set face detetction parameter.
         String faceDetection = mPreferences.getString(
-            CameraSettings.KEY_FACE_DETECTION,
-            mActivity.getString(R.string.pref_camera_facedetection_default));
+                CameraSettings.KEY_FACE_DETECTION,
+                mActivity.getString(R.string.pref_camera_facedetection_default));
 
         if (CameraUtil.isSupported(faceDetection, mParameters.getSupportedFaceDetectionModes())) {
             mParameters.setFaceDetectionMode(faceDetection);
-            if(faceDetection.equals("on") && mFaceDetectionEnabled == false) {
+            if (faceDetection.equals("on") && mFaceDetectionEnabled == false) {
                 mFaceDetectionEnabled = true;
                 startFaceDetection();
             }
-            if(faceDetection.equals("off") && mFaceDetectionEnabled == true) {
+            if (faceDetection.equals("off") && mFaceDetectionEnabled == true) {
                 stopFaceDetection();
                 mFaceDetectionEnabled = false;
             }
         }
         // skin tone ie enabled only for auto,party and portrait BSM
         // when color effects are not enabled
-        if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
-            Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode)) &&
-            (Parameters.EFFECT_NONE.equals(colorEffect))) {
-             //Set Skin Tone Correction factor
-             Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
-             if(mSeekBarInitialized == true)
-                 mHandler.sendEmptyMessage(SET_SKIN_TONE_FACTOR);
+        if ((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
+                Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode)) &&
+                (Parameters.EFFECT_NONE.equals(colorEffect))) {
+            //Set Skin Tone Correction factor
+            Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
+            if (mSeekBarInitialized == true)
+                mHandler.sendEmptyMessage(SET_SKIN_TONE_FACTOR);
         }
 
         //Set Histogram
@@ -2487,12 +1829,12 @@ public class PhotoModule
                 CameraSettings.KEY_HISTOGRAM,
                 mActivity.getString(R.string.pref_camera_histogram_default));
         if (CameraUtil.isSupported(histogram,
-            mParameters.getSupportedHistogramModes()) && mCameraDevice != null) {
+                mParameters.getSupportedHistogramModes()) && mCameraDevice != null) {
             // Call for histogram
-            if(histogram.equals("enable")) {
+            if (histogram.equals("enable")) {
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        if(mGraphView != null) {
+                        if (mGraphView != null) {
                             mGraphView.setVisibility(View.VISIBLE);
                             mGraphView.PreviewChanged();
                         }
@@ -2504,10 +1846,10 @@ public class PhotoModule
                 mHiston = false;
                 mActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                         if (mGraphView != null)
-                             mGraphView.setVisibility(View.INVISIBLE);
-                         }
-                    });
+                        if (mGraphView != null)
+                            mGraphView.setVisibility(View.INVISIBLE);
+                    }
+                });
                 mCameraDevice.setHistogramMode(null);
             }
         }
@@ -2542,16 +1884,17 @@ public class PhotoModule
         String preview_flip = CameraUtil.getFilpModeString(preview_flip_value);
         String video_flip = CameraUtil.getFilpModeString(video_flip_value);
         String picture_flip = CameraUtil.getFilpModeString(picture_flip_value);
-        if(CameraUtil.isSupported(preview_flip, CameraSettings.getSupportedFlipMode(mParameters))){
+        if (CameraUtil.isSupported(preview_flip, CameraSettings.getSupportedFlipMode(mParameters))) {
             mParameters.set(CameraSettings.KEY_QC_PREVIEW_FLIP, preview_flip);
         }
-        if(CameraUtil.isSupported(video_flip, CameraSettings.getSupportedFlipMode(mParameters))){
+        if (CameraUtil.isSupported(video_flip, CameraSettings.getSupportedFlipMode(mParameters))) {
             mParameters.set(CameraSettings.KEY_QC_VIDEO_FLIP, video_flip);
         }
-        if(CameraUtil.isSupported(picture_flip, CameraSettings.getSupportedFlipMode(mParameters))){
+        if (CameraUtil.isSupported(picture_flip, CameraSettings.getSupportedFlipMode(mParameters))) {
             mParameters.set(CameraSettings.KEY_QC_SNAPSHOT_PICTURE_FLIP, picture_flip);
         }
     }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setAutoExposureLockIfSupported() {
         if (mAeLockSupported) {
@@ -2602,7 +1945,7 @@ public class PhotoModule
             Size size = mParameters.getPictureSize();
             Log.v(TAG, "new picture_size = " + size.width + " x " + size.height);
             if (old_size != null && size != null) {
-                if(!size.equals(old_size) && mCameraState != PREVIEW_STOPPED) {
+                if (!size.equals(old_size) && mCameraState != PREVIEW_STOPPED) {
                     Log.v(TAG, "Picture Size changed. Restart Preview");
                     mRestartPreview = true;
                 }
@@ -2750,7 +2093,8 @@ public class PhotoModule
             // Set focus time.
             mFocusManager.setFocusTime(Integer.valueOf(
                     mPreferences.getString(CameraSettings.KEY_FOCUS_TIME,
-                    mActivity.getString(R.string.pref_camera_focustime_default))));
+                            mActivity.getString(R.string.pref_camera_focustime_default))
+            ));
 
         } else {
             mFocusManager.overrideFocusMode(mParameters.getFocusMode());
@@ -2817,7 +2161,7 @@ public class PhotoModule
             return;
         } else if (isCameraIdle()) {
             setCameraParameters(mUpdateSet);
-             if(mRestartPreview && mCameraState != PREVIEW_STOPPED) {
+            if (mRestartPreview && mCameraState != PREVIEW_STOPPED) {
                 Log.v(TAG, "Restarting Preview...");
                 stopPreview();
                 resizeForPreviewAspectRatio();
@@ -2892,22 +2236,22 @@ public class PhotoModule
         if (mUI.mMenuInitialized) {
             setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
             mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
-                mPreferences);
+                    mPreferences);
             mActivity.initPowerShutter(mPreferences);
         } else {
             mHandler.sendEmptyMessage(SET_PHOTO_UI_PARAMS);
         }
         resizeForPreviewAspectRatio();
-        if (mSeekBarInitialized == true){
+        if (mSeekBarInitialized == true) {
             Log.v(TAG, "onSharedPreferenceChanged Skin tone bar: change");
             // skin tone is enabled only for party and portrait BSM
             // when color effects are not enabled
             String colorEffect = mPreferences.getString(
-                CameraSettings.KEY_COLOR_EFFECT,
-                mActivity.getString(R.string.pref_camera_coloreffect_default));
-            if((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
-                Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode)) &&
-                (Parameters.EFFECT_NONE.equals(colorEffect))) {
+                    CameraSettings.KEY_COLOR_EFFECT,
+                    mActivity.getString(R.string.pref_camera_coloreffect_default));
+            if ((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
+                    Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode)) &&
+                    (Parameters.EFFECT_NONE.equals(colorEffect))) {
                 Log.v(TAG, "Party/Portrait + No effect, SkinToneBar enabled");
             } else {
                 disableSkinToneSeekBar();
@@ -3011,6 +2355,21 @@ public class PhotoModule
         return mCameraState;
     }
 
+    private void setCameraState(int state) {
+        mCameraState = state;
+        switch (state) {
+            case PhotoController.PREVIEW_STOPPED:
+            case PhotoController.SNAPSHOT_IN_PROGRESS:
+            case PhotoController.LONGSHOT:
+            case PhotoController.SWITCHING_CAMERA:
+                mUI.enableGestures(false);
+                break;
+            case PhotoController.IDLE:
+                mUI.enableGestures(true);
+                break;
+        }
+    }
+
     @Override
     public void onQueueStatus(boolean full) {
         mUI.enableShutter(!full);
@@ -3041,7 +2400,7 @@ public class PhotoModule
             // we should not be here.
             return;
         }
-        for (int i = 0; i < 3 ; i++) {
+        for (int i = 0; i < 3; i++) {
             data[i] = event.values[i];
         }
         float[] orientation = new float[3];
@@ -3052,27 +2411,31 @@ public class PhotoModule
             mHeading += 360;
         }
     }
+
     @Override
     public void onPreviewFocusChanged(boolean previewFocused) {
         mUI.onPreviewFocusChanged(previewFocused);
     }
+
     // TODO: Delete this function after old camera code is removed
     @Override
-    public void onRestorePreferencesClicked() {}
+    public void onRestorePreferencesClicked() {
+    }
+
     private void setSkinToneFactor() {
-        if(mCameraDevice == null || mParameters == null || skinToneSeekBar == null)
+        if (mCameraDevice == null || mParameters == null || skinToneSeekBar == null)
             return;
 
         String skinToneEnhancementPref = "enable";
-        if(CameraUtil.isSupported(skinToneEnhancementPref,
-               mParameters.getSupportedSkinToneEnhancementModes())) {
-            if(skinToneEnhancementPref.equals("enable")) {
-                int skinToneValue =0;
+        if (CameraUtil.isSupported(skinToneEnhancementPref,
+                mParameters.getSupportedSkinToneEnhancementModes())) {
+            if (skinToneEnhancementPref.equals("enable")) {
+                int skinToneValue = 0;
                 int progress;
                 //get the value for the first time!
-                if (mskinToneValue ==0) {
+                if (mskinToneValue == 0) {
                     String factor = mPreferences.getString(
-                         CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR, "0");
+                            CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR, "0");
                     skinToneValue = Integer.parseInt(factor);
                 }
 
@@ -3080,7 +2443,7 @@ public class PhotoModule
                 enableSkinToneSeekBar();
                 //As a wrokaround set progress again to show the actually progress on screen.
                 if (skinToneValue != 0) {
-                    progress = (skinToneValue/SCE_FACTOR_STEP)-MIN_SCE_FACTOR;
+                    progress = (skinToneValue / SCE_FACTOR_STEP) - MIN_SCE_FACTOR;
                     skinToneSeekBar.setProgress(progress);
                 }
             } else {
@@ -3095,14 +2458,14 @@ public class PhotoModule
 
     private void enableSkinToneSeekBar() {
         int progress;
-        skinToneSeekBar.setMax(MAX_SCE_FACTOR-MIN_SCE_FACTOR);
+        skinToneSeekBar.setMax(MAX_SCE_FACTOR - MIN_SCE_FACTOR);
         skinToneSeekBar.setVisibility(View.VISIBLE);
         skinToneSeekBar.requestFocus();
         if (mskinToneValue != 0) {
-            progress = (mskinToneValue/SCE_FACTOR_STEP)-MIN_SCE_FACTOR;
+            progress = (mskinToneValue / SCE_FACTOR_STEP) - MIN_SCE_FACTOR;
             mskinToneSeekListener.onProgressChanged(skinToneSeekBar, progress, false);
         } else {
-            progress = (MAX_SCE_FACTOR-MIN_SCE_FACTOR)/2;
+            progress = (MAX_SCE_FACTOR - MIN_SCE_FACTOR) / 2;
             RightValue.setText("");
             LeftValue.setText("");
         }
@@ -3125,14 +2488,14 @@ public class PhotoModule
         mSkinToneSeekBar = false;
         Editor editor = mPreferences.edit();
         editor.putString(CameraSettings.KEY_SKIN_TONE_ENHANCEMENT_FACTOR,
-            Integer.toString(mskinToneValue - MIN_SCE_FACTOR));
+                Integer.toString(mskinToneValue - MIN_SCE_FACTOR));
         editor.apply();
     }
 
-/*
- * Provide a mapping for Jpeg encoding quality levels
- * from String representation to numeric representation.
- */
+    /*
+     * Provide a mapping for Jpeg encoding quality levels
+     * from String representation to numeric representation.
+     */
     @Override
     public boolean arePreviewControlsVisible() {
         return mUI.arePreviewControlsVisible();
@@ -3158,28 +2521,624 @@ public class PhotoModule
             }
         }
     }
+
+    /**
+     * This class is just a thread-safe queue for name,date holder objects.
+     */
+    public static class NamedImages {
+        private Vector<NamedEntity> mQueue;
+
+        public NamedImages() {
+            mQueue = new Vector<NamedEntity>();
+        }
+
+        public void nameNewImage(long date) {
+            NamedEntity r = new NamedEntity();
+            r.title = CameraUtil.createJpegName(date);
+            r.date = date;
+            mQueue.add(r);
+        }
+
+        public NamedEntity getNextNameEntity() {
+            synchronized (mQueue) {
+                if (!mQueue.isEmpty()) {
+                    return mQueue.remove(0);
+                }
+            }
+            return null;
+        }
+
+        public static class NamedEntity {
+            public String title;
+            public long date;
+        }
+    }
+
+    /**
+     * This Handler is used to post message back onto the main thread of the
+     * application
+     */
+    private class MainHandler extends Handler {
+        public MainHandler() {
+            super(Looper.getMainLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SETUP_PREVIEW: {
+                    setupPreview();
+                    break;
+                }
+
+                case CLEAR_SCREEN_DELAY: {
+                    mActivity.getWindow().clearFlags(
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    break;
+                }
+
+                case FIRST_TIME_INIT: {
+                    initializeFirstTime();
+                    break;
+                }
+
+                case SET_CAMERA_PARAMETERS_WHEN_IDLE: {
+                    setCameraParametersWhenIdle(0);
+                    break;
+                }
+
+                case SHOW_TAP_TO_FOCUS_TOAST: {
+                    showTapToFocusToast();
+                    break;
+                }
+
+                case SWITCH_CAMERA: {
+                    switchCamera();
+                    break;
+                }
+
+                case SWITCH_CAMERA_START_ANIMATION: {
+                    // TODO: Need to revisit
+                    // ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
+                    break;
+                }
+
+                case CAMERA_OPEN_DONE: {
+                    onCameraOpened();
+                    break;
+                }
+
+                case OPEN_CAMERA_FAIL: {
+                    mOpenCameraFail = true;
+                    CameraUtil.showErrorAndFinish(mActivity,
+                            R.string.cannot_connect_camera);
+                    break;
+                }
+
+                case CAMERA_DISABLED: {
+                    mCameraDisabled = true;
+                    CameraUtil.showErrorAndFinish(mActivity,
+                            R.string.camera_disabled);
+                    break;
+                }
+                case SET_SKIN_TONE_FACTOR: {
+                    Log.v(TAG, "set tone bar: mSceneMode = " + mSceneMode);
+                    setSkinToneFactor();
+                    mSeekBarInitialized = true;
+                    // skin tone ie enabled only for party and portrait BSM
+                    // when color effects are not enabled
+                    String colorEffect = mPreferences.getString(
+                            CameraSettings.KEY_COLOR_EFFECT,
+                            mActivity.getString(R.string.pref_camera_coloreffect_default));
+                    if ((Parameters.SCENE_MODE_PARTY.equals(mSceneMode) ||
+                            Parameters.SCENE_MODE_PORTRAIT.equals(mSceneMode)) &&
+                            (Parameters.EFFECT_NONE.equals(colorEffect))) {
+                        ;
+                    } else {
+                        Log.v(TAG, "Skin tone bar: disable");
+                        disableSkinToneSeekBar();
+                    }
+                    break;
+                }
+                case SET_PHOTO_UI_PARAMS: {
+                    setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
+                    mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
+                            mPreferences);
+                    break;
+                }
+
+                case SWITCH_TO_GCAM_MODULE: {
+                    mActivity.onModuleSelected(ModuleSwitcher.GCAM_MODULE_INDEX);
+                }
+
+                case CONFIGURE_SKIN_TONE_FACTOR: {
+                    if ((mCameraDevice != null) && isCameraIdle()) {
+                        synchronized (mCameraDevice) {
+                            mParameters = mCameraDevice.getParameters();
+                            mParameters.set("skinToneEnhancement", String.valueOf(msg.arg1));
+                            mCameraDevice.setParameters(mParameters);
+                        }
+                    }
+                    break;
+                }
+                case UPDATE_ASD_ICON: {
+                    if (!mSceneDetection) {
+                        mUI.updateSceneDetectionIcon(null);
+                        break;
+                    }
+                    if (mCameraState == IDLE) {
+                        mCameraDevice.refreshParameters();
+                        String scene = mCameraDevice.getParameters().get("asd-mode");
+                        Log.d(TAG, "detected scene=" + scene + " camstate=" + mCameraState);
+                        mUI.updateSceneDetectionIcon(scene);
+                    }
+                    mHandler.sendEmptyMessageDelayed(UPDATE_ASD_ICON, 2000);
+                    break;
+                }
+                case CLEAR_ASD_ICON: {
+                    mUI.updateSceneDetectionIcon(null);
+                    break;
+                }
+            }
+        }
+    }
+
+    private final class ASDMetadataCallback implements CameraMetadataCallback {
+        @Override
+        public void onCameraMetadata(byte[] data, CameraProxy camera) {
+            if (!mSceneDetection)
+                return;
+
+            if (data != null && data.length >= 8) {
+                int type = CameraUtil.byteArrayToInt(data, 0);
+                switch (type) {
+                    case CameraSettings.META_DATA_ASD:
+                        // ASD result is just a 32-bit integer
+                        if (data.length >= 12) {
+                            int asdMode = CameraUtil.byteArrayToInt(data, 8);
+                            if (asdMode < mASDModes.length) {
+                                Log.d(TAG, "ASD: value=" + asdMode + " asdMode=" + mASDModes[asdMode]);
+                                mUI.updateSceneDetectionIcon(mASDModes[asdMode]);
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    private final class LongshotShutterCallback
+            implements CameraShutterCallback {
+
+        @Override
+        public void onShutter(CameraProxy camera) {
+            mShutterCallbackTime = System.currentTimeMillis();
+            mShutterLag = mShutterCallbackTime - mCaptureStartTime;
+            Log.e(TAG, "[KPI Perf] PROFILE_SHUTTER_LAG mShutterLag = " + mShutterLag + "ms");
+            synchronized (mCameraDevice) {
+
+                if (mCameraState != LONGSHOT) {
+                    return;
+                }
+
+                if (mLongshotSave) {
+                    mCameraDevice.takePicture(mHandler,
+                            new LongshotShutterCallback(),
+                            mRawPictureCallback, mPostViewPictureCallback,
+                            new LongshotPictureCallback(null));
+                } else {
+                    mCameraDevice.takePicture(mHandler, new LongshotShutterCallback(),
+                            mRawPictureCallback, mPostViewPictureCallback,
+                            new JpegPictureCallback(null));
+                }
+            }
+        }
+    }
+
+    private final class ShutterCallback
+            implements CameraShutterCallback {
+
+        private boolean mNeedsAnimation;
+
+        public ShutterCallback(boolean needsAnimation) {
+            mNeedsAnimation = needsAnimation;
+        }
+
+        @Override
+        public void onShutter(CameraProxy camera) {
+            mShutterCallbackTime = System.currentTimeMillis();
+            mShutterLag = mShutterCallbackTime - mCaptureStartTime;
+            Log.e(TAG, "[KPI Perf] PROFILE_SHUTTER_LAG mShutterLag = " + mShutterLag + "ms");
+            if (mNeedsAnimation) {
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        animateAfterShutter();
+                    }
+                });
+            }
+        }
+    }
+
+    private final class StatsCallback
+            implements android.hardware.Camera.CameraDataCallback {
+        @Override
+        public void onCameraData(int[] data, android.hardware.Camera camera) {
+            //if(!mPreviewing || !mHiston || !mFirstTimeInitialized){
+            if (!mHiston || !mFirstTimeInitialized) {
+                return;
+            }
+            /*The first element in the array stores max hist value . Stats data begin from second value*/
+            synchronized (statsdata) {
+                System.arraycopy(data, 0, statsdata, 0, STATS_DATA);
+            }
+            mActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    if (mGraphView != null)
+                        mGraphView.PreviewChanged();
+                }
+            });
+        }
+    }
+
+    private final class PostViewPictureCallback
+            implements CameraPictureCallback {
+        @Override
+        public void onPictureTaken(byte[] data, CameraProxy camera) {
+            mPostViewPictureCallbackTime = System.currentTimeMillis();
+            Log.v(TAG, "mShutterToPostViewCallbackTime = "
+                    + (mPostViewPictureCallbackTime - mShutterCallbackTime)
+                    + "ms");
+        }
+    }
+
+    private final class RawPictureCallback
+            implements CameraPictureCallback {
+        @Override
+        public void onPictureTaken(byte[] rawData, CameraProxy camera) {
+            mRawPictureCallbackTime = System.currentTimeMillis();
+            Log.v(TAG, "mShutterToRawCallbackTime = "
+                    + (mRawPictureCallbackTime - mShutterCallbackTime) + "ms");
+        }
+    }
+
+    private final class LongshotPictureCallback implements CameraPictureCallback {
+        Location mLocation;
+
+        public LongshotPictureCallback(Location loc) {
+            mLocation = loc;
+        }
+
+        @Override
+        public void onPictureTaken(final byte[] jpegData, CameraProxy camera) {
+            if (mPaused) {
+                return;
+            }
+
+            mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
+
+            String jpegFilePath = new String(jpegData);
+            mNamedImages.nameNewImage(mCaptureStartTime);
+            NamedEntity name = mNamedImages.getNextNameEntity();
+            String title = (name == null) ? null : name.title;
+            long date = (name == null) ? -1 : name.date;
+
+            if (title == null) {
+                Log.e(TAG, "Unbalanced name/data pair");
+                return;
+            }
+
+
+            if (date == -1) {
+                Log.e(TAG, "Invalid filename date");
+                return;
+            }
+
+            String dstPath = Storage.getInstance().generateDirectory();
+            File sdCard = android.os.Environment.getExternalStorageDirectory();
+            File dstFile = new File(dstPath);
+            if (dstFile == null) {
+                Log.e(TAG, "Destination file path invalid");
+                return;
+            }
+
+            File srcFile = new File(jpegFilePath);
+            if (srcFile == null) {
+                Log.e(TAG, "Source file path invalid");
+                return;
+            }
+
+            if (srcFile.renameTo(dstFile)) {
+                Size s = mParameters.getPictureSize();
+                String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
+                mActivity.getMediaSaveService().addImage(
+                        null, title, date, mLocation, s.width, s.height,
+                        0, null, mOnMediaSavedListener, mContentResolver, pictureFormat);
+            } else {
+                Log.e(TAG, "Failed to move jpeg file");
+            }
+        }
+    }
+
+    private final class JpegPictureCallback
+            implements CameraPictureCallback {
+        Location mLocation;
+
+        public JpegPictureCallback(Location loc) {
+            mLocation = loc;
+        }
+
+        @Override
+        public void onPictureTaken(final byte[] jpegData, CameraProxy camera) {
+            mUI.enableShutter(true);
+            if (mPaused) {
+                return;
+            }
+            if (mIsImageCaptureIntent) {
+                stopPreview();
+            }
+            if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
+                mUI.showSwitcher();
+                mUI.setSwipingEnabled(true);
+            }
+
+            mReceivedSnapNum = mReceivedSnapNum + 1;
+            mJpegPictureCallbackTime = System.currentTimeMillis();
+            if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) {
+                Log.v(TAG, "JpegPictureCallback : in zslmode");
+                mParameters = mCameraDevice.getParameters();
+                mBurstSnapNum = CameraUtil.getNumSnapsPerShutter(mParameters);
+            }
+            Log.v(TAG, "JpegPictureCallback: Received = " + mReceivedSnapNum +
+                    "Burst count = " + mBurstSnapNum);
+
+            // If postview callback has arrived, the captured image is displayed
+            // in postview callback. If not, the captured image is displayed in
+            // raw picture callback.
+            if (mPostViewPictureCallbackTime != 0) {
+                mShutterToPictureDisplayedTime =
+                        mPostViewPictureCallbackTime - mShutterCallbackTime;
+                mPictureDisplayedToJpegCallbackTime =
+                        mJpegPictureCallbackTime - mPostViewPictureCallbackTime;
+            } else {
+                mShutterToPictureDisplayedTime =
+                        mRawPictureCallbackTime - mShutterCallbackTime;
+                mPictureDisplayedToJpegCallbackTime =
+                        mJpegPictureCallbackTime - mRawPictureCallbackTime;
+            }
+            Log.v(TAG, "mPictureDisplayedToJpegCallbackTime = "
+                    + mPictureDisplayedToJpegCallbackTime + "ms");
+
+            mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
+
+            boolean needRestartPreview = !mIsImageCaptureIntent
+                    && (mCameraState != LONGSHOT)
+                    && (mSnapshotMode != CameraInfo.CAMERA_SUPPORT_MODE_ZSL)
+                    && (mReceivedSnapNum == mBurstSnapNum);
+
+            Log.v(TAG, "needRestartPreview=" + needRestartPreview + " mCameraState=" + mCameraState +
+                    " mReceivedSnapNum= " + mReceivedSnapNum + " mBurstSnapNum=" + mBurstSnapNum);
+
+            if (needRestartPreview) {
+                setupPreview();
+            } else if ((mReceivedSnapNum == mBurstSnapNum)
+                    && (mCameraState != LONGSHOT)) {
+                mFocusManager.restartTouchFocusTimer();
+                if ((CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(
+                        mFocusManager.getFocusMode())) && (CameraUtil.cancelAutoFocusOnPreviewStopped()
+                        || mCameraState != PREVIEW_STOPPED)) {
+                    mCameraDevice.cancelAutoFocus();
+                }
+                mUI.resumeFaceDetection();
+                mCameraDevice.startPreview();
+                setCameraState(IDLE);
+            }
+
+            final ExifInterface exif = Exif.getExif(jpegData);
+            final int orientation = Exif.getOrientation(exif);
+            if (!mIsImageCaptureIntent) {
+                // Burst snapshot. Generate new image name.
+                if (mReceivedSnapNum > 1)
+                    mNamedImages.nameNewImage(mCaptureStartTime);
+
+                // Calculate the width and the height of the jpeg.
+                Size s = mParameters.getPictureSize();
+                boolean isSamsungHDR =
+                        (mSceneMode == CameraUtil.SCENE_MODE_HDR && CameraUtil.needSamsungHDRFormat());
+
+                int widths, heights;
+                if ((mJpegRotation + orientation) % 180 == 0 || isSamsungHDR) {
+                    widths = s.width;
+                    heights = s.height;
+                } else {
+                    widths = s.height;
+                    heights = s.width;
+                }
+
+                String pictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
+                if (pictureFormat != null && !pictureFormat.equalsIgnoreCase(PIXEL_FORMAT_JPEG)) {
+                    // overwrite width and height if raw picture
+                    String pair = mParameters.get(KEY_QC_RAW_PICUTRE_SIZE);
+                    if (pair != null) {
+                        int pos = pair.indexOf('x');
+                        if (pos != -1) {
+                            widths = Integer.parseInt(pair.substring(0, pos));
+                            heights = Integer.parseInt(pair.substring(pos + 1));
+                        }
+                    }
+                }
+                final int width = widths;
+                final int height = heights;
+                NamedEntity name = mNamedImages.getNextNameEntity();
+                String titleTemp = (name == null) ? null : name.title;
+                long date = (name == null) ? -1 : name.date;
+
+                // Handle debug mode outputs
+                if (mDebugUri != null) {
+                    // If using a debug uri, save jpeg there.
+                    saveToDebugUri(jpegData);
+
+                    // Adjust the title of the debug image shown in mediastore.
+                    if (titleTemp != null) {
+                        titleTemp = DEBUG_IMAGE_PREFIX + titleTemp;
+                    }
+                }
+
+                final String title = titleTemp;
+
+                if (title == null) {
+                    Log.e(TAG, "Unbalanced name/data pair");
+                } else {
+                    if (date == -1) date = mCaptureStartTime;
+                    if (mHeading >= 0) {
+                        // heading direction has been updated by the sensor.
+                        ExifTag directionRefTag = exif.buildTag(
+                                ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
+                                ExifInterface.GpsTrackRef.MAGNETIC_DIRECTION);
+                        ExifTag directionTag = exif.buildTag(
+                                ExifInterface.TAG_GPS_IMG_DIRECTION,
+                                new Rational(mHeading, 1));
+                        exif.setTag(directionRefTag);
+                        exif.setTag(directionTag);
+                    }
+                    final String mPictureFormat = mParameters.get(KEY_PICTURE_FORMAT);
+                    if (isSamsungHDR) {
+                        final long finalDate = date;
+                        new Thread(new Runnable() {
+                            public void run() {
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                Bitmap bm = CameraUtil.decodeYUV422P(jpegData, width, height);
+                                if (mJpegRotation != 0) {
+                                    Matrix matrix = new Matrix();
+                                    matrix.postRotate(mJpegRotation);
+                                    bm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+                                }
+
+                                bm.compress(Bitmap.CompressFormat.JPEG,
+                                        90,
+                                        baos);
+
+                                boolean rotated = (mJpegRotation % 180) != 0;
+
+                                mActivity.getMediaSaveService().addImage(
+                                        baos.toByteArray(), title, finalDate, mLocation,
+                                        rotated ? height : width, rotated ? width : height,
+                                        orientation, exif, mOnMediaSavedListener, mContentResolver, mPictureFormat);
+                            }
+                        }).start();
+
+                    } else {
+                        mActivity.getMediaSaveService().addImage(
+                                jpegData, title, date, mLocation, width, height,
+                                orientation, exif, mOnMediaSavedListener, mContentResolver, mPictureFormat);
+                    }
+                }
+                // Animate capture with real jpeg data instead of a preview frame.
+                if (!mBurstShotInProgress && mCameraState != LONGSHOT
+                        && (mReceivedSnapNum == mBurstSnapNum)) {
+                    mUI.animateCapture(jpegData, orientation, mMirror,
+                            (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) &&
+                                    (mSceneMode != CameraUtil.SCENE_MODE_HDR)
+                    );
+                }
+            } else {
+                mJpegImageData = jpegData;
+                if (!mQuickCapture) {
+                    mUI.showCapturedImageForReview(jpegData, orientation, mMirror);
+                } else {
+                    onCaptureDone();
+                }
+            }
+
+            // Check this in advance of each shot so we don't add to shutter
+            // latency. It's true that someone else could write to the SD card in
+            // the mean time and fill it, but that could have happened between the
+            // shutter press and saving the JPEG too.
+            mActivity.updateStorageSpaceAndHint();
+
+            long now = System.currentTimeMillis();
+            mJpegCallbackFinishTime = now - mJpegPictureCallbackTime;
+            Log.v(TAG, "mJpegCallbackFinishTime = "
+                    + mJpegCallbackFinishTime + "ms");
+
+            if (mReceivedSnapNum == mBurstSnapNum)
+                mJpegPictureCallbackTime = 0;
+
+            if (mHiston && (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL)) {
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (mGraphView != null) {
+                            mGraphView.setVisibility(View.VISIBLE);
+                            mGraphView.PreviewChanged();
+                        }
+                    }
+                });
+            }
+            if (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL &&
+                    mCameraState != LONGSHOT &&
+                    mReceivedSnapNum == mBurstSnapNum) {
+                cancelAutoFocus();
+            }
+
+            if (mSnapshotOnIdle && mBurstShotsDone > 0) {
+                mHandler.post(mDoSnapRunnable);
+            }
+        }
+    }
+
+    private final class AutoFocusCallback implements CameraAFCallback {
+        @Override
+        public void onAutoFocus(
+                boolean focused, CameraProxy camera) {
+            if (mPaused) return;
+
+            mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
+            Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
+            //don't reset the camera state while capture is in progress
+            //otherwise, it might result in another takepicture
+            switch (mCameraState) {
+                case PhotoController.LONGSHOT:
+                case SNAPSHOT_IN_PROGRESS:
+                    break;
+                default:
+                    setCameraState(IDLE);
+                    break;
+            }
+            mFocusManager.onAutoFocus(focused, mUI.isShutterPressed());
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private final class AutoFocusMoveCallback
+            implements CameraAFMoveCallback {
+        @Override
+        public void onAutoFocusMoving(
+                boolean moving, CameraProxy camera) {
+            mFocusManager.onAutoFocusMoving(moving);
+        }
+    }
 }
 
 class GraphView extends View {
-    private Bitmap  mBitmap;
-    private Paint   mPaint = new Paint();
-    private Paint   mPaintRect = new Paint();
-    private Canvas  mCanvas = new Canvas();
-    private float   mScale = (float)3;
-    private float   mWidth;
-    private float   mHeight;
+    private static final int STATS_SIZE = 256;
+    private Bitmap mBitmap;
+    private Paint mPaint = new Paint();
+    private Paint mPaintRect = new Paint();
+    private Canvas mCanvas = new Canvas();
+    private float mScale = (float) 3;
+    private float mWidth;
+    private float mHeight;
     private PhotoModule mPhotoModule;
     private CameraManager.CameraProxy mGraphCameraDevice;
     private float scaled;
-    private static final int STATS_SIZE = 256;
 
     public GraphView(Context context, AttributeSet attrs) {
-        super(context,attrs);
+        super(context, attrs);
 
         mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mPaintRect.setColor(0xFFFFFFFF);
         mPaintRect.setStyle(Paint.Style.FILL);
     }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
@@ -3188,9 +3147,10 @@ class GraphView extends View {
         mHeight = h;
         super.onSizeChanged(w, h, oldw, oldh);
     }
+
     @Override
     protected void onDraw(Canvas canvas) {
-        if(mPhotoModule == null || !mPhotoModule.mHiston ) {
+        if (mPhotoModule == null || !mPhotoModule.mHiston) {
             return;
         }
 
@@ -3200,40 +3160,40 @@ class GraphView extends View {
             final float border = 5;
             float graphheight = mHeight - (2 * border);
             float graphwidth = mWidth - (2 * border);
-            float left,top,right,bottom;
+            float left, top, right, bottom;
             float bargap = 0.0f;
-            float barwidth = graphwidth/STATS_SIZE;
+            float barwidth = graphwidth / STATS_SIZE;
 
             cavas.drawColor(0xFFAAAAAA);
             paint.setColor(Color.BLACK);
 
-            for (int k = 0; k <= (graphheight /32) ; k++) {
-                float y = (float)(32 * k)+ border;
-                cavas.drawLine(border, y, graphwidth + border , y, paint);
+            for (int k = 0; k <= (graphheight / 32); k++) {
+                float y = (float) (32 * k) + border;
+                cavas.drawLine(border, y, graphwidth + border, y, paint);
             }
-            for (int j = 0; j <= (graphwidth /32); j++) {
-                float x = (float)(32 * j)+ border;
+            for (int j = 0; j <= (graphwidth / 32); j++) {
+                float x = (float) (32 * j) + border;
                 cavas.drawLine(x, border, x, graphheight + border, paint);
             }
-            synchronized(PhotoModule.statsdata) {
-                 //Assumption: The first element contains
+            synchronized (PhotoModule.statsdata) {
+                //Assumption: The first element contains
                 //            the maximum value.
                 int maxValue = Integer.MIN_VALUE;
-                if ( 0 == PhotoModule.statsdata[0] ) {
-                    for ( int i = 1 ; i <= STATS_SIZE ; i++ ) {
-                         if ( maxValue < PhotoModule.statsdata[i] ) {
-                             maxValue = PhotoModule.statsdata[i];
-                         }
+                if (0 == PhotoModule.statsdata[0]) {
+                    for (int i = 1; i <= STATS_SIZE; i++) {
+                        if (maxValue < PhotoModule.statsdata[i]) {
+                            maxValue = PhotoModule.statsdata[i];
+                        }
                     }
                 } else {
                     maxValue = PhotoModule.statsdata[0];
                 }
-                mScale = ( float ) maxValue;
-                for(int i=1 ; i<=STATS_SIZE ; i++)  {
-                    scaled = (PhotoModule.statsdata[i]/mScale)*STATS_SIZE;
-                    if(scaled >= (float)STATS_SIZE)
-                        scaled = (float)STATS_SIZE;
-                    left = (bargap * (i+1)) + (barwidth * i) + border;
+                mScale = (float) maxValue;
+                for (int i = 1; i <= STATS_SIZE; i++) {
+                    scaled = (PhotoModule.statsdata[i] / mScale) * STATS_SIZE;
+                    if (scaled >= (float) STATS_SIZE)
+                        scaled = (float) STATS_SIZE;
+                    left = (bargap * (i + 1)) + (barwidth * i) + border;
                     top = graphheight + border;
                     right = left + barwidth;
                     bottom = top - scaled;
@@ -3242,16 +3202,18 @@ class GraphView extends View {
             }
             canvas.drawBitmap(mBitmap, 0, 0, null);
         }
-        if (mPhotoModule.mHiston && mPhotoModule!= null) {
+        if (mPhotoModule.mHiston && mPhotoModule != null) {
             mGraphCameraDevice = mPhotoModule.getCamera();
-            if (mGraphCameraDevice != null){
+            if (mGraphCameraDevice != null) {
                 mGraphCameraDevice.sendHistogramData();
             }
         }
     }
+
     public void PreviewChanged() {
         invalidate();
     }
+
     public void setPhotoModuleObject(PhotoModule photoModule) {
         mPhotoModule = photoModule;
     }
