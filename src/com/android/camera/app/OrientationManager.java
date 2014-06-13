@@ -76,7 +76,7 @@ public class OrientationManager {
         if (mOrientationLocked || mRotationLockedSetting) return;
         mOrientationLocked = true;
         if (ApiHelper.HAS_ORIENTATION_LOCK) {
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
             mActivity.setRequestedOrientation(calculateCurrentScreenOrientation());
         }
