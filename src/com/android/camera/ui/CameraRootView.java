@@ -23,6 +23,7 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.DisplayManager.DisplayListener;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,9 +39,12 @@ public class CameraRootView extends FrameLayout {
     private int mLeftMargin = 0;
     private int mRightMargin = 0;
     private final Rect mCurrentInsets = new Rect(0, 0, 0, 0);
+    private final Rect mLastInsets = new Rect();
     private int mOffset = 0;
     private Object mDisplayListener;
     private MyDisplayListener mListener;
+    private final boolean mHasTranslucentNavigationBar =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
     public interface MyDisplayListener {
         public void onDisplayChanged();
@@ -51,8 +55,22 @@ public class CameraRootView extends FrameLayout {
         initDisplayListener();
     }
 
+    public void redoFitSystemWindows() {
+        if (mLastInsets.left != 0 || mLastInsets.right != 0
+                || mLastInsets.top != 0 || mLastInsets.bottom != 0) {
+            Rect insets = new Rect(mLastInsets);
+            fitSystemWindows(insets);
+        }
+    }
+
     @Override
     protected boolean fitSystemWindows(Rect insets) {
+        mLastInsets.set(insets);
+        if (mHasTranslucentNavigationBar) {
+            // no adjustment needed
+            return super.fitSystemWindows(insets);
+        }
+
         // insets include status bar, navigation bar, etc
         // In this case, we are only concerned with the size of nav bar
         if (mCurrentInsets.equals(insets)) {

@@ -23,7 +23,8 @@
     <com.android.camera.ui.FilmStripView
         android:id="@+id/filmstrip_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false" />
 
     <!--com.android.camera.ui.FitSystemUiFrameLayout-->
     <FrameLayout
