@@ -84,7 +84,7 @@
     <dimen name="pie_arc_offset">48dp</dimen>
     <dimen name="pie_item_radius">370dp</dimen>
     <dimen name="pie_arc_radius">214dp</dimen>
-    <dimen name="pie_deadzone_width">36dp</dimen>
+    <dimen name="pie_deadzone_width">46dp</dimen>
     <dimen name="pie_anglezone_width">92dp</dimen>
     <dimen name="focus_radius_offset">8dp</dimen>
     <dimen name="focus_inner_offset">24dp</dimen>
@@ -94,7 +94,7 @@
     <dimen name="switcher_size">72dp</dimen>
     <dimen name="face_circle_stroke">2dip</dimen>
     <dimen name="zoom_font_size">14pt</dimen>
-    <dimen name="shutter_offset">-22dp</dimen>
+    <dimen name="shutter_offset">38dp</dimen>
     <dimen name="size_thumbnail">200dip</dimen>
     <dimen name="size_preview">400dip</dimen>
     <dimen name="navigation_bar_height">48dip</dimen>
