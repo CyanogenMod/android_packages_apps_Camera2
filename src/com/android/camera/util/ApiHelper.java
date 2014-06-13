@@ -56,11 +56,6 @@ public class ApiHelper {
 
     public static final boolean IS_NEXUS_5 = Build.DEVICE.equals("hammerhead");
 
-    public static final boolean SHOULD_HARD_RESET_PREVIEW_CALLBACK =
-            IS_NEXUS_5 && ("4.4".equals(Build.VERSION.RELEASE)
-                    || "4.4.1".equals(Build.VERSION.RELEASE)
-                    || "4.4.2".equals(Build.VERSION.RELEASE));
-
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
