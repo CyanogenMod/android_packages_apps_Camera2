@@ -31,24 +31,12 @@ import java.util.List;
 public class RenderOverlay extends FrameLayout {
 
     private static final String TAG = "CAM_Overlay";
-
-    interface Renderer {
-
-        public boolean handlesTouch();
-        public boolean onTouchEvent(MotionEvent evt);
-        public void setOverlay(RenderOverlay overlay);
-        public void layout(int left, int top, int right, int bottom);
-        public void draw(Canvas canvas);
-
-    }
-
     private RenderView mRenderView;
     private List<Renderer> mClients;
     private PreviewGestures mGestures;
     // reverse list of touch clients
     private List<Renderer> mTouchClients;
     private int[] mPosition = new int[2];
-
     public RenderOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRenderView = new RenderView(context);
@@ -119,6 +107,20 @@ public class RenderOverlay extends FrameLayout {
         mRenderView.invalidate();
     }
 
+    interface Renderer {
+
+        public boolean handlesTouch();
+
+        public boolean onTouchEvent(MotionEvent evt);
+
+        public void setOverlay(RenderOverlay overlay);
+
+        public void layout(int left, int top, int right, int bottom);
+
+        public void draw(Canvas canvas);
+
+    }
+
     private class RenderView extends View {
 
         private Renderer mTouchTarget;
@@ -151,7 +153,7 @@ public class RenderOverlay extends FrameLayout {
         @Override
         public void onLayout(boolean changed, int left, int top, int right, int bottom) {
             adjustPosition();
-            super.onLayout(changed, left,  top, right, bottom);
+            super.onLayout(changed, left, top, right, bottom);
             if (mClients == null) return;
             for (Renderer renderer : mClients) {
                 renderer.layout(left, top, right, bottom);

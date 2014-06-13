@@ -43,8 +43,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.camera.CameraActivity;
 import com.android.camera.MediaSaveService;
-import com.android.camera.PhotoModule;
 import com.android.camera.MediaSaveService.OnMediaSavedListener;
+import com.android.camera.PhotoModule;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.tinyplanet.TinyPlanetPreview.PreviewSizeListener;
 import com.android.camera.util.XmpUtil;
@@ -54,7 +54,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.locks.Lock;
@@ -65,9 +64,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * 360 degree stereographically mapped panoramic image.
  */
 public class TinyPlanetFragment extends DialogFragment implements PreviewSizeListener {
-    /** Argument to tell the fragment the URI of the original panoramic image. */
+    /**
+     * Argument to tell the fragment the URI of the original panoramic image.
+     */
     public static final String ARGUMENT_URI = "uri";
-    /** Argument to tell the fragment the title of the original panoramic image. */
+    /**
+     * Argument to tell the fragment the title of the original panoramic image.
+     */
     public static final String ARGUMENT_TITLE = "title";
 
     public static final String CROPPED_AREA_IMAGE_WIDTH_PIXELS =
@@ -85,9 +88,13 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
     public static final String GOOGLE_PANO_NAMESPACE = "http://ns.google.com/photos/1.0/panorama/";
 
     private static final String TAG = "TinyPlanetActivity";
-    /** Delay between a value update and the renderer running. */
+    /**
+     * Delay between a value update and the renderer running.
+     */
     private static final int RENDER_DELAY_MILLIS = 50;
-    /** Filename prefix to prepend to the original name for the new file. */
+    /**
+     * Filename prefix to prepend to the original name for the new file.
+     */
     private static final String FILENAME_PREFIX = "TINYPLANET_";
 
     private Uri mSourceImageUri;
@@ -103,17 +110,27 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
      */
     private Lock mResultLock = new ReentrantLock();
 
-    /** The title of the original panoramic image. */
+    /**
+     * The title of the original panoramic image.
+     */
     private String mOriginalTitle = "";
 
-    /** The padded source bitmap. */
+    /**
+     * The padded source bitmap.
+     */
     private Bitmap mSourceBitmap;
-    /** The resulting preview bitmap. */
+    /**
+     * The resulting preview bitmap.
+     */
     private Bitmap mResultBitmap;
 
-    /** Used to delay-post a tiny planet rendering task. */
+    /**
+     * Used to delay-post a tiny planet rendering task.
+     */
     private Handler mHandler = new Handler();
-    /** Whether rendering is in progress right now. */
+    /**
+     * Whether rendering is in progress right now.
+     */
     private Boolean mRendering = false;
     /**
      * Whether we should render one more time after the current rendering run is
@@ -121,18 +138,6 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
      * current rendering.
      */
     private Boolean mRenderOneMore = false;
-
-    /** Tiny planet data plus size. */
-    private static final class TinyPlanetImage {
-        public final byte[] mJpegData;
-        public final int mSize;
-
-        public TinyPlanetImage(byte[] jpegData, int size) {
-            mJpegData = jpegData;
-            mSize = size;
-        }
-    }
-
     /**
      * Creates and executes a task to create a tiny planet with the current
      * values.
@@ -182,6 +187,61 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
         }
     };
 
+    /**
+     * To create a proper TinyPlanet, the input image must be 2:1 (360:180
+     * degrees). So if needed, we pad the source image with black.
+     */
+    private static Bitmap createPaddedBitmap(Bitmap bitmapIn, XMPMeta xmp, int intermediateWidth) {
+        try {
+            int croppedAreaWidth =
+                    getInt(xmp, CROPPED_AREA_IMAGE_WIDTH_PIXELS);
+            int croppedAreaHeight =
+                    getInt(xmp, CROPPED_AREA_IMAGE_HEIGHT_PIXELS);
+            int fullPanoWidth =
+                    getInt(xmp, CROPPED_AREA_FULL_PANO_WIDTH_PIXELS);
+            int fullPanoHeight =
+                    getInt(xmp, CROPPED_AREA_FULL_PANO_HEIGHT_PIXELS);
+            int left = getInt(xmp, CROPPED_AREA_LEFT);
+            int top = getInt(xmp, CROPPED_AREA_TOP);
+
+            if (fullPanoWidth == 0 || fullPanoHeight == 0) {
+                return bitmapIn;
+            }
+            // Make sure the intermediate image has the similar size to the
+            // input.
+            Bitmap paddedBitmap = null;
+            float scale = intermediateWidth / (float) fullPanoWidth;
+            while (paddedBitmap == null) {
+                try {
+                    paddedBitmap = Bitmap.createBitmap(
+                            (int) (fullPanoWidth * scale), (int) (fullPanoHeight * scale),
+                            Bitmap.Config.ARGB_8888);
+                } catch (OutOfMemoryError e) {
+                    System.gc();
+                    scale /= 2;
+                }
+            }
+            Canvas paddedCanvas = new Canvas(paddedBitmap);
+
+            int right = left + croppedAreaWidth;
+            int bottom = top + croppedAreaHeight;
+            RectF destRect = new RectF(left * scale, top * scale, right * scale, bottom * scale);
+            paddedCanvas.drawBitmap(bitmapIn, null, destRect, null);
+            return paddedBitmap;
+        } catch (XMPException ex) {
+            // Do nothing, just use mSourceBitmap as is.
+        }
+        return bitmapIn;
+    }
+
+    private static int getInt(XMPMeta xmp, String key) throws XMPException {
+        if (xmp.doesPropertyExist(GOOGLE_PANO_NAMESPACE, key)) {
+            return xmp.getPropertyInteger(GOOGLE_PANO_NAMESPACE, key);
+        } else {
+            return 0;
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,7 +250,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getDialog().setCanceledOnTouchOutside(true);
 
@@ -322,7 +382,8 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                 mediaSaveService.addImage(image.mJpegData, tinyPlanetTitle, (new Date()).getTime(),
                         null,
                         image.mSize, image.mSize, 0, null, doneListener, getActivity()
-                                .getContentResolver(),PhotoModule.PIXEL_FORMAT_JPEG);
+                                .getContentResolver(), PhotoModule.PIXEL_FORMAT_JPEG
+                );
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -444,57 +505,15 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
     }
 
     /**
-     * To create a proper TinyPlanet, the input image must be 2:1 (360:180
-     * degrees). So if needed, we pad the source image with black.
+     * Tiny planet data plus size.
      */
-    private static Bitmap createPaddedBitmap(Bitmap bitmapIn, XMPMeta xmp, int intermediateWidth) {
-        try {
-            int croppedAreaWidth =
-                    getInt(xmp, CROPPED_AREA_IMAGE_WIDTH_PIXELS);
-            int croppedAreaHeight =
-                    getInt(xmp, CROPPED_AREA_IMAGE_HEIGHT_PIXELS);
-            int fullPanoWidth =
-                    getInt(xmp, CROPPED_AREA_FULL_PANO_WIDTH_PIXELS);
-            int fullPanoHeight =
-                    getInt(xmp, CROPPED_AREA_FULL_PANO_HEIGHT_PIXELS);
-            int left = getInt(xmp, CROPPED_AREA_LEFT);
-            int top = getInt(xmp, CROPPED_AREA_TOP);
+    private static final class TinyPlanetImage {
+        public final byte[] mJpegData;
+        public final int mSize;
 
-            if (fullPanoWidth == 0 || fullPanoHeight == 0) {
-                return bitmapIn;
-            }
-            // Make sure the intermediate image has the similar size to the
-            // input.
-            Bitmap paddedBitmap = null;
-            float scale = intermediateWidth / (float) fullPanoWidth;
-            while (paddedBitmap == null) {
-                try {
-                    paddedBitmap = Bitmap.createBitmap(
-                            (int) (fullPanoWidth * scale), (int) (fullPanoHeight * scale),
-                            Bitmap.Config.ARGB_8888);
-                } catch (OutOfMemoryError e) {
-                    System.gc();
-                    scale /= 2;
-                }
-            }
-            Canvas paddedCanvas = new Canvas(paddedBitmap);
-
-            int right = left + croppedAreaWidth;
-            int bottom = top + croppedAreaHeight;
-            RectF destRect = new RectF(left * scale, top * scale, right * scale, bottom * scale);
-            paddedCanvas.drawBitmap(bitmapIn, null, destRect, null);
-            return paddedBitmap;
-        } catch (XMPException ex) {
-            // Do nothing, just use mSourceBitmap as is.
-        }
-        return bitmapIn;
-    }
-
-    private static int getInt(XMPMeta xmp, String key) throws XMPException {
-        if (xmp.doesPropertyExist(GOOGLE_PANO_NAMESPACE, key)) {
-            return xmp.getPropertyInteger(GOOGLE_PANO_NAMESPACE, key);
-        } else {
-            return 0;
+        public TinyPlanetImage(byte[] jpegData, int size) {
+            mJpegData = jpegData;
+            mSize = size;
         }
     }
 }

@@ -26,12 +26,12 @@ import junit.framework.TestSuite;
 
 /**
  * Instrumentation Test Runner for all Camera tests.
- *
+ * <p/>
  * Running all tests:
- *
+ * <p/>
  * adb shell am instrument \
- *    -e class com.android.camera.StressTests \
- *    -w com.google.android.camera.tests/com.android.camera.stress.CameraStressTestRunner
+ * -e class com.android.camera.StressTests \
+ * -w com.google.android.camera.tests/com.android.camera.stress.CameraStressTestRunner
  */
 
 public class StressTests extends TestSuite {

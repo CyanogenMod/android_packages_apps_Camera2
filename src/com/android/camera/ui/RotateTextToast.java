@@ -30,6 +30,14 @@ public class RotateTextToast {
     private static final int TOAST_DURATION = 5000; // milliseconds
     ViewGroup mLayoutRoot;
     RotateLayout mToast;
+    private final Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            CameraUtil.fadeOut(mToast);
+            mLayoutRoot.removeView(mToast);
+            mToast = null;
+        }
+    };
     Handler mHandler;
 
     public RotateTextToast(Activity activity, int textResourceId, int orientation) {
@@ -42,15 +50,6 @@ public class RotateTextToast {
         mToast.setOrientation(orientation, false);
         mHandler = new Handler();
     }
-
-    private final Runnable mRunnable = new Runnable() {
-        @Override
-        public void run() {
-            CameraUtil.fadeOut(mToast);
-            mLayoutRoot.removeView(mToast);
-            mToast = null;
-        }
-    };
 
     public void show() {
         mToast.setVisibility(View.VISIBLE);

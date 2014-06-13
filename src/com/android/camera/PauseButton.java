@@ -31,10 +31,8 @@ package com.android.camera;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.ImageView;
-import android.view.MotionEvent;
 import android.view.View;
-import android.util.Log;
+import android.widget.ImageView;
 
 /**
  * A button designed to be used for the on-screen recording
@@ -42,10 +40,7 @@ import android.util.Log;
  */
 public class PauseButton extends ImageView {
 
-    public interface OnPauseButtonListener {
-        void onButtonPause();
-        void onButtonContinue();
-    }
+    private OnPauseButtonListener mListener;
 
     public PauseButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -78,5 +73,9 @@ public class PauseButton extends ImageView {
         mListener = listener;
     }
 
-    private OnPauseButtonListener mListener;
+    public interface OnPauseButtonListener {
+        void onButtonPause();
+
+        void onButtonContinue();
+    }
 }

@@ -91,7 +91,9 @@ public class WideAnglePanoramaUI implements
     private SurfaceTexture mSurfaceTexture;
     private View mPreviewCover;
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public WideAnglePanoramaUI(
             CameraActivity activity,
             WideAnglePanoramaController controller,
@@ -322,7 +324,8 @@ public class WideAnglePanoramaUI implements
     }
 
     @Override
-    public void onShutterButtonLongClick() {}
+    public void onShutterButtonLongClick() {
+    }
 
     @Override
     public void onLayoutChange(
@@ -472,6 +475,24 @@ public class WideAnglePanoramaUI implements
         mPreviewCover.setVisibility(View.VISIBLE);
     }
 
+    private static class FlipBitmapDrawable extends BitmapDrawable {
+
+        public FlipBitmapDrawable(Resources res, Bitmap bitmap) {
+            super(res, bitmap);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            Rect bounds = getBounds();
+            int cx = bounds.centerX();
+            int cy = bounds.centerY();
+            canvas.save(Canvas.MATRIX_SAVE_FLAG);
+            canvas.rotate(180, cx, cy);
+            super.draw(canvas);
+            canvas.restore();
+        }
+    }
+
     private class DialogHelper {
         private ProgressDialog mProgressDialog;
         private AlertDialog mAlertDialog;
@@ -511,24 +532,6 @@ public class WideAnglePanoramaUI implements
         public void showWaitingDialog(CharSequence message) {
             dismissAll();
             mProgressDialog = ProgressDialog.show(mActivity, null, message, true, false);
-        }
-    }
-
-    private static class FlipBitmapDrawable extends BitmapDrawable {
-
-        public FlipBitmapDrawable(Resources res, Bitmap bitmap) {
-            super(res, bitmap);
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            Rect bounds = getBounds();
-            int cx = bounds.centerX();
-            int cy = bounds.centerY();
-            canvas.save(Canvas.MATRIX_SAVE_FLAG);
-            canvas.rotate(180, cx, cy);
-            super.draw(canvas);
-            canvas.restore();
         }
     }
 }

@@ -38,7 +38,7 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     /**
      * Constructor.
      *
-     * @param wrappedAdapter  The {@link LocalDataAdapter} to be wrapped.
+     * @param wrappedAdapter The {@link LocalDataAdapter} to be wrapped.
      */
     AbstractLocalDataAdapterWrapper(LocalDataAdapter wrappedAdapter) {
         if (wrappedAdapter == null) {

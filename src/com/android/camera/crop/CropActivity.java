@@ -55,11 +55,25 @@ import java.io.OutputStream;
  * Activity for cropping an image.
  */
 public class CropActivity extends Activity {
-    private static final String LOGTAG = "CropActivity";
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
+    /**
+     * The maximum bitmap size we allow to be returned through the intent.
+     * Intents have a maximum of 1MB in total size. However, the Bitmap seems to
+     * have some overhead to hit so that we go way below the limit here to make
+     * sure the intent stays below 1MB.We should consider just returning a byte
+     * array instead of a Bitmap instance to avoid overhead.
+     */
+    public static final int MAX_BMAP_IN_INTENT = 750000;
+    private static final String LOGTAG = "CropActivity";
+    private static final int SELECT_PICTURE = 1; // request code for picker
+    private static final int DEFAULT_COMPRESS_QUALITY = 90;
+    // Flags
+    private static final int DO_SET_WALLPAPER = 1;
+    private static final int DO_RETURN_DATA = 1 << 1;
+    private static final int DO_EXTRA_OUTPUT = 1 << 2;
+    private static final int FLAG_CHECK = DO_SET_WALLPAPER | DO_RETURN_DATA | DO_EXTRA_OUTPUT;
     private CropExtras mCropExtras = null;
     private LoadBitmapTask mLoadBitmapTask = null;
-
     private int mOutputX = 0;
     private int mOutputY = 0;
     private Bitmap mOriginalBitmap = null;
@@ -70,24 +84,77 @@ public class CropActivity extends Activity {
     private View mSaveButton = null;
     private boolean finalIOGuard = false;
 
-    private static final int SELECT_PICTURE = 1; // request code for picker
+    protected static Bitmap getCroppedImage(Bitmap image, RectF cropBounds, RectF photoBounds) {
+        RectF imageBounds = new RectF(0, 0, image.getWidth(), image.getHeight());
+        RectF crop = CropMath.getScaledCropBounds(cropBounds, photoBounds, imageBounds);
+        if (crop == null) {
+            return null;
+        }
+        Rect intCrop = new Rect();
+        crop.roundOut(intCrop);
+        return Bitmap.createBitmap(image, intCrop.left, intCrop.top, intCrop.width(),
+                intCrop.height());
+    }
 
-    private static final int DEFAULT_COMPRESS_QUALITY = 90;
+    protected static Bitmap getDownsampledBitmap(Bitmap image, int max_size) {
+        if (image == null || image.getWidth() == 0 || image.getHeight() == 0 || max_size < 16) {
+            throw new IllegalArgumentException("Bad argument to getDownsampledBitmap()");
+        }
+        int shifts = 0;
+        int size = CropMath.getBitmapSize(image);
+        while (size > max_size) {
+            shifts++;
+            size /= 4;
+        }
+        Bitmap ret = Bitmap.createScaledBitmap(image, image.getWidth() >> shifts,
+                image.getHeight() >> shifts, true);
+        if (ret == null) {
+            return null;
+        }
+        // Handle edge case for rounding.
+        if (CropMath.getBitmapSize(ret) > max_size) {
+            return Bitmap.createScaledBitmap(ret, ret.getWidth() >> 1, ret.getHeight() >> 1, true);
+        }
+        return ret;
+    }
+
     /**
-     * The maximum bitmap size we allow to be returned through the intent.
-     * Intents have a maximum of 1MB in total size. However, the Bitmap seems to
-     * have some overhead to hit so that we go way below the limit here to make
-     * sure the intent stays below 1MB.We should consider just returning a byte
-     * array instead of a Bitmap instance to avoid overhead.
+     * Gets the crop extras from the intent, or null if none exist.
      */
-    public static final int MAX_BMAP_IN_INTENT = 750000;
+    protected static CropExtras getExtrasFromIntent(Intent intent) {
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            return new CropExtras(extras.getInt(CropExtras.KEY_OUTPUT_X, 0),
+                    extras.getInt(CropExtras.KEY_OUTPUT_Y, 0),
+                    extras.getBoolean(CropExtras.KEY_SCALE, true) &&
+                            extras.getBoolean(CropExtras.KEY_SCALE_UP_IF_NEEDED, false),
+                    extras.getInt(CropExtras.KEY_ASPECT_X, 0),
+                    extras.getInt(CropExtras.KEY_ASPECT_Y, 0),
+                    extras.getBoolean(CropExtras.KEY_SET_AS_WALLPAPER, false),
+                    extras.getBoolean(CropExtras.KEY_RETURN_DATA, false),
+                    (Uri) extras.getParcelable(MediaStore.EXTRA_OUTPUT),
+                    extras.getString(CropExtras.KEY_OUTPUT_FORMAT),
+                    extras.getBoolean(CropExtras.KEY_SHOW_WHEN_LOCKED, false),
+                    extras.getFloat(CropExtras.KEY_SPOTLIGHT_X),
+                    extras.getFloat(CropExtras.KEY_SPOTLIGHT_Y)
+            );
+        }
+        return null;
+    }
 
-    // Flags
-    private static final int DO_SET_WALLPAPER = 1;
-    private static final int DO_RETURN_DATA = 1 << 1;
-    private static final int DO_EXTRA_OUTPUT = 1 << 2;
+    protected static CompressFormat convertExtensionToCompressFormat(String extension) {
+        return extension.equals("png") ? CompressFormat.PNG : CompressFormat.JPEG;
+    }
 
-    private static final int FLAG_CHECK = DO_SET_WALLPAPER | DO_RETURN_DATA | DO_EXTRA_OUTPUT;
+    protected static String getFileExtension(String requestFormat) {
+        String outputFormat = (requestFormat == null)
+                ? "jpg"
+                : requestFormat;
+        outputFormat = outputFormat.toLowerCase();
+        return (outputFormat.equals("png") || outputFormat.equals("gif"))
+                ? "png" // We don't support gif compression.
+                : "jpg";
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +205,7 @@ public class CropActivity extends Activity {
     }
 
     @Override
-    public void onConfigurationChanged (Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mCropView.configChanged();
     }
@@ -239,40 +306,6 @@ public class CropActivity extends Activity {
         toast.show();
     }
 
-    /**
-     * AsyncTask for loading a bitmap into memory.
-     *
-     * @see #startLoadBitmap(android.net.Uri)
-     * see doneLoadBitmap (android.graphics.Bitmap)
-     */
-    private class LoadBitmapTask extends AsyncTask<Uri, Void, Bitmap> {
-        int mBitmapSize;
-        Context mContext;
-        Rect mOriginalBounds;
-        int mOrientation;
-
-        public LoadBitmapTask() {
-            mBitmapSize = getScreenImageSize();
-            mContext = getApplicationContext();
-            mOriginalBounds = new Rect();
-            mOrientation = 0;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Uri... params) {
-            Uri uri = params[0];
-            Bitmap bmap = ImageLoader.loadConstrainedBitmap(uri, mContext, mBitmapSize,
-                    mOriginalBounds, false);
-            mOrientation = ImageLoader.getMetadataRotation(mContext, uri);
-            return bmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            doneLoadBitmap(result, new RectF(mOriginalBounds), mOrientation);
-        }
-    }
-
     protected void startFinishOutput() {
         if (finalIOGuard) {
             return;
@@ -316,8 +349,8 @@ public class CropActivity extends Activity {
     }
 
     private void startBitmapIO(int flags, Bitmap currentBitmap, Uri sourceUri, Uri destUri,
-            RectF cropBounds, RectF photoBounds, RectF currentBitmapBounds, String format,
-            int rotation) {
+                               RectF cropBounds, RectF photoBounds, RectF currentBitmapBounds, String format,
+                               int rotation) {
         if (cropBounds == null || photoBounds == null || currentBitmap == null
                 || currentBitmap.getWidth() == 0 || currentBitmap.getHeight() == 0
                 || cropBounds.width() == 0 || cropBounds.height() == 0 || photoBounds.width() == 0
@@ -349,6 +382,55 @@ public class CropActivity extends Activity {
         done();
     }
 
+    private void done() {
+        finish();
+    }
+
+    private RectF getBitmapCrop(RectF imageBounds) {
+        RectF crop = mCropView.getCrop();
+        RectF photo = mCropView.getPhoto();
+        if (crop == null || photo == null) {
+            Log.w(LOGTAG, "could not get crop");
+            return null;
+        }
+        RectF scaledCrop = CropMath.getScaledCropBounds(crop, photo, imageBounds);
+        return scaledCrop;
+    }
+
+    /**
+     * AsyncTask for loading a bitmap into memory.
+     *
+     * @see #startLoadBitmap(android.net.Uri)
+     * see doneLoadBitmap (android.graphics.Bitmap)
+     */
+    private class LoadBitmapTask extends AsyncTask<Uri, Void, Bitmap> {
+        int mBitmapSize;
+        Context mContext;
+        Rect mOriginalBounds;
+        int mOrientation;
+
+        public LoadBitmapTask() {
+            mBitmapSize = getScreenImageSize();
+            mContext = getApplicationContext();
+            mOriginalBounds = new Rect();
+            mOrientation = 0;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Uri... params) {
+            Uri uri = params[0];
+            Bitmap bmap = ImageLoader.loadConstrainedBitmap(uri, mContext, mBitmapSize,
+                    mOriginalBounds, false);
+            mOrientation = ImageLoader.getMetadataRotation(mContext, uri);
+            return bmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            doneLoadBitmap(result, new RectF(mOriginalBounds), mOrientation);
+        }
+    }
+
     private class BitmapIOTask extends AsyncTask<Bitmap, Void, Boolean> {
 
         private final WallpaperManager mWPManager;
@@ -364,23 +446,9 @@ public class CropActivity extends Activity {
         Intent mResultIntent = null;
         int mRotation = 0;
 
-        // Helper to setup input stream
-        private void regenerateInputStream() {
-            if (mInUri == null) {
-                Log.w(LOGTAG, "cannot read original file, no input URI given");
-            } else {
-                Utils.closeSilently(mInStream);
-                try {
-                    mInStream = getContentResolver().openInputStream(mInUri);
-                } catch (FileNotFoundException e) {
-                    Log.w(LOGTAG, "cannot read file: " + mInUri.toString(), e);
-                }
-            }
-        }
-
         public BitmapIOTask(Uri sourceUri, Uri destUri, String outputFormat, int flags,
-                RectF cropBounds, RectF photoBounds, RectF originalBitmapBounds, int rotation,
-                int outputX, int outputY) {
+                            RectF cropBounds, RectF photoBounds, RectF originalBitmapBounds, int rotation,
+                            int outputX, int outputY) {
             mOutputFormat = outputFormat;
             mOutStream = null;
             mOutUri = destUri;
@@ -411,6 +479,20 @@ public class CropActivity extends Activity {
 
             if ((flags & (DO_EXTRA_OUTPUT | DO_SET_WALLPAPER)) != 0) {
                 regenerateInputStream();
+            }
+        }
+
+        // Helper to setup input stream
+        private void regenerateInputStream() {
+            if (mInUri == null) {
+                Log.w(LOGTAG, "cannot read original file, no input URI given");
+            } else {
+                Utils.closeSilently(mInStream);
+                try {
+                    mInStream = getContentResolver().openInputStream(mInUri);
+                } catch (FileNotFoundException e) {
+                    Log.w(LOGTAG, "cannot read file: " + mInUri.toString(), e);
+                }
             }
         }
 
@@ -568,7 +650,8 @@ public class CropActivity extends Activity {
                                 } catch (IOException e) {
                                     Log.w(LOGTAG,
                                             "failed to compress bitmap to file: "
-                                                    + mOutUri.toString(), e);
+                                                    + mOutUri.toString(), e
+                                    );
                                     failure = true;
                                 }
                             }
@@ -605,91 +688,5 @@ public class CropActivity extends Activity {
             doneBitmapIO(result.booleanValue(), mResultIntent);
         }
 
-    }
-
-    private void done() {
-        finish();
-    }
-
-    protected static Bitmap getCroppedImage(Bitmap image, RectF cropBounds, RectF photoBounds) {
-        RectF imageBounds = new RectF(0, 0, image.getWidth(), image.getHeight());
-        RectF crop = CropMath.getScaledCropBounds(cropBounds, photoBounds, imageBounds);
-        if (crop == null) {
-            return null;
-        }
-        Rect intCrop = new Rect();
-        crop.roundOut(intCrop);
-        return Bitmap.createBitmap(image, intCrop.left, intCrop.top, intCrop.width(),
-                intCrop.height());
-    }
-
-    protected static Bitmap getDownsampledBitmap(Bitmap image, int max_size) {
-        if (image == null || image.getWidth() == 0 || image.getHeight() == 0 || max_size < 16) {
-            throw new IllegalArgumentException("Bad argument to getDownsampledBitmap()");
-        }
-        int shifts = 0;
-        int size = CropMath.getBitmapSize(image);
-        while (size > max_size) {
-            shifts++;
-            size /= 4;
-        }
-        Bitmap ret = Bitmap.createScaledBitmap(image, image.getWidth() >> shifts,
-                image.getHeight() >> shifts, true);
-        if (ret == null) {
-            return null;
-        }
-        // Handle edge case for rounding.
-        if (CropMath.getBitmapSize(ret) > max_size) {
-            return Bitmap.createScaledBitmap(ret, ret.getWidth() >> 1, ret.getHeight() >> 1, true);
-        }
-        return ret;
-    }
-
-    /**
-     * Gets the crop extras from the intent, or null if none exist.
-     */
-    protected static CropExtras getExtrasFromIntent(Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            return new CropExtras(extras.getInt(CropExtras.KEY_OUTPUT_X, 0),
-                    extras.getInt(CropExtras.KEY_OUTPUT_Y, 0),
-                    extras.getBoolean(CropExtras.KEY_SCALE, true) &&
-                            extras.getBoolean(CropExtras.KEY_SCALE_UP_IF_NEEDED, false),
-                    extras.getInt(CropExtras.KEY_ASPECT_X, 0),
-                    extras.getInt(CropExtras.KEY_ASPECT_Y, 0),
-                    extras.getBoolean(CropExtras.KEY_SET_AS_WALLPAPER, false),
-                    extras.getBoolean(CropExtras.KEY_RETURN_DATA, false),
-                    (Uri) extras.getParcelable(MediaStore.EXTRA_OUTPUT),
-                    extras.getString(CropExtras.KEY_OUTPUT_FORMAT),
-                    extras.getBoolean(CropExtras.KEY_SHOW_WHEN_LOCKED, false),
-                    extras.getFloat(CropExtras.KEY_SPOTLIGHT_X),
-                    extras.getFloat(CropExtras.KEY_SPOTLIGHT_Y));
-        }
-        return null;
-    }
-
-    protected static CompressFormat convertExtensionToCompressFormat(String extension) {
-        return extension.equals("png") ? CompressFormat.PNG : CompressFormat.JPEG;
-    }
-
-    protected static String getFileExtension(String requestFormat) {
-        String outputFormat = (requestFormat == null)
-                ? "jpg"
-                : requestFormat;
-        outputFormat = outputFormat.toLowerCase();
-        return (outputFormat.equals("png") || outputFormat.equals("gif"))
-                ? "png" // We don't support gif compression.
-                : "jpg";
-    }
-
-    private RectF getBitmapCrop(RectF imageBounds) {
-        RectF crop = mCropView.getCrop();
-        RectF photo = mCropView.getPhoto();
-        if (crop == null || photo == null) {
-            Log.w(LOGTAG, "could not get crop");
-            return null;
-        }
-        RectF scaledCrop = CropMath.getScaledCropBounds(crop, photo, imageBounds);
-        return scaledCrop;
     }
 }

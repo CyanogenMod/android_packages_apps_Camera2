@@ -16,8 +16,6 @@
 
 package com.android.camera;
 
-import java.util.List;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -25,7 +23,11 @@ import android.util.AttributeSet;
 
 import com.android.camera2.R;
 
-/** A {@code ListPreference} where each entry has a corresponding icon. */
+import java.util.List;
+
+/**
+ * A {@code ListPreference} where each entry has a corresponding icon.
+ */
 public class IconListPreference extends ListPreference {
     private int mSingleIconId;
     private int mIconIds[];
@@ -57,8 +59,16 @@ public class IconListPreference extends ListPreference {
         return mIconIds;
     }
 
+    public void setIconIds(int[] iconIds) {
+        mIconIds = iconIds;
+    }
+
     public int[] getLargeIconIds() {
         return mLargeIconIds;
+    }
+
+    public void setLargeIconIds(int[] largeIconIds) {
+        mLargeIconIds = largeIconIds;
     }
 
     public int[] getImageIds() {
@@ -67,14 +77,6 @@ public class IconListPreference extends ListPreference {
 
     public boolean getUseSingleIcon() {
         return mUseSingleIcon;
-    }
-
-    public void setIconIds(int[] iconIds) {
-        mIconIds = iconIds;
-    }
-
-    public void setLargeIconIds(int[] largeIconIds) {
-        mLargeIconIds = largeIconIds;
     }
 
     public void setUseSingleIcon(boolean useSingle) {

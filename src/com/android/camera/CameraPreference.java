@@ -30,15 +30,8 @@ import com.android.camera2.R;
 public abstract class CameraPreference {
 
     private final String mTitle;
-    private SharedPreferences mSharedPreferences;
     private final Context mContext;
-
-    static public interface OnPreferenceChangedListener {
-        public void onSharedPreferenceChanged();
-        public void onRestorePreferencesClicked();
-        public void onOverriddenPreferencesClicked();
-        public void onCameraPickerClicked(int cameraId);
-    }
+    private SharedPreferences mSharedPreferences;
 
     public CameraPreference(Context context, AttributeSet attrs) {
         mContext = context;
@@ -60,4 +53,14 @@ public abstract class CameraPreference {
     }
 
     public abstract void reloadValue();
+
+    static public interface OnPreferenceChangedListener {
+        public void onSharedPreferenceChanged();
+
+        public void onRestorePreferencesClicked();
+
+        public void onOverriddenPreferencesClicked();
+
+        public void onCameraPickerClicked(int cameraId);
+    }
 }

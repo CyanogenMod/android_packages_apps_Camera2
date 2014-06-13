@@ -29,23 +29,27 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class SurfaceTextureRenderer {
 
-    public interface FrameDrawer {
-        public void onDrawFrame(GL10 gl);
-    }
-
     private static final String TAG = "CAM_" + SurfaceTextureRenderer.class.getSimpleName();
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-
+    private static final int EGL_OPENGL_ES2_BIT = 4;
+    private static final int[] CONFIG_SPEC = new int[]{
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 0,
+            EGL10.EGL_DEPTH_SIZE, 0,
+            EGL10.EGL_STENCIL_SIZE, 0,
+            EGL10.EGL_NONE
+    };
     private EGLConfig mEglConfig;
     private EGLDisplay mEglDisplay;
     private EGLContext mEglContext;
     private EGLSurface mEglSurface;
     private EGL10 mEgl;
     private GL10 mGl;
-
     private Handler mEglHandler;
     private FrameDrawer mFrameDrawer;
-
     private Object mRenderLock = new Object();
     private Runnable mRenderTask = new Runnable() {
         @Override
@@ -60,32 +64,39 @@ public class SurfaceTextureRenderer {
         }
     };
 
-    public class RenderThread extends Thread {
-        private Boolean mRenderStopped = false;
-
-        @Override
-        public void run() {
-            while (true) {
-                synchronized (mRenderStopped) {
-                    if (mRenderStopped) return;
-                }
-                draw(true);
-            }
-        }
-
-        public void stopRender() {
-            synchronized (mRenderStopped) {
-                mRenderStopped = true;
-            }
-        }
-    }
-
     public SurfaceTextureRenderer(SurfaceTexture tex,
-            Handler handler, FrameDrawer renderer) {
+                                  Handler handler, FrameDrawer renderer) {
         mEglHandler = handler;
         mFrameDrawer = renderer;
 
         initialize(tex);
+    }
+
+    private static void checkEglError(String prompt, EGL10 egl) {
+        int error;
+        while ((error = egl.eglGetError()) != EGL10.EGL_SUCCESS) {
+            Log.e(TAG, String.format("%s: EGL error: 0x%x", prompt, error));
+        }
+    }
+
+    private static EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+        int[] numConfig = new int[1];
+        if (!egl.eglChooseConfig(display, CONFIG_SPEC, null, 0, numConfig)) {
+            throw new IllegalArgumentException("eglChooseConfig failed");
+        }
+
+        int numConfigs = numConfig[0];
+        if (numConfigs <= 0) {
+            throw new IllegalArgumentException("No configs match configSpec");
+        }
+
+        EGLConfig[] configs = new EGLConfig[numConfigs];
+        if (!egl.eglChooseConfig(
+                display, CONFIG_SPEC, configs, numConfigs, numConfig)) {
+            throw new IllegalArgumentException("eglChooseConfig#2 failed");
+        }
+
+        return configs[0];
     }
 
     public RenderThread createRenderThread() {
@@ -110,8 +121,9 @@ public class SurfaceTextureRenderer {
 
     /**
      * Posts a render request to the GL thread.
-     * @param sync      set <code>true</code> if the caller needs it to be
-     *                  a synchronous call.
+     *
+     * @param sync set <code>true</code> if the caller needs it to be
+     *             a synchronous call.
      */
     public void draw(boolean sync) {
         synchronized (mRenderLock) {
@@ -141,7 +153,7 @@ public class SurfaceTextureRenderer {
                 } else {
                     Log.v(TAG, "EGL version: " + version[0] + '.' + version[1]);
                 }
-                int[] attribList = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
+                int[] attribList = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE};
                 mEglConfig = chooseConfig(mEgl, mEglDisplay);
                 mEglContext = mEgl.eglCreateContext(
                         mEglDisplay, mEglConfig, EGL10.EGL_NO_CONTEXT, attribList);
@@ -184,43 +196,27 @@ public class SurfaceTextureRenderer {
             }
         }
     }
-
-    private static void checkEglError(String prompt, EGL10 egl) {
-        int error;
-        while ((error = egl.eglGetError()) != EGL10.EGL_SUCCESS) {
-            Log.e(TAG, String.format("%s: EGL error: 0x%x", prompt, error));
-        }
+    public interface FrameDrawer {
+        public void onDrawFrame(GL10 gl);
     }
 
-    private static final int EGL_OPENGL_ES2_BIT = 4;
-    private static final int[] CONFIG_SPEC = new int[] {
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL10.EGL_RED_SIZE, 8,
-            EGL10.EGL_GREEN_SIZE, 8,
-            EGL10.EGL_BLUE_SIZE, 8,
-            EGL10.EGL_ALPHA_SIZE, 0,
-            EGL10.EGL_DEPTH_SIZE, 0,
-            EGL10.EGL_STENCIL_SIZE, 0,
-            EGL10.EGL_NONE
-    };
+    public class RenderThread extends Thread {
+        private Boolean mRenderStopped = false;
 
-    private static EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-        int[] numConfig = new int[1];
-        if (!egl.eglChooseConfig(display, CONFIG_SPEC, null, 0, numConfig)) {
-            throw new IllegalArgumentException("eglChooseConfig failed");
+        @Override
+        public void run() {
+            while (true) {
+                synchronized (mRenderStopped) {
+                    if (mRenderStopped) return;
+                }
+                draw(true);
+            }
         }
 
-        int numConfigs = numConfig[0];
-        if (numConfigs <= 0) {
-            throw new IllegalArgumentException("No configs match configSpec");
+        public void stopRender() {
+            synchronized (mRenderStopped) {
+                mRenderStopped = true;
+            }
         }
-
-        EGLConfig[] configs = new EGLConfig[numConfigs];
-        if (!egl.eglChooseConfig(
-                display, CONFIG_SPEC, configs, numConfigs, numConfig)) {
-            throw new IllegalArgumentException("eglChooseConfig#2 failed");
-        }
-
-        return configs[0];
     }
 }

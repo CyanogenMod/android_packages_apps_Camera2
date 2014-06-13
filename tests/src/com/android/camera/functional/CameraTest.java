@@ -16,8 +16,6 @@
 
 package com.android.camera.functional;
 
-import com.android.camera.CameraActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,6 +24,8 @@ import android.os.Process;
 import android.provider.MediaStore;
 import android.test.InstrumentationTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
+
+import com.android.camera.CameraActivity;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -42,7 +42,7 @@ public class CameraTest extends InstrumentationTestCase {
                 + "test_fd_leak.3gp"));
         getInstrumentation().startActivitySync(intent).finish();
         // Test if the fd is closed.
-        for (File f: new File("/proc/" + Process.myPid() + "/fd").listFiles()) {
+        for (File f : new File("/proc/" + Process.myPid() + "/fd").listFiles()) {
             assertEquals(-1, f.getCanonicalPath().indexOf("test_fd_leak.3gp"));
         }
     }
@@ -72,7 +72,7 @@ public class CameraTest extends InstrumentationTestCase {
         Runtime.getRuntime().runFinalization();
         Runtime.getRuntime().gc();
         int refCount = 0;
-        for (WeakReference<Activity> c: refs) {
+        for (WeakReference<Activity> c : refs) {
             if (c.get() != null) refCount++;
         }
         // If applications are leaking activity, every reference is reachable.

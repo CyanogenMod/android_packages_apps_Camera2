@@ -16,10 +16,6 @@
 
 package com.android.camera.crop;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -36,14 +32,14 @@ import com.android.gallery3d.filtershow.filters.FilterStraightenRepresentation;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 */
 
-import java.util.Collection;
-import java.util.Iterator;
-
 public final class GeometryMathUtils {
-    private static final String TAG = "GeometryMathUtils";
     public static final float SHOW_SCALE = .9f;
+    private static final String TAG = "GeometryMathUtils";
 
-    private GeometryMathUtils() {};
+    private GeometryMathUtils() {
+    }
+
+    ;
 
     // Math operations for 2d vectors
     public static float clamp(float i, float low, float high) {

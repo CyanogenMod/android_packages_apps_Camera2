@@ -16,37 +16,34 @@
 
 package com.android.camera.stress;
 
-import com.android.camera.CameraActivity;
-
 import android.app.Instrumentation;
 import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 import android.view.KeyEvent;
+
+import com.android.camera.CameraActivity;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 /**
  * Junit / Instrumentation test case for camera test
- *
  */
 
-public class CameraLatency extends ActivityInstrumentationTestCase2 <CameraActivity> {
-    private String TAG = "CameraLatency";
+public class CameraLatency extends ActivityInstrumentationTestCase2<CameraActivity> {
     private static final int TOTAL_NUMBER_OF_IMAGECAPTURE = 20;
     private static final long WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN = 6 * 1000; //6 seconds.
     private static final String CAMERA_TEST_OUTPUT_FILE =
             Environment.getExternalStorageDirectory().toString() + "/mediaStressOut.txt";
-
+    private String TAG = "CameraLatency";
     private long mTotalAutoFocusTime;
     private long mTotalShutterLag;
+    private long mAvgShutterLag = mTotalShutterLag;
     private long mTotalShutterToPictureDisplayedTime;
     private long mTotalPictureDisplayedToJpegCallbackTime;
     private long mTotalJpegCallbackFinishTime;
     private long mAvgAutoFocusTime;
-    private long mAvgShutterLag = mTotalShutterLag;
     private long mAvgShutterToPictureDisplayedTime;
     private long mAvgPictureDisplayedToJpegCallbackTime;
     private long mAvgJpegCallbackFinishTime;
@@ -90,8 +87,7 @@ public class CameraLatency extends ActivityInstrumentationTestCase2 <CameraActiv
                         mTotalPictureDisplayedToJpegCallbackTime +=
                                 c.getPictureDisplayedToJpegCallbackTime();
                         mTotalJpegCallbackFinishTime += c.getJpegCallbackFinishTime();
-                    }
-                    else {
+                    } else {
                         i--;
                         continue;
                     }
@@ -135,7 +131,7 @@ public class CameraLatency extends ActivityInstrumentationTestCase2 <CameraActiv
             fail("Camera Latency write output to file");
         }
         Log.v(TAG, "The Image capture wait time = " +
-            WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN);
+                WAIT_FOR_IMAGE_CAPTURE_TO_BE_TAKEN);
         Log.v(TAG, "Avg AutoFocus = " + mAvgAutoFocusTime);
         Log.v(TAG, "Avg mShutterLag = " + mAvgShutterLag);
         Log.v(TAG, "Avg mShutterToPictureDisplayedTime = "

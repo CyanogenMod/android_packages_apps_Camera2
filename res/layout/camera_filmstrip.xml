@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,56 +15,35 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_layout_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:id="@+id/camera_layout_root" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <com.android.camera.ui.FilmStripView
-        android:id="@+id/filmstrip_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <com.android.camera.ui.FilmStripView android:id="@+id/filmstrip_view"
+        android:layout_width="match_parent" android:layout_height="match_parent" />
 
     <!--com.android.camera.ui.FitSystemUiFrameLayout-->
-    <FrameLayout
-        android:id="@+id/camera_above_filmstrip_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+    <FrameLayout android:id="@+id/camera_above_filmstrip_layout" android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <include layout="@layout/filmstrip_bottom_controls" />
 
-        <LinearLayout
-            android:id="@+id/pano_stitching_progress_panel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:paddingBottom="52dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp"
-            android:visibility="gone"
-            android:orientation="vertical">
+        <LinearLayout android:id="@+id/pano_stitching_progress_panel"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal" android:orientation="vertical"
+            android:paddingBottom="52dp" android:paddingLeft="5dp" android:paddingRight="5dp"
+            android:paddingTop="5dp" android:visibility="gone">
 
-            <TextView
-                android:id="@+id/pano_stitching_progress_text"
-                android:text="@string/rendering_photo_sphere"
-                android:textColor="#ffffffff"
-                android:textSize="14sp"
-                android:shadowColor="#ff000000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:layout_gravity="right"/>
+            <TextView android:id="@+id/pano_stitching_progress_text"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_gravity="right" android:shadowColor="#ff000000" android:shadowDx="0"
+                android:shadowDy="0" android:shadowRadius="2" android:text="@string/rendering_photo_sphere"
+                android:textColor="#ffffffff" android:textSize="14sp"
+                android:visibility="visible" />
 
-            <ProgressBar
-                android:id="@+id/pano_stitching_progress_bar"
+            <ProgressBar android:id="@+id/pano_stitching_progress_bar"
                 style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:layout_gravity="bottom|center_horizontal" />
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal" android:visibility="visible" />
         </LinearLayout>
     </FrameLayout>
     <!--/com.android.camera.ui.FitSystemUiFrameLayout-->

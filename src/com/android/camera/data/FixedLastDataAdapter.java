@@ -36,7 +36,7 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     /**
      * Constructor.
      *
-     * @param wrappedAdapter  The {@link LocalDataAdapter} to be wrapped.
+     * @param wrappedAdapter The {@link LocalDataAdapter} to be wrapped.
      * @param lastData       The {@link LocalData} to be placed at the last position.
      */
     public FixedLastDataAdapter(

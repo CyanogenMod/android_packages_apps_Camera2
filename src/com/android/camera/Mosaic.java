@@ -18,20 +18,19 @@ package com.android.camera;
 
 /**
  * The Java interface to JNI calls regarding mosaic stitching.
- *
+ * <p/>
  * A high-level usage is:
- *
+ * <p/>
  * Mosaic mosaic = new Mosaic();
  * mosaic.setSourceImageDimensions(width, height);
  * mosaic.reset(blendType);
- *
+ * <p/>
  * while ((pixels = hasNextImage()) != null) {
- *    mosaic.setSourceImage(pixels);
+ * mosaic.setSourceImage(pixels);
  * }
- *
+ * <p/>
  * mosaic.createMosaic(highRes);
  * byte[] result = mosaic.getFinalMosaic();
- *
  */
 public class Mosaic {
     /**
@@ -65,7 +64,7 @@ public class Mosaic {
      * This mode is basically BLENDTYPE_CYLINDERPAN plus doing a rectangle cropping before returning
      * the mosaic. The mode is useful for making the resulting mosaic have a rectangle shape.
      */
-    public static final int BLENDTYPE_HORIZONTAL =3;
+    public static final int BLENDTYPE_HORIZONTAL = 3;
 
     /**
      * This strip type will use the default thin strips where the strips are
@@ -99,14 +98,13 @@ public class Mosaic {
     /**
      * Allocate memory for the image frames at the given resolution.
      *
-     * @param width width of the input frames in pixels
+     * @param width  width of the input frames in pixels
      * @param height height of the input frames in pixels
      */
     public native void allocateMosaicMemory(int width, int height);
 
     /**
      * Free memory allocated by allocateMosaicMemory.
-     *
      */
     public native void freeMosaicMemory();
 
@@ -117,10 +115,10 @@ public class Mosaic {
      *
      * @param pixels source image of NV21 format.
      * @return Float array of length 11; first 9 entries correspond to the 3x3
-     *         transformation matrix between the first frame and the passed frame;
-     *         the 10th entry is the number of the passed frame, where the counting
-     *         starts from 1; and the 11th entry is the returning code, whose value
-     *         is one of those MOSAIC_RET_* returning flags defined above.
+     * transformation matrix between the first frame and the passed frame;
+     * the 10th entry is the number of the passed frame, where the counting
+     * starts from 1; and the 11th entry is the returning code, whose value
+     * is one of those MOSAIC_RET_* returning flags defined above.
      */
     public native float[] setSourceImage(byte[] pixels);
 
@@ -132,10 +130,10 @@ public class Mosaic {
      * an associated SurfaceTexture).
      *
      * @return Float array of length 11; first 9 entries correspond to the 3x3
-     *         transformation matrix between the first frame and the passed frame;
-     *         the 10th entry is the number of the passed frame, where the counting
-     *         starts from 1; and the 11th entry is the returning code, whose value
-     *         is one of those MOSAIC_RET_* returning flags defined above.
+     * transformation matrix between the first frame and the passed frame;
+     * the 10th entry is the number of the passed frame, where the counting
+     * starts from 1; and the 11th entry is the returning code, whose value
+     * is one of those MOSAIC_RET_* returning flags defined above.
      */
     public native float[] setSourceImageFromGPU();
 
@@ -143,14 +141,15 @@ public class Mosaic {
      * Set the type of blending.
      *
      * @param type the blending type defined in the class. {BLENDTYPE_FULL,
-     *        BLENDTYPE_PAN, BLENDTYPE_CYLINDERPAN, BLENDTYPE_HORIZONTAL}
+     *             BLENDTYPE_PAN, BLENDTYPE_CYLINDERPAN, BLENDTYPE_HORIZONTAL}
      */
     public native void setBlendingType(int type);
 
     /**
      * Set the type of strips to use for blending.
+     *
      * @param type the blending strip type to use {STRIPTYPE_THIN,
-     * STRIPTYPE_WIDE}.
+     *             STRIPTYPE_WIDE}.
      */
     public native void setStripType(int type);
 
@@ -160,11 +159,11 @@ public class Mosaic {
      * The case of generating high-resolution mosaic may take dozens of seconds to finish.
      *
      * @param value True means generating a high-resolution mosaic -
-     *        which is based on the original images set in setSourceImage().
-     *        False means generating a low-resolution version -
-     *        which is based on 1/4 downscaled images from the original images.
+     *              which is based on the original images set in setSourceImage().
+     *              False means generating a low-resolution version -
+     *              which is based on 1/4 downscaled images from the original images.
      * @return Returns a status code suggesting if the mosaic building was
-     *        successful, in error, or was cancelled by the user.
+     * successful, in error, or was cancelled by the user.
      */
     public native int createMosaic(boolean value);
 
@@ -172,8 +171,8 @@ public class Mosaic {
      * Get the data for the created mosaic.
      *
      * @return Returns an integer array which contains the final mosaic in the ARGB_8888 format.
-     *         The first MosaicWidth*MosaicHeight values contain the image data, followed by 2
-     *         integers corresponding to the values MosaicWidth and MosaicHeight respectively.
+     * The first MosaicWidth*MosaicHeight values contain the image data, followed by 2
+     * integers corresponding to the values MosaicWidth and MosaicHeight respectively.
      */
     public native int[] getFinalMosaic();
 
@@ -181,9 +180,9 @@ public class Mosaic {
      * Get the data for the created mosaic.
      *
      * @return Returns a byte array which contains the final mosaic in the NV21 format.
-     *         The first MosaicWidth*MosaicHeight*1.5 values contain the image data, followed by
-     *         8 bytes which pack the MosaicWidth and MosaicHeight integers into 4 bytes each
-     *         respectively.
+     * The first MosaicWidth*MosaicHeight*1.5 values contain the image data, followed by
+     * 8 bytes which pack the MosaicWidth and MosaicHeight integers into 4 bytes each
+     * respectively.
      */
     public native byte[] getFinalMosaicNV21();
 
@@ -195,12 +194,13 @@ public class Mosaic {
 
     /**
      * Get the progress status of the mosaic computation process.
-     * @param hires Boolean flag to select whether to report progress of the
-     *              low-res or high-res mosaicer.
+     *
+     * @param hires             Boolean flag to select whether to report progress of the
+     *                          low-res or high-res mosaicer.
      * @param cancelComputation Boolean flag to allow cancelling the
-     *              mosaic computation when needed from the GUI end.
+     *                          mosaic computation when needed from the GUI end.
      * @return Returns a number from 0-100 where 50 denotes that the mosaic
-     *          computation is 50% done.
+     * computation is 50% done.
      */
     public native int reportProgress(boolean hires, boolean cancelComputation);
 }

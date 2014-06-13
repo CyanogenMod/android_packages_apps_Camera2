@@ -16,9 +16,6 @@
 
 package com.android.camera.functional;
 
-import com.android.camera.CameraActivity;
-import com.android.camera2.R;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -33,9 +30,12 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.android.camera.CameraActivity;
+import com.android.camera2.R;
+
 import java.io.File;
 
-public class VideoCaptureIntentTest extends ActivityInstrumentationTestCase2 <CameraActivity> {
+public class VideoCaptureIntentTest extends ActivityInstrumentationTestCase2<CameraActivity> {
     private static final String TAG = "VideoCaptureIntentTest";
     private Intent mIntent;
     private Uri mVideoUri;
@@ -56,7 +56,7 @@ public class VideoCaptureIntentTest extends ActivityInstrumentationTestCase2 <Ca
         if (mVideoUri != null) {
             ContentResolver resolver = getActivity().getContentResolver();
             Uri query = mVideoUri.buildUpon().build();
-            String[] projection = new String[] {VideoColumns.DATA};
+            String[] projection = new String[]{VideoColumns.DATA};
 
             Cursor cursor = null;
             try {
@@ -168,7 +168,7 @@ public class VideoCaptureIntentTest extends ActivityInstrumentationTestCase2 <Ca
         // also has duration, so the total duration may exceeds the limit a
         // little bit.
         Log.v(TAG, "Video length is " + duration + " ms.");
-        assertTrue(duration  < (durationLimit + 1) * 1000);
+        assertTrue(duration < (durationLimit + 1) * 1000);
     }
 
     @LargeTest

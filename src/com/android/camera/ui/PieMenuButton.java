@@ -24,6 +24,7 @@ import android.view.View;
 public class PieMenuButton extends View {
     private boolean mPressed;
     private boolean mReadyToClick = false;
+
     public PieMenuButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }

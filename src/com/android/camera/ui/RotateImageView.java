@@ -47,6 +47,9 @@ public class RotateImageView extends TwoStateImageView implements Rotatable {
 
     private long mAnimationStartTime = 0;
     private long mAnimationEndTime = 0;
+    private Bitmap mThumb;
+    private Drawable[] mThumbs;
+    private TransitionDrawable mThumbTransition;
 
     public RotateImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -104,7 +107,7 @@ public class RotateImageView extends TwoStateImageView implements Rotatable {
         if (mCurrentDegree != mTargetDegree) {
             long time = AnimationUtils.currentAnimationTimeMillis();
             if (time < mAnimationEndTime) {
-                int deltaTime = (int)(time - mAnimationStartTime);
+                int deltaTime = (int) (time - mAnimationStartTime);
                 int degree = mStartDegree + ANIMATION_SPEED
                         * (mClockwise ? deltaTime : -deltaTime) / 1000;
                 degree = degree >= 0 ? degree % 360 : degree % 360 + 360;
@@ -136,10 +139,6 @@ public class RotateImageView extends TwoStateImageView implements Rotatable {
         drawable.draw(canvas);
         canvas.restoreToCount(saveCount);
     }
-
-    private Bitmap mThumb;
-    private Drawable[] mThumbs;
-    private TransitionDrawable mThumbTransition;
 
     public void setBitmap(Bitmap bitmap) {
         // Make sure uri and original are consistently both null or both

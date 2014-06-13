@@ -71,11 +71,6 @@ public class CropView extends View {
     private int mTouchTolerance = 40;
     private float mDashOnLength = 20;
     private float mDashOffLength = 10;
-
-    private enum Mode {
-        NONE, MOVE
-    }
-
     private Mode mState = Mode.NONE;
 
     public CropView(Context context) {
@@ -373,5 +368,9 @@ public class CropView extends View {
                     mScreenCropBounds, mCropObj.isFixedAspect(), decode(mCropObj.getSelectState(), mRotation));
         }
 
+    }
+
+    private enum Mode {
+        NONE, MOVE
     }
 }

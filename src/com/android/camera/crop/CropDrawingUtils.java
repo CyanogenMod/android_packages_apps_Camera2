@@ -62,18 +62,18 @@ public abstract class CropDrawingUtils {
         p.setColor(Color.BLACK & 0x88000000);
 
         RectF r = new RectF();
-        r.set(0,0,w,bounds.top);
+        r.set(0, 0, w, bounds.top);
         canvas.drawRect(r, p);
-        r.set(0,bounds.top,bounds.left,h);
+        r.set(0, bounds.top, bounds.left, h);
         canvas.drawRect(r, p);
-        r.set(bounds.left,bounds.bottom,w,h);
+        r.set(bounds.left, bounds.bottom, w, h);
         canvas.drawRect(r, p);
-        r.set(bounds.right,bounds.top,w,bounds.bottom);
+        r.set(bounds.right, bounds.top, w, bounds.bottom);
         canvas.drawRect(r, p);
     }
 
     public static void drawIndicator(Canvas canvas, Drawable indicator, int indicatorSize,
-            float centerX, float centerY) {
+                                     float centerX, float centerY) {
         int left = (int) centerX - indicatorSize / 2;
         int top = (int) centerY - indicatorSize / 2;
         indicator.setBounds(left, top, left + indicatorSize, top + indicatorSize);
@@ -81,7 +81,7 @@ public abstract class CropDrawingUtils {
     }
 
     public static void drawIndicators(Canvas canvas, Drawable cropIndicator, int indicatorSize,
-            RectF bounds, boolean fixedAspect, int selection) {
+                                      RectF bounds, boolean fixedAspect, int selection) {
         boolean notMoving = (selection == CropObject.MOVE_NONE);
         if (fixedAspect) {
             if ((selection == CropObject.TOP_LEFT) || notMoving) {
@@ -113,7 +113,7 @@ public abstract class CropDrawingUtils {
     }
 
     public static void drawWallpaperSelectionFrame(Canvas canvas, RectF cropBounds, float spotX,
-            float spotY, Paint p, Paint shadowPaint) {
+                                                   float spotY, Paint p, Paint shadowPaint) {
         float sx = cropBounds.width() * spotX;
         float sy = cropBounds.height() * spotY;
         float cx = cropBounds.centerX();
@@ -165,18 +165,18 @@ public abstract class CropDrawingUtils {
     }
 
     public static boolean setBitmapToDisplayMatrix(Matrix m, RectF imageBounds,
-            RectF displayBounds) {
+                                                   RectF displayBounds) {
         m.reset();
         return m.setRectToRect(imageBounds, displayBounds, Matrix.ScaleToFit.CENTER);
     }
 
     public static boolean setImageToScreenMatrix(Matrix dst, RectF image,
-            RectF screen, int rotation) {
+                                                 RectF screen, int rotation) {
         RectF rotatedImage = new RectF();
         dst.setRotate(rotation, image.centerX(), image.centerY());
         if (!dst.mapRect(rotatedImage, image)) {
             return false; // fails for rotations that are not multiples of 90
-                          // degrees
+            // degrees
         }
         boolean rToR = dst.setRectToRect(rotatedImage, screen, Matrix.ScaleToFit.CENTER);
         boolean rot = dst.preRotate(rotation, image.centerX(), image.centerY());

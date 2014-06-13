@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 
 public class CheckedLinearLayout extends LinearLayout implements Checkable {
     private static final int[] CHECKED_STATE_SET = {
-        android.R.attr.state_checked
+            android.R.attr.state_checked
     };
     private boolean mChecked;
 

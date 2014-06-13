@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2011, The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2011, The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,72 +14,51 @@
 -->
 
 <com.android.camera.ui.TimeIntervalPopup xmlns:android="http://schemas.android.com/apk/res/android"
-        style="@style/SettingPopupWindow">
+    style="@style/SettingPopupWindow">
 
-    <LinearLayout android:orientation="vertical"
-            android:background="@color/popup_background"
-            android:layout_height="wrap_content"
-            android:layout_width="@dimen/big_setting_popup_window_width">
+    <LinearLayout android:layout_width="@dimen/big_setting_popup_window_width" android:layout_height="wrap_content"
+        android:background="@color/popup_background"
+        android:orientation="vertical">
 
-        <LinearLayout android:orientation="horizontal"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-            <TextView android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:ellipsize="end"
-                    android:layout_weight="1"
-                    android:minHeight="@dimen/popup_title_frame_min_height"
-                    style="@style/PopupTitleText" />
-            <Switch
-                    android:id="@+id/time_lapse_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0"
-                    android:layout_marginRight="8dp"
-                    android:layout_gravity="right|center_vertical" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView android:id="@+id/title" style="@style/PopupTitleText"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_weight="1" android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/popup_title_frame_min_height" />
+            <Switch android:id="@+id/time_lapse_switch" android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="8dp" android:layout_weight="0" />
         </LinearLayout>
 
         <View style="@style/PopupTitleSeparator" />
 
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                    android:id="@+id/set_time_interval_help_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dip"
-                    android:paddingLeft="16dip"
-                    android:paddingRight="16dip"
-                    android:paddingBottom="16dip"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/set_time_interval_help"/>
+            <TextView android:id="@+id/set_time_interval_help_text"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:paddingBottom="16dip" android:paddingLeft="16dip" android:paddingRight="16dip"
+                android:paddingTop="16dip"
+                android:text="@string/set_time_interval_help"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
 
-        <LinearLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" >
-                <include layout="@layout/time_interval_picker"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+            <include layout="@layout/time_interval_picker" />
         </LinearLayout>
 
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:divider="?android:attr/dividerHorizontal"
-                android:showDividers="beginning"
-                android:dividerPadding="0dip">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:divider="?android:attr/dividerHorizontal" android:dividerPadding="0dip"
+            android:orientation="vertical" android:showDividers="beginning">
             <Button android:id="@+id/time_lapse_interval_set_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:text="@string/time_lapse_interval_set" />
+                style="?android:attr/buttonBarButtonStyle" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/time_lapse_interval_set"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
     </LinearLayout>
 

@@ -16,19 +16,18 @@
 
 package com.android.camera.stress;
 
-import com.android.camera.CameraActivity;
-
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.test.InstrumentationTestCase;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
-import java.io.FileWriter;
+import com.android.camera.CameraActivity;
+
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 /**
  * Test cases to measure the camera and video recorder startup time.
@@ -36,11 +35,10 @@ import java.io.BufferedWriter;
 public class CameraStartUp extends InstrumentationTestCase {
 
     private static final int TOTAL_NUMBER_OF_STARTUP = 20;
-
-    private String TAG = "CameraStartUp";
     private static final String CAMERA_TEST_OUTPUT_FILE =
             Environment.getExternalStorageDirectory().toString() + "/mediaStressOut.txt";
     private static int WAIT_TIME_FOR_PREVIEW = 4 * 1000; //4 seconds.
+    private String TAG = "CameraStartUp";
 
     private long launchCamera() {
         long startupTime = 0;
@@ -90,7 +88,7 @@ public class CameraStartUp extends InstrumentationTestCase {
     }
 
     private void writeToOutputFile(long totalStartupTime,
-            String individualStartupTime, boolean firstStartUp, String Type) throws Exception {
+                                   String individualStartupTime, boolean firstStartUp, String Type) throws Exception {
         // TODO (yslau) : Need to integrate the output data with central
         // dashboard
         try {
@@ -100,9 +98,9 @@ public class CameraStartUp extends InstrumentationTestCase {
             if (firstStartUp) {
                 out.write("First " + Type + " Startup: " + totalStartupTime + "\n");
             } else {
-                long averageStartupTime = totalStartupTime / (TOTAL_NUMBER_OF_STARTUP -1);
+                long averageStartupTime = totalStartupTime / (TOTAL_NUMBER_OF_STARTUP - 1);
                 out.write(Type + "startup time: " + "\n");
-                out.write("Number of loop: " + (TOTAL_NUMBER_OF_STARTUP -1)  + "\n");
+                out.write("Number of loop: " + (TOTAL_NUMBER_OF_STARTUP - 1) + "\n");
                 out.write(individualStartupTime + "\n\n");
                 out.write(Type + " average startup time: " + averageStartupTime + " ms\n\n");
             }

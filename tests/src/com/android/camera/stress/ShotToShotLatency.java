@@ -19,14 +19,15 @@ package com.android.camera.stress;
 import android.app.Instrumentation;
 import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 import android.view.KeyEvent;
+
 import com.android.camera.CameraActivity;
+
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -34,13 +35,13 @@ import java.util.ArrayList;
  * Junit / Instrumentation test case for measuring camera shot to shot latency
  */
 public class ShotToShotLatency extends ActivityInstrumentationTestCase2<CameraActivity> {
-    private String TAG = "ShotToShotLatency";
     private static final int TOTAL_NUMBER_OF_SNAPSHOTS = 250;
     private static final long SNAPSHOT_WAIT = 1000;
     private static final String CAMERA_TEST_OUTPUT_FILE =
             Environment.getExternalStorageDirectory().toString() + "/mediaStressOut.txt";
     private static final String CAMERA_IMAGE_DIRECTORY =
             Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/";
+    private String TAG = "ShotToShotLatency";
 
     public ShotToShotLatency() {
         super(CameraActivity.class);

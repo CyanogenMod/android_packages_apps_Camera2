@@ -49,6 +49,146 @@ public class ZoomView extends ImageView {
     private Uri mUri;
     private int mOrientation;
 
+    public ZoomView(Context context) {
+        super(context);
+        setScaleType(ScaleType.FIT_CENTER);
+        addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                int w = right - left;
+                int h = bottom - top;
+                if (mViewportHeight != h || mViewportWidth != w) {
+                    mViewportWidth = w;
+                    mViewportHeight = h;
+                }
+            }
+        });
+    }
+
+    /**
+     * If the given rect is smaller than viewport on x or y axis, center rect within
+     * viewport on the corresponding axis. Otherwise, make sure viewport is within
+     * the bounds of the rect.
+     */
+    public static RectF adjustToFitInBounds(RectF rect, int viewportWidth, int viewportHeight) {
+        float dx = 0, dy = 0;
+        RectF newRect = new RectF(rect);
+        if (newRect.width() < viewportWidth) {
+            dx = viewportWidth / 2 - (newRect.left + newRect.right) / 2;
+        } else {
+            if (newRect.left > 0) {
+                dx = -newRect.left;
+            } else if (newRect.right < viewportWidth) {
+                dx = viewportWidth - newRect.right;
+            }
+        }
+
+        if (newRect.height() < viewportHeight) {
+            dy = viewportHeight / 2 - (newRect.top + newRect.bottom) / 2;
+        } else {
+            if (newRect.top > 0) {
+                dy = -newRect.top;
+            } else if (newRect.bottom < viewportHeight) {
+                dy = viewportHeight - newRect.bottom;
+            }
+        }
+
+        if (dx != 0 || dy != 0) {
+            newRect.offset(dx, dy);
+        }
+        return newRect;
+    }
+
+    public void loadBitmap(Uri uri, int orientation, RectF imageRect) {
+        if (!uri.equals(mUri)) {
+            mUri = uri;
+            mOrientation = orientation;
+            mFullResImageHeight = 0;
+            mFullResImageWidth = 0;
+            decodeImageSize();
+            mRegionDecoder = null;
+        }
+        startPartialDecodingTask(imageRect);
+    }
+
+    private void showPartiallyDecodedImage(boolean show) {
+        if (show) {
+            setVisibility(View.VISIBLE);
+        } else {
+            setVisibility(View.GONE);
+        }
+        mPartialDecodingTask = null;
+    }
+
+    public void cancelPartialDecodingTask() {
+        if (mPartialDecodingTask != null && !mPartialDecodingTask.isCancelled()) {
+            mPartialDecodingTask.cancel(true);
+            setVisibility(GONE);
+        }
+        mPartialDecodingTask = null;
+    }
+
+    private void startPartialDecodingTask(RectF endRect) {
+        // Cancel on-going partial decoding tasks
+        cancelPartialDecodingTask();
+        mPartialDecodingTask = new DecodePartialBitmap();
+        mPartialDecodingTask.execute(endRect);
+    }
+
+    private void decodeImageSize() {
+        BitmapFactory.Options option = new BitmapFactory.Options();
+        option.inJustDecodeBounds = true;
+        InputStream is = getInputStream();
+        BitmapFactory.decodeStream(is, null, option);
+        try {
+            is.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to close input stream");
+        }
+        mFullResImageWidth = option.outWidth;
+        mFullResImageHeight = option.outHeight;
+    }
+
+    // TODO: Cache the inputstream
+    private InputStream getInputStream() {
+        InputStream is = null;
+        try {
+            is = getContext().getContentResolver().openInputStream(mUri);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "File not found at: " + mUri);
+        }
+        return is;
+    }
+
+    /**
+     * Find closest sample factor that is power of 2, based on the given width and height
+     *
+     * @param width  width of the partial region to decode
+     * @param height height of the partial region to decode
+     * @return sample factor
+     */
+    private int getSampleFactor(int width, int height) {
+
+        float fitWidthScale = ((float) mViewportWidth) / ((float) width);
+        float fitHeightScale = ((float) mViewportHeight) / ((float) height);
+
+        float scale = Math.min(fitHeightScale, fitWidthScale);
+
+        // Find the closest sample factor that is power of 2
+        int sampleFactor = (int) (1f / scale);
+        if (sampleFactor <= 1) {
+            return 1;
+        }
+        for (int i = 0; i < 32; i++) {
+            if ((1 << (i + 1)) > sampleFactor) {
+                sampleFactor = (1 << i);
+                break;
+            }
+        }
+        return sampleFactor;
+    }
+
     private class DecodePartialBitmap extends AsyncTask<RectF, Void, Bitmap> {
 
         @Override
@@ -144,145 +284,5 @@ public class ZoomView extends ImageView {
             showPartiallyDecodedImage(true);
             mPartialDecodingTask = null;
         }
-    }
-
-    public ZoomView(Context context) {
-        super(context);
-        setScaleType(ScaleType.FIT_CENTER);
-        addOnLayoutChangeListener(new OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                int w = right - left;
-                int h = bottom - top;
-                if (mViewportHeight != h || mViewportWidth != w) {
-                    mViewportWidth = w;
-                    mViewportHeight = h;
-                }
-            }
-        });
-    }
-
-    public void loadBitmap(Uri uri, int orientation, RectF imageRect) {
-        if (!uri.equals(mUri)) {
-            mUri = uri;
-            mOrientation = orientation;
-            mFullResImageHeight = 0;
-            mFullResImageWidth = 0;
-            decodeImageSize();
-            mRegionDecoder = null;
-        }
-        startPartialDecodingTask(imageRect);
-    }
-
-    private void showPartiallyDecodedImage(boolean show) {
-        if (show) {
-            setVisibility(View.VISIBLE);
-        } else {
-            setVisibility(View.GONE);
-        }
-        mPartialDecodingTask = null;
-    }
-
-    public void cancelPartialDecodingTask() {
-        if (mPartialDecodingTask != null && !mPartialDecodingTask.isCancelled()) {
-            mPartialDecodingTask.cancel(true);
-            setVisibility(GONE);
-        }
-        mPartialDecodingTask = null;
-    }
-
-    /**
-     * If the given rect is smaller than viewport on x or y axis, center rect within
-     * viewport on the corresponding axis. Otherwise, make sure viewport is within
-     * the bounds of the rect.
-     */
-    public static RectF adjustToFitInBounds(RectF rect, int viewportWidth, int viewportHeight) {
-        float dx = 0, dy = 0;
-        RectF newRect = new RectF(rect);
-        if (newRect.width() < viewportWidth) {
-            dx = viewportWidth / 2 - (newRect.left + newRect.right) / 2;
-        } else {
-            if (newRect.left > 0) {
-                dx = -newRect.left;
-            } else if (newRect.right < viewportWidth) {
-                dx = viewportWidth - newRect.right;
-            }
-        }
-
-        if (newRect.height() < viewportHeight) {
-            dy = viewportHeight / 2 - (newRect.top + newRect.bottom) / 2;
-        } else {
-            if (newRect.top > 0) {
-                dy = -newRect.top;
-            } else if (newRect.bottom < viewportHeight) {
-                dy = viewportHeight - newRect.bottom;
-            }
-        }
-
-        if (dx != 0 || dy != 0) {
-            newRect.offset(dx, dy);
-        }
-        return newRect;
-    }
-
-    private void startPartialDecodingTask(RectF endRect) {
-        // Cancel on-going partial decoding tasks
-        cancelPartialDecodingTask();
-        mPartialDecodingTask = new DecodePartialBitmap();
-        mPartialDecodingTask.execute(endRect);
-    }
-
-    private void decodeImageSize() {
-        BitmapFactory.Options option = new BitmapFactory.Options();
-        option.inJustDecodeBounds = true;
-        InputStream is = getInputStream();
-        BitmapFactory.decodeStream(is, null, option);
-        try {
-            is.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to close input stream");
-        }
-        mFullResImageWidth = option.outWidth;
-        mFullResImageHeight = option.outHeight;
-    }
-
-    // TODO: Cache the inputstream
-    private InputStream getInputStream() {
-        InputStream is = null;
-        try {
-            is = getContext().getContentResolver().openInputStream(mUri);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found at: " + mUri);
-        }
-        return is;
-    }
-
-    /**
-     * Find closest sample factor that is power of 2, based on the given width and height
-     *
-     * @param width width of the partial region to decode
-     * @param height height of the partial region to decode
-     * @return sample factor
-     */
-    private int getSampleFactor(int width, int height) {
-
-        float fitWidthScale = ((float) mViewportWidth) / ((float) width);
-        float fitHeightScale = ((float) mViewportHeight) / ((float) height);
-
-        float scale = Math.min(fitHeightScale, fitWidthScale);
-
-        // Find the closest sample factor that is power of 2
-        int sampleFactor = (int) (1f / scale);
-        if (sampleFactor <=1) {
-            return 1;
-        }
-        for (int i = 0; i < 32; i++) {
-            if ((1 << (i + 1)) > sampleFactor) {
-                sampleFactor = (1 << i);
-                break;
-            }
-        }
-        return sampleFactor;
     }
 }

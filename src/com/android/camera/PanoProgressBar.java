@@ -24,11 +24,14 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 class PanoProgressBar extends ImageView {
-    @SuppressWarnings("unused")
-    private static final String TAG = "PanoProgressBar";
     public static final int DIRECTION_NONE = 0;
     public static final int DIRECTION_LEFT = 1;
     public static final int DIRECTION_RIGHT = 2;
+    @SuppressWarnings("unused")
+    private static final String TAG = "PanoProgressBar";
+    private final Paint mBackgroundPaint = new Paint();
+    private final Paint mDoneAreaPaint = new Paint();
+    private final Paint mIndicatorPaint = new Paint();
     private float mProgress = 0;
     private float mMaxProgress = 0;
     private float mLeftMostProgress = 0;
@@ -36,17 +39,10 @@ class PanoProgressBar extends ImageView {
     private float mProgressOffset = 0;
     private float mIndicatorWidth = 0;
     private int mDirection = 0;
-    private final Paint mBackgroundPaint = new Paint();
-    private final Paint mDoneAreaPaint = new Paint();
-    private final Paint mIndicatorPaint = new Paint();
     private float mWidth;
     private float mHeight;
     private RectF mDrawBounds;
     private OnDirectionChangeListener mListener = null;
-
-    public interface OnDirectionChangeListener {
-        public void onDirectionChange(int direction);
-    }
 
     public PanoProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,6 +62,10 @@ class PanoProgressBar extends ImageView {
         mListener = l;
     }
 
+    public int getDirection() {
+        return mDirection;
+    }
+
     private void setDirection(int direction) {
         if (mDirection != direction) {
             mDirection = direction;
@@ -74,10 +74,6 @@ class PanoProgressBar extends ImageView {
             }
             invalidate();
         }
-    }
-
-    public int getDirection() {
-        return mDirection;
     }
 
     @Override
@@ -184,5 +180,9 @@ class PanoProgressBar extends ImageView {
 
         // draw the mask image on the top for shaping.
         super.onDraw(canvas);
+    }
+
+    public interface OnDirectionChangeListener {
+        public void onDirectionChange(int direction);
     }
 }

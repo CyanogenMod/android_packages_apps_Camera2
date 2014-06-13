@@ -48,15 +48,35 @@ public class OrientationManager {
         mOrientationListener = new MyOrientationEventListener(activity);
     }
 
-    public void resume() {
-        ContentResolver resolver = mActivity.getContentResolver();
-        mRotationLockedSetting = Settings.System.getInt(
-                resolver, Settings.System.ACCELEROMETER_ROTATION, 0) != 1;
-        mOrientationListener.enable();
+    private static int roundOrientation(int orientation, int orientationHistory) {
+        boolean changeOrientation = false;
+        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            changeOrientation = true;
+        } else {
+            int dist = Math.abs(orientation - orientationHistory);
+            dist = Math.min(dist, 360 - dist);
+            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
+        }
+        if (changeOrientation) {
+            return ((orientation + 45) / 90 * 90) % 360;
+        }
+        return orientationHistory;
     }
 
-    public void pause() {
-        mOrientationListener.disable();
+    private static int getDisplayRotation(Activity activity) {
+        int rotation = activity.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                return 0;
+            case Surface.ROTATION_90:
+                return 90;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_270:
+                return 270;
+        }
+        return 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -67,6 +87,17 @@ public class OrientationManager {
     //  current device orientation and send it to listeners. If we don't lock
     //  the framework orientation, we always set the compensation value to 0.
     ////////////////////////////////////////////////////////////////////////////
+
+    public void resume() {
+        ContentResolver resolver = mActivity.getContentResolver();
+        mRotationLockedSetting = Settings.System.getInt(
+                resolver, Settings.System.ACCELEROMETER_ROTATION, 0) != 1;
+        mOrientationListener.enable();
+    }
+
+    public void pause() {
+        mOrientationListener.disable();
+    }
 
     /**
      * Lock the framework orientation to the current device orientation
@@ -116,6 +147,14 @@ public class OrientationManager {
         }
     }
 
+    public int getDisplayRotation() {
+        return getDisplayRotation(mActivity);
+    }
+
+    public int getCompensation() {
+        return 0;
+    }
+
     // This listens to the device orientation, so we can update the compensation.
     private class MyOrientationEventListener extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
@@ -130,40 +169,5 @@ public class OrientationManager {
             if (orientation == ORIENTATION_UNKNOWN) return;
             orientation = roundOrientation(orientation, 0);
         }
-    }
-
-    public int getDisplayRotation() {
-        return getDisplayRotation(mActivity);
-    }
-
-    public int getCompensation() {
-        return 0;
-    }
-
-    private static int roundOrientation(int orientation, int orientationHistory) {
-        boolean changeOrientation = false;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            changeOrientation = true;
-        } else {
-            int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min(dist, 360 - dist);
-            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
-        }
-        if (changeOrientation) {
-            return ((orientation + 45) / 90 * 90) % 360;
-        }
-        return orientationHistory;
-    }
-
-    private static int getDisplayRotation(Activity activity) {
-        int rotation = activity.getWindowManager().getDefaultDisplay()
-                .getRotation();
-        switch (rotation) {
-            case Surface.ROTATION_0: return 0;
-            case Surface.ROTATION_90: return 90;
-            case Surface.ROTATION_180: return 180;
-            case Surface.ROTATION_270: return 270;
-        }
-        return 0;
     }
 }

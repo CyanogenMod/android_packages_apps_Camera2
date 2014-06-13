@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -40,8 +39,7 @@
          This should reference the list in camera_asd_values and
          will be sensor-specific. App will convert from
          integer in metadata callback to array index. -->
-    <string-array name="asdModes">
-    </string-array>
+    <string-array name="asdModes"></string-array>
 
     <!-- Allow HDR and ZSL together -->
     <bool name="enableHDRWithZSL">false</bool>

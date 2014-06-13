@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2012, The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,10 +12,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- Caution: Don't merge with res/values-xlarge-port/drawable.xml, otherwise
-     the resources listed in this file wouldn't be reloaded when device
-     orientation changes. -->
-<resources>
-    <item name="btn_video_shutter_recording_holo" type="drawable">@drawable/btn_video_shutter_recording_holo_xlarge</item>
-    <item name="btn_video_shutter_recording_pressed_holo" type="drawable">@drawable/btn_video_shutter_recording_pressed_holo_xlarge</item>
-</resources>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/content"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="bottom|right" android:layout_marginBottom="8dip"
+    android:layout_marginRight="8dip" android:background="#80000000" android:orientation="horizontal"
+    android:paddingBottom="16dip" android:paddingLeft="8dip" android:paddingRight="8dip"
+    android:paddingTop="16dip" />

@@ -50,7 +50,10 @@ public class Switch extends CompoundButton {
     private static final int TOUCH_MODE_IDLE = 0;
     private static final int TOUCH_MODE_DOWN = 1;
     private static final int TOUCH_MODE_DRAGGING = 2;
-
+    private static final int[] CHECKED_STATE_SET = {
+            android.R.attr.state_checked
+    };
+    private final Rect mTempRect = new Rect();
     private Drawable mThumbDrawable;
     private Drawable mTrackDrawable;
     private int mThumbTextPadding;
@@ -59,41 +62,31 @@ public class Switch extends CompoundButton {
     private int mSwitchPadding;
     private CharSequence mTextOn;
     private CharSequence mTextOff;
-
     private int mTouchMode;
     private int mTouchSlop;
     private float mTouchX;
     private float mTouchY;
     private VelocityTracker mVelocityTracker = VelocityTracker.obtain();
     private int mMinFlingVelocity;
-
     private float mThumbPosition;
     private int mSwitchWidth;
     private int mSwitchHeight;
     private int mThumbWidth; // Does not include padding
-
     private int mSwitchLeft;
     private int mSwitchTop;
     private int mSwitchRight;
     private int mSwitchBottom;
-
     private TextPaint mTextPaint;
     private ColorStateList mTextColors;
     private Layout mOnLayout;
     private Layout mOffLayout;
-
-    private final Rect mTempRect = new Rect();
-
-    private static final int[] CHECKED_STATE_SET = {
-        android.R.attr.state_checked
-    };
 
     /**
      * Construct a new Switch with default styling, overriding specific style
      * attributes as requested.
      *
      * @param context The Context that will determine this widget's theming.
-     * @param attrs Specification of attributes that should deviate from default styling.
+     * @param attrs   Specification of attributes that should deviate from default styling.
      */
     public Switch(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.switchStyle);
@@ -103,8 +96,8 @@ public class Switch extends CompoundButton {
      * Construct a new Switch with a default style determined by the given theme attribute,
      * overriding specific style attributes as requested.
      *
-     * @param context The Context that will determine this widget's theming.
-     * @param attrs Specification of attributes that should deviate from the default styling.
+     * @param context  The Context that will determine this widget's theming.
+     * @param attrs    Specification of attributes that should deviate from the default styling.
      * @param defStyle An attribute ID within the active theme containing a reference to the
      *                 default style for this widget. e.g. android.R.attr.switchStyle.
      */

@@ -28,14 +28,13 @@ import com.android.camera2.R;
 
 /* A check box setting control which turns on/off the setting. */
 public class InLineSettingCheckBox extends InLineSettingItem {
-    private CheckBox mCheckBox;
-
     OnCheckedChangeListener mCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean desiredState) {
             changeIndex(desiredState ? 1 : 0);
         }
     };
+    private CheckBox mCheckBox;
 
     public InLineSettingCheckBox(Context context, AttributeSet attrs) {
         super(context, attrs);

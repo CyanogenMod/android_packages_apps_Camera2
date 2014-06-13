@@ -35,7 +35,6 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -43,16 +42,14 @@ import com.android.camera2.R;
 public class ModuleSwitcher extends RotateImageView
         implements OnClickListener, OnTouchListener {
 
-    @SuppressWarnings("unused")
-    private static final String TAG = "CAM_Switcher";
-    private static final int SWITCHER_POPUP_ANIM_DURATION = 200;
-
     public static final int PHOTO_MODULE_INDEX = 0;
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int WIDE_ANGLE_PANO_MODULE_INDEX = 2;
     public static final int LIGHTCYCLE_MODULE_INDEX = 3;
     public static final int GCAM_MODULE_INDEX = 4;
-
+    @SuppressWarnings("unused")
+    private static final String TAG = "CAM_Switcher";
+    private static final int SWITCHER_POPUP_ANIM_DURATION = 200;
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
@@ -60,13 +57,6 @@ public class ModuleSwitcher extends RotateImageView
             R.drawable.ic_switch_photosphere,
             R.drawable.ic_switch_gcam,
     };
-
-    public interface ModuleSwitchListener {
-        public void onModuleSelected(int i);
-
-        public void onShowSwitcherPopup();
-    }
-
     private ModuleSwitchListener mListener;
     private int mCurrentIndex;
     private int[] mModuleIds;
@@ -77,13 +67,10 @@ public class ModuleSwitcher extends RotateImageView
     private boolean mShowingPopup;
     private boolean mNeedsAnimationSetup;
     private Drawable mIndicator;
-
     private float mTranslationX = 0;
     private float mTranslationY = 0;
-
     private AnimatorListener mHideAnimationListener;
     private AnimatorListener mShowAnimationListener;
-
     public ModuleSwitcher(Context context) {
         super(context);
         init(context);
@@ -135,9 +122,9 @@ public class ModuleSwitcher extends RotateImageView
     public void setCurrentIndex(int i) {
         mCurrentIndex = i;
         if (i == GCAM_MODULE_INDEX) {
-          setImageResource(R.drawable.ic_switch_camera);
+            setImageResource(R.drawable.ic_switch_camera);
         } else {
-          setImageResource(mDrawIds[i]);
+            setImageResource(mDrawIds[i]);
         }
     }
 
@@ -396,5 +383,11 @@ public class ModuleSwitcher extends RotateImageView
         animate().alpha(0f).setDuration(SWITCHER_POPUP_ANIM_DURATION)
                 .setListener(mShowAnimationListener);
         return true;
+    }
+
+    public interface ModuleSwitchListener {
+        public void onModuleSelected(int i);
+
+        public void onShowSwitcherPopup();
     }
 }

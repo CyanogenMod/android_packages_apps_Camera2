@@ -16,10 +16,10 @@
 
 package com.android.camera.unittest;
 
-import com.android.camera.util.CameraUtil;
-
 import android.graphics.Matrix;
 import android.test.suitebuilder.annotation.SmallTest;
+
+import com.android.camera.util.CameraUtil;
 
 import junit.framework.TestCase;
 
@@ -75,26 +75,26 @@ public class CameraUnitTest extends TestCase {
         int[] expected;
 
         CameraUtil.prepareMatrix(matrix, false, 0, 800, 480);
-        points = new float[] {-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
-        expected = new int[] {0, 0, 400, 240, 800, 480, 400, 480, 100, 300};
+        points = new float[]{-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
+        expected = new int[]{0, 0, 400, 240, 800, 480, 400, 480, 100, 300};
         matrix.mapPoints(points);
         assertEquals(expected, points);
 
         CameraUtil.prepareMatrix(matrix, false, 90, 800, 480);
-        points = new float[] {-1000, -1000,   0,   0, 1000, 1000, 0, 1000, -750, 250};
-        expected = new int[] {800, 0, 400, 240, 0, 480, 0, 240, 300, 60};
+        points = new float[]{-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
+        expected = new int[]{800, 0, 400, 240, 0, 480, 0, 240, 300, 60};
         matrix.mapPoints(points);
         assertEquals(expected, points);
 
         CameraUtil.prepareMatrix(matrix, false, 180, 800, 480);
-        points = new float[] {-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
-        expected = new int[] {800, 480, 400, 240, 0, 0, 400, 0, 700, 180};
+        points = new float[]{-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
+        expected = new int[]{800, 480, 400, 240, 0, 0, 400, 0, 700, 180};
         matrix.mapPoints(points);
         assertEquals(expected, points);
 
         CameraUtil.prepareMatrix(matrix, true, 180, 800, 480);
-        points = new float[] {-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
-        expected = new int[] {0, 480, 400, 240, 800, 0, 400, 0, 100, 180};
+        points = new float[]{-1000, -1000, 0, 0, 1000, 1000, 0, 1000, -750, 250};
+        expected = new int[]{0, 480, 400, 240, 800, 0, 400, 0, 100, 180};
         matrix.mapPoints(points);
         assertEquals(expected, points);
     }

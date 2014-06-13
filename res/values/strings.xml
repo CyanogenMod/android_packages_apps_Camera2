@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -94,7 +93,8 @@
     <!-- Toast message shown when the cropped image has been saved in the
          %s folder (string: folder_download) [CHAR LIMIT=50]-->
     <string name="crop_saved">
-        Cropped image saved to <xliff:g id="folder_name">%s</xliff:g>.</string>
+        Cropped image saved to<xliff:g id="folder_name">%s</xliff:g>.
+    </string>
 
     <!-- Text indicating the title of a media item in details window [CHAR LIMIT=14] -->
     <string name="title">Title</string>
@@ -152,7 +152,8 @@
     <!-- Toast message shown after we try to make a local album available offline
          [CHAR LIMIT=150] -->
     <string name="try_to_set_local_album_available_offline">
-        This item is stored locally and available offline.</string>
+        This item is stored locally and available offline.
+    </string>
 
 
     <!-- The content of a dialog showing trimming in progress. [CHAR LIMIT=30] -->
@@ -236,11 +237,13 @@
     <!-- Video quality setting entry.
     Videos will be recorded in 4k DCI quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_4kdci" translatable="false">
-    4k DCI</string>
+        4k DCI
+    </string>
     <!-- Video quality setting entry.
     Videos will be recorded in 4k UHD quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_4kuhd" translatable="false">
-    4k UHD</string>
+        4k UHD
+    </string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_1080p" translatable="false">HD 1080p</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
@@ -316,7 +319,7 @@
 
     <!-- Settings screen, Flash mode title -->
     <string name="pref_camera_flashmode_title">Flash mode</string>
-        <!-- flash label [CHAR LIMIT=50] -->
+    <!-- flash label [CHAR LIMIT=50] -->
     <string name="pref_camera_flashmode_label">FLASH MODE</string>
 
     <!-- Settings screen, Flash mode 'auto'. [CHAR LIMIT=12] -->
@@ -434,7 +437,9 @@
     <string name="dialog_ok">OK</string>
 
     <!-- Low-memory dialog message [CHAR LIMIT=NONE] -->
-    <string name="spaceIsLow_content" product="default">Your SD card is running out of space. Change the quality setting or delete some images or other files.</string>
+    <string name="spaceIsLow_content" product="default">Your SD card is running out of space. Change
+        the quality setting or delete some images or other files.
+    </string>
 
     <!-- Camera format string for new image files. Passed to java.text.SimpleDateFormat. -->
     <string name="image_file_name_format" translatable="false">"'IMG'_yyyyMMdd_HHmmss"</string>
@@ -642,7 +647,9 @@ CHAR LIMIT = NONE] -->
     <!-- Title in time interval picker for setting time interval. [CHAR LIMIT = 30]-->
     <string name="set_time_interval">Set Time Interval</string>
     <!-- Help text that is shown when the time lapse feature is turned off. [CHAR LIMIT = 180]-->
-    <string name="set_time_interval_help">Time lapse feature is off. Turn it on to set time interval.</string>
+    <string name="set_time_interval_help">Time lapse feature is off. Turn it on to set time
+        interval.
+    </string>
     <!-- Title in timer setting for setting the duration for the countdown timer. [CHAR LIMIT = 50]-->
     <string name="set_duration">Set duration in seconds</string>
     <!-- On-screen hint during timer countdown for taking a photo. [CHAR LIMIT = 60]-->
@@ -651,7 +658,9 @@ CHAR LIMIT = NONE] -->
     <!-- Title for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT = 50] -->
     <string name="remember_location_title">Remember photo locations?</string>
     <!-- Message for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT = None] -->
-    <string name="remember_location_prompt">Tag your photos and videos with the locations where they are taken.\n\nOther apps can access this information along with your saved images.</string>
+    <string name="remember_location_prompt">Tag your photos and videos with the locations where they
+        are taken.\n\nOther apps can access this information along with your saved images.
+    </string>
     <!-- Negative answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT = 20] -->
     <string name="remember_location_no">No thanks</string>
     <!-- Positive answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT = 20] -->
@@ -683,4 +692,4 @@ CHAR LIMIT = NONE] -->
 
     <!--  String shown when setting the homepage wallpaper in the background [CHAR LIMIT=NONE] -->
     <string name="setting_wallpaper">Setting wallpaper</string>
- </resources>
+</resources>

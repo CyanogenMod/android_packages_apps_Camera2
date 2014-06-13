@@ -45,7 +45,7 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
     private ProgressDialog mProgress;
 
     public RotationTask(Context context, LocalDataAdapter adapter,
-            int currentDataId, boolean clockwise) {
+                        int currentDataId, boolean clockwise) {
         mContext = context;
         mAdapter = adapter;
         mCurrentDataId = currentDataId;
@@ -99,7 +99,8 @@ public class RotationTask extends AsyncTask<LocalData, Void, LocalData> {
             ExifTag tag = exifInterface.buildTag(
                     ExifInterface.TAG_ORIENTATION,
                     ExifInterface.getOrientationValueForRotation(
-                            finalRotationDegrees));
+                            finalRotationDegrees)
+            );
             if (tag != null) {
                 exifInterface.setTag(tag);
                 try {

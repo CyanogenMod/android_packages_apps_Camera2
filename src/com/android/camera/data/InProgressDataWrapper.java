@@ -51,7 +51,7 @@ public class InProgressDataWrapper implements LocalData {
     public View getView(
             Activity a, int width, int height,
             Drawable placeHolder, LocalDataAdapter adapter) {
-        View v =  mLocalData.getView(a, width, height, placeHolder, adapter);
+        View v = mLocalData.getView(a, width, height, placeHolder, adapter);
 
         if (mHasProgressBar) {
             // Return a framelayout with the progressbar and imageview.

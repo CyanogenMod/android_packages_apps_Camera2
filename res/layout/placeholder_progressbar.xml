@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,14 +15,9 @@
 -->
 
 <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/placeholder_progress"
-        style="@android:style/Widget.Holo.ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:paddingBottom="58dp"
-        android:visibility="visible"
-        android:indeterminate="true"
-        android:indeterminateOnly="true"
-        android:background="@null"/>
+    android:id="@+id/placeholder_progress" style="@android:style/Widget.Holo.ProgressBar.Large"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="bottom|center_horizontal" android:background="@null"
+    android:indeterminate="true" android:indeterminateOnly="true" android:paddingBottom="58dp"
+    android:visibility="visible" />
 

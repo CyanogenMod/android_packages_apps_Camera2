@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2012, The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2012, The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -26,16 +25,27 @@
     <dimen name="indicator_bar_width">@dimen/indicator_bar_width_xlarge</dimen>
     <dimen name="popup_title_text_size">@dimen/popup_title_text_size_xlarge</dimen>
     <dimen name="popup_title_frame_min_height">@dimen/popup_title_frame_min_height_xlarge</dimen>
-    <dimen name="big_setting_popup_window_width">@dimen/big_setting_popup_window_width_xlarge</dimen>
+    <dimen name="big_setting_popup_window_width">@dimen/big_setting_popup_window_width_xlarge
+    </dimen>
     <dimen name="setting_item_icon_width">@dimen/setting_item_icon_width_xlarge</dimen>
-    <dimen name="effect_setting_item_icon_width">@dimen/effect_setting_item_icon_width_xlarge</dimen>
+    <dimen name="effect_setting_item_icon_width">@dimen/effect_setting_item_icon_width_xlarge
+    </dimen>
     <dimen name="effect_setting_item_text_size">@dimen/effect_setting_item_text_size_xlarge</dimen>
     <dimen name="effect_setting_type_text_size">@dimen/effect_setting_type_text_size_xlarge</dimen>
-    <dimen name="effect_setting_type_text_min_height">@dimen/effect_setting_type_text_min_height_xlarge</dimen>
-    <dimen name="effect_setting_clear_text_size">@dimen/effect_setting_clear_text_size_xlarge</dimen>
-    <dimen name="effect_setting_clear_text_min_height">@dimen/effect_setting_clear_text_min_height_xlarge</dimen>
-    <dimen name="effect_setting_type_text_left_padding">@dimen/effect_setting_type_text_left_padding_xlarge</dimen>
+    <dimen name="effect_setting_type_text_min_height">
+        @dimen/effect_setting_type_text_min_height_xlarge
+    </dimen>
+    <dimen name="effect_setting_clear_text_size">@dimen/effect_setting_clear_text_size_xlarge
+    </dimen>
+    <dimen name="effect_setting_clear_text_min_height">
+        @dimen/effect_setting_clear_text_min_height_xlarge
+    </dimen>
+    <dimen name="effect_setting_type_text_left_padding">
+        @dimen/effect_setting_type_text_left_padding_xlarge
+    </dimen>
     <dimen name="onscreen_indicators_height">@dimen/onscreen_indicators_height_xlarge</dimen>
-    <dimen name="onscreen_exposure_indicator_text_size">@dimen/onscreen_exposure_indicator_text_size_xlarge</dimen>
+    <dimen name="onscreen_exposure_indicator_text_size">
+        @dimen/onscreen_exposure_indicator_text_size_xlarge
+    </dimen>
 </resources>
 

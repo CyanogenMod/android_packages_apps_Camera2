@@ -16,9 +16,6 @@
 
 package com.android.camera.functional;
 
-import com.android.camera.CameraActivity;
-import com.android.camera2.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,11 +27,14 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.view.KeyEvent;
 
+import com.android.camera.CameraActivity;
+import com.android.camera2.R;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
-public class ImageCaptureIntentTest extends ActivityInstrumentationTestCase2 <CameraActivity> {
+public class ImageCaptureIntentTest extends ActivityInstrumentationTestCase2<CameraActivity> {
     private Intent mIntent;
 
     public ImageCaptureIntentTest() {
@@ -67,7 +67,7 @@ public class ImageCaptureIntentTest extends ActivityInstrumentationTestCase2 <Ca
     @LargeTest
     public void testExtraOutput() throws Exception {
         File file = new File(Environment.getExternalStorageDirectory(),
-            "test.jpg");
+                "test.jpg");
         BufferedInputStream stream = null;
         byte[] jpegData;
 

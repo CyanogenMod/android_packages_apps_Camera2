@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2012, The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (c) 2012, The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,49 +15,31 @@
 
 <!-- Layout of time interval picker -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/time_interval_picker"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+    android:id="@+id/time_interval_picker" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="vertical">
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-                android:id="@+id/set_time_interval_title"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="5dip"
-                android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/set_time_interval"/>
+        <TextView android:id="@+id/set_time_interval_title" android:layout_width="match_parent"
+            android:layout_height="match_parent" android:gravity="center" android:paddingTop="5dip"
+            android:text="@string/set_time_interval"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dip"
-            android:paddingRight="16dip" >
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:paddingLeft="16dip"
+        android:paddingRight="16dip">
 
         <!-- time interval duration -->
-        <NumberPicker
-                android:id="@+id/duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false" />
+        <NumberPicker android:id="@+id/duration" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:focusable="false" />
 
         <!-- time interval duration units (seconds/minutes/hours) -->
-        <NumberPicker
-                android:id="@+id/duration_unit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginLeft="20dip"
-                android:focusable="false" />
+        <NumberPicker android:id="@+id/duration_unit" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginLeft="20dip"
+            android:layout_weight="2" android:focusable="false" />
 
     </LinearLayout>
 </LinearLayout>

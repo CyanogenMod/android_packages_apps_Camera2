@@ -26,21 +26,21 @@ import android.content.Context;
 public class AppManagerFactory {
 
     private static AppManagerFactory sFactory;
+    private PanoramaStitchingManager mPanoramaStitchingManager;
+    private PlaceholderManager mGcamProcessingManager;
+    /**
+     * No public constructor.
+     */
+    private AppManagerFactory(Context ctx) {
+        mPanoramaStitchingManager = new PanoramaStitchingManager(ctx);
+        mGcamProcessingManager = new PlaceholderManager(ctx);
+    }
 
     public static synchronized AppManagerFactory getInstance(Context ctx) {
         if (sFactory == null) {
             sFactory = new AppManagerFactory(ctx.getApplicationContext());
         }
         return sFactory;
-    }
-
-    private PanoramaStitchingManager mPanoramaStitchingManager;
-    private PlaceholderManager mGcamProcessingManager;
-
-    /** No public constructor. */
-    private AppManagerFactory(Context ctx) {
-        mPanoramaStitchingManager = new PanoramaStitchingManager(ctx);
-        mGcamProcessingManager = new PlaceholderManager(ctx);
     }
 
     public PanoramaStitchingManager getPanoramaStitchingManager() {

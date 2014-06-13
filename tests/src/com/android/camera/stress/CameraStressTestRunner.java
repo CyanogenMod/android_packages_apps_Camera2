@@ -19,6 +19,7 @@ package com.android.camera.stress;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
+
 import junit.framework.TestSuite;
 
 public class CameraStressTestRunner extends InstrumentationTestRunner {
@@ -48,13 +49,13 @@ public class CameraStressTestRunner extends InstrumentationTestRunner {
         String image_iterations = (String) icicle.get("image_iterations");
         String video_duration = (String) icicle.get("video_duration");
 
-        if ( video_iterations != null ) {
+        if (video_iterations != null) {
             mVideoIterations = Integer.parseInt(video_iterations);
         }
-        if ( image_iterations != null) {
+        if (image_iterations != null) {
             mImageIterations = Integer.parseInt(image_iterations);
         }
-        if ( video_duration != null) {
+        if (video_duration != null) {
             mVideoDuration = Integer.parseInt(video_duration);
         }
     }

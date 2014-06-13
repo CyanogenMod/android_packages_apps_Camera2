@@ -44,6 +44,7 @@ public class AnimationManager {
 
     /**
      * Starts capture animation.
+     *
      * @param view a thumbnail view that shows a picture captured and gets animated
      */
     public void startCaptureAnimation(final View view) {
@@ -99,7 +100,8 @@ public class AnimationManager {
                         parentView.getWidth() / 2 - centerX, 0f)
                         .setDuration(AnimationManager.SHRINK_DURATION),
                 translateY,
-                slide);
+                slide
+        );
         mCaptureAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
@@ -132,10 +134,11 @@ public class AnimationManager {
         mCaptureAnimator.start();
     }
 
-   /**
-    * Starts flash animation.
-    * @params flashOverlay the overlay that will animate on alpha to make the flash impression
-    */
+    /**
+     * Starts flash animation.
+     *
+     * @params flashOverlay the overlay that will animate on alpha to make the flash impression
+     */
     public void startFlashAnimation(final View flashOverlay) {
         // End the previous animation if the previous one is still running
         if (mFlashAnim != null && mFlashAnim.isRunning()) {
@@ -174,6 +177,7 @@ public class AnimationManager {
 
     /**
      * Starts ZSL fade animation.
+     *
      * @params view a thumbnail view that shows a picture fading out
      */
     public void startFadeAnimation(final View view) {

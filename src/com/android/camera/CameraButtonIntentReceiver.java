@@ -23,10 +23,10 @@ import android.content.Intent;
 /**
  * {@code CameraButtonIntentReceiver} is invoked when the camera button is
  * long-pressed.
- *
+ * <p/>
  * It is declared in {@code AndroidManifest.xml} to receive the
  * {@code android.intent.action.CAMERA_BUTTON} intent.
- *
+ * <p/>
  * After making sure we can use the camera hardware, it starts the Camera
  * activity.
  */

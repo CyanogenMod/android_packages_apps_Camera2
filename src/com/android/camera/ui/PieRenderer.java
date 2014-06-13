@@ -49,44 +49,38 @@ import java.util.List;
 public class PieRenderer extends OverlayRenderer
         implements FocusIndicator {
 
+    protected static final float SWEEP_SLICE = 0.14f;
+    protected static final float SWEEP_ARC = 0.23f;
     private static final String TAG = "PieRenderer";
-
-    // Sometimes continuous autofocus starts and stops several times quickly.
-    // These states are used to make sure the animation is run for at least some
-    // time.
-    private volatile int mState;
-    private ScaleAnimation mAnimation = new ScaleAnimation();
     private static final int STATE_IDLE = 0;
     private static final int STATE_FOCUSING = 1;
     private static final int STATE_FINISHING = 2;
     private static final int STATE_PIE = 8;
 
-    private static final float MATH_PI_2 = (float)(Math.PI / 2);
-
-    private Runnable mDisappear = new Disappear();
-    private Animation.AnimationListener mEndAction = new EndAction();
+    private static final float MATH_PI_2 = (float) (Math.PI / 2);
     private static final int SCALING_UP_TIME = 600;
     private static final int SCALING_DOWN_TIME = 100;
     private static final int DISAPPEAR_TIMEOUT = 200;
     private static final int DIAL_HORIZONTAL = 157;
     // fade out timings
     private static final int PIE_FADE_OUT_DURATION = 600;
-
     private static final long PIE_FADE_IN_DURATION = 200;
     private static final long PIE_XFADE_DURATION = 200;
     private static final long PIE_SELECT_FADE_DURATION = 300;
     private static final long PIE_OPEN_SUB_DELAY = 400;
     private static final long PIE_SLICE_DURATION = 80;
-
     private static final int MSG_OPEN = 0;
     private static final int MSG_CLOSE = 1;
     private static final int MSG_OPENSUBMENU = 2;
-
     protected static float CENTER = (float) Math.PI / 2;
-    protected static float RAD24 = (float)(24 * Math.PI / 180);
-    protected static final float SWEEP_SLICE = 0.14f;
-    protected static final float SWEEP_ARC = 0.23f;
-
+    protected static float RAD24 = (float) (24 * Math.PI / 180);
+    // Sometimes continuous autofocus starts and stops several times quickly.
+    // These states are used to make sure the animation is run for at least some
+    // time.
+    private volatile int mState;
+    private ScaleAnimation mAnimation = new ScaleAnimation();
+    private Runnable mDisappear = new Disappear();
+    private Animation.AnimationListener mEndAction = new EndAction();
     // geometry
     private int mRadius;
     private int mRadiusInc;
@@ -148,41 +142,40 @@ public class PieRenderer extends OverlayRenderer
     private float mCenterAngle;
 
     private ProgressRenderer mProgressRenderer;
-
+    private PieListener mListener;
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            switch(msg.what) {
-            case MSG_OPEN:
-                if (mListener != null) {
-                    mListener.onPieOpened(mPieCenterX, mPieCenterY);
-                }
-                break;
-            case MSG_CLOSE:
-                if (mListener != null) {
-                    mListener.onPieClosed();
-                }
-                break;
-            case MSG_OPENSUBMENU:
-                onEnterOpen();
-                break;
+            switch (msg.what) {
+                case MSG_OPEN:
+                    if (mListener != null) {
+                        mListener.onPieOpened(mPieCenterX, mPieCenterY);
+                    }
+                    break;
+                case MSG_CLOSE:
+                    if (mListener != null) {
+                        mListener.onPieClosed();
+                    }
+                    break;
+                case MSG_OPENSUBMENU:
+                    onEnterOpen();
+                    break;
             }
 
         }
     };
 
-    private PieListener mListener;
+    public PieRenderer(Context context) {
+        init(context);
+    }
 
-    static public interface PieListener {
-        public void onPieOpened(int centerX, int centerY);
-        public void onPieClosed();
+    private static void convertCart(int angle, int radius, Point out) {
+        double a = 2 * Math.PI * (angle % 360) / 360;
+        out.x = (int) (radius * Math.cos(a) + 0.5);
+        out.y = (int) (radius * Math.sin(a) + 0.5);
     }
 
     public void setPieListener(PieListener pl) {
         mListener = pl;
-    }
-
-    public PieRenderer(Context context) {
-        init(context);
     }
 
     private void init(Context ctx) {
@@ -273,6 +266,7 @@ public class PieRenderer extends OverlayRenderer
 
     /**
      * guaranteed has center set
+     *
      * @param show
      */
     private void show(boolean show) {
@@ -359,7 +353,7 @@ public class PieRenderer extends OverlayRenderer
         mCenterY = (b - t) / 2;
 
         int layoutWidth = r - l;
-        if( (layoutWidth > 0) && ((mMaxArcRadius + mCenterX) > layoutWidth) ){
+        if ((layoutWidth > 0) && ((mMaxArcRadius + mCenterX) > layoutWidth)) {
             mArcRadius = layoutWidth - mCenterX;
         } else {
             mArcRadius = mMaxArcRadius;
@@ -391,7 +385,7 @@ public class PieRenderer extends OverlayRenderer
         int y = mArcCenterY - mArcRadius - (level + 2) * mRadiusInc;
         int w = mLabel.getIntrinsicWidth();
         int h = mLabel.getIntrinsicHeight();
-        mLabel.setBounds(x - w/2, y - h/2, x + w/2, y + h/2);
+        mLabel.setBounds(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
     }
 
     private void layoutItems(int level, List<PieItem> items) {
@@ -463,6 +457,7 @@ public class PieRenderer extends OverlayRenderer
 
     /**
      * converts a
+     *
      * @param angle from 0..PI to Android degrees (clockwise starting at 3 o'clock)
      * @return skia angle
      */
@@ -514,7 +509,7 @@ public class PieRenderer extends OverlayRenderer
     // pop an item of the open item stack
     private PieItem closeOpenItem() {
         PieItem item = getOpenItem();
-        mOpen.remove(mOpen.size() -1);
+        mOpen.remove(mOpen.size() - 1);
         return item;
     }
 
@@ -592,11 +587,12 @@ public class PieRenderer extends OverlayRenderer
         if (mState == STATE_PIE) {
             final int count = item.getItems().size();
             float start = mCenterAngle + (count * SWEEP_ARC / 2f);
-            float end =  mCenterAngle - (count * SWEEP_ARC / 2f);
+            float end = mCenterAngle - (count * SWEEP_ARC / 2f);
             int cy = mArcCenterY - level * mRadiusInc;
             canvas.drawArc(new RectF(mPieCenterX - mArcRadius, cy - mArcRadius,
-                    mPieCenterX + mArcRadius, cy + mArcRadius),
-                    getDegrees(end), getDegrees(start) - getDegrees(end), false, mMenuArcPaint);
+                            mPieCenterX + mArcRadius, cy + mArcRadius),
+                    getDegrees(end), getDegrees(start) - getDegrees(end), false, mMenuArcPaint
+            );
         }
     }
 
@@ -616,7 +612,7 @@ public class PieRenderer extends OverlayRenderer
                     angle = getDegrees(angle);
                     canvas.rotate(angle, mPieCenterX, y);
                     if (mFadeOut != null) {
-                        p.setAlpha((int)(255 * alpha));
+                        p.setAlpha((int) (255 * alpha));
                     }
                     canvas.drawPath(item.getPath(), p);
                     if (mFadeOut != null) {
@@ -672,8 +668,8 @@ public class PieRenderer extends OverlayRenderer
                     mTapMode = false;
                     show(false);
                 } else if (!mOpening && !item.hasItems()) {
-                        startFadeOut(item);
-                        mTapMode = false;
+                    startFadeOut(item);
+                    mTapMode = false;
                 } else {
                     mTapMode = true;
                 }
@@ -728,7 +724,7 @@ public class PieRenderer extends OverlayRenderer
 
     private boolean inside(PointF polar, PieItem item, int pos, int count) {
         float start = getSliceCenter(item, pos, count) - SWEEP_SLICE / 2f;
-        boolean res =  (mArcRadius < polar.y)
+        boolean res = (mArcRadius < polar.y)
                 && (start < polar.x)
                 && (start + SWEEP_SLICE > polar.x)
                 && (!mTapMode || (mArcRadius + mRadiusInc > polar.y));
@@ -743,7 +739,7 @@ public class PieRenderer extends OverlayRenderer
         float y2 = mArcCenterY - getLevel() * mRadiusInc - y;
         res.y = (float) Math.sqrt(x * x + y2 * y2);
         if (x != 0) {
-            res.x = (float) Math.atan2(y1,  x);
+            res.x = (float) Math.atan2(y1, x);
             if (res.x < 0) {
                 res.x = (float) (2 * Math.PI + res.x);
             }
@@ -780,6 +776,7 @@ public class PieRenderer extends OverlayRenderer
     /**
      * enter a slice for a view
      * updates model only
+     *
      * @param item
      */
     private void onEnter(PieItem item) {
@@ -939,7 +936,7 @@ public class PieRenderer extends OverlayRenderer
     }
 
     private int getRandomRange() {
-        return (int)(-60 + 120 * Math.random());
+        return (int) (-60 + 120 * Math.random());
     }
 
     private void setCircle(int cx, int cy) {
@@ -977,12 +974,6 @@ public class PieRenderer extends OverlayRenderer
         convertCart(angle, mCircleSize - mInnerOffset + mInnerOffset / 3, mPoint2);
         canvas.drawLine(mPoint1.x + mFocusX, mPoint1.y + mFocusY,
                 mPoint2.x + mFocusX, mPoint2.y + mFocusY, p);
-    }
-
-    private static void convertCart(int angle, int radius, Point out) {
-        double a = 2 * Math.PI * (angle % 360) / 360;
-        out.x = (int) (radius * Math.cos(a) + 0.5);
-        out.y = (int) (radius * Math.sin(a) + 0.5);
     }
 
     @Override
@@ -1051,13 +1042,13 @@ public class PieRenderer extends OverlayRenderer
     }
 
     private void startAnimation(long duration, boolean timeout,
-            float toScale) {
+                                float toScale) {
         startAnimation(duration, timeout, mDialAngle,
                 toScale);
     }
 
     private void startAnimation(long duration, boolean timeout,
-            float fromScale, float toScale) {
+                                float fromScale, float toScale) {
         setVisible(true);
         mAnimation.reset();
         mAnimation.setDuration(duration);
@@ -1065,6 +1056,12 @@ public class PieRenderer extends OverlayRenderer
         mAnimation.setAnimationListener(timeout ? mEndAction : null);
         mOverlay.startAnimation(mAnimation);
         update();
+    }
+
+    static public interface PieListener {
+        public void onPieOpened(int centerX, int centerY);
+
+        public void onPieClosed();
     }
 
     private class EndAction implements Animation.AnimationListener {
@@ -1113,7 +1110,7 @@ public class PieRenderer extends OverlayRenderer
 
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
-            mDialAngle = (int)(mFrom + (mTo - mFrom) * interpolatedTime);
+            mDialAngle = (int) (mFrom + (mTo - mFrom) * interpolatedTime);
         }
     }
 

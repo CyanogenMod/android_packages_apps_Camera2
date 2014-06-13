@@ -29,25 +29,11 @@ import java.util.concurrent.locks.Lock;
  * Shows a preview of the TinyPlanet on the screen while editing.
  */
 public class TinyPlanetPreview extends View {
-    /**
-     * Classes implementing this interface get informed about changes to the
-     * preview size.
-     */
-    public static interface PreviewSizeListener {
-        /**
-         * Called when the preview size has changed.
-         *
-         * @param sizePx the size in pixels of the square preview area
-         */
-        public void onSizeChanged(int sizePx);
-    }
-
     private Paint mPaint = new Paint();
     private Bitmap mPreview;
     private Lock mLock;
     private PreviewSizeListener mPreviewSizeListener;
     private int mSize = 0;
-
     public TinyPlanetPreview(Context context) {
         super(context);
     }
@@ -115,5 +101,18 @@ public class TinyPlanetPreview extends View {
                 mPreviewSizeListener.onSizeChanged(mSize);
             }
         }
+    }
+
+    /**
+     * Classes implementing this interface get informed about changes to the
+     * preview size.
+     */
+    public static interface PreviewSizeListener {
+        /**
+         * Called when the preview size has changed.
+         *
+         * @param sizePx the size in pixels of the square preview area
+         */
+        public void onSizeChanged(int sizePx);
     }
 }

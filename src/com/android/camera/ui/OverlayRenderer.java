@@ -29,13 +29,13 @@ public abstract class OverlayRenderer implements RenderOverlay.Renderer {
 
     protected boolean mVisible;
 
+    public boolean isVisible() {
+        return mVisible;
+    }
+
     public void setVisible(boolean vis) {
         mVisible = vis;
         update();
-    }
-
-    public boolean isVisible() {
-        return mVisible;
     }
 
     // default does not handle touch

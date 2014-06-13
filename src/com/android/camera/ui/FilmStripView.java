@@ -22,12 +22,13 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
+import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -41,7 +42,6 @@ import com.android.camera.CameraActivity;
 import com.android.camera.data.LocalData;
 import com.android.camera.ui.FilmStripView.ImageData.PanoramaSupportCallback;
 import com.android.camera.ui.FilmstripBottomControls.BottomControlsListener;
-import com.android.camera.util.CameraUtil;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -52,6 +52,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final String TAG = "CAM_FilmStripView";
 
     private static final int BUFFER_SIZE = 5;
+    private final int mCurrentItem = (BUFFER_SIZE - 1) / 2;
+    private ViewItem[] mViewItem = new ViewItem[BUFFER_SIZE];
     private static final int GEOMETRY_ADJUST_TIME_MS = 400;
     private static final int SNAP_IN_CENTER_TIME_MS = 600;
     private static final float FLING_COASTING_DURATION_S = 0.05f;
@@ -59,24 +61,18 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     private static final int CAMERA_PREVIEW_SWIPE_THRESHOLD = 300;
     private static final float FILM_STRIP_SCALE = 0.5f;
     private static final float FULL_SCREEN_SCALE = 1f;
-
     private static final float TOLERANCE = 0.1f;
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
     private static final int DECELERATION_FACTOR = 4;
-
+    private final Rect mDrawArea = new Rect();
     private CameraActivity mActivity;
     private FilmStripGestureRecognizer mGestureRecognizer;
     private DataAdapter mDataAdapter;
     private int mViewGap;
-    private final Rect mDrawArea = new Rect();
-
-    private final int mCurrentItem = (BUFFER_SIZE - 1) / 2;
     private float mScale;
     private MyController mController;
     private int mCenterX = -1;
-    private ViewItem[] mViewItem = new ViewItem[BUFFER_SIZE];
-
     private Listener mListener;
     private ZoomView mZoomView = null;
 
@@ -98,576 +94,22 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
     private int mLastTotalNumber = 0;
 
-    /**
-     * Common interface for all images in the filmstrip.
-     */
-    public interface ImageData {
-
-        /**
-         * Interface that is used to tell the caller whether an image is a photo
-         * sphere.
-         */
-        public static interface PanoramaSupportCallback {
-            /**
-             * Called then photo sphere info has been loaded.
-             *
-             * @param isPanorama whether the image is a valid photo sphere
-             * @param isPanorama360 whether the photo sphere is a full 360
-             *            degree horizontal panorama
-             */
-            void panoramaInfoAvailable(boolean isPanorama,
-                    boolean isPanorama360);
-        }
-
-        // View types.
-        public static final int VIEW_TYPE_NONE = 0;
-        public static final int VIEW_TYPE_STICKY = 1;
-        public static final int VIEW_TYPE_REMOVABLE = 2;
-
-        // Actions allowed to be performed on the image data.
-        // The actions are defined bit-wise so we can use bit operations like
-        // | and &.
-        public static final int ACTION_NONE = 0;
-        public static final int ACTION_PROMOTE = 1;
-        public static final int ACTION_DEMOTE = (1 << 1);
-        /**
-         * For image data that supports zoom, it should also provide a valid
-         * content uri.
-         */
-        public static final int ACTION_ZOOM = (1 << 2);
-
-        /**
-         * SIZE_FULL can be returned by {@link ImageData#getWidth()} and
-         * {@link ImageData#getHeight()}. When SIZE_FULL is returned for
-         * width/height, it means the the width or height will be disregarded
-         * when deciding the view size of this ImageData, just use full screen
-         * size.
-         */
-        public static final int SIZE_FULL = -2;
-
-        /**
-         * Returns the width of the image before orientation applied.
-         * The final layout of the view returned by
-         * {@link DataAdapter#getView(android.app.Activity, int)} will
-         * preserve the aspect ratio of
-         * {@link com.android.camera.ui.FilmStripView.ImageData#getWidth()} and
-         * {@link com.android.camera.ui.FilmStripView.ImageData#getHeight()}.
-         */
-        public int getWidth();
-
-        /**
-         * Returns the height of the image before orientation applied.
-         * The final layout of the view returned by
-         * {@link DataAdapter#getView(android.app.Activity, int)} will
-         * preserve the aspect ratio of
-         * {@link com.android.camera.ui.FilmStripView.ImageData#getWidth()} and
-         * {@link com.android.camera.ui.FilmStripView.ImageData#getHeight()}.
-         */
-        public int getHeight();
-
-        /**
-         * Returns the orientation of the image.
-         */
-        public int getOrientation();
-
-        /** Returns the image data type */
-        public int getViewType();
-
-        /**
-         * Returns the coordinates of this item.
-         *
-         * @return A 2-element array containing {latitude, longitude}, or null,
-         *         if no position is known for this item.
-         */
-        public double[] getLatLong();
-
-        /**
-         * Checks if the UI action is supported.
-         *
-         * @param action The UI actions to check.
-         * @return {@code false} if at least one of the actions is not
-         *         supported. {@code true} otherwise.
-         */
-        public boolean isUIActionSupported(int action);
-
-        /**
-         * Gives the data a hint when its view is going to be displayed.
-         * {@code FilmStripView} should always call this function before showing
-         * its corresponding view every time.
-         */
-        public void prepare();
-
-        /**
-         * Gives the data a hint when its view is going to be removed from the
-         * view hierarchy. {@code FilmStripView} should always call this
-         * function after its corresponding view is removed from the view
-         * hierarchy.
-         */
-        public void recycle();
-
-        /**
-         * Asynchronously checks if the image is a photo sphere. Notified the
-         * callback when the results are available.
-         */
-        public void isPhotoSphere(Context context, PanoramaSupportCallback callback);
-
-        /**
-         * If the item is a valid photo sphere panorama, this method will launch
-         * the viewer.
-         */
-        public void viewPhotoSphere(PanoramaViewHelper helper);
-
-        /** Whether this item is a photo. */
-        public boolean isPhoto();
-
-        /**
-         * Returns the content URI of this data item.
-         *
-         * @return {@code Uri.EMPTY} if not valid.
-         */
-        public Uri getContentUri();
-    }
-
-    /**
-     * An interfaces which defines the interactions between the
-     * {@link ImageData} and the {@link FilmStripView}.
-     */
-    public interface DataAdapter {
-        /**
-         * An interface which defines the update report used to return to the
-         * {@link com.android.camera.ui.FilmStripView.Listener}.
-         */
-        public interface UpdateReporter {
-            /** Checks if the data of dataID is removed. */
-            public boolean isDataRemoved(int dataID);
-
-            /** Checks if the data of dataID is updated. */
-            public boolean isDataUpdated(int dataID);
-        }
-
-        /**
-         * An interface which defines the listener for data events over
-         * {@link ImageData}. Usually {@link FilmStripView} itself.
-         */
-        public interface Listener {
-            // Called when the whole data loading is done. No any assumption
-            // on previous data.
-            public void onDataLoaded();
-
-            // Only some of the data is changed. The listener should check
-            // if any thing needs to be updated.
-            public void onDataUpdated(UpdateReporter reporter);
-
-            public void onDataInserted(int dataID, ImageData data);
-
-            public void onDataRemoved(int dataID, ImageData data);
-        }
-
-        /** Returns the total number of image data */
-        public int getTotalNumber();
-
-        /**
-         * Returns the view to visually present the image data.
-         *
-         * @param activity The {@link Activity} context to create the view.
-         * @param dataID The ID of the image data to be presented.
-         * @return The view representing the image data. Null if unavailable or
-         *         the {@code dataID} is out of range.
-         */
-        public View getView(Activity activity, int dataID);
-
-        /**
-         * Returns the {@link ImageData} specified by the ID.
-         *
-         * @param dataID The ID of the {@link ImageData}.
-         * @return The specified {@link ImageData}. Null if not available.
-         */
-        public ImageData getImageData(int dataID);
-
-        /**
-         * Suggests the data adapter the maximum possible size of the layout so
-         * the {@link DataAdapter} can optimize the view returned for the
-         * {@link ImageData}.
-         *
-         * @param w Maximum width.
-         * @param h Maximum height.
-         */
-        public void suggestViewSizeBound(int w, int h);
-
-        /**
-         * Sets the listener for data events over the ImageData.
-         *
-         * @param listener The listener to use.
-         */
-        public void setListener(Listener listener);
-
-        /**
-         * Returns {@code true} if the view of the data can be moved by swipe
-         * gesture when in full-screen.
-         *
-         * @param dataID The ID of the data.
-         * @return {@code true} if the view can be moved, {@code false}
-         *         otherwise.
-         */
-        public boolean canSwipeInFullScreen(int dataID);
-    }
-
-    /**
-     * An interface which defines the FilmStripView UI action listener.
-     */
-    public interface Listener {
-        /**
-         * Callback when the data is promoted.
-         *
-         * @param dataID The ID of the promoted data.
-         */
-        public void onDataPromoted(int dataID);
-
-        /**
-         * Callback when the data is demoted.
-         *
-         * @param dataID The ID of the demoted data.
-         */
-        public void onDataDemoted(int dataID);
-
-        /**
-         * The callback when the item enters/leaves full-screen. TODO: Call this
-         * function actually.
-         *
-         * @param dataID The ID of the image data.
-         * @param fullScreen {@code true} if the data is entering full-screen.
-         *            {@code false} otherwise.
-         */
-        public void onDataFullScreenChange(int dataID, boolean fullScreen);
-
-        /**
-         * Called by {@link reload}.
-         */
-        public void onReload();
-
-        /**
-         * Called by {@link checkCurrentDataCentered} when the
-         * data is centered in the film strip.
-         *
-         * @param dataID the ID of the local data
-         */
-        public void onCurrentDataCentered(int dataID);
-
-        /**
-         * Called by {@link checkCurrentDataCentered} when the
-         * data is off centered in the film strip.
-         *
-         * @param dataID the ID of the local data
-         */
-        public void onCurrentDataOffCentered(int dataID);
-
-        /**
-         * The callback when the item is centered/off-centered.
-         *
-         * @param dataID The ID of the image data.
-         * @param focused {@code true} if the data is focused.
-         *            {@code false} otherwise.
-         */
-        public void onDataFocusChanged(int dataID, boolean focused);
-
-        /**
-         * Toggles the visibility of the ActionBar.
-         *
-         * @param dataID The ID of the image data.
-         */
-        public void onToggleSystemDecorsVisibility(int dataID);
-
-        /**
-         * Sets the visibility of system decors, including action bar and nav bar
-         * @param visible The visibility of the system decors
-         */
-        public void setSystemDecorsVisibility(boolean visible);
-    }
-
-    /**
-     * An interface which defines the controller of {@link FilmStripView}.
-     */
-    public interface Controller {
-        public boolean isScaling();
-
-        public void scroll(float deltaX);
-
-        public void fling(float velocity);
-
-        public void flingInsideZoomView (float velocityX, float velocityY);
-
-        public void scrollToPosition(int position, int duration, boolean interruptible);
-
-        public boolean goToNextItem();
-
-        public boolean stopScrolling(boolean forced);
-
-        public boolean isScrolling();
-
-        public void goToFirstItem();
-
-        public void goToFilmStrip();
-
-        public void goToFullScreen();
-
-    }
-
-    /**
-     * A helper class to tract and calculate the view coordination.
-     */
-    private static class ViewItem {
-        private int mDataId;
-        /** The position of the left of the view in the whole filmstrip. */
-        private int mLeftPosition;
-        private View mView;
-        private RectF mViewArea;
-
-        private ValueAnimator mTranslationXAnimator;
-
-        /**
-         * Constructor.
-         *
-         * @param id The id of the data from {@link DataAdapter}.
-         * @param v The {@code View} representing the data.
-         */
-        public ViewItem(
-                int id, View v, ValueAnimator.AnimatorUpdateListener listener) {
-            v.setPivotX(0f);
-            v.setPivotY(0f);
-            mDataId = id;
-            mView = v;
-            mLeftPosition = -1;
-            mViewArea = new RectF();
-            mTranslationXAnimator = new ValueAnimator();
-            mTranslationXAnimator.addUpdateListener(listener);
-        }
-
-        /** Returns the data id from {@link DataAdapter}. */
-        public int getId() {
-            return mDataId;
-        }
-
-        /** Sets the data id from {@link DataAdapter}. */
-        public void setId(int id) {
-            mDataId = id;
-        }
-
-        /** Sets the left position of the view in the whole filmstrip. */
-        public void setLeftPosition(int pos) {
-            mLeftPosition = pos;
-        }
-
-        /** Returns the left position of the view in the whole filmstrip. */
-        public int getLeftPosition() {
-            return mLeftPosition;
-        }
-
-        /** Returns the translation of Y regarding the view scale. */
-        public float getScaledTranslationY(float scale) {
-            return mView.getTranslationY() / scale;
-        }
-
-        /** Returns the translation of X regarding the view scale. */
-        public float getScaledTranslationX(float scale) {
-            return mView.getTranslationX() / scale;
-        }
-
-        /**
-         * The horizontal location of this view relative to its left position.
-         * This position is post-layout, in addition to wherever the object's
-         * layout placed it.
-         *
-         * @return The horizontal position of this view relative to its left position, in pixels.
-         */
-        public float getTranslationX() {
-            return mView.getTranslationX();
-        }
-
-        /**
-         * The vertical location of this view relative to its top position.
-         * This position is post-layout, in addition to wherever the object's
-         * layout placed it.
-         *
-         * @return The vertical position of this view relative to its top position,
-         * in pixels.
-         */
-        public float getTranslationY() {
-            return mView.getTranslationY();
-        }
-
-        /** Sets the translation of Y regarding the view scale. */
-        public void setTranslationY(float transY, float scale) {
-            mView.setTranslationY(transY * scale);
-        }
-
-        /** Sets the translation of X regarding the view scale. */
-        public void setTranslationX(float transX, float scale) {
-            mView.setTranslationX(transX * scale);
-        }
-
-        public void animateTranslationX(
-                float targetX, long duration_ms, TimeInterpolator interpolator) {
-            mTranslationXAnimator.setInterpolator(interpolator);
-            mTranslationXAnimator.setDuration(duration_ms);
-            mTranslationXAnimator.setFloatValues(mView.getTranslationX(), targetX);
-            mTranslationXAnimator.start();
-        }
-
-        /** Adjusts the translation of X regarding the view scale. */
-        public void translateXBy(float transX, float scale) {
-            mView.setTranslationX(mView.getTranslationX() + transX * scale);
-        }
-
-        public int getCenterX() {
-            return mLeftPosition + mView.getMeasuredWidth() / 2;
-        }
-
-        /** Gets the view representing the data. */
-        public View getView() {
-            return mView;
-        }
-
-        /**
-         * The visual x position of this view, in pixels.
-         */
-        public float getX() {
-            return mView.getX();
-        }
-
-        /**
-         * The visual y position of this view, in pixels.
-         */
-        public float getY() {
-            return mView.getY();
-        }
-
-        private void layoutAt(int left, int top) {
-            mView.layout(left, top, left + mView.getMeasuredWidth(),
-                    top + mView.getMeasuredHeight());
-        }
-
-        /**
-         * The bounding rect of the view.
-         */
-        public RectF getViewRect() {
-            RectF r = new RectF();
-            r.left = mView.getX();
-            r.top = mView.getY();
-            r.right = r.left + mView.getWidth() * mView.getScaleX();
-            r.bottom = r.top + mView.getHeight() * mView.getScaleY();
-            return r;
-        }
-
-        /**
-         * Layouts the view in the area assuming the center of the area is at a
-         * specific point of the whole filmstrip.
-         *
-         * @param drawArea The area when filmstrip will show in.
-         * @param refCenter The absolute X coordination in the whole filmstrip
-         *            of the center of {@code drawArea}.
-         * @param scale The current scale of the filmstrip.
-         */
-        public void layoutIn(Rect drawArea, int refCenter, float scale) {
-            final float translationX = (mTranslationXAnimator.isRunning() ?
-                    (Float) mTranslationXAnimator.getAnimatedValue() : 0f);
-            int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter + translationX) * scale);
-            int top = (int) (drawArea.centerY() - (mView.getMeasuredHeight() / 2) * scale);
-            layoutAt(left, top);
-            mView.setScaleX(scale);
-            mView.setScaleY(scale);
-
-            // update mViewArea for touch detection.
-            int l = mView.getLeft();
-            int t = mView.getTop();
-            mViewArea.set(l, t,
-                    l + mView.getMeasuredWidth() * scale,
-                    t + mView.getMeasuredHeight() * scale);
-        }
-
-        /** Returns true if the point is in the view. */
-        public boolean areaContains(float x, float y) {
-            return mViewArea.contains(x, y);
-        }
-
-        /**
-         * Return the width of the view.
-         */
-        public int getWidth() {
-            return mView.getWidth();
-        }
-
-        public void copyGeometry(ViewItem item) {
-            setLeftPosition(item.getLeftPosition());
-            View v = item.getView();
-            mView.setTranslationY(v.getTranslationY());
-            mView.setTranslationX(v.getTranslationX());
-        }
-        /**
-         * Apply a scale factor (i.e. {@param postScale}) on top of current scale at
-         * pivot point ({@param focusX}, {@param focusY}). Visually it should be the
-         * same as post concatenating current view's matrix with specified scale.
-         */
-        void postScale(float focusX, float focusY, float postScale, int viewportWidth,
-                       int viewportHeight) {
-            float transX = getTranslationX();
-            float transY = getTranslationY();
-            // Pivot point is top left of the view, so we need to translate
-            // to scale around focus point
-            transX -= (focusX - getX()) * (postScale - 1f);
-            transY -= (focusY - getY()) * (postScale - 1f);
-            float scaleX = mView.getScaleX() * postScale;
-            float scaleY = mView.getScaleY() * postScale;
-            updateTransform(transX, transY, scaleX, scaleY, viewportWidth,
-                    viewportHeight);
-        }
-
-        void updateTransform(float transX, float transY, float scaleX, float scaleY,
-                                    int viewportWidth, int viewportHeight) {
-            float left = transX + mView.getLeft();
-            float top = transY + mView.getTop();
-            RectF r = ZoomView.adjustToFitInBounds(new RectF(left, top,
-                    left + mView.getWidth() * scaleX,
-                    top + mView.getHeight() * scaleY),
-                    viewportWidth, viewportHeight);
-            mView.setScaleX(scaleX);
-            mView.setScaleY(scaleY);
-            transX = r.left - mView.getLeft();
-            transY = r.top - mView.getTop();
-            mView.setTranslationX(transX);
-            mView.setTranslationY(transY);
-        }
-
-        void resetTransform() {
-            mView.setScaleX(FULL_SCREEN_SCALE);
-            mView.setScaleY(FULL_SCREEN_SCALE);
-            mView.setTranslationX(0f);
-            mView.setTranslationY(0f);
-        }
-
-        @Override
-        public String toString() {
-            return "DataID = " + mDataId + "\n\t left = " + mLeftPosition
-                    + "\n\t viewArea = " + mViewArea
-                    + "\n\t centerX = " + getCenterX()
-                    + "\n\t view MeasuredSize = "
-                    + mView.getMeasuredWidth() + ',' + mView.getMeasuredHeight()
-                    + "\n\t view Size = " + mView.getWidth() + ',' + mView.getHeight()
-                    + "\n\t view scale = " + mView.getScaleX();
-        }
-    }
-
     public FilmStripView(Context context) {
         super(context);
         init((CameraActivity) context);
     }
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public FilmStripView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init((CameraActivity) context);
     }
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public FilmStripView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init((CameraActivity) context);
@@ -754,7 +196,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         return mDataAdapter.getImageData(curr.getId()).getViewType();
     }
 
-    /** Returns [width, height] preserving image aspect ratio. */
+    /**
+     * Returns [width, height] preserving image aspect ratio.
+     */
     private int[] calculateChildDimension(
             int imageWidth, int imageHeight, int imageOrientation,
             int boundWidth, int boundHeight) {
@@ -798,7 +242,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 MeasureSpec.makeMeasureSpec(
                         dim[0], MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(
-                        dim[1], MeasureSpec.EXACTLY));
+                        dim[1], MeasureSpec.EXACTLY)
+        );
     }
 
     @Override
@@ -827,7 +272,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 MeasureSpec.makeMeasureSpec(
                         widthMeasureSpec, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(
-                        heightMeasureSpec, MeasureSpec.EXACTLY));
+                        heightMeasureSpec, MeasureSpec.EXACTLY)
+        );
     }
 
     @Override
@@ -891,6 +337,16 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             v.setAlpha(1f);
             v.setTranslationX(0);
             v.setTranslationY(0);
+            if (mActivity.mCurrentModuleName == "WideAnglePanoramaModule") {
+                if (Settings.System.getInt(mActivity.getContentResolver(),
+                        Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
+                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                } else {
+                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                }
+            } else {
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
         }
         return item;
     }
@@ -981,10 +437,11 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 && mDataIdOnUserScrolling <= 1) {
             // Stop at the first ViewItem.
             stopScroll = true;
-        } else if(curr.getId() == 1 && mCenterX < curr.getCenterX()
+        } else if (curr.getId() == 1 && mCenterX < curr.getCenterX()
                 && mDataIdOnUserScrolling > 1 && mController.isScrolling()) {
             stopScroll = true;
-        } if (curr.getId() == mDataAdapter.getTotalNumber() - 1
+        }
+        if (curr.getId() == mDataAdapter.getTotalNumber() - 1
                 && mCenterX > curr.getCenterX()) {
             // Stop at the end.
             stopScroll = true;
@@ -1122,7 +579,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         data.isPhotoSphere(mActivity, new PanoramaSupportCallback() {
             @Override
             public void panoramaInfoAvailable(final boolean isPanorama,
-                    boolean isPanorama360) {
+                                              boolean isPanorama360) {
                 // Make sure the returned data is for the current image.
                 if (requestId == getCurrentId()) {
                     if (mListener != null) {
@@ -1151,7 +608,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
 
         int snapInTime = (int) (SNAP_IN_CENTER_TIME_MS
                 * ((float) Math.abs(mCenterX - currentViewCenter))
-                /  mDrawArea.width());
+                / mDrawArea.width());
         mController.scrollToPosition(currentViewCenter,
                 snapInTime, false);
         if (getCurrentViewType() == ImageData.VIEW_TYPE_STICKY
@@ -1168,7 +625,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
      * which occupies the whole screen. The other left ones are put on the left
      * side in full scales. Does nothing if there's no next item.
      *
-     * @param currItem The item ID of the current one to be translated.
+     * @param currItem      The item ID of the current one to be translated.
      * @param drawAreaWidth The width of the current draw area.
      * @param scaleFraction A {@code float} between 0 and 1. 0 if the current
      *                      scale is {@link FILM_STRIP_SCALE}. 1 if the
@@ -1192,7 +649,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         final int currCenterX = curr.getCenterX();
         final int nextCenterX = next.getCenterX();
         final int translate = (int) ((nextCenterX - drawAreaWidth
-                    - currCenterX) * scaleFraction);
+                - currCenterX) * scaleFraction);
 
         curr.layoutIn(mDrawArea, mCenterX, mScale);
         curr.getView().setAlpha(1f);
@@ -1307,7 +764,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         // preview.
         boolean immediateRight =
                 (mViewItem[mCurrentItem].getId() == 1 &&
-                mDataAdapter.getImageData(0).getViewType() == ImageData.VIEW_TYPE_STICKY);
+                        mDataAdapter.getImageData(0).getViewType() == ImageData.VIEW_TYPE_STICKY);
 
         // Layout the current ViewItem first.
         if (immediateRight) {
@@ -1326,7 +783,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 // In full-screen and mCenterX is on the left of the center,
                 // we draw the current one to "fade down".
                 fadeAndScaleRightViewItem(mCurrentItem);
-            } else if(mCenterX > currCenterX) {
+            } else if (mCenterX > currCenterX) {
                 // In full-screen and mCenterX is on the right of the center,
                 // we draw the current one translated.
                 translateLeftViewItem(mCurrentItem, fullScreenWidth, scaleFraction);
@@ -1399,7 +856,8 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 }
                 curr.setTranslationX(
                         (mViewItem[mCurrentItem].getLeftPosition() - curr.getLeftPosition())
-                        * scaleFraction, mScale);
+                                * scaleFraction, mScale
+                );
             }
         }
 
@@ -1842,7 +1300,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         invalidate();
     }
 
-    /** Some of the data is changed. */
+    /**
+     * Some of the data is changed.
+     */
     private void update(DataAdapter.UpdateReporter reporter) {
         // No data yet.
         if (mViewItem[mCurrentItem] == null) {
@@ -1992,19 +1452,730 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
     }
 
     /**
+     * Common interface for all images in the filmstrip.
+     */
+    public interface ImageData {
+
+        // View types.
+        public static final int VIEW_TYPE_NONE = 0;
+        public static final int VIEW_TYPE_STICKY = 1;
+        public static final int VIEW_TYPE_REMOVABLE = 2;
+        // Actions allowed to be performed on the image data.
+        // The actions are defined bit-wise so we can use bit operations like
+        // | and &.
+        public static final int ACTION_NONE = 0;
+        public static final int ACTION_PROMOTE = 1;
+        public static final int ACTION_DEMOTE = (1 << 1);
+        /**
+         * For image data that supports zoom, it should also provide a valid
+         * content uri.
+         */
+        public static final int ACTION_ZOOM = (1 << 2);
+        /**
+         * SIZE_FULL can be returned by {@link ImageData#getWidth()} and
+         * {@link ImageData#getHeight()}. When SIZE_FULL is returned for
+         * width/height, it means the the width or height will be disregarded
+         * when deciding the view size of this ImageData, just use full screen
+         * size.
+         */
+        public static final int SIZE_FULL = -2;
+
+        /**
+         * Returns the width of the image before orientation applied.
+         * The final layout of the view returned by
+         * {@link DataAdapter#getView(android.app.Activity, int)} will
+         * preserve the aspect ratio of
+         * {@link com.android.camera.ui.FilmStripView.ImageData#getWidth()} and
+         * {@link com.android.camera.ui.FilmStripView.ImageData#getHeight()}.
+         */
+        public int getWidth();
+
+        /**
+         * Returns the height of the image before orientation applied.
+         * The final layout of the view returned by
+         * {@link DataAdapter#getView(android.app.Activity, int)} will
+         * preserve the aspect ratio of
+         * {@link com.android.camera.ui.FilmStripView.ImageData#getWidth()} and
+         * {@link com.android.camera.ui.FilmStripView.ImageData#getHeight()}.
+         */
+        public int getHeight();
+
+        /**
+         * Returns the orientation of the image.
+         */
+        public int getOrientation();
+
+        /**
+         * Returns the image data type
+         */
+        public int getViewType();
+
+        /**
+         * Returns the coordinates of this item.
+         *
+         * @return A 2-element array containing {latitude, longitude}, or null,
+         * if no position is known for this item.
+         */
+        public double[] getLatLong();
+
+        /**
+         * Checks if the UI action is supported.
+         *
+         * @param action The UI actions to check.
+         * @return {@code false} if at least one of the actions is not
+         * supported. {@code true} otherwise.
+         */
+        public boolean isUIActionSupported(int action);
+
+        /**
+         * Gives the data a hint when its view is going to be displayed.
+         * {@code FilmStripView} should always call this function before showing
+         * its corresponding view every time.
+         */
+        public void prepare();
+
+        /**
+         * Gives the data a hint when its view is going to be removed from the
+         * view hierarchy. {@code FilmStripView} should always call this
+         * function after its corresponding view is removed from the view
+         * hierarchy.
+         */
+        public void recycle();
+
+        /**
+         * Asynchronously checks if the image is a photo sphere. Notified the
+         * callback when the results are available.
+         */
+        public void isPhotoSphere(Context context, PanoramaSupportCallback callback);
+
+        /**
+         * If the item is a valid photo sphere panorama, this method will launch
+         * the viewer.
+         */
+        public void viewPhotoSphere(PanoramaViewHelper helper);
+
+        /**
+         * Whether this item is a photo.
+         */
+        public boolean isPhoto();
+
+        /**
+         * Returns the content URI of this data item.
+         *
+         * @return {@code Uri.EMPTY} if not valid.
+         */
+        public Uri getContentUri();
+
+        /**
+         * Interface that is used to tell the caller whether an image is a photo
+         * sphere.
+         */
+        public static interface PanoramaSupportCallback {
+            /**
+             * Called then photo sphere info has been loaded.
+             *
+             * @param isPanorama    whether the image is a valid photo sphere
+             * @param isPanorama360 whether the photo sphere is a full 360
+             *                      degree horizontal panorama
+             */
+            void panoramaInfoAvailable(boolean isPanorama,
+                                       boolean isPanorama360);
+        }
+    }
+
+    /**
+     * An interfaces which defines the interactions between the
+     * {@link ImageData} and the {@link FilmStripView}.
+     */
+    public interface DataAdapter {
+        /**
+         * Returns the total number of image data
+         */
+        public int getTotalNumber();
+
+        /**
+         * Returns the view to visually present the image data.
+         *
+         * @param activity The {@link Activity} context to create the view.
+         * @param dataID   The ID of the image data to be presented.
+         * @return The view representing the image data. Null if unavailable or
+         * the {@code dataID} is out of range.
+         */
+        public View getView(Activity activity, int dataID);
+
+        /**
+         * Returns the {@link ImageData} specified by the ID.
+         *
+         * @param dataID The ID of the {@link ImageData}.
+         * @return The specified {@link ImageData}. Null if not available.
+         */
+        public ImageData getImageData(int dataID);
+
+        /**
+         * Suggests the data adapter the maximum possible size of the layout so
+         * the {@link DataAdapter} can optimize the view returned for the
+         * {@link ImageData}.
+         *
+         * @param w Maximum width.
+         * @param h Maximum height.
+         */
+        public void suggestViewSizeBound(int w, int h);
+
+        /**
+         * Sets the listener for data events over the ImageData.
+         *
+         * @param listener The listener to use.
+         */
+        public void setListener(Listener listener);
+
+        /**
+         * Returns {@code true} if the view of the data can be moved by swipe
+         * gesture when in full-screen.
+         *
+         * @param dataID The ID of the data.
+         * @return {@code true} if the view can be moved, {@code false}
+         * otherwise.
+         */
+        public boolean canSwipeInFullScreen(int dataID);
+
+        /**
+         * An interface which defines the update report used to return to the
+         * {@link com.android.camera.ui.FilmStripView.Listener}.
+         */
+        public interface UpdateReporter {
+            /**
+             * Checks if the data of dataID is removed.
+             */
+            public boolean isDataRemoved(int dataID);
+
+            /**
+             * Checks if the data of dataID is updated.
+             */
+            public boolean isDataUpdated(int dataID);
+        }
+
+        /**
+         * An interface which defines the listener for data events over
+         * {@link ImageData}. Usually {@link FilmStripView} itself.
+         */
+        public interface Listener {
+            // Called when the whole data loading is done. No any assumption
+            // on previous data.
+            public void onDataLoaded();
+
+            // Only some of the data is changed. The listener should check
+            // if any thing needs to be updated.
+            public void onDataUpdated(UpdateReporter reporter);
+
+            public void onDataInserted(int dataID, ImageData data);
+
+            public void onDataRemoved(int dataID, ImageData data);
+        }
+    }
+
+    /**
+     * An interface which defines the FilmStripView UI action listener.
+     */
+    public interface Listener {
+        /**
+         * Callback when the data is promoted.
+         *
+         * @param dataID The ID of the promoted data.
+         */
+        public void onDataPromoted(int dataID);
+
+        /**
+         * Callback when the data is demoted.
+         *
+         * @param dataID The ID of the demoted data.
+         */
+        public void onDataDemoted(int dataID);
+
+        /**
+         * The callback when the item enters/leaves full-screen. TODO: Call this
+         * function actually.
+         *
+         * @param dataID     The ID of the image data.
+         * @param fullScreen {@code true} if the data is entering full-screen.
+         *                   {@code false} otherwise.
+         */
+        public void onDataFullScreenChange(int dataID, boolean fullScreen);
+
+        /**
+         * Called by {@link reload}.
+         */
+        public void onReload();
+
+        /**
+         * Called by {@link checkCurrentDataCentered} when the
+         * data is centered in the film strip.
+         *
+         * @param dataID the ID of the local data
+         */
+        public void onCurrentDataCentered(int dataID);
+
+        /**
+         * Called by {@link checkCurrentDataCentered} when the
+         * data is off centered in the film strip.
+         *
+         * @param dataID the ID of the local data
+         */
+        public void onCurrentDataOffCentered(int dataID);
+
+        /**
+         * The callback when the item is centered/off-centered.
+         *
+         * @param dataID  The ID of the image data.
+         * @param focused {@code true} if the data is focused.
+         *                {@code false} otherwise.
+         */
+        public void onDataFocusChanged(int dataID, boolean focused);
+
+        /**
+         * Toggles the visibility of the ActionBar.
+         *
+         * @param dataID The ID of the image data.
+         */
+        public void onToggleSystemDecorsVisibility(int dataID);
+
+        /**
+         * Sets the visibility of system decors, including action bar and nav bar
+         *
+         * @param visible The visibility of the system decors
+         */
+        public void setSystemDecorsVisibility(boolean visible);
+    }
+
+    /**
+     * An interface which defines the controller of {@link FilmStripView}.
+     */
+    public interface Controller {
+        public boolean isScaling();
+
+        public void scroll(float deltaX);
+
+        public void fling(float velocity);
+
+        public void flingInsideZoomView(float velocityX, float velocityY);
+
+        public void scrollToPosition(int position, int duration, boolean interruptible);
+
+        public boolean goToNextItem();
+
+        public boolean stopScrolling(boolean forced);
+
+        public boolean isScrolling();
+
+        public void goToFirstItem();
+
+        public void goToFilmStrip();
+
+        public void goToFullScreen();
+
+    }
+
+    /**
+     * A helper class to tract and calculate the view coordination.
+     */
+    private static class ViewItem {
+        private int mDataId;
+        /**
+         * The position of the left of the view in the whole filmstrip.
+         */
+        private int mLeftPosition;
+        private View mView;
+        private RectF mViewArea;
+
+        private ValueAnimator mTranslationXAnimator;
+
+        /**
+         * Constructor.
+         *
+         * @param id The id of the data from {@link DataAdapter}.
+         * @param v  The {@code View} representing the data.
+         */
+        public ViewItem(
+                int id, View v, ValueAnimator.AnimatorUpdateListener listener) {
+            v.setPivotX(0f);
+            v.setPivotY(0f);
+            mDataId = id;
+            mView = v;
+            mLeftPosition = -1;
+            mViewArea = new RectF();
+            mTranslationXAnimator = new ValueAnimator();
+            mTranslationXAnimator.addUpdateListener(listener);
+        }
+
+        /**
+         * Returns the data id from {@link DataAdapter}.
+         */
+        public int getId() {
+            return mDataId;
+        }
+
+        /**
+         * Sets the data id from {@link DataAdapter}.
+         */
+        public void setId(int id) {
+            mDataId = id;
+        }
+
+        /**
+         * Returns the left position of the view in the whole filmstrip.
+         */
+        public int getLeftPosition() {
+            return mLeftPosition;
+        }
+
+        /**
+         * Sets the left position of the view in the whole filmstrip.
+         */
+        public void setLeftPosition(int pos) {
+            mLeftPosition = pos;
+        }
+
+        /**
+         * Returns the translation of Y regarding the view scale.
+         */
+        public float getScaledTranslationY(float scale) {
+            return mView.getTranslationY() / scale;
+        }
+
+        /**
+         * Returns the translation of X regarding the view scale.
+         */
+        public float getScaledTranslationX(float scale) {
+            return mView.getTranslationX() / scale;
+        }
+
+        /**
+         * The horizontal location of this view relative to its left position.
+         * This position is post-layout, in addition to wherever the object's
+         * layout placed it.
+         *
+         * @return The horizontal position of this view relative to its left position, in pixels.
+         */
+        public float getTranslationX() {
+            return mView.getTranslationX();
+        }
+
+        /**
+         * The vertical location of this view relative to its top position.
+         * This position is post-layout, in addition to wherever the object's
+         * layout placed it.
+         *
+         * @return The vertical position of this view relative to its top position,
+         * in pixels.
+         */
+        public float getTranslationY() {
+            return mView.getTranslationY();
+        }
+
+        /**
+         * Sets the translation of Y regarding the view scale.
+         */
+        public void setTranslationY(float transY, float scale) {
+            mView.setTranslationY(transY * scale);
+        }
+
+        /**
+         * Sets the translation of X regarding the view scale.
+         */
+        public void setTranslationX(float transX, float scale) {
+            mView.setTranslationX(transX * scale);
+        }
+
+        public void animateTranslationX(
+                float targetX, long duration_ms, TimeInterpolator interpolator) {
+            mTranslationXAnimator.setInterpolator(interpolator);
+            mTranslationXAnimator.setDuration(duration_ms);
+            mTranslationXAnimator.setFloatValues(mView.getTranslationX(), targetX);
+            mTranslationXAnimator.start();
+        }
+
+        /**
+         * Adjusts the translation of X regarding the view scale.
+         */
+        public void translateXBy(float transX, float scale) {
+            mView.setTranslationX(mView.getTranslationX() + transX * scale);
+        }
+
+        public int getCenterX() {
+            return mLeftPosition + mView.getMeasuredWidth() / 2;
+        }
+
+        /**
+         * Gets the view representing the data.
+         */
+        public View getView() {
+            return mView;
+        }
+
+        /**
+         * The visual x position of this view, in pixels.
+         */
+        public float getX() {
+            return mView.getX();
+        }
+
+        /**
+         * The visual y position of this view, in pixels.
+         */
+        public float getY() {
+            return mView.getY();
+        }
+
+        private void layoutAt(int left, int top) {
+            mView.layout(left, top, left + mView.getMeasuredWidth(),
+                    top + mView.getMeasuredHeight());
+        }
+
+        /**
+         * The bounding rect of the view.
+         */
+        public RectF getViewRect() {
+            RectF r = new RectF();
+            r.left = mView.getX();
+            r.top = mView.getY();
+            r.right = r.left + mView.getWidth() * mView.getScaleX();
+            r.bottom = r.top + mView.getHeight() * mView.getScaleY();
+            return r;
+        }
+
+        /**
+         * Layouts the view in the area assuming the center of the area is at a
+         * specific point of the whole filmstrip.
+         *
+         * @param drawArea  The area when filmstrip will show in.
+         * @param refCenter The absolute X coordination in the whole filmstrip
+         *                  of the center of {@code drawArea}.
+         * @param scale     The current scale of the filmstrip.
+         */
+        public void layoutIn(Rect drawArea, int refCenter, float scale) {
+            final float translationX = (mTranslationXAnimator.isRunning() ?
+                    (Float) mTranslationXAnimator.getAnimatedValue() : 0f);
+            int left = (int) (drawArea.centerX() + (mLeftPosition - refCenter + translationX) * scale);
+            int top = (int) (drawArea.centerY() - (mView.getMeasuredHeight() / 2) * scale);
+            layoutAt(left, top);
+            mView.setScaleX(scale);
+            mView.setScaleY(scale);
+
+            // update mViewArea for touch detection.
+            int l = mView.getLeft();
+            int t = mView.getTop();
+            mViewArea.set(l, t,
+                    l + mView.getMeasuredWidth() * scale,
+                    t + mView.getMeasuredHeight() * scale);
+        }
+
+        /**
+         * Returns true if the point is in the view.
+         */
+        public boolean areaContains(float x, float y) {
+            return mViewArea.contains(x, y);
+        }
+
+        /**
+         * Return the width of the view.
+         */
+        public int getWidth() {
+            return mView.getWidth();
+        }
+
+        public void copyGeometry(ViewItem item) {
+            setLeftPosition(item.getLeftPosition());
+            View v = item.getView();
+            mView.setTranslationY(v.getTranslationY());
+            mView.setTranslationX(v.getTranslationX());
+        }
+
+        /**
+         * Apply a scale factor (i.e. {@param postScale}) on top of current scale at
+         * pivot point ({@param focusX}, {@param focusY}). Visually it should be the
+         * same as post concatenating current view's matrix with specified scale.
+         */
+        void postScale(float focusX, float focusY, float postScale, int viewportWidth,
+                       int viewportHeight) {
+            float transX = getTranslationX();
+            float transY = getTranslationY();
+            // Pivot point is top left of the view, so we need to translate
+            // to scale around focus point
+            transX -= (focusX - getX()) * (postScale - 1f);
+            transY -= (focusY - getY()) * (postScale - 1f);
+            float scaleX = mView.getScaleX() * postScale;
+            float scaleY = mView.getScaleY() * postScale;
+            updateTransform(transX, transY, scaleX, scaleY, viewportWidth,
+                    viewportHeight);
+        }
+
+        void updateTransform(float transX, float transY, float scaleX, float scaleY,
+                             int viewportWidth, int viewportHeight) {
+            float left = transX + mView.getLeft();
+            float top = transY + mView.getTop();
+            RectF r = ZoomView.adjustToFitInBounds(new RectF(left, top,
+                            left + mView.getWidth() * scaleX,
+                            top + mView.getHeight() * scaleY),
+                    viewportWidth, viewportHeight
+            );
+            mView.setScaleX(scaleX);
+            mView.setScaleY(scaleY);
+            transX = r.left - mView.getLeft();
+            transY = r.top - mView.getTop();
+            mView.setTranslationX(transX);
+            mView.setTranslationY(transY);
+        }
+
+        void resetTransform() {
+            mView.setScaleX(FULL_SCREEN_SCALE);
+            mView.setScaleY(FULL_SCREEN_SCALE);
+            mView.setTranslationX(0f);
+            mView.setTranslationY(0f);
+        }
+
+        @Override
+        public String toString() {
+            return "DataID = " + mDataId + "\n\t left = " + mLeftPosition
+                    + "\n\t viewArea = " + mViewArea
+                    + "\n\t centerX = " + getCenterX()
+                    + "\n\t view MeasuredSize = "
+                    + mView.getMeasuredWidth() + ',' + mView.getMeasuredHeight()
+                    + "\n\t view Size = " + mView.getWidth() + ',' + mView.getHeight()
+                    + "\n\t view scale = " + mView.getScaleX();
+        }
+    }
+
+    private static class MyScroller {
+        private final Scroller mScroller;
+        private final ValueAnimator mXScrollAnimator;
+        private Handler mHandler;
+        private Listener mListener;
+        private Runnable mScrollChecker = new Runnable() {
+            @Override
+            public void run() {
+                boolean newPosition = mScroller.computeScrollOffset();
+                if (!newPosition) {
+                    mListener.onScrollEnd();
+                    return;
+                }
+                mListener.onScrollUpdate(mScroller.getCurrX(), mScroller.getCurrY());
+                mHandler.removeCallbacks(this);
+                mHandler.post(this);
+            }
+        };
+        private ValueAnimator.AnimatorUpdateListener mXScrollAnimatorUpdateListener =
+                new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        mListener.onScrollUpdate((Integer) animation.getAnimatedValue(), 0);
+                    }
+                };
+        private Animator.AnimatorListener mXScrollAnimatorListener =
+                new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mListener.onScrollEnd();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                        // Do nothing.
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        // Do nothing.
+                    }
+                };
+
+        public MyScroller(Context ctx, Handler handler, Listener listener,
+                          TimeInterpolator interpolator) {
+            mHandler = handler;
+            mListener = listener;
+            mScroller = new Scroller(ctx);
+            mXScrollAnimator = new ValueAnimator();
+            mXScrollAnimator.addUpdateListener(mXScrollAnimatorUpdateListener);
+            mXScrollAnimator.addListener(mXScrollAnimatorListener);
+            mXScrollAnimator.setInterpolator(interpolator);
+        }
+
+        public void fling(
+                int startX, int startY,
+                int velocityX, int velocityY,
+                int minX, int maxX,
+                int minY, int maxY) {
+            mScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
+            runChecker();
+        }
+
+        public void startScroll(int startX, int startY, int dx, int dy) {
+            mScroller.startScroll(startX, startY, dx, dy);
+            runChecker();
+        }
+
+        /**
+         * Only starts and updates scroll in x-axis.
+         */
+        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+            mXScrollAnimator.cancel();
+            mXScrollAnimator.setDuration(duration);
+            mXScrollAnimator.setIntValues(startX, startX + dx);
+            mXScrollAnimator.start();
+        }
+
+        public boolean isFinished() {
+            return (mScroller.isFinished() && !mXScrollAnimator.isRunning());
+        }
+
+        public void forceFinished(boolean finished) {
+            mScroller.forceFinished(finished);
+            if (finished) {
+                mXScrollAnimator.cancel();
+            }
+        }
+
+        private void runChecker() {
+            if (mHandler == null || mListener == null) {
+                return;
+            }
+            mHandler.removeCallbacks(mScrollChecker);
+            mHandler.post(mScrollChecker);
+        }
+
+        public interface Listener {
+            public void onScrollUpdate(int currX, int currY);
+
+            public void onScrollEnd();
+        }
+    }
+
+    /**
      * MyController controls all the geometry animations. It passively tells the
      * geometry information on demand.
      */
     private class MyController implements Controller {
 
         private final ValueAnimator mScaleAnimator;
+        private final MyScroller mScroller;
         private ValueAnimator mZoomAnimator;
         private AnimatorSet mFlingAnimator;
-
-        private final MyScroller mScroller;
         private boolean mCanStopScroll;
 
-        private final MyScroller.Listener mScrollerListener =
+        MyController(Context context) {
+            TimeInterpolator decelerateInterpolator = new DecelerateInterpolator(1.5f);
+            mScroller = new MyScroller(mActivity,
+                    new Handler(mActivity.getMainLooper()),
+                    mScrollerListener, decelerateInterpolator);
+            mCanStopScroll = true;
+
+            mScaleAnimator = new ValueAnimator();
+            mScaleAnimator.addUpdateListener(mScaleAnimatorUpdateListener);
+            mScaleAnimator.setInterpolator(decelerateInterpolator);
+        }        private final MyScroller.Listener mScrollerListener =
                 new MyScroller.Listener() {
                     @Override
                     public void onScrollUpdate(int currX, int currY) {
@@ -2033,7 +2204,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     }
                 };
 
-        private ValueAnimator.AnimatorUpdateListener mScaleAnimatorUpdateListener =
+        @Override
+        public boolean isScrolling() {
+            return !mScroller.isFinished();
+        }        private ValueAnimator.AnimatorUpdateListener mScaleAnimatorUpdateListener =
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -2044,23 +2218,6 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                         invalidate();
                     }
                 };
-
-        MyController(Context context) {
-            TimeInterpolator decelerateInterpolator = new DecelerateInterpolator(1.5f);
-            mScroller = new MyScroller(mActivity,
-                    new Handler(mActivity.getMainLooper()),
-                    mScrollerListener, decelerateInterpolator);
-            mCanStopScroll = true;
-
-            mScaleAnimator = new ValueAnimator();
-            mScaleAnimator.addUpdateListener(mScaleAnimatorUpdateListener);
-            mScaleAnimator.setInterpolator(decelerateInterpolator);
-        }
-
-        @Override
-        public boolean isScrolling() {
-            return !mScroller.isFinished();
-        }
 
         @Override
         public boolean isScaling() {
@@ -2077,7 +2234,9 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     * (viewWidth + mViewGap);
         }
 
-        /** Zoom all the way in or out on the image at the given pivot point. */
+        /**
+         * Zoom all the way in or out on the image at the given pivot point.
+         */
         private void zoomAt(final ViewItem current, final float focusX, final float focusY) {
             // End previous zoom animation, if any
             if (mZoomAnimator != null) {
@@ -2106,7 +2265,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     // Make sure animation ends up having the correct scale even
                     // if it is cancelled before it finishes
                     if (mScale != endScale) {
-                        current.postScale(focusX, focusY, endScale/mScale, mDrawArea.width(),
+                        current.postScale(focusX, focusY, endScale / mScale, mDrawArea.width(),
                                 mDrawArea.height());
                         mScale = endScale;
                     }
@@ -2218,7 +2377,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             final float velocity = Math.max(Math.abs(velocityX), Math.abs(velocityY));
             // Dynamically calculate duration
             final float duration = (float) (FLING_COASTING_DURATION_S
-                    * Math.pow(velocity, (1f/ (factor - 1f))));
+                    * Math.pow(velocity, (1f / (factor - 1f))));
 
             final float translationX = current.getTranslationX();
             final float translationY = current.getTranslationY();
@@ -2245,11 +2404,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             mFlingAnimator.setInterpolator(new TimeInterpolator() {
                 @Override
                 public float getInterpolation(float input) {
-                    return (float)(1.0f - Math.pow((1.0f - input), factor));
+                    return (float) (1.0f - Math.pow((1.0f - input), factor));
                 }
             });
             mFlingAnimator.addListener(new Animator.AnimatorListener() {
                 private boolean mCancelled = false;
+
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -2435,7 +2595,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                 return;
             }
             ImageData imageData = mDataAdapter.getImageData(curr.getId());
-            if(!imageData.isUIActionSupported(ImageData.ACTION_ZOOM)) {
+            if (!imageData.isUIActionSupported(ImageData.ACTION_ZOOM)) {
                 return;
             }
             Uri uri = getCurrentContentUri();
@@ -2470,117 +2630,10 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
         public boolean isZoomAnimationRunning() {
             return mZoomAnimator != null && mZoomAnimator.isRunning();
         }
-    }
-
-    private static class MyScroller {
-        public interface Listener {
-            public void onScrollUpdate(int currX, int currY);
-            public void onScrollEnd();
-        }
-
-        private Handler mHandler;
-        private Listener mListener;
-
-        private final Scroller mScroller;
-
-        private final ValueAnimator mXScrollAnimator;
-        private Runnable mScrollChecker = new Runnable() {
-            @Override
-            public void run() {
-                boolean newPosition = mScroller.computeScrollOffset();
-                if (!newPosition) {
-                    mListener.onScrollEnd();
-                    return;
-                }
-                mListener.onScrollUpdate(mScroller.getCurrX(), mScroller.getCurrY());
-                mHandler.removeCallbacks(this);
-                mHandler.post(this);
-            }
-        };
-
-        private ValueAnimator.AnimatorUpdateListener mXScrollAnimatorUpdateListener =
-                new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        mListener.onScrollUpdate((Integer) animation.getAnimatedValue(), 0);
-                    }
-                };
-
-        private Animator.AnimatorListener mXScrollAnimatorListener =
-                new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        // Do nothing.
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mListener.onScrollEnd();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-                        // Do nothing.
-                    }
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        // Do nothing.
-                    }
-                };
 
 
-        public MyScroller(Context ctx, Handler handler, Listener listener,
-                TimeInterpolator interpolator) {
-            mHandler = handler;
-            mListener = listener;
-            mScroller = new Scroller(ctx);
-            mXScrollAnimator = new ValueAnimator();
-            mXScrollAnimator.addUpdateListener(mXScrollAnimatorUpdateListener);
-            mXScrollAnimator.addListener(mXScrollAnimatorListener);
-            mXScrollAnimator.setInterpolator(interpolator);
-        }
 
-        public void fling(
-                int startX, int startY,
-                int velocityX, int velocityY,
-                int minX, int maxX,
-                int minY, int maxY) {
-            mScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
-            runChecker();
-        }
 
-        public void startScroll(int startX, int startY, int dx, int dy) {
-            mScroller.startScroll(startX, startY, dx, dy);
-            runChecker();
-        }
-
-        /** Only starts and updates scroll in x-axis. */
-        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
-            mXScrollAnimator.cancel();
-            mXScrollAnimator.setDuration(duration);
-            mXScrollAnimator.setIntValues(startX, startX + dx);
-            mXScrollAnimator.start();
-        }
-
-        public boolean isFinished() {
-            return (mScroller.isFinished() && !mXScrollAnimator.isRunning());
-        }
-
-        public void forceFinished(boolean finished) {
-            mScroller.forceFinished(finished);
-            if (finished) {
-                mXScrollAnimator.cancel();
-            }
-        }
-
-        private void runChecker() {
-            if (mHandler == null || mListener == null) {
-                return;
-            }
-            mHandler.removeCallbacks(mScrollChecker);
-            mHandler.post(mScrollChecker);
-        }
     }
 
     private class MyGestureReceiver implements FilmStripGestureRecognizer.Listener {
@@ -2696,11 +2749,12 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
                     // No next photo.
                     snapInCenter();
                 }
-            } if (mCenterX == currItem.getCenterX() && currId == 0
+            }
+            if (mCenterX == currItem.getCenterX() && currId == 0
                     && getCurrentViewType() == ImageData.VIEW_TYPE_STICKY) {
                 mController.goToFullScreen();
             } else {
-                if (mDataIdOnUserScrolling  == 0 && currId != 0) {
+                if (mDataIdOnUserScrolling == 0 && currId != 0) {
                     // Special case to go to filmstrip when the user scroll away
                     // from the camera preview and the current one is not the
                     // preview anymore.

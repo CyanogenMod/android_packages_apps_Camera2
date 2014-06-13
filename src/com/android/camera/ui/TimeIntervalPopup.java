@@ -39,24 +39,16 @@ import java.util.Locale;
  */
 public class TimeIntervalPopup extends AbstractSettingPopup {
     private static final String TAG = "TimeIntervalPopup";
+    private final String[] mUnits;
+    private final String[] mDurations;
     private NumberPicker mNumberSpinner;
     private NumberPicker mUnitSpinner;
     private Switch mTimeLapseSwitch;
-    private final String[] mUnits;
-    private final String[] mDurations;
     private IconListPreference mPreference;
     private Listener mListener;
     private Button mConfirmButton;
     private TextView mHelpText;
     private View mTimePicker;
-
-    static public interface Listener {
-        public void onListPrefChanged(ListPreference pref);
-    }
-
-    public void setSettingChangedListener(Listener listener) {
-        mListener = listener;
-    }
 
     public TimeIntervalPopup(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -78,6 +70,10 @@ public class TimeIntervalPopup extends AbstractSettingPopup {
             result[i] = format.format(value);
         }
         return result;
+    }
+
+    public void setSettingChangedListener(Listener listener) {
+        mListener = listener;
     }
 
     public void initialize(IconListPreference preference) {
@@ -176,5 +172,9 @@ public class TimeIntervalPopup extends AbstractSettingPopup {
         if (mListener != null) {
             mListener.onListPrefChanged(mPreference);
         }
+    }
+
+    static public interface Listener {
+        public void onListPrefChanged(ListPreference pref);
     }
 }

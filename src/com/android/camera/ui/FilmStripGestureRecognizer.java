@@ -26,23 +26,9 @@ import android.view.ScaleGestureDetector;
 public class FilmStripGestureRecognizer {
     @SuppressWarnings("unused")
     private static final String TAG = "FilmStripGestureRecognizer";
-
-    public interface Listener {
-        boolean onSingleTapUp(float x, float y);
-        boolean onDoubleTap(float x, float y);
-        boolean onScroll(float x, float y, float dx, float dy);
-        boolean onFling(float velocityX, float velocityY);
-        boolean onScaleBegin(float focusX, float focusY);
-        boolean onScale(float focusX, float focusY, float scale);
-        boolean onDown(float x, float y);
-        boolean onUp(float x, float y);
-        void onScaleEnd();
-    }
-
     private final GestureDetector mGestureDetector;
     private final ScaleGestureDetector mScaleDetector;
     private final Listener mListener;
-
     public FilmStripGestureRecognizer(Context context, Listener listener) {
         mListener = listener;
         mGestureDetector = new GestureDetector(context, new MyGestureListener(),
@@ -60,8 +46,28 @@ public class FilmStripGestureRecognizer {
         }
     }
 
+    public interface Listener {
+        boolean onSingleTapUp(float x, float y);
+
+        boolean onDoubleTap(float x, float y);
+
+        boolean onScroll(float x, float y, float dx, float dy);
+
+        boolean onFling(float velocityX, float velocityY);
+
+        boolean onScaleBegin(float focusX, float focusY);
+
+        boolean onScale(float focusX, float focusY, float scale);
+
+        boolean onDown(float x, float y);
+
+        boolean onUp(float x, float y);
+
+        void onScaleEnd();
+    }
+
     private class MyGestureListener
-                extends GestureDetector.SimpleOnGestureListener {
+            extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {
@@ -70,7 +76,7 @@ public class FilmStripGestureRecognizer {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                float velocityY) {
+                               float velocityY) {
             return mListener.onFling(velocityX, velocityY);
         }
 

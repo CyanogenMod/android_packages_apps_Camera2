@@ -54,7 +54,7 @@ public class ApiHelper {
     public static final boolean HAS_HIDEYBARS = isKitKatOrHigher();
 
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
-            Class<?> obj, int defaultVal) {
+                                          Class<?> obj, int defaultVal) {
         try {
             Field f = klass.getDeclaredField(fieldName);
             return f.getInt(obj);
