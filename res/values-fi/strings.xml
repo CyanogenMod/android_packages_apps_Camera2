@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Asetukset"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Tilaluettelo suljettu"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Tilaluettelo auki"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"Kuva otettu"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"Kaappaus valmis"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"Otettiin kuva"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"Tallennettiin video"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Avaa kamerasovellus"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Mediasisältö ajalta %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"Kuva %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"Video %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"Panoraama %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Photo Sphere %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"Linssin sumennus %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Mediasisältöä käsitellään"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Vaihda tilaluetteloon"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Tilaluettelo"</string>
@@ -298,7 +305,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Asetukset"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervallikuvaus"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Laajakulma"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoraama"</string>

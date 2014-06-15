@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"विकल्प"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"मोड सूची बंद हो गई"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"मोड सूची खुल गई"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"फ़ोटो खींच लिया गया"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"फ़ोटो ली गई"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"फ़ोटो ली गई"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"वीडियो लिया गया"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"कैमरे पर अनलॉक करें"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"%s का मीडिया"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"%s की फ़ोटो"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"%s का वीडियो"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"%s का पैनोरामा"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"%s का Photo Sphere"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"%s का लेंस ब्लर"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"मीडिया प्रोसेस हो रहा है"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"मोड सूची टॉगल करें"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"मोड सूची"</string>

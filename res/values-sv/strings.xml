@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Alternativ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Lägeslistan har stängts"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Lägeslistan har öppnats"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"En bild har tagits"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"En bild har tagits"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"Ett foto har tagits"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"En video har spelats in"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås upp till Kamera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Media från %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"Foto från %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"Video från %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama från %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Sfäriskt foto från %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"Linsoskärpa från %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Bearbetar media"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Visa/dölja lista över lägen"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista över lägen"</string>

@@ -221,9 +221,26 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"옵션"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"모드 목록이 닫혔습니다."</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"모드 목록이 열렸습니다."</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"캡처했습니다."</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"캡처했습니다."</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"사진을 촬영했습니다."</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"동영상을 촬영했습니다."</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"잠금 해제 시 카메라로 이동"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"%s의 미디어"</string>
+    <!-- String.format failed for translation -->
+    <!-- no translation found for photo_date_content_description (2542447647374681796) -->
+    <skip />
+    <!-- String.format failed for translation -->
+    <!-- no translation found for video_date_content_description (6576193397823971616) -->
+    <skip />
+    <!-- String.format failed for translation -->
+    <!-- no translation found for panorama_date_content_description (243370023361404002) -->
+    <skip />
+    <!-- String.format failed for translation -->
+    <!-- no translation found for photosphere_date_content_description (6315139237269418086) -->
+    <skip />
+    <!-- String.format failed for translation -->
+    <!-- no translation found for refocus_date_content_description (5460992862949541008) -->
+    <skip />
     <string name="media_processing_content_description" msgid="8138587719107183754">"미디어 처리 중"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"모드 목록 전환"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"모드 목록"</string>

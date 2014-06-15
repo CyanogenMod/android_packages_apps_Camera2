@@ -221,9 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Indstillinger"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Tilstandslisten er lukket"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Tilstandslisten er åben"</string>
-    <string name="accessibility_peek" msgid="2128006708870513182">"Billedet blev taget"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"Billedet blev taget"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"Billedet blev taget"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"Videoen blev optaget"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås op, og åbn Kamera"</string>
     <string name="media_date_content_description" msgid="2497288090192743887">"Medier fra %s"</string>
+    <string name="photo_date_content_description" msgid="2542447647374681796">"Billede fra %s"</string>
+    <string name="video_date_content_description" msgid="6576193397823971616">"Video fra %s"</string>
+    <string name="panorama_date_content_description" msgid="243370023361404002">"Panoramabillede fra %s"</string>
+    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Photo Sphere-billede fra %s"</string>
+    <string name="refocus_date_content_description" msgid="5460992862949541008">"Billede i Fokuseffekt fra %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Mediebehandling"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Slå tilstandslisten til eller fra"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Tilstandsliste"</string>
