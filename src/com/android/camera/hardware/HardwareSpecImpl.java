@@ -16,13 +16,9 @@
 
 package com.android.camera.hardware;
 
-import android.hardware.Camera;
-
-import com.android.camera.util.CameraUtil;
+import com.android.camera.app.CameraProvider;
 import com.android.camera.util.GcamHelper;
 import com.android.ex.camera2.portability.CameraCapabilities;
-
-import java.util.List;
 
 /**
  * HardwareSpecImpl is the default implementation of
@@ -40,31 +36,10 @@ public class HardwareSpecImpl implements HardwareSpec {
     /**
      * Compute the supported values for all
      * {@link com.android.camera.hardware.HardwareSpec} methods
-     * based on {@link android.hardware.Camera.Parameters}.
      */
-    @Deprecated
-    public HardwareSpecImpl(Camera.Parameters parameters) {
+    public HardwareSpecImpl(CameraProvider provider, CameraCapabilities capabilities) {
         // Cache whether front camera is supported.
-        mIsFrontCameraSupported = (Camera.getNumberOfCameras() > 1);
-
-        // Cache whether hdr is supported.
-        mIsHdrSupported = CameraUtil.isCameraHdrSupported(parameters);
-
-        // Cache whether hdr plus is supported.
-        mIsHdrPlusSupported = GcamHelper.hasGcamCapture();
-
-        // Cache whether flash is supported.
-        mIsFlashSupported = isFlashSupported(parameters);
-    }
-
-    /**
-     * Compute the supported values for all
-     * {@link com.android.camera.hardware.HardwareSpec} methods
-     * based on {@link com.android.ex.camera2.portability.CameraCapabilities}.
-     */
-    public HardwareSpecImpl(CameraCapabilities capabilities) {
-        // Cache whether front camera is supported.
-        mIsFrontCameraSupported = (Camera.getNumberOfCameras() > 1);
+        mIsFrontCameraSupported = (provider.getFirstFrontCameraId() != -1);
 
         // Cache whether hdr is supported.
         mIsHdrSupported = capabilities.supports(CameraCapabilities.SceneMode.HDR);
@@ -73,8 +48,7 @@ public class HardwareSpecImpl implements HardwareSpec {
         mIsHdrPlusSupported = GcamHelper.hasGcamCapture();
 
         // Cache whether flash is supported.
-        mIsFlashSupported = capabilities.supports(CameraCapabilities.FlashMode.AUTO) ||
-                capabilities.supports(CameraCapabilities.FlashMode.ON);
+        mIsFlashSupported = isFlashSupported(capabilities);
     }
 
     @Override
@@ -101,8 +75,8 @@ public class HardwareSpecImpl implements HardwareSpec {
      * Returns whether flash is supported and flash has more than
      * one possible value.
      */
-    private boolean isFlashSupported(Camera.Parameters parameters) {
-        List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-        return !(supportedFlashModes == null || (supportedFlashModes.size() == 1));
+    private boolean isFlashSupported(CameraCapabilities capabilities) {
+        return (capabilities.supports(CameraCapabilities.FlashMode.AUTO) || capabilities.supports
+                (CameraCapabilities.FlashMode.ON));
     }
 }

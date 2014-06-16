@@ -21,7 +21,6 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
-import android.hardware.Camera.Parameters;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,9 +33,7 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.UsageStatistics;
 import com.android.ex.camera2.portability.CameraCapabilities;
-import com.android.ex.camera2.portability.CameraCapabilitiesFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +86,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private int mDisplayOrientation;
     private List<Area> mFocusArea; // focus area in driver format
     private List<Area> mMeteringArea; // metering area in driver format
-    private String mFocusMode;
-    private final String[] mDefaultFocusModes;
-    private String mOverrideFocusMode;
-    private Parameters mParameters;
+    private CameraCapabilities.FocusMode mFocusMode;
+    private final List<CameraCapabilities.FocusMode> mDefaultFocusModes;
+    private CameraCapabilities.FocusMode mOverrideFocusMode;
     private CameraCapabilities mCapabilities;
     private final AppController mAppController;
     private final SettingsManager mSettingsManager;
@@ -141,29 +137,26 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public FocusOverlayManager(AppController appController,
-            String[] defaultFocusModes,
-            Parameters parameters, Listener listener,
-            boolean mirror, Looper looper, FocusUI ui) {
+            List<CameraCapabilities.FocusMode> defaultFocusModes, CameraCapabilities capabilities,
+            Listener listener, boolean mirror, Looper looper, FocusUI ui) {
         mAppController = appController;
         mSettingsManager = appController.getSettingsManager();
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
-        mDefaultFocusModes = defaultFocusModes;
-        // TODO: Pass in the capabilities directly.
-        setParameters(parameters, CameraCapabilitiesFactory.createFrom(parameters));
+        mDefaultFocusModes = new ArrayList<>(defaultFocusModes);
+        updateCapabilities(capabilities);
         mListener = listener;
         setMirror(mirror);
         mUI = ui;
         mFocusLocked = false;
     }
 
-    public void setParameters(Parameters parameters, CameraCapabilities capabilities) {
+    public void updateCapabilities(CameraCapabilities capabilities) {
         // parameters can only be null when onConfigurationChanged is called
         // before camera is open. We will just return in this case, because
         // parameters will be set again later with the right parameters after
         // camera is open.
-        if (parameters == null) return;
-        mParameters = parameters;
+        if (capabilities == null) return;
         mCapabilities = capabilities;
         mFocusAreaSupported = mCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
         mMeteringAreaSupported = mCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
@@ -226,10 +219,10 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
     }
 
-    public void onShutterUp() {
+    public void onShutterUp(CameraCapabilities.FocusMode currentFocusMode) {
         if (!mInitialized) return;
 
-        if (needAutoFocusCall()) {
+        if (needAutoFocusCall(currentFocusMode)) {
             // User releases half-pressed focus key.
             if (mState == STATE_FOCUSING || mState == STATE_SUCCESS
                     || mState == STATE_FAIL) {
@@ -242,10 +235,10 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         unlockAeAwbIfNeeded();
     }
 
-    public void focusAndCapture() {
+    public void focusAndCapture(CameraCapabilities.FocusMode currentFocusMode) {
         if (!mInitialized) return;
 
-        if (!needAutoFocusCall()) {
+        if (!needAutoFocusCall(currentFocusMode)) {
             // Focus is not needed.
             capture();
         } else if (mState == STATE_SUCCESS || mState == STATE_FAIL) {
@@ -458,37 +451,40 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
     }
 
-    public String getFocusMode() {
-        if (mOverrideFocusMode != null) return mOverrideFocusMode;
-        if (mParameters == null) return Parameters.FOCUS_MODE_AUTO;
-        List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
+    public CameraCapabilities.FocusMode getFocusMode(
+            final CameraCapabilities.FocusMode currentFocusMode) {
+        if (mOverrideFocusMode != null) {
+            return mOverrideFocusMode;
+        }
+        if (mCapabilities == null) {
+            return CameraCapabilities.FocusMode.AUTO;
+        }
 
         if (mFocusAreaSupported && mFocusArea != null) {
             // Always use autofocus in tap-to-focus.
-            mFocusMode = Parameters.FOCUS_MODE_AUTO;
+            mFocusMode = CameraCapabilities.FocusMode.AUTO;
         } else {
             // The default is continuous autofocus.
-            mFocusMode = mSettingsManager.getString(mAppController.getCameraScope(),
-                                                    Keys.KEY_FOCUS_MODE);
+            mFocusMode = mCapabilities.getStringifier()
+                    .focusModeFromString(mSettingsManager.getString(mAppController.getCameraScope(),
+                            Keys.KEY_FOCUS_MODE));
             // Try to find a supported focus mode from the default list.
             if (mFocusMode == null) {
-                for (int i = 0; i < mDefaultFocusModes.length; i++) {
-                    String mode = mDefaultFocusModes[i];
-                    if (CameraUtil.isSupported(mode, supportedFocusModes)) {
+                for (CameraCapabilities.FocusMode mode : mDefaultFocusModes) {
+                    if (mCapabilities.supports(mode)) {
                         mFocusMode = mode;
                         break;
                     }
                 }
             }
         }
-        if (!CameraUtil.isSupported(mFocusMode, supportedFocusModes)) {
+        if (!mCapabilities.supports(mFocusMode)) {
             // For some reasons, the driver does not support the current
             // focus mode. Fall back to auto.
-            if (CameraUtil.isSupported(Parameters.FOCUS_MODE_AUTO,
-                    mParameters.getSupportedFocusModes())) {
-                mFocusMode = Parameters.FOCUS_MODE_AUTO;
+            if (mCapabilities.supports(CameraCapabilities.FocusMode.AUTO)) {
+                mFocusMode = CameraCapabilities.FocusMode.AUTO;
             } else {
-                mFocusMode = mParameters.getFocusMode();
+                mFocusMode = currentFocusMode;
             }
         }
         return mFocusMode;
@@ -518,7 +514,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         } else if (mState == STATE_FOCUSING || mState == STATE_FOCUSING_SNAP_ON_FINISH) {
             mUI.onFocusStarted();
         } else {
-            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)) {
+            if (mFocusMode == CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
                 // TODO: check HAL behavior and decide if this can be removed.
                 mUI.onFocusSucceeded();
             } else if (mState == STATE_SUCCESS) {
@@ -573,7 +569,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         mHandler.removeMessages(RESET_TOUCH_FOCUS);
     }
 
-    public void overrideFocusMode(String focusMode) {
+    public void overrideFocusMode(CameraCapabilities.FocusMode focusMode) {
         mOverrideFocusMode = focusMode;
     }
 
@@ -585,10 +581,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         return mAeAwbLock;
     }
 
-    private boolean needAutoFocusCall() {
-        String focusMode = getFocusMode();
-        return !(focusMode.equals(Parameters.FOCUS_MODE_INFINITY)
-                || focusMode.equals(Parameters.FOCUS_MODE_FIXED)
-                || focusMode.equals(Parameters.FOCUS_MODE_EDOF));
+    private boolean needAutoFocusCall(CameraCapabilities.FocusMode focusMode) {
+        return !(focusMode == CameraCapabilities.FocusMode.INFINITY
+                || focusMode == CameraCapabilities.FocusMode.FIXED
+                || focusMode == CameraCapabilities.FocusMode.EXTENDED_DOF);
     }
 }

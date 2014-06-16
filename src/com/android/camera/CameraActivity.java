@@ -474,7 +474,8 @@ public class CameraActivity extends Activity
          */
         if (!mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
                                     Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
-            HardwareSpec hardware = new HardwareSpecImpl(camera.getCapabilities());
+            HardwareSpec hardware =
+                    new HardwareSpecImpl(getCameraProvider(), camera.getCapabilities());
             mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
                                  Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
                                  hardware.isFlashSupported());

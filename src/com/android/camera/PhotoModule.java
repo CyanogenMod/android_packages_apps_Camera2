@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Parameters;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -52,7 +51,6 @@ import com.android.camera.PhotoModule.NamedImages.NamedEntity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraProvider;
-import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
@@ -79,7 +77,6 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
-import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFMoveCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
@@ -96,7 +93,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -134,8 +131,6 @@ public class PhotoModule
 
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
 
-    private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
-
     private CameraActivity mActivity;
     private CameraProxy mCameraDevice;
     private int mCameraId;
@@ -154,12 +149,9 @@ public class PhotoModule
     // needed to be updated in mUpdateSet.
     private int mUpdateSet;
 
-    private static final int SCREEN_DELAY = 2 * 60 * 1000;
-
     private int mZoomValue; // The current zoom value.
     private int mTimerDuration;
 
-    private Parameters mInitialParams;
     private boolean mFocusAreaSupported;
     private boolean mMeteringAreaSupported;
     private boolean mAeLockSupported;
@@ -204,7 +196,7 @@ public class PhotoModule
     private int mCameraDisplayOrientation;
     // The value for UI components like indicators.
     private int mDisplayOrientation;
-    // The value for android.hardware.Camera.Parameters.setRotation.
+    // The value for cameradevice.CameraSettings.setPhotoRotationDegrees.
     private int mJpegRotation;
     // Indicates whether we are using front camera
     private boolean mMirror;
@@ -216,7 +208,6 @@ public class PhotoModule
 
     private ContentResolver mContentResolver;
 
-    private LocationManager mLocationManager;
     private AppController mAppController;
 
     private final PostViewPictureCallback mPostViewPictureCallback =
@@ -450,7 +441,6 @@ public class PhotoModule
         mActivity.getCameraProvider().requestCamera(mCameraId);
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mLocationManager = mActivity.getLocationManager();
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
         mUI.setCountdownFinishedListener(this);
 
@@ -714,11 +704,13 @@ public class PhotoModule
                         switchToGcamCapture();
                     } else {
                         if (Keys.isHdrOn(settingsManager)) {
-                            settingsManager.set(mAppController.getCameraScope(),
-                                                Keys.KEY_SCENE_MODE, CameraUtil.SCENE_MODE_HDR);
+                            settingsManager.set(mAppController.getCameraScope(), Keys.KEY_SCENE_MODE,
+                                    mCameraCapabilities.getStringifier().stringify(
+                                            CameraCapabilities.SceneMode.HDR));
                         } else {
-                            settingsManager.set(mAppController.getCameraScope(),
-                                                Keys.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
+                            settingsManager.set(mAppController.getCameraScope(), Keys.KEY_SCENE_MODE,
+                                    mCameraCapabilities.getStringifier().stringify(
+                                            CameraCapabilities.SceneMode.AUTO));
                         }
                         updateParametersSceneMode();
                         mCameraDevice.applySettings(mCameraSettings);
@@ -757,7 +749,8 @@ public class PhotoModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return (mCameraSettings != null ? new HardwareSpecImpl(mCameraCapabilities) : null);
+        return (mCameraSettings != null ?
+                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities) : null);
     }
 
     @Override
@@ -1355,7 +1348,7 @@ public class PhotoModule
         if (mFocusManager == null) {
             initializeFocusManager();
         }
-        mFocusManager.setParameters(mInitialParams, mCameraCapabilities);
+        mFocusManager.updateCapabilities(mCameraCapabilities);
 
         // Do camera parameter dependent initialization.
         mCameraSettings = mCameraDevice.getSettings();
@@ -1521,7 +1514,7 @@ public class PhotoModule
         }
 
         mSnapshotOnIdle = false;
-        mFocusManager.focusAndCapture();
+        mFocusManager.focusAndCapture(mCameraSettings.getCurrentFocusMode());
     }
 
     @Override
@@ -1596,12 +1589,20 @@ public class PhotoModule
             mFocusManager.removeMessages();
         } else {
             mMirror = isCameraFrontFacing();
-            String[] defaultFocusModes = mActivity.getResources().getStringArray(
+            String[] defaultFocusModesStrings = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
-            mFocusManager = new FocusOverlayManager(mAppController,
-                    defaultFocusModes,
-                    mInitialParams, this, mMirror,
-                    mActivity.getMainLooper(), mUI.getFocusUI());
+            ArrayList<CameraCapabilities.FocusMode> defaultFocusModes = new ArrayList<>();
+            CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
+            for (String modeString : defaultFocusModesStrings) {
+                CameraCapabilities.FocusMode mode = stringifier.focusModeFromString(modeString);
+                if (mode != null) {
+                    defaultFocusModes.add(mode);
+                }
+            }
+            mFocusManager =
+                    new FocusOverlayManager(mAppController, defaultFocusModes,
+                            mCameraCapabilities, this, mMirror, mActivity.getMainLooper(),
+                            mUI.getFocusUI());
             MotionManager motionManager = getServices().getMotionManager();
             if (motionManager != null) {
                 motionManager.addListener(mFocusManager);
@@ -1880,8 +1881,8 @@ public class PhotoModule
         if (!mSnapshotOnIdle) {
             // If the focus mode is continuous autofocus, call cancelAutoFocus
             // to resume it because it may have been paused by autoFocus call.
-            String focusMode = mFocusManager.getFocusMode();
-            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(focusMode)) {
+            if (mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()) ==
+                    CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
                 mCameraDevice.cancelAutoFocus();
             }
             mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
@@ -1948,12 +1949,10 @@ public class PhotoModule
         // video camera application.
         int[] fpsRange = CameraUtil.getPhotoPreviewFpsRange(mCameraCapabilities);
         if (fpsRange != null && fpsRange.length > 0) {
-            mCameraSettings.setPreviewFpsRange(
-                    fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
-                    fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
+            mCameraSettings.setPreviewFpsRange(fpsRange[0], fpsRange[1]);
         }
 
-        mCameraSettings.setSetting(CameraUtil.RECORDING_HINT, CameraUtil.FALSE);
+        mCameraSettings.setRecordingHintEnabled(false);
 
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_STABILIZATION)) {
             mCameraSettings.setVideoStabilization(false);
@@ -2001,10 +2000,12 @@ public class PhotoModule
 
         // Initialize focus mode.
         mFocusManager.overrideFocusMode(null);
-        mCameraSettings.setFocusMode(mCameraCapabilities.getStringifier()
-                .focusModeFromString(mFocusManager.getFocusMode()));
+        mCameraSettings
+                .setFocusMode(mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()));
         SessionStatsCollector.instance().autofocusActive(
-                mFocusManager.getFocusMode() == CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE);
+                mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()) ==
+                        CameraCapabilities.FocusMode.CONTINUOUS_PICTURE
+        );
 
         // Set picture size.
         updateParametersPictureSize();
@@ -2132,11 +2133,10 @@ public class PhotoModule
 
             // Set focus mode.
             mFocusManager.overrideFocusMode(null);
-            mCameraSettings.setFocusMode(mCameraCapabilities.getStringifier()
-                    .focusModeFromString(mFocusManager.getFocusMode()));
+            mCameraSettings.setFocusMode(
+                    mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()));
         } else {
-            mFocusManager.overrideFocusMode(mCameraCapabilities.getStringifier()
-                    .stringify(mCameraSettings.getCurrentFocusMode()));
+            mFocusManager.overrideFocusMode(mCameraSettings.getCurrentFocusMode());
         }
     }
 
@@ -2243,7 +2243,6 @@ public class PhotoModule
     }
 
     private void initializeCapabilities() {
-        mInitialParams = mCameraDevice.getParameters();
         mCameraCapabilities = mCameraDevice.getCapabilities();
         mFocusAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
         mMeteringAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
@@ -2267,9 +2266,9 @@ public class PhotoModule
         // Set zoom parameters asynchronously
         mCameraSettings.setZoomRatio((float) mZoomValue);
         mCameraDevice.applySettings(mCameraSettings);
-        Parameters p = mCameraDevice.getParameters();
-        if (p != null) {
-            return p.getZoom();
+        CameraSettings settings = mCameraDevice.getSettings();
+        if (settings != null) {
+            return settings.getCurrentZoomIndex();
         }
         return index;
     }
