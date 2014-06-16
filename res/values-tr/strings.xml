@@ -358,6 +358,8 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Ön kamera video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Varsayılan Kamera"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"Geri bildirim gönder"</string>
+    <!-- no translation found for setting_google_help (9188405022782314357) -->
+    <skip />
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ işleniyor…"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Açık kaynak lisansları"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Genel Ayarlar"</string>

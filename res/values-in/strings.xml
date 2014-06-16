@@ -358,6 +358,7 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video kamera depan"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Kamera Default"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"Kirim masukan"</string>
+    <string name="setting_google_help" msgid="9188405022782314357">"Bantuan"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Memproses HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Lisensi sumber terbuka"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Setelan Umum"</string>

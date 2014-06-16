@@ -212,7 +212,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"切換至拍照模式"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"切換至影片模式"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"切換至全景模式"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至 Photo Sphere 球形全景拍攝"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換成 Photo Sphere 球形全景拍攝模式"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"切換至高畫質"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"切換至重新對焦模式"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
@@ -358,6 +358,7 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"前置鏡頭影片"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"預設相機"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"提供意見"</string>
+    <string name="setting_google_help" msgid="9188405022782314357">"説明"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"正在處理 HDR+…"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"開放原始碼授權"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"一般設定"</string>
