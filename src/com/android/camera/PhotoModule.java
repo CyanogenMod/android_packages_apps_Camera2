@@ -1470,9 +1470,7 @@ public class PhotoModule
         // read settings from preferences so we retain user preferences.
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode) ||
             CameraSettings.isSlowShutterEnabled(mParameters)) {
-            String flashMode = mPreferences.getString(
-                    CameraSettings.KEY_FLASH_MODE,
-                    mActivity.getString(R.string.pref_camera_flashmode_default));
+            String flashMode = mParameters.getFlashMode();
             String whiteBalance = mPreferences.getString(
                     CameraSettings.KEY_WHITE_BALANCE,
                     mActivity.getString(R.string.pref_camera_whitebalance_default));
@@ -2752,8 +2750,11 @@ public class PhotoModule
 
         } else {
             mFocusManager.overrideFocusMode(mParameters.getFocusMode());
-            if (hdrOn)
+            if (hdrOn) {
                 mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
+            } else {
+                mParameters.setFlashMode(Parameters.FLASH_MODE_AUTO);
+            }
         }
 
         if (mContinuousFocusSupported && ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK) {
