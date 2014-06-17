@@ -16,15 +16,15 @@
 
 package com.android.camera;
 
-import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.debug.Log;
+import com.android.ex.camera2.portability.CameraAgent;
 
 public class CameraErrorCallback
-        implements CameraManager.CameraErrorCallback {
+        implements CameraAgent.CameraErrorCallback {
     private static final Log.Tag TAG = new Log.Tag("CamErrCallback");
 
     @Override
-    public void onError(int error, CameraManager.CameraProxy camera) {
+    public void onError(int error, CameraAgent.CameraProxy camera) {
         Log.e(TAG, "Got camera error callback. error=" + error);
         if (error == android.hardware.Camera.CAMERA_ERROR_SERVER_DIED) {
             // We are not sure about the current state of the app (in preview or

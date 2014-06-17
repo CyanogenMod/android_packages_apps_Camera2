@@ -21,17 +21,17 @@ import android.hardware.Camera;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-import com.android.camera.cameradevice.CameraCapabilities;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraSettings;
+import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraSettings;
 
 /**
- * A {@link com.android.camera.cameradevice.CameraManager.CameraProxy} which wraps the
+ * A {@link com.android.ex.camera2.portability.CameraAgent.CameraProxy} which wraps the
  * other and adds logs for all operations.
  */
-public class DebugCameraProxy implements CameraManager.CameraProxy {
+public class DebugCameraProxy implements CameraAgent.CameraProxy {
     private final Log.Tag mTag;
-    private final CameraManager.CameraProxy mProxy;
+    private final CameraAgent.CameraProxy mProxy;
 
     /**
      * Constructor.
@@ -39,7 +39,7 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
      * @param tag The tag to be used for logs.
      * @param proxy The camera proxy to be wrapped.
      */
-    public DebugCameraProxy(Log.Tag tag, CameraManager.CameraProxy proxy) {
+    public DebugCameraProxy(Log.Tag tag, CameraAgent.CameraProxy proxy) {
         mTag = tag;
         mProxy = proxy;
     }
@@ -63,7 +63,7 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void reconnect(Handler handler, CameraManager.CameraOpenCallback cb) {
+    public void reconnect(Handler handler, CameraAgent.CameraOpenCallback cb) {
         log("reconnect");
         mProxy.reconnect(handler, cb);
     }
@@ -105,7 +105,7 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void startPreviewWithCallback(Handler h, CameraManager.CameraStartPreviewCallback cb) {
+    public void startPreviewWithCallback(Handler h, CameraAgent.CameraStartPreviewCallback cb) {
         log("startPreviewWithCallback");
         mProxy.startPreviewWithCallback(h, cb);
     }
@@ -118,21 +118,21 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
 
     @Override
     public void setPreviewDataCallback(Handler handler,
-            CameraManager.CameraPreviewDataCallback cb) {
+            CameraAgent.CameraPreviewDataCallback cb) {
         log("setPreviewDataCallback");
         mProxy.setPreviewDataCallback(handler, cb);
     }
 
     @Override
     public void setOneShotPreviewCallback(Handler handler,
-            CameraManager.CameraPreviewDataCallback cb) {
+            CameraAgent.CameraPreviewDataCallback cb) {
         log("setOneShotPreviewCallback");
         mProxy.setOneShotPreviewCallback(handler, cb);
     }
 
     @Override
     public void setPreviewDataCallbackWithBuffer(Handler handler,
-            CameraManager.CameraPreviewDataCallback cb) {
+            CameraAgent.CameraPreviewDataCallback cb) {
         log("setPreviewDataCallbackWithBuffer");
         mProxy.setPreviewDataCallbackWithBuffer(handler, cb);
     }
@@ -144,7 +144,7 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void autoFocus(Handler handler, CameraManager.CameraAFCallback cb) {
+    public void autoFocus(Handler handler, CameraAgent.CameraAFCallback cb) {
         log("autoFocus");
         mProxy.autoFocus(handler, cb);
     }
@@ -156,15 +156,15 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void setAutoFocusMoveCallback(Handler handler, CameraManager.CameraAFMoveCallback cb) {
+    public void setAutoFocusMoveCallback(Handler handler, CameraAgent.CameraAFMoveCallback cb) {
         log("setAutoFocusMoveCallback");
         mProxy.setAutoFocusMoveCallback(handler, cb);
     }
 
     @Override
-    public void takePicture(Handler handler, CameraManager.CameraShutterCallback shutter,
-            CameraManager.CameraPictureCallback raw, CameraManager.CameraPictureCallback postview,
-            CameraManager.CameraPictureCallback jpeg) {
+    public void takePicture(Handler handler, CameraAgent.CameraShutterCallback shutter,
+            CameraAgent.CameraPictureCallback raw, CameraAgent.CameraPictureCallback postview,
+            CameraAgent.CameraPictureCallback jpeg) {
         log("takePicture");
         mProxy.takePicture(handler, shutter, raw, postview, jpeg);
     }
@@ -183,7 +183,7 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
 
     @Override
     public void setFaceDetectionCallback(Handler handler,
-            CameraManager.CameraFaceDetectionCallback callback) {
+            CameraAgent.CameraFaceDetectionCallback callback) {
         log("setFaceDetectionCallback");
         mProxy.setFaceDetectionCallback(handler, callback);
     }
@@ -201,7 +201,7 @@ public class DebugCameraProxy implements CameraManager.CameraProxy {
     }
 
     @Override
-    public void setErrorCallback(Handler handler, CameraManager.CameraErrorCallback cb) {
+    public void setErrorCallback(Handler handler, CameraAgent.CameraErrorCallback cb) {
         log("setErrorCallback");
         mProxy.setErrorCallback(handler, cb);
     }

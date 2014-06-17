@@ -19,7 +19,7 @@ package com.android.camera.app;
 import android.hardware.Camera;
 import android.os.Handler;
 
-import com.android.camera.cameradevice.CameraManager.CameraExceptionCallback;
+import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
 
 /**
  * An interface which defines the camera provider.

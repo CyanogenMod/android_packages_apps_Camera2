@@ -19,9 +19,9 @@ package com.android.camera.module;
 import com.android.camera.CameraActivity;
 import com.android.camera.ShutterButton;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
-import com.android.camera.cameradevice.CameraManager;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.settings.SettingsManager;
+import com.android.ex.camera2.portability.CameraAgent;
 
 /**
  * The controller at app level.
@@ -104,7 +104,7 @@ public interface ModuleController extends ShutterButton.OnShutterButtonListener 
      *
      * @param cameraProxy The camera device proxy.
      */
-    public void onCameraAvailable(CameraManager.CameraProxy cameraProxy);
+    public void onCameraAvailable(CameraAgent.CameraProxy cameraProxy);
 
     /**
      * Called by the app on startup or module switches, this allows the module

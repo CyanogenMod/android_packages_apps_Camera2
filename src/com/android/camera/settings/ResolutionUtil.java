@@ -17,7 +17,7 @@
 package com.android.camera.settings;
 
 import com.android.camera.util.ApiHelper;
-import com.android.camera.cameradevice.Size;
+import com.android.ex.camera2.portability.Size;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

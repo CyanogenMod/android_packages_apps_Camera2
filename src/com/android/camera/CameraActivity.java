@@ -81,9 +81,6 @@ import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.MotionManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraManagerFactory;
-import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.FixedLastDataAdapter;
 import com.android.camera.data.LocalData;
@@ -132,6 +129,9 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraAgentFactory;
+import com.android.ex.camera2.portability.CameraSettings;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.resize.ImageManager;
 import com.google.common.logging.eventprotos;
@@ -149,7 +149,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 public class CameraActivity extends Activity
-        implements AppController, CameraManager.CameraOpenCallback,
+        implements AppController, CameraAgent.CameraOpenCallback,
         ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
@@ -446,7 +446,7 @@ public class CameraActivity extends Activity
             };
 
     @Override
-    public void onCameraOpened(CameraManager.CameraProxy camera) {
+    public void onCameraOpened(CameraAgent.CameraProxy camera) {
         if (mPaused) {
             return;
         }
@@ -484,7 +484,7 @@ public class CameraActivity extends Activity
         mCameraAppUI.onChangeCamera();
     }
 
-    private void resetExposureCompensationToDefault(CameraManager.CameraProxy camera) {
+    private void resetExposureCompensationToDefault(CameraAgent.CameraProxy camera) {
         // Reset the exposure compensation before handing the camera to module.
         CameraSettings cameraSettings = camera.getSettings();
         cameraSettings.setExposureCompensationIndex(0);
@@ -514,7 +514,7 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onReconnectionFailure(CameraManager mgr, String info) {
+    public void onReconnectionFailure(CameraAgent mgr, String info) {
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null);
         Log.w(TAG, "Camera reconnection failure:" + info);
@@ -962,9 +962,9 @@ public class CameraActivity extends Activity
     @Override
     public void setupOneShotPreviewListener() {
         mCameraController.setOneShotPreviewCallback(mMainHandler,
-                new CameraManager.CameraPreviewDataCallback() {
+                new CameraAgent.CameraPreviewDataCallback() {
                     @Override
-                    public void onPreviewFrame(byte[] data, CameraManager.CameraProxy camera) {
+                    public void onPreviewFrame(byte[] data, CameraAgent.CameraProxy camera) {
                         mCurrentModule.onPreviewInitialDataReceived();
                         mCameraAppUI.onNewPreviewFrame();
                     }
@@ -1200,8 +1200,8 @@ public class CameraActivity extends Activity
         }
     }
 
-    private final CameraManager.CameraExceptionCallback mCameraDefaultExceptionCallback
-        = new CameraManager.CameraExceptionCallback() {
+    private final CameraAgent.CameraExceptionCallback mCameraDefaultExceptionCallback
+        = new CameraAgent.CameraExceptionCallback() {
                 @Override
                 public void onCameraException(RuntimeException e) {
                     Log.e(TAG, "Camera Exception", e);
@@ -1234,7 +1234,7 @@ public class CameraActivity extends Activity
         mMainHandler = new MainHandler(this, getMainLooper());
         mCameraController =
                 new CameraController(mAppContext, this, mMainHandler,
-                        CameraManagerFactory.getAndroidCameraManager());
+                        CameraAgentFactory.getAndroidCameraAgent());
         mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
                 mMainHandler);
 
@@ -1742,7 +1742,7 @@ public class CameraActivity extends Activity
         mCameraAppUI = null;
         mOrientationManager = null;
         mButtonManager = null;
-        CameraManagerFactory.recycle();
+        CameraAgentFactory.recycle();
         super.onDestroy();
     }
 
@@ -2312,7 +2312,7 @@ public class CameraActivity extends Activity
                 ((VideoModule) mCurrentModule).isRecording() : false;
     }
 
-    public CameraManager.CameraOpenCallback getCameraOpenErrorCallback() {
+    public CameraAgent.CameraOpenCallback getCameraOpenErrorCallback() {
         return mCameraController;
     }
 

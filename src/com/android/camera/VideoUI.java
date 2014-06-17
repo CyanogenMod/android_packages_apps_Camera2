@@ -27,8 +27,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.camera.cameradevice.CameraCapabilities;
-import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.FocusOverlay;
 import com.android.camera.ui.PreviewOverlay;
@@ -36,6 +34,8 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.widget.VideoRecordingHints;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraSettings;
 
 import java.util.List;
 

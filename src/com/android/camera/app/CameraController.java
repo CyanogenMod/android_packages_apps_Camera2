@@ -21,27 +21,27 @@ import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.camera.CameraDisabledException;
-import com.android.camera.cameradevice.CameraDeviceInfo;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraManager.CameraExceptionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
+import com.android.ex.camera2.portability.CameraDeviceInfo;
+import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
 
 /**
  * A class which implements {@link com.android.camera.app.CameraProvider} used
  * by {@link com.android.camera.CameraActivity}.
  * TODO: Make this class package private.
  */
-public class CameraController implements CameraManager.CameraOpenCallback, CameraProvider {
+public class CameraController implements CameraAgent.CameraOpenCallback, CameraProvider {
     private static final Log.Tag TAG = new Log.Tag("CameraController");
     private static final int EMPTY_REQUEST = -1;
     private final Context mContext;
-    private CameraManager.CameraOpenCallback mCallbackReceiver;
+    private CameraAgent.CameraOpenCallback mCallbackReceiver;
     private final Handler mCallbackHandler;
-    private final CameraManager mCameraManager;
+    private final CameraAgent mCameraAgent;
     private CameraDeviceInfo mInfo;
 
-    private CameraManager.CameraProxy mCameraProxy;
+    private CameraAgent.CameraProxy mCameraProxy;
     private int mRequestingCameraId = EMPTY_REQUEST;
 
     /**
@@ -53,13 +53,13 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
      *                callbacks to.
      * @param cameraManager Used for camera open/close.
      */
-    public CameraController(Context context, CameraManager.CameraOpenCallback callbackReceiver,
-            Handler handler, CameraManager cameraManager) {
+    public CameraController(Context context, CameraAgent.CameraOpenCallback callbackReceiver,
+            Handler handler, CameraAgent cameraManager) {
         mContext = context;
         mCallbackReceiver = callbackReceiver;
         mCallbackHandler = handler;
-        mCameraManager = cameraManager;
-        mInfo = mCameraManager.getCameraDeviceInfo();
+        mCameraAgent = cameraManager;
+        mInfo = mCameraAgent.getCameraDeviceInfo();
         if (mInfo == null && mCallbackReceiver != null) {
             mCallbackReceiver.onDeviceOpenFailure(-1, "GETTING_CAMERA_INFO");
         }
@@ -68,7 +68,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     @Override
     public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
             Handler handler) {
-        mCameraManager.setCameraDefaultExceptionCallback(callback, handler);
+        mCameraAgent.setCameraDefaultExceptionCallback(callback, handler);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
-    public void onCameraOpened(CameraManager.CameraProxy camera) {
+    public void onCameraOpened(CameraAgent.CameraProxy camera) {
         Log.v(TAG, "onCameraOpened");
         if (mRequestingCameraId != camera.getCameraId()) {
             // Not requesting any camera or not waiting for this one.
@@ -163,7 +163,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     @Override
-    public void onReconnectionFailure(CameraManager mgr, String info) {
+    public void onReconnectionFailure(CameraAgent mgr, String info) {
         if (mCallbackReceiver != null) {
             mCallbackReceiver.onReconnectionFailure(mgr, info);
         }
@@ -188,11 +188,11 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
         mRequestingCameraId = id;
         if (mCameraProxy == null) {
             // No camera yet.
-            checkAndOpenCamera(mContext, mCameraManager, id, mCallbackHandler, this);
+            checkAndOpenCamera(mContext, mCameraAgent, id, mCallbackHandler, this);
         } else if (mCameraProxy.getCameraId() != id) {
             // Already has another camera opened.
-            mCameraManager.closeCamera(mCameraProxy, false);
-            checkAndOpenCamera(mContext, mCameraManager, id, mCallbackHandler, this);
+            mCameraAgent.closeCamera(mCameraProxy, false);
+            checkAndOpenCamera(mContext, mCameraAgent, id, mCallbackHandler, this);
         } else {
             // The same camera, just do a reconnect.
             Log.v(TAG, "reconnecting to use the existing camera");
@@ -234,12 +234,12 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     public void closeCamera(boolean synced) {
         Log.v(TAG, "closing camera");
         mCameraProxy = null;
-        mCameraManager.closeCamera(mCameraProxy, synced);
+        mCameraAgent.closeCamera(mCameraProxy, synced);
         mRequestingCameraId = EMPTY_REQUEST;
     }
 
-    private static void checkAndOpenCamera(Context context, CameraManager cameraManager,
-            final int cameraId, Handler handler, final CameraManager.CameraOpenCallback cb) {
+    private static void checkAndOpenCamera(Context context, CameraAgent cameraManager,
+            final int cameraId, Handler handler, final CameraAgent.CameraOpenCallback cb) {
         try {
             CameraUtil.throwIfCameraDisabled(context);
             cameraManager.openCamera(handler, cameraId, cb);
@@ -254,7 +254,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     }
 
     public void setOneShotPreviewCallback(Handler handler,
-            CameraManager.CameraPreviewDataCallback cb) {
+            CameraAgent.CameraPreviewDataCallback cb) {
         mCameraProxy.setOneShotPreviewCallback(handler, cb);
     }
 }

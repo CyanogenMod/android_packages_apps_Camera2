@@ -23,13 +23,13 @@ import android.hardware.Camera.Parameters;
 import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager.SettingsCapabilities;
 import com.android.camera.util.Callback;
-import com.android.camera.cameradevice.Size;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraSettings;
+import com.android.ex.camera2.portability.Size;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -406,7 +406,7 @@ public class SettingsUtil {
      * Determines and returns the capabilities of the given camera.
      */
     public static SettingsCapabilities
-            getSettingsCapabilities(CameraManager.CameraProxy camera) {
+            getSettingsCapabilities(CameraAgent.CameraProxy camera) {
         final Parameters parameters = camera.getParameters();
         return (new SettingsCapabilities() {
             @Override

@@ -18,9 +18,9 @@ package com.android.camera.hardware;
 
 import android.hardware.Camera;
 
-import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
+import com.android.ex.camera2.portability.CameraCapabilities;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class HardwareSpecImpl implements HardwareSpec {
     /**
      * Compute the supported values for all
      * {@link com.android.camera.hardware.HardwareSpec} methods
-     * based on {@link com.android.camera.cameradevice.CameraCapabilities}.
+     * based on {@link com.android.ex.camera2.portability.CameraCapabilities}.
      */
     public HardwareSpecImpl(CameraCapabilities capabilities) {
         // Cache whether front camera is supported.

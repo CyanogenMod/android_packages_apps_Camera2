@@ -34,9 +34,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
-import com.android.camera.cameradevice.CameraCapabilities;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraSettings;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
@@ -47,11 +44,14 @@ import com.android.camera.widget.AspectRatioDialogLayout;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera.widget.LocationDialogLayout;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraSettings;
 
 import java.util.List;
 
 public class PhotoUI implements PreviewStatusListener,
-    CameraManager.CameraFaceDetectionCallback, PreviewStatusListener.PreviewAreaChangedListener {
+    CameraAgent.CameraFaceDetectionCallback, PreviewStatusListener.PreviewAreaChangedListener {
 
     private static final Log.Tag TAG = new Log.Tag("PhotoUI");
     private static final int DOWN_SAMPLE_FACTOR = 4;
@@ -561,7 +561,7 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
     @Override
-    public void onFaceDetection(Face[] faces, CameraManager.CameraProxy camera) {
+    public void onFaceDetection(Face[] faces, CameraAgent.CameraProxy camera) {
         if (mFaceView != null) {
             mFaceView.setFaces(faces);
         }

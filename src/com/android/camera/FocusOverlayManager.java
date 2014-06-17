@@ -27,14 +27,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import com.android.camera.cameradevice.CameraCapabilities;
-import com.android.camera.cameradevice.CameraCapabilitiesFactory;
 import com.android.camera.app.MotionManager;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
+import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraCapabilitiesFactory;
 
 import java.util.ArrayList;
 import java.util.List;

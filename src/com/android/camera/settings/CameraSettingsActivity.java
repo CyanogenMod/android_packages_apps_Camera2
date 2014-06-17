@@ -46,8 +46,8 @@ import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera.util.SettingsHelper;
-import com.android.camera.cameradevice.Size;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.Size;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

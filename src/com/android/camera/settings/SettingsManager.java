@@ -29,8 +29,8 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.SettingsHelper;
-import com.android.camera.cameradevice.Size;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.Size;
 
 import java.util.ArrayList;
 import java.util.List;

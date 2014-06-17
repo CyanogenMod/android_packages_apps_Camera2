@@ -53,12 +53,12 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
-import com.android.camera.cameradevice.CameraCapabilities;
-import com.android.camera.cameradevice.CameraSettings;
-import com.android.camera.cameradevice.Size;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraSettings;
+import com.android.ex.camera2.portability.Size;
 
 import java.io.Closeable;
 import java.io.IOException;

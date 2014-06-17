@@ -56,12 +56,6 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
-import com.android.camera.cameradevice.CameraCapabilities;
-import com.android.camera.cameradevice.CameraManager;
-import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
-import com.android.camera.cameradevice.CameraManager.CameraProxy;
-import com.android.camera.cameradevice.CameraSettings;
-import com.android.camera.cameradevice.Size;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.hardware.HardwareSpec;
@@ -73,6 +67,12 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
+import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
+import com.android.ex.camera2.portability.CameraSettings;
+import com.android.ex.camera2.portability.Size;
 import com.google.common.logging.eventprotos;
 
 import java.io.File;
@@ -213,8 +213,8 @@ public class VideoModule extends CameraModule
     private boolean mFocusAreaSupported;
     private boolean mMeteringAreaSupported;
 
-    private final CameraManager.CameraAFCallback mAutoFocusCallback =
-            new CameraManager.CameraAFCallback() {
+    private final CameraAgent.CameraAFCallback mAutoFocusCallback =
+            new CameraAgent.CameraAFCallback() {
         @Override
         public void onAutoFocus(boolean focused, CameraProxy camera) {
             if (mPaused) {
@@ -226,7 +226,7 @@ public class VideoModule extends CameraModule
 
     private final Object mAutoFocusMoveCallback =
             ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK
-                    ? new CameraManager.CameraAFMoveCallback() {
+                    ? new CameraAgent.CameraAFMoveCallback() {
                 @Override
                 public void onAutoFocusMoving(boolean moving, CameraProxy camera) {
                     mFocusManager.onAutoFocusMoving(moving);
@@ -437,7 +437,7 @@ public class VideoModule extends CameraModule
 
         if (mCameraSettings.getCurrentFocusMode() == CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,
-                    (CameraManager.CameraAFMoveCallback) mAutoFocusMoveCallback);
+                    (CameraAgent.CameraAFMoveCallback) mAutoFocusMoveCallback);
         } else {
             mCameraDevice.setAutoFocusMoveCallback(null, null);
         }

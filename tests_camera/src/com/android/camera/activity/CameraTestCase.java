@@ -30,8 +30,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.camera.CameraTestDevice;
-import com.android.camera.cameradevice.CameraManager.CameraProxy;
 import com.android.camera.util.CameraUtil;
+import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 import com.android.gallery3d.R;
 
 import static com.google.testing.littlemock.LittleMock.mock;
