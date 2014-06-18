@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"S\'ha fet una foto."</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"S\'ha enregistrat un vídeo."</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloqueja i vés a la Càmera"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Fitxers multimèdia de: %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Foto del dia %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Vídeo del dia %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panoràmica del dia %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Foto esfèrica del dia %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Efecte d\'enfocament del dia %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Data i hora de creació del fitxer multimèdia: %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Data i hora de creació de la fotografia: %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Data i hora de creació del vídeo: %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Data i hora de creació de la fotografia panoràmica: %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Data i hora de creació de la fotografia esfèrica: %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Data i hora de creació de l\'Efecte d\'enfocament: %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Processament de fitxers multimèdia"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activa la llista de modes"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Llista de modes"</string>

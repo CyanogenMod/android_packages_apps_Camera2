@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"ፎቶ ተነስቷል"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"ቪዲዮ ተቀርጹዋል"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ወደ ካሜራ ይክፈቱ"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"ማህደረ መረጃ ከ%s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"ፎቶ ከ%s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"ቪዲዮ ከ%s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"ፓኖራማ ከ%s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"የሉል ገጽታ ፎቶ ከ%s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"የካሜራ መስታወት ድብዘዛ ከ%s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"በ%s ላይ የተወሰደ ማህደረመረጃ"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"በ%s ላይ የተነሳ ፎቶ"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"በ%s ላይ የተቀረጸ ቪዲዮ"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"በ%s ላይ የተነሳ ፓኖራማ"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"በ%s ላይ የተነሳ የሉል ገጽታ ፎቶ"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"በ%s ላይ የተነሳ የምስሪት ድብዘዛ"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"ማህደረ መረጃ በመካሄድ ላይ"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"የሁነታ ዝርዝር ቀያይር"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"የሁነታ ዝርዝር"</string>

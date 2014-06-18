@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Se ha hecho una foto"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Se ha grabado un vídeo"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloquear para acceder a la cámara"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Archivos multimedia de %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Foto del %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Vídeo del %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorámica del %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Fotografía esférica del %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Efecto de enfoque del %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Archivo multimedia hecho el %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Foto hecha el %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Vídeo grabado el %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Foto panorámica hecha el %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Fotografía esférica hecha el %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Efecto de enfoque hecho el %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Procesando archivos multimedia"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activar lista de modo"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista de modo"</string>

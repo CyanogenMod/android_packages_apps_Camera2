@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Fotó elkészítve"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"A videó elkészült"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"A képernyőzár feloldásával indítsa el a kamerát"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"A tartalommódosítás időpontja: %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Fotó ekkorról: %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Videó ekkorról: %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorámakép ekkorról: %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Körpanorámakép ekkorról: %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Életlenített fotó ekkorról: %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Médiatartalom rögzítési ideje: %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Fotó rögzítési ideje: %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Videó rögzítési ideje: %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorámafotó rögzítési ideje: %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Körpanorámakép rögzítési ideje: %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Életlenített felvétel rögzítési ideje: %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Tartalom feldolgozása"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Váltás a módlistára"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Módlista"</string>

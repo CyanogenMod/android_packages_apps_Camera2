@@ -221,16 +221,16 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"Optionen"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"Modusliste geschlossen"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"Modusliste geöffnet"</string>
-    <string name="media_accessibility_peek" msgid="234540330161031946">"Capture aufgenommen"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"Screenshot aufgenommen"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Foto aufgenommen"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Video aufgenommen"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Entsperren und dann zur Kamera"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Medien ab %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Foto, %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Video, %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama, %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"360°-Panoramaaufnahme, %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Foto mit Fokuseffekt, %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Aufnahme, %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Foto, %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Video, %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panoramaaufnahme, %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Photo Sphere-Panoramaaufnahme, %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Aufnahme mit Fokuseffekt, %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Medienverarbeitung"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Modusliste umschalten"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Modusliste"</string>

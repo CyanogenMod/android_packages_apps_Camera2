@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Zrobiłeś zdjęcie"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Nagrałeś film"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Włącz aparat z ekranu blokady"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Materiał z: %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Zdjęcie z %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Film z %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama z %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Zdjęcie sferyczne z %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Zdjęcie z rozmyciem soczewkowym z %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Plik multimedialny z %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Zdjęcie zrobione %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Film nagrany %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorama wykonana %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Zdjęcie sferyczne zrobione %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Zdjęcie z rozmyciem soczewkowym zrobione %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Przetwarzane materiały"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Włącz/wyłącz listę trybów"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista trybów"</string>

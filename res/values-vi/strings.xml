@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Đã chụp ảnh"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Đã quay video"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Mở khóa cho máy ảnh"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Phương tiện từ %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Ảnh từ %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Video từ %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Ảnh toàn cảnh từ %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Ảnh toàn cảnh 360 độ từ %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Làm mờ ống kính từ %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Phương tiện được chụp/quay vào %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Ảnh được chụp vào %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Video được quay vào %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Ảnh toàn cảnh được chụp vào %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Ảnh toàn cảnh 360 độ được chụp vào %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Làm mờ ống kính được tiến hành vào %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Xử lý phương tiện"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Chuyển đổi danh sách chế độ"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Danh sách chế độ"</string>
@@ -358,8 +358,7 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video từ máy ảnh trước"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Máy ảnh mặc định"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"Gửi phản hồi"</string>
-    <!-- no translation found for setting_google_help (9188405022782314357) -->
-    <skip />
+    <string name="setting_google_help" msgid="9188405022782314357">"Trợ giúp"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Đang xử lý HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Giấy phép nguồn mở"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Cài đặt chung"</string>

@@ -225,12 +225,18 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Foto capturada"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Video capturado"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Desbloquear para acceder a la Cámara"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Archivos multimedia de %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Foto del %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Video del %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorámica del %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Foto esférica del %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Efecto de enfoque del %s"</string>
+    <!-- no translation found for media_date_content_description (2155634843596817141) -->
+    <skip />
+    <!-- no translation found for photo_date_content_description (5705865897898465619) -->
+    <skip />
+    <!-- no translation found for video_date_content_description (2151884014634284456) -->
+    <skip />
+    <!-- no translation found for panorama_date_content_description (990703578639006144) -->
+    <skip />
+    <!-- no translation found for photosphere_date_content_description (4183741743409007876) -->
+    <skip />
+    <!-- no translation found for refocus_date_content_description (5630960320424345547) -->
+    <skip />
     <string name="media_processing_content_description" msgid="8138587719107183754">"Procesando archivos multimedia"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activar lista de modos"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista de modos"</string>
