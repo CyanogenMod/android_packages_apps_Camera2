@@ -26,7 +26,7 @@
     <item quantity="one" msgid="8811352590292754044">"លុប​ធាតុ​ដែល​បាន​ជ្រើស?"</item>
     <item quantity="other" msgid="5075283252850066610">"លុប​ធាតុ​ដែល​បាន​ជ្រើស?"</item>
   </plurals>
-    <string name="share" msgid="8581089487762243115">"ចែក​រំលែក​"</string>
+    <string name="share" msgid="8581089487762243115">"ចែក​រំលែក"</string>
     <string name="share_panorama" msgid="3558466186935359444">"ចែករំលែក​ទេសភាព"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"ចែករំលែក​ជា​រូបថត"</string>
     <string name="deleted" msgid="2036165115527228127">"បាន​លុប"</string>
@@ -219,7 +219,7 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"បាន​ពិនិត្យ​រួចរាល់"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"ពិនិត្យ​ឡើងវិញ"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ជម្រើស"</string>
-    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប​"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"បាន​បើក​បញ្ជី​របៀប"</string>
     <string name="accessibility_peek" msgid="2128006708870513182">"ចាប់​យក"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ដោះ​សោ​ដើម្បី​ប្រើ​ម៉ាស៊ីន​ថត"</string>
@@ -272,9 +272,9 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"១២ ម៉ោង"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"១៥ ម៉ោង"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"២៤ ម៉ោង"</string>
-    <string name="time_lapse_seconds" msgid="7319683099532506270">"វិនាទី​"</string>
-    <string name="time_lapse_minutes" msgid="5325447383033224679">"នាទី​"</string>
-    <string name="time_lapse_hours" msgid="5294001144133261436">"ម៉ោង​"</string>
+    <string name="time_lapse_seconds" msgid="7319683099532506270">"វិនាទី"</string>
+    <string name="time_lapse_minutes" msgid="5325447383033224679">"នាទី"</string>
+    <string name="time_lapse_hours" msgid="5294001144133261436">"ម៉ោង"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"រួចរាល់"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"កំណត់​ចន្លោះ​ពេល"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"បាន​បិទ​​លក្ខណៈ​ពេលវេលា​កន្លង​ទៅ។ បើក​វា​ ដើម្បី​កំណត់​ចន្លោះ​ពេល។"</string>
@@ -297,7 +297,7 @@
     <string name="setting_wallpaper" msgid="2397759659347872725">"​កំណត់​ផ្ទាំង​រូបភាព"</string>
     <string name="mode_settings" msgid="2021937261522670921">"ការ​កំណត់"</string>
     <string name="mode_camera" msgid="279763925715250603">"ម៉ាស៊ីន​ថត"</string>
-    <string name="mode_video" msgid="8633929034048169139">"វីដេអូ​"</string>
+    <string name="mode_video" msgid="8633929034048169139">"វីដេអូ"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"រូបថត​វិល​ជុំ"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"ពេលវេលា​កន្លងទៅ"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"មុំ​ពេញ"</string>
@@ -330,7 +330,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"បោះបង់"</string>
     <string name="done_button_description" msgid="1334963435441544592">"រួចរាល់"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ថត​ឡើងវិញ"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"ចែករំលែក​"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"ចែករំលែក"</string>
     <string name="view_button_description" msgid="4985768837891362075">"មើល"</string>
     <string name="edit_button_description" msgid="98550816724901925">"កែសម្រួល"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"លុប"</string>
