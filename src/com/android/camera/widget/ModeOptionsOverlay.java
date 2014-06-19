@@ -32,6 +32,7 @@ import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.ShutterButton;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.PreviewOverlay;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera2.R;
 
 /**
@@ -101,6 +102,11 @@ public class ModeOptionsOverlay extends FrameLayout
     @Override
     public void onShutterButtonClick() {
         closeModeOptions();
+    }
+
+    @Override
+    public void onShutterCoordinate(TouchCoordinate coord) {
+        // Do nothing.
     }
 
     @Override

@@ -76,6 +76,7 @@ import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.CountDownView;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
@@ -153,6 +154,8 @@ public class PhotoModule
 
     private int mZoomValue; // The current zoom value.
     private int mTimerDuration;
+    /** Set when a volume button is clicked to take photo */
+    private boolean mVolumeButtonClickedFlag = false;
 
     private Parameters mInitialParams;
     private boolean mFocusAreaSupported;
@@ -234,6 +237,9 @@ public class PhotoModule
     private long mJpegPictureCallbackTime;
     private long mOnResumeTime;
     private byte[] mJpegImageData;
+    /** Touch coordinate for shutter button press. */
+    private TouchCoordinate mShutterTouchCoordinate;
+
 
     // These latency time are for the CameraLatency test.
     public long mAutoFocusTime;
@@ -1062,7 +1068,9 @@ public class PhotoModule
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                     mNamedImages.mQueue.lastElement().title + ".jpg", exif,
                     isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn,
-                    (float) mTimerDuration);
+                    (float) mTimerDuration, mShutterTouchCoordinate, mVolumeButtonClickedFlag);
+            mShutterTouchCoordinate = null;
+            mVolumeButtonClickedFlag = false;
 
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
@@ -1440,6 +1448,11 @@ public class PhotoModule
     }
 
     @Override
+    public void onShutterCoordinate(TouchCoordinate coord) {
+        mShutterTouchCoordinate = coord;
+    }
+
+    @Override
     public void onShutterButtonFocus(boolean pressed) {
         // Do nothing. We don't support half-press to focus anymore.
     }
@@ -1448,6 +1461,7 @@ public class PhotoModule
     public void onShutterButtonClick() {
         if (mPaused || (mCameraState == SWITCHING_CAMERA)
                 || (mCameraState == PREVIEW_STOPPED)) {
+            mVolumeButtonClickedFlag = false;
             return;
         }
 
@@ -1455,9 +1469,11 @@ public class PhotoModule
         if (mActivity.getStorageSpaceBytes() <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
             Log.i(TAG, "Not enough space or storage not ready. remaining="
                     + mActivity.getStorageSpaceBytes());
+            mVolumeButtonClickedFlag = false;
             return;
         }
-        Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
+        Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState +
+                " mVolumeButtonClickedFlag=" + mVolumeButtonClickedFlag);
 
         int countDownDuration = Integer.parseInt(mActivity.getSettingsManager()
                 .get(SettingsManager.SETTING_COUNTDOWN_DURATION));
@@ -1761,6 +1777,7 @@ public class PhotoModule
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (/* mActivity.isInCameraApp() && */mFirstTimeInitialized) {
+                    mVolumeButtonClickedFlag = true;
                     onShutterButtonClick();
                     return true;
                 }

@@ -17,10 +17,14 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.text.method.Touch;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.android.camera.debug.Log;
+import com.android.camera.ui.TouchCoordinate;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -31,11 +35,11 @@ import java.util.ArrayList;
  * pressed state changes.
  */
 public class ShutterButton extends ImageView {
-
+    private static final Log.Tag TAG = new Log.Tag("ShutterButton");
     public static final float ALPHA_WHEN_ENABLED = 1f;
     public static final float ALPHA_WHEN_DISABLED = 0.2f;
     private boolean mTouchEnabled = true;
-
+    private TouchCoordinate mTouchCoordinate;
     /**
      * A callback to be invoked when a ShutterButton's pressed state changes.
      */
@@ -46,6 +50,7 @@ public class ShutterButton extends ImageView {
          * @param pressed The ShutterButton that was pressed.
          */
         void onShutterButtonFocus(boolean pressed);
+        void onShutterCoordinate(TouchCoordinate coord);
         void onShutterButtonClick();
     }
 
@@ -78,6 +83,10 @@ public class ShutterButton extends ImageView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
         if (mTouchEnabled) {
+            if (m.getActionMasked() == MotionEvent.ACTION_UP) {
+                mTouchCoordinate = new TouchCoordinate(m.getX(), m.getY(), this.getMeasuredWidth(),
+                        this.getMeasuredHeight());
+            }
             return super.dispatchTouchEvent(m);
         } else {
             return false;
@@ -140,10 +149,12 @@ public class ShutterButton extends ImageView {
     }
 
     @Override
-        public boolean performClick() {
+    public boolean performClick() {
         boolean result = super.performClick();
         if (getVisibility() == View.VISIBLE) {
             for (OnShutterButtonListener listener : mListeners) {
+                listener.onShutterCoordinate(mTouchCoordinate);
+                mTouchCoordinate = null;
                 listener.onShutterButtonClick();
             }
         }
