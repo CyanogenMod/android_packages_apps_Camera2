@@ -28,7 +28,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera.CameraInfo;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
@@ -71,6 +70,7 @@ import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
+import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
 import com.google.common.logging.eventprotos;
@@ -422,7 +422,8 @@ public class VideoModule extends CameraModule
             }
 
             // Set rotation and gps data.
-            CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
+            Characteristics info =
+                    mActivity.getCameraProvider().getCharacteristics(mCameraId);
             int rotation = CameraUtil.getJpegRotation(info, mOrientation);
             mCameraSettings.setPhotoRotationDegrees(rotation);
             Location loc = mLocationManager.getCurrentLocation();
@@ -455,8 +456,16 @@ public class VideoModule extends CameraModule
      * @return Whether the currently active camera is front-facing.
      */
     private boolean isCameraFrontFacing() {
-        CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
-        return info.facing == CameraInfo.CAMERA_FACING_FRONT;
+        return mAppController.getCameraProvider().getCharacteristics(mCameraId)
+                .isFacingFront();
+    }
+
+    /**
+     * @return Whether the currently active camera is back-facing.
+     */
+    private boolean isCameraBackFacing() {
+        return mAppController.getCameraProvider().getCharacteristics(mCameraId)
+                .isFacingBack();
     }
 
     /**
@@ -843,7 +852,9 @@ public class VideoModule extends CameraModule
 
     private void setDisplayOrientation() {
         mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
-        mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, mCameraId);
+        Characteristics info =
+                mActivity.getCameraProvider().getCharacteristics(mCameraId);
+        mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, info);
         // Change the camera display orientation
         if (mCameraDevice != null) {
             mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
@@ -1148,11 +1159,14 @@ public class VideoModule extends CameraModule
         // which is the orientation the graphics need to rotate in order to render correctly.
         int rotation = 0;
         if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
+            Characteristics info =
+                    mActivity.getCameraProvider().getCharacteristics(mCameraId);
             if (isCameraFrontFacing()) {
-                rotation = (info.orientation - mOrientation + 360) % 360;
-            } else {  // back-facing camera
-                rotation = (info.orientation + mOrientation) % 360;
+                rotation = (info.getSensorOrientation() - mOrientation + 360) % 360;
+            } else if (isCameraBackFacing()) {
+                rotation = (info.getSensorOrientation() + mOrientation) % 360;
+            } else {
+                Log.e(TAG, "Camera is facing unhandled direction");
             }
         }
         mMediaRecorder.setOrientationHint(rotation);

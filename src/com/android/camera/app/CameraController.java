@@ -72,11 +72,11 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     }
 
     @Override
-    public Camera.CameraInfo[] getCameraInfo() {
+    public CameraDeviceInfo.Characteristics getCharacteristics(int cameraId) {
         if (mInfo == null) {
             return null;
         }
-        return mInfo.getCameraInfos();
+        return mInfo.getCharacteristics(cameraId);
     }
 
     @Override
@@ -117,11 +117,11 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         if (mInfo == null) {
             return false;
         }
-        if (id >= mInfo.getCameraInfos().length || mInfo.getCameraInfos()[id] == null) {
+        if (id >= mInfo.getNumberOfCameras() || mInfo.getCharacteristics(id) == null) {
             Log.e(TAG, "Camera info not available:" + id);
             return false;
         }
-        return (mInfo.getCameraInfos()[id].facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
+        return mInfo.getCharacteristics(id).isFacingFront();
     }
 
     @Override
@@ -129,11 +129,11 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         if (mInfo == null) {
             return false;
         }
-        if (id >= mInfo.getCameraInfos().length || mInfo.getCameraInfos()[id] == null) {
+        if (id >= mInfo.getNumberOfCameras() || mInfo.getCharacteristics(id) == null) {
             Log.e(TAG, "Camera info not available:" + id);
             return false;
         }
-        return (mInfo.getCameraInfos()[id].facing == Camera.CameraInfo.CAMERA_FACING_BACK);
+        return mInfo.getCharacteristics(id).isFacingBack();
     }
 
     @Override
