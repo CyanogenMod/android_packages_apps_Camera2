@@ -242,6 +242,12 @@ public class DebugCameraProxy implements CameraAgent.CameraProxy {
         mProxy.enableShutterSound(enable);
     }
 
+    @Override
+    public String dumpDeviceSettings() {
+        log("dumpDeviceSettings");
+        return mProxy.dumpDeviceSettings();
+    }
+
     private void log(String msg) {
         Log.v(mTag, msg);
     }
