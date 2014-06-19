@@ -57,6 +57,12 @@ import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.app.MotionManager;
+import com.android.camera.cameradevice.CameraCapabilities;
+import com.android.camera.cameradevice.CameraManager.CameraAFCallback;
+import com.android.camera.cameradevice.CameraManager.CameraAFMoveCallback;
+import com.android.camera.cameradevice.CameraManager.CameraPictureCallback;
+import com.android.camera.cameradevice.CameraManager.CameraProxy;
+import com.android.camera.cameradevice.CameraManager.CameraShutterCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -1643,9 +1649,9 @@ public class PhotoModule
 
     @Override
     public void pause() {
-        getServices().getRemoteShutterListener().onModuleExit();
         mPaused = true;
         mHandler.removeCallbacks(mResumeTaskRunnable);
+        getServices().getRemoteShutterListener().onModuleExit();
         SessionStatsCollector.instance().sessionActive(false);
 
         Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -2340,7 +2346,7 @@ public class PhotoModule
 
     @Override
     public void onRemoteShutterPress() {
-        capture();
+        focusAndCapture();
     }
 
     /**
