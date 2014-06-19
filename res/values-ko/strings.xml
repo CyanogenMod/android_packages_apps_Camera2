@@ -225,21 +225,17 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"사진을 촬영했습니다."</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"동영상을 촬영했습니다."</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"잠금 해제 시 카메라로 이동"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"%s의 미디어"</string>
-    <!-- String.format failed for translation -->
-    <!-- no translation found for photo_date_content_description (2542447647374681796) -->
+    <!-- no translation found for media_date_content_description (2155634843596817141) -->
     <skip />
-    <!-- String.format failed for translation -->
-    <!-- no translation found for video_date_content_description (6576193397823971616) -->
+    <!-- no translation found for photo_date_content_description (5705865897898465619) -->
     <skip />
-    <!-- String.format failed for translation -->
-    <!-- no translation found for panorama_date_content_description (243370023361404002) -->
+    <!-- no translation found for video_date_content_description (2151884014634284456) -->
     <skip />
-    <!-- String.format failed for translation -->
-    <!-- no translation found for photosphere_date_content_description (6315139237269418086) -->
+    <!-- no translation found for panorama_date_content_description (990703578639006144) -->
     <skip />
-    <!-- String.format failed for translation -->
-    <!-- no translation found for refocus_date_content_description (5460992862949541008) -->
+    <!-- no translation found for photosphere_date_content_description (4183741743409007876) -->
+    <skip />
+    <!-- no translation found for refocus_date_content_description (5630960320424345547) -->
     <skip />
     <string name="media_processing_content_description" msgid="8138587719107183754">"미디어 처리 중"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"모드 목록 전환"</string>
@@ -368,8 +364,7 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"전면 카메라 동영상"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"기본 카메라"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"의견 보내기"</string>
-    <!-- no translation found for setting_google_help (9188405022782314357) -->
-    <skip />
+    <string name="setting_google_help" msgid="9188405022782314357">"도움말"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ 처리 중…"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"오픈소스 라이선스"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"일반 설정"</string>

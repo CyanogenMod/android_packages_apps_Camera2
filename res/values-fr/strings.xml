@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"La photo a bien été prise."</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"La vidéo a bien été enregistrée."</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Déverrouiller l\'appareil photo"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Dernière modification des médias : %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Photo du %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Vidéo du %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama du %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Photo-sphère du %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Photo Effet focus du %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Contenu multimédia créé le %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Photo prise le %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Vidéo filmée le %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorama réalisé le %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Photo-sphère prise le %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Effet focus réalisé le %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Médias en cours de traitement…"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activer/désactiver la liste de modes"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Liste de modes"</string>

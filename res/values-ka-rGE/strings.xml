@@ -225,12 +225,18 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"ფოტო გადაღებულია"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"ვიდეო გადაღებულია"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"განბლოკვა კამერაზე გადასასვლელად"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"მედია %s-იდან"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"ფოტო %s-დან"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"ვიდეო %s-დან"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"პანორამა %s-დან"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Photo Sphere %s-დან"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"ობიექტივის დაბინდვა %s-დან"</string>
+    <!-- no translation found for media_date_content_description (2155634843596817141) -->
+    <skip />
+    <!-- no translation found for photo_date_content_description (5705865897898465619) -->
+    <skip />
+    <!-- no translation found for video_date_content_description (2151884014634284456) -->
+    <skip />
+    <!-- no translation found for panorama_date_content_description (990703578639006144) -->
+    <skip />
+    <!-- no translation found for photosphere_date_content_description (4183741743409007876) -->
+    <skip />
+    <!-- no translation found for refocus_date_content_description (5630960320424345547) -->
+    <skip />
     <string name="media_processing_content_description" msgid="8138587719107183754">"მედიის დამუშავება"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"რეჟიმის სიის გადართვა"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"რეჟიმის სია"</string>
@@ -358,8 +364,7 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"წინა კამერის ვიდეო"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ნაგულისხმევი კამერა"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"უკუკავშირის გაგზავნა"</string>
-    <!-- no translation found for setting_google_help (9188405022782314357) -->
-    <skip />
+    <string name="setting_google_help" msgid="9188405022782314357">"დახმარება"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ დამუშავება …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"ღია კოდის ლიცენზიები"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"ძირითადი პარამეტრები"</string>

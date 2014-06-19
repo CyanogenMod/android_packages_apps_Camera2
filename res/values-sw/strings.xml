@@ -227,12 +227,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Picha imepigwa"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Video imerekodiwa"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Fungua Kamera"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Maudhui kutoka %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Picha kutoka %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Video kutoka %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama kutoka %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Picha Duara kutoka %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Kuangazia shabaha kutoka %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Maudhui yalipigwa picha tarehe %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Picha ilipigwa tarehe%s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Video ilirekodiwa tarehe %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorama ilipigwa picha tarehe %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Picha Duara ilipigwa tarehe %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Kuangazia shabaha ilipigwa tarehe %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Uchakataji wa maudhui"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Geuza orodha ya hali"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Orodha ya Hali"</string>
@@ -360,8 +360,7 @@
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video ya kamera ya mbele"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Kamera ya chaguo-msingi"</string>
     <string name="setting_send_feedback" msgid="6637165939344951380">"Tuma maoni"</string>
-    <!-- no translation found for setting_google_help (9188405022782314357) -->
-    <skip />
+    <string name="setting_google_help" msgid="9188405022782314357">"Usaidizi"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Inachakata HDR+ ..."</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Leseni za programu huria"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Mipangilio ya Kawaida"</string>

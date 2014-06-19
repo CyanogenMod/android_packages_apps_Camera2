@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Foto diambil"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Video diambil"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Buka untuk ke Kamera"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Media dari %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Foto dari %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Video dari %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Panorama dari %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Photo Sphere dari %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Lens Blur dari %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Media diambil pada %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Foto diambil pada %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Video diambil pada %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorama diambil pada %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Foto 360˚ diambil pada %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Lens Blur diambil pada %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Media sedang diproses"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alihkan daftar mode"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Daftar mode"</string>

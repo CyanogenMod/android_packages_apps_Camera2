@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Фотографію зроблено"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Відео знято"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Розблокувати та перейти до Камери"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"Медіафайли з %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"Фотографія – %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"Відео – %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"Панорама – %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"Кругова панорама – %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Розмивання – %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Знято %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Сфотографовано %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Відео знято %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Панораму знято %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Кругову панораму знято %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Знімок у режимі розмивання зроблено %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Обробка медіафайлів"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Відкрити або закрити список режимів"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Список режимів"</string>

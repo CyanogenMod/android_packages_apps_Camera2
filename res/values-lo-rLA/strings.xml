@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"ຖ່າຍຮູບແລ້ວ"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"ຖ່າຍ​ວິດີໂອ​ແລ້ວ"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"​​ປົດ​ລັອກ​ໃຫ້​ກ້ອງ​ຖ່າຍ​ຮູບ"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"ໄຟ​ລ໌​ຈາກ %s"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"ຮູບພາບຈາກ %s"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"ວິດີໂອ​ຈາກ %s"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"ພາໂນຣາມາຈາກ %s"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"ໂຟໂຕສະເຟຍຈາກ %s"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"Lens blur ຈາກ %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"​ໄຟລ໌​ທີ່​ຖ່າຍ​ເມື່ອ %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"ຮູບ​ທີ່​ຖ່າຍ​ເມື່ອ %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"ວິ​ດີ​ໂອ​ທີ່​ຖ່າຍ​ເມື່ອ %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"ພາ​ໂນ​ຣາ​ມາ​ທີ່​ຖ່າຍ​ເມື່ອ %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"ໂຟ​ໂຕ​ສະ​ເຟຍ​ທີ່​ຖ່າຍ​ເມື່ອ %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Lens blur ທີ່​ຖ່າຍ​ເມື່ອ %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"​ກຳ​ລັງ​ປະ​ມວນ​ຜົນ​ໄຟ​ລ໌"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"ສະລັບລາຍຊື່ໂໝດ"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"ລາຍຊື່ໂໝດ"</string>

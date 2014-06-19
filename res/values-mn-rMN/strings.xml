@@ -225,12 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Зураг авсан"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Видео бичсэн"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Камер руу очихын тулд цоож тайлах"</string>
-    <string name="media_date_content_description" msgid="2497288090192743887">"%s-н медиа"</string>
-    <string name="photo_date_content_description" msgid="2542447647374681796">"%s-н зураг"</string>
-    <string name="video_date_content_description" msgid="6576193397823971616">"%s-н видео"</string>
-    <string name="panorama_date_content_description" msgid="243370023361404002">"%s-н Панорама"</string>
-    <string name="photosphere_date_content_description" msgid="6315139237269418086">"%s-н Фото Спер"</string>
-    <string name="refocus_date_content_description" msgid="5460992862949541008">"%s-н Линзний бүүдэгрэл"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"%s-д авсан медиа"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"%s-д авсан зураг"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"%s-д авсан видео"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"%s-д авсан Панорама"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%s-д авсан Фото спер"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"%s-д авсан Линзний бүүдэгрэл"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Медиа боловсруулалт"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Сэлгэх горимын жагсаалт"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Горимын жагсаалт"</string>
