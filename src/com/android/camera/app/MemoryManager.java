@@ -16,9 +16,6 @@
 
 package com.android.camera.app;
 
-import com.android.camera.app.MemoryQuery.MemoryMeasurement;
-import com.android.camera.app.MemoryQuery.WindowStats;
-
 import java.util.HashMap;
 
 /**
@@ -30,13 +27,6 @@ public interface MemoryManager {
      * Classes implementing this interface will be able to get updates about
      * memory status changes.
      */
-
-    /** A classification of the type of capture performed. */
-    public enum ReportType {
-        UNKNOWN, LAUNCH, GCAM, PANORAMA_HORIZONTAL, PANORAMA_VERTICAL, PHOTOSPHERE,
-        LENS_BLUR, WIDE_ANGLE, FISHEYE, CALIBRATION;
-    }
-
     public static interface MemoryListener {
         /**
          * Called when the app is experiencing a change in memory state. Modules
@@ -82,23 +72,5 @@ public interface MemoryManager {
      * @return HashMap containing memory metrics keyed by string labels
      *     defined in {@link MemoryQuery}.
      */
-    public MemoryMeasurement queryMemory();
-
-    /**
-     * Starts recording an analysis window of memory consumption.
-     *
-     * @param key Unique identifier of the analysis window to be recorded.
-     * @param type Type of capture being analyzed.
-     */
-    public void startAnalysisWindow(String key, ReportType type);
-
-    /**
-     * Reports the collected metrics of a specified analysis window of
-     * memory consumption.
-     *
-     * @param key Unique identifier of the analysis window to be reported.
-     * @param terminate True if recording of the specified analysis window
-     *                  should be terminated.
-     */
-    public WindowStats reportAnalysisWindow(String key, boolean terminate);
+    public HashMap queryMemory();
 }
