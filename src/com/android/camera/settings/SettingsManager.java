@@ -34,6 +34,7 @@ import com.android.camera2.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SettingsManager class provides an api for getting and setting both global and
@@ -100,12 +101,25 @@ public class SettingsManager {
         mDefaultSettings = PreferenceManager.getDefaultSharedPreferences(context);
         initGlobal();
 
+        // print default and global preferences
+        printAllPreferences(mDefaultSettings);
+        printAllPreferences(mGlobalSettings);
+
         // Check for a strict version upgrade.
         int version = getInt(SETTING_STRICT_UPGRADE_VERSION);
         if (STRICT_UPGRADE_VERSION != version) {
             upgrade(version);
         }
         setInt(SETTING_STRICT_UPGRADE_VERSION, STRICT_UPGRADE_VERSION);
+    }
+
+    private void printAllPreferences(SharedPreferences prefs) {
+        Map<String, ?> entries = prefs.getAll();
+        for (Map.Entry<String, ?> entry : entries.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue().toString();
+            Log.e(TAG, "key=" + key + " value=" + value);
+        }
     }
 
     /**
