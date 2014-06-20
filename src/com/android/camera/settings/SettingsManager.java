@@ -114,11 +114,16 @@ public class SettingsManager {
     }
 
     private void printAllPreferences(SharedPreferences prefs) {
+        if (!android.util.Log.isLoggable(com.android.camera.debug.Log.CAMERA_LOGTAG_PREFIX,
+                                         android.util.Log.VERBOSE)) {
+            return;
+        }
+
         Map<String, ?> entries = prefs.getAll();
         for (Map.Entry<String, ?> entry : entries.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue().toString();
-            Log.e(TAG, "key=" + key + " value=" + value);
+            Log.v(TAG, "key=" + key + " value=" + value);
         }
     }
 
