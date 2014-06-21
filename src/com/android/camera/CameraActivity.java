@@ -77,9 +77,7 @@ import com.android.camera.app.CameraServices;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.app.MemoryManager;
-import com.android.camera.app.MemoryManager.ReportType;
 import com.android.camera.app.MemoryQuery;
-import com.android.camera.app.MemoryQuery.MemoryMeasurement;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.MotionManager;
 import com.android.camera.app.OrientationManager;
@@ -1417,9 +1415,9 @@ public class CameraActivity extends Activity
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
-                MemoryMeasurement memoryData = mMemoryManager.queryMemory();
+                HashMap memoryData = mMemoryManager.queryMemory();
                 UsageStatistics.instance().reportMemoryConsumed(memoryData,
-                    ReportType.LAUNCH);
+                        MemoryQuery.REPORT_LABEL_LAUNCH);
             }
         });
         mMotionManager = getServices().getMotionManager();

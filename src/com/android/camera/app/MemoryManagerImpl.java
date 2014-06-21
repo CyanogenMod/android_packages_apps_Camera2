@@ -22,9 +22,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import com.android.camera.app.MediaSaver.QueueListener;
-import com.android.camera.app.MemoryManager.ReportType;
-import com.android.camera.app.MemoryQuery.MemoryMeasurement;
-import com.android.camera.app.MemoryQuery.WindowStats;
 import com.android.camera.debug.Log;
 import com.android.camera.util.GservicesHelper;
 
@@ -132,7 +129,6 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
                 return;
             }
         }
-        mMemoryQuery.appendWarning(level);
     }
 
     @Override
@@ -146,18 +142,8 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     }
 
     @Override
-    public MemoryMeasurement queryMemory() {
+    public HashMap queryMemory() {
         return mMemoryQuery.queryMemory();
-    }
-
-    @Override
-    public void startAnalysisWindow(String key, ReportType type) {
-        mMemoryQuery.startAnalysisWindow(key, type);
-    }
-
-    @Override
-    public WindowStats reportAnalysisWindow(String key, boolean terminate) {
-        return mMemoryQuery.reportAnalysisWindow(key, terminate);
     }
 
     /** Helper to determine max allowed native memory allocation (in megabytes). */
