@@ -94,7 +94,7 @@
   <string name="pref_camera_coloreffect_entry_vintage_cold">Берба хладно</string>
   <string name="pref_camera_coloreffect_entry_point_blue">Тачка плаве</string>
   <string name="pref_camera_coloreffect_entry_point_green">Тачка зелене</string>
-  <string name="pref_camera_coloreffect_entry_point_red_yellow">Тачка црвено-жута</string>
+  <string name="pref_camera_coloreffect_entry_point_red_yellow">Тачка црвено-жутe</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Цртаћ</string>
   <string name="pref_camera_burst_title">Непрекидно сликање</string>
   <string name="pref_camera_burst_entry_off">Искључено</string>
@@ -122,7 +122,7 @@
   <string name="pref_camera_slow_shutter_entry_4s">4 секунде</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 секунди</string>
   <string name="pref_camera_storage_title">Складиште</string>
-  <string name="camera_menu_enhance_label">ПОВЕЋАВАЊЕ</string>
+  <string name="camera_menu_enhance_label">ПОБОЉШАЊЕ</string>
   <string name="camera_menu_slow_shutter_label">СПОРИ ОКИДАЧ</string>
   <string name="camera_menu_beauty_mode_label">УЛЕПШАВАЊЕ</string>
   <string name="camera_menu_colorize_label">ОБОЈЕНОСТ</string>
