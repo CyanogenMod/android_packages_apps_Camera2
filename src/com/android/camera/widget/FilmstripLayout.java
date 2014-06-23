@@ -202,6 +202,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             return;
         }
         mListener.onFilmstripShown();
+        mFilmstripView.zoomAtIndexChanged();
         FilmstripController controller = mFilmstripView.getController();
         int currentId = controller.getCurrentId();
         if (controller.inFilmstrip()) {

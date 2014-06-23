@@ -693,6 +693,14 @@ public class FilmstripView extends ViewGroup {
     }
 
     /**
+     * Called after current item or zoom level has changed.
+     */
+    public void zoomAtIndexChanged() {
+        int id = mViewItem[mCurrentItem].getId();
+        mListener.onZoomAtIndexChanged(id, mScale);
+    }
+
+    /**
      * Checks if the data is at the center.
      *
      * @param id The id of the data to check.
@@ -839,7 +847,6 @@ public class FilmstripView extends ViewGroup {
         if (nearest == -1 || nearest == mCurrentItem) {
             return;
         }
-
         int prevDataId = (mViewItem[mCurrentItem] == null ? -1 : mViewItem[mCurrentItem].getId());
         final int adjust = nearest - mCurrentItem;
         if (adjust > 0) {
@@ -878,6 +885,7 @@ public class FilmstripView extends ViewGroup {
             final int totalItemCount = mDataAdapter.getTotalNumber();
             mListener.onScroll(firstVisible, visibleItemCount, totalItemCount);
         }
+        zoomAtIndexChanged();
     }
 
     /**
@@ -1889,6 +1897,7 @@ public class FilmstripView extends ViewGroup {
                             onEnterFilmstrip();
                         }
                     }
+                    zoomAtIndexChanged();
                 }
 
                 @Override
@@ -2013,6 +2022,7 @@ public class FilmstripView extends ViewGroup {
                         onEnterZoomView();
                     }
                     mZoomAnimator = null;
+                    zoomAtIndexChanged();
                 }
 
                 @Override
@@ -2884,6 +2894,7 @@ public class FilmstripView extends ViewGroup {
 
         @Override
         public void onScaleEnd() {
+            zoomAtIndexChanged();
             if (mScale > FULL_SCREEN_SCALE + TOLERANCE) {
                 return;
             }

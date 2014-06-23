@@ -52,6 +52,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.CameraPerformanceTracker;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -146,6 +147,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends Activity
         implements AppController, CameraManager.CameraOpenCallback,
@@ -676,6 +678,22 @@ public class CameraActivity extends Activity
                         CameraActivity.this.setFilmstripUiVisibility(false);
                     }
                 }
+
+                @Override
+                public void onZoomAtIndexChanged(int dataId, float zoom) {
+                    final LocalData localData = mDataAdapter.getLocalData(dataId);
+                    long ageMillis = System.currentTimeMillis() - localData.getDateModified() * 1000;
+
+                    // Do not log if items is to old or does not have a path (which is
+                    // being used as a key).
+                    if (TextUtils.isEmpty(localData.getPath()) ||
+                            ageMillis > UsageStatistics.VIEW_TIMEOUT_MILLIS) {
+                        return;
+                    }
+                    File localFile = new File(localData.getPath());
+                    UsageStatistics.instance().mediaView(localFile.getName(),
+                            TimeUnit.SECONDS.toMillis(localData.getDateModified()), zoom);
+               }
 
                 @Override
                 public void onDataFocusChanged(final int prevDataId, final int newDataId) {
