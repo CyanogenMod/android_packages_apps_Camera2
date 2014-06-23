@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
@@ -29,6 +28,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.Callback;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
 

@@ -29,7 +29,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Parameters;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
@@ -79,6 +78,7 @@ import com.google.common.logging.eventprotos;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -212,7 +212,6 @@ public class VideoModule extends CameraModule
             };
     private FocusOverlayManager mFocusManager;
     private boolean mMirror;
-    private Parameters mInitialSettings;
     private boolean mFocusAreaSupported;
     private boolean mMeteringAreaSupported;
 
@@ -471,10 +470,18 @@ public class VideoModule extends CameraModule
             mFocusManager.removeMessages();
         } else {
             mMirror = isCameraFrontFacing();
-            String[] defaultFocusModes = mActivity.getResources().getStringArray(
+            String[] defaultFocusModesStrings = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
+            CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
+            ArrayList<CameraCapabilities.FocusMode> defaultFocusModes = new ArrayList<>();
+            for (String modeString : defaultFocusModesStrings) {
+                CameraCapabilities.FocusMode mode = stringifier.focusModeFromString(modeString);
+                if (mode != null) {
+                    defaultFocusModes.add(mode);
+                }
+            }
             mFocusManager = new FocusOverlayManager(mAppController,
-                    defaultFocusModes, mInitialSettings, this, mMirror,
+                    defaultFocusModes, mCameraCapabilities, this, mMirror,
                     mActivity.getMainLooper(), mUI.getFocusUI());
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
@@ -549,7 +556,8 @@ public class VideoModule extends CameraModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return (mCameraSettings != null ? new HardwareSpecImpl(mCameraCapabilities) : null);
+        return (mCameraSettings != null ?
+                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities) : null);
     }
 
     @Override
@@ -578,17 +586,18 @@ public class VideoModule extends CameraModule
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
         mCameraDevice = cameraProxy;
-        mInitialSettings = mCameraDevice.getParameters();
         mCameraCapabilities = mCameraDevice.getCapabilities();
-        mFocusAreaSupported = CameraUtil.isFocusAreaSupported(mInitialSettings);
-        mMeteringAreaSupported = CameraUtil.isMeteringAreaSupported(mInitialSettings);
+        mCameraSettings = mCameraDevice.getSettings();
+        mFocusAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
+        mMeteringAreaSupported =
+                mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
         readVideoPreferences();
         resizeForPreviewAspectRatio();
         initializeFocusManager();
         // TODO: Having focus overlay manager caching the parameters is prone to error,
         // we should consider passing the parameters to focus overlay to ensure the
         // parameters are up to date.
-        mFocusManager.setParameters(mInitialSettings, mCameraCapabilities);
+        mFocusManager.updateCapabilities(mCameraCapabilities);
 
         startPreview();
         initializeVideoSnapshot();
@@ -685,7 +694,7 @@ public class VideoModule extends CameraModule
             startVideoRecording();
         }
         mAppController.setShutterEnabled(false);
-        mFocusManager.onShutterUp();
+        mFocusManager.onShutterUp(mCameraSettings.getCurrentFocusMode());
 
         // Keep the shutter button disabled when in video capture intent
         // mode and recording is stopped. It'll be re-enabled when
@@ -777,11 +786,13 @@ public class VideoModule extends CameraModule
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     /**
      * Calculates the preview size and stores it in mDesiredPreviewWidth and
-     * mDesiredPreviewHeight. This function checks {@link
-     * android.hardware.Camera.Parameters#getPreferredPreviewSizeForVideo()}
+     * mDesiredPreviewHeight.
+     *
+     * <p>This function checks {@link
+     * com.android.camera.cameradevice.CameraCapabilities#getPreferredPreviewSizeForVideo()}
      * but also considers the current preview area size on screen and make sure
      * the final preview size will not be smaller than 1/2 of the current
-     * on screen preview area in terms of their short sides.
+     * on screen preview area in terms of their short sides.</p>
      *
      * @return The preferred preview size or {@code null} if the camera is not
      *         opened yet.
@@ -885,9 +896,9 @@ public class VideoModule extends CameraModule
         // Set zoom parameters asynchronously
         mCameraSettings.setZoomIndex(mZoomValue);
         mCameraDevice.applySettings(mCameraSettings);
-        Parameters p = mCameraDevice.getParameters();
-        if (p != null) {
-            return p.getZoom();
+        CameraSettings settings = mCameraDevice.getSettings();
+        if (settings != null) {
+            return settings.getCurrentZoomIndex();
         }
         return index;
     }
@@ -913,8 +924,9 @@ public class VideoModule extends CameraModule
         if (mFocusManager != null) {
             // If the focus mode is continuous autofocus, call cancelAutoFocus
             // to resume it because it may have been paused by autoFocus call.
-            String focusMode = mFocusManager.getFocusMode();
-            if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(focusMode)) {
+            CameraCapabilities.FocusMode focusMode =
+                    mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode());
+            if (focusMode == CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
                 mCameraDevice.cancelAutoFocus();
             }
         }
@@ -1129,8 +1141,8 @@ public class VideoModule extends CameraModule
             // on the size restriction.
         }
 
-        // See android.hardware.Camera.Parameters.setRotation for
-        // documentation.
+        // See com.android.camera.cameradevice.CameraSettings.setPhotoRotationDegrees
+        // for documentation.
         // Note that mOrientation here is the device orientation, which is the opposite of
         // what activity.getWindowManager().getDefaultDisplay().getRotation() would return,
         // which is the orientation the graphics need to rotate in order to render correctly.
@@ -1581,8 +1593,7 @@ public class VideoModule extends CameraModule
         int[] fpsRange =
                 CameraUtil.getMaxPreviewFpsRange(mCameraCapabilities.getSupportedPreviewFpsRange());
         if (fpsRange.length > 0) {
-            mCameraSettings.setPreviewFpsRange(fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
-                    fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
+            mCameraSettings.setPreviewFpsRange(fpsRange[0], fpsRange[1]);
         } else {
             mCameraSettings.setPreviewFrameRate(mProfile.videoFrameRate);
         }
@@ -1595,7 +1606,7 @@ public class VideoModule extends CameraModule
         }
         updateFocusParameters();
 
-        mCameraSettings.setSetting(CameraUtil.RECORDING_HINT, CameraUtil.TRUE);
+        mCameraSettings.setRecordingHintEnabled(true);
 
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_STABILIZATION)) {
             mCameraSettings.setVideoStabilization(true);
@@ -1638,15 +1649,15 @@ public class VideoModule extends CameraModule
         if (mMediaRecorderRecording) {
             if (mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_VIDEO)) {
                 mCameraSettings.setFocusMode(CameraCapabilities.FocusMode.CONTINUOUS_VIDEO);
-                mFocusManager.overrideFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                mFocusManager.overrideFocusMode(CameraCapabilities.FocusMode.CONTINUOUS_VIDEO);
             } else {
                 mFocusManager.overrideFocusMode(null);
             }
         } else {
             mFocusManager.overrideFocusMode(null);
             if (mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_PICTURE)) {
-                mCameraSettings.setFocusMode(mCameraCapabilities.getStringifier()
-                        .focusModeFromString(mFocusManager.getFocusMode()));
+                mCameraSettings.setFocusMode(
+                        mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()));
                 if (mFocusAreaSupported) {
                     mCameraSettings.setFocusAreas(mFocusManager.getFocusAreas());
                 }

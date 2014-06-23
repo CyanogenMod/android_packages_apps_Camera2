@@ -28,7 +28,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
-import com.android.camera.CurrentModuleProvider;
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
@@ -37,7 +36,7 @@ import com.android.camera.ui.PreviewStatusListener;
 /**
  * The controller at app level.
  */
-public interface AppController extends CurrentModuleProvider {
+public interface AppController {
 
     /**
      * An interface which defines the shutter events listener.
@@ -110,6 +109,11 @@ public interface AppController extends CurrentModuleProvider {
      * Returns the current module controller.
      */
     public ModuleController getCurrentModuleController();
+
+    /**
+     * Returns the currently active module index.
+     */
+    public int getCurrentModuleIndex();
 
     /**
      * Gets the mode that can be switched to from the given mode id through

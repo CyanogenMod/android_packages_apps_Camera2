@@ -34,7 +34,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Parameters;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -67,7 +66,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 /**
  * Collection of utility functions used in this package.
@@ -102,48 +100,12 @@ public class CameraUtil {
     public static final String ACTION_CAMERA_SHUTTER_CLICK =
             "com.android.camera.action.SHUTTER_CLICK";
 
-    // Fields from android.hardware.Camera.Parameters
-    public static final String FOCUS_MODE_CONTINUOUS_PICTURE = "continuous-picture";
-    public static final String RECORDING_HINT = "recording-hint";
-    private static final String AUTO_EXPOSURE_LOCK_SUPPORTED = "auto-exposure-lock-supported";
-    private static final String AUTO_WHITE_BALANCE_LOCK_SUPPORTED = "auto-whitebalance-lock-supported";
-    public static final String SCENE_MODE_HDR = "hdr";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
-
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
 
     /** Has to be in sync with the receiving MovieActivity. */
     public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
-
-    public static boolean isSupported(String value, List<String> supported) {
-        return supported == null ? false : supported.indexOf(value) >= 0;
-    }
-
-    public static boolean isAutoExposureLockSupported(Parameters params) {
-        return TRUE.equals(params.get(AUTO_EXPOSURE_LOCK_SUPPORTED));
-    }
-
-    public static boolean isAutoWhiteBalanceLockSupported(Parameters params) {
-        return TRUE.equals(params.get(AUTO_WHITE_BALANCE_LOCK_SUPPORTED));
-    }
-
-    public static boolean isCameraHdrSupported(Parameters params) {
-        List<String> supported = params.getSupportedSceneModes();
-        return (supported != null) && supported.contains(SCENE_MODE_HDR);
-    }
-
-    public static boolean isMeteringAreaSupported(Parameters params) {
-        return params.getMaxNumMeteringAreas() > 0;
-    }
-
-    public static boolean isFocusAreaSupported(Parameters params) {
-        return (params.getMaxNumFocusAreas() > 0
-                && isSupported(Parameters.FOCUS_MODE_AUTO,
-                        params.getSupportedFocusModes()));
-    }
 
     // Private intent extras. Test only.
     private static final String EXTRAS_CAMERA_FACING =
@@ -313,15 +275,6 @@ public class CameraUtil {
     public static void Assert(boolean cond) {
         if (!cond) {
             throw new AssertionError();
-        }
-    }
-
-    private static void throwIfCameraDisabled(Activity activity) throws CameraDisabledException {
-        // Check if device policy has disabled the camera.
-        DevicePolicyManager dpm = (DevicePolicyManager) activity.getSystemService(
-                Context.DEVICE_POLICY_SERVICE);
-        if (dpm.getCameraDisabled(null)) {
-            throw new CameraDisabledException();
         }
     }
 
@@ -564,15 +517,6 @@ public class CameraUtil {
         return optimalSize;
     }
 
-    public static void dumpParameters(Parameters parameters) {
-        String flattened = parameters.flatten();
-        StringTokenizer tokenizer = new StringTokenizer(flattened, ";");
-        Log.d(TAG, "Dump all camera parameters:");
-        while (tokenizer.hasMoreElements()) {
-            Log.d(TAG, tokenizer.nextToken());
-        }
-    }
-
     /**
      * Returns whether the device is voice-capable (meaning, it can do MMS).
      */
@@ -744,27 +688,6 @@ public class CameraUtil {
         view.startAnimation(animation);
     }
 
-    public static void fadeIn(View view) {
-        fadeIn(view, 0F, 1F, 400);
-
-        // We disabled the button in fadeOut(), so enable it here.
-        view.setEnabled(true);
-    }
-
-    public static void fadeOut(View view) {
-        if (view.getVisibility() != View.VISIBLE) {
-            return;
-        }
-
-        // Since the button is still clickable before fade-out animation
-        // ends, we disable the button first to block click.
-        view.setEnabled(false);
-        Animation animation = new AlphaAnimation(1F, 0F);
-        animation.setDuration(400);
-        view.startAnimation(animation);
-        view.setVisibility(View.GONE);
-    }
-
     public static int getJpegRotation(CameraInfo info, int orientation) {
       // See android.hardware.Camera.Parameters.setRotation for
       // documentation.
@@ -849,8 +772,8 @@ public class CameraUtil {
         // Find the lowest min rate in supported ranges who can cover 30fps.
         int lowestMinRate = MAX_PREVIEW_FPS_TIMES_1000;
         for (int[] rate : frameRates) {
-            int minFps = rate[Parameters.PREVIEW_FPS_MIN_INDEX];
-            int maxFps = rate[Parameters.PREVIEW_FPS_MAX_INDEX];
+            int minFps = rate[0];
+            int maxFps = rate[1];
             if (maxFps >= PREFERRED_PREVIEW_FPS_TIMES_1000 &&
                     minFps <= PREFERRED_PREVIEW_FPS_TIMES_1000 &&
                     minFps < lowestMinRate) {
@@ -864,8 +787,8 @@ public class CameraUtil {
         int highestMaxRate = 0;
         for (int i = 0; i < frameRates.size(); i++) {
             int[] rate = frameRates.get(i);
-            int minFps = rate[Parameters.PREVIEW_FPS_MIN_INDEX];
-            int maxFps = rate[Parameters.PREVIEW_FPS_MAX_INDEX];
+            int minFps = rate[0];
+            int maxFps = rate[1];
             if (minFps == lowestMinRate && highestMaxRate < maxFps) {
                 highestMaxRate = maxFps;
                 resultIndex = i;

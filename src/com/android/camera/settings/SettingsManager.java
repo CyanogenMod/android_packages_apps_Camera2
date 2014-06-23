@@ -146,7 +146,7 @@ public class SettingsManager {
     }
 
     /**
-     * Interface with Camera Parameters and Modules.
+     * Interface with Camera Device Settings and Modules.
      */
     public interface OnSettingChangedListener {
         /**
