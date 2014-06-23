@@ -227,12 +227,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Picha imepigwa"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Video imerekodiwa"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Fungua Kamera"</string>
-    <string name="media_date_content_description" msgid="2155634843596817141">"Maudhui yalipigwa picha tarehe %s"</string>
-    <string name="photo_date_content_description" msgid="5705865897898465619">"Picha ilipigwa tarehe%s"</string>
-    <string name="video_date_content_description" msgid="2151884014634284456">"Video ilirekodiwa tarehe %s"</string>
-    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorama ilipigwa picha tarehe %s"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Picha Duara ilipigwa tarehe %s"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"Kuangazia shabaha ilipigwa tarehe %s"</string>
+    <string name="media_date_content_description" msgid="2155634843596817141">"Maudhui yalipigwa picha mnamo %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Picha ilipigwa mnamo %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Video ilirekodiwa mnamo %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panorama ilipigwa picha mnamo %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Picha Duara ilipigwa mnamo %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Kuangazia shabaha kulifanyika mnamo %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Uchakataji wa maudhui"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Geuza orodha ya hali"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Orodha ya Hali"</string>
@@ -389,4 +389,6 @@
     <string name="confirm_button_text" msgid="7389949384482206814">"SAWA, NIMEELEWA"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Kihisi kamili \n(4:03)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Kihisi kilichopunguzwa \n(16:09)"</string>
+    <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
+    <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
