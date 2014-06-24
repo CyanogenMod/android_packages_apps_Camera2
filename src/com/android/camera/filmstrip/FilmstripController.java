@@ -250,6 +250,14 @@ public interface FilmstripController {
         public void onEnterZoomView(int dataID);
 
         /**
+         * Called when current item or zoom level has changed.
+         *
+         * @param dataId The ID of the current focused image data.
+         * @param zoom Zoom level.
+         */
+        public void onZoomAtIndexChanged(int dataId, float zoom);
+
+        /**
          * The callback when the data focus changed.
          *
          * @param prevDataId The ID of the previously focused data or {@code -1} if
@@ -261,7 +269,8 @@ public interface FilmstripController {
         /**
          * The callback when we scroll.
          *
-         * @param firstVisiblePosition The position of the first rendered item (may be slightly offscreen depending on
+         * @param firstVisiblePosition The position of the first rendered item
+         *                             (may be slightly offscreen depending on
          *                             the orientation of the device).
          * @param visibleItemCount The total number of rendered items.
          * @param totalItemCount The total number of items in the filmstrip.

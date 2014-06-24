@@ -23,6 +23,8 @@ import com.android.camera.exif.ExifInterface;
 import java.util.HashMap;
 
 public class UsageStatistics {
+    public static final long VIEW_TIMEOUT_MILLIS = 0;
+
     private static UsageStatistics sInstance;
 
     public static UsageStatistics instance() {
@@ -36,6 +38,9 @@ public class UsageStatistics {
     }
 
     public void mediaInteraction(String ref, int interactionType, int cause, float age) {
+    }
+
+    public void mediaView(String ref, long modifiedMillis, float zoom) {
     }
 
     public void foregrounded(int source, int mode) {

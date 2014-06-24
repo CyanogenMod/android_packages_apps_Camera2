@@ -29,6 +29,7 @@ import com.android.camera.Storage;
 import com.android.camera2.R;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is used to represent a local data item that is in progress and not
@@ -37,6 +38,7 @@ import java.util.Date;
 public class LocalSessionData implements LocalData {
 
     private Uri mUri;
+    // Units are GMT epoch milliseconds.
     private long mDateTaken;
     protected final Bundle mMetaData;
     private int mWidth;
@@ -93,7 +95,9 @@ public class LocalSessionData implements LocalData {
 
     @Override
     public long getDateModified() {
-        return mDateTaken;
+        // Convert to seconds because LocalData interface specifies that this
+        // method should return seconds and mDateTaken is in milliseconds.
+        return TimeUnit.MILLISECONDS.toSeconds(mDateTaken);
     }
 
     @Override
