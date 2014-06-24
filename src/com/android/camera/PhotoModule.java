@@ -743,8 +743,12 @@ public class PhotoModule
 
     @Override
     public void hardResetSettings(SettingsManager settingsManager) {
-        // PhotoModule should hard reset HDR+ to off.
+        // PhotoModule should hard reset HDR+ to off,
+        // and HDR to off if HDR+ is supported.
         settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, false);
+        if (GcamHelper.hasGcamCapture()) {
+            settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR, false);
+        }
     }
 
     @Override
