@@ -34,6 +34,7 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.UsageStatistics;
 import com.android.ex.camera2.portability.CameraCapabilities;
 
 import java.util.ArrayList;
