@@ -27,6 +27,8 @@ import com.android.camera.debug.Log;
 import com.android.camera.module.ModuleController;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraAgentFactory;
+import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.Size;
 
 import java.util.List;
@@ -36,6 +38,7 @@ import java.util.Map;
  * Defines the AOSP upgrade path.
  */
 public class UpgradeAosp {
+    private static final Log.Tag TAG = new Log.Tag("UpgradeAosp");
 
     private static final String OLD_CAMERA_PREFERENCES_PREFIX = "_preferences_";
     private static final String OLD_MODULE_PREFERENCES_PREFIX = "_preferences_module_";
@@ -83,10 +86,12 @@ public class UpgradeAosp {
                 }
 
                 if (version < CAMERA_SIZE_SETTING_UPGRADE_VERSION) {
-                    upgradeCameraSizeSetting(settingsManager, app.getAndroidContext(),
-                                             Camera.CameraInfo.CAMERA_FACING_FRONT);
-                    upgradeCameraSizeSetting(settingsManager, app.getAndroidContext(),
-                                             Camera.CameraInfo.CAMERA_FACING_BACK);
+                    CameraDeviceInfo infos =
+                            CameraAgentFactory.getAndroidCameraAgent().getCameraDeviceInfo();
+                    upgradeCameraSizeSetting(settingsManager, app.getAndroidContext(), infos,
+                                             SettingsUtil.CAMERA_FACING_FRONT);
+                    upgradeCameraSizeSetting(settingsManager, app.getAndroidContext(), infos,
+                                             SettingsUtil.CAMERA_FACING_BACK);
                 }
 
                 if (version < CAMERA_SETTINGS_FILES_RENAMED_VERSION) {
@@ -127,16 +132,20 @@ public class UpgradeAosp {
      * sizes.
      */
     private static void upgradeCameraSizeSetting(SettingsManager settingsManager,
-                                                Context context, int facing) {
+                                                Context context, CameraDeviceInfo infos,
+                                                SettingsUtil.CameraDeviceSelector facing) {
         String key;
-        if (facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+        if (facing == SettingsUtil.CAMERA_FACING_FRONT) {
             key = Keys.KEY_PICTURE_SIZE_FRONT;
-        } else {
+        } else if (facing == SettingsUtil.CAMERA_FACING_BACK) {
             key = Keys.KEY_PICTURE_SIZE_BACK;
+        } else {
+            Log.w(TAG, "Ignoring attempt to upgrade size of unhandled camera facing direction");
+            return;
         }
 
         String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL, key);
-        int camera = SettingsUtil.getCameraId(facing);
+        int camera = SettingsUtil.getCameraId(infos, facing);
         if (camera != -1) {
             List<Size> supported = CameraPictureSizesCacher.getSizesForCamera(camera, context);
             if (supported != null) {

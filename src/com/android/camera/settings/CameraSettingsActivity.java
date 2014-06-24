@@ -47,6 +47,8 @@ import com.android.camera.util.CameraSettingsActivityHelper;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraAgentFactory;
+import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.Size;
 
 import java.text.DecimalFormat;
@@ -91,6 +93,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
         private FeedbackHelper mFeedbackHelper;
         private String[] mCamcorderProfileNames;
+        private CameraDeviceInfo mInfos;
 
         // Selected resolutions for the different cameras and sizes.
         private SelectedPictureSizes mOldPictureSizesBack;
@@ -108,6 +111,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             addPreferencesFromResource(R.xml.camera_preferences);
             CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
+            mInfos = CameraAgentFactory.getAndroidCameraAgent().getCameraDeviceInfo();
         }
 
         @Override
@@ -430,7 +434,7 @@ public class CameraSettingsActivity extends FragmentActivity {
          */
         private void loadSizes() {
             // Back camera.
-            int backCameraId = SettingsUtil.getCameraId(CameraInfo.CAMERA_FACING_BACK);
+            int backCameraId = SettingsUtil.getCameraId(mInfos, SettingsUtil.CAMERA_FACING_BACK);
             if (backCameraId >= 0) {
                 List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(backCameraId,
                         this.getActivity().getApplicationContext());
@@ -447,7 +451,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             }
 
             // Front camera.
-            int frontCameraId = SettingsUtil.getCameraId(CameraInfo.CAMERA_FACING_FRONT);
+            int frontCameraId = SettingsUtil.getCameraId(mInfos, SettingsUtil.CAMERA_FACING_FRONT);
             if (frontCameraId >= 0) {
                 List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(frontCameraId,
                         this.getActivity().getApplicationContext());

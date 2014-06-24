@@ -28,7 +28,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.Callback;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
-import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
 
@@ -461,22 +461,48 @@ public class SettingsUtil {
     }
 
     /**
-     * Gets the first camera facing the given direction.
+     * Gets the first (lowest-indexed) camera matching the given criterion.
      *
-     * @param facing Either {@link android.hardware.Camera.CameraInfo#CAMERA_FACING_BACK} or
-     *            {@link android.hardware.Camera.CameraInfo#CAMERA_FACING_FRONT}.
-     * @return The ID of the first camera matching the given direction, or
-     *         -1, if no camera with the given facing was found.
+     * @param facing Either {@link CAMERA_FACING_BACK}, {@link CAMERA_FACING_FRONT}, or some other
+     *               implementation of {@link CameraDeviceSelector}.
+     * @return The ID of the first camera matching the supplied criterion, or
+     *         -1, if no camera meeting the specification was found.
      */
-    public static int getCameraId(int facing) {
-        int numCameras = Camera.getNumberOfCameras();
+    public static int getCameraId(CameraDeviceInfo info, CameraDeviceSelector chooser) {
+        int numCameras = info.getNumberOfCameras();
         for (int i = 0; i < numCameras; ++i) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == facing) {
+            CameraDeviceInfo.Characteristics props = info.getCharacteristics(i);
+            if (props == null) {
+                // Skip this device entry
+                continue;
+            }
+            if (chooser.useCamera(props)) {
                 return i;
             }
         }
         return -1;
     }
+
+    public static interface CameraDeviceSelector {
+        /**
+         * Given the static characteristics of a specific camera device, decide whether it is the
+         * one we will use.
+         *
+         * @param info The static characteristics of a device.
+         * @return Whether we're electing to use this particular device.
+         */
+        public boolean useCamera(CameraDeviceInfo.Characteristics info);
+    }
+
+    public static final CameraDeviceSelector CAMERA_FACING_BACK = new CameraDeviceSelector() {
+        @Override
+        public boolean useCamera(CameraDeviceInfo.Characteristics info) {
+            return info.isFacingBack();
+        }};
+
+    public static final CameraDeviceSelector CAMERA_FACING_FRONT = new CameraDeviceSelector() {
+        @Override
+        public boolean useCamera(CameraDeviceInfo.Characteristics info) {
+            return info.isFacingFront();
+        }};
 }

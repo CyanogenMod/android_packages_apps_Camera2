@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera.CameraInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -83,6 +82,7 @@ import com.android.ex.camera2.portability.CameraAgent.CameraAFMoveCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 import com.android.ex.camera2.portability.CameraAgent.CameraShutterCallback;
+import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
 import com.google.common.logging.eventprotos;
@@ -1289,7 +1289,8 @@ public class PhotoModule
         } else {
             orientation = mOrientation;
         }
-        CameraInfo info = mActivity.getCameraProvider().getCameraInfo()[mCameraId];
+        Characteristics info =
+                mActivity.getCameraProvider().getCharacteristics(mCameraId);
         mJpegRotation = CameraUtil.getJpegRotation(info, orientation);
         mCameraSettings.setPhotoRotationDegrees(mJpegRotation);
         Location loc = mActivity.getLocationManager().getCurrentLocation();
@@ -1593,8 +1594,8 @@ public class PhotoModule
      * @return Whether the currently active camera is front-facing.
      */
     private boolean isCameraFrontFacing() {
-        CameraInfo info = mAppController.getCameraProvider().getCameraInfo()[mCameraId];
-        return info.facing == CameraInfo.CAMERA_FACING_FRONT;
+        return mAppController.getCameraProvider().getCharacteristics(mCameraId)
+                .isFacingFront();
     }
 
     /**
@@ -1844,7 +1845,9 @@ public class PhotoModule
 
     private void setDisplayOrientation() {
         mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
-        mDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, mCameraId);
+        Characteristics info =
+                mActivity.getCameraProvider().getCharacteristics(mCameraId);
+        mDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, info);
         mCameraDisplayOrientation = mDisplayOrientation;
         mUI.setDisplayOrientation(mDisplayOrientation);
         if (mFocusManager != null) {

@@ -33,7 +33,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -56,6 +55,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
+import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
 
@@ -386,25 +386,19 @@ public class CameraUtil {
         return naturalWidth < naturalHeight;
     }
 
-    public static int getDisplayOrientation(int degrees, int cameraId) {
+    public static int getDisplayOrientation(int degrees, Characteristics info) {
         // See android.hardware.Camera.setDisplayOrientation for
         // documentation.
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(cameraId, info);
-        int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
+        int result = 0;
+        if (info.isFacingFront()) {
+            result = (info.getSensorOrientation() + degrees) % 360;
             result = (360 - result) % 360;  // compensate the mirror
-        } else {  // back-facing
-            result = (info.orientation - degrees + 360) % 360;
+        } else if (info.isFacingBack()) {
+            result = (info.getSensorOrientation() - degrees + 360) % 360;
+        } else {
+            Log.e(TAG, "Camera is facing unhandled direction");
         }
         return result;
-    }
-
-    public static int getCameraOrientation(int cameraId) {
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(cameraId, info);
-        return info.orientation;
     }
 
     public static int roundOrientation(int orientation, int orientationHistory) {
@@ -688,18 +682,20 @@ public class CameraUtil {
         view.startAnimation(animation);
     }
 
-    public static int getJpegRotation(CameraInfo info, int orientation) {
-      // See android.hardware.Camera.Parameters.setRotation for
-      // documentation.
-      int rotation = 0;
-      if (orientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-          if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-              rotation = (info.orientation - orientation + 360) % 360;
-          } else {  // back-facing camera
-              rotation = (info.orientation + orientation) % 360;
-          }
-      }
-      return rotation;
+    public static int getJpegRotation(Characteristics info, int orientation) {
+        // See android.hardware.Camera.Parameters.setRotation for
+        // documentation.
+        int rotation = 0;
+        if (orientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
+            if (info.isFacingFront()) {
+                rotation = (info.getSensorOrientation() - orientation + 360) % 360;
+            } else if (info.isFacingBack()) {
+                rotation = (info.getSensorOrientation() + orientation) % 360;
+            } else {
+                Log.e(TAG, "Camera is facing unhandled direction");
+            }
+        }
+        return rotation;
   }
 
     /**

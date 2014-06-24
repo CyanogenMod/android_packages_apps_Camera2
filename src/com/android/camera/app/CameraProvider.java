@@ -20,6 +20,7 @@ import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
+import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 
 /**
  * An interface which defines the camera provider.
@@ -51,11 +52,12 @@ public interface CameraProvider {
             Handler handler);
 
     /**
-     * Get the {@link android.hardware.Camera.CameraInfo} of all the cameras.
+     * Get the {@link Characteristics} of the given camera.
      *
-     * @return An array of the {@link android.hardware.Camera.CameraInfo}.
+     * @param cameraId Which camera.
+     * @return The static characteristics of that camera.
      */
-    public Camera.CameraInfo[] getCameraInfo();
+    public Characteristics getCharacteristics(int cameraId);
 
     /**
      * @returns The current camera id.
