@@ -63,6 +63,7 @@ import com.android.camera.module.ModuleController;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
@@ -702,6 +703,11 @@ public class VideoModule extends CameraModule
         if (!(mIsVideoCaptureIntent && stop)) {
             mHandler.sendEmptyMessageDelayed(MSG_ENABLE_SHUTTER_BUTTON, SHUTTER_BUTTON_TIMEOUT);
         }
+    }
+
+    @Override
+    public void onShutterCoordinate(TouchCoordinate coord) {
+        // Do nothing.
     }
 
     @Override
@@ -1878,7 +1884,8 @@ public class VideoModule extends CameraModule
         Boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
         UsageStatistics.instance().photoCaptureDoneEvent(
                 eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
-                isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn, null);
+                isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn,
+                null, null, null);
 
         getServices().getMediaSaver().addImage(
                 data, title, dateTaken, loc, orientation,

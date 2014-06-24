@@ -59,6 +59,7 @@ import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
@@ -1359,6 +1360,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * keep all of that logic at this level.
          */
         mModeOptionsOverlay.setToggleClickable(false);
+    }
+
+    @Override
+    public void onShutterCoordinate(TouchCoordinate coord) {
+        // Do nothing.
     }
 
     @Override

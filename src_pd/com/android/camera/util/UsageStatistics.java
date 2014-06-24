@@ -18,7 +18,9 @@
 package com.android.camera.util;
 
 import android.content.Context;
+
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.ui.TouchCoordinate;
 
 import java.util.HashMap;
 
@@ -60,7 +62,8 @@ public class UsageStatistics {
     public void photoCaptureDoneEvent(int mode, String fileRef, ExifInterface exifRef,
                                       boolean front, boolean isHDR, float zoom,
                                       String flashSetting, boolean gridLinesOn,
-                                      Float timerSeconds) {
+                                      Float timerSeconds, TouchCoordinate touch,
+                                      Boolean volumeButtonShutter) {
     }
 
     public void cameraFailure(int cause, String info) {
@@ -70,6 +73,9 @@ public class UsageStatistics {
     }
 
     public void controlUsed(int control) {
+    }
+
+    public void tapToFocus(TouchCoordinate touch, Float duration) {
     }
 
     public void reportMemoryConsumed(HashMap memoryData, String reportType) {

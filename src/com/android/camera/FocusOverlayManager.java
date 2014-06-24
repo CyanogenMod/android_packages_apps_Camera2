@@ -32,6 +32,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.CameraUtil;
 import com.android.ex.camera2.portability.CameraCapabilities;
 
@@ -98,6 +99,10 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private final FocusUI mUI;
     private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
     private boolean mFocusLocked;
+
+    /** Manual tap to focus parameters */
+    private TouchCoordinate mTouchCoordinate;
+    private long mTouchTime;
 
     public  interface FocusUI {
         public boolean hasFaces();
@@ -360,6 +365,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
 
         // Use margin to set the focus indicator to the touched area.
         mUI.setFocusPosition(x, y, false);
+        // Log manual tap to focus.
+        mTouchCoordinate = new TouchCoordinate(x, y, mPreviewRect.width(), mPreviewRect.height());
+        mTouchTime = System.currentTimeMillis();
 
         // Stop face detection because we want to specify focus and metering area.
         mListener.stopFaceDetection();
@@ -533,6 +541,12 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         // Initialize mFocusArea.
         mFocusArea = null;
         mMeteringArea = null;
+
+        if (mTouchCoordinate != null) {
+            UsageStatistics.instance().tapToFocus(mTouchCoordinate,
+                    0.001f * (System.currentTimeMillis() - mTouchTime));
+            mTouchCoordinate = null;
+        }
     }
 
     private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
