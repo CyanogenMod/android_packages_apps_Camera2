@@ -69,7 +69,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
-
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
@@ -133,7 +132,9 @@ import com.android.camera.widget.FilmstripView;
 import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.resize.ImageManager;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.MemoryCategory;
+import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
 import com.google.common.logging.eventprotos.MediaInteraction;
@@ -146,7 +147,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends Activity
@@ -1229,13 +1229,11 @@ public class CameraActivity extends Activity
     @Override
     public void onCreate(Bundle state) {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
-
         super.onCreate(state);
-        final Glide glide = Glide.get();
-        if (!glide.isImageManagerSet()) {
-            // We load exclusively large images, so we want fewer threads to minimize jank.
-            glide.setImageManager(new ImageManager.Builder(getApplicationContext())
-                    .setResizeService(Executors.newSingleThreadExecutor()));
+        if (!Glide.isSetup()) {
+            Glide.setup(new GlideBuilder(this)
+                .setResizeService(new FifoPriorityThreadPoolExecutor(1)));
+            Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);
         }
 
         mOnCreateTime = System.currentTimeMillis();

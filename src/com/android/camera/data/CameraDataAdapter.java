@@ -140,7 +140,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         if (dataID >= mImages.size() || dataID < 0) {
             return;
         }
-        mImages.get(dataID).loadFullImage(context, w, h, view, this);
+        mImages.get(dataID).loadFullImage(context, mSuggestedWidth, mSuggestedHeight, view, this);
     }
 
     @Override

@@ -22,23 +22,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.presenter.target.ImageViewTarget;
-import com.bumptech.glide.presenter.target.Target;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -58,6 +54,8 @@ public abstract class LocalMediaData implements LocalData {
     static final int QUERY_ALL_MEDIA_ID = -1;
     private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
     private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
+    private static final int MEDIASTORE_THUMB_WIDTH = 512;
+    private static final int MEDIASTORE_THUMB_HEIGHT = 384;
 
     protected final long mContentId;
     protected final String mTitle;
@@ -198,19 +196,13 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     protected ImageView fillImageView(Context context, ImageView v,
-            int decodeWidth, int decodeHeight, int placeHolderResourceId,
+            int thumbWidth, int thumbHeight, int placeHolderResourceId,
             LocalDataAdapter adapter, boolean isInProgress) {
-        SizedImageViewTarget target = (SizedImageViewTarget) v.getTag(R.id.mediadata_tag_target);
-        if (target == null) {
-            target = new SizedImageViewTarget(v);
-            v.setTag(R.id.mediadata_tag_target, target);
-        }
-
         Glide.with(context)
-                .load(mPath)
-                .fitCenter()
-                .placeholder(placeHolderResourceId)
-                .into(target);
+            .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
+            .fitCenter()
+            .placeholder(placeHolderResourceId)
+            .into(v);
 
         v.setContentDescription(context.getResources().getString(
                 R.string.media_date_content_description,
@@ -220,7 +212,7 @@ public abstract class LocalMediaData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, View recycled, int decodeWidth, int decodeHeight,
+    public View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
             int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress) {
         final ImageView imageView;
         if (recycled != null) {
@@ -230,12 +222,12 @@ public abstract class LocalMediaData implements LocalData {
             imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 
-        return fillImageView(context, imageView, decodeWidth, decodeHeight,
+        return fillImageView(context, imageView, thumbWidth, thumbHeight,
                 placeHolderResourceId, adapter, isInProgress);
     }
 
     @Override
-    public void loadFullImage(Context context, int width, int height, View view,
+    public void loadFullImage(Context context, int thumbWidth, int thumbHeight, View view,
             LocalDataAdapter adapter) {
         // Default is do nothing.
         // Can be implemented by sub-classes.
@@ -506,10 +498,10 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        protected ImageView fillImageView(Context context, final ImageView v, final int decodeWidth,
-                final int decodeHeight, int placeHolderResourceId, LocalDataAdapter adapter,
+        protected ImageView fillImageView(Context context, final ImageView v, final int thumbWidth,
+                final int thumbHeight, int placeHolderResourceId, LocalDataAdapter adapter,
                 boolean isInProgress) {
-            loadImage(context, v, decodeWidth, decodeHeight, placeHolderResourceId, false);
+            loadImage(context, v, thumbWidth, thumbHeight, placeHolderResourceId, false);
 
             v.setContentDescription(context.getResources().getString(
                     R.string.media_date_content_description,
@@ -518,34 +510,37 @@ public abstract class LocalMediaData implements LocalData {
             return v;
         }
 
-        private void loadImage(Context context, ImageView imageView, int decodeWidth,
-                int decodeHeight, int placeHolderResourceId, boolean full) {
-            ThumbTarget thumbTarget = (ThumbTarget) imageView.getTag(R.id.mediadata_tag_target);
-            if (thumbTarget == null) {
-                thumbTarget = new ThumbTarget(imageView);
-                imageView.setTag(R.id.mediadata_tag_target, thumbTarget);
-            }
-            // Make sure we've reset all state related to showing thumb and full whenever
-            // we load a thumbnail because loading a thumbnail only happens when we're changing
-            // images.
-            if (!full) {
-                thumbTarget.clearTargets();
-            }
+        private void loadImage(Context context, ImageView imageView, int thumbWidth,
+                int thumbHeight, int placeHolderResourceId, boolean full) {
 
-            Glide.with(context)
-                    .using(new ImageModelLoader(context))
-                    .load(this)
-                    .placeholder(placeHolderResourceId)
-                    .fitCenter()
-                    .into(thumbTarget.getTarget(decodeWidth, decodeHeight, full));
+            DrawableRequestBuilder<Uri> request = Glide.with(context)
+                .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
+                .placeholder(placeHolderResourceId)
+                .fitCenter();
+            if (full) {
+                request.thumbnail(Glide.with(context)
+                        .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
+                            mOrientation)
+                        .override(thumbWidth, thumbHeight)
+                        .fitCenter())
+                    .override(Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE),
+                        Math.min(getHeight(), MAXIMUM_TEXTURE_SIZE));
+            } else {
+                request.thumbnail(Glide.with(context)
+                        .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
+                            mOrientation)
+                        .skipDiskCache(true)
+                        .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
+                    .override(thumbWidth, thumbHeight);
+            }
+            request.into(imageView);
         }
 
         @Override
         public void recycle(View view) {
             super.recycle(view);
             if (view != null) {
-                ThumbTarget thumbTarget = (ThumbTarget) view.getTag(R.id.mediadata_tag_target);
-                thumbTarget.clearTargets();
+                Glide.clear(view);
             }
         }
 
@@ -555,76 +550,16 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        public void loadFullImage(Context context, int w, int h, View v, LocalDataAdapter adapter)
+        public void loadFullImage(Context context, int thumbWidth, int thumbHeight, View v,
+            LocalDataAdapter adapter)
         {
-            loadImage(context, (ImageView) v, w, h, 0, true);
+            loadImage(context, (ImageView) v, thumbWidth, thumbHeight, 0, true);
         }
 
         private static class PhotoDataBuilder implements CursorToLocalData {
             @Override
             public PhotoData build(Cursor cursor) {
                 return LocalMediaData.PhotoData.buildFromCursor(cursor);
-            }
-        }
-
-        /**
-         * In the filmstrip we want to load a small version of an image and then load a
-         * larger version when we switch to full screen mode. This class manages
-         * that transition and loading process by keeping one target for the smaller thumbnail
-         * and a second target for the larger version.
-         */
-        private static class ThumbTarget {
-            private final SizedImageViewTarget mThumbTarget;
-            private final SizedImageViewTarget mFullTarget;
-            private boolean fullLoaded = false;
-
-            public ThumbTarget(ImageView imageView) {
-                mThumbTarget = new SizedImageViewTarget(imageView) {
-                    @Override
-                    public void onImageReady(Bitmap bitmap) {
-                        // If we manage to load the thumb after the full, we don't
-                        // want to replace the higher quality full with the thumb.
-                        if (!fullLoaded) {
-                            super.onImageReady(bitmap);
-                        }
-                    }
-                };
-
-                mFullTarget = new SizedImageViewTarget(imageView) {
-
-                    @Override
-                    public void onImageReady(Bitmap bitmap) {
-                        // When the full is loaded, we no longer need the thumb.
-                        fullLoaded = true;
-                        Glide.cancel(mThumbTarget);
-                        super.onImageReady(bitmap);
-                    }
-
-                    @Override
-                    public void setPlaceholder(Drawable placeholder) {
-                        // We always load the thumb first which will set the placeholder.
-                        // If we were to set the placeholder here too, instead of showing
-                        // the thumb while we load the full, we will instead revert back
-                        // to the placeholder.
-                    }
-                };
-            }
-
-            public Target getTarget(int width, int height, boolean full) {
-                final SizedImageViewTarget result = full ? mFullTarget : mThumbTarget;
-                // Limit the target size so we don't load a bitmap larger than the max size we
-                // can display.
-                width = Math.min(width, MAXIMUM_TEXTURE_SIZE);
-                height = Math.min(height, MAXIMUM_TEXTURE_SIZE);
-
-                result.setSize(width, height);
-                return result;
-            }
-
-            public void clearTargets() {
-                fullLoaded = false;
-                Glide.cancel(mThumbTarget);
-                Glide.cancel(mFullTarget);
             }
         }
     }
@@ -829,23 +764,19 @@ public abstract class LocalMediaData implements LocalData {
         }
 
         @Override
-        protected ImageView fillImageView(Context context, final ImageView v, final int decodeWidth,
-                final int decodeHeight, int placeHolderResourceId, LocalDataAdapter adapter,
+        protected ImageView fillImageView(Context context, final ImageView v, final int thumbWidth,
+                final int thumbHeight, int placeHolderResourceId, LocalDataAdapter adapter,
                 boolean isInProgress) {
-            SizedImageViewTarget target =
-                    (SizedImageViewTarget) v.getTag(R.id.mediadata_tag_target);
-            if (target == null) {
-                target = new SizedImageViewTarget(v);
-                v.setTag(R.id.mediadata_tag_target, target);
-            }
-            target.setSize(decodeWidth, decodeHeight);
-
             Glide.with(context)
-                    .using(new VideoModelLoader(context))
-                    .loadFromVideo(this)
-                    .placeholder(placeHolderResourceId)
-                    .fitCenter()
-                    .into(target);
+                .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
+                .thumbnail(Glide.with(context)
+                    .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
+                    .skipDiskCache(true)
+                    .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
+                .placeholder(placeHolderResourceId)
+                .fitCenter()
+                .override(thumbWidth, thumbHeight)
+                .into(v);
 
             v.setContentDescription(context.getResources().getString(
                     R.string.media_date_content_description,
@@ -856,7 +787,7 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public View getView(final Context context, View recycled,
-                int decodeWidth, int decodeHeight, int placeHolderResourceId,
+                int thumbWidth, int thumbHeight, int placeHolderResourceId,
                 LocalDataAdapter adapter, boolean isInProgress) {
 
             final VideoViewHolder viewHolder;
@@ -873,7 +804,7 @@ public abstract class LocalMediaData implements LocalData {
                 result.setTag(R.id.mediadata_tag_target, viewHolder);
             }
 
-            fillImageView(context, viewHolder.mVideoView, decodeWidth, decodeHeight,
+            fillImageView(context, viewHolder.mVideoView, thumbWidth, thumbHeight,
                     placeHolderResourceId, adapter, isInProgress);
 
             // ImageView for the play icon.
@@ -894,8 +825,7 @@ public abstract class LocalMediaData implements LocalData {
             super.recycle(view);
             VideoViewHolder videoViewHolder =
                     (VideoViewHolder) view.getTag(R.id.mediadata_tag_target);
-            Target target = (Target) videoViewHolder.mVideoView.getTag(R.id.mediadata_tag_target);
-            Glide.cancel(target);
+            Glide.clear(videoViewHolder.mVideoView);
         }
 
         @Override
@@ -919,32 +849,6 @@ public abstract class LocalMediaData implements LocalData {
         public VideoViewHolder(ImageView videoView, ImageView playButton) {
             mVideoView = videoView;
             mPlayButton = playButton;
-        }
-    }
-
-    /**
-     * Normally Glide will figure out the necessary size based on the view
-     * the image is being loaded into. In filmstrip the view isn't immediately
-     * laid out after being requested from the data, which can cause Glide to give
-     * up on obtaining the view dimensions. To avoid that, we manually set the
-     * dimensions.
-     */
-    private static class SizedImageViewTarget extends ImageViewTarget {
-        private int mWidth;
-        private int mHeight;
-
-        public SizedImageViewTarget(ImageView imageView) {
-            super(imageView);
-        }
-
-        public void setSize(int width, int height) {
-            mWidth = width;
-            mHeight = height;
-        }
-
-        @Override
-        public void getSize(final SizeReadyCallback cb) {
-            cb.onSizeReady(mWidth, mHeight);
         }
     }
 }
