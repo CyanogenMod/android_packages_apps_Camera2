@@ -231,7 +231,7 @@
     <!-- String.format failed for translation -->
     <!-- no translation found for panorama_date_content_description (990703578639006144) -->
     <skip />
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Photo Sphere criado em %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Photo Sphere criada em %s"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"Desfocagem da lente criada em %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Dados multimédia em processamento"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alternar lista de modos"</string>
@@ -389,4 +389,6 @@
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, JÁ PERCEBI"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Sensor completo \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Sensor recortado \n(16:9)"</string>
+    <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
+    <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>

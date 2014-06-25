@@ -225,18 +225,12 @@
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Bilde er tatt"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Video er tatt"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Lås opp og gå til Google Kamera"</string>
-    <!-- no translation found for media_date_content_description (2155634843596817141) -->
-    <skip />
-    <!-- no translation found for photo_date_content_description (5705865897898465619) -->
-    <skip />
-    <!-- no translation found for video_date_content_description (2151884014634284456) -->
-    <skip />
-    <!-- no translation found for panorama_date_content_description (990703578639006144) -->
-    <skip />
-    <!-- no translation found for photosphere_date_content_description (4183741743409007876) -->
-    <skip />
-    <!-- no translation found for refocus_date_content_description (5630960320424345547) -->
-    <skip />
+    <string name="media_date_content_description" msgid="2155634843596817141">"Innholdet ble spilt inn %s"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"Bildet ble tatt  %s"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"Videoen ble spilt inn %s"</string>
+    <string name="panorama_date_content_description" msgid="990703578639006144">"Panoramabildet ble tatt %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Bildeboblen ble tatt %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Soft-fokus-bildet ble tatt %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Media under behandling …"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Vis eller skjul modusliste"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Modusliste"</string>
@@ -393,4 +387,6 @@
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, SKJØNNER."</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Fullstendig sensor \n(04:03)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Beskåret sensor \n(16:09)"</string>
+    <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
+    <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
