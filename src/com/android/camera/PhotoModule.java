@@ -2324,7 +2324,12 @@ public class PhotoModule
 
     @Override
     public void onRemoteShutterPress() {
-        focusAndCapture();
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                focusAndCapture();
+            }
+        });
     }
 
     /**
