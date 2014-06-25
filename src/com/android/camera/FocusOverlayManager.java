@@ -27,9 +27,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.android.camera.app.MotionManager;
 import com.android.camera.cameradevice.CameraCapabilities;
 import com.android.camera.cameradevice.CameraCapabilitiesFactory;
-import com.android.camera.app.MotionManager;
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
@@ -163,7 +163,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         // before camera is open. We will just return in this case, because
         // parameters will be set again later with the right parameters after
         // camera is open.
-        if (parameters == null) return;
+        if (parameters == null) {
+            return;
+        }
         mParameters = parameters;
         mCapabilities = capabilities;
         mFocusAreaSupported = mCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
@@ -228,7 +230,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void onShutterUp() {
-        if (!mInitialized) return;
+        if (!mInitialized) {
+            return;
+        }
 
         if (needAutoFocusCall()) {
             // User releases half-pressed focus key.
@@ -244,7 +248,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void focusAndCapture() {
-        if (!mInitialized) return;
+        if (!mInitialized) {
+            return;
+        }
 
         if (!needAutoFocusCall()) {
             // Focus is not needed.
@@ -299,7 +305,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void onAutoFocusMoving(boolean moving) {
-        if (!mInitialized) return;
+        if (!mInitialized) {
+            return;
+        }
 
 
         // Ignore if the camera has detected some faces.
@@ -310,7 +318,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
 
         // Ignore if we have requested autofocus. This method only handles
         // continuous autofocus.
-        if (mState != STATE_IDLE) return;
+        if (mState != STATE_IDLE) {
+            return;
+        }
 
         // animate on false->true trasition only b/8219520
         if (moving && !mPreviousMoving) {
@@ -348,14 +358,18 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void onSingleTapUp(int x, int y) {
-        if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) return;
+        if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) {
+            return;
+        }
 
         // Let users be able to cancel previous touch focus.
         if ((mFocusArea != null) && (mState == STATE_FOCUSING ||
                     mState == STATE_SUCCESS || mState == STATE_FAIL)) {
             cancelAutoFocus();
         }
-        if (mPreviewRect.width() == 0 || mPreviewRect.height() == 0) return;
+        if (mPreviewRect.width() == 0 || mPreviewRect.height() == 0) {
+            return;
+        }
         // Initialize variables.
         // Initialize mFocusArea.
         if (mFocusAreaSupported) {
@@ -463,8 +477,12 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public String getFocusMode() {
-        if (mOverrideFocusMode != null) return mOverrideFocusMode;
-        if (mParameters == null) return Parameters.FOCUS_MODE_AUTO;
+        if (mOverrideFocusMode != null) {
+            return mOverrideFocusMode;
+        }
+        if (mParameters == null) {
+            return Parameters.FOCUS_MODE_AUTO;
+        }
         List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
 
         if (mFocusAreaSupported && mFocusArea != null) {
@@ -506,9 +524,10 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void updateFocusUI() {
-        if (!mInitialized) return;
-        // Show only focus indicator or face indicator.
-
+        if (!mInitialized) {
+            // Show only focus indicator or face indicator.
+            return;
+        }
         if (mState == STATE_IDLE) {
             if (mFocusArea == null) {
                 mUI.clearFocus();
@@ -533,7 +552,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void resetTouchFocus() {
-        if (!mInitialized) return;
+        if (!mInitialized) {
+            return;
+        }
 
         // Put focus indicator to the center. clear reset position
         mUI.clearFocus();
