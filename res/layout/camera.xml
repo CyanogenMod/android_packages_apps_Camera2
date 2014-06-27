@@ -60,7 +60,7 @@
         android:id="@+id/tutorials_placeholder_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#DEDEDE"
+        android:background="@color/fullscreen_dialog_background_color"
         android:visibility="gone"
         android:clickable="true" >
     </FrameLayout>
