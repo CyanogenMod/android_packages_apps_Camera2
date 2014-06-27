@@ -17,16 +17,14 @@
 package com.android.camera.data;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.android.camera.Storage;
 import com.android.camera2.R;
+import com.bumptech.glide.Glide;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +56,7 @@ public class LocalSessionData implements LocalData {
     }
 
     @Override
-    public View getView(Context context, View recycled, int width, int height,
+    public View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
             int placeholderResourcedId, LocalDataAdapter adapter, boolean isInProgress) {
         final ImageView imageView;
         if (recycled != null) {
@@ -69,9 +67,11 @@ public class LocalSessionData implements LocalData {
         }
 
         byte[] jpegData = Storage.getJpegForSession(mUri);
-        //TODO do this on a background thread
-        Bitmap bmp = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
-        imageView.setImageBitmap(bmp);
+        Glide.with(context)
+            .loadFromImage(jpegData, mUri.toString())
+            .fitCenter()
+            .into(imageView);
+
         imageView.setContentDescription(context.getResources().getString(
                 R.string.media_processing_content_description));
         return imageView;
@@ -213,7 +213,7 @@ public class LocalSessionData implements LocalData {
 
     @Override
     public void recycle(View view) {
-
+        Glide.clear(view);
     }
 
     @Override

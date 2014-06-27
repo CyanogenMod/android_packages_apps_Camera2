@@ -17,10 +17,8 @@
 package com.android.camera.data;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
-
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 
@@ -76,12 +74,12 @@ public interface LocalData extends ImageData {
      * Creates View to represent media.
      *
      * @param context The {@link android.content.Context} to create the view.
-     * @param width Width in pixels of rendered view.
-     * @param height Height in pixels of rendered view.
+     * @param thumbWidth Width in pixels of the suggested zoomed out view/image size.
+     * @param thumbHeight Height in pixels of the suggested zoomed out view/image size.
      * @param adapter Data adapter for this data item.
      */
-    View getView(Context context, View recycled, int width, int height, int placeHolderResourceId,
-            LocalDataAdapter adapter, boolean isInProgress);
+    View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
+        int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress);
 
     /** Returns a unique identifier for the view created by this data so that the view
      * can be reused.
@@ -94,12 +92,13 @@ public interface LocalData extends ImageData {
      * Request resize of View created by getView().
      *
      * @param context The {@link android.content.Context} to create the view.
-     * @param width Width in pixels of rendered view.
-     * @param height Height in pixels of rendered view.
+     * @param thumbWidth Width in pixels of the suggested zoomed out view/image size.
+     * @param thumbHeight Height in pixels of the suggested zoomed out view/image size.
      * @param view View created by getView();
      * @param adapter Data adapter for this data item.
      */
-    public void loadFullImage(Context context, int width, int height, View view, LocalDataAdapter adapter);
+    public void loadFullImage(Context context, int thumbWidth, int thumbHeight, View view,
+        LocalDataAdapter adapter);
 
     /**
      * Gets the date when this data is created. The returned date is also used
