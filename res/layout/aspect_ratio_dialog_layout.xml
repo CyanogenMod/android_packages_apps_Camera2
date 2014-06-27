@@ -18,6 +18,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/start_up_dialog_background_color">
+    android:background="@color/fullscreen_dialog_background_color">
     <include layout="@layout/aspect_ratio_dialog_content" />
 </com.android.camera.widget.AspectRatioDialogLayout>
