@@ -16,8 +16,6 @@
 
 package com.android.camera.settings;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
@@ -44,7 +42,6 @@ import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
-import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
@@ -83,15 +80,11 @@ public class CameraSettingsActivity extends FragmentActivity {
 
     public static class CameraSettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
-        public static final String PREF_OPEN_SOURCE_LICENSES = "pref_open_source_licenses";
         public static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
         public static final String PREF_CATEGORY_ADVANCED = "pref_category_advanced";
-        public static final String PREF_SEND_FEEDBACK = "pref_send_feedback";
         public static final String PREF_LAUNCH_HELP = "pref_launch_help";
-        private static final String BUILD_VERSION = "build_version";
         private static final Log.Tag TAG = new Log.Tag("SettingsFragment");
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
-        private FeedbackHelper mFeedbackHelper;
         private String[] mCamcorderProfileNames;
         private CameraDeviceInfo mInfos;
 
@@ -107,7 +100,6 @@ public class CameraSettingsActivity extends FragmentActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             Context context = this.getActivity().getApplicationContext();
-            mFeedbackHelper = new FeedbackHelper(context);
             addPreferencesFromResource(R.xml.camera_preferences);
             CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
@@ -118,15 +110,6 @@ public class CameraSettingsActivity extends FragmentActivity {
         public void onResume() {
             super.onResume();
             final Activity activity = this.getActivity();
-
-            // Only show open source licenses in GoogleCamera build.
-            // FIXME: SettingsHelper -> CameraSettingsActivityHelper
-            /**
-            if (!SettingsHelper.isOpenSourceLicensesShown()) {
-                Preference pref = findPreference(PREF_OPEN_SOURCE_LICENSES);
-                recursiveDelete(getPreferenceScreen(), pref);
-            }
-            **/
 
             // Load the camera sizes.
             loadSizes();
@@ -145,52 +128,15 @@ public class CameraSettingsActivity extends FragmentActivity {
                 (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
             configureHomeAsUp(advancedScreen);
 
-            // Set build number.
-            try {
-                final PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(
-                        getActivity().getPackageName(), 0);
-                findPreference(BUILD_VERSION).setSummary(packageInfo.versionName);
-            } catch (PackageManager.NameNotFoundException e) {
-                findPreference(BUILD_VERSION).setSummary("?");
-            }
-            getPreferenceScreen().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
-
-            // Set-Up Feedback entry to launch the feedback flow on click.
-            findPreference(PREF_SEND_FEEDBACK).setOnPreferenceClickListener(
-                    new OnPreferenceClickListener() {
-
-                        @Override
-                        public boolean onPreferenceClick(Preference preference) {
-                            mFeedbackHelper.startFeedback();
-                            return true;
-                        }
-                    });
-
-            final Account account = getFirstGoogleAccount();
             Preference helpPref = findPreference(PREF_LAUNCH_HELP);
             helpPref.setOnPreferenceClickListener(
                 new OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        GoogleHelpHelper.launchGoogleHelp(activity, account);
+                        GoogleHelpHelper.launchGoogleHelp(activity);
                         return true;
                     }
                 });
-        }
-
-        /**
-         * Tries to get one Google account for this user,
-         * which is used to customize the GoogleHelp screen.
-         */
-        private Account getFirstGoogleAccount() {
-            Account[] accounts = AccountManager.get(this.getActivity()
-                .getApplicationContext()).getAccountsByType("com.google");
-            if (accounts.length == 0) {
-                return null;
-            } else {
-                return accounts[0];
-            }
         }
 
         /**
@@ -284,12 +230,6 @@ public class CameraSettingsActivity extends FragmentActivity {
             super.onPause();
             getPreferenceScreen().getSharedPreferences()
                     .unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onStop() {
-            mFeedbackHelper.stopFeedback();
-            super.onStop();
         }
 
         @Override

@@ -20,4 +20,8 @@
             android:title="@string/details"
             android:visible="true"
             android:showAsAction="never" />
+    <item android:id="@+id/action_help_and_feedback"
+            android:title="@string/setting_google_help_and_feedback"
+            android:visible="true"
+            android:showAsAction="never" />
 </menu>

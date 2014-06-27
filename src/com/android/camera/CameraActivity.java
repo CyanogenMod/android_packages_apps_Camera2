@@ -125,6 +125,7 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GalleryHelper;
 import com.android.camera.util.GcamHelper;
+import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.ReleaseDialogHelper;
@@ -1230,6 +1231,10 @@ public class CameraActivity extends Activity
                 return true;
             case R.id.action_details:
                 showDetailsDialog(mFilmstripController.getCurrentId());
+                return true;
+            case R.id.action_help_and_feedback:
+                mResetToPreviewOnResume = false;
+                GoogleHelpHelper.launchGoogleHelp(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
