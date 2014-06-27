@@ -22,10 +22,10 @@ import android.content.Context;
 import android.content.Intent;
 
 public class GoogleHelpHelper {
-    public static Intent getGoogleHelpIntent(Context context, Account googleAccount) {
+    public static Intent getGoogleHelpIntent(Context context) {
         return null;
     }
 
-    public static void launchGoogleHelp(Activity activity, Account googleAccount) {
+    public static void launchGoogleHelp(Activity activity) {
     }
 }
