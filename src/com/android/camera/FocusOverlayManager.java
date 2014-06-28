@@ -158,11 +158,11 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     public void updateCapabilities(CameraCapabilities capabilities) {
-        // parameters can only be null when onConfigurationChanged is called
+        // capabilities can only be null when onConfigurationChanged is called
         // before camera is open. We will just return in this case, because
-        // parameters will be set again later with the right parameters after
+        // capabilities will be set again later with the right capabilities after
         // camera is open.
-        if (parameters == null) {
+        if (capabilities == null) {
             return;
         }
         mCapabilities = capabilities;
