@@ -74,7 +74,23 @@
   <string name="pref_camera_scenemode_entry_auto">Automatesch</string>
   <string name="pref_video_time_lapse_frame_interval_5000">5 Sekonnen</string>
   <string name="pref_video_time_lapse_frame_interval_15000">15 Sekonnen</string>
+  <string name="pref_video_time_lapse_frame_interval_30000">0,5 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_60000">1 Minutt</string>
+  <string name="pref_video_time_lapse_frame_interval_90000">1,5 Minutten</string>
   <string name="pref_video_time_lapse_frame_interval_120000">2 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_150000">2,5 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_180000">3 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_240000">4 Minutten</string>
   <string name="pref_video_time_lapse_frame_interval_300000">5 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_360000">6 Minutten</string>
   <string name="pref_video_time_lapse_frame_interval_600000">10 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_720000">12 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_900000">15 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_1440000">24 Minutten</string>
+  <string name="pref_video_time_lapse_frame_interval_7200000">2 Stonnen</string>
+  <string name="pref_video_time_lapse_frame_interval_10800000">3 Stonnen</string>
+  <string name="pref_video_time_lapse_frame_interval_43200000">12 Stonnen</string>
+  <string name="pref_video_time_lapse_frame_interval_86400000">24 Stonnen</string>
+  <string name="time_lapse_seconds">Sekonnen</string>
+  <string name="time_lapse_minutes">Minutten</string>
 </resources>
