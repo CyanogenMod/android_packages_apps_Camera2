@@ -57,7 +57,7 @@
   <string name="pref_camera_redeyereduction_entry_disable">無効</string>
   <string name="error_app_unsupported_hfr">HFRは選択された解像度ではサポートされていません</string>
   <string name="error_app_unsupported_hfr_codec">HFRがONのときはH.264ビデオエンコードのみサポートされています</string>
-  <string name="error_app_unsupported">このコーデックの形式ではサポートされていない動画の解像度です</string>
+  <string name="error_app_unsupported">このコーデックの種類ではサポートされていない動画の解像度です</string>
   <string name="error_app_unsupported_raw">ZSLモードではRAW画像はサポートされていません</string>
   <string name="error_app_unsupported_hdr_zsl">ZSLモードではHDRはサポートされていません</string>
   <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">オートブラケット</string>
