@@ -1286,12 +1286,6 @@ public class CameraActivity extends Activity
         }
 
         if (mSecureCamera) {
-            // Foreground event caused by lock screen startup.
-            // It is necessary to log this in onCreate, to avoid the
-            // onResume->onPause->onResume sequence.
-            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_IMAGE_CAPTURE_SECURE,
-                    currentUserInterfaceMode());
-
             // Change the window flags so that secure camera can show when
             // locked
             Window win = getWindow();
@@ -1587,24 +1581,24 @@ public class CameraActivity extends Activity
             mAutoRotateScreen = true;
         }
 
+        // Foreground event logging.
+        int source;
         String action = getIntent().getAction();
-        // Foreground event logging
         if (MediaStore.ACTION_VIDEO_CAPTURE.equals(action)) {
-            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_VIDEO_CAPTURE,
-                    currentUserInterfaceMode());
+            source = ForegroundSource.ACTION_VIDEO_CAPTURE;
         } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)) {
-            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_IMAGE_CAPTURE,
-                    currentUserInterfaceMode());
+            source = ForegroundSource.ACTION_IMAGE_CAPTURE;
         } else if (MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action) ||
                 INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
-            // logged in onCreate()
+            // Foreground event caused by lock screen startup.
+            // May get double logged due to lock screen onResume->onPause->onResume sequence.
+            source = ForegroundSource.ACTION_IMAGE_CAPTURE_SECURE;
         } else if (Intent.ACTION_MAIN.equals(action)) {
-            UsageStatistics.instance().foregrounded(ForegroundSource.ACTION_MAIN,
-                    currentUserInterfaceMode());
+            source = ForegroundSource.ACTION_MAIN;
         } else {
-            UsageStatistics.instance().foregrounded(ForegroundSource.UNKNOWN_SOURCE,
-                    currentUserInterfaceMode());
+            source = ForegroundSource.UNKNOWN_SOURCE;
         }
+        UsageStatistics.instance().foregrounded(source, currentUserInterfaceMode());
 
         mGalleryIntent = IntentHelper.getPhotosGalleryIntent(mAppContext);
         Drawable galleryLogo = IntentHelper.getGalleryIcon(mAppContext, mGalleryIntent);
