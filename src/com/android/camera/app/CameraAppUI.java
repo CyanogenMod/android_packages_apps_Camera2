@@ -648,7 +648,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     /**
      * Updates the preview matrix without altering it.
-     * 
+     *
      * @param matrix
      * @param aspectRatio the desired aspect ratio for the preview.
      */
@@ -1701,7 +1701,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     /**
      * This adds letterboxing around the preview, one on each side
-     * 
+     *
      * @param width the width in pixels of each letterboxing cover
      */
     public void addLetterboxing(int width) {
@@ -1786,6 +1786,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToIntentReviewLayout();
+    }
+
+    /**
+     * @return whether UI is in intent review mode
+     */
+    public boolean isInIntentReview() {
+        return mBottomBar.isInIntentReview();
     }
 
     @Override
