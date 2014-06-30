@@ -1502,9 +1502,7 @@ public class PhotoModule
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode) ||
             CameraSettings.isSlowShutterEnabled(mParameters)) {
             String flashMode = mParameters.getFlashMode();
-            String whiteBalance = mPreferences.getString(
-                    CameraSettings.KEY_WHITE_BALANCE,
-                    mActivity.getString(R.string.pref_camera_whitebalance_default));
+            String whiteBalance = Parameters.WHITE_BALANCE_AUTO;
             String focusMode = mFocusManager.getFocusMode();
 
             overrideCameraSettings(flashMode, whiteBalance, focusMode,
@@ -2819,6 +2817,10 @@ public class PhotoModule
                 mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
             } else {
                 mParameters.setFlashMode(Parameters.FLASH_MODE_AUTO);
+            }
+            if (CameraUtil.isSupported(Parameters.WHITE_BALANCE_AUTO,
+                    mParameters.getSupportedWhiteBalance())) {
+                mParameters.setWhiteBalance(Parameters.WHITE_BALANCE_AUTO);
             }
         }
 

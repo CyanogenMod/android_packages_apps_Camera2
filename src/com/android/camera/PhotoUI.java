@@ -620,7 +620,10 @@ public class PhotoUI implements PieListener,
                 CameraSettings.readExposure(prefs));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
         int wbIndex = -1;
-        String wb = params.getWhiteBalance();
+        String wb = Camera.Parameters.WHITE_BALANCE_AUTO;
+        if (Camera.Parameters.SCENE_MODE_AUTO.equals(params.getSceneMode())) {
+            wb = params.getWhiteBalance();
+        }
         ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
         if (pref != null) {
             wbIndex = pref.findIndexOfValue(wb);
