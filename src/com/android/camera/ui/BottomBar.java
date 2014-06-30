@@ -228,8 +228,16 @@ public class BottomBar extends FrameLayout {
     public void transitionToIntentReviewLayout() {
         mCaptureLayout.setVisibility(View.INVISIBLE);
         mIntentReviewLayout.setVisibility(View.VISIBLE);
+        mCancelLayout.setVisibility(View.INVISIBLE);
 
         mMode = MODE_INTENT_REVIEW;
+    }
+
+    /**
+     * @return whether UI is in intent review mode
+     */
+    public boolean isInIntentReview() {
+        return mMode == MODE_INTENT_REVIEW;
     }
 
     private void setButtonImageLevels(int level) {

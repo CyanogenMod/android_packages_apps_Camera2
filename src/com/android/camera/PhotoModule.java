@@ -1545,7 +1545,11 @@ public class PhotoModule
 
     @Override
     public void onCountDownFinished() {
-        mAppController.getCameraAppUI().transitionToCapture();
+        if (mIsImageCaptureIntent) {
+            mAppController.getCameraAppUI().transitionToIntentReviewLayout();
+        } else {
+            mAppController.getCameraAppUI().transitionToCapture();
+        }
         mAppController.getCameraAppUI().showModeOptions();
         if (mPaused) {
             return;
@@ -1782,7 +1786,8 @@ public class PhotoModule
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_FOCUS:
-                if (/* TODO: mActivity.isInCameraApp() && */mFirstTimeInitialized) {
+                if (/* TODO: mActivity.isInCameraApp() && */mFirstTimeInitialized &&
+                    !mActivity.getCameraAppUI().isInIntentReview()) {
                     if (event.getRepeatCount() == 0) {
                         onShutterButtonFocus(true);
                     }
@@ -1813,9 +1818,14 @@ public class PhotoModule
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (/* mActivity.isInCameraApp() && */mFirstTimeInitialized) {
-                    mVolumeButtonClickedFlag = true;
-                    onShutterButtonClick();
+                if (/* mActivity.isInCameraApp() && */mFirstTimeInitialized &&
+                    !mActivity.getCameraAppUI().isInIntentReview()) {
+                    if (mUI.isCountingDown()) {
+                        cancelCountDown();
+                    } else {
+                        mVolumeButtonClickedFlag = true;
+                        onShutterButtonClick();
+                    }
                     return true;
                 }
                 return false;

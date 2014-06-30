@@ -1792,6 +1792,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.transitionToIntentReviewLayout();
     }
 
+    /**
+     * @return whether UI is in intent review mode
+     */
+    public boolean isInIntentReview() {
+        return mBottomBar.isInIntentReview();
+    }
+
     @Override
     public void onSettingChanged(SettingsManager settingsManager, String key) {
         // Update the mode options based on the hardware spec,
