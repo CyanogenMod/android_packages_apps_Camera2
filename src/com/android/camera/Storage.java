@@ -33,7 +33,6 @@ import com.android.camera.data.LocalData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
-import com.android.camera.util.ImageLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,44 +60,21 @@ public class Storage {
     private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();
     private static HashMap<Uri, Point> sSessionsToSizes= new HashMap<Uri, Point>();
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private static void setImageSize(ContentValues values, int width, int height) {
-        // The two fields are available since ICS but got published in JB
-        if (ApiHelper.HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT) {
-            values.put(MediaColumns.WIDTH, width);
-            values.put(MediaColumns.HEIGHT, height);
-        }
-    }
-
-    public static void writeFile(String path, byte[] jpeg, ExifInterface exif) {
-        if (exif != null) {
-            try {
-                exif.writeExif(jpeg, path);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to write data", e);
-            }
-        } else {
-            writeFile(path, jpeg);
-        }
-    }
-
-    public static void writeFile(String path, byte[] data) {
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(path);
-            out.write(data);
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to write data", e);
-        } finally {
-            try {
-                out.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to close file after write", e);
-            }
-        }
-    }
-
-    // Save the image and add it to the MediaStore.
+    /**
+     * Save the image with default JPEG MIME type and add it to the MediaStore.
+     *
+     * @param resolver The The content resolver to use.
+     * @param title The title of the media file.
+     * @param date The date fo the media file.
+     * @param location The location of the media file.
+     * @param orientation The orientation of the media file.
+     * @param exif The EXIF info. Can be {@code null}.
+     * @param jpeg The JPEG data.
+     * @param width The width of the media file after the orientation is
+     *              applied.
+     * @param height The height of the media file after the orientation is
+     *               applied.
+     */
     public static Uri addImage(ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
             int height) {
@@ -107,20 +83,81 @@ public class Storage {
                 LocalData.MIME_TYPE_JPEG);
     }
 
-    // Save the image with a given mimeType and add it the MediaStore.
-    public static Uri addImage(ContentResolver resolver, String title, long date,
-            Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
+    /**
+     * Saves the media with a given MIME type and adds it to the MediaStore.
+     * <p>
+     * The path will be automatically generated according to the title.
+     * </p>
+     *
+     * @param resolver The The content resolver to use.
+     * @param title The title of the media file.
+     * @param data The data to save.
+     * @param date The date fo the media file.
+     * @param location The location of the media file.
+     * @param orientation The orientation of the media file.
+     * @param exif The EXIF info. Can be {@code null}.
+     * @param width The width of the media file after the orientation is
+     *            applied.
+     * @param height The height of the media file after the orientation is
+     *            applied.
+     * @param mimeType The MIME type of the data.
+     * @return The URI of the added image, or null if the image could not be
+     *         added.
+     */
+    private static Uri addImage(ContentResolver resolver, String title, long date,
+            Location location, int orientation, ExifInterface exif, byte[] data, int width,
             int height, String mimeType) {
 
         String path = generateFilepath(title);
-        writeFile(path, jpeg, exif);
-        return addImage(resolver, title, date, location, orientation,
-                jpeg.length, path, width, height, mimeType);
+        long fileLength = writeFile(path, data, exif);
+        if (fileLength >= 0) {
+            return addImageToMediaStore(resolver, title, date, location, orientation, fileLength,
+                    path, width, height, mimeType);
+        }
+        return null;
+    }
+
+    /**
+     * Add the entry for the media file to media store.
+     *
+     * @param resolver The The content resolver to use.
+     * @param title The title of the media file.
+     * @param date The date fo the media file.
+     * @param location The location of the media file.
+     * @param orientation The orientation of the media file.
+     * @param width The width of the media file after the orientation is
+     *            applied.
+     * @param height The height of the media file after the orientation is
+     *            applied.
+     * @param mimeType The MIME type of the data.
+     * @return The content URI of the inserted media file or null, if the image
+     *         could not be added.
+     */
+    private static Uri addImageToMediaStore(ContentResolver resolver, String title, long date,
+            Location location, int orientation, long jpegLength, String path, int width, int height,
+            String mimeType) {
+        // Insert into MediaStore.
+        ContentValues values =
+                getContentValuesForData(title, date, location, orientation, jpegLength, path, width,
+                        height, mimeType);
+
+        Uri uri = null;
+        try {
+            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+        } catch (Throwable th)  {
+            // This can happen when the external volume is already mounted, but
+            // MediaScanner has not notify MediaProvider to add that volume.
+            // The picture is still safe and MediaScanner will find it and
+            // insert it into MediaProvider. The only problem is that the user
+            // cannot click the thumbnail to review the picture.
+            Log.e(TAG, "Failed to write MediaStore" + th);
+        }
+        return uri;
     }
 
     // Get a ContentValues object for the given photo data
     public static ContentValues getContentValuesForData(String title,
-            long date, Location location, int orientation, int jpegLength,
+            long date, Location location, int orientation, long jpegLength,
             String path, int width, int height, String mimeType) {
 
         File file = new File(path);
@@ -178,31 +215,6 @@ public class Storage {
         sSessionsToPlaceholderBytes.put(uri, jpeg);
     }
 
-    // Add the image to media store.
-    public static Uri addImage(ContentResolver resolver, String title,
-            long date, Location location, int orientation, int jpegLength,
-            String path, int width, int height, String mimeType) {
-        // Insert into MediaStore.
-        ContentValues values =
-                getContentValuesForData(title, date, location, orientation, jpegLength, path,
-                        width, height, mimeType);
-
-        Uri uri = null;
-        try {
-            uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-        } catch (Throwable th)  {
-            // This can happen when the external volume is already mounted, but
-            // MediaScanner has not notify MediaProvider to add that volume.
-            // The picture is still safe and MediaScanner will find it and
-            // insert it into MediaProvider. The only problem is that the user
-            // cannot click the thumbnail to review the picture.
-            Log.e(TAG, "Failed to write MediaStore" + th);
-        }
-        return uri;
-    }
-
-    // Overwrites the file and updates the MediaStore
-
     /**
      * Take jpeg bytes and add them to the media store, either replacing an existing item
      * or a placeholder uri to replace
@@ -228,6 +240,65 @@ public class Storage {
                 width, height, mimeType);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private static void setImageSize(ContentValues values, int width, int height) {
+        // The two fields are available since ICS but got published in JB
+        if (ApiHelper.HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT) {
+            values.put(MediaColumns.WIDTH, width);
+            values.put(MediaColumns.HEIGHT, height);
+        }
+    }
+
+    /**
+     * Writes the JPEG data to a file. If there's EXIF info, the EXIF header
+     * will be added.
+     *
+     * @param path The path to the target file.
+     * @param jpeg The JPEG data.
+     * @param exif The EXIF info. Can be {@code null}.
+     *
+     * @return The size of the file. -1 if failed.
+     */
+    private static long writeFile(String path, byte[] jpeg, ExifInterface exif) {
+        if (exif != null) {
+            try {
+                exif.writeExif(jpeg, path);
+                File f = new File(path);
+                return f.length();
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to write data", e);
+            }
+        } else {
+            return writeFile(path, jpeg);
+        }
+        return -1;
+    }
+
+    /**
+     * Writes the data to a file.
+     *
+     * @param path The path to the target file.
+     * @param data The data to save.
+     *
+     * @return The size of the file. -1 if failed.
+     */
+    private static long writeFile(String path, byte[] data) {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(path);
+            out.write(data);
+            return data.length;
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to write data", e);
+        } finally {
+            try {
+                out.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to close file after write", e);
+            }
+        }
+        return -1;
+    }
 
     // Updates the image values in MediaStore
     private static Uri updateImage(Uri imageUri, ContentResolver resolver, String title,
@@ -242,8 +313,8 @@ public class Storage {
         Uri resultUri = imageUri;
         if (Storage.isSessionUri(imageUri)) {
             // If this is a session uri, then we need to add the image
-            resultUri = addImage(resolver, title, date, location, orientation, jpegLength, path,
-                    width, height, mimeType);
+            resultUri = addImageToMediaStore(resolver, title, date, location, orientation,
+                    jpegLength, path, width, height, mimeType);
             sSessionsToContentUris.put(imageUri, resultUri);
             sContentUrisToSessions.put(resultUri, imageUri);
         } else {
@@ -253,62 +324,7 @@ public class Storage {
         return resultUri;
     }
 
-    /**
-     * Update the image from the file that has changed.
-     * <p>
-     * Note: This will update the DATE_TAKEN to right now. We could consider not
-     * changing it to preserve the original timestamp.
-     */
-    public static void updateImageFromChangedFile(Uri mediaUri, Location location,
-            ContentResolver resolver, String mimeType) {
-        File mediaFile = new File(ImageLoader.getLocalPathFromUri(resolver, mediaUri));
-        if (!mediaFile.exists()) {
-            throw new IllegalArgumentException("Provided URI is not an existent file: "
-                    + mediaUri.getPath());
-        }
-
-        ContentValues values = new ContentValues();
-        // TODO: Read the date from file.
-        values.put(Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(Images.Media.MIME_TYPE, mimeType);
-        values.put(Images.Media.SIZE, mediaFile.length());
-        if (location != null) {
-            values.put(ImageColumns.LATITUDE, location.getLatitude());
-            values.put(ImageColumns.LONGITUDE, location.getLongitude());
-        }
-
-        resolver.update(mediaUri, values, null, null);
-    }
-
-    /**
-     * Updates the item's mime type to the given one. This is useful e.g. when
-     * switching an image to an in-progress type for re-processing.
-     *
-     * @param uri the URI of the item to change
-     * @param mimeType the new mime type of the item
-     */
-    public static void updateItemMimeType(Uri uri, String mimeType, ContentResolver resolver) {
-        ContentValues values = new ContentValues(1);
-        values.put(ImageColumns.MIME_TYPE, mimeType);
-
-        // Update the MediaStore
-        int rowsModified = resolver.update(uri, values, null, null);
-        if (rowsModified != 1) {
-            // This should never happen
-            throw new IllegalStateException("Bad number of rows (" + rowsModified
-                    + ") updated for uri: " + uri);
-        }
-    }
-
-    public static void deleteImage(ContentResolver resolver, Uri uri) {
-        try {
-            resolver.delete(uri, null, null);
-        } catch (Throwable th) {
-            Log.e(TAG, "Failed to delete image: " + uri);
-        }
-    }
-
-    public static String generateFilepath(String title) {
+    private static String generateFilepath(String title) {
         return DIRECTORY + '/' + title + ".jpg";
     }
 
