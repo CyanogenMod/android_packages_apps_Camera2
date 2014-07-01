@@ -119,7 +119,7 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"១៣ មេហ្គាភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"៨ មេហ្គា​ភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"៥ មេហ្គា​ភីកសែល"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"៤ មេហ្គា​​ភីក​សែល"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"៤ មេហ្គា​ភីកសែល (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"៣ មេហ្គា​ភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"២ មេហ្គា​ភីកសែល"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"២ មេហ្គាភីក​សែល (16:9)"</string>
@@ -178,8 +178,8 @@
     <string name="pref_camera_countdown_label_ten" msgid="4372650985906500604">"១០ វិនាទី"</string>
     <string name="pref_camera_countdown_label_fifteen" msgid="8469955900530268867">"១៥ វិនាទី"</string>
     <string name="not_selectable_in_scene_mode" msgid="3260801086980522611">"មិន​អាច​ជ្រើស​បាន​ក្នុង​របៀប​រូបភាព។"</string>
-    <string name="pref_exposure_title" msgid="7525751789152582800">"បង្ហាញ"</string>
-    <string name="pref_exposure_label" msgid="2604738602400261218">"បង្ហាញ"</string>
+    <string name="pref_exposure_title" msgid="7525751789152582800">"ពន្លឺ"</string>
+    <string name="pref_exposure_label" msgid="2604738602400261218">"ពន្លឺ"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
     <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->

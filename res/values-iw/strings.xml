@@ -75,7 +75,7 @@
     <string name="focal_length" msgid="8351221512187346229">"רוחק מוקד"</string>
     <string name="white_balance" msgid="1600142743496129085">"איזון לבן"</string>
     <string name="exposure_time" msgid="949787291620767754">"זמן חשיפה"</string>
-    <string name="iso" msgid="8578773821062054902">"‏ISO‏"</string>
+    <string name="iso" msgid="8578773821062054902">"‏ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"מ\"מ"</string>
     <string name="manual" msgid="2444400953521760140">"ידני"</string>
     <string name="auto" msgid="2552649885114400474">"אוטומטי"</string>
@@ -119,7 +119,7 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 מגה פיקסל"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 מגה פיקסל"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 מגה פיקסל (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 מגה פיקסל"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 מגה פיקסל (16:9)"</string>

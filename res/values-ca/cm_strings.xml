@@ -29,6 +29,7 @@
   <string name="pref_camera_picturesize_entry_6_4mp">6,4 Mp</string>
   <string name="pref_camera_picturesize_entry_6mp">6 Mp</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4,5 Mp</string>
+  <string name="pref_camera_picturesize_entry_4mp">4 Mp</string>
   <string name="pref_camera_picturesize_entry_3_7mp">3,7 Mp</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2,5 Mp</string>
   <string name="pref_camera_picturesize_entry_2_1mp">2,1 Mp</string>
@@ -80,7 +81,7 @@
   <string name="pref_camera_scenemode_entry_sweepstitch">Punt rastrejat</string>
   <string name="pref_camera_scenemode_entry_text">Text</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatre</string>
-  <string name="pref_camera_scenemode_entry_whiteboard">Pissarra</string>
+  <string name="pref_camera_scenemode_entry_whiteboard">Pissarra blanca</string>
   <string name="pref_camera_focusmode_entry_continuouspicture">Fotografia contínua</string>
   <string name="pref_camera_focusmode_entry_extended">Extès</string>
   <string name="pref_camera_focusmode_entry_facedetect">Detecció de cares</string>

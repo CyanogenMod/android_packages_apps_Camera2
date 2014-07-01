@@ -119,7 +119,7 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13M пиксел"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8M пиксел"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5M пиксел"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4M пиксел"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4M пиксел (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3M пиксел"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2M пиксел"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2M пиксел (16:9)"</string>
@@ -289,7 +289,7 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"Томруулах"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"Эргүүлэх"</string>
     <string name="crop_save" msgid="2841974981340098579">"Хадгалах"</string>
-    <string name="cannot_load_image" msgid="4100136187076585580">"Зургийг ачаалах боломжгүй!"</string>
+    <string name="cannot_load_image" msgid="4100136187076585580">"Зургийг ачааллах боломжгүй!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Зургийн хальсаар харах"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Ханын зургийг тохируулж байна"</string>
 </resources>

@@ -119,10 +119,10 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 megapikseliä"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 megapikseliä"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 megapikseliä"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 megapikseliä (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 megapikseliä"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 megapikseliä"</string>
-    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 megap. (16:9)"</string>
+    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 megapikseliä (16:9)"</string>
     <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1,5 megapikseliä"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1,3 megapikseliä"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1 megapikseli"</string>

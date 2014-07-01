@@ -112,14 +112,14 @@
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Qualità video"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Alta"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Bassa"</string>
-    <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Rallentatore"</string>
+    <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Time-lapse"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Impostazioni della fotocamera"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Impostazioni videocamera"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"Dimensioni immagine"</string>
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 Mpixel"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 Mpixel"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 Mpixel"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 Mpixel"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 Mpixel (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 Mpixel"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 Mpixel"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 Mpixel (16:9)"</string>
@@ -275,7 +275,7 @@
     <string name="time_lapse_hours" msgid="5294001144133261436">"ore"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"Fine"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"Imposta l\'intervallo di tempo"</string>
-    <string name="set_time_interval_help" msgid="64145154088021389">"La funzione Rallentatore non è attiva. Attivala per impostare l\'intervallo di tempo."</string>
+    <string name="set_time_interval_help" msgid="64145154088021389">"La funzione Time lapse non è attiva. Attivala per impostare l\'intervallo di tempo."</string>
     <string name="set_duration" msgid="1638453882581604341">"Imposta la durata in secondi"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Conto alla rovescia per scattare una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Memorizzare i luoghi delle foto?"</string>

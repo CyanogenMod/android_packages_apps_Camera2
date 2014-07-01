@@ -38,7 +38,7 @@
   <string name="pref_camera_skinToneEnhancement_title">Millora la tonalitat de la pell</string>
   <string name="pref_camera_skinToneEnhancement_entry_enable">Activa</string>
   <string name="pref_camera_skinToneEnhancement_entry_disable">Desactiva</string>
-  <string name="pref_camera_zsl_title">Disparador instantani (ZSL)</string>
+  <string name="pref_camera_zsl_title">Obturador instantani (ZSL)</string>
   <string name="pref_camera_selectablezoneaf_title">Zona d\'Auto Focus</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Medició puntual</string>

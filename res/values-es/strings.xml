@@ -119,7 +119,7 @@
     <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 MP"</string>
     <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 MP"</string>
     <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 MP"</string>
-    <string name="pref_camera_picturesize_entry_4mp" msgid="4786178543089540678">"4 MP"</string>
+    <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 MP (16:9)"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 MP"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 MP"</string>
     <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 MP (16:9)"</string>
@@ -228,8 +228,8 @@
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Revisar cancelación"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Revisión terminada"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"Revisar repetición"</string>
-    <string name="capital_on" msgid="1118214824959797269">"ACTIVADO"</string>
-    <string name="capital_off" msgid="3020696135020167263">"DESACTIVADO"</string>
+    <string name="capital_on" msgid="1118214824959797269">"SÍ"</string>
+    <string name="capital_off" msgid="3020696135020167263">"NO"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"No"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0,5 segundos"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 segundo"</string>
