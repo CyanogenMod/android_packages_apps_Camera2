@@ -49,6 +49,15 @@
         android:layout_gravity="center_horizontal"
         android:visibility="invisible" />
 
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/intent_review_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:background="@android:color/black"
+        android:visibility="gone" />
+
     <FrameLayout
         android:id="@+id/module_layout"
         android:layout_width="match_parent"

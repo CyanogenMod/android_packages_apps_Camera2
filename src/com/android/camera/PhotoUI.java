@@ -237,17 +237,12 @@ public class PhotoUI implements PreviewStatusListener,
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
 
         if (mController.isImageCaptureIntent()) {
-            createIntentReviewImageView();
+            initIntentReviewImageView();
         }
     }
 
-    private void createIntentReviewImageView() {
-        ViewGroup parentViewGroup = (ViewGroup) mRootView;
-        mIntentReviewImageView = (ImageView) mActivity.getLayoutInflater()
-            .inflate(R.layout.intent_review_imageview, parentViewGroup, false);
-        parentViewGroup.addView(mIntentReviewImageView);
-        mIntentReviewImageView.bringToFront();
-
+    private void initIntentReviewImageView() {
+        mIntentReviewImageView = (ImageView) mRootView.findViewById(R.id.intent_review_imageview);
         mActivity.getCameraAppUI().addPreviewAreaChangedListener(
                 new PreviewStatusListener.PreviewAreaChangedListener() {
                     @Override
