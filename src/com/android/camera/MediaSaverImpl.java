@@ -164,10 +164,14 @@ public class MediaSaverImpl implements MediaSaver {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            if (listener != null) listener.onMediaSaved(uri);
+            if (listener != null && uri != null) {
+                listener.onMediaSaved(uri);
+            }
             boolean previouslyFull = isQueueFull();
             mMemoryUse -= data.length;
-            if (isQueueFull() != previouslyFull) onQueueAvailable();
+            if (isQueueFull() != previouslyFull) {
+                onQueueAvailable();
+            }
         }
     }
 
@@ -214,7 +218,9 @@ public class MediaSaverImpl implements MediaSaver {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            if (listener != null) listener.onMediaSaved(uri);
+            if (listener != null) {
+                listener.onMediaSaved(uri);
+            }
         }
     }
 }
