@@ -23,7 +23,7 @@ import com.android.camera.ShutterButton.OnShutterButtonListener;
 
 
 public interface PhotoController extends OnShutterButtonListener {
-
+    public static final int INIT = -1;
     public static final int PREVIEW_STOPPED = 0;
     public static final int IDLE = 1;  // preview is active
     // Focus is in progress. The exact focus state is in Focus.java.
