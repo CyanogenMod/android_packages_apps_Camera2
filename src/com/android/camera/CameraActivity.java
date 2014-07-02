@@ -69,6 +69,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
+
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
@@ -864,6 +865,14 @@ public class CameraActivity extends Activity
                     }
                     LocalData newData = LocalMediaData.PhotoData.fromContentUri(
                             getContentResolver(), contentUri);
+
+                    // This can be null if e.g. a session is canceled (e.g.
+                    // through discard panorama). It might be worth adding
+                    // onSessionCanceled or the like this interface.
+                    if (newData == null) {
+                        Log.i(TAG, "onSessionDone: Could not find LocalData for URI: " + contentUri);
+                        return;
+                    }
 
                     final int pos = mDataAdapter.findDataByContentUri(sessionUri);
                     if (pos == -1) {
