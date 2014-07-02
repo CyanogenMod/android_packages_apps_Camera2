@@ -86,8 +86,8 @@ public class UpgradeAosp {
                 }
 
                 if (version < CAMERA_SIZE_SETTING_UPGRADE_VERSION) {
-                    CameraDeviceInfo infos =
-                            CameraAgentFactory.getAndroidCameraAgent().getCameraDeviceInfo();
+                    CameraDeviceInfo infos = CameraAgentFactory
+                            .getAndroidCameraAgent(app.getAndroidContext()).getCameraDeviceInfo();
                     upgradeCameraSizeSetting(settingsManager, app.getAndroidContext(), infos,
                                              SettingsUtil.CAMERA_FACING_FRONT);
                     upgradeCameraSizeSetting(settingsManager, app.getAndroidContext(), infos,
