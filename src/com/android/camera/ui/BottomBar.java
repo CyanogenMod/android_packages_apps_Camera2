@@ -344,6 +344,12 @@ public class BottomBar extends FrameLayout {
      */
     public void setShutterButtonEnabled(boolean enabled) {
         mShutterButton.setEnabled(enabled);
+        if (enabled) {
+            mShutterButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+        } else {
+            mShutterButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+
     }
 
     /**
