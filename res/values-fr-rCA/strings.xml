@@ -357,8 +357,7 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Appareil photo avant"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Caméra vidéo avant"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Appareil photo par défaut"</string>
-    <string name="setting_send_feedback" msgid="6637165939344951380">"Envoyer des commentaires"</string>
-    <string name="setting_google_help" msgid="9188405022782314357">"Aide"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Aide et commentaires"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Traitement HDR+ en cours…"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Licences de logiciel libres"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Paramètres généraux"</string>
