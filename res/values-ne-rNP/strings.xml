@@ -311,7 +311,7 @@
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Timelapse मोडमा स्विच गर्नुहोस्"</string>
     <string name="mode_wideangle_desc" msgid="5924237384871288501">"Wideangle मोडमा स्विच गर्नुहोस्"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"परिदृश्य मोडमा स्विच गर्नुहोस्"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"लेन्स ब्लर मोडमा स्वीच गर्नुहोस्"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"लेन्स ब्लर मोडमा स्विच गर्नुहोस्"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"सेटिंग्सहरू खोल्नुहोस्"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"सेटिंग्सहरू बन्द गर्नुहोस्"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus बन्द"</string>
@@ -354,7 +354,7 @@
     <!-- String.format failed for translation -->
     <!-- no translation found for setting_summary_x_megapixels (6533463462760866830) -->
     <skip />
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"धमिलो लेन्स चित्र सम्पादन गर्न यहाँ क्लिक गर्नुहोस्।"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"लेन्स ब्लर तस्बिर सम्पादन गर्न यहाँ क्लिक गर्नुहोस्।"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"उन्नत"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"मान्युअल खु्लापन"</string>
 </resources>
