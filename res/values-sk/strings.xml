@@ -20,7 +20,7 @@
     <string name="video_camera_label" msgid="1723708322021743770">"Videokamera"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
-    <string name="set_image" msgid="3969690281401045698">"Fotografia bude použitá ako"</string>
+    <string name="set_image" msgid="3969690281401045698">"Nastaviť fotku ako"</string>
     <string name="delete" msgid="2714492172818940424">"Odstrániť"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="8811352590292754044">"Odstrániť vybratú položku?"</item>
@@ -32,7 +32,7 @@
     <string name="deleted" msgid="2036165115527228127">"Odstránené"</string>
     <string name="undo" msgid="5110048345890050107">"SPÄŤ"</string>
     <string name="details" msgid="4404020741542549488">"Podrobnosti"</string>
-    <string name="close" msgid="4826166926297479820">"Zavrieť"</string>
+    <string name="close" msgid="4826166926297479820">"Zatvoriť"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="9217673864242686656">"Počet vybratých položiek: %1$d"</item>
     <item quantity="one" msgid="5806616411905812727">"Počet vybratých položiek: %1$d"</item>
@@ -106,7 +106,7 @@
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Zvuk odpočít."</string>
+    <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Zvuk odpočítavania"</string>
     <string name="setting_off" msgid="6782191065550276632">"Vypnuté"</string>
     <string name="setting_on" msgid="9086728135773197891">"Zapnuté"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Kvalita videa"</string>
@@ -116,16 +116,16 @@
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Nastavenia fotoaparátu"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Nastavenie videokamery"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"Veľkosť fotografie"</string>
-    <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 Mpx"</string>
+    <string name="pref_camera_picturesize_entry_13mp" msgid="6728485576074234195">"13 MPx"</string>
+    <string name="pref_camera_picturesize_entry_8mp" msgid="7088352012301633667">"8 MPx"</string>
+    <string name="pref_camera_picturesize_entry_5mp" msgid="1501745661448065284">"5 MPx"</string>
     <string name="pref_camera_picturesize_entry_4mp_wide" msgid="3338812763544573634">"4 megapixely (16:9)"</string>
-    <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 Mpx (16:9)"</string>
-    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1,5 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1,3 Mpx"</string>
-    <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1 Mpx"</string>
+    <string name="pref_camera_picturesize_entry_3mp" msgid="140799231761236311">"3 MPx"</string>
+    <string name="pref_camera_picturesize_entry_2mp" msgid="450006451326859328">"2 MPx"</string>
+    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="1877997036497332813">"2 MPx (16:9)"</string>
+    <string name="pref_camera_picturesize_entry_1_5mp" msgid="7089801019442294745">"1,5 MPx"</string>
+    <string name="pref_camera_picturesize_entry_1_3mp" msgid="3451742533756821502">"1,3 MPx"</string>
+    <string name="pref_camera_picturesize_entry_1mp" msgid="5043732005295894167">"1 MPx"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="7387786033708903628">"VGA"</string>
     <string name="pref_camera_picturesize_entry_qvga" msgid="6134562622041084167">"QVGA"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"Režim zaostrenia"</string>
@@ -190,7 +190,7 @@
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Na karte SD je málo miesta. Zmeňte nastavenie kvality alebo odstráňte niektoré obrázky či iné súbory."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Bolo dosiahnuté obmedzenie veľkosti."</string>
-    <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Veľmi rýchlo"</string>
+    <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Príliš rýchlo"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Príprava panorámy"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"Panorámu sa nepodarilo uložiť."</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"Panoráma"</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Prepnúť na fotoaparát"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Prepnúť do režimu video"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Prepnúť na panorámu"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Prepnúť na panorámu Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Prepnúť do režimu Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Prepnúť na vysokú kvalitu"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Zrušiť"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Hotovo"</string>
@@ -278,8 +278,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funkcia časozberného videa je vypnutá. Zapnite ju a a nastavte časový interval."</string>
     <string name="set_duration" msgid="1638453882581604341">"Nastavte dobu trvania v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítavanie spúšte fotoaparátu"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Zapamätať si, kde boli fotky vytvorené?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridajte k fotkám a videám polohy, kde boli zaznamenané.\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Pamätať si, kde boli fotky vytvorené?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridávať k fotkám a videám označenia miest, kde boli zaznamenané\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, nemám záujem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Áno"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ĎALŠIE MOŽNOSTI"</string>

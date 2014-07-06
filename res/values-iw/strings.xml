@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"הגדר משך זמן בשניות"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"סופר לאחור עד לצילום תמונה"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"האם לזכור מיקומי תמונות?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"תייג את התמונות והסרטונים שלך לציון המקומות שבהם צולמו.\n\nאפליקציות אחרות יכולות לגשת למידע הזה, כולל תמונות שנשמרו."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"תייג תמונות וסרטונים כדי לציין היכן הם צולמו.\n\nאפליקציות אחרות יכולות לגשת למידע הזה, כולל תמונות שנשמרו."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"לא תודה"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"כן"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"עוד אפשרויות"</string>

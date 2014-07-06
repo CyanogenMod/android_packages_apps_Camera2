@@ -225,7 +225,7 @@
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"ወደ ፓኖራማ ቀይር"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"ወደ ሉል ገጽታ ፎቶ ቀይር"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"ወደ ከፍተኛ ጥራት ቀይር"</string>
-    <string name="accessibility_review_cancel" msgid="5462850829869569629">"ግምገማ ሰርዝ"</string>
+    <string name="accessibility_review_cancel" msgid="5462850829869569629">"ግምገማ ይቅር"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"ግምገማ ተጠናቅቋል"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"ዳግም የተነሳውን ይገምግሙ"</string>
     <string name="capital_on" msgid="1118214824959797269">"በርቷል"</string>

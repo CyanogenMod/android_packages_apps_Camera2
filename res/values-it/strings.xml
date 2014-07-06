@@ -57,7 +57,7 @@
     <string name="set_as" msgid="5469055085024870081">"Imposta come"</string>
     <string name="video_err" msgid="1562566029875081552">"Impossibile riprodurre il video"</string>
     <string name="crop_saved" msgid="4465794038855602739">"Immagine ritagliata salvata in <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="title" msgid="8061744305671964703">"Titolo"</string>
+    <string name="title" msgid="8061744305671964703">"Nome"</string>
     <string name="description" msgid="8193138501982849808">"Descrizione"</string>
     <string name="time" msgid="5248213506417024287">"Ora"</string>
     <string name="location" msgid="564326205780827668">"Posizione"</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Passa a foto"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Passa a video"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Passa a panorama"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Passa a foto sferica"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Passa a Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Passa ad alta qualità"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Annulla verifica"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Verifica terminata"</string>

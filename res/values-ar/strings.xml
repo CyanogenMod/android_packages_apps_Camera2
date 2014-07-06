@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"غير معروف"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"هذا العنصر مخزن محليًا ومتاح في وضع عدم الاتصال."</string>
     <string name="please_wait" msgid="1416313324505140068">"يُرجى الانتظار"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"جارٍ عرض البانوراما بزاوية 360 درجة"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"جارٍ عرض بانوراما 360 درجة"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"خطأ في الكاميرا"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"يتعذر الاتصال بالكاميرا."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"تم تعطيل الكاميرا بسبب سياسات الأمان."</string>
@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"تعيين المدة بالثواني"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"جارٍ بدء العد التنازلي لالتقاط صورة"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"هل تريد حفظ مواقع الصور؟"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ضع علامة على الصور ومقاطع الفيديو التابعة لك تشير إلى المواقع التي تم التقاطها منها.\n\nيمكن لتطبيقات أخرى الوصول إلى هذه المعلومات والوصول إلى صورك المحفوظة."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"يمكنك تحديد الموقع الذي تم منه التقاط الصور ومقاطع الفيديو التابعة لك.\n\nيمكن لتطبيقات أخرى الوصول إلى هذه المعلومات والوصول إلى صورك المحفوظة."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"لا شكرًا"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"نعم"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"المزيد من الخيارات"</string>

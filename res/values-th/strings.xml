@@ -21,15 +21,15 @@
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"ตั้งค่าภาพเป็น"</string>
-    <string name="delete" msgid="2714492172818940424">"ลบ"</string>
+    <string name="delete" msgid="2714492172818940424">"นำออก"</string>
   <plurals name="delete_selection">
-    <item quantity="one" msgid="8811352590292754044">"ลบรายการที่เลือกไหม"</item>
-    <item quantity="other" msgid="5075283252850066610">"ลบรายการที่เลือกไหม"</item>
+    <item quantity="one" msgid="8811352590292754044">"นำออกรายการที่เลือกไหม"</item>
+    <item quantity="other" msgid="5075283252850066610">"นำออกรายการที่เลือกไหม"</item>
   </plurals>
     <string name="share" msgid="8581089487762243115">"แชร์"</string>
     <string name="share_panorama" msgid="3558466186935359444">"แชร์ภาพพาโนรามา"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"แชร์เป็นรูปภาพ"</string>
-    <string name="deleted" msgid="2036165115527228127">"ลบแล้ว"</string>
+    <string name="deleted" msgid="2036165115527228127">"นำออกแล้ว"</string>
     <string name="undo" msgid="5110048345890050107">"เลิกทำ"</string>
     <string name="details" msgid="4404020741542549488">"รายละเอียด"</string>
     <string name="close" msgid="4826166926297479820">"ปิด"</string>
@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"ไม่ทราบ"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"รายการนี้จัดเก็บภายในเครื่องและสามารถใช้งานแบบออฟไลน์"</string>
     <string name="please_wait" msgid="1416313324505140068">"โปรดรอสักครู่"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"กำลังแสดงผลโฟโตสเฟียร์"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"กำลังแสดงผล Photo Sphere"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"ข้อผิดพลาดกล้องถ่ายรูป"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"ไม่สามารถเชื่อมต่อกับกล้องถ่ายรูป"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"กล้องถ่ายรูปถูกปิดใช้งานเนื่องจากนโยบายด้านความปลอดภัย"</string>
@@ -188,7 +188,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"กล้องด้านหน้า"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"กล้องด้านหลัง"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ตกลง"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"การ์ด SD ของคุณมีพื้นที่เหลือน้อยแล้ว ให้เปลี่ยนการตั้งค่าคุณภาพหรือลบบางภาพหรือไฟล์อื่นๆ ออก"</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"การ์ด SD ของคุณมีพื้นที่เหลือน้อยแล้ว ให้เปลี่ยนการตั้งค่าคุณภาพหรือนำออกบางภาพหรือไฟล์อื่นๆ ออก"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"ขนาดถึงขีดจำกัดแล้ว"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"เร็วเกินไป"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"กำลังสร้างภาพพาโนรามา"</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"เปลี่ยนเป็นภาพถ่าย"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"เปลี่ยนเป็นวิดีโอ"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"เปลี่ยนเป็นภาพพาโนรามา"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็นโฟโตสเฟียร์"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"เปลี่ยนเป็น Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"เปลี่ยนเป็นคุณภาพสูง"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"ไม่ผ่านการตรวจสอบ"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"ผ่านการตรวจสอบ"</string>
@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ตั้งระยะเวลาเป็นวินาที"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"นับถอยหลังเพื่อถ่ายภาพ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"จดจำตำแหน่งภาพไหม"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"แท็กรูปภาพและวิดีโอด้วยตำแหน่งที่ถ่ายภาพ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ตลอดจนภาพที่บันทึกไว้ของคุณได้"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ใส่ตำแหน่งที่ถ่ายภาพในรูปและวิดีโอ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ ตลอดจนภาพที่บันทึกไว้ของคุณได้"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ไม่ ขอบคุณ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ใช่"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ตัวเลือกเพิ่มเติม"</string>

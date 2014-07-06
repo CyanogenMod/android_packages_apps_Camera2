@@ -31,7 +31,7 @@
     <string name="share_as_photo" msgid="4831213580709167218">"Отправить фото"</string>
     <string name="deleted" msgid="2036165115527228127">"Удалено"</string>
     <string name="undo" msgid="5110048345890050107">"ОТМЕНИТЬ"</string>
-    <string name="details" msgid="4404020741542549488">"Детали"</string>
+    <string name="details" msgid="4404020741542549488">"Информация"</string>
     <string name="close" msgid="4826166926297479820">"Закрыть"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="9217673864242686656">"%1$d"</item>
@@ -84,7 +84,7 @@
     <string name="unknown" msgid="564184550182858146">"Неизвестно"</string>
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Этот альбом хранится на устройстве, его можно посмотреть в офлайн-режиме"</string>
     <string name="please_wait" msgid="1416313324505140068">"Подождите…"</string>
-    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Создание круговой панорамы…"</string>
+    <string name="rendering_photo_sphere" msgid="3032858512989313215">"Создание Photo Sphere…"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Ошибка камеры"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Не удалось подключиться к камере"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Камера отключена в соответствии с политикой безопасности."</string>
@@ -223,7 +223,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Фото"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Видео"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Панорама"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Круговая панорама"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Высокое качество"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Отмена"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"Готово"</string>
@@ -279,7 +279,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Время отсчета в секундах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Обратный отсчет перед съемкой"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Сохранять место съемки?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Информация о месте съемки будет автоматически добавлена в описание ваших фотографий и видеозаписей.\n\nДоступ к этим данным, а также к самим фотографиям и видео смогут получить и другие приложения."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"К вашим фотографиям и видеозаписям будет автоматически добавляться информация о месте съемки.\n\nЭти данные будут доступны другим приложениям, у которых есть доступ к фотографиям и видео."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Нет"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ЕЩЁ"</string>

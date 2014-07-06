@@ -63,11 +63,11 @@
     <string name="location" msgid="564326205780827668">"Ubicación"</string>
     <string name="path" msgid="5927003361865586353">"Ruta"</string>
     <string name="width" msgid="7045750687833828758">"Ancho"</string>
-    <string name="height" msgid="5186001199353423689">"Altura"</string>
+    <string name="height" msgid="5186001199353423689">"Alto"</string>
     <string name="orientation" msgid="3883761294106680270">"Orientación"</string>
     <string name="duration" msgid="5316211067383665008">"Duración"</string>
     <string name="mimetype" msgid="6415940055077963944">"Tipo de MIME"</string>
-    <string name="file_size" msgid="6841070748357980676">"Tamaño archivo"</string>
+    <string name="file_size" msgid="6841070748357980676">"Tamaño del archivo"</string>
     <string name="maker" msgid="698691509121545856">"Fabricante"</string>
     <string name="model" msgid="8547493604023069452">"Modelo"</string>
     <string name="flash" msgid="995041910749174196">"Flash"</string>
