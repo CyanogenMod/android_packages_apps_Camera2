@@ -350,8 +350,7 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotoaparat spredaj: foto."</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Fotoaparat spredaj: video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Privzeta kamera"</string>
-    <string name="setting_send_feedback" msgid="6637165939344951380">"Pošljite povratne info."</string>
-    <string name="setting_google_help" msgid="9188405022782314357">"Pomoč"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Pomoč in povrat. inform."</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Obdelava fotograf. HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Odprtokodne licence"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Splošne nastavitve"</string>
