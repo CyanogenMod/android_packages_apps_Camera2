@@ -357,8 +357,7 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografija prednje kamere"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video prednje kamere"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Zadani fotoaparat"</string>
-    <string name="setting_send_feedback" msgid="6637165939344951380">"Slanje povr. informacija"</string>
-    <string name="setting_google_help" msgid="9188405022782314357">"Pomoć"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Pomoć/povr. informacije"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Obrađivanje VDR+ slike…"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Licence otvorenog koda"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Opće postavke"</string>
@@ -388,5 +387,5 @@
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Cijeli senzor \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Obrezani senzor \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
-    <string name="pref_boolean_true" msgid="4131945223998878009">"1."</string>
+    <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
