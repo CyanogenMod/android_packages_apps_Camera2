@@ -335,7 +335,7 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Eliminar"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"O botão está agora %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Localização"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografia câm. posterior"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografia câmara posterior"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo da câmara posterior"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografia câmara frontal"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo da câmara frontal"</string>

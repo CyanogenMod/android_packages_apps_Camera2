@@ -295,7 +295,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Postavke"</string>
     <string name="mode_camera" msgid="279763925715250603">"Fotoaparat"</string>
     <string name="mode_video" msgid="8633929034048169139">"Videozapis"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Fotosfera"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Protek vremena"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokokutno"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
@@ -303,7 +303,7 @@
     <string name="mode_settings_desc" msgid="1189966170303887131">"Otvaranje postavki"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Prelazak na način fotoaparata"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Prelazak na videokameru"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prelazak na način Photo Sphere"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Prelazak na način fotosfere"</string>
     <string name="mode_craft_desc" msgid="8411543408424448562">"Prelazak na napredni način fotoaparata"</string>
     <string name="mode_advanced_camera_desc" msgid="6960004655720210841">"Prelazak na napredni način fotoaparata"</string>
     <string name="mode_timelapse_desc" msgid="6713275294166788276">"Prelazak na način protoka vremena"</string>
@@ -335,9 +335,9 @@
     <string name="delete_button_description" msgid="2251065309677200911">"Brisanje"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Gumb se promijenio u %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Lokacija"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotograf. stražnje kamere"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografija stražnje kamere"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Video stražnje kamere"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotograf. prednje kamere"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografija prednje kamere"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Video prednje kamere"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Zadani fotoaparat"</string>
     <string name="setting_send_feedback" msgid="1327616762665878557">"Slanje povratnih inform."</string>

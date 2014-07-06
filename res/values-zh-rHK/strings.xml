@@ -215,9 +215,9 @@
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"切換至「Photo Sphere 全景相片」"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"切換至高畫質"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"切換至重新對焦模式"</string>
-    <string name="accessibility_review_cancel" msgid="5462850829869569629">"[檢視模式] 取消"</string>
-    <string name="accessibility_review_ok" msgid="3486465319880320270">"[檢視模式] 完成"</string>
-    <string name="accessibility_review_retake" msgid="2547112860787022130">"[檢視模式] 重拍"</string>
+    <string name="accessibility_review_cancel" msgid="5462850829869569629">"取消"</string>
+    <string name="accessibility_review_ok" msgid="3486465319880320270">"完成"</string>
+    <string name="accessibility_review_retake" msgid="2547112860787022130">"重拍"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"選項"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"已關閉模式清單"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"已開啟模式清單"</string>

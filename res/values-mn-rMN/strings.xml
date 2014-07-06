@@ -274,7 +274,7 @@
     <string name="time_lapse_hours" msgid="5294001144133261436">"цаг"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"Дууссан"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"Хугацааны интервал тохируулах"</string>
-    <string name="set_time_interval_help" msgid="64145154088021389">"Цагын урсгал идэвхгүй. Хугацааны интервалыг тохируулах бол идэвхтэй болгоно уу."</string>
+    <string name="set_time_interval_help" msgid="64145154088021389">"Цагийн урсгал идэвхгүй. Хугацааны интервалыг тохируулах бол идэвхтэй болгоно уу."</string>
     <string name="set_duration" msgid="1638453882581604341">"Үргэлжлэх хугацааг секундээр тохируулах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Зураг авахаар цаг тоолж байна"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Зургийн байршлыг санаж байна уу?"</string>
@@ -350,7 +350,7 @@
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Бага"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Өндөр"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s мегапиксел"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Линзний бүүдэгрэлтэй зургийг засварлахын тулд энд товшино уу."</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="86205552045250053">"Линзний бүдэгрэлтэй зургийг засварлахын тулд энд товшино уу."</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Дэлгэрэнгүй"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Гараар гэрэлтүүлэг тохируулах"</string>
 </resources>
