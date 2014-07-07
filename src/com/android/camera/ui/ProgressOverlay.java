@@ -19,9 +19,9 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.view.View;
-import android.view.ViewGroup;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.FrameLayout;
 
 /**
  * ProgressOverlay is a view that sits under the PreviewOverlay.
@@ -56,9 +56,10 @@ public class ProgressOverlay extends View {
      */
     public void setBounds(RectF area) {
         if (area.width() > 0 && area.height() > 0) {
-            ViewGroup.LayoutParams params = getLayoutParams();
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
             params.width = (int) area.width();
             params.height= (int) area.height();
+            params.setMargins((int) area.left, (int) area.top, 0, 0);
             setLayoutParams(params);
         }
     }
