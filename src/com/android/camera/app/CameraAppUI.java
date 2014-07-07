@@ -1675,6 +1675,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mBottomBar.setShutterButtonEnabled(enabled);
     }
 
+    public void setShutterButtonImportantToA11y(boolean important) {
+        mBottomBar.setShutterButtonImportantToA11y(important);
+    }
+
     public boolean isShutterButtonEnabled() {
         return mBottomBar.isShutterButtonEnabled();
     }
