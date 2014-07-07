@@ -411,7 +411,6 @@ public class ModeListView extends FrameLayout
             announceForAccessibility(
                     getContext().getResources().getString(R.string.accessibility_mode_list_hidden));
         }
-
     }
 
     /**
@@ -533,7 +532,6 @@ public class ModeListView extends FrameLayout
                     getContext().getResources().getString(R.string.accessibility_mode_list_shown));
             showSettingsClingIfEnabled(true);
         }
-
     }
 
     /**
@@ -1535,6 +1533,7 @@ public class ModeListView extends FrameLayout
                 mModeListOpenListener.onModeListClosed();
             }
         }
+
         if (mVisibilityChangedListener != null) {
             mVisibilityChangedListener.onVisibilityEvent(getVisibility() == VISIBLE);
         }
