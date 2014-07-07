@@ -67,8 +67,9 @@ public class LocalSessionData implements LocalData {
         }
 
         byte[] jpegData = Storage.getJpegForSession(mUri);
+        int currentVersion = Storage.getJpegVersionForSession(mUri);
         Glide.with(context)
-            .loadFromImage(jpegData, mUri.toString())
+            .loadFromImage(jpegData, mUri.toString() + currentVersion)
             .fitCenter()
             .into(imageView);
 

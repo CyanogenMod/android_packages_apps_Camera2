@@ -58,7 +58,9 @@ public class Storage {
     private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<Uri, Uri>();
     private static HashMap<Uri, Uri> sContentUrisToSessions = new HashMap<Uri, Uri>();
     private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();
-    private static HashMap<Uri, Point> sSessionsToSizes= new HashMap<Uri, Point>();
+    private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<Uri, Point>();
+    private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions =
+        new HashMap<Uri, Integer>();
 
     /**
      * Save the image with default JPEG MIME type and add it to the MediaStore.
@@ -213,6 +215,8 @@ public class Storage {
         Point size = new Point(width, height);
         sSessionsToSizes.put(uri, size);
         sSessionsToPlaceholderBytes.put(uri, jpeg);
+        Integer currentVersion = sSessionsToPlaceholderVersions.get(uri);
+        sSessionsToPlaceholderVersions.put(uri, currentVersion == null ? 0 : currentVersion + 1);
     }
 
     /**
@@ -336,6 +340,17 @@ public class Storage {
      */
     public static byte[] getJpegForSession(Uri uri) {
         return sSessionsToPlaceholderBytes.get(uri);
+    }
+
+    /**
+     * Returns the current version of a placeholder for a session. The version will increment
+     * with each call to replacePlaceholder.
+     *
+     * @param uri the session uri to look up.
+     * @return the current version int.
+     */
+    public static int getJpegVersionForSession(Uri uri) {
+        return sSessionsToPlaceholderVersions.get(uri);
     }
 
     /**
