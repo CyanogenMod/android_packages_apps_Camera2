@@ -237,7 +237,6 @@ public class CameraActivity extends Activity
     private LocalMediaObserver mLocalVideosObserver;
 
     private boolean mPendingDeletion = false;
-    private boolean mSavedShutterEnabledState = true;
 
     private CameraController mCameraController;
     private boolean mPaused;
@@ -1067,18 +1066,9 @@ public class CameraActivity extends Activity
         // TODO: implement this
     }
 
-    private void saveShutterEnabledState() {
-        mSavedShutterEnabledState = isShutterEnabled();
-    }
-
-    private void restoreShutterEnabledState() {
-        setShutterEnabled(mSavedShutterEnabledState);
-    }
-
     @Override
     public void setShutterEnabled(boolean enabled) {
         mCameraAppUI.setShutterButtonEnabled(enabled);
-        saveShutterEnabledState();
     }
 
     @Override
@@ -1328,15 +1318,7 @@ public class CameraActivity extends Activity
             @Override
             public void onVisibilityChanged(boolean visible) {
                 mModeListVisible = visible;
-                if (visible) {
-                    saveShutterEnabledState();
-                    // bypass own setShutterEnabled()
-                    // which will blow away whatever's stored in
-                    // mSavedShutterEnabledState
-                    mCameraAppUI.setShutterButtonEnabled(false);
-                } else {
-                    restoreShutterEnabledState();
-                }
+                mCameraAppUI.setShutterButtonImportantToA11y(!visible);
                 updatePreviewVisibility();
             }
         });
