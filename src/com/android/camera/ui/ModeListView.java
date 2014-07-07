@@ -682,6 +682,11 @@ public class ModeListView extends FrameLayout
             }
         }
 
+        @Override
+        public void onCurrentState() {
+            super.onCurrentState();
+            ModeListView.this.disableA11yOnModeSelectorItems();
+        }
         /**
          * Gets called when the animation finishes or gets canceled.
          *
@@ -692,6 +697,7 @@ public class ModeListView extends FrameLayout
             // If successfully finish hiding shimmy, then we should go back to
             // fully hidden state.
             if (success) {
+                ModeListView.this.enableA11yOnModeSelectorItems();
                 mModeListOpenFactor = 1;
                 mCurrentStateManager.setCurrentState(new FullyHiddenState());
                 return;
@@ -1090,6 +1096,18 @@ public class ModeListView extends FrameLayout
         mListBackgroundColor = getResources().getColor(R.color.mode_list_background);
         mSettingsButtonMargin = getResources().getDimensionPixelSize(
                 R.dimen.mode_list_settings_icon_margin);
+    }
+
+    private void disableA11yOnModeSelectorItems() {
+        for (View selectorItem : mModeSelectorItems) {
+            selectorItem.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+    }
+
+    private void enableA11yOnModeSelectorItems() {
+        for (View selectorItem : mModeSelectorItems) {
+            selectorItem.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+        }
     }
 
     /**
