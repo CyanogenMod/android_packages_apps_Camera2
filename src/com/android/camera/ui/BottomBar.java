@@ -344,12 +344,18 @@ public class BottomBar extends FrameLayout {
      */
     public void setShutterButtonEnabled(boolean enabled) {
         mShutterButton.setEnabled(enabled);
-        if (enabled) {
+        setShutterButtonImportantToA11y(enabled);
+    }
+
+    /**
+     * Sets whether shutter button should be included in a11y announcement and navigation
+     */
+    public void setShutterButtonImportantToA11y(boolean important) {
+        if (important) {
             mShutterButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
         } else {
             mShutterButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
-
     }
 
     /**
