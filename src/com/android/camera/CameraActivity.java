@@ -848,6 +848,7 @@ public class CameraActivity extends Activity
             new SessionListener() {
                 @Override
                 public void onSessionQueued(final Uri uri) {
+                    Log.v(TAG, "onSessionQueued: " + uri);
                     if (!Storage.isSessionUri(uri)) {
                         return;
                     }
@@ -914,11 +915,13 @@ public class CameraActivity extends Activity
 
                 @Override
                 public void onSessionUpdated(Uri uri) {
+                    Log.v(TAG, "onSessionUpdated: " + uri);
                     mDataAdapter.refresh(uri);
                 }
 
                 @Override
                 public void onSessionPreviewAvailable(Uri uri) {
+                    Log.v(TAG, "onSessionPreviewAvailable: " + uri);
                     mDataAdapter.refresh(uri);
                     int dataId = mDataAdapter.findDataByContentUri(uri);
                     if (dataId != -1) {
