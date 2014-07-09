@@ -30,8 +30,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import com.android.camera.Storage;
-import com.android.camera.data.PanoramaMetadataLoader;
-import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
@@ -526,6 +524,11 @@ public abstract class LocalMediaData implements LocalData {
         private void loadImage(Context context, ImageView imageView, int thumbWidth,
                 int thumbHeight, int placeHolderResourceId, boolean full) {
 
+            //TODO: Figure out why these can be <= 0.
+            if (thumbWidth <= 0 || thumbHeight <=0) {
+                return;
+            }
+
             DrawableRequestBuilder<Uri> request = Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
                 .placeholder(placeHolderResourceId)
@@ -542,7 +545,6 @@ public abstract class LocalMediaData implements LocalData {
                 request.thumbnail(Glide.with(context)
                         .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
                             mOrientation)
-                        .skipDiskCache(true)
                         .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                     .override(thumbWidth, thumbHeight);
             }
@@ -780,11 +782,16 @@ public abstract class LocalMediaData implements LocalData {
         protected ImageView fillImageView(Context context, final ImageView v, final int thumbWidth,
                 final int thumbHeight, int placeHolderResourceId, LocalDataAdapter adapter,
                 boolean isInProgress) {
+
+            //TODO: Figure out why these can be <= 0.
+            if (thumbWidth <= 0 || thumbHeight <=0) {
+                return v;
+            }
+
             Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
                 .thumbnail(Glide.with(context)
                     .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
-                    .skipDiskCache(true)
                     .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                 .placeholder(placeHolderResourceId)
                 .fitCenter()
