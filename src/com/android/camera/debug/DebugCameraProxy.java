@@ -25,12 +25,14 @@ import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.CameraSettings;
+import com.android.ex.camera2.portability.CameraStateHolder;
+import com.android.ex.camera2.portability.DispatchThread;
 
 /**
  * A {@link com.android.ex.camera2.portability.CameraAgent.CameraProxy} which wraps the
  * other and adds logs for all operations.
  */
-public class DebugCameraProxy implements CameraAgent.CameraProxy {
+public class DebugCameraProxy extends CameraAgent.CameraProxy {
     private final Log.Tag mTag;
     private final CameraAgent.CameraProxy mProxy;
 
@@ -253,6 +255,21 @@ public class DebugCameraProxy implements CameraAgent.CameraProxy {
     public String dumpDeviceSettings() {
         log("dumpDeviceSettings");
         return mProxy.dumpDeviceSettings();
+    }
+
+    @Override
+    public Handler getCameraHandler() {
+        return mProxy.getCameraHandler();
+    }
+
+    @Override
+    public DispatchThread getDispatchThread() {
+        return mProxy.getDispatchThread();
+    }
+
+    @Override
+    public CameraStateHolder getCameraState() {
+        return mProxy.getCameraState();
     }
 
     private void log(String msg) {
