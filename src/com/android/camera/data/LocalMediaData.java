@@ -513,6 +513,11 @@ public abstract class LocalMediaData implements LocalData {
         private void loadImage(Context context, ImageView imageView, int thumbWidth,
                 int thumbHeight, int placeHolderResourceId, boolean full) {
 
+            //TODO: Figure out why these can be <= 0.
+            if (thumbWidth <= 0 || thumbHeight <=0) {
+                return;
+            }
+
             DrawableRequestBuilder<Uri> request = Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
                 .placeholder(placeHolderResourceId)
@@ -529,7 +534,6 @@ public abstract class LocalMediaData implements LocalData {
                 request.thumbnail(Glide.with(context)
                         .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
                             mOrientation)
-                        .skipDiskCache(true)
                         .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                     .override(thumbWidth, thumbHeight);
             }
@@ -767,20 +771,24 @@ public abstract class LocalMediaData implements LocalData {
         protected ImageView fillImageView(Context context, final ImageView v, final int thumbWidth,
                 final int thumbHeight, int placeHolderResourceId, LocalDataAdapter adapter,
                 boolean isInProgress) {
+            v.setContentDescription(context.getResources().getString(
+                R.string.media_date_content_description,
+                getReadableDate(mDateModifiedInSeconds)));
+
+            //TODO: Figure out why these can be <= 0.
+            if (thumbWidth <= 0 || thumbHeight <=0) {
+                return v;
+            }
+
             Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
                 .thumbnail(Glide.with(context)
                     .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
-                    .skipDiskCache(true)
                     .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                 .placeholder(placeHolderResourceId)
                 .fitCenter()
                 .override(thumbWidth, thumbHeight)
                 .into(v);
-
-            v.setContentDescription(context.getResources().getString(
-                    R.string.media_date_content_description,
-                    getReadableDate(mDateModifiedInSeconds)));
 
             return v;
         }
