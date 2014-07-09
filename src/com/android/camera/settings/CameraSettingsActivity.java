@@ -61,7 +61,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.mode_settings);
 
-        CameraSettingsFragment dialog = new CameraSettingsFragment(this);
+        CameraSettingsFragment dialog = new CameraSettingsFragment();
         getFragmentManager().beginTransaction().replace(android.R.id.content, dialog).commit();
     }
 
@@ -82,7 +82,6 @@ public class CameraSettingsActivity extends FragmentActivity {
         public static final String PREF_LAUNCH_HELP = "pref_launch_help";
         private static final Log.Tag TAG = new Log.Tag("SettingsFragment");
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
-        private Context mContext;
         private String[] mCamcorderProfileNames;
         private CameraDeviceInfo mInfos;
 
@@ -94,10 +93,6 @@ public class CameraSettingsActivity extends FragmentActivity {
         private SelectedVideoQualities mVideoQualitiesBack;
         private SelectedVideoQualities mVideoQualitiesFront;
 
-        public CameraSettingsFragment(Context context) {
-            mContext = context;
-        }
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -105,7 +100,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             addPreferencesFromResource(R.xml.camera_preferences);
             CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
-            mInfos = CameraAgentFactory.getAndroidCameraAgent(mContext).getCameraDeviceInfo();
+            mInfos = CameraAgentFactory.getAndroidCameraAgent(context).getCameraDeviceInfo();
         }
 
         @Override
