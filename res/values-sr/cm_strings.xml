@@ -46,8 +46,8 @@
   <string name="pref_camera_scenemode_entry_asd">Најбољи хитац</string>
   <string name="pref_camera_scenemode_entry_baby">Беба</string>
   <string name="pref_camera_scenemode_entry_backgroundblur">Замагљивање позадине</string>
-  <string name="pref_camera_scenemode_entry_backlight">Позадинско осветљење</string>
-  <string name="pref_camera_scenemode_entry_backlightportrait">Портрет позадинског осветљења</string>
+  <string name="pref_camera_scenemode_entry_backlight">Позадинска осветљеност</string>
+  <string name="pref_camera_scenemode_entry_backlightportrait">Портрет позадинске осветљености</string>
   <string name="pref_camera_scenemode_entry_barcode">Баркод</string>
   <string name="pref_camera_scenemode_entry_beach">Плажа</string>
   <string name="pref_camera_scenemode_entry_beauty">Лепота</string>
@@ -65,7 +65,7 @@
   <string name="pref_camera_scenemode_entry_highsensitivity">Висока осетљивост</string>
   <string name="pref_camera_scenemode_entry_indoor">Унутра</string>
   <string name="pref_camera_scenemode_entry_landscape">Пејзаж</string>
-  <string name="pref_camera_scenemode_entry_mix_illuminant">Мешано осветљење</string>
+  <string name="pref_camera_scenemode_entry_mix_illuminant">Мешана осветљеност</string>
   <string name="pref_camera_scenemode_entry_mood">Расположење</string>
   <string name="pref_camera_scenemode_entry_nightportrait">Портрет ноћу</string>
   <string name="pref_camera_scenemode_entry_nightindoor">Унутрашња ноћ</string>
@@ -82,7 +82,7 @@
   <string name="pref_camera_scenemode_entry_text">Текст</string>
   <string name="pref_camera_scenemode_entry_theatre">Позориште</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Белатабла</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Континуирана слика</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Непрекидна слика</string>
   <string name="pref_camera_focusmode_entry_extended">Проширено</string>
   <string name="pref_camera_focusmode_entry_facedetect">Детекција лица</string>
   <string name="pref_camera_focusmode_entry_facepriority">Приоритет лица</string>
@@ -96,7 +96,7 @@
   <string name="pref_camera_coloreffect_entry_point_green">Тачка зелене</string>
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Тачка црвено-жутe</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Цртаћ</string>
-  <string name="pref_camera_burst_title">Непрекидно сликање</string>
+  <string name="pref_camera_burst_title">Вишеструко сликање</string>
   <string name="pref_camera_burst_entry_off">Искључено</string>
   <string name="pref_camera_burst_entry_5">5 снимака</string>
   <string name="pref_camera_burst_entry_10">10 снимака</string>
