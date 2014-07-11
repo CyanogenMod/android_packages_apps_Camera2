@@ -696,6 +696,9 @@ public class FilmstripView extends ViewGroup {
      * Called after current item or zoom level has changed.
      */
     public void zoomAtIndexChanged() {
+        if (mViewItem[mCurrentItem] == null) {
+            return;
+        }
         int id = mViewItem[mCurrentItem].getId();
         mListener.onZoomAtIndexChanged(id, mScale);
     }
