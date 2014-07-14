@@ -1143,12 +1143,7 @@ public class PhotoModule
 
             // Send the taken photo to remote shutter listeners, if any are
             // registered.
-            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-                @Override
-                public void run() {
-                    getServices().getRemoteShutterListener().onPictureTaken(jpegData);
-                }
-            });
+            getServices().getRemoteShutterListener().onPictureTaken(jpegData);
 
             // Check this in advance of each shot so we don't add to shutter
             // latency. It's true that someone else could write to the SD card
