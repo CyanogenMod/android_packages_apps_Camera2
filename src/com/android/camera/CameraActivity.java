@@ -564,6 +564,9 @@ public class CameraActivity extends Activity
 
     private String fileNameFromDataID(int dataID) {
         final LocalData localData = mDataAdapter.getLocalData(dataID);
+        if (localData == null) {
+            return "";
+        }
 
         File localFile = new File(localData.getPath());
         return localFile.getName();
