@@ -38,7 +38,6 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
@@ -230,6 +229,7 @@ public class CameraActivity extends Activity
     private ActionBar mActionBar;
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
+    private boolean mIsActivityRunning = false;
 
     private final Uri[] mNfcPushUris = new Uri[1];
 
@@ -1758,6 +1758,7 @@ public class CameraActivity extends Activity
     @Override
     public void onStart() {
         super.onStart();
+        mIsActivityRunning = true;
         mPanoramaViewHelper.onStart();
 
         /*
@@ -1783,6 +1784,7 @@ public class CameraActivity extends Activity
 
     @Override
     protected void onStop() {
+        mIsActivityRunning = false;
         mPanoramaViewHelper.onStop();
         if (mFeedbackHelper != null) {
             mFeedbackHelper.stopFeedback();
@@ -1947,6 +1949,10 @@ public class CameraActivity extends Activity
     }
 
     protected void updateStorageHint(long storageSpace) {
+        if (!mIsActivityRunning) {
+            return;
+        }
+
         String message = null;
         if (storageSpace == Storage.UNAVAILABLE) {
             message = getString(R.string.no_storage);
