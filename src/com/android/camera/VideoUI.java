@@ -54,7 +54,6 @@ public class VideoUI implements PreviewStatusListener {
     private VideoRecordingHints mVideoHints;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
-    private View mTimeLapseLabel;
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
     private final VideoController mController;
@@ -162,7 +161,6 @@ public class VideoUI implements PreviewStatusListener {
         mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
         mRecordingTimeView = (TextView) mRootView.findViewById(R.id.recording_time);
         mRecordingTimeRect = (RotateLayout) mRootView.findViewById(R.id.recording_time_rect);
-        mTimeLapseLabel = mRootView.findViewById(R.id.time_lapse_label);
         // The R.id.labels can only be found in phone layout.
         // That is, mLabelsLinearLayout should be null in tablet layout.
         mLabelsLinearLayout = (LinearLayout) mRootView.findViewById(R.id.labels);
@@ -179,12 +177,6 @@ public class VideoUI implements PreviewStatusListener {
         if (aspectRatio != mAspectRatio) {
             mAspectRatio = aspectRatio;
             mController.updatePreviewAspectRatio(mAspectRatio);
-        }
-    }
-
-    public void showTimeLapseUI(boolean enable) {
-        if (mTimeLapseLabel != null) {
-            mTimeLapseLabel.setVisibility(enable ? View.VISIBLE : View.GONE);
         }
     }
 
