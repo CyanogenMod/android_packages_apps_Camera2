@@ -38,6 +38,12 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
     private final File mBaseDirectory;
 
     /**
+     * This is where we used to store temp session data, but it was the wrong
+     * place. But we want to make sure it's cleaned up for users that upgraded.
+     */
+    private final File mDeprecatedBaseDirectory;
+
+    /**
      * Creates a new {@link SessionStorageManager} instance.
      *
      * @param context A valid Android context to be used for determining the
@@ -45,11 +51,13 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
      * @return A session storage manager.
      */
     public static SessionStorageManager create(Context context) {
-        return new SessionStorageManagerImpl(context.getExternalFilesDir(null));
+        return new SessionStorageManagerImpl(context.getExternalCacheDir(),
+                context.getExternalFilesDir(null));
     }
 
-    SessionStorageManagerImpl(File baseDirectory) {
+    SessionStorageManagerImpl(File baseDirectory, File deprecatedBaseDirectory) {
         mBaseDirectory = baseDirectory;
+        mDeprecatedBaseDirectory = deprecatedBaseDirectory;
     }
 
     @Override
@@ -65,6 +73,11 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
 
         // Make sure there are no expired sessions in this directory.
         cleanUpExpiredSessions(sessionDirectory);
+
+        // For upgraded users, make sure we also clean up the old location.
+        File deprecatedSessionDirectory = new File(mDeprecatedBaseDirectory, subDirectory);
+        cleanUpExpiredSessions(deprecatedSessionDirectory);
+
         return sessionDirectory;
     }
 
@@ -79,6 +92,9 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
                 return file.isDirectory();
             }
         });
+        if (sessionDirs == null) {
+            return;
+        }
 
         final long nowInMillis = System.currentTimeMillis();
         for (File sessionDir : sessionDirs) {
