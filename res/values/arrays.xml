@@ -517,8 +517,8 @@
     <integer name="camera_mode_refocus">2</integer>
     <integer name="camera_mode_photosphere">3</integer>
     <integer name="camera_mode_panorama">4</integer>
-    <integer name="camera_mode_timelapse">5</integer>
-    <integer name="camera_mode_gcam">6</integer>
+    <integer name="camera_mode_gcam">5</integer>
+
 
     <!-- Ordered list of all camera modes. -->
     <integer-array name="camera_modes">
@@ -527,7 +527,6 @@
         <item>@integer/camera_mode_refocus</item>
         <item>@integer/camera_mode_photosphere</item>
         <item>@integer/camera_mode_panorama</item>
-        <item>@integer/camera_mode_timelapse</item>
         <item>@integer/camera_mode_gcam</item>
     </integer-array>
 
@@ -560,10 +559,8 @@
     <array name="camera_mode_theme_color">
         <item>@color/camera_mode_color</item>
         <item>@color/video_mode_color</item>
-        <item>@color/craft_mode_color</item>
         <item>@color/photosphere_mode_color</item>
         <item>@color/panorama_mode_color</item>
-        <item>@color/timelapse_mode_color</item>
         <item>@color/camera_mode_color</item>
     </array>
 
@@ -603,7 +600,6 @@
         <item>@drawable/ic_refocus_normal</item>
         <item>@drawable/ic_photo_sphere_normal</item>
         <item>@drawable/ic_panorama_normal</item>
-        <item>@drawable/ic_timelapse_normal</item>
         <item>@drawable/ic_camera_normal</item>
     </array>
 
@@ -613,7 +609,6 @@
         <item>@drawable/ic_refocus</item>
         <item>@null</item>
         <item>@drawable/ic_panorama</item>
-        <item>@null</item>
         <item>@drawable/ic_camera</item>
     </array>
 
