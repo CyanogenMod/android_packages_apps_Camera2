@@ -1295,7 +1295,7 @@ public class CameraActivity extends Activity
         GcamHelper.init(getContentResolver());
         ModulesInfo.setupModules(mAppContext, mModuleManager);
 
-        mSettingsManager = new SettingsManager(this);
+        mSettingsManager = getServices().getSettingsManager();
         Upgrade.executeUpgradeOnVersionChanged(mSettingsManager,
             Keys.KEY_UPGRADE_VERSION, UpgradeAosp.AOSP_UPGRADE_VERSION,
             UpgradeAosp.getAospUpgradeSteps(this));

@@ -31,6 +31,7 @@ import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.PlaceholderManager;
 import com.android.camera.session.SessionStorageManager;
 import com.android.camera.session.SessionStorageManagerImpl;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.RemoteShutterHelper;
 import com.android.camera.util.SessionStatsCollector;
@@ -48,6 +49,7 @@ public class CameraApp extends Application implements CameraServices {
     private PlaceholderManager mPlaceHolderManager;
     private RemoteShutterListener mRemoteShutterListener;
     private MotionManager mMotionManager;
+    private SettingsManager mSettingsManager;
 
     @Override
     public void onCreate() {
@@ -71,6 +73,7 @@ public class CameraApp extends Application implements CameraServices {
                 mPlaceHolderManager, mSessionStorageManager);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
         mRemoteShutterListener = RemoteShutterHelper.create(this);
+        mSettingsManager = new SettingsManager(this);
 
         clearNotifications();
 
@@ -101,6 +104,11 @@ public class CameraApp extends Application implements CameraServices {
     @Override
     public RemoteShutterListener getRemoteShutterListener() {
         return mRemoteShutterListener;
+    }
+
+    @Override
+    public SettingsManager getSettingsManager() {
+        return mSettingsManager;
     }
 
     /**
