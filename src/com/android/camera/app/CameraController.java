@@ -39,7 +39,7 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
     private CameraManager.CameraOpenCallback mCallbackReceiver;
     private final Handler mCallbackHandler;
     private final CameraManager mCameraManager;
-    private CameraDeviceInfo mInfo;
+    private final CameraDeviceInfo mInfo;
 
     private CameraManager.CameraProxy mCameraProxy;
     private int mRequestingCameraId = EMPTY_REQUEST;
@@ -232,7 +232,11 @@ public class CameraController implements CameraManager.CameraOpenCallback, Camer
      * TODO: Make this method package private.
      */
     public void closeCamera(boolean synced) {
-        Log.v(TAG, "closing camera");
+        if (mCameraProxy == null) {
+            Log.v(TAG, "No camera open, not closing");
+            return;
+        }
+        Log.v(TAG, "Closing camera");
         mCameraProxy = null;
         mCameraManager.closeCamera(mCameraProxy, synced);
         mRequestingCameraId = EMPTY_REQUEST;
