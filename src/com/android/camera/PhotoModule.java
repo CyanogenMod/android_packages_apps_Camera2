@@ -444,8 +444,6 @@ public class PhotoModule
         // This must be done before startPreview.
         mIsImageCaptureIntent = isImageCaptureIntent();
 
-        mActivity.getCameraProvider().requestCamera(mCameraId);
-
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
         mUI.setCountdownFinishedListener(this);
@@ -1557,6 +1555,16 @@ public class PhotoModule
             return;
         }
         Log.v(TAG, "Executing onResumeTasks.");
+
+        mCountdownSoundPlayer.loadSounds();
+        if (mFocusManager != null) {
+            // If camera is not open when resume is called, focus manager will
+            // not be initialized yet, in which case it will start listening to
+            // preview area size change later in the initialization.
+            mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
+        }
+        mAppController.addPreviewAreaSizeChangedListener(mUI);
+
         CameraProvider camProvider = mActivity.getCameraProvider();
         if (camProvider == null) {
             // No camera provider, the Activity is destroyed already.
@@ -1587,6 +1595,9 @@ public class PhotoModule
         if (msensor != null) {
             mSensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+
+        getServices().getRemoteShutterListener().onModuleReady(this);
+        SessionStatsCollector.instance().sessionActive(true);
     }
 
     /**
@@ -1631,25 +1642,23 @@ public class PhotoModule
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
     }
 
+    /**
+     * @return Whether we are resuming from within the lockscreen.
+     */
+    private boolean isResumeFromLockscreen() {
+        String action = mActivity.getIntent().getAction();
+        return (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
+                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action));
+    }
+
     @Override
     public void resume() {
         mPaused = false;
-        mCountdownSoundPlayer.loadSounds();
-        if (mFocusManager != null) {
-            // If camera is not open when resume is called, focus manager will
-            // not
-            // be initialized yet, in which case it will start listening to
-            // preview area size change later in the initialization.
-            mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
-        }
-        mAppController.addPreviewAreaSizeChangedListener(mUI);
 
         // Add delay on resume from lock screen only, in order to to speed up
         // the onResume --> onPause --> onResume cycle from lock screen.
         // Don't do always because letting go of thread can cause delay.
-        String action = mActivity.getIntent().getAction();
-        if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
-                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
+        if (isResumeFromLockscreen()) {
             Log.v(TAG, "On resume, from lock screen.");
             // Note: onPauseAfterSuper() will delete this runnable, so we will
             // at most have 1 copy queued up.
@@ -1658,8 +1667,6 @@ public class PhotoModule
             Log.v(TAG, "On resume.");
             onResumeTasks();
         }
-        getServices().getRemoteShutterListener().onModuleReady(this);
-        SessionStatsCollector.instance().sessionActive(true);
     }
 
     @Override
