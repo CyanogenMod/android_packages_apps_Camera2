@@ -344,8 +344,7 @@ public class IndicatorIconController
             syncPanoIndicator();
             return;
         }
-        if (key.equals(Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)
-                || key.equals(Keys.KEY_EXPOSURE)) {
+        if (key.equals(Keys.KEY_EXPOSURE)) {
             syncExposureIndicator();
             return;
         }

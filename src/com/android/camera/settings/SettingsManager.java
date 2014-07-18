@@ -189,6 +189,7 @@ public class SettingsManager {
             mCustomPreferences.registerOnSharedPreferenceChangeListener(
                 sharedPreferenceListener);
         }
+        Log.v(TAG, "listeners: " + mListeners);
     }
 
     /**

@@ -18,6 +18,7 @@ package com.android.camera.app;
 
 import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
+import com.android.camera.settings.SettingsManager;
 
 /**
  * Functionality available to all modules and services.
@@ -56,4 +57,9 @@ public interface CameraServices {
      *         capture apps. Will never return null.
      */
     public RemoteShutterListener getRemoteShutterListener();
+
+    /**
+     * @return The settings manager which allows get/set of all app settings.
+     */
+    public SettingsManager getSettingsManager();
 }
