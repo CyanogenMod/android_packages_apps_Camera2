@@ -27,5 +27,4 @@
     <item name="ic_snapshot_border" type="drawable">@drawable/ic_snapshot_border_xlarge</item>
     <item name="ic_switch_photo_facing_holo_light" type="drawable">@drawable/ic_switch_photo_facing_holo_light_xlarge</item>
     <item name="ic_switch_video_facing_holo_light" type="drawable">@drawable/ic_switch_video_facing_holo_light_xlarge</item>
-    <item name="ic_timelapse_none" type="drawable">@drawable/ic_timelapse_none_xlarge</item>
 </resources>

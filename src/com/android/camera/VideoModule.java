@@ -161,11 +161,6 @@ public class VideoModule extends CameraModule
     // The video duration limit. 0 means no limit.
     private int mMaxVideoDurationInMs;
 
-    // Time Lapse parameters.
-    private final boolean mCaptureTimeLapse = false;
-    // Default 0. If it is larger than 0, the camcorder is in time lapse mode.
-    private final int mTimeBetweenTimeLapseFrameCaptureMs = 0;
-
     boolean mPreviewing = false; // True if preview is started.
     // The display rotation in degrees. This is only valid when mPreviewing is
     // true.
@@ -369,7 +364,6 @@ public class VideoModule extends CameraModule
         mUI.setOrientationIndicator(0, false);
         setDisplayOrientation();
 
-        mUI.showTimeLapseUI(mCaptureTimeLapse);
         mPendingSwitchCameraId = -1;
 
         mShutterIconId = CameraUtil.getCameraShutterIconId(
@@ -768,17 +762,6 @@ public class VideoModule extends CameraModule
                     .getAndroidContext());
         }
 
-        // TODO: Uncomment this block to re-enable time-lapse.
-        /* // Read time lapse recording interval.
-        String frameIntervalStr = settingsManager.get(
-            SettingsManager.SETTING_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
-        mTimeBetweenTimeLapseFrameCaptureMs = Integer.parseInt(frameIntervalStr);
-        mCaptureTimeLapse = (mTimeBetweenTimeLapseFrameCaptureMs != 0);
-        // TODO: This should be checked instead directly +1000.
-        if (mCaptureTimeLapse) {
-            quality += 1000;
-        } */
-
         // If quality is not supported, request QUALITY_HIGH which is always supported.
         if (CamcorderProfile.hasProfile(mCameraId, quality) == false) {
             quality = CamcorderProfile.QUALITY_HIGH;
@@ -1119,17 +1102,10 @@ public class VideoModule extends CameraModule
         // Unlock the camera object before passing it to media recorder.
         mCameraDevice.unlock();
         mMediaRecorder.setCamera(mCameraDevice.getCamera());
-        if (!mCaptureTimeLapse) {
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-        }
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mMediaRecorder.setProfile(mProfile);
         mMediaRecorder.setVideoSize(mProfile.videoFrameWidth, mProfile.videoFrameHeight);
         mMediaRecorder.setMaxDuration(mMaxVideoDurationInMs);
-        if (mCaptureTimeLapse) {
-            double fps = 1000 / (double) mTimeBetweenTimeLapseFrameCaptureMs;
-            setCaptureRate(mMediaRecorder, fps);
-        }
 
         setRecordLocation();
 
@@ -1258,9 +1234,7 @@ public class VideoModule extends CameraModule
         if (mVideoFileDescriptor == null) {
             long duration = SystemClock.uptimeMillis() - mRecordingStartTime;
             if (duration > 0) {
-                if (mCaptureTimeLapse) {
-                    duration = getTimeLapseVideoLength(duration);
-                }
+                //
             } else {
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
@@ -1418,7 +1392,6 @@ public class VideoModule extends CameraModule
             mUI.showReviewImage(bitmap);
         }
         mUI.showReviewControls();
-        mUI.showTimeLapseUI(false);
     }
 
     private boolean stopVideoRecording() {
@@ -1541,13 +1514,6 @@ public class VideoModule extends CameraModule
         return timeStringBuilder.toString();
     }
 
-    private long getTimeLapseVideoLength(long deltaMs) {
-        // For better approximation calculate fractional number of frames captured.
-        // This will update the video time at a higher resolution.
-        double numberOfFrames = (double) deltaMs / mTimeBetweenTimeLapseFrameCaptureMs;
-        return (long) (numberOfFrames / mProfile.videoFrameRate * 1000);
-    }
-
     private void updateRecordingTime() {
         if (!mMediaRecorderRecording) {
             return;
@@ -1567,16 +1533,9 @@ public class VideoModule extends CameraModule
         String text;
 
         long targetNextUpdateDelay;
-        if (!mCaptureTimeLapse) {
-            text = millisecondToTimeString(deltaAdjusted, false);
-            targetNextUpdateDelay = 1000;
-        } else {
-            // The length of time lapse video is different from the length
-            // of the actual wall clock time elapsed. Display the video length
-            // only in format hh:mm:ss.dd, where dd are the centi seconds.
-            text = millisecondToTimeString(getTimeLapseVideoLength(delta), true);
-            targetNextUpdateDelay = mTimeBetweenTimeLapseFrameCaptureMs;
-        }
+
+        text = millisecondToTimeString(deltaAdjusted, false);
+        targetNextUpdateDelay = 1000;
 
         mUI.setRecordingTime(text);
 
@@ -1585,9 +1544,7 @@ public class VideoModule extends CameraModule
             // when it needs changing.
             mRecordingTimeCountsDown = countdownRemainingTime;
 
-            int color = mActivity.getResources().getColor(countdownRemainingTime
-                    ? R.color.recording_time_remaining_text
-                    : R.color.recording_time_elapsed_text);
+            int color = mActivity.getResources().getColor(R.color.recording_time_remaining_text);
 
             mUI.setRecordingTimeTextColor(color);
         }

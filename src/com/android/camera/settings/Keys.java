@@ -35,8 +35,6 @@ public class Keys {
     public static final String KEY_RECORD_LOCATION = "pref_camera_recordlocation_key";
     public static final String KEY_VIDEO_QUALITY_BACK = "pref_video_quality_back_key";
     public static final String KEY_VIDEO_QUALITY_FRONT = "pref_video_quality_front_key";
-    public static final String KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL =
-            "pref_video_time_lapse_frame_interval_key";
     public static final String KEY_PICTURE_SIZE_BACK = "pref_camera_picturesize_back_key";
     public static final String KEY_PICTURE_SIZE_FRONT = "pref_camera_picturesize_front_key";
     public static final String KEY_JPEG_QUALITY = "pref_camera_jpegquality_key";
@@ -111,11 +109,6 @@ public class Keys {
         settingsManager.setDefaults(KEY_VIDEO_QUALITY_FRONT,
             context.getString(R.string.pref_video_quality_default),
             context.getResources().getStringArray(R.array.pref_video_quality_entryvalues));
-
-        settingsManager.setDefaults(KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
-            context.getString(R.string.pref_video_time_lapse_frame_interval_default),
-            context.getResources().getStringArray(
-                R.array.pref_video_time_lapse_frame_interval_entryvalues));
 
         settingsManager.setDefaults(KEY_JPEG_QUALITY,
             context.getString(R.string.pref_camera_jpeg_quality_normal),
