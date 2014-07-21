@@ -82,6 +82,7 @@
 
     <color name="camera_mode_color">#2979ff</color>
     <color name="video_mode_color">#dd2c00</color>
+    <color name="refocus_mode_color">#00c853</color>
     <color name="photosphere_mode_color">#aa00ff</color>
     <color name="panorama_mode_color">#ffbc00</color>
     <color name="mode_cover_default_color">#191919</color>

@@ -559,9 +559,9 @@
     <array name="camera_mode_theme_color">
         <item>@color/camera_mode_color</item>
         <item>@color/video_mode_color</item>
+        <item>@color/refocus_mode_color</item>
         <item>@color/photosphere_mode_color</item>
         <item>@color/panorama_mode_color</item>
-        <item>@color/camera_mode_color</item>
     </array>
 
     <string-array name="camera_mode_text">
