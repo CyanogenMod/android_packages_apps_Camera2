@@ -218,7 +218,8 @@ public abstract class LocalMediaData implements LocalData {
         if (recycled != null) {
             imageView = (ImageView) recycled;
         } else {
-            imageView = new ImageView(context);
+            imageView = (ImageView) LayoutInflater.from(context)
+                .inflate(R.layout.filmstrip_image, null);
             imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 

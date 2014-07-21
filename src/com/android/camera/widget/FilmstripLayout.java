@@ -470,7 +470,8 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
         public MyBackgroundDrawable() {
             mPaint = new Paint();
-            mPaint.setColor(0);
+            mPaint.setAntiAlias(true);
+            mPaint.setColor(getResources().getColor(R.color.filmstrip_background));
             mPaint.setAlpha(255);
         }
 
@@ -489,6 +490,10 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         @Override
         public void setAlpha(int i) {
             mPaint.setAlpha(i);
+        }
+
+        private void setAlpha(float a) {
+            setAlpha((int) (a*255.0f));
         }
 
         @Override
@@ -517,6 +522,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         }
 
         private void drawHiding(Canvas canvas) {
+            setAlpha(1.0f - mFilmstripContentTranslationProgress);
             canvas.drawRect(
                     mFilmstripContentLayout.getLeft() + mFilmstripContentLayout.getTranslationX(),
                     mFilmstripContentLayout.getTop() + mFilmstripContentLayout.getTranslationY(),
@@ -535,6 +541,8 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             float y = height / 2f;
             float refX = width * (1 - mFraction);
             float refY = y * (1 - mFraction);
+
+            setAlpha(mFraction);
             canvas.drawCircle(x, getMeasuredHeight() / 2,
                     FloatMath.sqrt((x - refX) * (x - refX) + (y - refY) * (y - refY)), mPaint);
         }
