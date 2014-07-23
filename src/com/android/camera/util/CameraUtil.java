@@ -1141,7 +1141,7 @@ public class CameraUtil {
               .obtainTypedArray(R.array.camera_mode_shutter_icon);
         if (modeIndex < 0 || modeIndex >= shutterIcons.length()) {
             Log.e(TAG, "Invalid mode index: " + modeIndex);
-            return 0;
+            throw new IllegalStateException("Invalid mode index: " + modeIndex);
         }
         return shutterIcons.getResourceId(modeIndex, 0);
     }

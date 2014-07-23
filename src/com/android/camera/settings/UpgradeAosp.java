@@ -58,21 +58,21 @@ public class UpgradeAosp {
 
     /**
      * With this version, the names of the files storing camera specific
-     * settings changed.
+     * and module specific settings changed.
      */
-    private static final int CAMERA_SETTINGS_FILES_RENAMED_VERSION = 4;
+    private static final int CAMERA_MODULE_SETTINGS_FILES_RENAMED_VERSION = 4;
 
     /**
-     * With this version, the names of the files storing module specific
-     * settings changed.
+     * With this version, timelapse mode was removed and mode indices need
+     * to be resequenced.
      */
-    private static final int MODULE_SETTINGS_FILES_RENAMED_VERSION = 4;
+    private static final int CAMERA_SETTINGS_SELECTED_MODULE_INDEX = 5;
 
     /**
      * Increment this value whenever new AOSP UpgradeSteps need to
      * be executed.
      */
-    public static final int AOSP_UPGRADE_VERSION = 4;
+    public static final int AOSP_UPGRADE_VERSION = 5;
 
     /**
      * Returns UpgradeSteps which executes AOSP upgrade logic.
@@ -94,16 +94,16 @@ public class UpgradeAosp {
                                              SettingsUtil.CAMERA_FACING_BACK);
                 }
 
-                if (version < CAMERA_SETTINGS_FILES_RENAMED_VERSION) {
+                if (version < CAMERA_MODULE_SETTINGS_FILES_RENAMED_VERSION) {
                     upgradeCameraSettingsFiles(settingsManager, app.getAndroidContext());
-                }
-
-                if (version < MODULE_SETTINGS_FILES_RENAMED_VERSION) {
                     upgradeModuleSettingsFiles(settingsManager, app.getAndroidContext(), app);
+                    settingsManager.remove(SettingsManager.SCOPE_GLOBAL,
+                            Keys.KEY_STARTUP_MODULE_INDEX);
                 }
 
-                settingsManager.remove(SettingsManager.SCOPE_GLOBAL,
-                                       Keys.KEY_STARTUP_MODULE_INDEX);
+                if (version < CAMERA_SETTINGS_SELECTED_MODULE_INDEX) {
+                    upgradeSelectedModeIndex(settingsManager, app.getAndroidContext());
+                }
             }
         };
     }
@@ -211,6 +211,30 @@ public class UpgradeAosp {
                                                 + module.getModuleStringIdentifier());
 
             copyPreferences(oldModulePreferences, newModulePreferences);
+        }
+    }
+
+    /**
+     * The R.integer.camera_mode_* indices were cleaned up, resulting in removals and renaming
+     * of certain values. In particular camera_mode_gcam is now 5, not 6. We modify any
+     * persisted user settings that may refer to the old value.
+     */
+    private static void upgradeSelectedModeIndex(SettingsManager settingsManager, Context context) {
+        int oldGcamIndex = 6; // from hardcoded previous mode index resource
+        int gcamIndex = context.getResources().getInteger(R.integer.camera_mode_gcam);
+
+        int lastUsedCameraIndex = settingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_CAMERA_MODULE_LAST_USED);
+        if (lastUsedCameraIndex == oldGcamIndex) {
+            settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_MODULE_LAST_USED,
+                    gcamIndex);
+        }
+
+        int startupModuleIndex = settingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_STARTUP_MODULE_INDEX);
+        if (startupModuleIndex == oldGcamIndex) {
+            settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_STARTUP_MODULE_INDEX,
+                    gcamIndex);
         }
     }
 }
