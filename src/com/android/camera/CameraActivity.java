@@ -976,10 +976,16 @@ public class CameraActivity extends Activity
 
     @Override
     public String getCameraScope() {
-        if (getCurrentCameraId() < 0) {
-            throw new IllegalStateException();
+        int currentCameraId = getCurrentCameraId();
+        if (currentCameraId < 0) {
+            // if an unopen camera i.e. negative ID is returned, which we've observed in
+            // some automated scenarios, just return it as a valid separate scope
+            // this could cause user issues, so log a stack trace noting the call path
+            // which resulted in this scenario.
+            Log.w(TAG, "getting camera scope with no open camera, using id: " + currentCameraId,
+                    new Exception());
         }
-        return CAMERA_SCOPE_PREFIX + Integer.toString(getCurrentCameraId());
+        return CAMERA_SCOPE_PREFIX + Integer.toString(currentCameraId);
     }
 
     @Override
