@@ -1196,9 +1196,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         int unpressedColor = mController.getAndroidContext().getResources()
             .getColor(R.color.bottombar_unpressed);
         setBottomBarColor(unpressedColor);
-        int pressedColor = mController.getAndroidContext().getResources()
-            .getColor(R.color.bottombar_pressed);
-        setBottomBarPressedColor(pressedColor);
+        updateModeSpecificUIColors();
+
         mBottomBar.setCaptureLayoutHelper(mCaptureLayoutHelper);
 
         mModeOptionsOverlay
@@ -1394,6 +1393,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (lastIndex == currentIndex) {
             hideModeCover();
         }
+
+        updateModeSpecificUIColors();
+    }
+
+    private void updateModeSpecificUIColors() {
+        // set up UI colors to match the current mode
+        /*
+        int colorId = CameraUtil.getCameraThemeColorId(mController.getCurrentModuleIndex(),
+                mController.getAndroidContext());
+        int pressedColor = mController.getAndroidContext().getResources().getColor(colorId);
+        setBottomBarPressedColor(pressedColor);
+        */
+        setBottomBarColorsForModeIndex(mController.getCurrentModuleIndex());
     }
 
     @Override
@@ -1651,10 +1663,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * Sets the pressed color of the bottom bar.
+     * Sets the pressed color of the bottom bar for a camera mode index.
      */
-    public void setBottomBarPressedColor(int colorId) {
-        mBottomBar.setBackgroundPressedColor(colorId);
+    public void setBottomBarColorsForModeIndex(int index) {
+        mBottomBar.setColorsForModeIndex(index);
     }
 
     /**

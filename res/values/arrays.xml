@@ -514,4 +514,12 @@
         <item>@string/pref_boolean_false</item>
         <item>@string/pref_boolean_true</item>
     </array>
+
+    <array name="shutter_button_backgrounds" translatable="false">
+        <item>@drawable/shutter_button_background_still</item>
+        <item>@drawable/shutter_button_background_video</item>
+        <item>@drawable/shutter_button_background_refocus</item>
+        <item>@drawable/shutter_button_background_still</item>
+        <item>@drawable/shutter_button_background_still</item>
+    </array>
 </resources>
