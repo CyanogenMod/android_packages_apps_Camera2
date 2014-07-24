@@ -275,7 +275,7 @@
     <string name="time_lapse_seconds" msgid="7319683099532506270">"seconds"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"minutes"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"hours"</string>
-    <string name="time_lapse_interval_set" msgid="2418594453248958440">"Finished"</string>
+    <string name="time_lapse_interval_set" msgid="2418594453248958440">"Done"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"Set Time Interval"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"Time lapse feature is off. Turn it on to set time interval."</string>
     <string name="set_duration" msgid="1638453882581604341">"Set duration in seconds"</string>
@@ -331,7 +331,7 @@
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Countdown timer duration is set to 10 seconds"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"More Options"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Cancel"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"Finished"</string>
+    <string name="done_button_description" msgid="1334963435441544592">"Done"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Retake"</string>
     <string name="share_button_description" msgid="5108508790540832053">"Share"</string>
     <string name="view_button_description" msgid="4985768837891362075">"View"</string>
