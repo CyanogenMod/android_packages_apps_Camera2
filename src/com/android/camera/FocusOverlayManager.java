@@ -477,25 +477,31 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     public CameraCapabilities.FocusMode getFocusMode(
             final CameraCapabilities.FocusMode currentFocusMode) {
         if (mOverrideFocusMode != null) {
+            Log.v(TAG, "returning override focus: " + mOverrideFocusMode);
             return mOverrideFocusMode;
         }
         if (mCapabilities == null) {
+            Log.v(TAG, "no capabilities, returning default AUTO focus mode");
             return CameraCapabilities.FocusMode.AUTO;
         }
 
         if (mFocusAreaSupported && mFocusArea != null) {
+            Log.v(TAG, "in tap to focus, returning AUTO focus mode");
             // Always use autofocus in tap-to-focus.
             mFocusMode = CameraCapabilities.FocusMode.AUTO;
         } else {
+            String focusSetting = mSettingsManager.getString(mAppController.getCameraScope(),
+                    Keys.KEY_FOCUS_MODE);
+            Log.v(TAG, "stored focus setting for camera: " + focusSetting);
             // The default is continuous autofocus.
-            mFocusMode = mCapabilities.getStringifier()
-                    .focusModeFromString(mSettingsManager.getString(mAppController.getCameraScope(),
-                            Keys.KEY_FOCUS_MODE));
+            mFocusMode = mCapabilities.getStringifier().focusModeFromString(focusSetting);
+            Log.v(TAG, "focus mode resolved from setting: " + mFocusMode);
             // Try to find a supported focus mode from the default list.
             if (mFocusMode == null) {
                 for (CameraCapabilities.FocusMode mode : mDefaultFocusModes) {
                     if (mCapabilities.supports(mode)) {
                         mFocusMode = mode;
+                        Log.v(TAG, "selected supported focus mode from default list" + mode);
                         break;
                     }
                 }
@@ -505,8 +511,10 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             // For some reasons, the driver does not support the current
             // focus mode. Fall back to auto.
             if (mCapabilities.supports(CameraCapabilities.FocusMode.AUTO)) {
+                Log.v(TAG, "no supported focus mode, falling back to AUTO");
                 mFocusMode = CameraCapabilities.FocusMode.AUTO;
             } else {
+                Log.v(TAG, "no supported focus mode, falling back to current: " + currentFocusMode);
                 mFocusMode = currentFocusMode;
             }
         }
