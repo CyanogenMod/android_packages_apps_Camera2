@@ -448,6 +448,7 @@
         <item>@color/refocus_mode_color</item>
         <item>@color/photosphere_mode_color</item>
         <item>@color/panorama_mode_color</item>
+        <item>@color/camera_mode_color</item>
     </array>
 
     <string-array name="camera_mode_text">
@@ -519,6 +520,7 @@
         <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_video</item>
         <item>@drawable/shutter_button_background_refocus</item>
+        <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_still</item>
     </array>
