@@ -107,7 +107,7 @@ public class BottomBar extends FrameLayout {
         for (int i = 0; i < len; i++) {
             int drawableId = ar.getResourceId(i, -1);
             LayerDrawable shutterBackground = mShutterButtonBackgrounds[i] =
-                    (LayerDrawable) context.getResources().getDrawable(drawableId);
+                    (LayerDrawable) context.getResources().getDrawable(drawableId).mutate();
 
             // the background for video has a circle_item drawable placeholder
             // that gets replaced by an AnimatedCircleDrawable for the cool
