@@ -48,7 +48,7 @@
         android:clickable="true"
         android:contentDescription="@string/accessibility_cancel_button"
         android:focusable="true"
-        android:background="@null"
+        android:background="@drawable/shutter_button_background_refocus"
         android:src="@drawable/ic_cancel" />
   </FrameLayout>
 
