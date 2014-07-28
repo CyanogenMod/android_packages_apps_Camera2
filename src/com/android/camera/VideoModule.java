@@ -1508,7 +1508,11 @@ public class VideoModule implements CameraModule,
 
     private void saveVideo() {
         if (mVideoFileDescriptor == null) {
-            long duration = SystemClock.uptimeMillis() - mRecordingStartTime + mRecordingTotalTime;
+            long duration = 0L;
+            if (mMediaRecorderPausing == false)
+                duration = SystemClock.uptimeMillis() - mRecordingStartTime + mRecordingTotalTime;
+            else
+                duration = mRecordingTotalTime;
             if (duration > 0) {
                 if (mCaptureTimeLapse) {
                     duration = getTimeLapseVideoLength(duration);
@@ -1813,6 +1817,7 @@ public class VideoModule implements CameraModule,
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 fail ? UsageStatistics.ACTION_CAPTURE_FAIL :
                     UsageStatistics.ACTION_CAPTURE_DONE, "Video",
+                mMediaRecorderPausing ? mRecordingTotalTime :
                     SystemClock.uptimeMillis() - mRecordingStartTime + mRecordingTotalTime);
         mStopRecPending = false;
         return fail;
