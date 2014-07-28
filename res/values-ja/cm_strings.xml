@@ -102,8 +102,8 @@
   <string name="pref_camera_burst_entry_10">10枚</string>
   <string name="pref_camera_burst_entry_15">15枚</string>
   <string name="pref_camera_burst_entry_20">20枚</string>
-  <string name="pref_camera_focustime_title">タッチフォーカス継続時間</string>
-  <string name="pref_camera_focustime_summary">タッチフォーカス継続時間を選択</string>
+  <string name="pref_camera_focustime_title">タッチフォーカスの長さ</string>
+  <string name="pref_camera_focustime_summary">タッチフォーカスの長さを選択</string>
   <string name="pref_camera_focustime_entry_5">5秒</string>
   <string name="pref_camera_focustime_entry_10">10秒</string>
   <string name="pref_camera_focustime_entry_15">15秒</string>
@@ -128,6 +128,6 @@
   <string name="camera_menu_colorize_label">カラー化</string>
   <string name="camera_menu_effects_label">効果</string>
   <string name="camera_menu_asd_label">スマートシーン</string>
-  <string name="pref_camera_power_shutter_title">パワーシャッター</string>
+  <string name="pref_camera_power_shutter_title">電源シャッター</string>
   <string name="pref_superzoom_title">拡大</string>
 </resources>

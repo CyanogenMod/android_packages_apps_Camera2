@@ -89,10 +89,10 @@
   <string name="pref_camera_antibanding_entry_1">50 Hz</string>
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>
   <string name="pref_camera_antibanding_entry_3">Аутоматски</string>
-  <string name="pref_camera_coloreffect_title">Ефекат боја</string>
+  <string name="pref_camera_coloreffect_title">Ефекат боје</string>
   <string name="pref_camera_coloreffect_entry_none">Ниједан</string>
-  <string name="pref_camera_coloreffect_entry_mono">Моно</string>
-  <string name="pref_camera_coloreffect_entry_sepia">Сепија</string>
+  <string name="pref_camera_coloreffect_entry_mono">Црно-бело</string>
+  <string name="pref_camera_coloreffect_entry_sepia">Сепиа</string>
   <string name="pref_camera_coloreffect_entry_negative">Негатив</string>
   <string name="pref_camera_coloreffect_entry_solarize">Соларизовано</string>
   <string name="pref_camera_coloreffect_entry_posterize">Постеризовано</string>
