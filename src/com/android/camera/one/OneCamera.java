@@ -78,7 +78,7 @@ public interface OneCamera {
 
     /**
      * A class implementing this interface can be passed into the call to take a
-     * picture in order to receive the resultingimage or updated about the
+     * picture in order to receive the resulting image or updated about the
      * progress.
      */
     public static interface PictureCallback {
@@ -154,27 +154,16 @@ public interface OneCamera {
     public void takePicture(PhotoCaptureParameters params, CaptureSession session);
 
     /**
-     * Adds a listener that is called whenever the camera encounters an error.
+     * Sets or replaces a listener that is called whenever the camera encounters
+     * an error.
      */
-    public void addCameraErrorListener(CameraErrorListener listener);
+    public void setCameraErrorListener(CameraErrorListener listener);
 
     /**
-     * Removes a previously added listener from the list of listeners that are
-     * called whenever the camera encounters an error.
+     * Sets or replaces a listener that is called whenever the focus state of
+     * the camera changes.
      */
-    public void removeCameraErrorListener(CameraErrorListener listener);
-
-    /**
-     * Adds a listener that is called whenever the focus state of the camera
-     * changes.
-     */
-    public void addFocusStateListener(FocusStateListener listener);
-
-    /**
-     * Removes the previously added listener from the list of listners that are
-     * called whenever the focus state of the camera changes.
-     */
-    public void removeFocusStateListener(FocusStateListener listener);
+    public void setFocusStateListener(FocusStateListener listener);
 
     /**
      * Starts a preview stream and renders it to the given surface.
