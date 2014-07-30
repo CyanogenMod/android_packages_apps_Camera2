@@ -41,7 +41,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private static final Log.Tag TAG = new Log.Tag("TexViewHelper");
     public static final float MATCH_SCREEN = 0f;
     private static final int UNSET = -1;
-    private TextureView mPreview;
+    private final TextureView mPreview;
     private int mWidth = 0;
     private int mHeight = 0;
     private RectF mPreviewArea = new RectF();
