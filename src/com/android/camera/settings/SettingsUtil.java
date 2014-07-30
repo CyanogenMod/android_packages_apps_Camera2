@@ -16,18 +16,16 @@
 
 package com.android.camera.settings;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.hardware.Camera;
+import android.content.res.Resources;
 import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
 import com.android.camera.debug.Log;
 import com.android.camera.util.Callback;
 import com.android.camera2.R;
-import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
@@ -67,7 +65,7 @@ public class SettingsUtil {
          * SIZE_SMALL as well as resolutions separated by an x i.e. "1024x576" <br/>
          * If it fails to parse the string, it will return the old SIZE_LARGE
          * value.
-         * 
+         *
          * @param sizeSetting the preference string to convert to a size
          * @param supportedSizes all possible camera sizes that are supported
          * @return the size that this setting represents
@@ -392,7 +390,7 @@ public class SettingsUtil {
 
     /**
      * This is used to serialize a size to a string for storage in settings
-     * 
+     *
      * @param size The size to serialize.
      * @return the string to be saved in preferences
      */
@@ -402,7 +400,7 @@ public class SettingsUtil {
 
     /**
      * This parses a setting string and returns the representative size.
-     * 
+     *
      * @param sizeSetting The string to parse.
      * @return the represented Size.
      */
