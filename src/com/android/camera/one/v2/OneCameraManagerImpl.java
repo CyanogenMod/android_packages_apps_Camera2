@@ -66,9 +66,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
                     try {
                         CameraCharacteristics characteristics = mCameraManager
                                 .getCameraCharacteristics(device.getId());
-                        // TODO: Un-comment this once OneCameraImpl is submitted.
-//                        openCallback.onCameraOpened(
-//                                new OneCameraImpl(device, characteristics, pictureSize));
+                        openCallback.onCameraOpened(
+                                new OneCameraImpl(device, characteristics, pictureSize));
                     } catch (CameraAccessException e) {
                         Log.d(TAG, "Could not get camera characteristics");
                         openCallback.onFailure();
