@@ -477,7 +477,8 @@ public class VideoModule extends CameraModule
             String[] defaultFocusModesStrings = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
             CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
-            ArrayList<CameraCapabilities.FocusMode> defaultFocusModes = new ArrayList<>();
+            ArrayList<CameraCapabilities.FocusMode> defaultFocusModes =
+                    new ArrayList<CameraCapabilities.FocusMode>();
             for (String modeString : defaultFocusModesStrings) {
                 CameraCapabilities.FocusMode mode = stringifier.focusModeFromString(modeString);
                 if (mode != null) {

@@ -76,12 +76,12 @@ import com.android.camera.util.SessionStatsCollector;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera2.R;
-import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFMoveCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 import com.android.ex.camera2.portability.CameraAgent.CameraShutterCallback;
+import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
@@ -1622,7 +1622,8 @@ public class PhotoModule
             mMirror = isCameraFrontFacing();
             String[] defaultFocusModesStrings = mActivity.getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
-            ArrayList<CameraCapabilities.FocusMode> defaultFocusModes = new ArrayList<>();
+            ArrayList<CameraCapabilities.FocusMode> defaultFocusModes =
+                    new ArrayList<CameraCapabilities.FocusMode>();
             CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
             for (String modeString : defaultFocusModesStrings) {
                 CameraCapabilities.FocusMode mode = stringifier.focusModeFromString(modeString);
@@ -2300,7 +2301,7 @@ public class PhotoModule
             return index;
         }
         // Set zoom parameters asynchronously
-        mCameraSettings.setZoomRatio((float) mZoomValue);
+        mCameraSettings.setZoomRatio(mZoomValue);
         mCameraDevice.applySettings(mCameraSettings);
         CameraSettings settings = mCameraDevice.getSettings();
         if (settings != null) {

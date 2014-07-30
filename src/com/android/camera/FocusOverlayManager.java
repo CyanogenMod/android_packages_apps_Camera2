@@ -149,7 +149,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         mSettingsManager = appController.getSettingsManager();
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
-        mDefaultFocusModes = new ArrayList<>(defaultFocusModes);
+        mDefaultFocusModes = new ArrayList<CameraCapabilities.FocusMode>(defaultFocusModes);
         updateCapabilities(capabilities);
         mListener = listener;
         setMirror(mirror);
