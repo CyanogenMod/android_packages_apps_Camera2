@@ -13,19 +13,13 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1175086483881127797">"相機"</string>
     <string name="video_camera_label" msgid="1723708322021743770">"攝錄機"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"將相片設為"</string>
     <string name="delete" msgid="2714492172818940424">"刪除"</string>
-  <plurals name="delete_selection">
-    <item quantity="one" msgid="8811352590292754044">"刪除選取的項目？"</item>
-    <item quantity="other" msgid="5075283252850066610">"刪除選取的項目？"</item>
-  </plurals>
     <string name="share" msgid="8581089487762243115">"分享"</string>
     <string name="share_panorama" msgid="3558466186935359444">"分享全景相片"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"以相片形式分享"</string>
@@ -33,21 +27,6 @@
     <string name="undo" msgid="5110048345890050107">"復原"</string>
     <string name="details" msgid="4404020741542549488">"詳細資料"</string>
     <string name="close" msgid="4826166926297479820">"關閉"</string>
-  <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"已選取 %1$d 個"</item>
-    <item quantity="one" msgid="5806616411905812727">"已選取 %1$d 個"</item>
-    <item quantity="other" msgid="3767743589502328221">"已選取 %1$d 個"</item>
-  </plurals>
-  <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"已選取 %1$d 本"</item>
-    <item quantity="one" msgid="9063509704521984072">"已選取 %1$d 本"</item>
-    <item quantity="other" msgid="135044054552480485">"已選取 %1$d 本"</item>
-  </plurals>
-  <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"已選取 %1$d 個"</item>
-    <item quantity="one" msgid="1456436514367094505">"已選取 %1$d 個"</item>
-    <item quantity="other" msgid="1511467088339194694">"已選取 %1$d 個"</item>
-  </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"在地圖上顯示"</string>
     <string name="rotate_left" msgid="2618440058490662604">"向左旋轉"</string>
     <string name="rotate_right" msgid="4896096424267838355">"向右旋轉"</string>
@@ -56,7 +35,6 @@
     <string name="trim_action" msgid="4736803320203951827">"剪輯"</string>
     <string name="set_as" msgid="5469055085024870081">"設為"</string>
     <string name="video_err" msgid="1562566029875081552">"無法播放影片。"</string>
-    <string name="crop_saved" msgid="4465794038855602739">"裁剪的相片已儲存至「<xliff:g id="FOLDER_NAME">%s</xliff:g>」。"</string>
     <string name="title" msgid="8061744305671964703">"標題"</string>
     <string name="description" msgid="8193138501982849808">"說明"</string>
     <string name="time" msgid="5248213506417024287">"時間"</string>
@@ -99,12 +77,7 @@
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"儲存位置資料"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"位置"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"倒數計時器"</string>
-  <plurals name="pref_camera_timer_entry">
-    <item quantity="one" msgid="8919878087230098328">"1 秒"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d 秒"</item>
-  </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
-    <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"倒數時發出嗶聲"</string>
     <string name="setting_off" msgid="6782191065550276632">"關閉"</string>
     <string name="setting_on" msgid="9086728135773197891">"開啟"</string>
@@ -169,9 +142,7 @@
     <string name="pref_exposure_title" msgid="7525751789152582800">"曝光"</string>
     <string name="pref_exposure_label" msgid="2604738602400261218">"曝光"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
-    <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
-    <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"高動態範圍"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"前置鏡頭"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"後置鏡頭"</string>
@@ -389,3 +360,4 @@
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
+

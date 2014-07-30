@@ -13,19 +13,13 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1175086483881127797">"Камера"</string>
     <string name="video_camera_label" msgid="1723708322021743770">"Камкордер"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"Постављање слике као"</string>
     <string name="delete" msgid="2714492172818940424">"Избриши"</string>
-  <plurals name="delete_selection">
-    <item quantity="one" msgid="8811352590292754044">"Желите ли да избришете изабрану ставку?"</item>
-    <item quantity="other" msgid="5075283252850066610">"Желите ли да избришете изабране ставке?"</item>
-  </plurals>
     <string name="share" msgid="8581089487762243115">"Дели"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Дели панораму"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Дели као слику"</string>
@@ -33,21 +27,6 @@
     <string name="undo" msgid="5110048345890050107">"ОПОЗОВИ"</string>
     <string name="details" msgid="4404020741542549488">"Детаљи"</string>
     <string name="close" msgid="4826166926297479820">"Затвори"</string>
-  <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"Изабрано je %1$d"</item>
-    <item quantity="one" msgid="5806616411905812727">"Изабрана je %1$d"</item>
-    <item quantity="other" msgid="3767743589502328221">"Изабрано je %1$d"</item>
-  </plurals>
-  <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"Изабрано je %1$d"</item>
-    <item quantity="one" msgid="9063509704521984072">"Изабран je %1$d"</item>
-    <item quantity="other" msgid="135044054552480485">"Изабрано је %1$d"</item>
-  </plurals>
-  <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"Изабрано je %1$d"</item>
-    <item quantity="one" msgid="1456436514367094505">"Изабрана je %1$d"</item>
-    <item quantity="other" msgid="1511467088339194694">"Изабрано je %1$d"</item>
-  </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"Прикажи на мапи"</string>
     <string name="rotate_left" msgid="2618440058490662604">"Ротирај налево"</string>
     <string name="rotate_right" msgid="4896096424267838355">"Ротирај надесно"</string>
@@ -56,7 +35,6 @@
     <string name="trim_action" msgid="4736803320203951827">"Скрати"</string>
     <string name="set_as" msgid="5469055085024870081">"Постави као"</string>
     <string name="video_err" msgid="1562566029875081552">"Није могуће пустити видео."</string>
-    <string name="crop_saved" msgid="4465794038855602739">"Опсечена слика је сачувана у директоријуму <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="title" msgid="8061744305671964703">"Наслов"</string>
     <string name="description" msgid="8193138501982849808">"Опис"</string>
     <string name="time" msgid="5248213506417024287">"Време"</string>
@@ -99,12 +77,7 @@
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Сачувај локацију"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ЛОКАЦИЈА"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Тајмер за одбројавање"</string>
-  <plurals name="pref_camera_timer_entry">
-    <item quantity="one" msgid="8919878087230098328">"1 секунда"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d сек"</item>
-  </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
-    <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Звучно одбројавање"</string>
     <string name="setting_off" msgid="6782191065550276632">"Искључено"</string>
     <string name="setting_on" msgid="9086728135773197891">"Укључено"</string>
@@ -169,9 +142,7 @@
     <string name="pref_exposure_title" msgid="7525751789152582800">"Експозиција"</string>
     <string name="pref_exposure_label" msgid="2604738602400261218">"ЕКСПОЗИЦИЈА"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
-    <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
-    <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ПРЕДЊА КАМЕРА"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ЗАДЊА КАМЕРА"</string>
@@ -389,3 +360,4 @@
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
+
