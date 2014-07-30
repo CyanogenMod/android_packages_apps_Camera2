@@ -19,16 +19,12 @@ package com.android.camera.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Resources;
-import android.hardware.Camera;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
+import android.util.Size;
 
 import com.android.camera.debug.Log;
 
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,7 +76,7 @@ public class SettingsManager {
     private final String mPackageName;
     private final SharedPreferences mDefaultPreferences;
     private SharedPreferences mCustomPreferences;
-    private DefaultsStore mDefaultsStore = new DefaultsStore();
+    private final DefaultsStore mDefaultsStore = new DefaultsStore();
 
     /**
      * A List of OnSettingChangedListener's, maintained to compare to new
@@ -369,6 +365,30 @@ public class SettingsManager {
      */
     public boolean getBoolean(String scope, String key) {
         return getBoolean(scope, key, getBooleanDefault(key));
+    }
+
+    /**
+     * Retrieve a setting's value as a {@link Size}. Returns <code>null</code>
+     * if value could not be parsed as a size.
+     */
+    public Size getSize(String scope, String key) {
+        String strValue = getString(scope, key);
+        if (strValue == null) {
+            return null;
+        }
+
+        String[] widthHeight = strValue.split("x");
+        if (widthHeight.length != 2) {
+            return null;
+        }
+
+        try {
+            int width = Integer.parseInt(widthHeight[0]);
+            int height = Integer.parseInt(widthHeight[1]);
+            return new Size(width, height);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 
     /**
