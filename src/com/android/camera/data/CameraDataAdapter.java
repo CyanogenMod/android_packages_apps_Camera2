@@ -197,7 +197,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public boolean undoDataRemoval() {
-        if (mLocalDataToDelete == null) return false;
+        if (mLocalDataToDelete == null) {
+            return false;
+        }
         LocalData d = mLocalDataToDelete;
         mLocalDataToDelete = null;
         insertData(d);
@@ -206,7 +208,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public boolean executeDeletion() {
-        if (mLocalDataToDelete == null) return false;
+        if (mLocalDataToDelete == null) {
+            return false;
+        }
 
         DeletionTask task = new DeletionTask();
         task.execute(mLocalDataToDelete);
@@ -262,7 +266,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
         int pos = 0;
         Comparator<LocalData> comp = new LocalData.NewestFirstComparator();
         for (; pos < mImages.size()
-                && comp.compare(data, mImages.get(pos)) > 0; pos++);
+                && comp.compare(data, mImages.get(pos)) > 0; pos++) {
+            ;
+        }
         mImages.add(pos, data);
         if (mListener != null) {
             mListener.onDataInserted(pos, data);
@@ -421,6 +427,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
             if (mDoneCallback != null) {
                 mDoneCallback.onCallback(null);
             }
+
+            android.util.Log.d("DBG>>>", "QueryTask loads new photos.");
             // Now check for any photos added since this task was kicked off
             LoadNewPhotosTask ltask = new LoadNewPhotosTask(mLastPhotoId);
             ltask.execute(mContext.getContentResolver());
