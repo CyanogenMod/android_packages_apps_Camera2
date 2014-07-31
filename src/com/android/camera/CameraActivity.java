@@ -1652,22 +1652,39 @@ public class CameraActivity extends Activity
             mAutoRotateScreen = true;
         }
 
-        // Foreground event logging.
+        // Foreground event logging.  ACTION_STILL_IMAGE_CAMERA and
+        // INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE are double logged due to
+        // lockscreen onResume->onPause->onResume sequence.
         int source;
         String action = getIntent().getAction();
-        if (MediaStore.ACTION_VIDEO_CAPTURE.equals(action)) {
-            source = ForegroundSource.ACTION_VIDEO_CAPTURE;
-        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)) {
-            source = ForegroundSource.ACTION_IMAGE_CAPTURE;
-        } else if (MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action) ||
-                INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
-            // Foreground event caused by lock screen startup.
-            // May get double logged due to lock screen onResume->onPause->onResume sequence.
-            source = ForegroundSource.ACTION_IMAGE_CAPTURE_SECURE;
-        } else if (Intent.ACTION_MAIN.equals(action)) {
-            source = ForegroundSource.ACTION_MAIN;
-        } else {
-            source = ForegroundSource.UNKNOWN_SOURCE;
+        switch (action) {
+            case MediaStore.ACTION_IMAGE_CAPTURE:
+                source = ForegroundSource.ACTION_IMAGE_CAPTURE;
+                break;
+            case MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA:
+                // was UNKNOWN_SOURCE in Fishlake.
+                source = ForegroundSource.ACTION_STILL_IMAGE_CAMERA;
+                break;
+            case MediaStore.INTENT_ACTION_VIDEO_CAMERA:
+                // was UNKNOWN_SOURCE in Fishlake.
+                source = ForegroundSource.ACTION_VIDEO_CAMERA;
+                break;
+            case MediaStore.ACTION_VIDEO_CAPTURE:
+                source = ForegroundSource.ACTION_VIDEO_CAPTURE;
+                break;
+            case MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE:
+                // was ACTION_IMAGE_CAPTURE_SECURE in Fishlake.
+                source = ForegroundSource.ACTION_STILL_IMAGE_CAMERA_SECURE;
+                break;
+            case MediaStore.ACTION_IMAGE_CAPTURE_SECURE:
+                source = ForegroundSource.ACTION_IMAGE_CAPTURE_SECURE;
+                break;
+            case Intent.ACTION_MAIN:
+                source = ForegroundSource.ACTION_MAIN;
+                break;
+            default:
+                source = ForegroundSource.UNKNOWN_SOURCE;
+                break;
         }
         UsageStatistics.instance().foregrounded(source, currentUserInterfaceMode());
 
