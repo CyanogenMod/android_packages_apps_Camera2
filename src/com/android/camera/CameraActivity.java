@@ -75,9 +75,9 @@ import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.LocationManager;
-import com.android.camera.app.ModuleManager;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryQuery;
+import com.android.camera.app.ModuleManager;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.MotionManager;
 import com.android.camera.app.OrientationManager;
@@ -103,6 +103,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
+import com.android.camera.one.OneCameraManager;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
@@ -1164,6 +1165,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void notifyNewMedia(Uri uri) {
+        // TODO: This method is running on the main thread. Also we should get
+        // rid of that AsyncTask.
+
         updateStorageSpaceAndHint(null);
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
@@ -1186,6 +1190,7 @@ public class CameraActivity extends Activity
             Log.w(TAG, "Unknown new media with MIME type:" + mimeType + ", uri:" + uri);
             return;
         }
+
         // We are preloading the metadata for new video since we need the
         // rotation info for the thumbnail.
         new AsyncTask<LocalData, Void, LocalData>() {
@@ -1198,9 +1203,9 @@ public class CameraActivity extends Activity
 
             @Override
             protected void onPostExecute(LocalData data) {
-                if (mDataAdapter.addData(data)) {
-                    startPeekAnimation(data, mCurrentModule.getPeekAccessibilityString());
-                }
+                // TODO: Figure out why sometimes the data is aleady there.
+                mDataAdapter.addData(data);
+                startPeekAnimation(data, mCurrentModule.getPeekAccessibilityString());
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, newData);
     }
@@ -1223,6 +1228,11 @@ public class CameraActivity extends Activity
     @Override
     public CameraProvider getCameraProvider() {
         return mCameraController;
+    }
+
+    @Override
+    public OneCameraManager getCameraManager() {
+        return OneCameraManager.get(this);
     }
 
     private void removeData(int dataID) {
