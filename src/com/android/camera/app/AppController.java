@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
 import com.android.camera.module.ModuleController;
+import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -200,7 +201,7 @@ public interface AppController {
      * Gets called from module when the module needs to change the transform
      * matrix of the preview TextureView. It does not modify the matrix before
      * applying it.
-     * 
+     *
      * @param matrix transform matrix to be set on preview TextureView
      * @param aspectRatio the desired aspect ratio of the preview
      */
@@ -208,7 +209,7 @@ public interface AppController {
 
     /**
      * Call this to find the full rect available for a full screen preview
-     * 
+     *
      * @return the rect of the full screen minus any decor.
      */
     public RectF getFullscreenRect();
@@ -218,7 +219,7 @@ public interface AppController {
      * matrix of the preview TextureView. It is encouraged to use
      * {@link #updatePreviewAspectRatio(float)} over this function, unless the
      * module needs to rotate the surface texture using transform matrix.
-     * 
+     *
      * @param matrix transform matrix to be set on preview TextureView
      */
     public void updatePreviewTransform(Matrix matrix);
@@ -315,6 +316,11 @@ public interface AppController {
      * Returns the {@link com.android.camera.app.CameraProvider}.
      */
     public CameraProvider getCameraProvider();
+
+    /**
+     * Returns the new camera API manager.
+     */
+    public OneCameraManager getCameraManager();
 
     /**
      * Returns the {@link OrientationManagerImpl}.
