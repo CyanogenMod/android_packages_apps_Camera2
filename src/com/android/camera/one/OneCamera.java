@@ -17,6 +17,7 @@
 package com.android.camera.one;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Size;
 import android.view.Surface;
 
@@ -91,10 +92,16 @@ public interface OneCamera {
         /**
          * Called when the final picture is done taking
          *
-         * @param jpegData the JPEG data of the final image
          * @param session the capture session
          */
-        public void onPictureTaken(byte[] jpegData, CaptureSession session);
+        public void onPictureTaken(CaptureSession session);
+
+        /**
+         * Called when the picture has been saved to disk.
+         *
+         *  @param uri the URI of the stored data.
+         */
+        public void onPictureSaved(Uri uri);
 
         /**
          * Called when picture taking failed.
@@ -138,18 +145,46 @@ public interface OneCamera {
      * Parameters to be given to photo capture requests.
      */
     public static final class PhotoCaptureParameters {
+        /** The title/filename (without suffix) for this capture. */
+        public String title = null;
         /** Called when the capture is completed or failed. */
-        public PictureCallback callback;
+        public PictureCallback callback = null;
         /** The device orientation so we can compute the right JPEG rotation. */
-        public int orientation;
+        public int orientation = Integer.MIN_VALUE;
+        /** The heading of the device at time of capture. In degrees. */
+        public int heading = Integer.MIN_VALUE;
+
         // TODO: Add Location
+
+        /**
+         * Checks whether all required values are set. If one is missing, it
+         * throws a {@link RuntimeException}.
+         */
+        public void checkSanity() {
+            checkRequired(title);
+            checkRequired(callback);
+            checkRequired(orientation);
+            checkRequired(heading);
+        }
+
+        private void checkRequired(int num) {
+            if (num == Integer.MIN_VALUE) {
+                throw new RuntimeException("Photo capture parameter missing.");
+            }
+        }
+
+        private void checkRequired(Object obj) {
+            if (obj == null) {
+                throw new RuntimeException("Photo capture parameter missing.");
+            }
+        }
     }
 
     /**
      * Call this to take a picture.
      *
      * @param params parameters for taking pictures.
-     * @param session the capture session of this call.
+     * @param session the capture session for this picture.
      */
     public void takePicture(PhotoCaptureParameters params, CaptureSession session);
 

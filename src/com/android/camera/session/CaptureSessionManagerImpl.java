@@ -59,19 +59,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private CharSequence mProgressMessage;
         /** A place holder for this capture session. */
         private PlaceholderManager.Session mPlaceHolderSession;
+        private boolean mNoPlaceHolderRequired = false;
         private Uri mContentUri;
         /** These listeners get informed about progress updates. */
         private final HashSet<ProgressListener> mProgressListeners =
                 new HashSet<ProgressListener>();
+        private final long mSessionStartMillis;
 
         /**
          * Creates a new {@link CaptureSession}.
          *
          * @param title the title of this session.
+         * @param sessionStartMillis the timestamp of this capture session (since epoch).
          * @param location the location of this session, used for media store.
          */
-        private CaptureSessionImpl(String title, Location location) {
+        private CaptureSessionImpl(String title, long sessionStartMillis, Location location) {
             mTitle = title;
+            mSessionStartMillis = sessionStartMillis;
             mLocation = location;
         }
 
@@ -119,12 +123,17 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
+        public void startEmpty() {
+            mNoPlaceHolderRequired = true;
+        }
+
+        @Override
         public synchronized void startSession(byte[] placeholder, CharSequence progressMessage) {
             mProgressMessage = progressMessage;
 
-            final long now = System.currentTimeMillis();
             // TODO: This needs to happen outside the UI thread.
-            mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder, now);
+            mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
+                    mSessionStartMillis);
             mUri = mPlaceHolderSession.outputUri;
             putSession(mUri, this);
             notifyTaskQueued(mUri);
@@ -149,7 +158,14 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         @Override
         public synchronized void saveAndFinish(byte[] data, int width, int height, int orientation,
-                ExifInterface exif, OnMediaSavedListener listener) {
+                ExifInterface exif, final OnMediaSavedListener listener) {
+            if (mNoPlaceHolderRequired) {
+                mMediaSaver.addImage(
+                        data, mTitle, mSessionStartMillis, null, width, height,
+                        orientation, exif, listener, mContentResolver);
+                return;
+            }
+
             if (mPlaceHolderSession == null) {
                 throw new IllegalStateException(
                         "Cannot call saveAndFinish without calling startSession first.");
@@ -345,13 +361,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
-    public CaptureSession createNewSession(String title, Location location) {
-        return new CaptureSessionImpl(title, location);
+    public CaptureSession createNewSession(String title, long sessionStartTime, Location location) {
+        return new CaptureSessionImpl(title, sessionStartTime, location);
     }
 
     @Override
     public CaptureSession createSession() {
-        return new CaptureSessionImpl(null, null);
+        return new CaptureSessionImpl(null, System.currentTimeMillis(), null);
     }
 
     @Override
