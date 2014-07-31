@@ -18,6 +18,7 @@ package com.android.camera.module;
 
 import android.content.Context;
 
+import com.android.camera.CaptureModule;
 import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
 import com.android.camera.app.AppController;
@@ -26,6 +27,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
+import com.android.camera.util.SystemProperties;
 import com.android.camera2.R;
 
 /**
@@ -34,6 +36,12 @@ import com.android.camera2.R;
  */
 public class ModulesInfo {
     private static final Log.Tag TAG = new Log.Tag("ModulesInfo");
+
+    /** Switch between PhotoModule and the new CaptureModule. */
+    private static final String PROP_ENABLE_CAPTURE_MODULE = "persist.camera.newcapture";
+    private static final String VALUE_CAPTURE_MODULE_OFF = "0";
+    private static final boolean ENABLE_CAPTURE_MODULE = !VALUE_CAPTURE_MODULE_OFF
+            .equals(SystemProperties.get(PROP_ENABLE_CAPTURE_MODULE, VALUE_CAPTURE_MODULE_OFF));
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
@@ -66,12 +74,16 @@ public class ModulesInfo {
 
             @Override
             public boolean requestAppForCamera() {
-                return true;
+                // The PhotoModule requests the old app camere, while the new
+                // capture module is using OneCamera. At some point we'll
+                // refactor all modules to use OneCamera, then the new module
+                // doesn't have to manage it itself.
+                return !ENABLE_CAPTURE_MODULE;
             }
 
             @Override
             public ModuleController createModule(AppController app) {
-                return new PhotoModule(app);
+                return ENABLE_CAPTURE_MODULE ? new CaptureModule(app) : new PhotoModule(app);
             }
         });
     }
