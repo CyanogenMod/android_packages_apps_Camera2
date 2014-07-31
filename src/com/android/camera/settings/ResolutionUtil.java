@@ -79,7 +79,7 @@ public class ResolutionUtil {
         /**
          * Use this to add a new resolution to this bucket. It will insert it
          * into the sizes array and update appropriate members.
-         * 
+         *
          * @param size the new size to be added
          */
         public void add(Size size) {
@@ -103,7 +103,7 @@ public class ResolutionUtil {
      * sDesiredAspectRatios, and the largest full sensor ratio. T his guarantees
      * that users can use a full-sensor size, as well as any of the preferred
      * aspect ratios from above;
-     * 
+     *
      * @param sizes A super set of all sizes to be displayed
      * @param isBackCamera true if these are sizes for the back camera
      * @return The list of sizes to display grouped first by aspect ratio
@@ -141,7 +141,7 @@ public class ResolutionUtil {
 
     /**
      * Get the area in pixels of a size.
-     * 
+     *
      * @param size the size to measure
      * @return the area.
      */
@@ -156,7 +156,7 @@ public class ResolutionUtil {
      * Given a list of sizes of a similar aspect ratio, it tries to pick evenly
      * spaced out options. It starts with the largest, then tries to find one at
      * 50% of the last chosen size for the subsequent size.
-     * 
+     *
      * @param sizes A list of Sizes that are all of a similar aspect ratio
      * @return A list of at least one, and no more than three representative
      *         sizes from the list.
@@ -195,7 +195,7 @@ public class ResolutionUtil {
     /**
      * Take an aspect ratio and squish it into a nearby desired aspect ratio, if
      * possible.
-     * 
+     *
      * @param aspectRatio the aspect ratio to fuzz
      * @return the closest desiredAspectRatio within RATIO_TOLERANCE, or the
      *         original ratio
@@ -214,7 +214,7 @@ public class ResolutionUtil {
      * The result is a list of buckets sorted by each bucket's largest area.
      * They are sorted from largest to smallest. This will bucket aspect ratios
      * that are close to the sDesiredAspectRatios in to the same bucket.
-     * 
+     *
      * @param sizes all supported sizes for a camera
      * @param isBackCamera true if these are sizes for the back camera
      * @return all of the sizes grouped by their closest aspect ratio
@@ -251,7 +251,7 @@ public class ResolutionUtil {
 
     /**
      * Given a size, return a string describing the aspect ratio by reducing the
-     * 
+     *
      * @param size the size to describe
      * @return a string description of the aspect ratio
      */
@@ -263,7 +263,7 @@ public class ResolutionUtil {
     /**
      * Reduce an aspect ratio to its lowest common denominator. The ratio of the
      * input and output sizes is guaranteed to be the same.
-     * 
+     *
      * @param aspectRatio the aspect ratio to reduce
      * @return The reduced aspect ratio which may equal the original.
      */
@@ -278,7 +278,7 @@ public class ResolutionUtil {
 
     /**
      * Given a size return the numerator of its aspect ratio
-     * 
+     *
      * @param size the size to measure
      * @return the numerator
      */
@@ -290,7 +290,7 @@ public class ResolutionUtil {
     /**
      * Given a size, return the closest aspect ratio that falls close to the
      * given size.
-     * 
+     *
      * @param size the size to approximate
      * @return the closest desired aspect ratio, or the original aspect ratio if
      *         none were close enough
@@ -306,8 +306,18 @@ public class ResolutionUtil {
     }
 
     /**
+     * See {@link #getApproximateSize(Size)}.
+     * <p>
+     * TODO: Move this whole util to {@link android.util.Size}
+     */
+    public static android.util.Size getApproximateSize(android.util.Size size) {
+        Size result = getApproximateSize(new Size(size.getWidth(), size.getHeight()));
+        return new android.util.Size(result.width(), result.height());
+    }
+
+    /**
      * Given a size return the numerator of its aspect ratio
-     * 
+     *
      * @param size
      * @return the denominator
      */
