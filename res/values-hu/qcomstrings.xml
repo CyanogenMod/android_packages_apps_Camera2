@@ -137,7 +137,7 @@
   <string name="pref_camera_saturation_entry_level2">Szint 2</string>
   <string name="pref_camera_saturation_entry_level3">Szint 3</string>
   <string name="pref_camera_saturation_entry_level4">Szint 4</string>
-  <string name="pref_camera_saturation_entry_level5">Szint 5(Alapértelmezés)</string>
+  <string name="pref_camera_saturation_entry_level5">Szint 5 (Alapértelmezés)</string>
   <string name="pref_camera_saturation_entry_level6">Szint 6</string>
   <string name="pref_camera_saturation_entry_level7">Szint 7</string>
   <string name="pref_camera_saturation_entry_level8">Szint 8</string>
