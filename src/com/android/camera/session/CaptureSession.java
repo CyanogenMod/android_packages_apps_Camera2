@@ -95,6 +95,12 @@ public interface CaptureSession {
     public void startSession(Uri uri, CharSequence progressMessage);
 
     /**
+     * Start a session like this if it's not processing for a long time and
+     * therefore doesn't need a temporary placeholder or a progress message.
+     */
+    public void startEmpty();
+
+    /**
      * Cancel the session without a final result. The session will be removed
      * from the film strip, progress notifications will be cancelled.
      */
