@@ -45,9 +45,6 @@ import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
-import com.android.camera.exif.ExifInterface;
-import com.android.camera.exif.ExifTag;
-import com.android.camera.exif.Rational;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
@@ -66,8 +63,6 @@ import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
-
-import java.io.IOException;
 
 /**
  * New Capture module that is made to support photo and video capture on top of
@@ -299,16 +294,22 @@ public class CaptureModule extends CameraModule implements ModuleController,
         if (mCamera == null) {
             return;
         }
+        mAppController.setShutterEnabled(false);
 
         // Set up the capture session.
-        String title = CameraUtil.createJpegName(System.currentTimeMillis());
+        long sessionTime = System.currentTimeMillis();
+        String title = CameraUtil.createJpegName(sessionTime);
         CaptureSession session = getServices().getCaptureSessionManager()
-                .createNewSession(title, null);
+                .createNewSession(title, sessionTime, null);
+
+        // TODO: Add location.
 
         // Set up the parameters for this capture.
         PhotoCaptureParameters params = new PhotoCaptureParameters();
+        params.title = CameraUtil.createJpegName(System.currentTimeMillis());
         params.callback = this;
         params.orientation = getOrientation();
+        params.heading = mHeading;
 
         // Take the picture.
         mCamera.takePicture(params, session);
@@ -582,44 +583,16 @@ public class CaptureModule extends CameraModule implements ModuleController,
     }
 
     @Override
-    public void onPictureTaken(byte[] jpegData, CaptureSession session) {
-        int heading = mHeading;
-        int width = 0;
-        int height = 0;
-        int rotation = 0;
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface();
-            exif.readExif(jpegData);
+    public void onPictureTaken(CaptureSession session) {
+        // Picture taken does not mean the processing is done.
 
-            Integer w = exif.getTagIntValue(ExifInterface.TAG_PIXEL_X_DIMENSION);
-            width = (w == null) ? width : w;
-            Integer h = exif.getTagIntValue(ExifInterface.TAG_PIXEL_Y_DIMENSION);
-            height = (h == null) ? height : h;
+        // TODO, enough memory available? ProcessingService status, etc.
+        mAppController.setShutterEnabled(true);
+    }
 
-            // Get image rotation from EXIF.
-            rotation = Exif.getOrientation(exif);
-
-            // Set GPS heading direction based on sensor, if location is on.
-            if (heading >= 0) {
-                ExifTag directionRefTag = exif.buildTag(
-                        ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
-                        ExifInterface.GpsTrackRef.MAGNETIC_DIRECTION);
-                ExifTag directionTag = exif.buildTag(
-                        ExifInterface.TAG_GPS_IMG_DIRECTION,
-                        new Rational(heading, 1));
-                exif.setTag(directionRefTag);
-                exif.setTag(directionTag);
-            }
-        } catch (IOException e) {
-            Log.w(TAG, "Could not read exif from gcam jpeg", e);
-            exif = null;
-        }
-
-        // TODO: Use correct time, location etc data.
-        getServices().getMediaSaver().addImage(
-                jpegData, session.getTitle(), System.currentTimeMillis(), null, width, height,
-                rotation, exif, mOnMediaSavedListener, mContentResolver);
+    @Override
+    public void onPictureSaved(Uri uri) {
+        mAppController.notifyNewMedia(uri);
     }
 
     @Override

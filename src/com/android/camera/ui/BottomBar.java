@@ -76,10 +76,10 @@ public class BottomBar extends FrameLayout {
     private final RectF mRect = new RectF();
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
-    private boolean mIsOsVersionL;
+    private final boolean mIsOsVersionL;
     // for Android L, these backgrounds are RippleDrawables (ISA LayerDrawable)
     // pre-L, they're plain old LayerDrawables
-    private LayerDrawable[] mShutterButtonBackgrounds;
+    private final LayerDrawable[] mShutterButtonBackgrounds;
     // a reference to the shutter background's first contained drawable
     // if it's an animated circle drawable (for video mode)
     private AnimatedCircleDrawable mAnimatedCircleDrawable;
@@ -389,9 +389,14 @@ public class BottomBar extends FrameLayout {
      * Disabled means that the shutter button is not clickable and is greyed
      * out.
      */
-    public void setShutterButtonEnabled(boolean enabled) {
-        mShutterButton.setEnabled(enabled);
-        setShutterButtonImportantToA11y(enabled);
+    public void setShutterButtonEnabled(final boolean enabled) {
+        mShutterButton.post(new Runnable() {
+            @Override
+            public void run() {
+                mShutterButton.setEnabled(enabled);
+                setShutterButtonImportantToA11y(enabled);
+            }
+        });
     }
 
     /**
