@@ -52,6 +52,7 @@ import com.android.camera.one.OneCamera.CaptureReadyCallback;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
+import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
@@ -79,13 +80,18 @@ import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
  * <li>Show resolution dialog on certain devices
  * <li>Store location
  * <li>Timer
+ * <li>Capture intent
  * </ul>
  */
-public class CaptureModule extends CameraModule implements ModuleController,
-        TextureView.SurfaceTextureListener, RemoteCameraModule,
-        MediaSaver.QueueListener, SensorEventListener,
+public class CaptureModule extends CameraModule
+        implements MediaSaver.QueueListener,
+        ModuleController,
+        OneCamera.PictureCallback,
         PreviewStatusListener.PreviewAreaChangedListener,
-        OneCamera.PictureCallback {
+        RemoteCameraModule,
+        SensorEventListener,
+        SettingsManager.OnSettingChangedListener,
+        TextureView.SurfaceTextureListener {
 
     /**
      * Called on layout changes.
@@ -256,6 +262,7 @@ public class CaptureModule extends CameraModule implements ModuleController,
         mAppController = appController;
         mContext = mAppController.getAndroidContext();
         mSettingsManager = mAppController.getSettingsManager();
+        mSettingsManager.addListener(this);
     }
 
     @Override
@@ -306,9 +313,10 @@ public class CaptureModule extends CameraModule implements ModuleController,
 
         // Set up the parameters for this capture.
         PhotoCaptureParameters params = new PhotoCaptureParameters();
-        params.title = CameraUtil.createJpegName(System.currentTimeMillis());
+        params.title = title;
         params.callback = this;
         params.orientation = getOrientation();
+        params.flashMode = getFlashModeFromSettings();
         params.heading = mHeading;
 
         // Take the picture.
@@ -317,8 +325,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
 
     @Override
     public void onPreviewAreaChanged(RectF previewArea) {
-//        mUI.updatePreviewAreaRect(previewArea);
-//        mUI.positionProgressOverlay(previewArea);
+        // mUI.updatePreviewAreaRect(previewArea);
+        // mUI.positionProgressOverlay(previewArea);
     }
 
     @Override
@@ -380,6 +388,7 @@ public class CaptureModule extends CameraModule implements ModuleController,
             public void onFailure() {
                 Log.e(TAG, "Could not open camera.");
                 mCamera = null;
+                mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
             }
 
             @Override
@@ -405,11 +414,12 @@ public class CaptureModule extends CameraModule implements ModuleController,
                         Log.e(TAG, "Could not set up preview.");
                         mCamera.close(null);
                         mCamera = null;
+                        // TODO: Show an error message and exit.
                     }
 
                     @Override
                     public void onReadyForCapture() {
-                        Log.d(TAG, "Ready for capture, w000t!");
+                        Log.d(TAG, "Ready for capture.");
                         onPreviewStarted();
                     }
                 });
@@ -530,8 +540,7 @@ public class CaptureModule extends CameraModule implements ModuleController,
 
             @Override
             public boolean isFlashSupported() {
-                // TODO: Enable once we support this.
-                return false;
+                return true;
             }
         };
     }
@@ -549,6 +558,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
         // TODO: Enable once we support this.
         bottomBarSpec.enableSelfTimer = false;
         bottomBarSpec.showSelfTimer = false;
+        // TODO: Deal with e.g. HDR+ if it doesn't support it.
+        bottomBarSpec.enableFlash = true;
         return bottomBarSpec;
     }
 
@@ -584,8 +595,6 @@ public class CaptureModule extends CameraModule implements ModuleController,
 
     @Override
     public void onPictureTaken(CaptureSession session) {
-        // Picture taken does not mean the processing is done.
-
         // TODO, enough memory available? ProcessingService status, etc.
         mAppController.setShutterEnabled(true);
     }
@@ -597,12 +606,17 @@ public class CaptureModule extends CameraModule implements ModuleController,
 
     @Override
     public void onTakePictureProgress(int progressPercent) {
-        // TODO once we hace HDR+ hooke dup.
+        // TODO once we have HDR+ hooked up.
     }
 
     @Override
     public void onPictureTakenFailed() {
         // TODO
+    }
+
+    @Override
+    public void onSettingChanged(SettingsManager settingsManager, String key) {
+        // TODO Auto-generated method stub
     }
 
     /**
@@ -659,7 +673,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
             mScreenHeight = incomingHeight;
             updateBufferDimension();
 
-            mPreviewTranformationMatrix = mAppController.getCameraAppUI().getPreviewTransform(mPreviewTranformationMatrix);
+            mPreviewTranformationMatrix = mAppController.getCameraAppUI().getPreviewTransform(
+                    mPreviewTranformationMatrix);
             int width = mScreenWidth;
             int height = mScreenHeight;
 
@@ -706,7 +721,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
             mPreviewTranformationMatrix.setRectToRect(viewRect, bufRect, Matrix.ScaleToFit.FILL);
 
             // Rotate buffer contents to proper orientation
-            mPreviewTranformationMatrix.postRotate(getPreviewOrientation(mDisplayRotation), centerX, centerY);
+            mPreviewTranformationMatrix.postRotate(getPreviewOrientation(mDisplayRotation),
+                    centerX, centerY);
 
             // TODO: This is probably only working for the N5. Need to test
             // on a device like N10 with different sensor orientation.
@@ -722,9 +738,9 @@ public class CaptureModule extends CameraModule implements ModuleController,
             Size pictureSize = getPictureSizeFromSettings();
             if (pictureSize != null) {
                 pictureSize = ResolutionUtil.getApproximateSize(pictureSize);
-                    if (pictureSize.equals(new Size(16, 9))) {
-                        is16by9 = true;
-                    }
+                if (pictureSize.equals(new Size(16, 9))) {
+                    is16by9 = true;
+                }
             }
 
             float scale;
@@ -750,7 +766,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
 
             float previewCenterX = previewWidth / 2;
             float previewCenterY = previewHeight / 2;
-            mPreviewTranformationMatrix.postTranslate(previewCenterX - centerX, previewCenterY - centerY);
+            mPreviewTranformationMatrix.postTranslate(previewCenterX - centerX, previewCenterY
+                    - centerY);
 
             if (is16by9) {
                 float aspectRatio = FULLSCREEN_ASPECT_RATIO;
@@ -764,7 +781,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
                 float wOffset = -(previewWidth - renderedPreviewRect.width()) / 2.0f;
                 float hOffset = -(previewHeight - renderedPreviewRect.height()) / 2.0f;
                 mPreviewTranformationMatrix.postTranslate(wOffset, hOffset);
-                mAppController.updatePreviewTransformFullscreen(mPreviewTranformationMatrix, aspectRatio);
+                mAppController.updatePreviewTransformFullscreen(mPreviewTranformationMatrix,
+                        aspectRatio);
                 mFinalAspectRatio = aspectRatio;
             } else {
                 mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
@@ -774,7 +792,8 @@ public class CaptureModule extends CameraModule implements ModuleController,
             // if (mGcamProxy != null) {
             // mGcamProxy.postSetAspectRatio(mFinalAspectRatio);
             // }
-//            mUI.updatePreviewAreaRect(new RectF(0, 0, previewWidth, previewHeight));
+            // mUI.updatePreviewAreaRect(new RectF(0, 0, previewWidth,
+            // previewHeight));
 
             // TODO: Add face detection.
             // Characteristics info =
@@ -889,14 +908,31 @@ public class CaptureModule extends CameraModule implements ModuleController,
         // Reset the default buffer sizes on the shared SurfaceTexture
         // so they are not scaled for gcam.
         //
-        // According to the documentation for SurfaceTexture.setDefaultBufferSize,
+        // According to the documentation for
+        // SurfaceTexture.setDefaultBufferSize,
         // photo and video based image producers (presumably only Camera 1 api),
-        // override this buffer size.  Any module that uses egl to render to a
-        // SurfaceTexture must have these buffer sizes reset manually.  Otherwise
-        // the SurfaceTexture cannot be transformed by matrix set on the TextureView.
+        // override this buffer size. Any module that uses egl to render to a
+        // SurfaceTexture must have these buffer sizes reset manually. Otherwise
+        // the SurfaceTexture cannot be transformed by matrix set on the
+        // TextureView.
         if (mPreviewTexture != null) {
             mPreviewTexture.setDefaultBufferSize(mAppController.getCameraAppUI().getSurfaceWidth(),
-                mAppController.getCameraAppUI().getSurfaceHeight());
+                    mAppController.getCameraAppUI().getSurfaceHeight());
+        }
+    }
+
+    /**
+     * @return The currently set Flash settings. Defaults to AUTO if the setting
+     *         could not be parsed.
+     */
+    private Flash getFlashModeFromSettings() {
+        String flashSetting = mSettingsManager.getString(mAppController.getCameraScope(),
+                Keys.KEY_FLASH_MODE);
+        try {
+            return Flash.valueOf(flashSetting.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            Log.w(TAG, "Could not parse Flash Setting. Defaulting to AUTO.");
+            return Flash.AUTO;
         }
     }
 }

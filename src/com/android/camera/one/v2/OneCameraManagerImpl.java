@@ -78,10 +78,10 @@ public class OneCameraManagerImpl extends OneCameraManager {
                 }
             }, null);
         } catch (CameraAccessException ex) {
-            Log.e(TAG, "Could not open camera.", ex);
+            Log.e(TAG, "Could not open camera. " + ex.getMessage());
             openCallback.onFailure();
         } catch (UnsupportedOperationException ex) {
-            Log.e(TAG, "Could not open camera.", ex);
+            Log.e(TAG, "Could not open camera. " + ex.getMessage());
             openCallback.onFailure();
         }
     }
