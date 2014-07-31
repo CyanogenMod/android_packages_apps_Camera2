@@ -22,7 +22,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
@@ -664,7 +663,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         return mTextureViewHelper.getFullscreenRect();
     }
 
-
     /**
      * This is to support modules that calculate their own transform matrix because
      * they need to use a transform matrix to rotate the preview.
@@ -1069,6 +1067,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void resumePreviewRendering() {
         mTextureView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Returns the transform associated with the preview view.
+     *
+     * @param m the Matrix in which to copy the current transform.
+     * @return The specified matrix if not null or a new Matrix instance
+     *         otherwise.
+     */
+    public Matrix getPreviewTransform(Matrix m) {
+        return mTextureView.getTransform(m);
     }
 
     @Override
