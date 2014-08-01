@@ -64,6 +64,9 @@ public class eventprotos {
             public static final int ACTION_IMAGE_CAPTURE_SECURE = 10000;
             public static final int ACTION_VIDEO_CAPTURE = 10000;
             public static final int ACTION_MAIN = 10000;
+            public static final int ACTION_STILL_IMAGE_CAMERA_SECURE = 10000;
+            public static final int ACTION_VIDEO_CAMERA = 10000;
+            public static final int ACTION_STILL_IMAGE_CAMERA = 10000;
         }
     }
 
