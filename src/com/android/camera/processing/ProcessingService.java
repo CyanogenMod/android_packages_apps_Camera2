@@ -221,7 +221,8 @@ public class ProcessingService extends Service implements ProgressListener {
         }
         CaptureSession session = task.getSession();
         if (session == null) {
-            session = mSessionManager.createNewSession(task.getName(), task.getLocation());
+            // TODO: Timestamp is not required right now, refactor this to make it clearer.
+            session = mSessionManager.createNewSession(task.getName(), 0, task.getLocation());
         }
         resetNotification();
 
