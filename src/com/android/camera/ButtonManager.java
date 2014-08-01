@@ -786,10 +786,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         }
         button.overrideContentDescriptions(R.array.grid_lines_descriptions);
 
-        int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
-                                                            Keys.KEY_CAMERA_GRID_LINES);
-        button.setState(index >= 0 ? index : 0, false);
-
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
             public void stateChanged(View view, int state) {
@@ -800,6 +796,10 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 }
             }
         });
+
+        int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
+                                                            Keys.KEY_CAMERA_GRID_LINES);
+        button.setState(index >= 0 ? index : 0, true);
     }
 
     public boolean isPanoEnabled() {
