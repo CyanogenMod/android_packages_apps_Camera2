@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package com.android.camera;
 
 import android.animation.Animator;
@@ -575,6 +576,9 @@ public class CameraActivity extends Activity
 
     private float fileAgeFromDataID(int dataID) {
         final LocalData localData = mDataAdapter.getLocalData(dataID);
+        if (localData == null) {
+            return 0;
+        }
 
         File localFile = new File(localData.getPath());
         return 0.001f * (System.currentTimeMillis() - localFile.lastModified());
