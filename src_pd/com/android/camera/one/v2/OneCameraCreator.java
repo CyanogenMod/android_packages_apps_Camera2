@@ -18,9 +18,9 @@ package com.android.camera.one.v2;
 
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.util.Size;
 
 import com.android.camera.one.OneCamera;
+import com.android.camera.util.Size;
 
 public class OneCameraCreator {
     public static OneCamera create(boolean enableHdrPlus, CameraDevice device,
