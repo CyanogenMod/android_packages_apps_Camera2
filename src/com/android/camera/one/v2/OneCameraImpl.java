@@ -42,6 +42,7 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
@@ -151,8 +152,9 @@ public class OneCameraImpl extends AbstractOneCamera {
             builder.set(CaptureRequest.JPEG_ORIENTATION, getJpegRotation(params.orientation));
             builder.addTarget(mPreviewSurface);
             builder.addTarget(mJpegImageReader.getSurface());
-            CaptureRequest c1 = builder.build();
-            mCaptureSession.capture(c1, null, mCameraHandler);
+            applyFlashMode(params.flashMode, builder);
+            CaptureRequest request = builder.build();
+            mCaptureSession.capture(request, null, mCameraHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Could not access camera for JPEG capture.");
             params.callback.onPictureTakenFailed();
@@ -392,6 +394,29 @@ public class OneCameraImpl extends AbstractOneCamera {
             return (sensorOrientation - deviceOrientationDegrees + 360) % 360;
         } else {
             return (sensorOrientation + deviceOrientationDegrees) % 360;
+        }
+    }
+
+    private void applyFlashMode(Flash flashMode, CaptureRequest.Builder requestBuilder) {
+        switch (flashMode) {
+            case ON:
+                Log.d(TAG, "Flash mode ON");
+                requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+                requestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_SINGLE);
+                break;
+            case OFF:
+                Log.d(TAG, "Flash mode OFF");
+                requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.CONTROL_AE_MODE_ON);
+                requestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+                break;
+            case AUTO:
+            default:
+                Log.d(TAG, "Flash mode AUTO");
+                requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                break;
         }
     }
 }

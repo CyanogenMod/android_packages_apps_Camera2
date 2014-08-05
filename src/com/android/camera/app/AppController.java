@@ -374,4 +374,12 @@ public interface AppController {
      * Shows the given tutorial overlay.
      */
     public void showTutorial(AbstractTutorialOverlay tutorial);
+
+    /**
+     * Shows and error message on the screen and, when dismissed, exits the
+     * activity.
+     *
+     * @param messageId the ID of the message to show on screen before exiting.
+     */
+    public void showErrorAndFinish(int messageId);
 }
