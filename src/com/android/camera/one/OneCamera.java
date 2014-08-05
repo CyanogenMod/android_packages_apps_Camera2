@@ -145,6 +145,15 @@ public interface OneCamera {
      * Parameters to be given to photo capture requests.
      */
     public static final class PhotoCaptureParameters {
+        /**
+         * Flash modes.
+         * <p>
+         * Has to be in sync with R.arrays.pref_camera_flashmode_entryvalues.
+         */
+        public static enum Flash {
+            AUTO, OFF, ON
+        }
+
         /** The title/filename (without suffix) for this capture. */
         public String title = null;
         /** Called when the capture is completed or failed. */
@@ -153,7 +162,8 @@ public interface OneCamera {
         public int orientation = Integer.MIN_VALUE;
         /** The heading of the device at time of capture. In degrees. */
         public int heading = Integer.MIN_VALUE;
-
+        /** Flash mode for this capture. */
+        public Flash flashMode = Flash.AUTO;
         // TODO: Add Location
 
         /**
