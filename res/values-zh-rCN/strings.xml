@@ -13,7 +13,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1175086483881127797">"相机"</string>
     <string name="video_camera_label" msgid="1723708322021743770">"摄像机"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
@@ -66,9 +68,9 @@
     <string name="cannot_connect_camera" msgid="4311259792784598381">"无法连接到相机。"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"由于安全政策的限制，相机已被禁用。"</string>
     <string name="wait" msgid="765601745709933047">"请稍候…"</string>
-    <string name="no_storage" product="default" msgid="5922012950780548098">"使用相机前请先插入 SD 卡。"</string>
-    <string name="preparing_sd" product="default" msgid="7435693655017362767">"正在准备 SD 卡…"</string>
-    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"无法使用 SD 卡。"</string>
+    <string name="no_storage" product="default" msgid="5922012950780548098">"使用相机前请先插入SD卡。"</string>
+    <string name="preparing_sd" product="default" msgid="7435693655017362767">"正在准备SD卡…"</string>
+    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"无法使用SD卡。"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"延时录影"</string>
     <string name="capturing" msgid="5255164204641920893">"正在拍摄"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"选择摄像头"</string>
@@ -78,6 +80,7 @@
     <string name="pref_camera_location_label" msgid="8695441802378057719">"位置信息"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"倒计时器"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
+    <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"倒计时过程中发出提示音"</string>
     <string name="setting_off" msgid="6782191065550276632">"关闭"</string>
     <string name="setting_on" msgid="9086728135773197891">"开启"</string>
@@ -142,13 +145,15 @@
     <string name="pref_exposure_title" msgid="7525751789152582800">"曝光"</string>
     <string name="pref_exposure_label" msgid="2604738602400261218">"曝光"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
+    <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"前置摄像头"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"后置摄像头"</string>
     <string name="dialog_ok" msgid="774141340500181131">"确定"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"取消"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD 卡空间不足。请更改画质设置，或删除部分图片或其他文件。"</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD卡空间不足。请更改画质设置，或删除部分图片或其他文件。"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"已达文件大小上限。"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"速度太快"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"正在生成全景照片"</string>
@@ -360,4 +365,3 @@
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
-
