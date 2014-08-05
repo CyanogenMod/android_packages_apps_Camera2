@@ -1325,9 +1325,9 @@ public class CameraActivity extends Activity
         mActionBar = getActionBar();
         mActionBar.addOnMenuVisibilityListener(this);
         mMainHandler = new MainHandler(this, getMainLooper());
-        mCameraController =
-                new CameraController(mAppContext, this, mMainHandler,
-                        CameraAgentFactory.getAndroidCameraAgent(this));
+        mCameraController = new CameraController(mAppContext, this, mMainHandler,
+                CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.API_1),
+                CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.AUTO));
         mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
                 mMainHandler);
 
@@ -1852,7 +1852,8 @@ public class CameraActivity extends Activity
         mCameraAppUI = null;
         mOrientationManager = null;
         mButtonManager = null;
-        CameraAgentFactory.recycle();
+        CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
+        CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
         super.onDestroy();
     }
 

@@ -22,4 +22,9 @@ public class GservicesHelper {
     public static int getMaxAllowedNativeMemoryMb(Context context) {
         return -1;
     }
+
+    public static boolean useCamera2ApiThroughPortabilityLayer(Context context) {
+        // Use the camera2 API by default. This only affects PhotoModule on L.
+        return true;
+    }
 }
