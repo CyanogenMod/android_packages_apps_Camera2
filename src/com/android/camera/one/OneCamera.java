@@ -18,10 +18,10 @@ package com.android.camera.one;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Size;
 import android.view.Surface;
 
 import com.android.camera.session.CaptureSession;
+import com.android.camera.util.Size;
 
 /**
  * OneCamera is a camera API tailored around our Google Camera application

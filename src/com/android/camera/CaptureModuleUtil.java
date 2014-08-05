@@ -18,12 +18,12 @@ package com.android.camera;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.util.Size;
 import android.view.Surface;
 
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.Size;
 
 import java.util.ArrayList;
 
