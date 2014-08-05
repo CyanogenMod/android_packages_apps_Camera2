@@ -22,10 +22,6 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"இதுவாகப் படத்தை அமை"</string>
     <string name="delete" msgid="2714492172818940424">"நீக்கு"</string>
-  <plurals name="delete_selection">
-    <item quantity="one" msgid="8811352590292754044">"தேர்ந்தெடுத்த உருப்படியை நீக்கவா?"</item>
-    <item quantity="other" msgid="5075283252850066610">"தேர்ந்தெடுத்த உருப்படிகளை நீக்கவா?"</item>
-  </plurals>
     <string name="share" msgid="8581089487762243115">"பகிர்"</string>
     <string name="share_panorama" msgid="3558466186935359444">"பனோரமாவைப் பகிர்"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"படமாகப் பகிர்"</string>
@@ -33,21 +29,6 @@
     <string name="undo" msgid="5110048345890050107">"செயல்தவிர்"</string>
     <string name="details" msgid="4404020741542549488">"விவரங்கள்"</string>
     <string name="close" msgid="4826166926297479820">"மூடு"</string>
-  <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"%1$d தேர்ந்தெடுக்கப்பட்டது"</item>
-    <item quantity="one" msgid="5806616411905812727">"%1$d தேர்ந்தெடுக்கப்பட்டது"</item>
-    <item quantity="other" msgid="3767743589502328221">"%1$d தேர்ந்தெடுக்கப்பட்டன"</item>
-  </plurals>
-  <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"%1$d தேர்ந்தெடுக்கப்பட்டது"</item>
-    <item quantity="one" msgid="9063509704521984072">"%1$d தேர்ந்தெடுக்கப்பட்டது"</item>
-    <item quantity="other" msgid="135044054552480485">"%1$d தேர்ந்தெடுக்கப்பட்டன"</item>
-  </plurals>
-  <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"%1$d தேர்ந்தெடுக்கப்பட்டது"</item>
-    <item quantity="one" msgid="1456436514367094505">"%1$d தேர்ந்தெடுக்கப்பட்டது"</item>
-    <item quantity="other" msgid="1511467088339194694">"%1$d தேர்ந்தெடுக்கப்பட்டன"</item>
-  </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"வரைபடத்தில் காட்டு"</string>
     <string name="rotate_left" msgid="2618440058490662604">"இடதுபுறமாகச் சுழற்று"</string>
     <string name="rotate_right" msgid="4896096424267838355">"வலதுபுறமாகச் சுழற்று"</string>
@@ -56,7 +37,6 @@
     <string name="trim_action" msgid="4736803320203951827">"ட்ரிம்"</string>
     <string name="set_as" msgid="5469055085024870081">"இவ்வாறாக அமை"</string>
     <string name="video_err" msgid="1562566029875081552">"வீடியோவை இயக்க முடியவில்லை."</string>
-    <string name="crop_saved" msgid="4465794038855602739">"செதுக்கிய படம் <xliff:g id="FOLDER_NAME">%s</xliff:g> இல் சேமிக்கப்பட்டது."</string>
     <string name="title" msgid="8061744305671964703">"தலைப்பு"</string>
     <string name="description" msgid="8193138501982849808">"விளக்கம்"</string>
     <string name="time" msgid="5248213506417024287">"நேரம்"</string>
@@ -99,10 +79,6 @@
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"இருப்பிடத்தைச் சேமி"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"இருப்பிடம்"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"நேரக் கணிப்பான்"</string>
-  <plurals name="pref_camera_timer_entry">
-    <item quantity="one" msgid="8919878087230098328">"1 வினாடி"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d வினாடிகள்"</item>
-  </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"நேரக் கணிப்பான்போது பீப்"</string>

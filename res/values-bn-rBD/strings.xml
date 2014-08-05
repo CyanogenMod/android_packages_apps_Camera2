@@ -22,10 +22,6 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"এই হিসাবে ছবি সেট করুন"</string>
     <string name="delete" msgid="2714492172818940424">"মুছুন"</string>
-  <plurals name="delete_selection">
-    <item quantity="one" msgid="8811352590292754044">"নির্বাচিত আইটেম মুছবেন?"</item>
-    <item quantity="other" msgid="5075283252850066610">"নির্বাচিত আইটেমগুলি মুছবেন?"</item>
-  </plurals>
     <string name="share" msgid="8581089487762243115">"ভাগ করুন"</string>
     <string name="share_panorama" msgid="3558466186935359444">"প্যানোরামা ভাগ করুন"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"ফটো হিসাবে ভাগ করুন"</string>
@@ -33,21 +29,6 @@
     <string name="undo" msgid="5110048345890050107">"পূর্বাবস্থায় ফিরুন"</string>
     <string name="details" msgid="4404020741542549488">"বিশদ বিবরণ"</string>
     <string name="close" msgid="4826166926297479820">"বন্ধ করুন"</string>
-  <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="9217673864242686656">"%1$dটি নির্বাচন করা হয়েছে"</item>
-    <item quantity="one" msgid="5806616411905812727">"%1$dটি নির্বাচন করা হয়েছে"</item>
-    <item quantity="other" msgid="3767743589502328221">"%1$dটি নির্বাচন করা হয়েছে"</item>
-  </plurals>
-  <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="8095100906728830821">"%1$dটি নির্বাচন করা হয়েছে"</item>
-    <item quantity="one" msgid="9063509704521984072">"%1$dটি নির্বাচন করা হয়েছে"</item>
-    <item quantity="other" msgid="135044054552480485">"%1$dটি নির্বাচন করা হয়েছে"</item>
-  </plurals>
-  <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="1942343672734097509">"%1$dটি নির্বাচন করা হয়েছে"</item>
-    <item quantity="one" msgid="1456436514367094505">"%1$dটি নির্বাচন করা হয়েছে"</item>
-    <item quantity="other" msgid="1511467088339194694">"%1$dটি নির্বাচন করা হয়েছে"</item>
-  </plurals>
     <string name="show_on_map" msgid="8542853913632649160">"মানচিত্রে দেখান"</string>
     <string name="rotate_left" msgid="2618440058490662604">"বামদিকে ঘোরান"</string>
     <string name="rotate_right" msgid="4896096424267838355">"ডানদিকে ঘোরান"</string>
@@ -56,7 +37,6 @@
     <string name="trim_action" msgid="4736803320203951827">"ট্রিম করুন"</string>
     <string name="set_as" msgid="5469055085024870081">"এই হিসাবে সেট করুন"</string>
     <string name="video_err" msgid="1562566029875081552">"ভিডিও প্লে করা যাবে না৷"</string>
-    <string name="crop_saved" msgid="4465794038855602739">"ক্রপ করা চিত্র <xliff:g id="FOLDER_NAME">%s</xliff:g> এ সংরক্ষণ করা হয়েছে।"</string>
     <string name="title" msgid="8061744305671964703">"শীর্ষক"</string>
     <string name="description" msgid="8193138501982849808">"বর্ণনা"</string>
     <string name="time" msgid="5248213506417024287">"সময়"</string>
@@ -99,10 +79,6 @@
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"অবস্থান সংরক্ষণ করুন"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"অবস্থান"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"কাউন্টডাউন টাইমার"</string>
-  <plurals name="pref_camera_timer_entry">
-    <item quantity="one" msgid="8919878087230098328">"১ সেকেন্ড"</item>
-    <item quantity="other" msgid="5782794798884172289">"%d সেকেন্ড"</item>
-  </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"কাউন্টডাউনের সময় বীপ"</string>
