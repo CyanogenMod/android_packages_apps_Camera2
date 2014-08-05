@@ -30,7 +30,6 @@ import android.media.ImageReader;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Size;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
@@ -44,6 +43,7 @@ import com.android.camera.exif.Rational;
 import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.util.Size;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -198,7 +198,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     public Size[] getSupportedSizes() {
         StreamConfigurationMap config = mCharacteristics
                 .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        return config.getOutputSizes(ImageFormat.JPEG);
+        return Size.convert(config.getOutputSizes(ImageFormat.JPEG));
     }
 
     @Override

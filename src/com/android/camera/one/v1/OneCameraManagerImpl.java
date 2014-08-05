@@ -16,11 +16,10 @@
 
 package com.android.camera.one.v1;
 
-import android.util.Size;
-
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.util.Size;
 
 /**
  * The {@link OneCameraManager} implementation on top of the Camera 1 API
