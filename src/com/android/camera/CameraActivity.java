@@ -2439,6 +2439,11 @@ public class CameraActivity extends Activity
         mCameraAppUI.showTutorial(tutorial, getLayoutInflater());
     }
 
+    @Override
+    public void showErrorAndFinish(int messageId) {
+        CameraUtil.showErrorAndFinish(this, messageId);
+    }
+
     /**
      * Reads the current location recording settings and passes it on to the
      * location manager.
