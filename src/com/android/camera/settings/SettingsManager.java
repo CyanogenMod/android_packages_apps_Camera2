@@ -20,9 +20,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
-import android.util.Size;
 
 import com.android.camera.debug.Log;
+import com.android.camera.util.Size;
 
 import java.util.ArrayList;
 import java.util.List;
