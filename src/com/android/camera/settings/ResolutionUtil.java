@@ -310,9 +310,10 @@ public class ResolutionUtil {
      * <p>
      * TODO: Move this whole util to {@link android.util.Size}
      */
-    public static android.util.Size getApproximateSize(android.util.Size size) {
+    public static com.android.camera.util.Size getApproximateSize(
+            com.android.camera.util.Size size) {
         Size result = getApproximateSize(new Size(size.getWidth(), size.getHeight()));
-        return new android.util.Size(result.width(), result.height());
+        return new com.android.camera.util.Size(result.width(), result.height());
     }
 
     /**
