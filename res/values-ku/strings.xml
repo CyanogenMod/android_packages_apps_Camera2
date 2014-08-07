@@ -76,7 +76,7 @@
   <string name="rendering_photo_sphere">بەئەنجام دەگەێەنێتى گۆى وێنە</string>
   <string name="camera_error_title">هەڵەی کامێرا</string>
   <string name="cannot_connect_camera">ناتوانرێت پەیوەندی بکرێت بە کامێراوە.</string>
-  <string name="camera_disabled">کامێراکە لەکارخرا لەبەر هۆکاری ئاسایشیەوە.</string>
+  <string name="camera_disabled">کامێراکە لەکارخرا لەبەر هۆکاری ئاساییشیەوە.</string>
   <string name="wait">تکایە چاوەڕێبکە\u2026</string>
   <string name="no_storage" product="default">بیرگەی دەرەکی تێبکە پێشی بەکارهێنانی کامێراکە.</string>
   <string name="preparing_sd" product="default">ئامادەکردنی بیرگەی دەرەکی\u2026</string>
@@ -189,7 +189,7 @@
   <string name="effect_goofy_face_small_mouth">دەمی بچوک</string>
   <string name="effect_goofy_face_big_nose">لوتی گەورە</string>
   <string name="effect_goofy_face_small_eyes">چاوی بچوک</string>
-  <string name="effect_backdropper_space">لە بۆشای</string>
+  <string name="effect_backdropper_space">لە بۆشایی</string>
   <string name="effect_backdropper_sunset">خۆراوا</string>
   <string name="effect_backdropper_gallery">ڤیدۆکانت</string>
   <string name="video_snapshot_hint">دەستلێدان بۆ وێنەگرتن کاتێک تۆمار ئەکات.</string>

@@ -86,8 +86,8 @@
   <string name="pref_camera_iso_entry_iso1600">ISO1600</string>
   <string name="pref_camera_antibanding_title">アンチバンディング</string>
   <string name="pref_camera_antibanding_entry_0">OFF</string>
-  <string name="pref_camera_antibanding_entry_1">50Hz</string>
-  <string name="pref_camera_antibanding_entry_2">60Hz</string>
+  <string name="pref_camera_antibanding_entry_1">50 Hz</string>
+  <string name="pref_camera_antibanding_entry_2">60 Hz</string>
   <string name="pref_camera_antibanding_entry_3">自動</string>
   <string name="pref_camera_coloreffect_title">色彩効果</string>
   <string name="pref_camera_coloreffect_entry_none">なし</string>
@@ -147,7 +147,7 @@
   <string name="pref_camera_contrast_title">コントラスト</string>
   <string name="pref_camera_saturation_title">彩度</string>
   <string name="pref_camera_picture_format_title">画像のフォーマット</string>
-  <string name="pref_camera_jpegquality_title">画質</string>
+  <string name="pref_camera_jpegquality_title">写真の画質</string>
   <string name="pref_camera_jpegquality_entry_0">55%</string>
   <string name="pref_camera_jpegquality_entry_1">65%</string>
   <string name="pref_camera_jpegquality_entry_2">75%</string>
