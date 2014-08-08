@@ -1351,6 +1351,7 @@ public class VideoModule extends CameraModule
                     mUI.showRecordingUI(true);
 
                     setFocusParameters();
+
                     updateRecordingTime();
                     mActivity.enableKeepScreenOn(true);
                 }
@@ -1628,6 +1629,8 @@ public class VideoModule extends CameraModule
                 mFocusManager.overrideFocusMode(null);
             }
         } else {
+            // FIXME(b/16984793): This is broken. For some reasons, CONTINUOUS_PICTURE is not on
+            // when preview starts.
             mFocusManager.overrideFocusMode(null);
             if (mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_PICTURE)) {
                 mCameraSettings.setFocusMode(
