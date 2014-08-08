@@ -2286,7 +2286,7 @@ public class PhotoModule
                 mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_PICTURE);
     }
 
-    // TODO: Remove this
+    // TODO: Use zoomRatio device API rather than deprecated zoomIndex
     @Override
     public int onZoomChanged(int index) {
         // Not useful to change zoom value when the activity is paused.
@@ -2298,7 +2298,7 @@ public class PhotoModule
             return index;
         }
         // Set zoom parameters asynchronously
-        mCameraSettings.setZoomRatio(mZoomValue);
+        mCameraSettings.setZoomIndex(mZoomValue);
         mCameraDevice.applySettings(mCameraSettings);
         CameraSettings settings = mCameraDevice.getSettings();
         if (settings != null) {
