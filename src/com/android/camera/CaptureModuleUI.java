@@ -174,13 +174,10 @@ public class CaptureModuleUI implements
         mFocusUI.onFocusFailed();
     }
 
-    public void setAutoFocusTarget(int x, int y, boolean isAutoFocus) {
+    public void setAutoFocusTarget(int x, int y) {
+        // TODO: refactor.
+        boolean isAutoFocus = false;
         mFocusUI.setFocusPosition(x, y, isAutoFocus);
-        // Log manual tap to focus.
-        // TODO: Log coordinates. Note: 16x9 mode will be tricky.
-        if (isAutoFocus == false) {
-            UsageStatistics.instance().tapToFocus(null, null);
-        }
     }
 
     public void clearAutoFocusIndicator() {
