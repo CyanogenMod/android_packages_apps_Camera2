@@ -416,11 +416,6 @@ public class VideoModule extends CameraModule
                 return;
             }
 
-            // Set rotation and gps data.
-            Characteristics info =
-                    mActivity.getCameraProvider().getCharacteristics(mCameraId);
-            int rotation = CameraUtil.getJpegRotation(info, mOrientation);
-            mCameraSettings.setPhotoRotationDegrees(rotation);
             Location loc = mLocationManager.getCurrentLocation();
             CameraUtil.setGpsParameters(mCameraSettings, loc);
             mCameraDevice.applySettings(mCameraSettings);
@@ -844,10 +839,10 @@ public class VideoModule extends CameraModule
         mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
         Characteristics info =
                 mActivity.getCameraProvider().getCharacteristics(mCameraId);
-        mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, info);
+        mCameraDisplayOrientation = info.getPreviewOrientation(mDisplayRotation);
         // Change the camera display orientation
         if (mCameraDevice != null) {
-            mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
+            mCameraDevice.setDisplayOrientation(mDisplayRotation);
         }
         if (mFocusManager != null) {
             mFocusManager.setDisplayOrientation(mCameraDisplayOrientation);
@@ -919,7 +914,7 @@ public class VideoModule extends CameraModule
         }
 
         setDisplayOrientation();
-        mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
+        mCameraDevice.setDisplayOrientation(mDisplayRotation);
         setCameraParameters();
 
         if (mFocusManager != null) {

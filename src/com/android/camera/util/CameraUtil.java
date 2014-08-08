@@ -386,21 +386,6 @@ public class CameraUtil {
         return naturalWidth < naturalHeight;
     }
 
-    public static int getDisplayOrientation(int degrees, Characteristics info) {
-        // See android.hardware.Camera.setDisplayOrientation for
-        // documentation.
-        int result = 0;
-        if (info.isFacingFront()) {
-            result = (info.getSensorOrientation() + degrees) % 360;
-            result = (360 - result) % 360;  // compensate the mirror
-        } else if (info.isFacingBack()) {
-            result = (info.getSensorOrientation() - degrees + 360) % 360;
-        } else {
-            Log.e(TAG, "Camera is facing unhandled direction");
-        }
-        return result;
-    }
-
     public static int roundOrientation(int orientation, int orientationHistory) {
         boolean changeOrientation = false;
         if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
@@ -681,22 +666,6 @@ public class CameraUtil {
         animation.setDuration(duration);
         view.startAnimation(animation);
     }
-
-    public static int getJpegRotation(Characteristics info, int orientation) {
-        // See android.hardware.Camera.Parameters.setRotation for
-        // documentation.
-        int rotation = 0;
-        if (orientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            if (info.isFacingFront()) {
-                rotation = (info.getSensorOrientation() - orientation + 360) % 360;
-            } else if (info.isFacingBack()) {
-                rotation = (info.getSensorOrientation() + orientation) % 360;
-            } else {
-                Log.e(TAG, "Camera is facing unhandled direction");
-            }
-        }
-        return rotation;
-  }
 
     /**
      * Down-samples a jpeg byte array.
