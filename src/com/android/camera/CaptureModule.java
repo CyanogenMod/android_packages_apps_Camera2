@@ -839,10 +839,8 @@ public class CaptureModule extends CameraModule
     }
 
     private int getOrientation() {
-        // We need to be consistent with the framework orientation (i.e. the
-        // orientation of the UI.) when the auto-rotate screen setting is on.
         if (mAppController.isAutoRotateScreen()) {
-            return (360 - mDisplayRotation) % 360;
+            return mDisplayRotation;
         } else {
             return mOrientation;
         }
