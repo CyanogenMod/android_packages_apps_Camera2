@@ -47,6 +47,8 @@ import com.android.camera.debug.Log.Tag;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.AutoFocusMode;
+import com.android.camera.one.OneCamera.AutoFocusState;
 import com.android.camera.one.OneCamera.CaptureReadyCallback;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
@@ -62,6 +64,8 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Size;
+import com.android.camera.util.SystemProperties;
+import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
@@ -87,6 +91,7 @@ public class CaptureModule extends CameraModule
         implements MediaSaver.QueueListener,
         ModuleController,
         OneCamera.PictureCallback,
+        OneCamera.FocusStateListener,
         PreviewStatusListener.PreviewAreaChangedListener,
         RemoteCameraModule,
         SensorEventListener,
@@ -140,6 +145,29 @@ public class CaptureModule extends CameraModule
                 }
             };
 
+    /**
+     * Show AF target in center of preview and start animation.
+     */
+    Runnable mShowAutoFocusTargetInCenterRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mUI.setAutoFocusTarget(((int) (mPreviewArea.left + mPreviewArea.right)) / 2,
+                    ((int) (mPreviewArea.top + mPreviewArea.bottom)) / 2);
+            mUI.showAutoFocusInProgress();
+        }
+    };
+
+    /**
+     * Hide AF target UI element.
+     */
+    Runnable mHideAutoFocusTargetRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // showAutoFocusSuccess() just hides the AF UI.
+            mUI.showAutoFocusSuccess();
+        }
+    };
+
     private static final Tag TAG = new Tag("CaptureModule");
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
     /** Enable additional debug output. */
@@ -151,6 +179,12 @@ public class CaptureModule extends CameraModule
      * TODO: Make sure this value is in sync with what we see on L.
      */
     private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
+
+    /** System Properties switch to enable debugging focus UI. */
+    private static final String PROP_FOCUS_DEBUG_UI_KEY = "persist.camera.focus_debug_ui";
+    private static final String PROP_FOCUS_DEBUG_UI_OFF = "0";
+    private static final boolean FOCUS_DEBUG_UI = !PROP_FOCUS_DEBUG_UI_OFF
+            .equals(SystemProperties.get(PROP_FOCUS_DEBUG_UI_KEY, PROP_FOCUS_DEBUG_UI_OFF));
 
     private final Object mDimensionLock = new Object();
     /**
@@ -186,6 +220,16 @@ public class CaptureModule extends CameraModule
     private ModuleState mState = ModuleState.IDLE;
     /** Current orientation of the device. */
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
+    /** Current zoom value. */
+    private float mZoomValue = 1f;
+
+    /** True if in AF tap-to-focus sequence. */
+    private boolean mTapToFocusInProgress = false;
+
+    /** Persistence of Tap to Focus target UI after scan complete. */
+    private static final int FOCUS_HOLD_UI_MILLIS = 500;
+    /** Persistence of Tap to Focus target UI timeout. */
+    private static final int FOCUS_HOLD_UI_TIMEOUT_MILLIS = 1500;
 
     /** Accelerometer data. */
     private final float[] mGData = new float[3];
@@ -214,19 +258,16 @@ public class CaptureModule extends CameraModule
 
     /** Current display rotation in degrees. */
     private int mDisplayRotation;
-    /** Current width of the screen, in pixels. */
+    /** Current screen width in pixels. */
     private int mScreenWidth;
-    /** Current height of the screen, in pixels. */
+    /** Current screen height in pixels. */
     private int mScreenHeight;
-    /** Current preview width, in pixels. */
+    /** Current width of preview frames from camera. */
     private int mPreviewBufferWidth;
-    /** Current preview height, in pixels. */
+    /** Current height of preview frames from camera.. */
     private int mPreviewBufferHeight;
-
-    // /** Current preview area width. */
-    // private float mFullPreviewWidth;
-    // /** Current preview area height. */
-    // private float mFullPreviewHeight;
+    /** Area used by preview. */
+    RectF mPreviewArea;
 
     /** The current preview transformation matrix. */
     private Matrix mPreviewTranformationMatrix = new Matrix();
@@ -325,6 +366,7 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onPreviewAreaChanged(RectF previewArea) {
+        mPreviewArea = previewArea;
         // mUI.updatePreviewAreaRect(previewArea);
         // mUI.positionProgressOverlay(previewArea);
     }
@@ -421,6 +463,7 @@ public class CaptureModule extends CameraModule
                     public void onReadyForCapture() {
                         Log.d(TAG, "Ready for capture.");
                         onPreviewStarted();
+                        mCamera.setFocusStateListener(CaptureModule.this);
                     }
                 });
             }
@@ -578,8 +621,97 @@ public class CaptureModule extends CameraModule
         return false;
     }
 
+    /**
+     * Focus sequence starts for zone around tap location for single tap.
+     */
     @Override
     public void onSingleTapUp(View view, int x, int y) {
+        Log.v(TAG, "onSingleTapUp x=" + x + " y=" + y);
+        // TODO: This should query actual capability.
+        if (mCameraFacing == Facing.FRONT) {
+            return;
+        }
+        triggerFocusAtScreenCoord(x, y);
+    }
+
+    // TODO: Consider refactoring FocusOverlayManager.
+    // Currently AF state transitions are controlled in OneCameraImpl.
+    // PhotoModule uses FocusOverlayManager which uses API1/portability
+    // logic and coordinates.
+
+    private void triggerFocusAtScreenCoord(int x, int y) {
+        mTapToFocusInProgress = true;
+        // Show UI immediately even though scan has not started yet.
+        mUI.setAutoFocusTarget(x, y);
+        mUI.showAutoFocusInProgress();
+        mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+        mMainHandler.postDelayed(mHideAutoFocusTargetRunnable, FOCUS_HOLD_UI_TIMEOUT_MILLIS);
+
+        // Normalize coordinates to [0,1] per CameraOne API.
+        float points[] = new float[2];
+        points[0] = (x - mPreviewArea.left) / mPreviewArea.width();
+        points[1] = (y - mPreviewArea.top) / mPreviewArea.height();
+
+        // Rotate coordinates to portrait orientation per CameraOne API.
+        Matrix rotationMatrix = new Matrix();
+        rotationMatrix.setRotate(mDisplayRotation, 0.5f, 0.5f);
+        rotationMatrix.mapPoints(points);
+        mCamera.triggerFocusAndMeterAtPoint(points[0], points[1]);
+
+        // Log touch (screen coordinates).
+        if (mZoomValue == 1f) {
+            TouchCoordinate touchCoordinate = new TouchCoordinate(x - mPreviewArea.left,
+                    y - mPreviewArea.top, mPreviewArea.width(), mPreviewArea.height());
+            // TODO: Add to logging: duration, rotation.
+            UsageStatistics.instance().tapToFocus(touchCoordinate, null);
+        }
+    }
+
+    /**
+     * This AF status listener does two things:
+     * <ol>
+     * <li>Ends tap-to-focus period when mode goes from AUTO to CONTINUOUS_PICTURE.</li>
+     * <li>Updates AF UI if tap-to-focus is not in progress.</li>
+     * </ol>
+     */
+    public void onFocusStatusUpdate(final AutoFocusMode mode, final AutoFocusState state) {
+        Log.v(TAG, "AF status is mode:" + mode + " state:" + state);
+
+        if (FOCUS_DEBUG_UI) {
+            // TODO: Add debug circle radius+color UI to FocusOverlay.
+            // mMainHandler.post(...)
+        }
+
+        // After tap to focus SCAN completes, clear UI after FOCUS_HOLD_UI_MILLIS.
+        if (mTapToFocusInProgress && mode == AutoFocusMode.AUTO &&
+                (state == AutoFocusState.STOPPED_FOCUSED ||
+                        state == AutoFocusState.STOPPED_UNFOCUSED)) {
+            mMainHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mTapToFocusInProgress = false;
+                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+                    mMainHandler.post(mHideAutoFocusTargetRunnable);
+                }
+            }, FOCUS_HOLD_UI_MILLIS);
+        }
+
+        // Use the OneCamera auto focus callbacks to show the UI, except for
+        // tap to focus where we show UI right away at touch, and then turn
+        // it off early at 0.5 sec, before the focus lock expires at 3 sec.
+        if (!mTapToFocusInProgress) {
+            switch (state) {
+                case SCANNING:
+                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+                    mMainHandler.post(mShowAutoFocusTargetInCenterRunnable);
+                    break;
+                case STOPPED_FOCUSED:
+                case STOPPED_UNFOCUSED:
+                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+                    mMainHandler.post(mHideAutoFocusTargetRunnable);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -654,6 +786,7 @@ public class CaptureModule extends CameraModule
 
     /***
      * Update the preview transform based on the new dimensions.
+     * TODO: Make work with all: aspect ratios/resolutions x screens/cameras.
      */
     private void updatePreviewTransform(int incomingWidth, int incomingHeight,
             boolean forceUpdate) {
@@ -759,11 +892,9 @@ public class CaptureModule extends CameraModule
             }
             mPreviewTranformationMatrix.postScale(scale, scale, centerX, centerY);
 
+            // TODO: Take these quantities from mPreviewArea.
             float previewWidth = effectiveWidth * scale;
             float previewHeight = effectiveHeight * scale;
-            // mFullPreviewWidth = previewWidth;
-            // mFullPreviewHeight = previewHeight;
-
             float previewCenterX = previewWidth / 2;
             float previewCenterY = previewHeight / 2;
             mPreviewTranformationMatrix.postTranslate(previewCenterX - centerX, previewCenterY
@@ -833,6 +964,7 @@ public class CaptureModule extends CameraModule
 
     private void closeCamera() {
         if (mCamera != null) {
+            mCamera.setFocusStateListener(null);
             mCamera.close(null);
             mCamera = null;
         }
