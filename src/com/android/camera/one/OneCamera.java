@@ -36,6 +36,40 @@ public interface OneCamera {
     }
 
     /**
+     * Auto focus system status.
+     * <ul>
+     * <li>{@link #INACTIVE}</li>
+     * <li>{@link #SCANNING}</li>
+     * <li>{@link #STOPPED_FOCUSED}</li>
+     * <li>{@link #STOPPED_UNFOCUSED}</li>
+     * </ul>
+     */
+    public static enum AutoFocusState {
+        /** Indicates AF system is inactive for some reason (could be an error). */
+        INACTIVE,
+        /** Indicates scan in progress. */
+        SCANNING,
+        /** Indicates scan success (camera in focus). */
+        STOPPED_FOCUSED,
+        /** Indicates scan or other failure.  */
+        STOPPED_UNFOCUSED
+    }
+
+    /**
+     * Auto focus system mode.
+     * <ul>
+     * <li>{@link #CONTINUOUS_PICTURE}</li>
+     * <li>{@link #AUTO}</li>
+     * </ul>
+     */
+    public static enum AutoFocusMode {
+        /** System is continuously focusing. */
+        CONTINUOUS_PICTURE,
+        /** System is running a triggered scan. */
+        AUTO
+    }
+
+    /**
      * Classes implementing this interface will be called when the camera was
      * opened or failed to open.
      */
@@ -129,16 +163,17 @@ public interface OneCamera {
 
     /**
      * Classes implementing this interface will be called when the state of the
-     * focus changes.
+     * focus changes.  Guaranteed not to stay stuck in scanning state past some
+     * reasonable timeout even if Camera API is stuck.
      */
     public static interface FocusStateListener {
         /**
-         * Called when an auto-focus run ended
+         * Called when mode or state of auto focus system changes.
          *
-         * @param success whether auto-focus succeeded. If true, it means that
-         *            the image should not be sharp.
+         * @param mode Is manual AF trigger cycle active.
+         * @param state Current state: scanning, focused, not focused, inactive.
          */
-        public void onAutoFocusDone(boolean success);
+        public void onFocusStatusUpdate(AutoFocusMode mode, AutoFocusState state);
     }
 
     /**
@@ -189,6 +224,22 @@ public interface OneCamera {
             }
         }
     }
+
+    /**
+     * Triggers auto focus scan for default ROI.
+     */
+    public void triggerAutoFocus();
+
+    /**
+     * Meters and triggers auto focus scan with ROI around tap point.
+     * <p/>
+     * Normalized coordinates are referenced to portrait preview window
+     * with 0,0 top left and 1,1 bottom right.  Rotation has no effect.
+     *
+     * @param nx normalized x coordinate.
+     * @param nx normalized y coordinate.
+     */
+    public void triggerFocusAndMeterAtPoint(float nx, float ny);
 
     /**
      * Call this to take a picture.
