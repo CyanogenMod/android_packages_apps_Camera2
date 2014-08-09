@@ -78,7 +78,7 @@
   <string name="pref_camera_scenemode_entry_spotlight">スポットライト</string>
   <string name="pref_camera_scenemode_entry_steadyphoto">落ち着いた写真</string>
   <string name="pref_camera_scenemode_entry_supernight">闇夜</string>
-  <string name="pref_camera_scenemode_entry_sweepstitch">スイープステッチ</string>
+  <string name="pref_camera_scenemode_entry_sweepstitch">スイープスティッチ</string>
   <string name="pref_camera_scenemode_entry_text">テキスト</string>
   <string name="pref_camera_scenemode_entry_theatre">劇場</string>
   <string name="pref_camera_scenemode_entry_whiteboard">ホワイトボード</string>
@@ -109,7 +109,7 @@
   <string name="pref_camera_focustime_entry_15">15秒</string>
   <string name="pref_camera_focustime_entry_20">20秒</string>
   <string name="pref_camera_focustime_entry_30">30秒</string>
-  <string name="pref_camera_focustime_entry_infinite">無制限</string>
+  <string name="pref_camera_focustime_entry_infinite">無限</string>
   <string name="pref_camera_flashmode_entry_redeye">赤目</string>
   <string name="pref_camera_flashmode_label_redeye">赤目</string>
   <string name="pref_camera_beauty_mode_title">ビューティーモード</string>
