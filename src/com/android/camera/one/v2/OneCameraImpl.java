@@ -49,8 +49,9 @@ import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.session.CaptureSession;
-import com.android.camera.util.Size;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.JpegUtilNative;
+import com.android.camera.util.Size;
 import com.android.camera.util.SystemProperties;
 
 import java.io.IOException;
@@ -86,6 +87,13 @@ public class OneCameraImpl extends AbstractOneCamera {
 
     /** Default JPEG encoding quality. */
     private static final Byte JPEG_QUALITY = 90;
+
+    /**
+     * Set to ImageFormat.JPEG, to use the hardware encoder, or
+     * ImageFormat.YUV_420_888 to use the software encoder.
+     * No other image formats are supported.
+     */
+    private static final int sCaptureImageFormat = ImageFormat.YUV_420_888;
 
     /** Width and height of touch metering region as fraction of longest edge. */
     private static final float METERING_REGION_EDGE = 0.1f;
@@ -166,7 +174,6 @@ public class OneCameraImpl extends AbstractOneCamera {
                     super.onCaptureCompleted(session, request, result);
                 }
             };
-
     /** Thread on which the camera operations are running. */
     private final HandlerThread mCameraThread;
     /** Handler of the {@link #mCameraThread}. */
@@ -196,9 +203,9 @@ public class OneCameraImpl extends AbstractOneCamera {
     /** A callback that is called when the device is fully closed. */
     private CloseCallback mCloseCallback = null;
 
-    /** Receives the normal JPEG captured images. */
-    private final ImageReader mJpegImageReader;
-    ImageReader.OnImageAvailableListener mJpegImageListener =
+    /** Receives the normal captured images. */
+    private final ImageReader mCaptureImageReader;
+    ImageReader.OnImageAvailableListener mCaptureImageListener =
             new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -229,9 +236,9 @@ public class OneCameraImpl extends AbstractOneCamera {
         mCameraThread.start();
         mCameraHandler = new Handler(mCameraThread.getLooper());
 
-        mJpegImageReader = ImageReader.newInstance(pictureSize.getWidth(), pictureSize.getHeight(),
-                ImageFormat.JPEG, 2);
-        mJpegImageReader.setOnImageAvailableListener(mJpegImageListener, mCameraHandler);
+        mCaptureImageReader = ImageReader.newInstance(pictureSize.getWidth(), pictureSize.getHeight(),
+                sCaptureImageFormat, 2);
+        mCaptureImageReader.setOnImageAvailableListener(mCaptureImageListener, mCameraHandler);
         Log.d(TAG, "New Camera2 based OneCameraImpl created.");
     }
 
@@ -280,6 +287,7 @@ public class OneCameraImpl extends AbstractOneCamera {
             // JPEG capture.
             CaptureRequest.Builder builder = mDevice
                     .createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+
             // TODO: Check that these control modes are correct for AWB, AE.
             if (mLastRequestedControlAFMode == CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE) {
                 builder.set(CaptureRequest.CONTROL_AF_MODE,
@@ -292,15 +300,19 @@ public class OneCameraImpl extends AbstractOneCamera {
                 Log.v(TAG, "CaptureRequest with AUTO.");
             }
             builder.setTag(RequestTag.CAPTURE);
-            builder.set(CaptureRequest.JPEG_QUALITY, JPEG_QUALITY);
-            builder.set(CaptureRequest.JPEG_ORIENTATION, getJpegRotation(params.orientation));
+
+            if (sCaptureImageFormat == ImageFormat.JPEG) {
+                builder.set(CaptureRequest.JPEG_QUALITY, JPEG_QUALITY);
+                builder.set(CaptureRequest.JPEG_ORIENTATION, getJpegRotation(params.orientation));
+            }
+
             builder.addTarget(mPreviewSurface);
-            builder.addTarget(mJpegImageReader.getSurface());
+            builder.addTarget(mCaptureImageReader.getSurface());
             applyFlashMode(params.flashMode, builder);
             CaptureRequest request = builder.build();
             mCaptureSession.capture(request, mAutoFocusStateListener, mCameraHandler);
         } catch (CameraAccessException e) {
-            Log.e(TAG, "Could not access camera for JPEG capture.");
+            Log.e(TAG, "Could not access camera for still image capture.");
             params.callback.onPictureTakenFailed();
             return;
         }
@@ -349,7 +361,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     public Size[] getSupportedSizes() {
         StreamConfigurationMap config = mCharacteristics
                 .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        return Size.convert(config.getOutputSizes(ImageFormat.JPEG));
+        return Size.convert(config.getOutputSizes(sCaptureImageFormat));
     }
 
     @Override
@@ -442,7 +454,7 @@ public class OneCameraImpl extends AbstractOneCamera {
             }
             List<Surface> outputSurfaces = new ArrayList<Surface>(2);
             outputSurfaces.add(previewSurface);
-            outputSurfaces.add(mJpegImageReader.getSurface());
+            outputSurfaces.add(mCaptureImageReader.getSurface());
 
             mDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateListener() {
 
@@ -659,8 +671,8 @@ public class OneCameraImpl extends AbstractOneCamera {
         x1 = CameraUtil.clamp(x1, 0, sensor.width() - 1);
         y0 = CameraUtil.clamp(y0, 0, sensor.height() - 1);
         y1 = CameraUtil.clamp(y1, 0, sensor.height() - 1);
-        int wt = (int) ((1 - METERING_REGION_WEIGHT) * (float) MeteringRectangle.METERING_WEIGHT_MIN
-                + METERING_REGION_WEIGHT * (float) MeteringRectangle.METERING_WEIGHT_MAX);
+        int wt = (int) ((1 - METERING_REGION_WEIGHT) * MeteringRectangle.METERING_WEIGHT_MIN
+                + METERING_REGION_WEIGHT * MeteringRectangle.METERING_WEIGHT_MAX);
 
         Log.v(TAG, "sensor 3A @ x0=" + x0 + " y0=" + y0 + " dx=" + (x1 - x0) + " dy=" + (y1 - y0));
         MeteringRectangle[] regions = new MeteringRectangle[]{
@@ -690,8 +702,26 @@ public class OneCameraImpl extends AbstractOneCamera {
      */
     private static byte[] acquireJpegBytesAndClose(ImageReader reader) {
         Image img = reader.acquireLatestImage();
-        Image.Plane plane0 = img.getPlanes()[0];
-        ByteBuffer buffer = plane0.getBuffer();
+
+        ByteBuffer buffer;
+
+        if (img.getFormat() == ImageFormat.JPEG) {
+            Image.Plane plane0 = img.getPlanes()[0];
+            buffer = plane0.getBuffer();
+        } else if (img.getFormat() == ImageFormat.YUV_420_888) {
+            buffer = ByteBuffer.allocateDirect(img.getWidth() * img.getHeight() * 3);
+
+            Log.v(TAG, "Compressing JPEG with software encoder.");
+            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img, buffer, JPEG_QUALITY);
+
+            if (numBytes < 0) {
+                throw new RuntimeException("Error compressing jpeg.");
+            }
+
+            buffer.limit(numBytes);
+        } else {
+            throw new RuntimeException("Unsupported image format.");
+        }
 
         byte[] imageBytes = new byte[buffer.remaining()];
         buffer.get(imageBytes);
