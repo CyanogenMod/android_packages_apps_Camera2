@@ -249,8 +249,7 @@ class ExifData {
     }
 
     /**
-     * Returns a list of all {@link ExifTag}s in the ExifData or null if there
-     * are none.
+     * Returns a list of all {@link ExifTag}s in the ExifData.
      */
     protected List<ExifTag> getAllTags() {
         ArrayList<ExifTag> ret = new ArrayList<ExifTag>();
@@ -263,9 +262,6 @@ class ExifData {
                     }
                 }
             }
-        }
-        if (ret.size() == 0) {
-            return null;
         }
         return ret;
     }
