@@ -13,7 +13,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1175086483881127797">"Kamera"</string>
     <string name="video_camera_label" msgid="1723708322021743770">"Perekam video"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
@@ -78,6 +80,7 @@
     <string name="pref_camera_location_label" msgid="8695441802378057719">"LOKASI"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Penghitung mundur"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
+    <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Bip penghitungan"</string>
     <string name="setting_off" msgid="6782191065550276632">"Nonaktif"</string>
     <string name="setting_on" msgid="9086728135773197891">"Aktif"</string>
@@ -142,7 +145,9 @@
     <string name="pref_exposure_title" msgid="7525751789152582800">"Pencahayaan"</string>
     <string name="pref_exposure_label" msgid="2604738602400261218">"PENCAHAYAAN"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
+    <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"KAMERA DEPAN"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"KAMERA BELAKANG"</string>
@@ -205,7 +210,7 @@
     <string name="media_processing_content_description" msgid="8138587719107183754">"Media sedang diproses"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alihkan daftar mode"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Daftar mode"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alihkan strip film"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alihkan setrip film"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Strip film"</string>
     <string name="capital_on" msgid="1118214824959797269">"NYALA"</string>
     <string name="capital_off" msgid="3020696135020167263">"MATI"</string>
@@ -271,7 +276,7 @@
     <string name="photo_editor" msgid="1521994560971367225">"Editor Foto"</string>
     <string name="crop_save" msgid="2841974981340098579">"Simpan"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Tidak dapat memuat gambar!"</string>
-    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tampilan strip film"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tampilan setrip film"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Menyetel wallpaper"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Setelan"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
@@ -360,4 +365,3 @@
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
-
