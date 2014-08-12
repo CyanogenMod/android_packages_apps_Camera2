@@ -108,12 +108,11 @@ import com.android.camera.one.OneCameraManager;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
+import com.android.camera.settings.AppUpgrader;
 import com.android.camera.settings.CameraSettingsActivity;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
-import com.android.camera.settings.Upgrade;
-import com.android.camera.settings.UpgradeAosp;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.DetailsDialog;
@@ -1317,9 +1316,8 @@ public class CameraActivity extends Activity
         ModulesInfo.setupModules(mAppContext, mModuleManager);
 
         mSettingsManager = getServices().getSettingsManager();
-        Upgrade.executeUpgradeOnVersionChanged(mSettingsManager,
-            Keys.KEY_UPGRADE_VERSION, UpgradeAosp.AOSP_UPGRADE_VERSION,
-            UpgradeAosp.getAospUpgradeSteps(this));
+        AppUpgrader appUpgrader = new AppUpgrader(this);
+        appUpgrader.upgrade(mSettingsManager);
         Keys.setDefaults(mSettingsManager, mAppContext);
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
