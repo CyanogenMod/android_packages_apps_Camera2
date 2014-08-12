@@ -210,7 +210,7 @@
     <string name="media_processing_content_description" msgid="8138587719107183754">"Media sedang diproses"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alihkan daftar mode"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Daftar mode"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alihkan strip film"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alihkan setrip film"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Strip film"</string>
     <string name="capital_on" msgid="1118214824959797269">"NYALA"</string>
     <string name="capital_off" msgid="3020696135020167263">"MATI"</string>
@@ -276,7 +276,7 @@
     <string name="photo_editor" msgid="1521994560971367225">"Editor Foto"</string>
     <string name="crop_save" msgid="2841974981340098579">"Simpan"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Tidak dapat memuat gambar!"</string>
-    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tampilan strip film"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tampilan setrip film"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Menyetel wallpaper"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Setelan"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
