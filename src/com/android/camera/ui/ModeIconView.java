@@ -16,8 +16,6 @@
 
 package com.android.camera.ui;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -36,19 +34,16 @@ import com.android.camera2.R;
  * whereas a state list drawable would require a different drawable for each state.
  */
 public class ModeIconView extends View {
-
-    private static final int SELECTION_ANIMATION_DURATION_MS = 500;
-    private static final int HIGHLIGHT_STATE_ALPHA = 0x4C;
     private boolean mHighlightIsOn = false;
     private final GradientDrawable mBackground;
-    private final GradientDrawable mHighlightDrawable;
+    private final GradientDrawable mHoverDrawable;
+
     private final int mIconBackgroundSize;
     private int mHighlightColor;
     private final int mBackgroundDefaultColor;
     private final int mIconDrawableSize;
     private Drawable mIconDrawable = null;
     private boolean mSelected = false;
-    private ValueAnimator mSelectionAnimation;
 
     public ModeIconView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,11 +53,13 @@ public class ModeIconView extends View {
         mBackground = (GradientDrawable) getResources()
                 .getDrawable(R.drawable.mode_icon_background).mutate();
         mBackground.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
-        mHighlightDrawable = (GradientDrawable) getResources()
+        mHoverDrawable = (GradientDrawable) getResources()
                 .getDrawable(R.drawable.mode_icon_background).mutate();
-        mHighlightDrawable.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
+        mHoverDrawable.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
         mIconDrawableSize = getResources().getDimensionPixelSize(
                 R.dimen.mode_selector_icon_drawable_size);
+
+        mHoverDrawable.setColor(getResources().getColor(R.color.mode_icon_hover_highlight));
     }
 
     /**
@@ -72,6 +69,7 @@ public class ModeIconView extends View {
      */
     public void setIconDrawable(Drawable drawable) {
         mIconDrawable = drawable;
+
         // Center icon in the background.
         if (mIconDrawable != null) {
             mIconDrawable.setBounds(mIconBackgroundSize / 2 - mIconDrawableSize / 2,
@@ -86,14 +84,27 @@ public class ModeIconView extends View {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (mHighlightIsOn && !mSelected) {
-            mHighlightDrawable.draw(canvas);
+            mHoverDrawable.draw(canvas);
         } else {
             mBackground.draw(canvas);
         }
         if (mIconDrawable != null) {
             mIconDrawable.draw(canvas);
         }
+    }
 
+    /**
+     * @return A clone of the icon drawable associated with this view.
+     */
+    public Drawable getIconDrawableClone() {
+        return mIconDrawable.getConstantState().newDrawable();
+    }
+
+    /**
+     * @return The size of the icon drawable.
+     */
+    public int getIconDrawableSize() {
+        return mIconDrawableSize;
     }
 
     /**
@@ -102,6 +113,7 @@ public class ModeIconView extends View {
      *
      * @param selected true when selected, false otherwise.
      */
+    @Override
     public void setSelected(boolean selected) {
         if (selected) {
             mBackground.setColor(mHighlightColor);
@@ -109,52 +121,9 @@ public class ModeIconView extends View {
         } else {
             mBackground.setColor(mBackgroundDefaultColor);
         }
+
         mSelected = selected;
         invalidate();
-    }
-
-    /**
-     * Animate mode icon background from highlight state to selected state.
-     * TODO: Remove the selection animation if UX agrees to do so.
-     */
-    public void selectWithAnimation() {
-        mSelected = true;
-        mHighlightIsOn = false;
-        // Animate alpha between highlight alpha to selected state alpha.
-        mSelectionAnimation = ValueAnimator.ofInt(HIGHLIGHT_STATE_ALPHA, 255);
-        mSelectionAnimation.setDuration(SELECTION_ANIMATION_DURATION_MS);
-        mSelectionAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int alpha = (Integer) animation.getAnimatedValue();
-                int backgroundColor = (mHighlightColor & 0xffffff) | (alpha << 24);
-                mBackground.setColor(backgroundColor);
-                invalidate();
-            }
-        });
-        mSelectionAnimation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                // Do nothing.
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mSelectionAnimation = null;
-                invalidate();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                // Do nothing.
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                // Do nothing.
-            }
-        });
-        mSelectionAnimation.start();
     }
 
     /**
@@ -176,7 +145,12 @@ public class ModeIconView extends View {
      */
     public void setHighlightColor(int highlightColor) {
         mHighlightColor = highlightColor;
-        highlightColor = (highlightColor & 0xffffff) | 0x4C000000;
-        mHighlightDrawable.setColor(highlightColor);
+    }
+
+    /**
+     * @return The highlightColor color the the highlight state.
+     */
+    public int getHighlightColor() {
+        return mHighlightColor;
     }
 }
