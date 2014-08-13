@@ -18,6 +18,9 @@ package com.android.camera.data;
 
 import android.net.Uri;
 
+import com.android.camera.debug.Log;
+import com.android.camera.debug.Log.Tag;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -48,17 +51,30 @@ public class LocalDataList {
         }
     }
 
-    private LinkedList<LocalData> mList = new LinkedList<LocalData>();
-    private HashMap<Uri, LocalData> mUriMap = new HashMap<Uri, LocalData>();
+    private static final Tag TAG = new Tag("LocalDataList");
+    private final LinkedList<LocalData> mList = new LinkedList<LocalData>();
+    private final HashMap<Uri, LocalData> mUriMap = new HashMap<Uri, LocalData>();
 
     public LocalData get(int index) {
         return mList.get(index);
     }
 
-    public LocalData remove(int index) {
-        LocalData removedItem = mList.remove(index);
-        mUriMap.remove(removedItem);
-        return removedItem;
+    /**
+     * Removes the item at the given index.
+     *
+     * @param index the item to delete
+     * @return If the item was found and deleted, it is returned. If the item
+     *         was not found, null is returned.
+     */
+    public synchronized LocalData remove(int index) {
+        try {
+            LocalData removedItem = mList.remove(index);
+            mUriMap.remove(removedItem);
+            return removedItem;
+        } catch (IndexOutOfBoundsException ex) {
+            Log.w(TAG, "Could not remove item. Not found: " + index, ex);
+            return null;
+        }
     }
 
     public LocalData get(Uri uri) {
