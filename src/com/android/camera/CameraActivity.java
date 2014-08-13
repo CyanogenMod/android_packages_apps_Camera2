@@ -305,10 +305,12 @@ public class CameraActivity extends Activity
                     }
                     final LocalData data = getCurrentLocalData();
                     if (data == null) {
+                        Log.w(TAG, "Cannot open null data.");
                         return;
                     }
                     final Uri contentUri = data.getUri();
                     if (contentUri == Uri.EMPTY) {
+                        Log.w(TAG, "Cannot open empty URL.");
                         return;
                     }
 
@@ -330,6 +332,7 @@ public class CameraActivity extends Activity
                 public void onEdit() {
                     LocalData data = getCurrentLocalData();
                     if (data == null) {
+                        Log.w(TAG, "Cannot edit null data.");
                         return;
                     }
                     final int currentDataId = getCurrentDataId();
@@ -344,6 +347,7 @@ public class CameraActivity extends Activity
                 public void onTinyPlanet() {
                     LocalData data = getCurrentLocalData();
                     if (data == null) {
+                        Log.w(TAG, "Cannot edit tiny planet on null data.");
                         return;
                     }
                     launchTinyPlanetEditor(data);
@@ -362,6 +366,11 @@ public class CameraActivity extends Activity
                 @Override
                 public void onShare() {
                     final LocalData data = getCurrentLocalData();
+                    if (data == null) {
+                        Log.w(TAG, "Cannot share null data.");
+                        return;
+                    }
+
                     final int currentDataId = getCurrentDataId();
                     UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
                             MediaInteraction.InteractionType.SHARE,
