@@ -132,6 +132,7 @@ public class SettingsUtil {
 
     /** Video qualities sorted by size. */
     public static int[] sVideoQualities = new int[] {
+            CamcorderProfile.QUALITY_2160P,
             CamcorderProfile.QUALITY_1080P,
             CamcorderProfile.QUALITY_720P,
             CamcorderProfile.QUALITY_480P,
