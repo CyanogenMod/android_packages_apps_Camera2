@@ -161,10 +161,11 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public void removeData(int dataID) {
-        if (dataID >= mImages.size()) {
+        LocalData d = mImages.remove(dataID);
+        if (d == null) {
             return;
         }
-        LocalData d = mImages.remove(dataID);
+
         // Delete previously removed data first.
         executeDeletion();
         mLocalDataToDelete = d;
