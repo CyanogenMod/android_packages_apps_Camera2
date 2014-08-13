@@ -18,7 +18,6 @@ package com.android.camera.ui;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -35,13 +34,10 @@ import com.android.camera2.R;
  * This class implements a circular drawable that starts with a zero radius
  * and can be triggered to animate expand to a given radius.
  * <p>
- * There are three colors associated with this drawable:
+ * There are two colors associated with this drawable:
  * <p>
  * A background color, which is loaded from a resource
  * R.color.mode_icon_hover_highlight.
- * <p>
- * A base color, which is attached a circle that is animate expanded first and
- * drawn underneath the main color.
  * <p>
  * And, a main color, which is attached to the main circle that is expanded last
  * and is drawn on top of the other colors.
@@ -50,19 +46,13 @@ import com.android.camera2.R;
  * feel for mode switcher touch events.
  */
 public class TouchCircleDrawable extends Drawable {
-    private static final int BASE_CIRCLE_ANIM_DURATION_MS = 200;
-    private static final int CIRCLE_ANIM_DURATION_MS = 130;
-    private static final int CIRCLE_ANIM_DURATION_DELAY_MS = 100;
+    private static final int CIRCLE_ANIM_DURATION_MS = 250;
 
     private Paint mColorPaint = new Paint();
-    private Paint mBasePaint = new Paint();
     private Paint mBackgroundPaint = new Paint();
     private int mColor;
-    private int mBaseColor;
     private int mColorAlpha = 0xff;
-    private int mBaseAlpha = 0x4b;
     private int mColorRadius;
-    private int mBaseRadius;
     private int mBackgroundRadius;
     private Drawable mIconDrawable;
     private int mIconDrawableSize;
@@ -89,12 +79,10 @@ public class TouchCircleDrawable extends Drawable {
         super();
 
         mColorPaint.setAntiAlias(true);
-        mBasePaint.setAntiAlias(true);
         mBackgroundPaint.setAntiAlias(true);
         mBackgroundPaint.setColor(resources.getColor(R.color.mode_icon_hover_highlight));
 
         setColor(color);
-        setBaseColor(baseColor);
     }
 
     /**
@@ -146,7 +134,6 @@ public class TouchCircleDrawable extends Drawable {
         if (mDrawBackground) {
             canvas.drawCircle(mCenter.x, mCenter.y, mBackgroundRadius, mBackgroundPaint);
         }
-        canvas.drawCircle(mCenter.x, mCenter.y, mBaseRadius, mBasePaint);
         canvas.drawCircle(mCenter.x, mCenter.y, mColorRadius, mColorPaint);
         if (mIconDrawable != null) {
             mIconDrawable.draw(canvas);
@@ -179,17 +166,6 @@ public class TouchCircleDrawable extends Drawable {
         mColorPaint.setAlpha(mColorAlpha);
     }
 
-    /**
-     * Set the base color
-     *
-     * @param color The color of the initial expanded circle (draws behind the main color).
-     */
-    public void setBaseColor(int color) {
-        mBaseColor = color;
-        mBasePaint.setColor(mBaseColor);
-        mBasePaint.setAlpha(mBaseAlpha);
-    }
-
     public void setIconDrawable(Drawable d, int size) {
         mIconDrawable = d;
         mIconDrawableSize = size;
@@ -210,25 +186,9 @@ public class TouchCircleDrawable extends Drawable {
     public void animate() {
         mBackgroundRadius = Math.min(mW/2, mH/2);
 
-        final ValueAnimator baseAnimator =
-                ValueAnimator.ofInt(0, Math.min(mW/2, mH/2));
-        baseAnimator.setDuration(BASE_CIRCLE_ANIM_DURATION_MS);
-        baseAnimator.setInterpolator(Gusterpolator.INSTANCE);
-        baseAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mBaseRadius = (Integer) animation.getAnimatedValue();
-                invalidateSelf();
-                if (mUpdateListener != null) {
-                    mUpdateListener.onAnimationUpdate(animation);
-                }
-            }
-        });
-
         final ValueAnimator colorAnimator =
                 ValueAnimator.ofInt(0, Math.min(mW/2, mH/2));
         colorAnimator.setDuration(CIRCLE_ANIM_DURATION_MS);
-        colorAnimator.setStartDelay(CIRCLE_ANIM_DURATION_DELAY_MS);
         colorAnimator.setInterpolator(Gusterpolator.INSTANCE);
         colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -241,8 +201,7 @@ public class TouchCircleDrawable extends Drawable {
             }
         });
 
-        AnimatorSet s = new AnimatorSet();
-        s.addListener(new AnimatorListener() {
+        colorAnimator.addListener(new AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
                 mDrawBackground = true;
@@ -277,15 +236,15 @@ public class TouchCircleDrawable extends Drawable {
                 }
             }
         });
-        s.playTogether(baseAnimator, colorAnimator);
-        s.start();
+
+        colorAnimator.start();
     }
 
     /**
      *  Reset this drawable to its initial, preanimated state.
      */
     public void reset() {
-        mBaseRadius = mColorRadius = 0;
+        mColorRadius = 0;
     }
 
     /**
