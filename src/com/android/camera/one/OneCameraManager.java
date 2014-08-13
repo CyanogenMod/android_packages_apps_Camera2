@@ -16,12 +16,12 @@
 
 package com.android.camera.one;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
@@ -65,7 +65,7 @@ public abstract class OneCameraManager {
      * The instance is created the first time this method is called and cached
      * in a singleton thereafter, so successive calls are cheap.
      */
-    public static OneCameraManager get(Activity activity) {
+    public static OneCameraManager get(CameraActivity activity) {
         if (sCameraManager == null) {
             sCameraManager = create(activity);
         }
@@ -76,11 +76,13 @@ public abstract class OneCameraManager {
      * Creates a new camera manager that is based on Camera2 API, if available,
      * or otherwise uses the portability API.
      */
-    private static OneCameraManager create(Activity activity) {
+    private static OneCameraManager create(CameraActivity activity) {
         CameraManager cameraManager = (CameraManager) activity
                 .getSystemService(Context.CAMERA_SERVICE);
+        int maxMemoryMB = activity.getServices().getMemoryManager()
+                .getMaxAllowedNativeMemoryAllocation();
         if (cameraManager != null && isCamera2FullySupported(cameraManager)) {
-            return new com.android.camera.one.v2.OneCameraManagerImpl(cameraManager);
+            return new com.android.camera.one.v2.OneCameraManagerImpl(cameraManager, maxMemoryMB);
         } else {
             return new com.android.camera.one.v1.OneCameraManagerImpl();
         }
