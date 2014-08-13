@@ -1396,6 +1396,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeCoverState = COVER_SHOWN;
 
         int lastIndex = mController.getCurrentModuleIndex();
+        // Actual mode teardown / new mode initialization happens here
         mController.onModeSelected(modeIndex);
         int currentIndex = mController.getCurrentModuleIndex();
 
