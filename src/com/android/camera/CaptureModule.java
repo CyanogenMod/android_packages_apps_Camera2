@@ -69,6 +69,8 @@ import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
+import java.io.File;
+
 /**
  * New Capture module that is made to support photo and video capture on top of
  * the OneCamera API, to transparently support GCam.
@@ -221,7 +223,7 @@ public class CaptureModule extends CameraModule
     /** Current orientation of the device. */
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
     /** Current zoom value. */
-    private float mZoomValue = 1f;
+    private final float mZoomValue = 1f;
 
     /** True if in AF tap-to-focus sequence. */
     private boolean mTapToFocusInProgress = false;
@@ -274,12 +276,8 @@ public class CaptureModule extends CameraModule
     /** TODO: This is N5 specific. */
     public static final float FULLSCREEN_ASPECT_RATIO = 16 / 9f;
 
-    /**
-     * Desires aspect ratio of the final image.
-     * <p>
-     * TODO: Can't we deduct this from the final image's resolution?
-     */
-    private Float mFinalAspectRatio;
+    /** A directory to store debug information in during development. */
+    private final File mDebugDataDir;
 
     /** CLEAN UP START */
     // private SoundPool mSoundPool;
@@ -304,6 +302,7 @@ public class CaptureModule extends CameraModule
         mContext = mAppController.getAndroidContext();
         mSettingsManager = mAppController.getSettingsManager();
         mSettingsManager.addListener(this);
+        mDebugDataDir = mContext.getExternalCacheDir();
     }
 
     @Override
@@ -359,6 +358,7 @@ public class CaptureModule extends CameraModule
         params.orientation = getOrientation();
         params.flashMode = getFlashModeFromSettings();
         params.heading = mHeading;
+        params.debugDataFolder = mDebugDataDir;
 
         // Take the picture.
         mCamera.takePicture(params, session);
@@ -674,6 +674,7 @@ public class CaptureModule extends CameraModule
      * <li>Updates AF UI if tap-to-focus is not in progress.</li>
      * </ol>
      */
+    @Override
     public void onFocusStatusUpdate(final AutoFocusMode mode, final AutoFocusState state) {
         Log.v(TAG, "AF status is mode:" + mode + " state:" + state);
 
@@ -914,10 +915,8 @@ public class CaptureModule extends CameraModule
                 mPreviewTranformationMatrix.postTranslate(wOffset, hOffset);
                 mAppController.updatePreviewTransformFullscreen(mPreviewTranformationMatrix,
                         aspectRatio);
-                mFinalAspectRatio = aspectRatio;
             } else {
                 mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
-                mFinalAspectRatio = null;
                 mAppController.getCameraAppUI().hideLetterboxing();
             }
             // if (mGcamProxy != null) {
