@@ -23,6 +23,8 @@ import android.view.Surface;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
+import java.io.File;
+
 /**
  * OneCamera is a camera API tailored around our Google Camera application
  * needs. It's not a general purpose API but instead offers an API with exactly
@@ -200,6 +202,9 @@ public interface OneCamera {
         /** Flash mode for this capture. */
         public Flash flashMode = Flash.AUTO;
         // TODO: Add Location
+
+        /** Set this to provide a debug folder for this capture. */
+        public File debugDataFolder;
 
         /**
          * Checks whether all required values are set. If one is missing, it

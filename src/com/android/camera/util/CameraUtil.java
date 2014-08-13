@@ -32,7 +32,6 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.hardware.Camera;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -55,7 +54,6 @@ import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
-import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.android.ex.camera2.portability.Size;
 
@@ -355,10 +353,14 @@ public class CameraUtil {
         int rotation = windowManager.getDefaultDisplay()
                 .getRotation();
         switch (rotation) {
-            case Surface.ROTATION_0: return 0;
-            case Surface.ROTATION_90: return 90;
-            case Surface.ROTATION_180: return 180;
-            case Surface.ROTATION_270: return 270;
+            case Surface.ROTATION_0:
+                return 0;
+            case Surface.ROTATION_90:
+                return 90;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_270:
+                return 270;
         }
         return 0;
     }
@@ -366,6 +368,7 @@ public class CameraUtil {
     /**
      * Calculate the default orientation of the device based on the width and
      * height of the display when rotation = 0 (i.e. natural width and height)
+     *
      * @param context current context
      * @return whether the default orientation of the device is portrait
      */
@@ -630,7 +633,7 @@ public class CameraUtil {
     }
 
     public static void prepareMatrix(Matrix matrix, boolean mirror, int displayOrientation,
-                                     Rect previewRect) {
+            Rect previewRect) {
         // Need mirror for front camera.
         matrix.setScale(mirror ? -1 : 1, 1);
         // This is the value for android.hardware.Camera.setDisplayOrientation.
@@ -669,6 +672,7 @@ public class CameraUtil {
 
     /**
      * Down-samples a jpeg byte array.
+     *
      * @param data a byte array of jpeg data
      * @param downSampleFactor down-sample factor
      * @return decoded and down-sampled bitmap
@@ -699,7 +703,7 @@ public class CameraUtil {
             // available.
             settings.setGpsData(
                     new CameraSettings.GpsData(0f, 0f, 0f, System.currentTimeMillis() / 1000, null)
-            );
+                    );
         } else {
             Log.d(TAG, "Set gps location");
             // for NETWORK_PROVIDER location provider, we may have
@@ -1022,7 +1026,6 @@ public class CameraUtil {
         return ret;
     }
 
-
     /**
      * Gets the theme color of a specific mode.
      *
@@ -1150,5 +1153,40 @@ public class CameraUtil {
             return 0;
         }
         return cameraModesIcons.getResourceId(modeIndex, 0);
+    }
+
+    /**
+     * Gets the number of cores available in this device, across all processors.
+     * Requires: Ability to peruse the filesystem at "/sys/devices/system/cpu"
+     * <p>
+     * Source: http://stackoverflow.com/questions/7962155/
+     *
+     * @return The number of cores, or 1 if failed to get result
+     */
+    public static int getNumCpuCores() {
+        // Private Class to display only CPU devices in the directory listing
+        class CpuFilter implements java.io.FileFilter {
+            @Override
+            public boolean accept(java.io.File pathname) {
+                // Check if filename is "cpu", followed by a single digit number
+                if (java.util.regex.Pattern.matches("cpu[0-9]+", pathname.getName())) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        try {
+            // Get directory containing CPU info
+            java.io.File dir = new java.io.File("/sys/devices/system/cpu/");
+            // Filter to only list the devices we care about
+            java.io.File[] files = dir.listFiles(new CpuFilter());
+            // Return the number of cores (virtual CPU devices)
+            return files.length;
+        } catch (Exception e) {
+            // Default to return 1 core
+            Log.e(TAG, "Failed to count number of cores, defaulting to 1", e);
+            return 1;
+        }
     }
 }
