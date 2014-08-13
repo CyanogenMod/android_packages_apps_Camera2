@@ -102,4 +102,6 @@
     <color name="dialog_text_color">#6D6D6D</color>
 
     <color name="settings_cling_color">#2962FF</color>
+
+    <color name="mode_icon_hover_highlight">#2DFFFFFF</color>
 </resources>
