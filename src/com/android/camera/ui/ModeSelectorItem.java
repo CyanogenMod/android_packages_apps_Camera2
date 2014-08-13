@@ -22,7 +22,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -48,19 +47,13 @@ class ModeSelectorItem extends FrameLayout {
     public static final int FLY_IN = 1;
     public static final int FLY_OUT = 2;
 
-    private static final int SHADE_WIDTH_PIX = 100;
-
     private TextView mText;
     private ModeIconView mIcon;
     private int mVisibleWidth = 0;
     private final int mMinVisibleWidth;
     private VisibleWidthChangedListener mListener = null;
 
-    private int mDrawingMode = FLY_IN;
-    private int mHeight;
     private int mWidth;
-    private int mDefaultBackgroundColor;
-    private int mDefaultTextColor;
     private int mModeId;
 
     /**
@@ -92,11 +85,9 @@ class ModeSelectorItem extends FrameLayout {
                     "Roboto-Medium.ttf");
         }
         mText.setTypeface(typeface);
-        mDefaultTextColor = mText.getCurrentTextColor();
     }
 
     public void setDefaultBackgroundColor(int color) {
-        mDefaultBackgroundColor = color;
         setBackgroundColor(color);
     }
 
@@ -112,6 +103,7 @@ class ModeSelectorItem extends FrameLayout {
         mIcon.setHighlighted(highlighted);
     }
 
+    @Override
     public void setSelected(boolean selected) {
         mIcon.setSelected(selected);
     }
@@ -145,7 +137,6 @@ class ModeSelectorItem extends FrameLayout {
      *                to right)
      */
     public void onSwipeModeChanged(boolean swipeIn) {
-        mDrawingMode = swipeIn ? FLY_IN : FLY_OUT;
         mText.setTranslationX(0);
     }
 
@@ -157,11 +148,9 @@ class ModeSelectorItem extends FrameLayout {
     public void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         mWidth = right - left;
-        mHeight = bottom - top;
         if (changed && mVisibleWidth > 0) {
             // Reset mode list to full screen
             setVisibleWidth(mWidth);
-            mDrawingMode = FLY_OUT;
         }
     }
 
@@ -244,6 +233,13 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     /**
+     * @return highlightColor color for the highlight state
+     */
+    public int getHighlightColor() {
+        return mIcon.getHighlightColor();
+    }
+
+    /**
      * Gets the maximum visible width of the mode icon. The mode item will be
      * full shown when the mode icon has max visible width.
      */
@@ -279,10 +275,10 @@ class ModeSelectorItem extends FrameLayout {
     }
 
     /**
-     * Animate mode icon to selected state.
+     * @return The {@link ModeIconView} attached to this item.
      */
-    public void selectWithAnimation() {
-        mIcon.selectWithAnimation();
+    public ModeIconView getIcon() {
+        return mIcon;
     }
 
     /**
