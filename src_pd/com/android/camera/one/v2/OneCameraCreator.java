@@ -24,7 +24,7 @@ import com.android.camera.util.Size;
 
 public class OneCameraCreator {
     public static OneCamera create(boolean enableHdrPlus, CameraDevice device,
-            CameraCharacteristics characteristics, Size pictureSize) {
+            CameraCharacteristics characteristics, Size pictureSize, int maxMemoryMB) {
         return new OneCameraImpl(device, characteristics, pictureSize);
     }
 }

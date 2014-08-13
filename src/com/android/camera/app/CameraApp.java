@@ -18,12 +18,10 @@ package com.android.camera.app;
 
 import android.app.Application;
 import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
 
 import com.android.camera.MediaSaverImpl;
 import com.android.camera.debug.LogHelper;
-import com.android.camera.app.MotionManager;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
