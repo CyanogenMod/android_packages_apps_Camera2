@@ -17,6 +17,7 @@
 package com.android.camera.ui;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
@@ -25,13 +26,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -826,7 +827,6 @@ public class ModeListView extends FrameLayout
      * mode list will transition into fully hidden state.
      */
     private class SelectedState extends  ModeListState {
-
         public SelectedState(ModeSelectorItem selectedItem) {
             final int modeId = selectedItem.getModeId();
             // Un-highlight all the modes.
@@ -834,8 +834,7 @@ public class ModeListView extends FrameLayout
                 mModeSelectorItems[i].setHighlighted(false);
                 mModeSelectorItems[i].setSelected(false);
             }
-            // Select the focused item.
-            selectedItem.setSelected(true);
+
             PeepholeAnimationEffect effect = new PeepholeAnimationEffect();
             effect.setSize(mWidth, mHeight);
 
@@ -853,6 +852,7 @@ public class ModeListView extends FrameLayout
             iconY -= location[1];
 
             effect.setAnimationStartingPosition(iconX, iconY);
+            effect.setModeSpecificColor(selectedItem.getHighlightColor());
             if (mScreenShotProvider != null) {
                 effect.setBackground(mScreenShotProvider
                         .getPreviewFrame(PREVIEW_DOWN_SAMPLE_FACTOR),
@@ -860,17 +860,8 @@ public class ModeListView extends FrameLayout
                 effect.setBackgroundOverlay(mScreenShotProvider.getPreviewOverlayAndControls());
             }
             mCurrentAnimationEffects = effect;
+            effect.startFadeoutAnimation(null, selectedItem, iconX, iconY, modeId);
             invalidate();
-
-            // Post mode selection runnable to the end of the message queue
-            // so that current UI changes can finish before mode initialization
-            // clogs up UI thread.
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    onModeSelected(modeId);
-                }
-            });
         }
 
         @Override
@@ -880,26 +871,11 @@ public class ModeListView extends FrameLayout
 
         @Override
         public void startModeSelectionAnimation() {
-            mCurrentAnimationEffects.startAnimation(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
+            mCurrentAnimationEffects.startAnimation(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mCurrentAnimationEffects = null;
                     mCurrentStateManager.setCurrentState(new FullyHiddenState());
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
                 }
             });
         }
@@ -1137,7 +1113,7 @@ public class ModeListView extends FrameLayout
 
         // Mark the supported modes in a boolean array to preserve the
         // sequence of the modes
-        SparseArray<Boolean> modeIsSupported = new SparseArray<Boolean>();
+        SparseBooleanArray modeIsSupported = new SparseBooleanArray();
         for (int i = 0; i < modeIndexList.size(); i++) {
             int mode = modeIndexList.get(i);
             modeIsSupported.put(mode, true);
@@ -1668,6 +1644,7 @@ public class ModeListView extends FrameLayout
      * When visible width of list is changed, the background of the list needs
      * to darken/lighten correspondingly.
      */
+    @Override
     public void onVisibleWidthChanged(int visibleWidth) {
         mVisibleWidth = visibleWidth;
 
@@ -1835,7 +1812,6 @@ public class ModeListView extends FrameLayout
             animateModeItemsInOrder = false;
             delay *= -1;
         }
-        int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
         for (int i = 0; i < mTotalModes; i++) {
             ObjectAnimator animator;
             if (animateModeItemsInOrder) {
@@ -1908,11 +1884,11 @@ public class ModeListView extends FrameLayout
         float position;
         int slowZone = (int) (maxWidth * SLOW_ZONE_PERCENTAGE);
         if (lastVisibleWidth < (maxWidth - slowZone)) {
-            position = VELOCITY_THRESHOLD * (float) timeElapsed + lastVisibleWidth;
+            position = VELOCITY_THRESHOLD * timeElapsed + lastVisibleWidth;
         } else {
             float percentageIntoSlowZone = (lastVisibleWidth - (maxWidth - slowZone)) / slowZone;
             float velocity = (1 - percentageIntoSlowZone) * VELOCITY_THRESHOLD;
-            position = velocity * (float) timeElapsed + lastVisibleWidth;
+            position = velocity * timeElapsed + lastVisibleWidth;
         }
         position = Math.min(maxWidth, position);
         return position;
@@ -1924,22 +1900,29 @@ public class ModeListView extends FrameLayout
         private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
 
         private final Paint mMaskPaint = new Paint();
-        private final Paint mBackgroundPaint = new Paint();
         private final RectF mBackgroundDrawArea = new RectF();
 
-        private int mWidth;
-        private int mHeight;
         private int mPeepHoleCenterX = UNSET;
         private int mPeepHoleCenterY = UNSET;
         private float mRadius = 0f;
         private ValueAnimator mPeepHoleAnimator;
         private Bitmap mBackground;
-        private Bitmap mBlurredBackground;
         private Bitmap mBackgroundOverlay;
+
+        private Paint mCirclePaint = new Paint();
+        private Paint mCoverPaint = new Paint();
+
+        private TouchCircleDrawable mCircleDrawable;
 
         public PeepholeAnimationEffect() {
             mMaskPaint.setAlpha(0);
             mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+
+            mCirclePaint.setColor(0);
+            mCirclePaint.setAlpha(0);
+
+            mCoverPaint.setColor(0);
+            mCoverPaint.setAlpha(0);
         }
 
         @Override
@@ -1953,24 +1936,18 @@ public class ModeListView extends FrameLayout
             return true;
         }
 
-        @Override
-        public void drawForeground(Canvas canvas) {
-            // Draw the circle in clear mode
-            if (mPeepHoleAnimator != null) {
-                // Draw a transparent circle using clear mode
-                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mMaskPaint);
-            }
-        }
-
         public void setAnimationStartingPosition(int x, int y) {
             mPeepHoleCenterX = x;
             mPeepHoleCenterY = y;
         }
 
+        public void setModeSpecificColor(int color) {
+            mCirclePaint.setColor(color & 0x00ffffff);
+        }
+
         /**
          * Sets the bitmap to be drawn in the background and the drawArea to draw
-         * the bitmap. In the meantime, start processing the image in a background
-         * thread to get a blurred background image.
+         * the bitmap.
          *
          * @param background image to be drawn in the background
          * @param drawArea area to draw the background image
@@ -1978,8 +1955,6 @@ public class ModeListView extends FrameLayout
         public void setBackground(Bitmap background, RectF drawArea) {
             mBackground = background;
             mBackgroundDrawArea.set(drawArea);
-            new BlurTask().execute(Bitmap.createScaledBitmap(background, background.getWidth(),
-                    background.getHeight(), true));
         }
 
         /**
@@ -1989,37 +1964,26 @@ public class ModeListView extends FrameLayout
             mBackgroundOverlay = overlay;
         }
 
-        /**
-         * This gets called when a blurred image of the background is generated.
-         * Start an animation to fade in the blur.
-         *
-         * @param blur blurred image of the background.
-         */
-        public void setBlurredBackground(Bitmap blur) {
-            mBlurredBackground = blur;
-            // Start fade in.
-            ObjectAnimator alpha = ObjectAnimator.ofInt(mBackgroundPaint, "alpha", 80, 255);
-            alpha.setDuration(250);
-            alpha.setInterpolator(Gusterpolator.INSTANCE);
-            alpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    invalidate();
-                }
-            });
-            alpha.start();
-            invalidate();
-        }
-
         @Override
         public void drawBackground(Canvas canvas) {
             if (mBackground != null && mBackgroundOverlay != null) {
-                canvas.drawARGB(255, 0, 0, 0);
                 canvas.drawBitmap(mBackground, null, mBackgroundDrawArea, null);
-                if (mBlurredBackground != null) {
-                    canvas.drawBitmap(mBlurredBackground, null, mBackgroundDrawArea, mBackgroundPaint);
-                }
+                canvas.drawPaint(mCoverPaint);
                 canvas.drawBitmap(mBackgroundOverlay, 0, 0, null);
+
+                if (mCircleDrawable != null) {
+                    mCircleDrawable.draw(canvas);
+                }
+            }
+        }
+
+        @Override
+        public void drawForeground(Canvas canvas) {
+            // Draw the circle in clear mode
+            if (mPeepHoleAnimator != null) {
+                // Draw a transparent circle using clear mode
+                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mMaskPaint);
+                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mCirclePaint);
             }
         }
 
@@ -2028,6 +1992,62 @@ public class ModeListView extends FrameLayout
             // No need to draw super when mBackgroundOverlay is being drawn, as
             // background overlay already contains what's drawn in super.
             return (mBackground == null || mBackgroundOverlay == null);
+        }
+
+        public void startFadeoutAnimation(Animator.AnimatorListener listener,
+                final ModeSelectorItem selectedItem,
+                int x, int y, final int modeId) {
+            mCoverPaint.setColor(0);
+            mCoverPaint.setAlpha(0);
+
+            ValueAnimator alphaAnimator = ValueAnimator.ofInt(0, 255);
+            alphaAnimator.setDuration(100);
+            alphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mCoverPaint.setAlpha((Integer) animation.getAnimatedValue());
+                    invalidate();
+                }
+            });
+            if (listener != null) {
+                alphaAnimator.addListener(listener);
+            }
+
+            int size = getContext().getResources()
+                    .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
+            mCircleDrawable = new TouchCircleDrawable(getContext().getResources());
+            mCircleDrawable.setIconDrawable(
+                    selectedItem.getIcon().getIconDrawableClone(),
+                    selectedItem.getIcon().getIconDrawableSize());
+            mCircleDrawable.setSize(size, size);
+            mCircleDrawable.setCenter(new Point(x, y));
+            mCircleDrawable.setColor(selectedItem.getHighlightColor());
+            mCircleDrawable.setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    invalidate();
+                }
+            });
+
+            mCircleDrawable.setAnimatorListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    // Post mode selection runnable to the end of the message queue
+                    // so that current UI changes can finish before mode initialization
+                    // clogs up UI thread.
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Select the focused item.
+                            selectedItem.setSelected(true);
+                            onModeSelected(modeId);
+                        }
+                    });
+                }
+            });
+            mCircleDrawable.animate();
+            alphaAnimator.start();
         }
 
         @Override
@@ -2047,7 +2067,7 @@ public class ModeListView extends FrameLayout
             int startRadius = getResources().getDimensionPixelSize(
                     R.dimen.mode_selector_icon_block_width) / 2;
 
-            mPeepHoleAnimator = ValueAnimator.ofFloat(0, endRadius);
+            mPeepHoleAnimator = ValueAnimator.ofFloat(startRadius, endRadius);
             mPeepHoleAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
             mPeepHoleAnimator.setInterpolator(Gusterpolator.INSTANCE);
             mPeepHoleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -2063,7 +2083,7 @@ public class ModeListView extends FrameLayout
                 mPeepHoleAnimator.addListener(listener);
             }
 
-            mPeepHoleAnimator.addListener(new Animator.AnimatorListener() {
+            mPeepHoleAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     // Sets a HW layer on the view for the animation.
@@ -2075,19 +2095,38 @@ public class ModeListView extends FrameLayout
                     // Sets the layer type back to NONE as a workaround for b/12594617.
                     setLayerType(LAYER_TYPE_NONE, null);
                 }
+            });
 
+            mCirclePaint.setAlpha(255);
+            mCoverPaint.setAlpha(255);
+            ValueAnimator alphaAnimator = ValueAnimator.ofInt(255, 0);
+            alphaAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
+            alphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
-                public void onAnimationCancel(Animator animation) {
-
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int alpha = (Integer) animation.getAnimatedValue();
+                    mCirclePaint.setAlpha(alpha);
+                    mCoverPaint.setAlpha(alpha);
+                }
+            });
+            alphaAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Sets a HW layer on the view for the animation.
+                    setLayerType(LAYER_TYPE_HARDWARE, null);
                 }
 
                 @Override
-                public void onAnimationRepeat(Animator animation) {
-
+                public void onAnimationEnd(Animator animation) {
+                    // Sets the layer type back to NONE as a workaround for b/12594617.
+                    setLayerType(LAYER_TYPE_NONE, null);
                 }
             });
 
+
             mPeepHoleAnimator.start();
+            alphaAnimator.start();
         }
 
         @Override
@@ -2103,41 +2142,5 @@ public class ModeListView extends FrameLayout
                 return true;
             }
         }
-
-        private class BlurTask extends AsyncTask<Bitmap, Integer, Bitmap> {
-
-            // Gaussian blur mask size.
-            private static final int MASK_SIZE = 7;
-            @Override
-            protected Bitmap doInBackground(Bitmap... params) {
-
-                Bitmap intermediateBitmap = params[0];
-                int factor = 4;
-                Bitmap lowResPreview = Bitmap.createScaledBitmap(intermediateBitmap,
-                        intermediateBitmap.getWidth() / factor,
-                        intermediateBitmap.getHeight() / factor, true);
-
-                int width = lowResPreview.getWidth();
-                int height = lowResPreview.getHeight();
-
-                if (mInputPixels == null || mInputPixels.length < width * height) {
-                    mInputPixels = new int[width * height];
-                    mOutputPixels = new int[width * height];
-                }
-                lowResPreview.getPixels(mInputPixels, 0, width, 0, 0, width, height);
-                CameraUtil.blur(mInputPixels, mOutputPixels, width, height, MASK_SIZE);
-                lowResPreview.setPixels(mOutputPixels, 0, width, 0, 0, width, height);
-
-                intermediateBitmap.recycle();
-                return Bitmap.createScaledBitmap(lowResPreview, width * factor,
-                        height * factor, true);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                setBlurredBackground(bitmap);
-            }
-        };
     }
-
 }
