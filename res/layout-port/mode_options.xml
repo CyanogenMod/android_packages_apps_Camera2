@@ -95,7 +95,6 @@
         <ImageButton
             android:id="@+id/exposure_button"
             style="@style/ModeOption"
-            android:background="@null"
             android:src="@drawable/ic_exposure"
             android:contentDescription="@string/manual_exposure_compensation_desc" />
         <com.android.camera.MultiToggleImageButton
