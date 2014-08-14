@@ -18,23 +18,19 @@ package com.android.camera.widget;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Path;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.view.Gravity;
+import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.util.AttributeSet;
 
+import com.android.camera.MultiToggleImageButton;
 import com.android.camera.ui.RadioOptions;
 import com.android.camera.ui.TopRightWeightedLayout;
 import com.android.camera.util.Gusterpolator;
@@ -67,7 +63,6 @@ public class ModeOptions extends FrameLayout {
     public static final int BAR_STANDARD = 0;
     public static final int BAR_PANO = 1;
 
-    private int mParentSize;
     private boolean mIsPortrait;
     private float mRadius = 0f;
 
@@ -157,23 +152,19 @@ public class ModeOptions extends FrameLayout {
                 .getDimensionPixelSize(R.dimen.mode_options_toggle_padding);
 
             float rLeft, rRight, rTop, rBottom;
-            View parent = (View) getParent();
             if (mIsPortrait) {
                 rLeft = getWidth() - buttonPadding - buttonSize;
                 rTop = (getHeight() - buttonSize) / 2.0f;
-
-                mParentSize = parent.getWidth();
             } else {
                 rLeft = buttonPadding;
                 rTop = buttonPadding;
-
-                mParentSize = parent.getHeight();
             }
             rRight = rLeft + buttonSize;
             rBottom = rTop + buttonSize;
             mAnimateFrom.set(rLeft, rTop, rRight, rBottom);
 
             setupAnimators();
+            setupToggleButtonParams();
         }
 
         super.onLayout(changed, left, top, right, bottom);
@@ -187,6 +178,21 @@ public class ModeOptions extends FrameLayout {
             canvas.drawPaint(mPaint);
         }
         super.onDraw(canvas);
+    }
+
+    private void setupToggleButtonParams() {
+        int size = (mIsPortrait ? getHeight() : getWidth());
+
+        for (int i = 0; i < mModeOptionsButtons.getChildCount(); i++) {
+            View button = mModeOptionsButtons.getChildAt(i);
+            if (button instanceof MultiToggleImageButton) {
+                MultiToggleImageButton toggleButton = (MultiToggleImageButton) button;
+                toggleButton.setParentSize(size);
+                toggleButton.setAnimDirection(mIsPortrait ?
+                        MultiToggleImageButton.ANIM_DIRECTION_VERTICAL :
+                        MultiToggleImageButton.ANIM_DIRECTION_HORIZONTAL);
+            }
+        }
     }
 
     private void setupAnimators() {
@@ -249,7 +255,7 @@ public class ModeOptions extends FrameLayout {
                 }
 
                 final ValueAnimator paddingAnimator =
-                    ValueAnimator.ofFloat((float) (deltaX*(childCount-i)), 0.0f);
+                    ValueAnimator.ofFloat(deltaX*(childCount-i), 0.0f);
                 paddingAnimator.setDuration(PADDING_ANIMATION_TIME);
                 paddingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
