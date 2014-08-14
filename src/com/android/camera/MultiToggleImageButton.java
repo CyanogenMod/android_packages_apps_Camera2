@@ -315,6 +315,13 @@ public class MultiToggleImageButton extends ImageButton {
     }
 
     private Bitmap combine(int oldState, int newState) {
+        // in some cases, a new set of image Ids are set via overrideImageIds()
+        // and oldState overruns the array.
+        // check here for that.
+        if (oldState >= mImageIds.length) {
+            return null;
+        }
+
         int width = getWidth();
         int height = getHeight();
 
