@@ -17,7 +17,6 @@
 package com.android.camera;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -95,6 +94,7 @@ public class CaptureModule extends CameraModule
         ModuleController,
         OneCamera.PictureCallback,
         OneCamera.FocusStateListener,
+        OneCamera.ReadyStateChangedListener,
         PreviewStatusListener.PreviewAreaChangedListener,
         RemoteCameraModule,
         SensorEventListener,
@@ -198,8 +198,6 @@ public class CaptureModule extends CameraModule
     /** Application context. */
     private final Context mContext;
     private CaptureModuleUI mUI;
-    /** Your standard content resolver. */
-    private ContentResolver mContentResolver;
     /** The camera manager used to open cameras. */
     private OneCameraManager mCameraManager;
     /** The currently opened camera device. */
@@ -307,7 +305,6 @@ public class CaptureModule extends CameraModule
         mIsResumeFromLockScreen = isResumeFromLockscreen(activity);
         mMainHandler = new Handler(activity.getMainLooper());
         mCameraManager = mAppController.getCameraManager();
-        mContentResolver = activity.getContentResolver();
         mDisplayRotation = CameraUtil.getDisplayRotation(mContext);
         mCameraFacing = getFacingFromCameraId(mSettingsManager.getInteger(
                 mAppController.getModuleScope(),
@@ -337,7 +334,6 @@ public class CaptureModule extends CameraModule
         if (mCamera == null) {
             return;
         }
-        mAppController.setShutterEnabled(false);
 
         // Set up the capture session.
         long sessionTime = System.currentTimeMillis();
@@ -460,6 +456,7 @@ public class CaptureModule extends CameraModule
                         Log.d(TAG, "Ready for capture.");
                         onPreviewStarted();
                         mCamera.setFocusStateListener(CaptureModule.this);
+                        mCamera.setReadyStateChangedListener(CaptureModule.this);
                     }
                 });
             }
@@ -516,6 +513,8 @@ public class CaptureModule extends CameraModule
         mAppController.addPreviewAreaSizeChangedListener(this);
         resetDefaultBufferSize();
         getServices().getRemoteShutterListener().onModuleReady(this);
+        // TODO: Check if we can really take a photo right now (memory, camera
+        // state, ... ).
         mAppController.setShutterEnabled(true);
     }
 
@@ -720,6 +719,11 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
+    public void onReadyStateChanged(boolean readyForCapture) {
+        mAppController.setShutterEnabled(readyForCapture);
+    }
+
+    @Override
     public String getPeekAccessibilityString() {
         return mAppController.getAndroidContext()
                 .getResources().getString(R.string.photo_accessibility_peek);
@@ -732,8 +736,6 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onPictureTaken(CaptureSession session) {
-        // TODO, enough memory available? ProcessingService status, etc.
-        mAppController.setShutterEnabled(true);
     }
 
     @Override
@@ -748,7 +750,6 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onPictureTakenFailed() {
-        // TODO
     }
 
     @Override
