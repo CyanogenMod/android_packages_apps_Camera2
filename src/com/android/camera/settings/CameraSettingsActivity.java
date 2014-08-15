@@ -18,11 +18,10 @@ package com.android.camera.settings;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -32,8 +31,6 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 
 import com.android.camera.debug.Log;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
@@ -53,6 +50,8 @@ import java.util.List;
  * Provides the settings UI for the Camera app.
  */
 public class CameraSettingsActivity extends FragmentActivity {
+    public static final String PREF_SCREEN_EXTRA = "pref_screen_extra";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +60,8 @@ public class CameraSettingsActivity extends FragmentActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(R.string.mode_settings);
 
-        CameraSettingsFragment dialog = new CameraSettingsFragment();
+        String prefKey = getIntent().getStringExtra(PREF_SCREEN_EXTRA);
+        CameraSettingsFragment dialog = new CameraSettingsFragment(prefKey);
         getFragmentManager().beginTransaction().replace(android.R.id.content, dialog).commit();
     }
 
@@ -77,6 +77,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
     public static class CameraSettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
+
         public static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
         public static final String PREF_CATEGORY_ADVANCED = "pref_category_advanced";
         public static final String PREF_LAUNCH_HELP = "pref_launch_help";
@@ -84,6 +85,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
         private String[] mCamcorderProfileNames;
         private CameraDeviceInfo mInfos;
+        private final String mPrefKey;
 
         // Selected resolutions for the different cameras and sizes.
         private SelectedPictureSizes mOldPictureSizesBack;
@@ -93,12 +95,20 @@ public class CameraSettingsActivity extends FragmentActivity {
         private SelectedVideoQualities mVideoQualitiesBack;
         private SelectedVideoQualities mVideoQualitiesFront;
 
+        public CameraSettingsFragment(String prefKey) {
+            mPrefKey = prefKey;
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             Context context = this.getActivity().getApplicationContext();
             addPreferencesFromResource(R.xml.camera_preferences);
-            CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
+            // Only add the additional preferences when in the main settings
+            // view, and not in the sub-preferences screens.
+            if (mPrefKey == null) {
+                CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
+            }
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
             mInfos = CameraAgentFactory.getAndroidCameraAgent(context).getCameraDeviceInfo();
         }
@@ -119,11 +129,11 @@ public class CameraSettingsActivity extends FragmentActivity {
             final PreferenceScreen resolutionScreen =
                     (PreferenceScreen) findPreference(PREF_CATEGORY_RESOLUTION);
             fillEntriesAndSummaries(resolutionScreen);
-            configureHomeAsUp(resolutionScreen);
+            setPreferenceScreenIntent(resolutionScreen);
 
             final PreferenceScreen advancedScreen =
                 (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
-            configureHomeAsUp(advancedScreen);
+            setPreferenceScreenIntent(advancedScreen);
 
             Preference helpPref = findPreference(PREF_LAUNCH_HELP);
             helpPref.setOnPreferenceClickListener(
@@ -141,28 +151,49 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Configure home-as-up for sub-screens.
          */
-        private void configureHomeAsUp(final PreferenceScreen preferenceScreen) {
-            preferenceScreen.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    setUpHomeButton(preferenceScreen);
-                    return false;
-                }
-            });
+        private void setPreferenceScreenIntent(final PreferenceScreen preferenceScreen) {
+            Intent intent = new Intent(getActivity(), CameraSettingsActivity.class);
+            intent.putExtra(PREF_SCREEN_EXTRA, preferenceScreen.getKey());
+            preferenceScreen.setIntent(intent);
         }
 
-        private void setUpHomeButton(PreferenceScreen preferenceScreen) {
-            final Dialog dialog = preferenceScreen.getDialog();
-            dialog.getActionBar().setDisplayHomeAsUpEnabled(true);
+        /**
+         * This override allows the CameraSettingsFragment to be reused for
+         * different nested PreferenceScreens within the single camera
+         * preferences XML resource. If the fragment is constructed with a
+         * desired preference key (delivered via an extra in the creation
+         * intent), it is used to look up the nested PreferenceScreen and
+         * returned here.
+         */
+        @Override
+        public PreferenceScreen getPreferenceScreen() {
+            PreferenceScreen root = super.getPreferenceScreen();
+            if (mPrefKey == null || root == null) {
+                return root;
+            } else {
+                PreferenceScreen match = findByKey(root, mPrefKey);
+                if (match != null) {
+                    return match;
+                } else {
+                    throw new RuntimeException("key " + mPrefKey + " not found");
+                }
+            }
+        }
 
-            View homeButton = dialog.findViewById(android.R.id.home);
-            if (homeButton != null) {
-                homeButton.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
+        private PreferenceScreen findByKey(PreferenceScreen parent, String key) {
+            if (key.equals(parent.getKey())) {
+                return parent;
+            } else {
+                for (int i = 0; i < parent.getPreferenceCount(); i++) {
+                    Preference child = parent.getPreference(i);
+                    if (child instanceof PreferenceScreen) {
+                        PreferenceScreen match = findByKey((PreferenceScreen) child, key);
+                        if (match != null) {
+                            return match;
+                        }
                     }
-                });
+                }
+                return null;
             }
         }
 
