@@ -16,6 +16,8 @@
 
 package com.android.camera.one;
 
+import java.io.File;
+
 /**
  * A common abstract {@link OneCamera} implementation that contains some utility
  * functions and plumbing we don't want every sub-class of {@link OneCamera} to
@@ -34,5 +36,32 @@ public abstract class AbstractOneCamera implements OneCamera {
     @Override
     public final void setFocusStateListener(FocusStateListener listener) {
         mFocusStateListener = listener;
+    }
+
+    /**
+     * Create a directory we can use to store debugging information during Gcam
+     * captures.
+     *
+     * @param root the root into which we put a session-specific sub-directory.
+     * @param folderName the sub-folder within 'root' where the data should be
+     *            put.
+     * @return The session-specific directory (absolute path) into which to
+     *         store debug information.
+     */
+    protected static String makeDebugDir(File root, String folderName) {
+        if (root == null) {
+            return null;
+        }
+        if (!root.exists() || !root.isDirectory()) {
+            throw new RuntimeException("Gcam debug directory not valid or doesn't exist: "
+                    + root.getAbsolutePath());
+        }
+        File destFolder = (new File(new File(root, folderName),
+                String.valueOf(System.currentTimeMillis())));
+        if (!destFolder.mkdirs()) {
+            throw new RuntimeException("Could not create Gcam debug data folder.");
+        }
+        String destFolderPath = destFolder.getAbsolutePath();
+        return destFolderPath;
     }
 }
