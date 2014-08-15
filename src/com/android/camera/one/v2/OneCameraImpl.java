@@ -102,6 +102,10 @@ public class OneCameraImpl extends AbstractOneCamera {
     private static final float METERING_REGION_WEIGHT = 0.25f;
     /** Duration to hold after manual focus tap. */
     private static final int FOCUS_HOLD_MILLIS = 3000;
+    /** Zero weight 3A region, to reset regions per API. */
+    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[]{
+            new MeteringRectangle(0, 0, 1, 1, 0)
+    };
 
     /**
      * CaptureRequest tags.
@@ -521,6 +525,10 @@ public class OneCameraImpl extends AbstractOneCamera {
             mLastRequestedControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
             builder.set(CaptureRequest.CONTROL_AF_MODE,
                     CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            // TODO: Move to apply3ARegions(CaptureRequest.Builder builder).
+            // Reset 3A regions.
+            builder.set(CaptureRequest.CONTROL_AF_REGIONS, ZERO_WEIGHT_3A_REGION);
+            builder.set(CaptureRequest.CONTROL_AE_REGIONS, ZERO_WEIGHT_3A_REGION);
             builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
             mCaptureSession.setRepeatingRequest(builder.build(), mAutoFocusStateListener,
                     mCameraHandler);
