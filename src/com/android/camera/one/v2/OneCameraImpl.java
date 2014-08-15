@@ -224,6 +224,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                     byte[] imageBytes = acquireJpegBytesAndClose(reader);
                     // TODO: The savePicture call here seems to block UI thread.
                     savePicture(imageBytes, capture.parameters, capture.session);
+                    broadcastReadyState(true);
                     capture.parameters.callback.onPictureTaken(capture.session);
                 }
             };
@@ -260,6 +261,9 @@ public class OneCameraImpl extends AbstractOneCamera {
             // Do not do anything when a picture is already in progress.
             return;
         }
+
+        // Wait until the picture comes back.
+        broadcastReadyState(false);
 
         mTakePictureRunnable = new Runnable() {
             @Override
@@ -331,6 +335,7 @@ public class OneCameraImpl extends AbstractOneCamera {
             mCaptureSession.capture(request, mAutoFocusStateListener, mCameraHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Could not access camera for still image capture.");
+            broadcastReadyState(true);
             params.callback.onPictureTakenFailed();
             return;
         }

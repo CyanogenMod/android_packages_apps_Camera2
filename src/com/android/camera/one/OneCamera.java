@@ -53,7 +53,7 @@ public interface OneCamera {
         SCANNING,
         /** Indicates scan success (camera in focus). */
         STOPPED_FOCUSED,
-        /** Indicates scan or other failure.  */
+        /** Indicates scan or other failure. */
         STOPPED_UNFOCUSED
     }
 
@@ -114,6 +114,18 @@ public interface OneCamera {
     }
 
     /**
+     * Classes implementing this interface can be informed when the state of
+     * capture changes.
+     */
+    public static interface ReadyStateChangedListener {
+        /**
+         * Called when the camera is either ready or not ready to take a picture
+         * right now.
+         */
+        public void onReadyStateChanged(boolean readyForCapture);
+    }
+
+    /**
      * A class implementing this interface can be passed into the call to take a
      * picture in order to receive the resulting image or updated about the
      * progress.
@@ -135,7 +147,7 @@ public interface OneCamera {
         /**
          * Called when the picture has been saved to disk.
          *
-         *  @param uri the URI of the stored data.
+         * @param uri the URI of the stored data.
          */
         public void onPictureSaved(Uri uri);
 
@@ -165,7 +177,7 @@ public interface OneCamera {
 
     /**
      * Classes implementing this interface will be called when the state of the
-     * focus changes.  Guaranteed not to stay stuck in scanning state past some
+     * focus changes. Guaranteed not to stay stuck in scanning state past some
      * reasonable timeout even if Camera API is stuck.
      */
     public static interface FocusStateListener {
@@ -238,8 +250,8 @@ public interface OneCamera {
     /**
      * Meters and triggers auto focus scan with ROI around tap point.
      * <p/>
-     * Normalized coordinates are referenced to portrait preview window
-     * with 0,0 top left and 1,1 bottom right.  Rotation has no effect.
+     * Normalized coordinates are referenced to portrait preview window with 0,0
+     * top left and 1,1 bottom right. Rotation has no effect.
      *
      * @param nx normalized x coordinate.
      * @param nx normalized y coordinate.
@@ -265,6 +277,12 @@ public interface OneCamera {
      * the camera changes.
      */
     public void setFocusStateListener(FocusStateListener listener);
+
+    /**
+     * Sets or replaces a listener that is called whenever the state of the
+     * camera changes to be either ready or not ready to take another picture.
+     */
+    public void setReadyStateChangedListener(ReadyStateChangedListener listener);
 
     /**
      * Starts a preview stream and renders it to the given surface.
