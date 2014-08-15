@@ -40,6 +40,7 @@ import android.view.Surface;
 
 import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
+import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.ExifInterface;
@@ -53,7 +54,6 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.CaptureDataSerializer;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
-import com.android.camera.util.SystemProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,18 +81,10 @@ public class OneCameraImpl extends AbstractOneCamera {
 
     private static final Tag TAG = new Tag("OneCameraImpl2");
 
-    /**
-     * If set to true, will write data about each capture request to disk.
-     * <p>
-     * TODO: Port to a setprop.
-     */
-    private static final boolean DEBUG_WRITE_CAPTURE_DATA = false;
-
-    /** System Properties switch to enable additional focus logging. */
-    private static final String PROP_FOCUS_DEBUG_KEY = "persist.camera.focus_debug_log";
-    private static final String PROP_FOCUS_DEBUG_OFF = "0";
-    private static final boolean FOCUS_DEBUG = !PROP_FOCUS_DEBUG_OFF
-            .equals(SystemProperties.get(PROP_FOCUS_DEBUG_KEY, PROP_FOCUS_DEBUG_OFF));
+    /** If true, will write data about each capture request to disk. */
+    private static final boolean DEBUG_WRITE_CAPTURE_DATA = DebugPropertyHelper.writeCaptureData();
+    /** If true, will log per-frame AF info. */
+    private static final boolean DEBUG_FOCUS_LOG = DebugPropertyHelper.showFocusDebugLog();
 
     /** Default JPEG encoding quality. */
     private static final Byte JPEG_QUALITY = 90;
@@ -167,8 +159,8 @@ public class OneCameraImpl extends AbstractOneCamera {
                     if (partialResult.get(CaptureResult.CONTROL_AF_STATE) != null) {
                         mAutoFocusStateListenerPartialOK = true;
                         autofocusStateChangeDispatcher(partialResult);
-                        if (FOCUS_DEBUG) {
-                            logExtraFocusInfo(partialResult);
+                        if (DEBUG_FOCUS_LOG) {
+                            //logExtraFocusInfo(partialResult);
                         }
                     } else {
                         mAutoFocusStateListenerPartialOK = false;
@@ -182,6 +174,9 @@ public class OneCameraImpl extends AbstractOneCamera {
                         TotalCaptureResult result) {
                     if (!mAutoFocusStateListenerPartialOK) {
                         autofocusStateChangeDispatcher(result);
+                    }
+                    if (DEBUG_FOCUS_LOG) {
+                        logExtraFocusInfo(result);
                     }
                     super.onCaptureCompleted(session, request, result);
                 }
