@@ -20,7 +20,7 @@
     <string name="video_camera_label" msgid="1723708322021743770">"ဗီဒီယိုရိုက်"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
-    <string name="set_image" msgid="3969690281401045698">"အနေဖြင့် ဓာတ်ပုံအားသတ်မှတ်ရန်"</string>
+    <string name="set_image" msgid="3969690281401045698">"အနေဖြင့် ဓာတ်ပုံအားသတ်မှတ်ရန်"</string>
     <string name="delete" msgid="2714492172818940424">"ဖျက်ပစ်ရန်"</string>
     <string name="share" msgid="8581089487762243115">"မျှဝေခြင်း"</string>
     <string name="share_panorama" msgid="3558466186935359444">"မြင်ကွယ်ကျယ်အားမျှဝေပါ"</string>
@@ -30,12 +30,12 @@
     <string name="details" msgid="4404020741542549488">"အသေးစိတ်"</string>
     <string name="close" msgid="4826166926297479820">"ပိတ်ရန်"</string>
     <string name="show_on_map" msgid="8542853913632649160">"မြေပုံတွင်ပြရန်"</string>
-    <string name="rotate_left" msgid="2618440058490662604">"ဘယ်ဖက်သို့လှည့်ပါ"</string>
-    <string name="rotate_right" msgid="4896096424267838355">"ညာဖက်သို့ လှည့်ပါ"</string>
+    <string name="rotate_left" msgid="2618440058490662604">"ဘယ်ဖက်သို့လှည့်ပါ"</string>
+    <string name="rotate_right" msgid="4896096424267838355">"ညာဖက်သို့ လှည့်ပါ"</string>
     <string name="edit" msgid="2776879395749004347">"ပြင်ဆင်ရန်"</string>
     <string name="crop_action" msgid="6933589718464132714">"ဖြတ်ရန်"</string>
     <string name="trim_action" msgid="4736803320203951827">"အနားသတ်ရန်"</string>
-    <string name="set_as" msgid="5469055085024870081">"အနေဖြင့် သတ်မှတ်ရန်"</string>
+    <string name="set_as" msgid="5469055085024870081">"အနေဖြင့် သတ်မှတ်ရန်"</string>
     <string name="video_err" msgid="1562566029875081552">"ဗီဒီယို ဖွင့်လို့ မရပါ"</string>
     <string name="title" msgid="8061744305671964703">"ခေါင်းစဉ်"</string>
     <string name="description" msgid="8193138501982849808">"အကြောင်းအရာ"</string>
@@ -57,7 +57,7 @@
     <string name="exposure_time" msgid="949787291620767754">"အလင်းဝင်ချိန်"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"မီလီမီတာ"</string>
-    <string name="manual" msgid="2444400953521760140">"ကိုယ်တိုင်ထည့်သွင်းခြင်း"</string>
+    <string name="manual" msgid="2444400953521760140">"ကိုယ်တိုင်ထည့်သွင်းခြင်း"</string>
     <string name="auto" msgid="2552649885114400474">"အလိုအလျောက်"</string>
     <string name="flash_on" msgid="6573457197393807642">"မီးထိုးပြီး"</string>
     <string name="flash_off" msgid="7889323512830926273">"မီးမထိုး"</string>
@@ -69,7 +69,7 @@
     <string name="camera_disabled" msgid="6963443549010040595">"လုံခြုံရေးမူဝါဒကြောင့် ကင်မရာအား ပိတ်ထားပါသည်"</string>
     <string name="wait" msgid="765601745709933047">"ကျေးဇူးပြု၍ ခဏစောင့်ပါ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ကင်မရာမသုံးခင် SDကဒ်အရင် ထည့်ပါ"</string>
-    <string name="preparing_sd" product="default" msgid="7435693655017362767">"SDကဒ်အအဆင်သင့်စေရန်ပြုလုပ်ခြင်း"</string>
+    <string name="preparing_sd" product="default" msgid="7435693655017362767">"SDကဒ်အအဆင်သင့်စေရန်ပြုလုပ်ခြင်း"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD အား ဆက်သွယ်လို့မရပါ"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"အချိန်ကြာရှည်ရိုက်ကူးမှု"</string>
     <string name="capturing" msgid="5255164204641920893">"ရိုက်ယူရန်"</string>
@@ -196,11 +196,11 @@
     <string name="accessibility_review_retake" msgid="2547112860787022130">"သုံးသပ်မှုပြန်လုပ်ရန်"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ရွေးစရာများ"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"မုဒ် စာရင်း ပိတ်ထား"</string>
-    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"မုဒ် စာရင်း ဖွင့်ထား"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"မုဒ် စာရင်း ဖွင့်ထား"</string>
     <string name="media_accessibility_peek" msgid="234540330161031946">"ရိုက်ယူမှု လုပ်ပြီး"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"ဓာတ်ပုံ ရိုက်ပြီး"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"ဗီဒီယို ရိုက်ပြီး"</string>
-    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ကင်မရာသို့ သော့ဖွင့်"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ကင်မရာသို့ သော့ဖွင့်"</string>
     <string name="media_date_content_description" msgid="2155634843596817141">"မီဒီယာကို %s မှာ ယူခဲ့"</string>
     <string name="photo_date_content_description" msgid="5705865897898465619">"ဓာတ်ပုံ %s မှာ ရိုက်ခဲ့"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"ဗီဒီယို %s မှာ ရိုက်ခဲ့"</string>
@@ -214,18 +214,18 @@
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"ဖလင်ပြား"</string>
     <string name="capital_on" msgid="1118214824959797269">"ဖွင့်ရန်"</string>
     <string name="capital_off" msgid="3020696135020167263">"ပိတ်ရန်"</string>
-    <string name="video_control_play" msgid="6895236811408921715">"ဗီဒီယို ဖွင့်ရန်"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"ဗီဒီယို ဖွင့်ရန်"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"ပိတ်ရန်"</string>
-    <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"စက္ကန့်ဝက်"</string>
+    <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"စက္ကန့်ဝက်"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"၁ စက္ကန့်"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"၁ စက္ကန့်ခွဲ"</string>
     <string name="pref_video_time_lapse_frame_interval_2000" msgid="1821755013078449188">"၂ စက္ကန့်"</string>
     <string name="pref_video_time_lapse_frame_interval_2500" msgid="8027471301321122045">"၂ စက္ကန့်ခွဲ"</string>
     <string name="pref_video_time_lapse_frame_interval_3000" msgid="1411114492405867872">"၃ စက္ကန့်"</string>
     <string name="pref_video_time_lapse_frame_interval_4000" msgid="1197483421014140132">"၄ စက္ကန့်"</string>
-    <string name="pref_video_time_lapse_frame_interval_5000" msgid="7211885329755347592">"၅ စက္ကန့်"</string>
-    <string name="pref_video_time_lapse_frame_interval_6000" msgid="6665825017557898190">"၆ စက္ကန့်"</string>
-    <string name="pref_video_time_lapse_frame_interval_10000" msgid="1126841483618922521">"၁၀ စက္ကန့်"</string>
+    <string name="pref_video_time_lapse_frame_interval_5000" msgid="7211885329755347592">"၅ စက္ကန့်"</string>
+    <string name="pref_video_time_lapse_frame_interval_6000" msgid="6665825017557898190">"၆ စက္ကန့်"</string>
+    <string name="pref_video_time_lapse_frame_interval_10000" msgid="1126841483618922521">"၁၀ စက္ကန့်"</string>
     <string name="pref_video_time_lapse_frame_interval_12000" msgid="8769265988037327085">"၁၂ စက္ကန့်"</string>
     <string name="pref_video_time_lapse_frame_interval_15000" msgid="1452711342185926617">"၁၅ စက္ကန့်"</string>
     <string name="pref_video_time_lapse_frame_interval_24000" msgid="2505505645705111419">"၂၄ စက္ကန့်"</string>
@@ -255,13 +255,13 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"၁၂ နာရီ"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"၁၅ နာရီ"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"၂၄နာရီ"</string>
-    <string name="time_lapse_seconds" msgid="7319683099532506270">"စက္ကန့်"</string>
+    <string name="time_lapse_seconds" msgid="7319683099532506270">"စက္ကန့်"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"မိနစ်"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"နာရီ"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"ပြီးပါပြီ"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"အချိန်အကွာအဝေးသတ်မှတ်ရန်"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"အချိန်ကြာမှု ပြုလုပ်ချက်မရပါ။ ကြာချိန်သတ်မှတ်ရန် ထိုအရာအားဖွင့်ပါ"</string>
-    <string name="set_duration" msgid="1638453882581604341">"ကြာချိန်ကို စက္ကန့်ဖြင့် မှတ်ပါ"</string>
+    <string name="set_duration" msgid="1638453882581604341">"ကြာချိန်ကို စက္ကန့်ဖြင့် မှတ်ပါ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ဓာတ်ပုံရိုက်ရန် အမှတ်ရေနေစဉ်"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ဓာတ်ပုံ၏​တည်နေရာများ မှတ်မိပါသလား?"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"ဓာတ်ပုံများနှင့် ဗီဒီယိုများအား ရိုက်ကူးခဲ့ရာ နေရာများနှင့်တကွ မှတ်သားပါ\n\nတခြား အပ်ပလီကေးရှင်းများမှ ဒီအချက်အလက်ကို သိမ်းထားသော ပုံများနှင့်အတူ ရယူနိုင်သည်"</string>
@@ -280,7 +280,7 @@
     <string name="setting_wallpaper" msgid="2397759659347872725">"နောက်ခံ ရွေးနေစဉ်"</string>
     <string name="mode_settings" msgid="2021937261522670921">"ဆက်တင်များ"</string>
     <string name="mode_camera" msgid="279763925715250603">"ကင်မရာ"</string>
-    <string name="mode_video" msgid="8633929034048169139">"ဗီ​ဒီ​ယို"</string>
+    <string name="mode_video" msgid="8633929034048169139">"ဗီ​ဒီ​ယို​"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"ကြားမြင့်ချိန်"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"ထောင့်ကျယ်"</string>
@@ -302,7 +302,7 @@
     <string name="flash_on_desc" msgid="930372145324854699">"မီးပွင့်နိုင်"</string>
     <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"HDR+ ဖလက်ရှ ပိတ်ရန်"</string>
     <string name="hdr_plus_flash_auto_desc" msgid="4812200236263011537">"HDR+ ဖလက်ရှ အော်တို"</string>
-    <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"HDR+ ဖလက်ရှ ဖွင့်ရန်"</string>
+    <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"HDR+ ဖလက်ရှ ဖွင့်ရန်"</string>
     <string name="torch_on_desc" msgid="3069836196559213365">"မီးဖွင့်ထား"</string>
     <string name="torch_off_desc" msgid="8304675202998742618">"မီးပိတ်ထား"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"အနောက်မှကင်မရာ"</string>
@@ -310,8 +310,8 @@
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"လိုင်းပြမှုမရှိ"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"လိုင်းပြမှုရှိ"</string>
     <string name="countdown_timer_off" msgid="1663008439564495948">"အချိန်စေ့ တိုင်မား ပိတ်ထား"</string>
-    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၃ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
-    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၁၀ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၃ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၁၀ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ပိုမိုရွေးချယ်စရာများ"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"ပယ်ဖျက်သည်"</string>
     <string name="done_button_description" msgid="1334963435441544592">"ပြီးပါပြီ"</string>
@@ -320,12 +320,12 @@
     <string name="view_button_description" msgid="4985768837891362075">"မြင်ကွင်း"</string>
     <string name="edit_button_description" msgid="98550816724901925">"ပြင်ဆင်ရန်"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ဖျက်ပစ်ရန်"</string>
-    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"လက်ဖြင့် အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း"</string>
-    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း -၂"</string>
-    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း -၁"</string>
-    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း ၀"</string>
-    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း +၁"</string>
-    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း +၂"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"လက်ဖြင့် အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း"</string>
+    <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း -၂"</string>
+    <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း -၁"</string>
+    <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း ၀"</string>
+    <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း +၁"</string>
+    <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း +၂"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ခလုတ်မှာယခု %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"တည်နေရာ"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"​​ကျောဘက် ကင်မရာ ဓာတ်ပုံ"</string>
@@ -341,7 +341,7 @@
     <string name="pref_category_about" msgid="1966255405679342337">"အကြောင်း"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"တည်ဆောက်ခြင်းအမှတ်"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"နည်းသော"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"မြင့်မားခြင်း"</string>
+    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"မြင့်မားခြင်း"</string>
     <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
     <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
     <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD 480p"</string>
@@ -351,16 +351,16 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s မီဂါပီဇယ်များ"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s မီဂါပီဇယ်များ"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ဆုံချက် ပြန်ညှိရန် ဒီမှာ ထိပါ"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"အဆင့်မြင့်"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"လက်ဖြင့် အလင်းပေး"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"ဆက်တင် ထဲမှာ၊ ပြတ်သားမှု နှင့် အရည်အသွေးကို ပြောင်းပါ၊ သို့မဟုတ် အဆင့်မြင့် အင်္ဂါရပ်များကို စမ်းကြည့်ပါ။"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"အဆင့်မြင့်"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"လက်ဖြင့် အလင်းပေး"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"ဆက်တင် ထဲမှာ၊ ပြတ်သားမှု နှင့် အရည်အသွေးကို ပြောင်းပါ၊ သို့မဟုတ် အဆင့်မြင့် အင်္ဂါရပ်များကို စမ်းကြည့်ပါ။"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ဓာတ်ပုံ ဆိုက် ရွေးရန်"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ဒါကို သင်သည် နောက်မှာ ဆက်တင် ထဲတွင် ပြောင်းလဲနိုင်သည်။"</string>
     <string name="share_to" msgid="5144911209144798122">"...အား မျှဝေရန်"</string>
-    <string name="edit_with" msgid="615569327230783971">"...နှင့် တည်းဖြတ်ရန်"</string>
+    <string name="edit_with" msgid="615569327230783971">"...နှင့် တည်းဖြတ်ရန်"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ရှေ့ဆက်"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"အိုကေ၊ ရပြီ"</string>
-    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"အာရုံခံပုံ အပြည့် \n(4:3)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"အာရုံခံပုံ အပြည့် \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"အာရုံခံကိရိယာမှ ဖြတ်ထား\n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"၀"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"၁"</string>
