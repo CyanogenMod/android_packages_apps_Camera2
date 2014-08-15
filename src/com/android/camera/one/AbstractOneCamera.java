@@ -27,6 +27,7 @@ import java.io.File;
 public abstract class AbstractOneCamera implements OneCamera {
     protected CameraErrorListener mCameraErrorListener;
     protected FocusStateListener mFocusStateListener;
+    protected ReadyStateChangedListener mReadyStateChangedListener;
 
     @Override
     public final void setCameraErrorListener(CameraErrorListener listener) {
@@ -36,6 +37,11 @@ public abstract class AbstractOneCamera implements OneCamera {
     @Override
     public final void setFocusStateListener(FocusStateListener listener) {
         mFocusStateListener = listener;
+    }
+
+    @Override
+    public void setReadyStateChangedListener(ReadyStateChangedListener listener) {
+        mReadyStateChangedListener = listener;
     }
 
     /**
@@ -63,5 +69,14 @@ public abstract class AbstractOneCamera implements OneCamera {
         }
         String destFolderPath = destFolder.getAbsolutePath();
         return destFolderPath;
+    }
+
+    /**
+     * If set, tells the ready state changed listener the new state.
+     */
+    protected void broadcastReadyState(boolean readyForCapture) {
+        if (mReadyStateChangedListener != null) {
+            mReadyStateChangedListener.onReadyStateChanged(readyForCapture);
+        }
     }
 }
