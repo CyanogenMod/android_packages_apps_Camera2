@@ -50,10 +50,12 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.CaptureDataSerializer;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
 import com.android.camera.util.SystemProperties;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -79,6 +81,13 @@ public class OneCameraImpl extends AbstractOneCamera {
 
     private static final Tag TAG = new Tag("OneCameraImpl2");
 
+    /**
+     * If set to true, will write data about each capture request to disk.
+     * <p>
+     * TODO: Port to a setprop.
+     */
+    private static final boolean DEBUG_WRITE_CAPTURE_DATA = false;
+
     /** System Properties switch to enable additional focus logging. */
     private static final String PROP_FOCUS_DEBUG_KEY = "persist.camera.focus_debug_log";
     private static final String PROP_FOCUS_DEBUG_OFF = "0";
@@ -90,8 +99,8 @@ public class OneCameraImpl extends AbstractOneCamera {
 
     /**
      * Set to ImageFormat.JPEG, to use the hardware encoder, or
-     * ImageFormat.YUV_420_888 to use the software encoder.
-     * No other image formats are supported.
+     * ImageFormat.YUV_420_888 to use the software encoder. No other image
+     * formats are supported.
      */
     private static final int sCaptureImageFormat = ImageFormat.YUV_420_888;
 
@@ -131,28 +140,29 @@ public class OneCameraImpl extends AbstractOneCamera {
     /** Last time takePicture() was called in uptimeMillis. */
     private long mTakePictureStartMillis;
     /** Runnable that returns to CONTROL_AF_MODE = AF_CONTINUOUS_PICTURE. */
-    private Runnable mReturnToContinuousAFRunnable = new Runnable() {
+    private final Runnable mReturnToContinuousAFRunnable = new Runnable() {
         @Override
         public void run() {
             repeatingPreviewWithReadyListener(null);
         }
     };
 
-    /** Current zoom value.  1.0 is no zoom. */
-    private float mZoomValue = 1f;
+    /** Current zoom value. 1.0 is no zoom. */
+    private final float mZoomValue = 1f;
     /** If partial results was OK, don't need to process total result. */
     private boolean mAutoFocusStateListenerPartialOK = false;
 
     /**
      * Common listener for preview frame metadata.
      */
-    private CameraCaptureSession.CaptureListener mAutoFocusStateListener = new
+    private final CameraCaptureSession.CaptureListener mAutoFocusStateListener = new
             CameraCaptureSession.CaptureListener() {
                 // AF state information is sometimes available 1 frame before
                 // onCaptureCompleted(), so we take advantage of that.
                 @Override
-                public void onCaptureProgressed(CameraCaptureSession session, CaptureRequest request,
-                                                CaptureResult partialResult) {
+                public void onCaptureProgressed(CameraCaptureSession session,
+                        CaptureRequest request,
+                        CaptureResult partialResult) {
 
                     if (partialResult.get(CaptureResult.CONTROL_AF_STATE) != null) {
                         mAutoFocusStateListenerPartialOK = true;
@@ -165,9 +175,11 @@ public class OneCameraImpl extends AbstractOneCamera {
                     }
                     super.onCaptureProgressed(session, request, partialResult);
                 }
+
                 @Override
-                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-                                               TotalCaptureResult result) {
+                public void onCaptureCompleted(CameraCaptureSession session,
+                        CaptureRequest request,
+                        TotalCaptureResult result) {
                     if (!mAutoFocusStateListenerPartialOK) {
                         autofocusStateChangeDispatcher(result);
                     }
@@ -211,7 +223,8 @@ public class OneCameraImpl extends AbstractOneCamera {
                 public void onImageAvailable(ImageReader reader) {
                     InFlightCapture capture = mCaptureQueue.remove();
 
-                    // Since this is not an HDR+ session, we will just save the result.
+                    // Since this is not an HDR+ session, we will just save the
+                    // result.
                     capture.session.startEmpty();
                     byte[] imageBytes = acquireJpegBytesAndClose(reader);
                     // TODO: The savePicture call here seems to block UI thread.
@@ -236,7 +249,8 @@ public class OneCameraImpl extends AbstractOneCamera {
         mCameraThread.start();
         mCameraHandler = new Handler(mCameraThread.getLooper());
 
-        mCaptureImageReader = ImageReader.newInstance(pictureSize.getWidth(), pictureSize.getHeight(),
+        mCaptureImageReader = ImageReader.newInstance(pictureSize.getWidth(),
+                pictureSize.getHeight(),
                 sCaptureImageFormat, 2);
         mCaptureImageReader.setOnImageAvailableListener(mCaptureImageListener, mCameraHandler);
         Log.d(TAG, "New Camera2 based OneCameraImpl created.");
@@ -276,7 +290,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     /**
-     * Take picture immediately.  Parameters passed through from takePicture().
+     * Take picture immediately. Parameters passed through from takePicture().
      */
     public void takePictureNow(PhotoCaptureParameters params, CaptureSession session) {
         long dt = SystemClock.uptimeMillis() - mTakePictureStartMillis;
@@ -310,6 +324,15 @@ public class OneCameraImpl extends AbstractOneCamera {
             builder.addTarget(mCaptureImageReader.getSurface());
             applyFlashMode(params.flashMode, builder);
             CaptureRequest request = builder.build();
+
+            if (DEBUG_WRITE_CAPTURE_DATA) {
+                final String debugDataDir = makeDebugDir(params.debugDataFolder,
+                        "normal_capture_debug");
+                Log.i(TAG, "Writing capture data to: " + debugDataDir);
+                CaptureDataSerializer.toFile("Normal Capture", request, new File(debugDataDir,
+                        "capture.txt"));
+            }
+
             mCaptureSession.capture(request, mAutoFocusStateListener, mCameraHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Could not access camera for still image capture.");
@@ -487,7 +510,7 @@ public class OneCameraImpl extends AbstractOneCamera {
      * Request preview capture stream with AF_MODE_CONTINUOUS_PICTURE.
      *
      * @param readyListener called when request was build and sent, or if
-     *                      setting up the request failed.
+     *            setting up the request failed.
      */
     private void repeatingPreviewWithReadyListener(CaptureReadyCallback readyListener) {
         try {
@@ -520,7 +543,7 @@ public class OneCameraImpl extends AbstractOneCamera {
      * @param meteringRegions metering regions, for tap to focus/expose.
      */
     private void repeatingPreviewWithAFTrigger(MeteringRectangle[] focusRegions,
-                                               MeteringRectangle[] meteringRegions, Object tag) {
+            MeteringRectangle[] meteringRegions, Object tag) {
         try {
             CaptureRequest.Builder builder;
             builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -645,7 +668,9 @@ public class OneCameraImpl extends AbstractOneCamera {
     @Override
     public void triggerFocusAndMeterAtPoint(float nx, float ny) {
         Log.v(TAG, "triggerFocusAndMeterAtPoint(" + nx + "," + ny + ")");
-        float points[] = new float[]{nx, ny};
+        float points[] = new float[] {
+                nx, ny
+        };
         // Make sure the points are in [0,1] range.
         points[0] = CameraUtil.clamp(points[0], 0f, 1f);
         points[1] = CameraUtil.clamp(points[1], 0f, 1f);
@@ -657,10 +682,12 @@ public class OneCameraImpl extends AbstractOneCamera {
             zoomMatrix.mapPoints(points);
         }
 
-        // TODO: Make this work when preview aspect ratio != sensor aspect ratio.
+        // TODO: Make this work when preview aspect ratio != sensor aspect
+        // ratio.
         Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
         int edge = (int) (METERING_REGION_EDGE * Math.max(sensor.width(), sensor.height()));
-        // x0 and y0 in sensor coordinate system, rotated 90 degrees from portrait.
+        // x0 and y0 in sensor coordinate system, rotated 90 degrees from
+        // portrait.
         int x0 = (int) (sensor.width() * points[1]);
         int y0 = (int) (sensor.height() * (1f - points[0]));
         int x1 = x0 + edge;
@@ -675,8 +702,9 @@ public class OneCameraImpl extends AbstractOneCamera {
                 + METERING_REGION_WEIGHT * MeteringRectangle.METERING_WEIGHT_MAX);
 
         Log.v(TAG, "sensor 3A @ x0=" + x0 + " y0=" + y0 + " dx=" + (x1 - x0) + " dy=" + (y1 - y0));
-        MeteringRectangle[] regions = new MeteringRectangle[]{
-                new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, wt)};
+        MeteringRectangle[] regions = new MeteringRectangle[] {
+                new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, wt)
+        };
         repeatingPreviewWithAFTrigger(regions, regions, null);
     }
 
@@ -801,7 +829,8 @@ public class OneCameraImpl extends AbstractOneCamera {
         Object tag = result.getRequest().getTag();
         // Nexus 5 has a bug where CONTROL_AF_STATE is missing sometimes.
         if (result.get(CaptureResult.CONTROL_AF_STATE) == null) {
-            //throw new IllegalStateException("CaptureResult missing CONTROL_AF_STATE.");
+            // throw new
+            // IllegalStateException("CaptureResult missing CONTROL_AF_STATE.");
             Log.e(TAG, "\n!!!! TotalCaptureResult missing CONTROL_AF_STATE. !!!!\n ");
             return;
         }
