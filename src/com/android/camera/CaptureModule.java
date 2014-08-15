@@ -42,6 +42,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.hardware.HardwareSpec;
@@ -183,10 +184,7 @@ public class CaptureModule extends CameraModule
     private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
     /** System Properties switch to enable debugging focus UI. */
-    private static final String PROP_FOCUS_DEBUG_UI_KEY = "persist.camera.focus_debug_ui";
-    private static final String PROP_FOCUS_DEBUG_UI_OFF = "0";
-    private static final boolean FOCUS_DEBUG_UI = !PROP_FOCUS_DEBUG_UI_OFF
-            .equals(SystemProperties.get(PROP_FOCUS_DEBUG_UI_KEY, PROP_FOCUS_DEBUG_UI_OFF));
+    private static final boolean FOCUS_DEBUG_UI = DebugPropertyHelper.showFocusDebugUI();
 
     private final Object mDimensionLock = new Object();
     /**
