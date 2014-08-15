@@ -13,7 +13,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1175086483881127797">"Камера"</string>
     <string name="video_camera_label" msgid="1723708322021743770">"Видеокамера"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
@@ -78,6 +80,7 @@
     <string name="pref_camera_location_label" msgid="8695441802378057719">"МЕСТОПОЛОЖЕНИЕ"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Автоспуск"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
+    <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Сигнал"</string>
     <string name="setting_off" msgid="6782191065550276632">"Выкл."</string>
     <string name="setting_on" msgid="9086728135773197891">"Вкл."</string>
@@ -142,7 +145,9 @@
     <string name="pref_exposure_title" msgid="7525751789152582800">"Выдержка"</string>
     <string name="pref_exposure_label" msgid="2604738602400261218">"ВЫДЕРЖКА"</string>
     <!-- no translation found for pref_camera_hdr_default (5054955236904902318) -->
+    <skip />
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
+    <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ПЕРЕДНЯЯ КАМЕРА"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ЗАДНЯЯ КАМЕРА"</string>
@@ -360,4 +365,3 @@
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
-
