@@ -228,8 +228,6 @@ public class CaptureModule extends CameraModule
 
     /** Persistence of Tap to Focus target UI after scan complete. */
     private static final int FOCUS_HOLD_UI_MILLIS = 500;
-    /** Persistence of Tap to Focus target UI timeout. */
-    private static final int FOCUS_HOLD_UI_TIMEOUT_MILLIS = 1500;
 
     /** Accelerometer data. */
     private final float[] mGData = new float[3];
@@ -642,8 +640,6 @@ public class CaptureModule extends CameraModule
         // Show UI immediately even though scan has not started yet.
         mUI.setAutoFocusTarget(x, y);
         mUI.showAutoFocusInProgress();
-        mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-        mMainHandler.postDelayed(mHideAutoFocusTargetRunnable, FOCUS_HOLD_UI_TIMEOUT_MILLIS);
 
         // Normalize coordinates to [0,1] per CameraOne API.
         float points[] = new float[2];
@@ -681,18 +677,28 @@ public class CaptureModule extends CameraModule
             // mMainHandler.post(...)
         }
 
-        // After tap to focus SCAN completes, clear UI after FOCUS_HOLD_UI_MILLIS.
-        if (mTapToFocusInProgress && mode == AutoFocusMode.AUTO &&
-                (state == AutoFocusState.STOPPED_FOCUSED ||
-                        state == AutoFocusState.STOPPED_UNFOCUSED)) {
-            mMainHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+        // If mTapToFocusInProgress, clear UI.
+        if (mTapToFocusInProgress) {
+            // Clear UI on return to CONTINUOUS_PICTURE (debug mode).
+            if (FOCUS_DEBUG_UI) {
+                if (mode == AutoFocusMode.CONTINUOUS_PICTURE) {
                     mTapToFocusInProgress = false;
                     mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
                     mMainHandler.post(mHideAutoFocusTargetRunnable);
                 }
-            }, FOCUS_HOLD_UI_MILLIS);
+            } else { // Clear UI FOCUS_HOLD_UI_MILLIS after scan end (normal).
+                if (mode == AutoFocusMode.AUTO && (state == AutoFocusState.STOPPED_FOCUSED ||
+                        state == AutoFocusState.STOPPED_UNFOCUSED)) {
+                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTapToFocusInProgress = false;
+                            mMainHandler.post(mHideAutoFocusTargetRunnable);
+                        }
+                    }, FOCUS_HOLD_UI_MILLIS);
+                }
+            }
         }
 
         // Use the OneCamera auto focus callbacks to show the UI, except for
