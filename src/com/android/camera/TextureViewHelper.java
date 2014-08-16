@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -24,9 +25,16 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 
+import com.android.camera.app.CameraProvider;
 import com.android.camera.debug.Log;
+import com.android.camera.settings.Keys;
+import com.android.camera.settings.ResolutionUtil;
+import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
+import com.android.ex.camera2.portability.CameraDeviceInfo;
+import com.android.ex.camera2.portability.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +50,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     public static final float MATCH_SCREEN = 0f;
     private static final int UNSET = -1;
     private final TextureView mPreview;
+    private final CameraProvider mCameraProvider;
     private int mWidth = 0;
     private int mHeight = 0;
     private RectF mPreviewArea = new RectF();
@@ -60,8 +69,10 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
     private int mOrientation = UNSET;
 
-    public TextureViewHelper(TextureView preview, CaptureLayoutHelper helper) {
+    public TextureViewHelper(TextureView preview, CaptureLayoutHelper helper,
+                             CameraProvider cameraProvider) {
         mPreview = preview;
+        mCameraProvider = cameraProvider;
         mPreview.addOnLayoutChangeListener(this);
         mPreview.setSurfaceTextureListener(this);
         mCaptureLayoutHelper = helper;
@@ -88,9 +99,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             mWidth = width;
             mHeight = height;
             mOrientation = rotation;
-            if (mAutoAdjustTransform) {
-                updateTransform();
-            } else {
+            if (!updateTransform()) {
                 clearTransform();
             }
         }
@@ -221,17 +230,35 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     /**
      * Updates the transform matrix based current width and height of TextureView
      * and preview stream aspect ratio.
+     *
+     * <p>If not {@code mAutoAdjustTransform}, this does nothing except return
+     * {@code false}. In all other cases, it returns {@code true}, regardless of
+     * whether the transform was changed.</p>
+     *
+     * @return Whether {@code mAutoAdjustTransform}.
      */
-    private void updateTransform() {
+    private boolean updateTransform() {
+        if (!mAutoAdjustTransform) {
+            return false;
+        }
         if (mAspectRatio == MATCH_SCREEN || mAspectRatio < 0 || mWidth == 0 || mHeight == 0) {
-            return;
+            return true;
         }
 
-        Matrix matrix = mPreview.getTransform(null);
-        RectF previewRect = mCaptureLayoutHelper.getPreviewRect();
-        matrix.setRectToRect(new RectF(0, 0, mWidth, mHeight), previewRect, Matrix.ScaleToFit.FILL);
+        Matrix matrix;
+        int cameraId = mCameraProvider.getCurrentCameraId();
+        if (cameraId >= 0) {
+            CameraDeviceInfo.Characteristics info = mCameraProvider.getCharacteristics(cameraId);
+            matrix = info.getPreviewTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),
+                    mCaptureLayoutHelper.getPreviewRect());
+        } else {
+            Log.w(TAG, "Unable to find current camera... defaulting to identity matrix");
+            matrix = new Matrix();
+        }
+
         mPreview.setTransform(matrix);
         updatePreviewArea(matrix);
+        return true;
     }
 
     private void onPreviewAreaChanged(final RectF previewArea) {
@@ -276,18 +303,10 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
     public Bitmap getPreviewBitmap(int downsample) {
         RectF textureArea = getTextureArea();
-        RectF previewArea = getPreviewArea();
-        Bitmap preview = mPreview.getBitmap((int) textureArea.width() / downsample,
-                (int) textureArea.height() / downsample);
-        int xOffset = (int) ((textureArea.width() - previewArea.width()) / (2 * downsample));
-        int yOffset = (int) ((textureArea.height() - previewArea.height()) / (2 * downsample));
-        int newWidth = (int) (previewArea.width() / downsample);
-        int newHeight = (int) (previewArea.height() / downsample);
-
-        if (xOffset != 0 || yOffset != 0) {
-            return Bitmap.createBitmap(preview, xOffset, yOffset, newWidth, newHeight);
-        }
-        return preview;
+        int width = (int) textureArea.width() / downsample;
+        int height = (int) textureArea.height() / downsample;
+        Bitmap preview = mPreview.getBitmap(width, height);
+        return Bitmap.createBitmap(preview, 0, 0, width, height, mPreview.getTransform(null), true);
     }
 
     /**
