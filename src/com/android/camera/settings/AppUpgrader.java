@@ -111,7 +111,8 @@ public class AppUpgrader extends SettingsUpgrader {
 
         if (lastVersion < CAMERA_SIZE_SETTING_UPGRADE_VERSION) {
             CameraDeviceInfo infos = CameraAgentFactory
-                    .getAndroidCameraAgent(context).getCameraDeviceInfo();
+                    .getAndroidCameraAgent(context, CameraAgentFactory.CameraApi.API_1)
+                    .getCameraDeviceInfo();
             upgradeCameraSizeSetting(settingsManager, context, infos,
                     SettingsUtil.CAMERA_FACING_FRONT);
             upgradeCameraSizeSetting(settingsManager, context, infos,
