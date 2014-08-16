@@ -1197,7 +1197,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mController.getSettingsManager().addListener(this);
         mModuleUI = (FrameLayout) mCameraRootView.findViewById(R.id.module_layout);
         mTextureView = (TextureView) mCameraRootView.findViewById(R.id.preview_content);
-        mTextureViewHelper = new TextureViewHelper(mTextureView, mCaptureLayoutHelper);
+        mTextureViewHelper = new TextureViewHelper(mTextureView, mCaptureLayoutHelper,
+                mController.getCameraProvider());
         mTextureViewHelper.setSurfaceTextureListener(this);
         mTextureViewHelper.setOnLayoutChangeListener(mPreviewLayoutChangeListener);
 
