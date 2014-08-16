@@ -110,7 +110,9 @@ public class CameraSettingsActivity extends FragmentActivity {
                 CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
             }
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
-            mInfos = CameraAgentFactory.getAndroidCameraAgent(context).getCameraDeviceInfo();
+            mInfos = CameraAgentFactory
+                    .getAndroidCameraAgent(context, CameraAgentFactory.CameraApi.API_1)
+                    .getCameraDeviceInfo();
         }
 
         @Override

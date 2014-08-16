@@ -35,6 +35,15 @@ public interface CameraProvider {
      */
     public void requestCamera(int id);
 
+    /**
+     * Requests the camera device. If the camera device of the same ID is
+     * already requested, then no-op here.
+     *
+     * @param id The ID of the requested camera device.
+     * @param useNewApi Whether to use the new API if this platform provides it.
+     */
+    public void requestCamera(int id, boolean useNewApi);
+
     public boolean waitingForCamera();
 
     /**
