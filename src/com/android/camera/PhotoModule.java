@@ -72,6 +72,7 @@ import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
+import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.SessionStatsCollector;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AspectRatioSelector;
@@ -651,7 +652,7 @@ public class PhotoModule
         closeCamera();
         mCameraId = mPendingSwitchCameraId;
         settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID, mCameraId);
-        mActivity.getCameraProvider().requestCamera(mCameraId);
+        requestCameraOpen();
         mUI.clearFaces();
         if (mFocusManager != null) {
             mFocusManager.removeMessages();
@@ -661,6 +662,15 @@ public class PhotoModule
         mFocusManager.setMirror(mMirror);
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
+    }
+
+    /**
+     * Uses the {@link CameraProvider} to open the currently-selected camera
+     * device, using {@link GservicesHelper} to choose between API-1 and API-2.
+     */
+    private void requestCameraOpen() {
+        mActivity.getCameraProvider().requestCamera(mCameraId,
+                GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity));
     }
 
     private final ButtonManager.ButtonCallback mCameraCallback =
@@ -1567,7 +1577,7 @@ public class PhotoModule
             // No camera provider, the Activity is destroyed already.
             return;
         }
-        camProvider.requestCamera(mCameraId);
+        requestCameraOpen();
 
         mJpegPictureCallbackTime = 0;
         mZoomValue = 0;
