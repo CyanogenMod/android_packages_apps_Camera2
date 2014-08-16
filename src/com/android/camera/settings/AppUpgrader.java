@@ -265,6 +265,15 @@ public class AppUpgrader extends SettingsUpgrader {
             return;
         }
 
+        // infos might be null if the underlying camera device is broken. In
+        // that case, just delete the old settings and force the user to
+        // reselect, it's the least evil solution given we want to only upgrade
+        // settings once.
+        if (infos == null) {
+            settingsManager.remove(SettingsManager.SCOPE_GLOBAL, key);
+            return;
+        }
+
         String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL, key);
         int camera = SettingsUtil.getCameraId(infos, facing);
         if (camera != -1) {
