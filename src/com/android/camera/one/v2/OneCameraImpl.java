@@ -35,7 +35,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 
 import com.android.camera.Exif;
@@ -320,7 +319,8 @@ public class OneCameraImpl extends AbstractOneCamera {
 
             if (sCaptureImageFormat == ImageFormat.JPEG) {
                 builder.set(CaptureRequest.JPEG_QUALITY, JPEG_QUALITY);
-                builder.set(CaptureRequest.JPEG_ORIENTATION, getJpegRotation(params.orientation));
+                builder.set(CaptureRequest.JPEG_ORIENTATION,
+                        CameraUtil.getJpegRotation(params.orientation, mCharacteristics));
             }
 
             builder.addTarget(mPreviewSurface);
@@ -764,26 +764,6 @@ public class OneCameraImpl extends AbstractOneCamera {
         buffer.rewind();
         img.close();
         return imageBytes;
-    }
-
-    /**
-     * Given the device orientation, this returns the required JPEG rotation for
-     * this camera.
-     *
-     * @param deviceOrientationDegrees the device orientation in degrees.
-     * @return The JPEG orientation in degrees.
-     */
-    private int getJpegRotation(int deviceOrientationDegrees) {
-        if (deviceOrientationDegrees == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            return 0;
-        }
-        int facing = mCharacteristics.get(CameraCharacteristics.LENS_FACING);
-        int sensorOrientation = mCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-        if (facing == CameraMetadata.LENS_FACING_FRONT) {
-            return (sensorOrientation - deviceOrientationDegrees + 360) % 360;
-        } else {
-            return (sensorOrientation + deviceOrientationDegrees) % 360;
-        }
     }
 
     private void applyFlashMode(Flash flashMode, CaptureRequest.Builder requestBuilder) {
