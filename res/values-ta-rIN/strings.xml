@@ -86,8 +86,8 @@
     <string name="setting_on" msgid="9086728135773197891">"இயக்கத்தில்"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"வீடியோ தரம்"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"இடைவெளிக்கான நேரம்"</string>
-    <string name="pref_camera_settings_category" msgid="4274141528139077830">"கேமரா அமைப்புகள்"</string>
-    <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"கேம்கார்டர் அமைப்புகள்"</string>
+    <string name="pref_camera_settings_category" msgid="4274141528139077830">"கேமரா அமைப்பு"</string>
+    <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"கேம்கார்டர் அமைப்பு"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"பட அளவு"</string>
     <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"பெரியது"</string>
     <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"நடுத்தரம்"</string>
@@ -268,7 +268,7 @@
     <string name="remember_location_no" msgid="4412802756840226925">"நன்றி, வேண்டாம்"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ஆம்"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"மேலும் விருப்பங்கள்"</string>
-    <string name="camera_menu_settings_label" msgid="3862756725328016822">"அமைப்புகள்"</string>
+    <string name="camera_menu_settings_label" msgid="3862756725328016822">"அமைப்பு"</string>
     <string name="create_tiny_planet" msgid="5186918191372107343">"சிறிய கிரகத்தை உருவாக்கு"</string>
     <string name="saving_tiny_planet" msgid="8828265180177375494">"சிறிய கிரகத்தைச் சேமிக்கிறது …"</string>
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"அளவை மாற்று"</string>
@@ -278,7 +278,7 @@
     <string name="cannot_load_image" msgid="4100136187076585580">"படத்தை ஏற்ற முடியவில்லை!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"படத்துண்டு காட்சி"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"வால்பேப்பரை அமைக்கிறது"</string>
-    <string name="mode_settings" msgid="2021937261522670921">"அமைப்புகள்"</string>
+    <string name="mode_settings" msgid="2021937261522670921">"அமைப்பு"</string>
     <string name="mode_camera" msgid="279763925715250603">"கேமரா"</string>
     <string name="mode_video" msgid="8633929034048169139">"வீடியோ"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"360 டிகிரி பனோரமா"</string>
@@ -336,7 +336,7 @@
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"உதவி &amp; கருத்து"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ ஐத் தயார் செய்கிறது …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"ஓப்பன் சோர்ஸ் உரிமங்கள்"</string>
-    <string name="pref_category_general" msgid="6737748849700581019">"பொது அமைப்புகள்"</string>
+    <string name="pref_category_general" msgid="6737748849700581019">"பொது அமைப்பு"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"தெளிவுத்திறன் &amp; தரம்"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"அறிமுகம்"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"நடப்புப் பதிப்பு"</string>
@@ -348,6 +348,8 @@
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
+    <!-- no translation found for pref_video_quality_entry_2160p (4522927631413184505) -->
+    <skip />
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s மெகாபிக்சல்கள்"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s மெகாபிக்சல்கள்"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"மறுகவனம் செலுத்த, இங்கு தொடவும்"</string>
