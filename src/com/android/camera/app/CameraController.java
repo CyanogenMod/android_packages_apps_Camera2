@@ -39,10 +39,20 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     private CameraAgent.CameraOpenCallback mCallbackReceiver;
     private final Handler mCallbackHandler;
     private final CameraAgent mCameraAgent;
-    private final CameraDeviceInfo mInfo;
+    private final CameraAgent mCameraAgentNg;
+
+    /** The one for the API that is currently in use (deprecated one by default). */
+    private CameraDeviceInfo mInfo;
 
     private CameraAgent.CameraProxy mCameraProxy;
     private int mRequestingCameraId = EMPTY_REQUEST;
+
+    /**
+     * Determines which of mCameraAgent and mCameraAgentNg is currently in use.
+     * <p>It's only possible to enable this if the new API is actually
+     * supported.</p>
+     */
+    private boolean mUsingNewApi = false;
 
     /**
      * Constructor.
@@ -52,13 +62,20 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
      * @param handler The {@link android.os.Handler} to post the camera
      *                callbacks to.
      * @param cameraManager Used for camera open/close.
+     * @param cameraManagerNg Used for camera open/close with the new API. If
+     *                        {@code null} or the same object as
+     *                        {@code cameraManager}, the new API will not be
+     *                        exposed and requests for it will get the old one.
      */
     public CameraController(Context context, CameraAgent.CameraOpenCallback callbackReceiver,
-            Handler handler, CameraAgent cameraManager) {
+            Handler handler, CameraAgent cameraManager, CameraAgent cameraManagerNg) {
         mContext = context;
         mCallbackReceiver = callbackReceiver;
         mCallbackHandler = handler;
         mCameraAgent = cameraManager;
+        // If the new implementation is the same as the old, the
+        // CameraAgentFactory decided this device doesn't support the new API.
+        mCameraAgentNg = cameraManagerNg != cameraManager ? cameraManagerNg : null;
         mInfo = mCameraAgent.getCameraDeviceInfo();
         if (mInfo == null && mCallbackReceiver != null) {
             mCallbackReceiver.onDeviceOpenFailure(-1, "GETTING_CAMERA_INFO");
@@ -69,6 +86,9 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
             Handler handler) {
         mCameraAgent.setCameraDefaultExceptionCallback(callback, handler);
+        if (mCameraAgentNg != null) {
+            mCameraAgentNg.setCameraDefaultExceptionCallback(callback, handler);
+        }
     }
 
     @Override
@@ -180,6 +200,11 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
 
     @Override
     public void requestCamera(int id) {
+        requestCamera(id, false);
+    }
+
+    @Override
+    public void requestCamera(int id, boolean useNewApi) {
         // Based on
         // (mRequestingCameraId == id, mRequestingCameraId == EMPTY_REQUEST),
         // we have (T, T), (T, F), (F, T), (F, F).
@@ -195,19 +220,31 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             return;
         }
         mRequestingCameraId = id;
+
+        // Only actually use the new API if it's supported on this device.
+        useNewApi = mCameraAgentNg != null && useNewApi;
+        CameraAgent cameraManager = useNewApi ? mCameraAgentNg : mCameraAgent;
+
         if (mCameraProxy == null) {
             // No camera yet.
-            checkAndOpenCamera(mContext, mCameraAgent, id, mCallbackHandler, this);
-        } else if (mCameraProxy.getCameraId() != id) {
-            // Already has another camera opened.
-            mCameraAgent.closeCamera(mCameraProxy, false);
-            checkAndOpenCamera(mContext, mCameraAgent, id, mCallbackHandler, this);
+            checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
+        } else if (mCameraProxy.getCameraId() != id || mUsingNewApi != useNewApi) {
+            // Already has camera opened, and is switching cameras and/or APIs.
+            if (mUsingNewApi) {
+                mCameraAgentNg.closeCamera(mCameraProxy, true);
+            } else {
+                mCameraAgent.closeCamera(mCameraProxy, true);
+            }
+            checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
         } else {
             // The same camera, just do a reconnect.
             Log.v(TAG, "reconnecting to use the existing camera");
             mCameraProxy.reconnect(mCallbackHandler, this);
             mCameraProxy = null;
         }
+
+        mUsingNewApi = useNewApi;
+        mInfo = cameraManager.getCameraDeviceInfo();
     }
 
     @Override
@@ -247,8 +284,13 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         }
         Log.v(TAG, "Closing camera");
         mCameraProxy = null;
-        mCameraAgent.closeCamera(mCameraProxy, synced);
+        if (mUsingNewApi) {
+            mCameraAgentNg.closeCamera(mCameraProxy, synced);
+        } else {
+            mCameraAgent.closeCamera(mCameraProxy, synced);
+        }
         mRequestingCameraId = EMPTY_REQUEST;
+        mUsingNewApi = false;
     }
 
     private static void checkAndOpenCamera(Context context, CameraAgent cameraManager,
