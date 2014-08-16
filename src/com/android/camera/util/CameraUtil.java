@@ -32,6 +32,8 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraMetadata;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -1187,6 +1189,27 @@ public class CameraUtil {
             // Default to return 1 core
             Log.e(TAG, "Failed to count number of cores, defaulting to 1", e);
             return 1;
+        }
+    }
+
+    /**
+     * Given the device orientation and Camera2 characteristics, this returns
+     * the required JPEG rotation for this camera.
+     *
+     * @param deviceOrientationDegrees the device orientation in degrees.
+     * @return The JPEG orientation in degrees.
+     */
+    public static int getJpegRotation(int deviceOrientationDegrees,
+            CameraCharacteristics characteristics) {
+        if (deviceOrientationDegrees == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            return 0;
+        }
+        int facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+        if (facing == CameraMetadata.LENS_FACING_FRONT) {
+            return (sensorOrientation + deviceOrientationDegrees) % 360;
+        } else {
+            return (sensorOrientation - deviceOrientationDegrees + 360) % 360;
         }
     }
 }
