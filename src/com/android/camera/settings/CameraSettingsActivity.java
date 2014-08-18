@@ -405,6 +405,10 @@ public class CameraSettingsActivity extends FragmentActivity {
          * accordingly.
          */
         private void loadSizes() {
+            if (mInfos == null) {
+                Log.w(TAG, "null deviceInfo, cannot display resolution sizes");
+                return;
+            }
             // Back camera.
             int backCameraId = SettingsUtil.getCameraId(mInfos, SettingsUtil.CAMERA_FACING_BACK);
             if (backCameraId >= 0) {
