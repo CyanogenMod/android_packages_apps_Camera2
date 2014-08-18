@@ -170,22 +170,32 @@ public class MultiToggleImageButton extends ImageButton {
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mClickEnabled = false;
+                setClickEnabled(false);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 setStateInternal(state, callListener);
-                mClickEnabled = true;
+                setClickEnabled(true);
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
                 setStateInternal(state, callListener);
-                mClickEnabled = true;
+                setClickEnabled(true);
             }
         });
         animator.start();
+    }
+
+    /**
+     * Enable or disable click reactions for this button
+     * without affecting visual state.
+     * For most cases you'll want to use {@link #setEnabled(boolean)}.
+     * @param enabled True if click enabled, false otherwise.
+     */
+    public void setClickEnabled(boolean enabled) {
+        mClickEnabled = enabled;
     }
 
     private void setStateInternal(int state, boolean callListener) {
