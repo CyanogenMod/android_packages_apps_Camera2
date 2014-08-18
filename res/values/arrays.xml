@@ -24,12 +24,9 @@
    </string-array>
 
     <string-array name="pref_video_quality_entryvalues" translatable="false">
-        <!-- Large size is the default. -->
-        <item>@string/pref_video_quality_default</item>
-        <!-- A medium size -->
-        <item>medium</item>
-        <!-- Small size. -->
-        <item>small</item>
+        <item>@string/pref_video_quality_large</item>
+        <item>@string/pref_video_quality_medium</item>
+        <item>@string/pref_video_quality_small</item>
     </string-array>
 
     <!-- Camera Preferences Picture size dialog box entries -->
