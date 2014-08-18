@@ -16,14 +16,10 @@
 
 package com.android.camera;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -34,7 +30,6 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.RadioOptions;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.widget.ModeOptions;
-
 import com.android.camera2.R;
 
 /**
@@ -382,7 +377,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 mListener.onButtonEnabledChanged(this, buttonId);
             }
         }
-        button.setTag(R.string.tag_enabled_id, (Integer) buttonId);
+        button.setTag(R.string.tag_enabled_id, buttonId);
 
         if (button.getVisibility() != View.VISIBLE) {
             button.setVisibility(View.VISIBLE);
@@ -407,7 +402,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 mListener.onButtonEnabledChanged(this, buttonId);
             }
         }
-        button.setTag(R.string.tag_enabled_id, (Integer) buttonId);
+        button.setTag(R.string.tag_enabled_id, buttonId);
 
         if (button.getVisibility() != View.VISIBLE) {
             button.setVisibility(View.VISIBLE);
@@ -460,14 +455,38 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
+     * Disable click reactions for a button without affecting visual state.
+     * For most cases you'll want to use {@link #disableButton(int)}.
+     * @param buttonId The id of the button.
+     */
+    public void disableButtonClick(int buttonId) {
+        ImageButton button = getButtonOrError(buttonId);
+        if (button instanceof MultiToggleImageButton) {
+            ((MultiToggleImageButton) button).setClickEnabled(false);
+        }
+    }
+
+    /**
+     * Enable click reactions for a button without affecting visual state.
+     * For most cases you'll want to use {@link #enableButton(int)}.
+     * @param buttonId The id of the button.
+     */
+    public void enableButtonClick(int buttonId) {
+        ImageButton button = getButtonOrError(buttonId);
+        if (button instanceof MultiToggleImageButton) {
+            ((MultiToggleImageButton) button).setClickEnabled(true);
+        }
+    }
+
+    /**
      * Hide a button by id.
      */
     public void hideButton(int buttonId) {
         View button;
         try {
-            button = (View) getButtonOrError(buttonId);
+            button = getButtonOrError(buttonId);
         } catch (IllegalArgumentException e) {
-            button = (View) getImageButtonOrError(buttonId);
+            button = getImageButtonOrError(buttonId);
         }
         if (button.getVisibility() == View.VISIBLE) {
             button.setVisibility(View.GONE);
@@ -543,9 +562,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public boolean isEnabled(int buttonId) {
         View button;
         try {
-            button = (View) getButtonOrError(buttonId);
+            button = getButtonOrError(buttonId);
         } catch (IllegalArgumentException e) {
-            button = (View) getImageButtonOrError(buttonId);
+            button = getImageButtonOrError(buttonId);
         }
 
         Integer enabledId = (Integer) button.getTag(R.string.tag_enabled_id);
@@ -562,9 +581,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public boolean isVisible(int buttonId) {
         View button;
         try {
-            button = (View) getButtonOrError(buttonId);
+            button = getButtonOrError(buttonId);
         } catch (IllegalArgumentException e) {
-            button = (View) getImageButtonOrError(buttonId);
+            button = getImageButtonOrError(buttonId);
         }
         return (button.getVisibility() == View.VISIBLE);
     }
