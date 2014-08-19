@@ -163,7 +163,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                         mAutoFocusStateListenerPartialOK = true;
                         autofocusStateChangeDispatcher(partialResult);
                         if (DEBUG_FOCUS_LOG) {
-                            //logExtraFocusInfo(partialResult);
+                            //AutoFocusHelper.logExtraFocusInfo(partialResult);
                         }
                     } else {
                         mAutoFocusStateListenerPartialOK = false;
@@ -179,7 +179,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                         autofocusStateChangeDispatcher(result);
                     }
                     if (DEBUG_FOCUS_LOG) {
-                        logExtraFocusInfo(result);
+                        AutoFocusHelper.logExtraFocusInfo(result);
                     }
                     super.onCaptureCompleted(session, request, result);
                 }
@@ -603,8 +603,8 @@ public class OneCameraImpl extends AbstractOneCamera {
         Object tag = result.getRequest().getTag();
 
         // Convert to OneCamera mode and state.
-        AutoFocusMode resultAFMode = modeFromCamera2Mode(nativeAFControlMode);
-        AutoFocusState resultAFState = stateFromCamera2State(nativeAFControlState);
+        AutoFocusMode resultAFMode = AutoFocusHelper.modeFromCamera2Mode(nativeAFControlMode);
+        AutoFocusState resultAFState = AutoFocusHelper.stateFromCamera2State(nativeAFControlState);
 
         boolean lensIsStopped = (resultAFState == AutoFocusState.STOPPED_FOCUSED ||
                 resultAFState == AutoFocusState.STOPPED_UNFOCUSED);
@@ -634,37 +634,6 @@ public class OneCameraImpl extends AbstractOneCamera {
         }
         mLastResultAFState = resultAFState;
         mLastResultAFMode = resultAFMode;
-    }
-
-    /**
-     * Convert reported camera2 AF state to OneCamera AutoFocusState.
-     */
-    private static AutoFocusState stateFromCamera2State(int state) {
-        switch (state) {
-            case CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN:
-            case CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN:
-                return AutoFocusState.SCANNING;
-            case CaptureResult.CONTROL_AF_STATE_PASSIVE_FOCUSED:
-            case CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED:
-                return AutoFocusState.STOPPED_FOCUSED;
-            case CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED:
-            case CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED:
-                return AutoFocusState.STOPPED_UNFOCUSED;
-            default:
-                return AutoFocusState.INACTIVE;
-        }
-    }
-
-    /**
-     * Convert reported camera2 AF state to OneCamera AutoFocusMode.
-     */
-    private static AutoFocusMode modeFromCamera2Mode(int mode) {
-        if (mode == CaptureResult.CONTROL_AF_MODE_AUTO) {
-            return AutoFocusMode.AUTO;
-        } else {
-            // CONTROL_AF_MODE_CONTINUOUS_PICTURE is the other mode used.
-            return AutoFocusMode.CONTINUOUS_PICTURE;
-        }
     }
 
     @Override
@@ -786,47 +755,6 @@ public class OneCameraImpl extends AbstractOneCamera {
                 requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
                         CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
                 break;
-        }
-    }
-
-    /**
-     * Utility function: converts CaptureResult.CONTROL_AF_STATE* to String.
-     */
-    private static String camera2ControlAFStateDesc(int aFState) {
-        switch (aFState) {
-            case CaptureResult.CONTROL_AF_STATE_INACTIVE:
-                return "inactive";
-            case CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN:
-                return "passive_scan";
-            case CaptureResult.CONTROL_AF_STATE_PASSIVE_FOCUSED:
-                return "passive_focused";
-            case CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN:
-                return "active_scan";
-            case CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED:
-                return "focus_locked";
-            case CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED:
-                return "not_focus_locked";
-            case CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED:
-                return "passive_unfocused";
-            default:
-                return "unknown";
-        }
-    }
-
-    private void logExtraFocusInfo(CaptureResult result) {
-        Object tag = result.getRequest().getTag();
-        // Nexus 5 has a bug where CONTROL_AF_STATE is missing sometimes.
-        if (result.get(CaptureResult.CONTROL_AF_STATE) == null) {
-            // throw new
-            // IllegalStateException("CaptureResult missing CONTROL_AF_STATE.");
-            Log.e(TAG, "\n!!!! TotalCaptureResult missing CONTROL_AF_STATE. !!!!\n ");
-            return;
-        }
-        Log.v(TAG, "camera2 AF state: " + camera2ControlAFStateDesc(result.
-                get(CaptureResult.CONTROL_AF_STATE)) +
-                (tag == null ? "" : ("  tag: " + tag)));
-        if (result.get(CaptureResult.LENS_FOCUS_DISTANCE) != null) {
-            Log.v(TAG, "  lens @ " + result.get(CaptureResult.LENS_FOCUS_DISTANCE));
         }
     }
 }
