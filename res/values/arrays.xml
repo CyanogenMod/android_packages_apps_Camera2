@@ -434,7 +434,6 @@
         <item>@integer/camera_mode_photosphere</item>
         <item>@integer/camera_mode_panorama</item>
         <item>@integer/camera_mode_photo</item>
-        <item>@integer/camera_mode_photo</item>
     </integer-array>
 
     <!-- An array of camera mode indices that should always be visible in mode drawer. -->
