@@ -348,6 +348,8 @@
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
+    <!-- no translation found for pref_video_quality_entry_2160p (4522927631413184505) -->
+    <skip />
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s മെഗാപിക്‌സലുകൾ"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s മെഗാപിക്‌സലുകൾ"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"വീണ്ടും ഫോക്കസ് ചെയ്യാൻ, ഇവിടെ സ്‌പർശിക്കുക"</string>
