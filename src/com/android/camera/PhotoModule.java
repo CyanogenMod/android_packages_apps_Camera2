@@ -110,7 +110,7 @@ public class PhotoModule
         RemoteCameraModule,
         CountDownView.OnCountDownStatusListener {
 
-    private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
+    public static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
 
     private static final Log.Tag TAG = new Log.Tag(PHOTO_MODULE_STRING_ID);
 
