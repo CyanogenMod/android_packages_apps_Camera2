@@ -26,7 +26,7 @@
     <string name="share_panorama" msgid="3558466186935359444">"မြင်ကွယ်ကျယ်အားမျှဝေပါ"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"ဓာတ်ပုံအနေဖြင့်မျှပါ"</string>
     <string name="deleted" msgid="2036165115527228127">"ဖျက်ပြီး"</string>
-    <string name="undo" msgid="5110048345890050107">"တစ်ဆင့် နောက်ပြန်ပြုလုပ်ပါ"</string>
+    <string name="undo" msgid="5110048345890050107">"နောက်ပြန်လုပ်ပါ"</string>
     <string name="details" msgid="4404020741542549488">"အသေးစိတ်"</string>
     <string name="close" msgid="4826166926297479820">"ပိတ်ရန်"</string>
     <string name="show_on_map" msgid="8542853913632649160">"မြေပုံတွင်ပြရန်"</string>
@@ -263,7 +263,7 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"အချိန်ကြာမှု ပြုလုပ်ချက်မရပါ။ ကြာချိန်သတ်မှတ်ရန် ထိုအရာအားဖွင့်ပါ"</string>
     <string name="set_duration" msgid="1638453882581604341">"ကြာချိန်ကို စက္ကန့်ဖြင့် မှတ်ပါ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ဓာတ်ပုံရိုက်ရန် အမှတ်ရေနေစဉ်"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"ဓာတ်ပုံ၏​တည်နေရာများ မှတ်မိပါသလား?"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"ဓာတ်ပုံရိုက်ခဲ့တဲ့နေရာ သိမ်းရမလား"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"ဓာတ်ပုံများနှင့် ဗီဒီယိုများအား ရိုက်ကူးခဲ့ရာ နေရာများနှင့်တကွ မှတ်သားပါ\n\nတခြား အပ်ပလီကေးရှင်းများမှ ဒီအချက်အလက်ကို သိမ်းထားသော ပုံများနှင့်အတူ ရယူနိုင်သည်"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ကျေးဇူးပဲ မလိုပါဘူး"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"မှန်ပါသည်"</string>
@@ -348,16 +348,15 @@
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
-    <!-- no translation found for pref_video_quality_entry_2160p (4522927631413184505) -->
-    <skip />
+    <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s မီဂါပီဇယ်များ"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s မီဂါပီဇယ်များ"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ဆုံချက် ပြန်ညှိရန် ဒီမှာ ထိပါ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"အဆင့်မြင့်"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"လက်ဖြင့် အလင်းပေး"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"ဆက်တင် ထဲမှာ၊ ပြတ်သားမှု နှင့် အရည်အသွေးကို ပြောင်းပါ၊ သို့မဟုတ် အဆင့်မြင့် အင်္ဂါရပ်များကို စမ်းကြည့်ပါ။"</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"ဓာတ်ပုံ ဆိုက် ရွေးရန်"</string>
-    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ဒါကို သင်သည် နောက်မှာ ဆက်တင် ထဲတွင် ပြောင်းလဲနိုင်သည်။"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"ဓာတ်ပုံဆိုက် ရွေးရန်"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"နောက်မှ ဆက်တင်ထဲတွင် ပြန်ပြောင်း၍ ရပါသည်။"</string>
     <string name="share_to" msgid="5144911209144798122">"...အား မျှဝေရန်"</string>
     <string name="edit_with" msgid="615569327230783971">"...နှင့် တည်းဖြတ်ရန်"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ရှေ့ဆက်"</string>
