@@ -22,6 +22,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.params.ColorSpaceTransform;
 import android.hardware.camera2.params.RggbChannelVector;
 import android.hardware.camera2.params.TonemapCurve;
+import android.util.Pair;
 import android.util.Rational;
 
 import com.android.camera.debug.Log;
@@ -46,7 +47,7 @@ public class CaptureDataSerializer {
         public void write(Writer writer) throws IOException;
     }
 
-    private static final Tag TAG = new Tag("CaptureDataSerializer");
+    private static final Tag TAG = new Tag("CaptureDataSerilzr");
 
     /**
      * Generate a human-readable string of the given capture request and return
@@ -156,6 +157,8 @@ public class CaptureDataSerializer {
                 return toString((ColorSpaceTransform) object);
             } else if (object instanceof TonemapCurve) {
                 return toString((TonemapCurve) object);
+            } else if (object instanceof Pair) {
+                return toString((Pair<?, ?>) object);
             }
             return object.toString();
         }
@@ -227,5 +230,10 @@ public class CaptureDataSerializer {
         str.append(Arrays.toString(blues));
 
         return str.toString();
+    }
+
+    private static String toString(Pair<?, ?> pair) {
+        return "Pair: " + metadataValueToString(pair.first) + " / "
+                + metadataValueToString(pair.second);
     }
 }
