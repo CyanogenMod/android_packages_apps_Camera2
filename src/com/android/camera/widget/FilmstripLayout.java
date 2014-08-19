@@ -28,7 +28,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -107,9 +106,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    if (mAnimationDirection == ANIM_DIRECTION_IN && !mDrawHidingBackground) {
-                        mBackgroundDrawable.setFraction(valueAnimator.getAnimatedFraction());
-                    }
                     translateContentLayout((Float) valueAnimator.getAnimatedValue());
                     mBackgroundDrawable.invalidateSelf();
                 }
@@ -298,9 +294,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
     private void setDrawHidingBackground(boolean hiding) {
         mDrawHidingBackground = hiding;
-        if (!mDrawHidingBackground) {
-            mBackgroundDrawable.setFraction(0f);
-        }
     }
 
     private void translateContentLayout(float fraction) {
@@ -465,7 +458,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
     private class MyBackgroundDrawable extends Drawable {
         private Paint mPaint;
-        private float mFraction;
         private int mOffset;
 
         public MyBackgroundDrawable() {
@@ -473,10 +465,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             mPaint.setAntiAlias(true);
             mPaint.setColor(getResources().getColor(R.color.filmstrip_background));
             mPaint.setAlpha(255);
-        }
-
-        public void setFraction(float f) {
-            mFraction = f;
         }
 
         /**
@@ -523,28 +511,12 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
 
         private void drawHiding(Canvas canvas) {
             setAlpha(1.0f - mFilmstripContentTranslationProgress);
-            canvas.drawRect(
-                    mFilmstripContentLayout.getLeft() + mFilmstripContentLayout.getTranslationX(),
-                    mFilmstripContentLayout.getTop() + mFilmstripContentLayout.getTranslationY(),
-                    getMeasuredWidth(), getMeasuredHeight(), mPaint);
+            canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
 
         private void drawShowing(Canvas canvas) {
-            int width = getMeasuredWidth();
-            float translation = mFilmstripContentLayout.getTranslationX();
-            if (translation == 0f) {
-                canvas.drawRect(getBounds(), mPaint);
-                return;
-            }
-            final float height = getMeasuredHeight();
-            float x = width * (1.1f + mFraction * 0.9f);
-            float y = height / 2f;
-            float refX = width * (1 - mFraction);
-            float refY = y * (1 - mFraction);
-
-            setAlpha(mFraction);
-            canvas.drawCircle(x, getMeasuredHeight() / 2,
-                    FloatMath.sqrt((x - refX) * (x - refX) + (y - refY) * (y - refY)), mPaint);
+            setAlpha(1.0f - mFilmstripContentTranslationProgress);
+            canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
     }
 
