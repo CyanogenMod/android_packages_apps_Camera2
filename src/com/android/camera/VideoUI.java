@@ -57,8 +57,7 @@ public class VideoUI implements PreviewStatusListener {
     private RotateLayout mRecordingTimeRect;
     private boolean mRecordingStarted = false;
     private final VideoController mController;
-    private int mZoomMax;
-    private List<Integer> mZoomRatios;
+    private float mZoomMax;
 
     private float mAspectRatio = UNSET;
     private final AnimationManager mAnimationManager;
@@ -213,12 +212,11 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     public void initializeZoom(CameraSettings settings, CameraCapabilities capabilities) {
-        mZoomMax = capabilities.getMaxZoomIndex();
-        mZoomRatios = capabilities.getZoomRatioList();
+        mZoomMax = capabilities.getMaxZoomRatio();
         // Currently we use immediate zoom for fast zooming to get better UX and
         // there is no plan to take advantage of the smooth zoom.
         // TODO: setup zoom through App UI.
-        mPreviewOverlay.setupZoom(mZoomMax, settings.getCurrentZoomIndex(), mZoomRatios,
+        mPreviewOverlay.setupZoom(mZoomMax, settings.getCurrentZoomRatio(),
                 new ZoomChangeListener());
     }
 
@@ -277,8 +275,8 @@ public class VideoUI implements PreviewStatusListener {
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
         @Override
-        public void onZoomValueChanged(int index) {
-            mController.onZoomChanged(index);
+        public void onZoomValueChanged(float ratio) {
+            mController.onZoomChanged(ratio);
         }
 
         @Override

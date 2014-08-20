@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -48,10 +49,15 @@ import java.util.List;
 public class PreviewOverlay extends View
     implements PreviewStatusListener.PreviewAreaChangedListener {
 
+    public static final float ZOOM_MIN_RATIO = 1.0f;
+
     private static final Log.Tag TAG = new Log.Tag("PreviewOverlay");
 
-    public static final int ZOOM_MIN_FACTOR = 100;
+    /** Minimum time between calls to zoom listener. */
+    private static final long ZOOM_MINIMUM_WAIT_MILLIS = 33;
 
+    /** Next time zoom change should be sent to listener. */
+    private long mDelayZoomCallUntilMillis = 0;
     private final ZoomGestureDetector mScaleDetector;
     private final ZoomProcessor mZoomProcessor = new ZoomProcessor();
     private GestureDetector mGestureDetector = null;
@@ -73,9 +79,9 @@ public class PreviewOverlay extends View
         /**
          * This gets called when scale gesture changes the zoom value.
          *
-         * @param index index of the list of supported zoom ratios
+         * @param ratio zoom ratio, [1.0f,maximum]
          */
-        void onZoomValueChanged(int index);  // only for immediate zoom
+        void onZoomValueChanged(float ratio);  // only for immediate zoom
     }
 
     public interface OnPreviewTouchedListener {
@@ -91,31 +97,17 @@ public class PreviewOverlay extends View
     }
 
     /**
-     * This sets up the zoom listener and zoom related parameters.
-     *
-     * @param zoomMax max zoom index
-     * @param zoom current zoom index
-     * @param zoomRatios a list of zoom ratios
-     * @param zoomChangeListener a listener that receives callbacks when zoom changes
-     */
-    public void setupZoom(int zoomMax, int zoom, List<Integer> zoomRatios,
-                          OnZoomChangedListener zoomChangeListener) {
-        mZoomListener = zoomChangeListener;
-        mZoomProcessor.setupZoom(zoomMax, zoom, zoomRatios);
-    }
-
-    /**
      * This sets up the zoom listener and zoom related parameters when
      * the range of zoom ratios is continuous.
      *
-     * @param zoomMaxRatio max zoom ratio
-     * @param zoom current zoom index
+     * @param zoomMaxRatio max zoom ratio, [1.0f,+Inf)
+     * @param zoom current zoom ratio, [1.0f,zoomMaxRatio]
      * @param zoomChangeListener a listener that receives callbacks when zoom changes
      */
-    public void setupZoom(float zoomMaxRatio, int zoom, OnZoomChangedListener zoomChangeListener) {
+    public void setupZoom(float zoomMaxRatio, float zoom,
+                          OnZoomChangedListener zoomChangeListener) {
         mZoomListener = zoomChangeListener;
-        int zoomMax = ((int) zoomMaxRatio * 100) - ZOOM_MIN_FACTOR;
-        mZoomProcessor.setupZoom(zoomMax, zoom, null);
+        mZoomProcessor.setupZoom(zoomMaxRatio, zoom);
     }
 
     @Override
@@ -240,12 +232,10 @@ public class PreviewOverlay extends View
         // Diameter of Zoom UI donut hole as fraction of Zoom UI diameter.
         private static final float ZOOM_UI_DONUT = 0.25f;
 
-        final private int mMinIndex = 0;
-        private int mMaxIndex;
-        // Discrete Zoom level [mMinIndex,mMaxIndex].
-        private int mCurrentIndex;
+        private final float mMinRatio = 1.0f;
+        private float mMaxRatio;
         // Continuous Zoom level [0,1].
-        private float mCurrentFraction;
+        private float mCurrentRatio;
         private double mFingerAngle;  // in radians.
         private final Paint mPaint;
         private int mCenterX;
@@ -267,19 +257,14 @@ public class PreviewOverlay extends View
             mPaint.setStrokeCap(Paint.Cap.ROUND);
         }
 
-        // Set maximum Zoom Index from Module.
-        public void setZoomMax(int zoomMaxIndex) {
-            mMaxIndex = zoomMaxIndex;
+        // Set maximum zoom ratio from Module.
+        public void setZoomMax(float zoomMaxRatio) {
+            mMaxRatio = zoomMaxRatio;
         }
 
-        // Set current Zoom Index from Module.
-        public void setZoom(int index) {
-            mCurrentIndex = index;
-            mCurrentFraction = (float) index / (mMaxIndex - mMinIndex);
-        }
-
-        public void setZoomValue(int value) {
-            // Do nothing because we are not display text value in current UI.
+        // Set current zoom ratio from Module.
+        public void setZoom(float ratio) {
+            mCurrentRatio = ratio;
         }
 
         public void layout(int l, int t, int r, int b) {
@@ -308,7 +293,8 @@ public class PreviewOverlay extends View
                     mCenterY + mOuterRadius * (float) Math.sin(mFingerAngle), mPaint);
             // Draw Zoom progress.
             mPaint.setAlpha(255);
-            float zoomRadius = mInnerRadius + mCurrentFraction * (mOuterRadius - mInnerRadius);
+            float fillRatio = (mCurrentRatio - mMinRatio) / (mMaxRatio - mMinRatio);
+            float zoomRadius = mInnerRadius + fillRatio * (mOuterRadius - mInnerRadius);
             canvas.drawLine(mCenterX + mInnerRadius * (float) Math.cos(mFingerAngle),
                     mCenterY - mInnerRadius * (float) Math.sin(mFingerAngle),
                     mCenterX + zoomRadius * (float) Math.cos(mFingerAngle),
@@ -322,13 +308,21 @@ public class PreviewOverlay extends View
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             final float sf = detector.getScaleFactor();
-            mCurrentFraction = (0.33f + mCurrentFraction) * sf * sf - 0.33f;
-            if (mCurrentFraction < 0.0f) mCurrentFraction = 0.0f;
-            if (mCurrentFraction > 1.0f) mCurrentFraction = 1.0f;
-            int newIndex = mMinIndex + (int) (mCurrentFraction * (mMaxIndex - mMinIndex));
-            if (mZoomListener != null && newIndex != mCurrentIndex) {
-                mZoomListener.onZoomValueChanged(newIndex);
-                mCurrentIndex = newIndex;
+            mCurrentRatio = (0.33f + mCurrentRatio) * sf * sf - 0.33f;
+            if (mCurrentRatio < mMinRatio) mCurrentRatio = mMinRatio;
+            if (mCurrentRatio > mMaxRatio) mCurrentRatio = mMaxRatio;
+
+            // Only call the listener with a certain frequency. This is
+            // necessary because these listeners will make repeated
+            // applySettings() calls into the portability layer, and doing this
+            // too often can back up its handler and result in visible lag in
+            // updating the zoom level and other controls.
+            long now = SystemClock.uptimeMillis();
+            if (now > mDelayZoomCallUntilMillis) {
+                if (mZoomListener != null) {
+                    mZoomListener.onZoomValueChanged(mCurrentRatio);
+                }
+                mDelayZoomCallUntilMillis = now + ZOOM_MINIMUM_WAIT_MILLIS;
             }
             mFingerAngle = mScaleDetector.getAngle();
             invalidate();
@@ -379,8 +373,7 @@ public class PreviewOverlay extends View
             invalidate();
         }
 
-        private void setupZoom(int zoomMax, int zoom, List<Integer> zoomRatios) {
-            mZoomRatios = zoomRatios;
+        private void setupZoom(float zoomMax, float zoom) {
             setZoomMax(zoomMax);
             setZoom(zoom);
         }
