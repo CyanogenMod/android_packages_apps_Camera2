@@ -79,4 +79,15 @@ public abstract class AbstractOneCamera implements OneCamera {
             mReadyStateChangedListener.onReadyStateChanged(readyForCapture);
         }
     }
+
+    @Override
+    public float getMaxZoom() {
+        // If not implemented, return 1.0.
+        return 1f;
+    }
+
+    @Override
+    public void setZoom(float zoom) {
+        // If not implemented, no-op.
+    }
 }
