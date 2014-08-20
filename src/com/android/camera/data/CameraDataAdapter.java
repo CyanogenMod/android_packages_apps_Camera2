@@ -428,8 +428,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
             if (mDoneCallback != null) {
                 mDoneCallback.onCallback(null);
             }
-
-            android.util.Log.d("DBG>>>", "QueryTask loads new photos.");
             // Now check for any photos added since this task was kicked off
             LoadNewPhotosTask ltask = new LoadNewPhotosTask(mLastPhotoId);
             ltask.execute(mContext.getContentResolver());
