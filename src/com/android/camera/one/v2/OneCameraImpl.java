@@ -117,11 +117,13 @@ public class OneCameraImpl extends AbstractOneCamera {
         /** Request that is part of a pre shot trigger. */
         PRESHOT_TRIGGERED_AF,
         /** Capture request (purely for logging). */
-        CAPTURE
+        CAPTURE,
+        /** Tap to focus (purely for logging). */
+        TAP_TO_FOCUS
     }
 
     /** Current CONTROL_AF_MODE request to Camera2 API. */
-    private int mLastRequestedControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
+    private int mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
     /** Last OneCamera.AutoFocusState reported. */
     private AutoFocusState mLastResultAFState = AutoFocusState.INACTIVE;
     /** Last OneCamera.AutoFocusMode reported. */
@@ -138,12 +140,18 @@ public class OneCameraImpl extends AbstractOneCamera {
     private final Runnable mReturnToContinuousAFRunnable = new Runnable() {
         @Override
         public void run() {
-            repeatingPreviewWithReadyListener(null);
+            m3ARegions = ZERO_WEIGHT_3A_REGION;
+            mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
+            repeatingPreview(null);
         }
     };
 
     /** Current zoom value. 1.0 is no zoom. */
-    private final float mZoomValue = 1f;
+    private float mZoomValue = 1f;
+    /** Current crop region: set from mZoomValue. */
+    private Rect mCropRegion;
+    /** Current AE and AF regions */
+    private MeteringRectangle[] m3ARegions = ZERO_WEIGHT_3A_REGION;
     /** If partial results was OK, don't need to process total result. */
     private boolean mAutoFocusStateListenerPartialOK = false;
 
@@ -261,7 +269,8 @@ public class OneCameraImpl extends AbstractOneCamera {
     @Override
     public void takePicture(final PhotoCaptureParameters params, final CaptureSession session) {
         if (mTakePictureWhenLensStoppedAndAuto || mTakePictureWhenLensIsStopped) {
-            // Do not do anything when a picture is already in progress.
+            // Do not do anything when a picture is already in progress
+            // that is waiting for a 3A to finish.
             return;
         }
 
@@ -276,17 +285,27 @@ public class OneCameraImpl extends AbstractOneCamera {
         };
         mTakePictureStartMillis = SystemClock.uptimeMillis();
 
-        if (mLastResultAFMode == AutoFocusMode.CONTINUOUS_PICTURE
+        // TODO: First, check to see if we need to run pre-capture (flash).
+
+        if (false /*a picture is available from the ZSL ring buffer*/) {
+
+            // Process the ZSL picture and return that.
+            // TODO: Insert ZSL code here.
+
+        } else if (mLastResultAFMode == AutoFocusMode.CONTINUOUS_PICTURE
                 && mLastResultAFState == AutoFocusState.STOPPED_UNFOCUSED) {
+            // If in CONTINUOUS_PICTURE + unfocused, trigger an AF scan then
+            // take a picture.
             Log.v(TAG, "Unfocused: Triggering auto focus scan.");
-            // Trigger auto focus scan if in CONTINUOUS_PICTURE + unfocused.
             mTakePictureWhenLensStoppedAndAuto = true;
-            repeatingPreviewWithAFTrigger(null, null, RequestTag.PRESHOT_TRIGGERED_AF);
+            m3ARegions = ZERO_WEIGHT_3A_REGION;
+            sendAutoFocusTriggerCaptureRequest(RequestTag.PRESHOT_TRIGGERED_AF);
         } else if (mLastResultAFState == AutoFocusState.SCANNING) {
-            // Delay shot if scanning.
+            // If scanning, wait until the scan is done, then take the picture.
             Log.v(TAG, "Waiting until scan is done before taking shot.");
             mTakePictureWhenLensIsStopped = true;
         } else {
+            // TODO: Run CONTROL_AF_TRIGGER_START and wait until lens locks.
             takePictureNow(params, session);
         }
     }
@@ -303,19 +322,8 @@ public class OneCameraImpl extends AbstractOneCamera {
             // JPEG capture.
             CaptureRequest.Builder builder = mDevice
                     .createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-
-            // TODO: Check that these control modes are correct for AWB, AE.
-            if (mLastRequestedControlAFMode == CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE) {
-                builder.set(CaptureRequest.CONTROL_AF_MODE,
-                        CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                Log.v(TAG, "CaptureRequest with CONTROL_AF_MODE_CONTINUOUS_PICTURE.");
-            } else if (mLastRequestedControlAFMode == CameraMetadata.CONTROL_AF_MODE_AUTO) {
-                builder.set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
-                builder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                        CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
-                Log.v(TAG, "CaptureRequest with AUTO.");
-            }
             builder.setTag(RequestTag.CAPTURE);
+            addBaselineCaptureKeysToRequest(builder);
 
             if (sCaptureImageFormat == ImageFormat.JPEG) {
                 builder.set(CaptureRequest.JPEG_QUALITY, JPEG_QUALITY);
@@ -325,6 +333,7 @@ public class OneCameraImpl extends AbstractOneCamera {
 
             builder.addTarget(mPreviewSurface);
             builder.addTarget(mCaptureImageReader.getSurface());
+            // TODO: Fix this.
             applyFlashMode(params.flashMode, builder);
             CaptureRequest request = builder.build();
 
@@ -493,7 +502,15 @@ public class OneCameraImpl extends AbstractOneCamera {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     mCaptureSession = session;
-                    repeatingPreviewWithReadyListener(listener);
+                    m3ARegions = ZERO_WEIGHT_3A_REGION;
+                    mZoomValue = 1f;
+                    mCropRegion = cropRegionForZoom(mZoomValue);
+                    boolean success = repeatingPreview(null);
+                    if (success) {
+                        listener.onReadyForCapture();
+                    } else {
+                        listener.onSetupFailed();
+                    }
                 }
 
                 @Override
@@ -511,70 +528,59 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     /**
+     * Adds current regions to CaptureRequest and base AF mode + AF_TRIGGER_IDLE.
+     *
+     * @param builder Build for the CaptureRequest
+     */
+    private void addBaselineCaptureKeysToRequest(CaptureRequest.Builder builder) {
+        builder.set(CaptureRequest.CONTROL_AF_REGIONS, m3ARegions);
+        builder.set(CaptureRequest.CONTROL_AE_REGIONS, m3ARegions);
+        builder.set(CaptureRequest.SCALER_CROP_REGION, mCropRegion);
+        builder.set(CaptureRequest.CONTROL_AF_MODE, mControlAFMode);
+        builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
+    }
+
+    /**
      * Request preview capture stream with AF_MODE_CONTINUOUS_PICTURE.
      *
-     * @param readyListener called when request was build and sent, or if
-     *            setting up the request failed.
+     * @return true if request was build and sent successfully.
+     * @param tag
      */
-    private void repeatingPreviewWithReadyListener(CaptureReadyCallback readyListener) {
+    private boolean repeatingPreview(Object tag) {
         try {
             CaptureRequest.Builder builder = mDevice.
                     createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             builder.addTarget(mPreviewSurface);
             builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            mLastRequestedControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
-            builder.set(CaptureRequest.CONTROL_AF_MODE,
-                    CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            // TODO: Move to apply3ARegions(CaptureRequest.Builder builder).
-            // Reset 3A regions.
-            builder.set(CaptureRequest.CONTROL_AF_REGIONS, ZERO_WEIGHT_3A_REGION);
-            builder.set(CaptureRequest.CONTROL_AE_REGIONS, ZERO_WEIGHT_3A_REGION);
-            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
+            addBaselineCaptureKeysToRequest(builder);
             mCaptureSession.setRepeatingRequest(builder.build(), mAutoFocusStateListener,
                     mCameraHandler);
-            Log.v(TAG, "Sent preview request with AF_MODE_CONTINUOUS_PICTURE.");
-            if (readyListener != null) {
-                readyListener.onReadyForCapture();
-            }
+            Log.v(TAG, String.format("Sent repeating Preview request, zoom = %.2f", mZoomValue));
+            return true;
         } catch (CameraAccessException ex) {
             Log.e(TAG, "Could not access camera setting up preview.", ex);
-            if (readyListener != null) {
-                readyListener.onSetupFailed();
-            }
+            return false;
         }
     }
 
     /**
-     * Request preview capture stream with auto focus cycle.
-     *
-     * @param focusRegions focus regions, for tap to focus/expose.
-     * @param meteringRegions metering regions, for tap to focus/expose.
+     * Request preview capture stream with auto focus trigger cycle.
      */
-    private void repeatingPreviewWithAFTrigger(MeteringRectangle[] focusRegions,
-            MeteringRectangle[] meteringRegions, Object tag) {
+    private void sendAutoFocusTriggerCaptureRequest(Object tag) {
         try {
+            // Step 1: Request single frame CONTROL_AF_TRIGGER_START.
             CaptureRequest.Builder builder;
             builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             builder.addTarget(mPreviewSurface);
             builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            if (focusRegions != null) {
-                builder.set(CaptureRequest.CONTROL_AF_REGIONS, focusRegions);
-            }
-            if (meteringRegions != null) {
-                builder.set(CaptureRequest.CONTROL_AE_REGIONS, meteringRegions);
-            }
-            builder.set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
-            mLastRequestedControlAFMode = CameraMetadata.CONTROL_AF_MODE_AUTO;
-
-            // Step 1: Request single frame CONTROL_AF_TRIGGER_START.
+            mControlAFMode = CameraMetadata.CONTROL_AF_MODE_AUTO;
+            addBaselineCaptureKeysToRequest(builder);
             builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
+            builder.setTag(tag);
             mCaptureSession.capture(builder.build(), mAutoFocusStateListener, mCameraHandler);
 
-            // Step 2: Request continuous frames CONTROL_AF_TRIGGER_IDLE.
-            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
-            builder.setTag(tag);
-            mCaptureSession.setRepeatingRequest(builder.build(), mAutoFocusStateListener,
-                    mCameraHandler);
+            // Step 2: Call repeatingPreview to update mControlAFMode.
+            repeatingPreview(tag);
             resumeContinuousAFAfterDelay(FOCUS_HOLD_MILLIS);
         } catch (CameraAccessException ex) {
             Log.e(TAG, "Could not execute preview request.", ex);
@@ -616,7 +622,9 @@ public class OneCameraImpl extends AbstractOneCamera {
             mCameraHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    repeatingPreviewWithReadyListener(null);
+                    m3ARegions = ZERO_WEIGHT_3A_REGION;
+                    mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
+                    repeatingPreview(null);
                 }
             });
             mTakePictureWhenLensStoppedAndAuto = false;
@@ -639,7 +647,8 @@ public class OneCameraImpl extends AbstractOneCamera {
     @Override
     public void triggerAutoFocus() {
         Log.v(TAG, "triggerAutoFocus()");
-        repeatingPreviewWithAFTrigger(null, null, null);
+        m3ARegions = ZERO_WEIGHT_3A_REGION;
+        sendAutoFocusTriggerCaptureRequest(null);
     }
 
     @Override
@@ -679,10 +688,30 @@ public class OneCameraImpl extends AbstractOneCamera {
                 + METERING_REGION_WEIGHT * MeteringRectangle.METERING_WEIGHT_MAX);
 
         Log.v(TAG, "sensor 3A @ x0=" + x0 + " y0=" + y0 + " dx=" + (x1 - x0) + " dy=" + (y1 - y0));
-        MeteringRectangle[] regions = new MeteringRectangle[] {
-                new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, wt)
-        };
-        repeatingPreviewWithAFTrigger(regions, regions, null);
+        m3ARegions = new MeteringRectangle[]{new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, wt)};
+        sendAutoFocusTriggerCaptureRequest(RequestTag.TAP_TO_FOCUS);
+    }
+
+    @Override
+    public float getMaxZoom() {
+        return mCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+    }
+
+    @Override
+    public void setZoom(float zoom) {
+        mZoomValue = zoom;
+        mCropRegion = cropRegionForZoom(zoom);
+        repeatingPreview(null);
+    }
+
+    private Rect cropRegionForZoom(float zoom) {
+        Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+        float zoomWidth = sensor.width() / zoom;
+        float zoomHeight = sensor.height() / zoom;
+        float zoomLeft = (sensor.width() - zoomWidth) / 2;
+        float zoomTop = (sensor.height() - zoomHeight) / 2;
+        return new Rect((int) zoomLeft, (int) zoomTop, (int) (zoomLeft + zoomWidth),
+                (int) (zoomTop + zoomHeight));
     }
 
     /**

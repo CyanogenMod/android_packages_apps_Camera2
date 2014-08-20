@@ -219,7 +219,7 @@ public class CaptureModule extends CameraModule
     /** Current orientation of the device. */
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
     /** Current zoom value. */
-    private final float mZoomValue = 1f;
+    private float mZoomValue = 1f;
 
     /** True if in AF tap-to-focus sequence. */
     private boolean mTapToFocusInProgress = false;
@@ -285,7 +285,6 @@ public class CaptureModule extends CameraModule
     // private float mZoomValue;
     // private int mSensorOrientation;
     // private int mLensFacing;
-    // private volatile float mMaxZoomRatio = 1.0f;
     // private String mFlashMode;
     /** CLEAN UP END */
 
@@ -455,6 +454,8 @@ public class CaptureModule extends CameraModule
                     public void onReadyForCapture() {
                         Log.d(TAG, "Ready for capture.");
                         onPreviewStarted();
+                        // Enable zooming after preview has started.
+                        mUI.initializeZoom(mCamera.getMaxZoom());
                         mCamera.setFocusStateListener(CaptureModule.this);
                         mCamera.setReadyStateChangedListener(CaptureModule.this);
                     }
@@ -769,6 +770,17 @@ public class CaptureModule extends CameraModule
             height = mScreenHeight;
         }
         updatePreviewTransform(width, height);
+    }
+
+    /**
+     * Set zoom value.
+     * @param zoom Zoom value, must be between 1.0 and mCamera.getMaxZoom().
+     */
+    public void setZoom(float zoom) {
+        mZoomValue = zoom;
+        if (mCamera != null) {
+            mCamera.setZoom(zoom);
+        }
     }
 
     /**
