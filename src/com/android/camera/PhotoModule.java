@@ -1558,7 +1558,8 @@ public class PhotoModule
             oldOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
             Log.v(TAG, "onOrientationChanged, update parameters");
             if (mParameters != null && mCameraDevice != null) {
-                onSharedPreferenceChanged();
+                setFlipValue();
+                mCameraDevice.setParameters(mParameters);
             }
         }
 
@@ -2560,6 +2561,11 @@ public class PhotoModule
                 mCameraDevice.setHistogramMode(null);
             }
         }
+
+        setFlipValue();
+    }
+
+    private void setFlipValue() {
         // Read Flip mode from adb command
         //value: 0(default) - FLIP_MODE_OFF
         //value: 1 - FLIP_MODE_H
@@ -2601,6 +2607,7 @@ public class PhotoModule
             mParameters.set(CameraSettings.KEY_QC_SNAPSHOT_PICTURE_FLIP, picture_flip);
         }
     }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setAutoExposureLockIfSupported() {
         if (mAeLockSupported) {
