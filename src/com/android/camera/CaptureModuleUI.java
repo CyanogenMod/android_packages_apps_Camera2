@@ -27,6 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.android.camera.debug.Log;
+import com.android.camera.ui.PreviewOverlay;
+import com.android.camera.ui.PreviewOverlay.OnZoomChangedListener;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.ProgressOverlay;
 import com.android.camera.util.UsageStatistics;
@@ -38,10 +41,13 @@ import com.android.camera2.R;
 public class CaptureModuleUI implements
         PreviewStatusListener {
 
+    private static final Log.Tag TAG = new Log.Tag("CaptureModuleUI");
+
     private final CameraActivity mActivity;
     private final CaptureModule mModule;
     private final View mRootView;
 
+    private final PreviewOverlay mPreviewOverlay;
     private final ProgressOverlay mProgressOverlay;
     private final View.OnLayoutChangeListener mLayoutListener;
     private final TextureView mPreviewView;
@@ -57,6 +63,26 @@ public class CaptureModuleUI implements
     private final FocusOverlayManager.FocusUI mFocusUI;
     private int mPreviewAreaWidth;
     private int mPreviewAreaHeight;
+
+    /** Maximum zoom; intialize to 1.0 (disabled) */
+    private float mMaxZoom = 1f;
+
+    /** Set up listener to receive zoom changes from View and send to module. */
+    private final OnZoomChangedListener mZoomChancedListener  = new OnZoomChangedListener() {
+        @Override
+        public void onZoomValueChanged(int index) {
+            float zoomValue = ((float) PreviewOverlay.ZOOM_MIN_FACTOR + (float) index) / 100;
+            mModule.setZoom(zoomValue);
+        }
+
+        @Override
+        public void onZoomStart() {
+        }
+
+        @Override
+        public void onZoomEnd() {
+        }
+    };
 
     @Override
     public void onPreviewLayoutChanged(View v, int left, int top, int right,
@@ -106,6 +132,7 @@ public class CaptureModuleUI implements
 
         mPreviewView = (TextureView) mRootView.findViewById(R.id.preview_content);
 
+        mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mProgressOverlay = (ProgressOverlay) mRootView.findViewById(R.id.progress_overlay);
 
         mPreviewThumb = (ImageView) mRootView.findViewById(R.id.gcam_preview_thumb);
@@ -186,6 +213,7 @@ public class CaptureModuleUI implements
 
     public void clearAutoFocusIndicator(boolean waitUntilProgressIsHidden) {
     }
+
     /**
      * Sets the progress of the gcam picture taking.
      *
@@ -200,5 +228,16 @@ public class CaptureModuleUI implements
         m = getPreviewTransform(m);
         Bitmap src = mPreviewView.getBitmap();
         return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, true);
+    }
+
+    /**
+     * Enables zoom UI, setting maximum zoom.
+     * Called from Module when camera is available.
+     *
+     * @param maxZoom maximum zoom value.
+     */
+    public void initializeZoom(float maxZoom) {
+        mMaxZoom = maxZoom;
+        mPreviewOverlay.setupZoom(mMaxZoom, 0, mZoomChancedListener);
     }
 }
