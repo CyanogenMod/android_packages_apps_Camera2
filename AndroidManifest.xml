@@ -42,7 +42,7 @@
     <application
         android:name="com.android.camera.app.CameraApp"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_camera_clr_48dp"
+        android:icon="@drawable/logo_camera_color_44in48dp"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:restoreAnyVersion="true"
