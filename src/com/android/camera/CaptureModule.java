@@ -64,7 +64,6 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Size;
-import com.android.camera.util.SystemProperties;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
@@ -745,8 +744,8 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onTakePictureProgress(int progressPercent) {
-        // TODO once we have HDR+ hooked up.
+    public void onTakePictureProgress(float progress) {
+        mUI.setPictureTakingProgress((int)(progress * 100));
     }
 
     @Override
