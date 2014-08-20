@@ -337,4 +337,20 @@ public interface OneCamera {
      * @return Whether this camera is facing to the front.
      */
     public boolean isFrontFacing();
+
+    /**
+     * Get the maximum zoom value.
+     *
+     * @return A float number to represent the maximum zoom value(>= 1.0).
+     */
+    public float getMaxZoom();
+
+    /**
+     * This function sets the current zoom ratio value.
+     * <p>
+     * The zoom range must be [1.0, maxZoom]. The maxZoom can be queried by {@link #getMaxZoom}.
+     *
+     * @param zoom Zoom ratio value passed to scaler.
+     */
+    public void setZoom(float zoom);
 }

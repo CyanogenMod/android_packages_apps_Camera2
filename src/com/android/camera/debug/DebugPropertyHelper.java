@@ -30,9 +30,9 @@ public class DebugPropertyHelper {
     /** Switch between PhotoModule and the new CaptureModule. */
     private static final String PROP_ENABLE_CAPTURE_MODULE = PREFIX + ".newcapture";
     /** Enable additional focus logging. */
-    private static final String PROP_FOCUS_DEBUG_LOG = PREFIX + ".focus_debug_log";
+    private static final String PROP_FOCUS_DEBUG_LOG = PREFIX + ".frame_log";
     /** Enable additional debug UI to show AE, AF, Face detection states */
-    private static final String PROP_3A_DEBUG_UI = PREFIX + ".3A_debug_ui";
+    private static final String PROP_3A_DEBUG_UI = PREFIX + ".debug_ui";
     /** Write data about each capture request to disk. */
     private static final String PROP_WRITE_CAPTURE_DATA = PREFIX + ".capture_write";
 
