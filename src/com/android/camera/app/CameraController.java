@@ -104,7 +104,8 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         if (mCameraProxy != null) {
             return mCameraProxy.getCameraId();
         } else {
-            return -1;
+            Log.v(TAG, "getCurrentCameraId without an open camera... returning requested id");
+            return mRequestingCameraId;
         }
     }
 
