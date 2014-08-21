@@ -527,7 +527,14 @@ public class PhotoModule
             }, createAspectRatioDialogCallback());
         } else {
             // App upgrade. Only show aspect ratio selection.
-            mUI.showAspectRatioDialog(createAspectRatioDialogCallback());
+            boolean wasShown = mUI.showAspectRatioDialog(createAspectRatioDialogCallback());
+            if (!wasShown) {
+                // If the dialog was not shown, set this flag to true so that we
+                // never have to check for it again. It means that we don't need
+                // to show the dialog on this device.
+                mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_USER_SELECTED_ASPECT_RATIO, true);
+            }
         }
     }
 
@@ -654,6 +661,7 @@ public class PhotoModule
         Log.i(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
         closeCamera();
         mCameraId = mPendingSwitchCameraId;
+
         settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID, mCameraId);
         requestCameraOpen();
         mUI.clearFaces();
@@ -714,7 +722,7 @@ public class PhotoModule
                 @Override
                 public void onStateChanged(int state) {
                     SettingsManager settingsManager = mActivity.getSettingsManager();
-                    if (GcamHelper.hasGcamCapture()) {
+                    if (GcamHelper.hasGcamAsSeparateModule()) {
                         // Set the camera setting to default backfacing.
                         settingsManager.setToDefault(mAppController.getModuleScope(),
                                                      Keys.KEY_CAMERA_ID);
@@ -763,7 +771,7 @@ public class PhotoModule
         // PhotoModule should hard reset HDR+ to off,
         // and HDR to off if HDR+ is supported.
         settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, false);
-        if (GcamHelper.hasGcamCapture()) {
+        if (GcamHelper.hasGcamAsSeparateModule()) {
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR, false);
         }
     }

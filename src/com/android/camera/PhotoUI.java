@@ -19,7 +19,6 @@ package com.android.camera;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -44,8 +43,8 @@ import com.android.camera.widget.AspectRatioDialogLayout;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera.widget.LocationDialogLayout;
 import com.android.camera2.R;
-import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraAgent;
+import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraSettings;
 
 import java.util.List;
@@ -94,7 +93,7 @@ public class PhotoUI implements PreviewStatusListener,
         }
     };
     private Runnable mRunnableForNextFrame = null;
-    private CountDownView mCountdownView;
+    private final CountDownView mCountdownView;
 
     @Override
     public GestureDetector.OnGestureListener getGestureListener() {
@@ -400,18 +399,24 @@ public class PhotoUI implements PreviewStatusListener,
         }
     }
 
-    public void showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback) {
+    /**
+     * @return Whether the dialog was shown.
+     */
+    public boolean showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback) {
         if (showAspectRatioDialogOnThisDevice()) {
             setDialog(new Dialog(mActivity, android.R.style.Theme_Black_NoTitleBar_Fullscreen));
             showAspectRatioDialog(callback, mDialog);
+            return true;
+        } else {
+            return false;
         }
     }
 
-    private void showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback,
+    private boolean showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback,
             final Dialog aspectRatioDialog) {
         if (aspectRatioDialog == null) {
             Log.e(TAG, "Dialog for aspect ratio is null.");
-            return;
+            return false;
         }
         final AspectRatioDialogLayout aspectRatioDialogLayout =
                 (AspectRatioDialogLayout) mActivity
@@ -434,6 +439,7 @@ public class PhotoUI implements PreviewStatusListener,
         aspectRatioDialog.setContentView(aspectRatioDialogLayout, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         aspectRatioDialog.show();
+        return true;
     }
 
     /**
