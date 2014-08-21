@@ -722,6 +722,14 @@ public class VideoModule extends CameraModule
                                    Keys.KEY_VIDEO_QUALITY_BACK)) {
             settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL,
                                          Keys.KEY_VIDEO_QUALITY_BACK);
+
+            // TODO: Remove this once 4k recording is stable enough on new devices.
+            // Don't set the default resolution to be large if the device supports 4k video.
+            if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_2160P)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                                    Keys.KEY_VIDEO_QUALITY_BACK,
+                                    mAppController.getAndroidContext().getString(R.string.pref_video_quality_medium));
+            }
         }
         if (!settingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
                                    Keys.KEY_VIDEO_QUALITY_FRONT)) {
