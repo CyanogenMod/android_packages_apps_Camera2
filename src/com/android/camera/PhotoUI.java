@@ -929,17 +929,20 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onFocusStarted() {
-        getFocusIndicator().showStart();
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) indicator.showStart();
     }
 
     @Override
     public void onFocusSucceeded(boolean timeout) {
-        getFocusIndicator().showSuccess(timeout);
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) indicator.showSuccess(timeout);
     }
 
     @Override
     public void onFocusFailed(boolean timeout) {
-        getFocusIndicator().showFail(timeout);
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) indicator.showFail(timeout);
     }
 
     @Override
