@@ -157,7 +157,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends Activity
         implements AppController, CameraAgent.CameraOpenCallback,
-        ActionBar.OnMenuVisibilityListener, ShareActionProvider.OnShareTargetSelectedListener,
+        ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
 
     private static final Log.Tag TAG = new Log.Tag("CameraActivity");
@@ -283,6 +283,15 @@ public class CameraActivity extends Activity
         @Override
         public void onReceive(Context context, Intent intent) {
             finish();
+        }
+    };
+
+    private ActionBar.OnMenuVisibilityListener mOnMenuVisibilityListener =
+            new ActionBar.OnMenuVisibilityListener() {
+        @Override
+        public void onMenuVisibilityChanged(boolean isVisible) {
+            // TODO: Remove this or bring back the original implementation: cancel
+            // auto-hide actionbar.
         }
     };
 
@@ -603,6 +612,7 @@ public class CameraActivity extends Activity
                 @Override
                 public void onSwipeOutBegin() {
                     mActionBar.hide();
+                    mCameraAppUI.hideBottomControls();
                     mFilmstripCoversPreview = false;
                     updatePreviewVisibility();
                 }
@@ -787,8 +797,10 @@ public class CameraActivity extends Activity
         if (visible != mActionBar.isShowing()) {
             if (visible) {
                 mActionBar.show();
+                mCameraAppUI.showBottomControls();
             } else {
                 mActionBar.hide();
+                mCameraAppUI.hideBottomControls();
             }
         }
         mFilmstripCoversPreview = visible;
@@ -839,12 +851,6 @@ public class CameraActivity extends Activity
                 return mNfcPushUris;
             }
         }, CameraActivity.this);
-    }
-
-    @Override
-    public void onMenuVisibilityChanged(boolean isVisible) {
-        // TODO: Remove this or bring back the original implementation: cancel
-        // auto-hide actionbar.
     }
 
     @Override
@@ -1332,7 +1338,7 @@ public class CameraActivity extends Activity
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_main);
         mActionBar = getActionBar();
-        mActionBar.addOnMenuVisibilityListener(this);
+        mActionBar.addOnMenuVisibilityListener(mOnMenuVisibilityListener);
         mMainHandler = new MainHandler(this, getMainLooper());
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
                 CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.API_1),
@@ -1848,7 +1854,7 @@ public class CameraActivity extends Activity
         if (mSecureCamera) {
             unregisterReceiver(mScreenOffReceiver);
         }
-        mActionBar.removeOnMenuVisibilityListener(this);
+        mActionBar.removeOnMenuVisibilityListener(mOnMenuVisibilityListener);
         mSettingsManager.removeAllListeners();
         mCameraController.removeCallbackReceiver();
         getContentResolver().unregisterContentObserver(mLocalImagesObserver);
