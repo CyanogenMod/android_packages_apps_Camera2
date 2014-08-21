@@ -74,4 +74,9 @@ public class ApiHelper {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 || "KeyLimePie".equals(Build.VERSION.CODENAME);
     }
+
+    public static boolean isLOrHigher() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.L
+                || "L".equals(Build.VERSION.CODENAME);
+    }
 }
