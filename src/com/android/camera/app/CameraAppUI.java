@@ -1487,6 +1487,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         return mFilmstripBottomControls;
     }
 
+    public void showBottomControls() {
+        mFilmstripBottomControls.show();
+    }
+
+    public void hideBottomControls() {
+        mFilmstripBottomControls.hide();
+    }
+
     /**
      * @param listener The listener for bottom controls.
      */

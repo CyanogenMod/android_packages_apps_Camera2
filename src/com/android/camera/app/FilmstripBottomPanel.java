@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.camera.util.Gusterpolator;
 import com.android.camera.widget.Cling;
 import com.android.camera.widget.ExternalViewerButton;
 import com.android.camera2.R;
@@ -32,6 +33,7 @@ import com.android.camera2.R;
  * sphere image and creating a tiny planet from a photo sphere image.
  */
 class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
+    private static final int ANIM_DURATION = 150;
 
     private final AppController mController;
     private final ViewGroup mLayout;
@@ -264,5 +266,19 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
         } else {
             mMiddleFiller.setVisibility(View.GONE);
         }
+    }
+
+    public void show() {
+        int offset = mLayout.getHeight();
+        mLayout.setTranslationY(offset);
+        mLayout.animate().translationY(0).setDuration(ANIM_DURATION)
+                .setInterpolator(Gusterpolator.INSTANCE);
+    }
+
+    public void hide() {
+        int offset = mLayout.getHeight();
+        mLayout.setTranslationY(0);
+        mLayout.animate().translationY(offset).setDuration(ANIM_DURATION)
+                .setInterpolator(Gusterpolator.INSTANCE);
     }
 }
