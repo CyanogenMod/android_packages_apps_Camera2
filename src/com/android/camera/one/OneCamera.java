@@ -157,13 +157,14 @@ public interface OneCamera {
         public void onPictureTakenFailed();
 
         /**
-         * Called if the capture session requires processing to update the the
-         * implementer about the current progress.
+         * Called when capture session is reporting a processing update. This
+         * should only be called by capture sessions that require the user to
+         * hold still for a while.
          *
-         * @param progressPercent a value from 0-100, indicating the current
-         *            processing progress.
+         * @param progress a value from 0...1, indicating the current processing
+         *            progress.
          */
-        public void onTakePictureProgress(int progressPercent);
+        public void onTakePictureProgress(float progress);
     }
 
     /**
@@ -348,7 +349,8 @@ public interface OneCamera {
     /**
      * This function sets the current zoom ratio value.
      * <p>
-     * The zoom range must be [1.0, maxZoom]. The maxZoom can be queried by {@link #getMaxZoom}.
+     * The zoom range must be [1.0, maxZoom]. The maxZoom can be queried by
+     * {@link #getMaxZoom}.
      *
      * @param zoom Zoom ratio value passed to scaler.
      */

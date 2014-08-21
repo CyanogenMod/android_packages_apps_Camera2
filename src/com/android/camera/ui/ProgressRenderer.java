@@ -19,7 +19,6 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
@@ -30,7 +29,6 @@ import com.android.camera2.R;
  * Renders a circular progress bar on the screen.
  */
 public class ProgressRenderer {
-
     private final int mProgressRadius;
     private final Paint mProgressBasePaint;
     private final Paint mProgressPaint;
@@ -38,7 +36,13 @@ public class ProgressRenderer {
     private RectF mArcBounds = new RectF(0, 0, 1, 1);
     private int mProgressAngleDegrees = 270;
     private boolean mVisible = false;
-    private View mParentView;
+    private final View mParentView;
+    private final Runnable mInvalidateParentViewRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mParentView.invalidate();
+        }
+    };
 
     /**
      * After we reach 100%, keep on painting the progress for another x milliseconds
@@ -58,6 +62,8 @@ public class ProgressRenderer {
     /**
      * Shows a progress indicator. If the progress is '100', the progress
      * indicator will be hidden.
+     * <p>
+     * Can be called from any thread.
      *
      * @param percent the progress in percent (0-100).
      */
@@ -70,7 +76,7 @@ public class ProgressRenderer {
         if (percent < 100) {
             mVisible = true;
         }
-        mParentView.invalidate();
+        mParentView.post(mInvalidateParentViewRunnable);
     }
 
     /**
