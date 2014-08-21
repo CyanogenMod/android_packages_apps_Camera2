@@ -201,8 +201,12 @@
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
 
-    <!-- The default quality value is 'large'. -->
-    <string name="pref_video_quality_default" translatable="false">large</string>
+    <!-- The value of a camera preference indicating the video quality is 'large'. -->
+    <string name="pref_video_quality_large" translatable="false">large</string>
+    <!-- The value of a camera preference indicating the video quality is 'medium'. -->
+    <string name="pref_video_quality_medium" translatable="false">medium</string>
+    <!-- The value of a camera preference indicating the video quality is 'small'. -->
+    <string name="pref_video_quality_small" translatable="false">small</string>
 
     <!-- Describes the preference dialog for choosing interval between frame capture for
     time lapse recording. Appears at top of the dialog. [CHAR LIMIT=30] -->
