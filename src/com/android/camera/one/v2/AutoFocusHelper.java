@@ -68,6 +68,13 @@ public class AutoFocusHelper {
             Log.e(TAG, "\n!!!! TotalCaptureResult missing CONTROL_AF_STATE. !!!!\n ");
             return;
         }
+        if (result.get(CaptureResult.LENS_STATE) == null) {
+            // throw new
+            // IllegalStateException("CaptureResult missing LENS_STATE.");
+            Log.e(TAG, "\n!!!! TotalCaptureResult missing LENS_STATE. !!!!\n ");
+            return;
+        }
+
         Object tag = result.getRequest().getTag();
 
         Log.v(TAG, String.format("af_state:%-17s  lens_foc_dist:%.3f  lens_state:%-10s  %s",
