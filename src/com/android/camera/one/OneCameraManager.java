@@ -20,6 +20,8 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.debug.Log;
@@ -77,12 +79,14 @@ public abstract class OneCameraManager {
      * or otherwise uses the portability API.
      */
     private static OneCameraManager create(CameraActivity activity) {
+        DisplayMetrics displayMetrics = getDisplayMetrics(activity);
         CameraManager cameraManager = (CameraManager) activity
                 .getSystemService(Context.CAMERA_SERVICE);
         int maxMemoryMB = activity.getServices().getMemoryManager()
                 .getMaxAllowedNativeMemoryAllocation();
         if (cameraManager != null && isCamera2FullySupported(cameraManager)) {
-            return new com.android.camera.one.v2.OneCameraManagerImpl(cameraManager, maxMemoryMB);
+            return new com.android.camera.one.v2.OneCameraManagerImpl(cameraManager, maxMemoryMB,
+                    displayMetrics);
         } else {
             return new com.android.camera.one.v1.OneCameraManagerImpl();
         }
@@ -107,5 +111,16 @@ public abstract class OneCameraManager {
             Log.e(TAG, "Could not access camera to determine hardware-level API support.");
             return false;
         }
+    }
+
+    private static DisplayMetrics getDisplayMetrics(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager)
+                context.getSystemService(Context.WINDOW_SERVICE);
+        if (wm != null) {
+            displayMetrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(displayMetrics);
+        }
+        return displayMetrics;
     }
 }
