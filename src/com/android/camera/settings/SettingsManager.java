@@ -449,7 +449,7 @@ public class SettingsManager {
      * Set a setting to the default value stored in the DefaultsStore.
      */
     public void setToDefault(String scope, String key) {
-	set(scope, key, getStringDefault(key));
+        set(scope, key, getStringDefault(key));
     }
 
     /**

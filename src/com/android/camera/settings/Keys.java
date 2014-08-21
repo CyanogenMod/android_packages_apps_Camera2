@@ -103,11 +103,11 @@ public class Keys {
             context.getResources().getStringArray(R.array.pref_camera_focusmode_entryvalues));
 
         settingsManager.setDefaults(KEY_VIDEO_QUALITY_BACK,
-            context.getString(R.string.pref_video_quality_default),
+            context.getString(R.string.pref_video_quality_large),
             context.getResources().getStringArray(R.array.pref_video_quality_entryvalues));
 
         settingsManager.setDefaults(KEY_VIDEO_QUALITY_FRONT,
-            context.getString(R.string.pref_video_quality_default),
+            context.getString(R.string.pref_video_quality_large),
             context.getResources().getStringArray(R.array.pref_video_quality_entryvalues));
 
         settingsManager.setDefaults(KEY_JPEG_QUALITY,
