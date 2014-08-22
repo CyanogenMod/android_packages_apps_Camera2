@@ -267,15 +267,6 @@ public class CameraActivity extends Activity
     private MemoryManager mMemoryManager;
     private MotionManager mMotionManager;
 
-    private ActionBar.OnMenuVisibilityListener mOnMenuVisibilityListener =
-            new ActionBar.OnMenuVisibilityListener() {
-                @Override
-                public void onMenuVisibilityChanged(boolean isVisible) {
-                    // TODO: Remove this or bring back the original implementation: cancel
-                    // auto-hide actionbar.
-                }
-    };
-
     @Override
     public CameraAppUI getCameraAppUI() {
         return mCameraAppUI;
