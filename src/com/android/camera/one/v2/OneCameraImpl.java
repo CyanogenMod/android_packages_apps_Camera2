@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2;
 
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -37,6 +38,7 @@ import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.view.Surface;
 
+import com.android.camera.CaptureModuleUtil;
 import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.debug.DebugPropertyHelper;
@@ -702,6 +704,13 @@ public class OneCameraImpl extends AbstractOneCamera {
         mZoomValue = zoom;
         mCropRegion = cropRegionForZoom(zoom);
         repeatingPreview(null);
+    }
+
+    @Override
+    public Size pickPreviewSize(Size pictureSize, Context context) {
+        float pictureAspectRatio = pictureSize.getWidth() / (float) pictureSize.getHeight();
+        return CaptureModuleUtil.getOptimalPreviewSize(context, getSupportedSizes(),
+                pictureAspectRatio);
     }
 
     private Rect cropRegionForZoom(float zoom) {

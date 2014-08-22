@@ -58,7 +58,6 @@ import com.android.camera.one.OneCameraManager;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
-import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
@@ -427,7 +426,7 @@ public class CaptureModule extends CameraModule
             public void onCameraOpened(final OneCamera camera) {
                 Log.d(TAG, "onCameraOpened: " + camera);
                 mCamera = camera;
-                updateBufferDimension();
+                updatePreviewBufferDimension();
 
                 // If the surface texture is not destroyed, it may have the last
                 // frame lingering.
@@ -663,7 +662,8 @@ public class CaptureModule extends CameraModule
     /**
      * This AF status listener does two things:
      * <ol>
-     * <li>Ends tap-to-focus period when mode goes from AUTO to CONTINUOUS_PICTURE.</li>
+     * <li>Ends tap-to-focus period when mode goes from AUTO to
+     * CONTINUOUS_PICTURE.</li>
      * <li>Updates AF UI if tap-to-focus is not in progress.</li>
      * </ol>
      */
@@ -773,6 +773,7 @@ public class CaptureModule extends CameraModule
 
     /**
      * Set zoom value.
+     *
      * @param zoom Zoom value, must be between 1.0 and mCamera.getMaxZoom().
      */
     public void setZoom(float zoom) {
@@ -802,8 +803,8 @@ public class CaptureModule extends CameraModule
     }
 
     /***
-     * Update the preview transform based on the new dimensions.
-     * TODO: Make work with all: aspect ratios/resolutions x screens/cameras.
+     * Update the preview transform based on the new dimensions. TODO: Make work
+     * with all: aspect ratios/resolutions x screens/cameras.
      */
     private void updatePreviewTransform(int incomingWidth, int incomingHeight,
             boolean forceUpdate) {
@@ -821,7 +822,7 @@ public class CaptureModule extends CameraModule
             mDisplayRotation = incomingRotation;
             mScreenWidth = incomingWidth;
             mScreenHeight = incomingHeight;
-            updateBufferDimension();
+            updatePreviewBufferDimension();
 
             mPreviewTranformationMatrix = mAppController.getCameraAppUI().getPreviewTransform(
                     mPreviewTranformationMatrix);
@@ -882,31 +883,10 @@ public class CaptureModule extends CameraModule
                 effectiveHeight = temp;
             }
 
-            boolean is16by9 = false;
-
-            // TODO: BACK/FRONT.
-            Size pictureSize = getPictureSizeFromSettings();
-            if (pictureSize != null) {
-                pictureSize = ResolutionUtil.getApproximateSize(pictureSize);
-                if (pictureSize.equals(new Size(16, 9))) {
-                    is16by9 = true;
-                }
-            }
-
-            float scale;
-            if (is16by9) {
-                // We are going to be clipping off edges to achieve the 16
-                // by 9 aspect ratio so we will choose the max here to fill,
-                // instead of fit.
-                scale =
-                        Math.max(width / (float) effectiveWidth, height
-                                / (float) effectiveHeight);
-            } else {
-                // Scale to fit view, cropping the longest dimension
-                scale =
-                        Math.min(width / (float) effectiveWidth, height
-                                / (float) effectiveHeight);
-            }
+            // Scale to fit view, cropping the longest dimension
+            float scale =
+                    Math.min(width / (float) effectiveWidth, height
+                            / (float) effectiveHeight);
             mPreviewTranformationMatrix.postScale(scale, scale, centerX, centerY);
 
             // TODO: Take these quantities from mPreviewArea.
@@ -917,24 +897,8 @@ public class CaptureModule extends CameraModule
             mPreviewTranformationMatrix.postTranslate(previewCenterX - centerX, previewCenterY
                     - centerY);
 
-            if (is16by9) {
-                float aspectRatio = FULLSCREEN_ASPECT_RATIO;
-                RectF renderedPreviewRect = mAppController.getFullscreenRect();
-                float desiredPreviewWidth = Math.max(renderedPreviewRect.height(),
-                        renderedPreviewRect.width()) * 1 / aspectRatio;
-                int letterBoxWidth = (int) Math.ceil((Math.min(renderedPreviewRect.width(),
-                        renderedPreviewRect.height()) - desiredPreviewWidth) / 2.0f);
-                mAppController.getCameraAppUI().addLetterboxing(letterBoxWidth);
-
-                float wOffset = -(previewWidth - renderedPreviewRect.width()) / 2.0f;
-                float hOffset = -(previewHeight - renderedPreviewRect.height()) / 2.0f;
-                mPreviewTranformationMatrix.postTranslate(wOffset, hOffset);
-                mAppController.updatePreviewTransformFullscreen(mPreviewTranformationMatrix,
-                        aspectRatio);
-            } else {
-                mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
-                mAppController.getCameraAppUI().hideLetterboxing();
-            }
+            mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
+            mAppController.getCameraAppUI().hideLetterboxing();
             // if (mGcamProxy != null) {
             // mGcamProxy.postSetAspectRatio(mFinalAspectRatio);
             // }
@@ -953,17 +917,20 @@ public class CaptureModule extends CameraModule
         }
     }
 
-    private void updateBufferDimension() {
+    /**
+     * Based on the current picture size, selects the best preview dimension and
+     * stores it in {@link #mPreviewBufferWidth} and
+     * {@link #mPreviewBufferHeight}.
+     */
+    private void updatePreviewBufferDimension() {
         if (mCamera == null) {
             return;
         }
 
-        Size picked = CaptureModuleUtil.pickBufferDimensions(
-                mCamera.getSupportedSizes(),
-                mCamera.getFullSizeAspectRatio(),
-                mContext);
-        mPreviewBufferWidth = picked.getWidth();
-        mPreviewBufferHeight = picked.getHeight();
+        Size pictureSize = getPictureSizeFromSettings();
+        Size previewBufferSize = mCamera.pickPreviewSize(pictureSize, mContext);
+        mPreviewBufferWidth = previewBufferSize.getWidth();
+        mPreviewBufferHeight = previewBufferSize.getHeight();
     }
 
     /**
