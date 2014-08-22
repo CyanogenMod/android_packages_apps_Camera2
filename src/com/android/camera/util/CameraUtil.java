@@ -964,7 +964,7 @@ public class CameraUtil {
         try {
             boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
             if (!isSecureCamera) {
-                Intent intent = IntentHelper.getVideoPlayerIntent(activity, uri)
+                Intent intent = IntentHelper.getVideoPlayerIntent(uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
                         .putExtra(KEY_TREAT_UP_AS_BACK, true);
                 activity.startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
