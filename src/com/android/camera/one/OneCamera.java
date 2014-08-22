@@ -16,6 +16,7 @@
 
 package com.android.camera.one;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.Surface;
@@ -355,4 +356,17 @@ public interface OneCamera {
      * @param zoom Zoom ratio value passed to scaler.
      */
     public void setZoom(float zoom);
+
+    /**
+     * Based on the selected picture size, this returns the best preview size.
+     *
+     * @param pictureSize the picture size as selected by the user. A camera
+     *            might choose not to obey these and therefore the returned
+     *            preview size might not match the aspect ratio of the given
+     *            size.
+     * @param context the android application context
+     * @return The preview size that best matches the picture aspect ratio that
+     *         will be taken.
+     */
+    public Size pickPreviewSize(Size pictureSize, Context context);
 }
