@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -267,6 +266,15 @@ public class CameraActivity extends Activity
     };
     private MemoryManager mMemoryManager;
     private MotionManager mMotionManager;
+
+    private ActionBar.OnMenuVisibilityListener mOnMenuVisibilityListener =
+            new ActionBar.OnMenuVisibilityListener() {
+                @Override
+                public void onMenuVisibilityChanged(boolean isVisible) {
+                    // TODO: Remove this or bring back the original implementation: cancel
+                    // auto-hide actionbar.
+                }
+    };
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -1274,9 +1282,6 @@ public class CameraActivity extends Activity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mFilmstripVisible && startGallery()) {
-                    return true;
-                }
                 onBackPressed();
                 return true;
             case R.id.action_details:
@@ -1337,6 +1342,7 @@ public class CameraActivity extends Activity
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_main);
+
         mActionBar = getActionBar();
         mActionBar.addOnMenuVisibilityListener(mOnMenuVisibilityListener);
         mMainHandler = new MainHandler(this, getMainLooper());
@@ -1710,19 +1716,13 @@ public class CameraActivity extends Activity
         }
         UsageStatistics.instance().foregrounded(source, currentUserInterfaceMode());
 
-        mGalleryIntent = IntentHelper.getPhotosGalleryIntent(mAppContext);
-        Drawable galleryLogo = IntentHelper.getGalleryIcon(mAppContext, mGalleryIntent);
-        if (galleryLogo == null) {
-            try {
-                galleryLogo = getPackageManager().getActivityLogo(getComponentName());
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Can't get the activity logo");
-            }
+        mGalleryIntent = IntentHelper.getGalleryIntent(mAppContext);
+        boolean isOsVersionL = mAppContext.getResources().getBoolean(R.bool.is_os_version_l);
+        if (isOsVersionL) {
+            // hide the up affordance for L devices, it's not very Materially
+            mActionBar.setDisplayShowHomeEnabled(false);
         }
-        if (mGalleryIntent != null) {
-            mActionBar.setDisplayUseLogoEnabled(true);
-        }
-        mActionBar.setLogo(galleryLogo);
+
         mOrientationManager.resume();
         super.onResume();
         mPeekAnimationThread = new HandlerThread("Peek animation");
@@ -1957,6 +1957,22 @@ public class CameraActivity extends Activity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.filmstrip_menu, menu);
         mActionBarMenu = menu;
+
+        // add a button for launching the gallery
+        if (mGalleryIntent != null) {
+            CharSequence appName =  IntentHelper.getGalleryAppName(mAppContext, mGalleryIntent);
+            if (appName != null) {
+                MenuItem menuItem = menu.add(appName);
+                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setIntent(mGalleryIntent);
+
+                Drawable galleryLogo = IntentHelper.getGalleryIcon(mAppContext, mGalleryIntent);
+                if (galleryLogo != null) {
+                    menuItem.setIcon(galleryLogo);
+                }
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 

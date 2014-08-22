@@ -29,46 +29,30 @@ import java.util.List;
 public class IntentHelper {
     private static final Log.Tag TAG = new Log.Tag("IntentHelper");
 
-    public static Intent getDefaultGalleryIntent(Context context) {
-        return getGalleryIntent(context, true);
-    }
-
-    public static Intent getPhotosGalleryIntent(Context context) {
-        return getGalleryIntent(context, false);
-    }
-
-    public static Intent getGalleryIntent(Context context, boolean failoverToDefaultGallery) {
-        PackageManager pm = context.getPackageManager();
+    public static Intent getGalleryIntent(Context context) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         GalleryHelper.setGalleryIntentClassName(intent);
-        if (failoverToDefaultGallery) {
-            List<ResolveInfo> resolveInfos =
-                    pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            if (resolveInfos.size() == 0) {
-                // No matching activities.
-                intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_APP_GALLERY);
-                resolveInfos = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                if (resolveInfos.size() == 0) {
-                    return null;
-                }
-                ResolveInfo firstPackage = resolveInfos.get(0);
-                intent.setClassName(firstPackage.activityInfo.packageName,
-                                    firstPackage.activityInfo.name);
-            }
-            for (ResolveInfo info : resolveInfos) {
-                Log.v(TAG, info.resolvePackageName + ':' + info.activityInfo.packageName +
-                      ":" + info.activityInfo.name + ',' + info.activityInfo.enabled);
-            }
+
+        // check if intent can launch gallery
+        PackageManager pm = context.getPackageManager();
+        List<ResolveInfo> resolveInfos =
+            pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (resolveInfos.size() == 0) {
+            return null;
+        } else {
+            return intent;
         }
-        return intent;
     }
 
     public static Drawable getGalleryIcon(Context context, Intent galleryIntent) {
         return GalleryHelper.getGalleryIcon(context, galleryIntent);
     }
 
-    public static Intent getVideoPlayerIntent(Context context, Uri uri) {
+    public static CharSequence getGalleryAppName(Context context, Intent galleryIntent) {
+        return GalleryHelper.getGalleryAppName(context, galleryIntent);
+    }
+
+    public static Intent getVideoPlayerIntent(Uri uri) {
         return new Intent(Intent.ACTION_VIEW)
             .setDataAndType(uri, "video/*");
     }
