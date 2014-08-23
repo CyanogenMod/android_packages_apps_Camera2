@@ -69,8 +69,7 @@ public class PhotoUI implements PreviewStatusListener,
     private final FaceView mFaceView = null;
     private DecodeImageForReview mDecodeTaskForReview = null;
 
-    private int mZoomMax;
-    private List<Integer> mZoomRatios;
+    private float mZoomMax;
 
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
@@ -450,12 +449,11 @@ public class PhotoUI implements PreviewStatusListener,
                 !capabilities.supports(CameraCapabilities.Feature.ZOOM)) {
             return;
         }
-        mZoomMax = capabilities.getMaxZoomIndex();
-        mZoomRatios = capabilities.getZoomRatioList();
+        mZoomMax = capabilities.getMaxZoomRatio();
         // Currently we use immediate zoom for fast zooming to get better UX and
         // there is no plan to take advantage of the smooth zoom.
         // TODO: Need to setup a path to AppUI to do this
-        mPreviewOverlay.setupZoom(mZoomMax, settings.getCurrentZoomIndex(), mZoomRatios,
+        mPreviewOverlay.setupZoom(mZoomMax, settings.getCurrentZoomRatio(),
                 new ZoomChangeListener());
     }
 
@@ -501,8 +499,8 @@ public class PhotoUI implements PreviewStatusListener,
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
         @Override
-        public void onZoomValueChanged(int index) {
-            mController.onZoomChanged(index);
+        public void onZoomValueChanged(float ratio) {
+            mController.onZoomChanged(ratio);
         }
 
         @Override

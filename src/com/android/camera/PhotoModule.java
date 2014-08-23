@@ -151,7 +151,7 @@ public class PhotoModule
     // needed to be updated in mUpdateSet.
     private int mUpdateSet;
 
-    private int mZoomValue; // The current zoom value.
+    private float mZoomValue; // The current zoom ratio.
     private int mTimerDuration;
     /** Set when a volume button is clicked to take photo */
     private boolean mVolumeButtonClickedFlag = false;
@@ -1084,15 +1084,10 @@ public class PhotoModule
 
             int orientation = Exif.getOrientation(exif);
 
-            float zoomValue = 0f;
+            float zoomValue = 1.0f;
             if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-                int zoomIndex = mCameraSettings.getCurrentZoomIndex();
-                List<Integer> zoomRatios = mCameraCapabilities.getZoomRatioList();
-                if (zoomRatios != null && zoomIndex < zoomRatios.size()) {
-                    zoomValue = 0.01f * zoomRatios.get(zoomIndex);
-                }
+                zoomValue = mCameraSettings.getCurrentZoomRatio();
             }
-
             boolean hdrOn = CameraCapabilities.SceneMode.HDR == mSceneMode;
             String flashSetting =
                     mActivity.getSettingsManager().getString(mAppController.getCameraScope(),
@@ -1360,7 +1355,7 @@ public class PhotoModule
         initializeCapabilities();
 
         // Reset zoom value index.
-        mZoomValue = 0;
+        mZoomValue = 1.0f;
         if (mFocusManager == null) {
             initializeFocusManager();
         }
@@ -1583,7 +1578,7 @@ public class PhotoModule
         requestCameraOpen();
 
         mJpegPictureCallbackTime = 0;
-        mZoomValue = 0;
+        mZoomValue = 1.0f;
 
         mOnResumeTime = SystemClock.uptimeMillis();
         checkDisplayRotation();
@@ -2009,7 +2004,7 @@ public class PhotoModule
     private void updateCameraParametersZoom() {
         // Set zoom.
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-            mCameraSettings.setZoomIndex(mZoomValue);
+            mCameraSettings.setZoomRatio(mZoomValue);
         }
     }
 
@@ -2299,25 +2294,19 @@ public class PhotoModule
                 mCameraCapabilities.supports(CameraCapabilities.FocusMode.CONTINUOUS_PICTURE);
     }
 
-    // TODO: Use zoomRatio device API rather than deprecated zoomIndex
     @Override
-    public int onZoomChanged(int index) {
+    public void onZoomChanged(float ratio) {
         // Not useful to change zoom value when the activity is paused.
         if (mPaused) {
-            return index;
+            return;
         }
-        mZoomValue = index;
+        mZoomValue = ratio;
         if (mCameraSettings == null || mCameraDevice == null) {
-            return index;
+            return;
         }
         // Set zoom parameters asynchronously
-        mCameraSettings.setZoomIndex(mZoomValue);
+        mCameraSettings.setZoomRatio(mZoomValue);
         mCameraDevice.applySettings(mCameraSettings);
-        CameraSettings settings = mCameraDevice.getSettings();
-        if (settings != null) {
-            return settings.getCurrentZoomIndex();
-        }
-        return index;
     }
 
     @Override
