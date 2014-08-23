@@ -54,7 +54,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
     }
 
     @Override
-    public void open(Facing facing, final Size pictureSize, final OpenCallback openCallback) {
+    public void open(Facing facing, final boolean useHdr, final Size pictureSize,
+            final OpenCallback openCallback) {
         try {
             final String cameraId = getCameraId(facing);
             Log.i(TAG, "Opening Camera ID " + cameraId);
@@ -76,7 +77,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
                         CameraCharacteristics characteristics = mCameraManager
                                 .getCameraCharacteristics(device.getId());
                         // TODO: Set boolean based on whether HDR+ is enabled.
-                        OneCamera oneCamera = OneCameraCreator.create(true, device,
+                        OneCamera oneCamera = OneCameraCreator.create(useHdr, device,
                                 characteristics, pictureSize, mMaxMemoryMB, mDisplayMetrics);
                         openCallback.onCameraOpened(oneCamera);
                     } catch (CameraAccessException e) {
@@ -110,7 +111,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
     }
 
     /** Returns the ID of the first back-facing camera. */
-    private String getFirstBackCameraId() {
+    public String getFirstBackCameraId() {
         Log.d(TAG, "Getting First BACK Camera");
         String cameraId = getFirstCameraFacing(CameraCharacteristics.LENS_FACING_BACK);
         if (cameraId == null) {
@@ -120,7 +121,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
     }
 
     /** Returns the ID of the first front-facing camera. */
-    private String getFirstFrontCameraId() {
+    public String getFirstFrontCameraId() {
         Log.d(TAG, "Getting First FRONT Camera");
         String cameraId = getFirstCameraFacing(CameraCharacteristics.LENS_FACING_FRONT);
         if (cameraId == null) {
