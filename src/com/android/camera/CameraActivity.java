@@ -1522,7 +1522,7 @@ public class CameraActivity extends Activity
             modeIndex = mSettingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
                                                     Keys.KEY_STARTUP_MODULE_INDEX);
             if ((modeIndex == gcamIndex &&
-                    !GcamHelper.hasGcamCapture()) || modeIndex < 0) {
+                    !GcamHelper.hasGcamAsSeparateModule()) || modeIndex < 0) {
                 modeIndex = photoIndex;
             }
         }
@@ -2074,7 +2074,7 @@ public class CameraActivity extends Activity
     public int getPreferredChildModeIndex(int modeIndex) {
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
             boolean hdrPlusOn = Keys.isHdrPlusOn(mSettingsManager);
-            if (hdrPlusOn && GcamHelper.hasGcamCapture()) {
+            if (hdrPlusOn && GcamHelper.hasGcamAsSeparateModule()) {
                 modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
             }
         }
