@@ -58,7 +58,7 @@ public class ModulesInfo {
             registerRefocusModule(moduleManager, context.getResources()
                     .getInteger(R.integer.camera_mode_refocus));
         }
-        if (GcamHelper.hasGcamCapture()) {
+        if (GcamHelper.hasGcamAsSeparateModule()) {
             registerGcamModule(moduleManager, context.getResources()
                     .getInteger(R.integer.camera_mode_gcam));
         }

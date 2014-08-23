@@ -24,9 +24,10 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.util.Size;
 
 public class OneCameraCreator {
-    public static OneCamera create(boolean enableHdrPlus, CameraDevice device,
+    public static OneCamera create(boolean useHdr, CameraDevice device,
             CameraCharacteristics characteristics, Size pictureSize, int maxMemoryMB,
             DisplayMetrics displayMetrics) {
+        // TODO: Might want to switch current camera to vendor HDR.
         return new OneCameraImpl(device, characteristics, pictureSize);
     }
 }
