@@ -43,12 +43,14 @@ public abstract class OneCameraManager {
      *
      * @param facing which camera to open. The first camera found in the given
      *            direction will be opened.
+     * @param enableHdr if an HDR feature exists, open a camera that supports it
      * @param captureSize the capture size. This must be one of the supported
      *            sizes.
      * @param callback this listener is called when the camera was opened or
      *            when it failed to open.
      */
-    public abstract void open(Facing facing, Size captureSize, OpenCallback callback);
+    public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
+            OpenCallback callback);
 
     /**
      * Returns whether the device has a camera facing the given direction.
