@@ -182,7 +182,7 @@ public class VideoModule extends CameraModule
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
-    private int mZoomValue;  // The current zoom value.
+    private float mZoomValue;  // The current zoom ratio.
 
     private final MediaSaver.OnMediaSavedListener mOnVideoSavedListener =
             new MediaSaver.OnMediaSavedListener() {
@@ -876,35 +876,22 @@ public class VideoModule extends CameraModule
      * Returns current Zoom value, with 1.0 as the value for no zoom.
      */
     private float currentZoomValue() {
-        float zoomValue = 1.0f;
-        if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-            int zoomIndex = mCameraSettings.getCurrentZoomIndex();
-            List<Integer> zoomRatios = mCameraCapabilities.getZoomRatioList();
-            if (zoomRatios != null && zoomIndex < zoomRatios.size()) {
-                zoomValue = 0.01f * zoomRatios.get(zoomIndex);
-            }
-        }
-        return zoomValue;
+        return mCameraSettings.getCurrentZoomRatio();
     }
 
     @Override
-    public int onZoomChanged(int index) {
+    public void onZoomChanged(float ratio) {
         // Not useful to change zoom value when the activity is paused.
         if (mPaused) {
-            return index;
+            return;
         }
-        mZoomValue = index;
+        mZoomValue = ratio;
         if (mCameraSettings == null || mCameraDevice == null) {
-            return index;
+            return;
         }
         // Set zoom parameters asynchronously
-        mCameraSettings.setZoomIndex(mZoomValue);
+        mCameraSettings.setZoomRatio(mZoomValue);
         mCameraDevice.applySettings(mCameraSettings);
-        CameraSettings settings = mCameraDevice.getSettings();
-        if (settings != null) {
-            return settings.getCurrentZoomIndex();
-        }
-        return index;
     }
 
     private void startPreview() {
@@ -1585,7 +1572,7 @@ public class VideoModule extends CameraModule
 
         // Set zoom.
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.ZOOM)) {
-            mCameraSettings.setZoomIndex(mZoomValue);
+            mCameraSettings.setZoomRatio(mZoomValue);
         }
         updateFocusParameters();
 
@@ -1660,7 +1647,7 @@ public class VideoModule extends CameraModule
         mPaused = false;
         installIntentFilter();
         mAppController.setShutterEnabled(false);
-        mZoomValue = 0;
+        mZoomValue = 1.0f;
 
         showVideoSnapshotUI(false);
 
@@ -1760,7 +1747,7 @@ public class VideoModule extends CameraModule
         }
 
         // From onResume
-        mZoomValue = 0;
+        mZoomValue = 1.0f;
         mUI.setOrientationIndicator(0, false);
 
         // Start switch camera animation. Post a message because

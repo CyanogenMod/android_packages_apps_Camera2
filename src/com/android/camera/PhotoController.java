@@ -32,8 +32,7 @@ public interface PhotoController extends OnShutterButtonListener {
     // Switching between cameras.
     public static final int SWITCHING_CAMERA = 4;
 
-    // returns the actual set zoom value
-    public int onZoomChanged(int requestedZoom);
+    public void onZoomChanged(float requestedZoom);
 
     public boolean isImageCaptureIntent();
 
