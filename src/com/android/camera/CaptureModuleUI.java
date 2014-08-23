@@ -70,9 +70,8 @@ public class CaptureModuleUI implements
     /** Set up listener to receive zoom changes from View and send to module. */
     private final OnZoomChangedListener mZoomChancedListener  = new OnZoomChangedListener() {
         @Override
-        public void onZoomValueChanged(int index) {
-            float zoomValue = ((float) PreviewOverlay.ZOOM_MIN_FACTOR + (float) index) / 100;
-            mModule.setZoom(zoomValue);
+        public void onZoomValueChanged(float ratio) {
+            mModule.setZoom(ratio);
         }
 
         @Override
