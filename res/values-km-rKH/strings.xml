@@ -22,7 +22,7 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"កំណត់​រូបភាព​ជា"</string>
     <string name="delete" msgid="2714492172818940424">"លុប"</string>
-    <string name="share" msgid="8581089487762243115">"ចែក​រំលែក"</string>
+    <string name="share" msgid="8581089487762243115">"ចែក​រំលែក​"</string>
     <string name="share_panorama" msgid="3558466186935359444">"ចែករំលែក​ទេសភាព"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"ចែករំលែក​ជា​រូបថត"</string>
     <string name="deleted" msgid="2036165115527228127">"បាន​លុប"</string>
@@ -195,7 +195,7 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"បាន​ពិនិត្យ​រួចរាល់"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"ពិនិត្យ​ឡើងវិញ"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"ជម្រើស"</string>
-    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"បាន​​បិទ​បញ្ជី​​របៀប​"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"បាន​បើក​បញ្ជី​របៀប"</string>
     <string name="media_accessibility_peek" msgid="234540330161031946">"ចាប់​យក"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"បាន​ថតរូប"</string>
@@ -255,9 +255,9 @@
     <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"១២ ម៉ោង"</string>
     <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"១៥ ម៉ោង"</string>
     <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"២៤ ម៉ោង"</string>
-    <string name="time_lapse_seconds" msgid="7319683099532506270">"វិនាទី"</string>
-    <string name="time_lapse_minutes" msgid="5325447383033224679">"នាទី"</string>
-    <string name="time_lapse_hours" msgid="5294001144133261436">"ម៉ោង"</string>
+    <string name="time_lapse_seconds" msgid="7319683099532506270">"វិនាទី​"</string>
+    <string name="time_lapse_minutes" msgid="5325447383033224679">"នាទី​"</string>
+    <string name="time_lapse_hours" msgid="5294001144133261436">"ម៉ោង​"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"រួចរាល់"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"កំណត់​ចន្លោះ​ពេល"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"បាន​បិទ​​លក្ខណៈ​ពេលវេលា​កន្លង​ទៅ។ បើក​វា​ ដើម្បី​កំណត់​ចន្លោះ​ពេល។"</string>
@@ -280,7 +280,7 @@
     <string name="setting_wallpaper" msgid="2397759659347872725">"​កំណត់​ផ្ទាំង​រូបភាព"</string>
     <string name="mode_settings" msgid="2021937261522670921">"ការ​កំណត់"</string>
     <string name="mode_camera" msgid="279763925715250603">"ម៉ាស៊ីន​ថត"</string>
-    <string name="mode_video" msgid="8633929034048169139">"វីដេអូ"</string>
+    <string name="mode_video" msgid="8633929034048169139">"វីដេអូ​"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"រូបថត​វិល​ជុំ"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"ពេលវេលា​កន្លងទៅ"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"មុំ​ពេញ"</string>
@@ -300,7 +300,7 @@
     <string name="flash_off_desc" msgid="7151559466286106797">"បិទ​ការ​បាញ់​ពន្លឺ"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"បាញ់​ពន្លឺ​ស្វ័យ​ប្រវត្តិ"</string>
     <string name="flash_on_desc" msgid="930372145324854699">"បើក​ការ​បាញ់​ពន្លឺ"</string>
-    <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"HDR+ បិទ​ពន្លឺ"</string>
+    <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"HDR+ បិទ​ពន្លឺ​"</string>
     <string name="hdr_plus_flash_auto_desc" msgid="4812200236263011537">"HDR+ បាញ់​ពន្លឺ​ស្វ័យប្រវត្តិ"</string>
     <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"HDR+ បើក​ពន្លឺ"</string>
     <string name="torch_on_desc" msgid="3069836196559213365">"បើក​ពិល"</string>
@@ -316,7 +316,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"បោះបង់"</string>
     <string name="done_button_description" msgid="1334963435441544592">"រួចរាល់"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ថត​ឡើងវិញ"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"ចែករំលែក"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"ចែករំលែក​"</string>
     <string name="view_button_description" msgid="4985768837891362075">"មើល"</string>
     <string name="edit_button_description" msgid="98550816724901925">"កែសម្រួល"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"លុប"</string>
@@ -348,8 +348,7 @@
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
-    <!-- no translation found for pref_video_quality_entry_2160p (4522927631413184505) -->
-    <skip />
+    <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s មេហ្គាភីកសែល"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s មីហ្គា​ភីកសែល"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ដើម្បី​ផ្ដោត​ ប៉ះ​ទីនេះ"</string>

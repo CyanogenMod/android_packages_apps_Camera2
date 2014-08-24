@@ -350,8 +350,7 @@
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720p"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
-    <!-- no translation found for pref_video_quality_entry_2160p (4522927631413184505) -->
-    <skip />
+    <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
     <!-- String.format failed for translation -->
     <!-- no translation found for setting_summary_x_megapixels (6533463462760866830) -->
     <skip />
