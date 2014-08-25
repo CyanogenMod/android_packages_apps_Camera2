@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/shutter_offset"
         android:src="@drawable/btn_new_shutter" />
 
     <include layout="@layout/menu_indicators_keyguard"

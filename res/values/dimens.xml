@@ -94,7 +94,6 @@
     <dimen name="switcher_size">72dp</dimen>
     <dimen name="face_circle_stroke">2dip</dimen>
     <dimen name="zoom_font_size">14pt</dimen>
-    <dimen name="shutter_offset">-22dp</dimen>
     <dimen name="size_thumbnail">200dip</dimen>
     <dimen name="size_preview">400dip</dimen>
     <dimen name="navigation_bar_height">48dip</dimen>
