@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/shutter_offset"
         android:contentDescription="@string/accessibility_shutter_button"
         android:scaleType="center"
         android:src="@drawable/btn_new_shutter" />
