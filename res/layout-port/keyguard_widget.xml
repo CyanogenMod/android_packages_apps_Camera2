@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/shutter_offset"
         android:src="@drawable/btn_new_shutter" />
 
     <include layout="@layout/menu_indicators_keyguard"
@@ -35,14 +34,14 @@
         android:layout_toRightOf="@id/shutter"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="4dip"
-        android:layout_marginBottom="7dip" />
+        android:layout_marginBottom="19dip" />
 
     <ImageView
         android:id="@+id/camera_switcher"
         style="@style/SwitcherButton"
         android:layout_toLeftOf="@id/shutter"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="3dip"
+        android:layout_marginBottom="15dip"
         android:scaleType="center"
         android:contentDescription="@string/accessibility_mode_picker"
         android:src="@drawable/ic_switch_camera" />
@@ -52,7 +51,7 @@
         style="@style/SwitcherButton"
         android:layout_toLeftOf="@id/shutter"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="3dip"
+        android:layout_marginBottom="15dip"
         android:scaleType="center"
         android:contentDescription="@string/accessibility_mode_picker"
         android:src="@drawable/ic_switcher_menu_indicator" />

@@ -43,18 +43,17 @@
             android:contentDescription="@string/accessibility_menu_button" />
 
         <com.android.camera.ui.ModuleSwitcher
-           android:id="@+id/camera_switcher"
-           style="@style/SwitcherButton"
-           android:layout_gravity="bottom|left"
-           android:layout_marginBottom="2dip"
-           android:contentDescription="@string/accessibility_mode_picker" />
+            android:id="@+id/camera_switcher"
+            style="@style/SwitcherButton"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="2dip"
+            android:contentDescription="@string/accessibility_mode_picker" />
 
         <com.android.camera.ShutterButton
             android:id="@+id/shutter_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="@dimen/shutter_offset"
             android:clickable="true"
             android:contentDescription="@string/accessibility_shutter_button"
             android:focusable="true"
