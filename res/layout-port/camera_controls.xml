@@ -29,9 +29,11 @@
         <include layout="@layout/menu_indicators"
             android:layout_width="64dip"
             android:layout_height="64dip"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="8dip"
-            android:layout_marginRight="-8dip" />
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginBottom="6dip" />
 
         <com.android.camera.ui.PieMenuButton
             android:id="@+id/menu"
@@ -52,7 +54,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="@dimen/shutter_offset"
             android:clickable="true"
             android:contentDescription="@string/accessibility_shutter_button"
             android:focusable="true"
