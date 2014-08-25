@@ -55,6 +55,7 @@ import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.v2.OneCameraManagerImpl;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
@@ -62,6 +63,7 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
@@ -113,40 +115,6 @@ public class CaptureModule extends CameraModule
     };
 
     /**
-     * Called when the captured media has been saved.
-     */
-    private final MediaSaver.OnMediaSavedListener mOnMediaSavedListener =
-            new MediaSaver.OnMediaSavedListener() {
-                @Override
-                public void onMediaSaved(Uri uri) {
-                    if (uri != null) {
-                        mAppController.notifyNewMedia(uri);
-                    }
-                }
-            };
-
-    /**
-     * Called when the user pressed the back/front camera switch button.
-     */
-    private final ButtonManager.ButtonCallback mCameraSwitchCallback =
-            new ButtonManager.ButtonCallback() {
-                @Override
-                public void onStateChanged(int cameraId) {
-                    // At the time this callback is fired, the camera id
-                    // has be set to the desired camera.
-                    if (mPaused) {
-                        return;
-                    }
-
-                    mSettingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,
-                            cameraId);
-
-                    Log.d(TAG, "Start to switch camera. cameraId=" + cameraId);
-                    switchCamera(getFacingFromCameraId(cameraId));
-                }
-            };
-
-    /**
      * Show AF target in center of preview and start animation.
      */
     Runnable mShowAutoFocusTargetInCenterRunnable = new Runnable() {
@@ -185,6 +153,13 @@ public class CaptureModule extends CameraModule
     private static final boolean FOCUS_DEBUG_UI = DebugPropertyHelper.showFocusDebugUI();
 
     private final Object mDimensionLock = new Object();
+
+    /**
+     * Sticky Gcam mode is when this module's sole purpose it to be the Gcam mode.
+     * If true, the device uses {@link PhotoModule} for normal picture taking.
+     */
+    private final boolean mStickyGcamCamera;
+
     /**
      * Lock for race conditions in the SurfaceTextureListener callbacks.
      */
@@ -202,6 +177,9 @@ public class CaptureModule extends CameraModule
     private OneCamera mCamera;
     /** The direction the currently opened camera is facing to. */
     private Facing mCameraFacing = Facing.BACK;
+    /** Whether HDR is currently enabled. */
+    private boolean mHdrEnabled = false;
+
     /** The texture used to render the preview in. */
     private SurfaceTexture mPreviewTexture;
 
@@ -286,14 +264,21 @@ public class CaptureModule extends CameraModule
     // private String mFlashMode;
     /** CLEAN UP END */
 
-    /** Constructs a new capture module. */
     public CaptureModule(AppController appController) {
+        this(appController, false);
+    }
+
+    /** Constructs a new capture module. */
+    public CaptureModule(AppController appController, boolean stickyHdr) {
         super(appController);
         mAppController = appController;
         mContext = mAppController.getAndroidContext();
         mSettingsManager = mAppController.getSettingsManager();
         mSettingsManager.addListener(this);
         mDebugDataDir = mContext.getExternalCacheDir();
+        mStickyGcamCamera = stickyHdr;
+        // TODO: Read HDR setting from user preferences.
+        mHdrEnabled = stickyHdr;
     }
 
     @Override
@@ -414,52 +399,53 @@ public class CaptureModule extends CameraModule
         mPreviewTexture = surface;
         closeCamera();
 
-        mCameraManager.open(mCameraFacing, getPictureSizeFromSettings(), new OpenCallback() {
-            @Override
-            public void onFailure() {
-                Log.e(TAG, "Could not open camera.");
-                mCamera = null;
-                mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
-            }
-
-            @Override
-            public void onCameraOpened(final OneCamera camera) {
-                Log.d(TAG, "onCameraOpened: " + camera);
-                mCamera = camera;
-                updatePreviewBufferDimension();
-
-                // If the surface texture is not destroyed, it may have the last
-                // frame lingering.
-                // We need to hold off setting transform until preview is
-                // started.
-                resetDefaultBufferSize();
-                mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
-
-                Log.d(TAG, "starting preview ...");
-
-                // TODO: Consider rolling these two calls into one.
-                camera.startPreview(new Surface(surface), new CaptureReadyCallback() {
-
+        // Only enable HDR on the back camera
+        boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
+        mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
+                new OpenCallback() {
                     @Override
-                    public void onSetupFailed() {
-                        Log.e(TAG, "Could not set up preview.");
-                        mCamera.close(null);
+                    public void onFailure() {
+                        Log.e(TAG, "Could not open camera.");
                         mCamera = null;
-                        // TODO: Show an error message and exit.
+                        mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
                     }
 
                     @Override
-                    public void onReadyForCapture() {
-                        Log.d(TAG, "Ready for capture.");
-                        onPreviewStarted();
-                        // Enable zooming after preview has started.
-                        mUI.initializeZoom(mCamera.getMaxZoom());
-                        mCamera.setFocusStateListener(CaptureModule.this);
-                        mCamera.setReadyStateChangedListener(CaptureModule.this);
+                    public void onCameraOpened(final OneCamera camera) {
+                        Log.d(TAG, "onCameraOpened: " + camera);
+                        mCamera = camera;
+                        updatePreviewBufferDimension();
+
+                        // If the surface texture is not destroyed, it may have
+                        // the last frame lingering. We need to hold off setting
+                        // transform until preview is started.
+                        resetDefaultBufferSize();
+                        mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
+                        Log.d(TAG, "starting preview ...");
+
+                        // TODO: Consider rolling these two calls into one.
+                        camera.startPreview(new Surface(surface), new CaptureReadyCallback() {
+
+                            @Override
+                            public void onSetupFailed() {
+                                Log.e(TAG, "Could not set up preview.");
+                                mCamera.close(null);
+                                mCamera = null;
+                                // TODO: Show an error message and exit.
+                            }
+
+                            @Override
+                            public void onReadyForCapture() {
+                                Log.d(TAG, "Ready for capture.");
+                                onPreviewStarted();
+                                // Enable zooming after preview has started.
+                                mUI.initializeZoom(mCamera.getMaxZoom());
+                                mCamera.setFocusStateListener(CaptureModule.this);
+                                mCamera.setReadyStateChangedListener(CaptureModule.this);
+                            }
+                        });
                     }
                 });
-            }
-        });
     }
 
     @Override
@@ -553,7 +539,13 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void hardResetSettings(SettingsManager settingsManager) {
-        // TODO Auto-generated method stub
+        if (mStickyGcamCamera) {
+            // Sitcky HDR+ mode should hard reset HDR+ to on, and camera back
+            // facing.
+            settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, true);
+            settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,
+                    getBackFacingCameraId());
+        }
     }
 
     @Override
@@ -566,13 +558,13 @@ public class CaptureModule extends CameraModule
 
             @Override
             public boolean isHdrSupported() {
+                // TODO: Check if the device has HDR and not HDR+.
                 return false;
             }
 
             @Override
             public boolean isHdrPlusSupported() {
-                // TODO: Enable once we support this.
-                return false;
+                return GcamHelper.hasGcamCapture();
             }
 
             @Override
@@ -587,16 +579,14 @@ public class CaptureModule extends CameraModule
         CameraAppUI.BottomBarUISpec bottomBarSpec = new CameraAppUI.BottomBarUISpec();
         bottomBarSpec.enableGridLines = true;
         bottomBarSpec.enableCamera = true;
-        bottomBarSpec.cameraCallback = mCameraSwitchCallback;
-        // TODO: Enable once we support this.
-        bottomBarSpec.enableHdr = false;
-        // TODO: Enable once we support this.
-        bottomBarSpec.hdrCallback = null;
+        bottomBarSpec.cameraCallback = getCameraCallback();
+        bottomBarSpec.enableHdr = GcamHelper.hasGcamCapture();
+        bottomBarSpec.hdrCallback = getHdrButtonCallback();
         // TODO: Enable once we support this.
         bottomBarSpec.enableSelfTimer = false;
         bottomBarSpec.showSelfTimer = false;
         // TODO: Deal with e.g. HDR+ if it doesn't support it.
-        bottomBarSpec.enableFlash = true;
+        // bottomBarSpec.enableFlash = true;
         return bottomBarSpec;
     }
 
@@ -632,7 +622,6 @@ public class CaptureModule extends CameraModule
     // Currently AF state transitions are controlled in OneCameraImpl.
     // PhotoModule uses FocusOverlayManager which uses API1/portability
     // logic and coordinates.
-
     private void triggerFocusAtScreenCoord(int x, int y) {
         mTapToFocusInProgress = true;
         // Show UI immediately even though scan has not started yet.
@@ -745,7 +734,7 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onTakePictureProgress(float progress) {
-        mUI.setPictureTakingProgress((int)(progress * 100));
+        mUI.setPictureTakingProgress((int) (progress * 100));
     }
 
     @Override
@@ -781,6 +770,126 @@ public class CaptureModule extends CameraModule
         if (mCamera != null) {
             mCamera.setZoom(zoom);
         }
+    }
+
+    /**
+     * TODO: Remove this method once we are in pure CaptureModule land.
+     */
+    private String getBackFacingCameraId() {
+        if (!(mCameraManager instanceof OneCameraManagerImpl)) {
+            throw new IllegalStateException("This should never be called with Camera API V1");
+        }
+        OneCameraManagerImpl manager = (OneCameraManagerImpl) mCameraManager;
+        return manager.getFirstBackCameraId();
+    }
+
+    /**
+     * @return Depending on whether we're in sticky-HDR mode or not, return the
+     *         proper callback to be used for when the HDR/HDR+ button is
+     *         pressed.
+     */
+    private ButtonManager.ButtonCallback getHdrButtonCallback() {
+        if (mStickyGcamCamera) {
+            return new ButtonManager.ButtonCallback() {
+                @Override
+                public void onStateChanged(int state) {
+                    if (mPaused) {
+                        return;
+                    }
+                    if (state == ButtonManager.ON) {
+                        throw new IllegalStateException(
+                                "Can't leave hdr plus mode if switching to hdr plus mode.");
+                    }
+                    SettingsManager settingsManager = mAppController.getSettingsManager();
+                    settingsManager.set(mAppController.getModuleScope(),
+                            Keys.KEY_REQUEST_RETURN_HDR_PLUS, false);
+                    switchToRegularCapture();
+                }
+            };
+        } else {
+            return new ButtonManager.ButtonCallback() {
+                @Override
+                public void onStateChanged(int hdrEnabled) {
+                    if (mPaused) {
+                        return;
+                    }
+                    Log.d(TAG, "HDR enabled =" + hdrEnabled);
+                    mHdrEnabled = hdrEnabled == 1;
+                    switchCamera();
+                }
+            };
+        }
+    }
+
+    /**
+     * @return Depending on whether we're in sticky-HDR mode or not, this
+     *         returns the proper callback to be used for when the camera
+     *         (front/back switch) button is pressed.
+     */
+    private ButtonManager.ButtonCallback getCameraCallback() {
+        if (mStickyGcamCamera) {
+            return new ButtonManager.ButtonCallback() {
+                @Override
+                public void onStateChanged(int state) {
+                    if (mPaused) {
+                        return;
+                    }
+
+                    // At the time this callback is fired, the camera id setting
+                    // has changed to the desired camera.
+                    SettingsManager settingsManager = mAppController.getSettingsManager();
+                    if (Keys.isCameraBackFacing(settingsManager,
+                            mAppController.getModuleScope())) {
+                        throw new IllegalStateException(
+                                "Hdr plus should never be switching from front facing camera.");
+                    }
+
+                    // Switch to photo mode, but request a return to hdr plus on
+                    // switching to back camera again.
+                    settingsManager.set(mAppController.getModuleScope(),
+                            Keys.KEY_REQUEST_RETURN_HDR_PLUS, true);
+                    switchToRegularCapture();
+                }
+            };
+        } else {
+            return new ButtonManager.ButtonCallback() {
+                @Override
+                public void onStateChanged(int cameraId) {
+                    if (mPaused) {
+                        return;
+                    }
+
+                    // At the time this callback is fired, the camera id
+                    // has be set to the desired camera.
+                    mSettingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,
+                            cameraId);
+
+                    Log.d(TAG, "Start to switch camera. cameraId=" + cameraId);
+                    mCameraFacing = getFacingFromCameraId(cameraId);
+                    switchCamera();
+                }
+            };
+        }
+    }
+
+    /**
+     * Switches to PhotoModule to do regular photo captures.
+     * <p>
+     * TODO: Remove this once we use CaptureModule for photo taking.
+     */
+    private void switchToRegularCapture() {
+        // Turn off HDR+ before switching back to normal photo mode.
+        SettingsManager settingsManager = mAppController.getSettingsManager();
+        settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, false);
+
+        // Disable this button to prevent callbacks from this module from firing
+        // while we are transitioning modules.
+        ButtonManager buttonManager = mAppController.getButtonManager();
+        buttonManager.disableButtonClick(ButtonManager.BUTTON_HDR_PLUS);
+        mAppController.getCameraAppUI().freezeScreenUntilPreviewReady();
+        mAppController.onModeSelected(mContext.getResources().getInteger(
+                R.integer.camera_mode_photo));
+        buttonManager.enableButtonClick(ButtonManager.BUTTON_HDR_PLUS);
     }
 
     /**
@@ -969,8 +1078,11 @@ public class CaptureModule extends CameraModule
         || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action));
     }
 
-    private void switchCamera(Facing switchTo) {
-        if (mPaused || mCameraFacing == switchTo) {
+    /**
+     * Re-initialize the camera if e.g. the HDR mode or facing property changed.
+     */
+    private void switchCamera() {
+        if (mPaused) {
             return;
         }
         // TODO: Un-comment once we have timer back.
@@ -978,7 +1090,6 @@ public class CaptureModule extends CameraModule
 
         mAppController.freezeScreenUntilPreviewReady();
 
-        mCameraFacing = switchTo;
         initSurface(mPreviewTexture);
 
         // TODO: Un-comment once we have focus back.
