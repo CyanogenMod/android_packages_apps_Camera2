@@ -37,6 +37,7 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -1335,7 +1336,10 @@ public class CameraActivity extends Activity
         setContentView(R.layout.activity_main);
 
         mActionBar = getActionBar();
+        // set actionbar background to complete transparent
+        mActionBar.setBackgroundDrawable(new ColorDrawable(0x00000000));
         mActionBar.addOnMenuVisibilityListener(mOnMenuVisibilityListener);
+
         mMainHandler = new MainHandler(this, getMainLooper());
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
                 CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.API_1),
