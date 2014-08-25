@@ -86,7 +86,7 @@ public abstract class OneCameraManager {
                 .getSystemService(Context.CAMERA_SERVICE);
         int maxMemoryMB = activity.getServices().getMemoryManager()
                 .getMaxAllowedNativeMemoryAllocation();
-        if (cameraManager != null && isCamera2FullySupported(cameraManager)) {
+        if (cameraManager != null && isCamera2Supported(cameraManager)) {
             return new com.android.camera.one.v2.OneCameraManagerImpl(cameraManager, maxMemoryMB,
                     displayMetrics);
         } else {
@@ -95,7 +95,7 @@ public abstract class OneCameraManager {
     }
 
     /**
-     * Returns whether the device fully supports API2,
+     * Returns whether the device fully supports API2
      *
      * @param cameraManager the Camera2 API manager.
      * @return If this device is only emulating Camera2 API on top of an older
@@ -103,12 +103,16 @@ public abstract class OneCameraManager {
      *         only returns true, if Camera2 is fully supported through newer
      *         HALs.
      */
-    private static boolean isCamera2FullySupported(CameraManager cameraManager) {
+    private static boolean isCamera2Supported(CameraManager cameraManager) {
         try {
             final String id = cameraManager.getCameraIdList()[0];
+            // TODO: We should check for all the flags we need to ensure the
+            // device is capable of taking Camera2 API shots. For now, let's
+            // accept all device that are either 'partial' or 'full' devices
+            // (but not legacy).
             return cameraManager.getCameraCharacteristics(id).get(
                     CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)
-                == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL;
+                != CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY;
         } catch (CameraAccessException ex) {
             Log.e(TAG, "Could not access camera to determine hardware-level API support.");
             return false;
