@@ -108,7 +108,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     public  interface FocusUI {
         public boolean hasFaces();
         public void clearFocus();
-        public void setFocusPosition(int x, int y, boolean isAutoFocus);
+        public void setFocusPosition(int x, int y, boolean isPassiveScan);
         public void onFocusStarted();
         public void onFocusSucceeded();
         public void onFocusFailed();
