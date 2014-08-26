@@ -29,9 +29,11 @@
         <include layout="@layout/menu_indicators"
             android:layout_width="64dip"
             android:layout_height="64dip"
-            android:layout_marginTop="-8dip"
-            android:layout_marginRight="8dip"
-            android:layout_gravity="top|right"/>
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="6dip"
+            android:layout_marginTop="4dip"
+            android:layout_marginBottom="4dip" />
 
         <com.android.camera.ui.PieMenuButton
             android:id="@+id/menu"
