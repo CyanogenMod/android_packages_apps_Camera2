@@ -150,7 +150,7 @@ public class CaptureModule extends CameraModule
     private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
     /** System Properties switch to enable debugging focus UI. */
-    private static final boolean FOCUS_DEBUG_UI = DebugPropertyHelper.showFocusDebugUI();
+    private static final boolean CAPTURE_DEBUG_UI = DebugPropertyHelper.showCaptureDebugUI();
 
     private final Object mDimensionLock = new Object();
 
@@ -660,7 +660,7 @@ public class CaptureModule extends CameraModule
     public void onFocusStatusUpdate(final AutoFocusMode mode, final AutoFocusState state) {
         Log.v(TAG, "AF status is mode:" + mode + " state:" + state);
 
-        if (FOCUS_DEBUG_UI) {
+        if (CAPTURE_DEBUG_UI) {
             // TODO: Add debug circle radius+color UI to FocusOverlay.
             // mMainHandler.post(...)
         }
@@ -668,7 +668,7 @@ public class CaptureModule extends CameraModule
         // If mTapToFocusInProgress, clear UI.
         if (mTapToFocusInProgress) {
             // Clear UI on return to CONTINUOUS_PICTURE (debug mode).
-            if (FOCUS_DEBUG_UI) {
+            if (CAPTURE_DEBUG_UI) {
                 if (mode == AutoFocusMode.CONTINUOUS_PICTURE) {
                     mTapToFocusInProgress = false;
                     mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
