@@ -66,7 +66,6 @@
     <string-array name="pref_camera_slow_shutter_entries" translatable="false">
         <item>@string/pref_camera_slow_shutter_entry_off</item>
         <item>@string/pref_camera_slow_shutter_entry_auto</item>
-        <!--
         <item>@string/pref_camera_slow_shutter_entry_half_second</item>
         <item>@string/pref_camera_slow_shutter_entry_1s</item>
         <item>@string/pref_camera_slow_shutter_entry_2s</item>
@@ -75,14 +74,12 @@
         <item>@string/pref_camera_slow_shutter_entry_16s</item>
         <item>@string/pref_camera_slow_shutter_entry_32s</item>
         <item>@string/pref_camera_slow_shutter_entry_64s</item>
-        -->
     </string-array>
 
     <!-- 0 is off, 1 is auto, specific values are in microseconds -->
     <string-array name="pref_camera_slow_shutter_entryvalues" translatable="false">
         <item>0</item>
         <item>1</item>
-        <!--
         <item>500000</item>
         <item>1000000</item>
         <item>2000000</item>
@@ -91,12 +88,6 @@
         <item>16000000</item>
         <item>32000000</item>
         <item>64000000</item>
-        -->
-    </string-array>
-
-    <string-array name="pref_camera_slow_shutter_icons" translatable="false">
-        <item>@drawable/ic_slowshutter_off</item>
-        <item>@drawable/ic_slowshutter</item>
     </string-array>
 
     <string-array name="pref_camera_beauty_mode_icons" translatable="false">
@@ -107,11 +98,6 @@
     <string-array name="pref_camera_beauty_mode_labels" translatable="false">
         <item>@string/camera_menu_beauty_mode_label</item>
         <item>@string/camera_menu_beauty_mode_label</item>
-    </string-array>
-
-    <string-array name="pref_camera_slow_shutter_labels" translatable="false">
-        <item>@string/camera_menu_slow_shutter_label</item>
-        <item>@string/camera_menu_slow_shutter_label</item>
     </string-array>
 
     <!-- Automatic scene detection -->
