@@ -37,4 +37,12 @@
     <style name="Theme.CameraSettings" parent="@android:style/Theme.Material">
        <item name="android:windowFullscreen">true</item>
     </style>
+
+    <style name="FilmstripBottomControlButton">
+        <item name="android:layout_width">@dimen/filmstrip_bottom_control_button_size</item>
+        <item name="android:layout_height">@dimen/filmstrip_bottom_control_button_size</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
 </resources>
