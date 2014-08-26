@@ -66,8 +66,10 @@
     <color name="bright_foreground_disabled_holo_dark">#ff4c4c4c</color>
     <color name="bright_foreground_holo_dark">#fff3f3f3</color>
     <color name="face_detect_start">#ffffff00</color>
-    <color name="face_detect_success">#8050d060</color>
-    <color name="face_detect_fail">#80d05060</color>
+    <color name="focus_debug">#90ffffff</color>
+    <color name="focus_debug_light">#50ffffff</color>
+    <color name="focus_debug_success">#9000ff00</color>
+    <color name="focus_debug_fail">#90ff0000</color>
     <color name="gray">#FFAAAAAA</color>
 
     <!-- Camera mode switcher -->
