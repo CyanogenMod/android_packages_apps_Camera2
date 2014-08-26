@@ -92,7 +92,7 @@
     <dimen name="focus_outer_stroke">3dp</dimen>
     <dimen name="focus_inner_stroke">2dp</dimen>
     <dimen name="switcher_size">72dp</dimen>
-    <dimen name="face_circle_stroke">2dip</dimen>
+    <dimen name="face_circle_stroke">1dip</dimen>
     <dimen name="shutter_offset">-22dp</dimen>
     <dimen name="size_thumbnail">200dip</dimen>
     <dimen name="size_preview">400dip</dimen>
