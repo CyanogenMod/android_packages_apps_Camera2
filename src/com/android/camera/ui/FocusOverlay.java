@@ -18,13 +18,16 @@ package com.android.camera.ui;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.android.camera.FocusOverlayManager;
+import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera2.R;
 
@@ -34,13 +37,26 @@ import com.android.camera2.R;
 public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     private static final Log.Tag TAG = new Log.Tag("FocusOverlay");
 
+    /** System Properties switch to enable debugging focus UI. */
+    private static final boolean CAPTURE_DEBUG_UI = DebugPropertyHelper.showCaptureDebugUI();
+
     private final static int FOCUS_DURATION_MS = 500;
     private final static int FOCUS_INDICATOR_ROTATION_DEGREES = 50;
 
     private final Drawable mFocusIndicator;
-    private final Drawable mFocusOuterRing;
+    private Drawable mFocusOuterRing;
     private final Rect mBounds = new Rect();
     private final ValueAnimator mFocusAnimation = new ValueAnimator();
+
+    private Paint mDebugPaint;
+    private Paint mDebugAEPaint;
+    private int mDebugStartColor;
+    private int mDebugPassiveColor;
+    private int mDebugSuccessColor;
+    private int mDebugFailColor;
+    private Rect mFocusDebugAFRect;
+    private Rect mFocusDebugAERect;
+    private boolean mIsPassiveScan;
 
     private int mPositionX;
     private int mPositionY;
@@ -55,6 +71,23 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mFocusIndicatorSize = getResources().getDimensionPixelSize(R.dimen.focus_inner_ring_size);
         mFocusOuterRing = getResources().getDrawable(R.drawable.focus_ring_touch_outer);
         mFocusOuterRingSize = getResources().getDimensionPixelSize(R.dimen.focus_outer_ring_size);
+
+        if (CAPTURE_DEBUG_UI) {
+            Resources res = getResources();
+            mDebugStartColor = res.getColor(R.color.focus_debug);
+            mDebugPassiveColor = res.getColor(R.color.focus_debug_light);
+            mDebugSuccessColor = res.getColor(R.color.focus_debug_success);
+            mDebugFailColor = res.getColor(R.color.focus_debug_fail);
+            mDebugPaint = new Paint();
+            mDebugPaint.setColor(res.getColor(R.color.focus_debug));
+            mDebugPaint.setAntiAlias(true);
+            mDebugPaint.setStyle(Paint.Style.STROKE);
+            mDebugPaint.setStrokeWidth(res.getDimension(R.dimen.focus_debug_stroke));
+            mDebugAEPaint = new Paint(mDebugPaint);
+            mDebugAEPaint.setColor(res.getColor(R.color.focus_debug));
+            mFocusDebugAFRect = new Rect();
+            mFocusDebugAERect = new Rect();
+        }
     }
 
     @Override
@@ -66,10 +99,19 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     @Override
     public void clearFocus() {
         mShowIndicator = false;
+        if (CAPTURE_DEBUG_UI) {
+            setVisibility(INVISIBLE);
+        }
     }
 
     @Override
     public void setFocusPosition(int x, int y, boolean isPassiveScan) {
+        setFocusPosition(x, y, isPassiveScan, 0, 0);
+    }
+
+    @Override
+    public void setFocusPosition(int x, int y, boolean isPassiveScan, int aFsize, int aEsize) {
+        mIsPassiveScan = isPassiveScan;
         mPositionX = x;
         mPositionY = y;
         mBounds.set(x - mFocusIndicatorSize / 2, y - mFocusIndicatorSize / 2,
@@ -77,6 +119,20 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         mFocusIndicator.setBounds(mBounds);
         mFocusOuterRing.setBounds(x - mFocusOuterRingSize / 2, y - mFocusOuterRingSize / 2,
                 x + mFocusOuterRingSize / 2, y + mFocusOuterRingSize / 2);
+
+        if (CAPTURE_DEBUG_UI) {
+            mFocusOuterRing.setBounds(0, 0, 0, 0);
+            mFocusDebugAFRect.set(x - aFsize / 2, y - aFsize / 2, x + aFsize / 2, y + aFsize / 2);
+            // If AE region is different size than AF region and active scan.
+            if (aFsize != aEsize && !isPassiveScan) {
+                mFocusDebugAERect.set(x - aEsize / 2, y - aEsize / 2, x + aEsize / 2,
+                        y + aEsize / 2);
+            } else {
+                mFocusDebugAERect.set(0, 0, 0, 0);
+            }
+            mDebugPaint.setColor(isPassiveScan ? mDebugPassiveColor : mDebugStartColor);
+        }
+
         if (getVisibility() != VISIBLE) {
             setVisibility(VISIBLE);
         }
@@ -101,6 +157,9 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     public void onFocusSucceeded() {
         mFocusAnimation.cancel();
         mShowIndicator = false;
+        if (CAPTURE_DEBUG_UI && !mIsPassiveScan) {
+            mDebugPaint.setColor(mDebugSuccessColor);
+        }
         invalidate();
     }
 
@@ -108,6 +167,9 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     public void onFocusFailed() {
         mFocusAnimation.cancel();
         mShowIndicator = false;
+        if (CAPTURE_DEBUG_UI && !mIsPassiveScan) {
+            mDebugPaint.setColor(mDebugFailColor);
+        }
         invalidate();
     }
 
@@ -131,6 +193,19 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
             canvas.rotate(mAngle, mPositionX, mPositionY);
             mFocusIndicator.draw(canvas);
             canvas.restore();
+        }
+        if (CAPTURE_DEBUG_UI && mFocusDebugAFRect != null) {
+            canvas.drawRect(mFocusDebugAFRect, mDebugPaint);
+            float delta = 0.1f * mFocusDebugAERect.width();
+            float left = mFocusDebugAERect.left;
+            float top = mFocusDebugAERect.top;
+            float right = mFocusDebugAERect.right;
+            float bot = mFocusDebugAERect.bottom;
+
+            canvas.drawLines(new float[]{left, top + delta, left, top, left, top, left + delta, top}, mDebugAEPaint);
+            canvas.drawLines(new float[]{right, top + delta, right, top, right, top, right - delta, top}, mDebugAEPaint);
+            canvas.drawLines(new float[]{left, bot - delta, left, bot, left, bot, left + delta, bot}, mDebugAEPaint);
+            canvas.drawLines(new float[]{right, bot - delta, right, bot, right, bot, right - delta, bot}, mDebugAEPaint);
         }
     }
 }

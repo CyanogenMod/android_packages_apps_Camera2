@@ -53,9 +53,6 @@ public class FaceView extends View
     private Face[] mFaces;
     private Face[] mPendingFaces;
     private int mColor;
-    private final int mFocusingColor;
-    private final int mFocusedColor;
-    private final int mFailColor;
     private Paint mPaint;
     private volatile boolean mBlocked;
 
@@ -79,10 +76,7 @@ public class FaceView extends View
     public FaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         Resources res = getResources();
-        mFocusingColor = res.getColor(R.color.face_detect_start);
-        mFocusedColor = res.getColor(R.color.face_detect_success);
-        mFailColor = res.getColor(R.color.face_detect_fail);
-        mColor = mFocusingColor;
+        mColor = res.getColor(R.color.face_detect_start);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Style.STROKE);
@@ -139,21 +133,18 @@ public class FaceView extends View
 
     @Override
     public void showStart() {
-        mColor = mFocusingColor;
         invalidate();
     }
 
     // Ignore the parameter. No autofocus animation for face detection.
     @Override
     public void showSuccess(boolean timeout) {
-        mColor = mFocusedColor;
         invalidate();
     }
 
     // Ignore the parameter. No autofocus animation for face detection.
     @Override
     public void showFail(boolean timeout) {
-        mColor = mFailColor;
         invalidate();
     }
 
@@ -161,7 +152,6 @@ public class FaceView extends View
     public void clear() {
         // Face indicator is displayed during preview. Do not clear the
         // drawable.
-        mColor = mFocusingColor;
         mFaces = null;
         invalidate();
     }
