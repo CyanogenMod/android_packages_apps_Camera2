@@ -212,7 +212,7 @@ public class FaceView extends View
                 }
                 mPaint.setColor(mColor);
                 mRect.offset(mPreviewArea.left, mPreviewArea.top);
-                canvas.drawOval(mRect, mPaint);
+                canvas.drawRect(mRect, mPaint);
             }
             canvas.restore();
         }
