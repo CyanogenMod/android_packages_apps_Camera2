@@ -645,6 +645,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mTextureViewHelper.updateAspectRatio(aspectRatio);
     }
 
+    /**
+     * WAR: Reset the SurfaceTexture's default buffer size to the current view dimensions of
+     * its TextureView.  This is necessary to get the expected behavior for the TextureView's
+     * HardwareLayer transform matrix (set by TextureView#setTransform) after configuring the
+     * SurfaceTexture as an output for the Camera2 API (which involves changing the default buffer
+     * size).
+     *
+     * b/17286155 - Tracking a fix for this in HardwareLayer.
+     */
+    public void setDefaultBufferSizeToViewDimens() {
+        if (mSurface == null || mTextureView == null) {
+            Log.w(TAG, "Could not set SurfaceTexture default buffer dimensions, not yet setup");
+            return;
+        }
+        mSurface.setDefaultBufferSize(mTextureView.getWidth(), mTextureView.getHeight());
+    }
 
     /**
      * Updates the preview matrix without altering it.
