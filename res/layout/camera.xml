@@ -42,6 +42,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.android.camera.ui.FaceView
+        android:id="@+id/face_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <com.android.camera.ui.GridLines
         android:id="@+id/grid_lines"
         android:layout_width="match_parent"
