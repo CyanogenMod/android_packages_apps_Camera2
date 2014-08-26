@@ -68,6 +68,15 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
 
     private static final int RESET_TOUCH_FOCUS = 0;
     private static final int RESET_TOUCH_FOCUS_DELAY = 4000;
+    /**
+     * Size of AF region as multiple of shortest edge.
+     * Was 0.125 * longest edge prior to L release.
+     * TODO: Move to GservicesHelper
+     */
+    private static final float AF_REGION_BOX = 0.2f;
+
+    /** How much wider the touch metering area is relative to the AF area. */
+    public static final float AE_MULTIPLIER = 1.5f;
 
     private int mState = STATE_IDLE;
     private static final int STATE_IDLE = 0; // Focus is not active.
@@ -108,6 +117,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     public  interface FocusUI {
         public boolean hasFaces();
         public void clearFocus();
+        public void setFocusPosition(int x, int y, boolean isPassiveScan, int aFsize, int aEsize);
         public void setFocusPosition(int x, int y, boolean isPassiveScan);
         public void onFocusStarted();
         public void onFocusSucceeded();
@@ -323,12 +333,27 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         // animate on false->true trasition only b/8219520
         if (moving && !mPreviousMoving) {
             // Auto focus at the center of the preview.
-            mUI.setFocusPosition(mPreviewRect.centerX(), mPreviewRect.centerY(), true);
+            mUI.setFocusPosition(mPreviewRect.centerX(), mPreviewRect.centerY(), true,
+                    getAFRegionEdge(), getAERegionEdge());
             mUI.onFocusStarted();
         } else if (!moving) {
             mUI.onFocusSucceeded();
         }
         mPreviousMoving = moving;
+    }
+
+    /** Returns width of auto focus region in pixels. */
+    private int getAFRegionEdge() {
+        return (int) (Math.min(mPreviewRect.width(), mPreviewRect.height()) * AF_REGION_BOX);
+    }
+
+    /** Returns width of metering region in pixels. */
+    private int getAERegionEdge() {
+        // Convert the coordinates to driver format.
+        // AE area is bigger by AE_MULTIPLIER because exposure is sensitive and
+        // easy to over- or underexposure if area is too small.
+        return (int) (Math.min(mPreviewRect.width(), mPreviewRect.height()) * AF_REGION_BOX
+                * AE_MULTIPLIER);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -339,7 +364,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
 
         // Convert the coordinates to driver format.
-        calculateTapArea(x, y, 1f, mFocusArea.get(0).rect);
+        calculateTapArea(x, y, getAFRegionEdge(), mFocusArea.get(0).rect);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -350,9 +375,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
 
         // Convert the coordinates to driver format.
-        // AE area is bigger because exposure is sensitive and
-        // easy to over- or underexposure if area is too small.
-        calculateTapArea(x, y, 1.5f, mMeteringArea.get(0).rect);
+        calculateTapArea(x, y, getAERegionEdge(), mMeteringArea.get(0).rect);
     }
 
     public void onSingleTapUp(int x, int y) {
@@ -379,7 +402,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
 
         // Use margin to set the focus indicator to the touched area.
-        mUI.setFocusPosition(x, y, false);
+        mUI.setFocusPosition(x, y, false, getAFRegionEdge(), getAERegionEdge());
         // Log manual tap to focus.
         mTouchCoordinate = new TouchCoordinate(x, y, mPreviewRect.width(), mPreviewRect.height());
         mTouchTime = System.currentTimeMillis();
@@ -575,22 +598,15 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         }
     }
 
-    private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
-        int areaSize = (int) (getAreaSize() * areaMultiple);
-        int left = CameraUtil.clamp(x - areaSize / 2, mPreviewRect.left,
-                mPreviewRect.right - areaSize);
-        int top = CameraUtil.clamp(y - areaSize / 2, mPreviewRect.top,
-                mPreviewRect.bottom - areaSize);
+    private void calculateTapArea(int x, int y, int size, Rect rect) {
+        int left = CameraUtil.clamp(x - size / 2, mPreviewRect.left,
+                mPreviewRect.right - size);
+        int top = CameraUtil.clamp(y - size / 2, mPreviewRect.top,
+                mPreviewRect.bottom - size);
 
-        RectF rectF = new RectF(left, top, left + areaSize, top + areaSize);
+        RectF rectF = new RectF(left, top, left + size, top + size);
         mMatrix.mapRect(rectF);
         CameraUtil.rectFToRect(rectF, rect);
-    }
-
-    private int getAreaSize() {
-        // Recommended focus area size from the manufacture is 1/8 of the image
-        // width (i.e. longer edge of the image)
-        return Math.max(mPreviewRect.width(), mPreviewRect.height()) / 8;
     }
 
     /* package */ int getFocusState() {
