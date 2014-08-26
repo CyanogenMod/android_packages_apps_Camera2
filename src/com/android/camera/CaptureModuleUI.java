@@ -202,8 +202,8 @@ public class CaptureModuleUI implements
 
     public void setAutoFocusTarget(int x, int y) {
         // TODO: refactor.
-        boolean isAutoFocus = false;
-        mFocusUI.setFocusPosition(x, y, isAutoFocus);
+        boolean isPassiveScan = true;
+        mFocusUI.setFocusPosition(x, y, isPassiveScan);
     }
 
     public void clearAutoFocusIndicator() {
