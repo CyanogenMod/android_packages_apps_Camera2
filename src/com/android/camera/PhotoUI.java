@@ -33,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.camera.FocusOverlayManager.FocusUI;
+import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
@@ -65,7 +66,7 @@ public class PhotoUI implements PreviewStatusListener,
     private Dialog mDialog = null;
 
     // TODO: Remove face view logic if UX does not bring it back within a month.
-    private final FaceView mFaceView = null;
+    private final FaceView mFaceView;
     private DecodeImageForReview mDecodeTaskForReview = null;
 
     private float mZoomMax;
@@ -234,6 +235,12 @@ public class PhotoUI implements PreviewStatusListener,
         mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
+        // Show faces if we are in debug mode.
+        if (DebugPropertyHelper.showCaptureDebugUI()) {
+            mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
+        } else {
+            mFaceView = null;
+        }
 
         if (mController.isImageCaptureIntent()) {
             initIntentReviewImageView();
