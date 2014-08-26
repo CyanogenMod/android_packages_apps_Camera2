@@ -445,9 +445,18 @@ public class CameraUtil {
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
             }
-            if (Math.abs(size.height() - targetHeight) < minDiff) {
+
+            double heightDiff = Math.abs(size.height() - targetHeight);
+            if (heightDiff < minDiff) {
                 optimalSizeIndex = i;
-                minDiff = Math.abs(size.height() - targetHeight);
+                minDiff = heightDiff;
+            } else if (heightDiff == minDiff) {
+                // Prefer resolutions smaller-than-display when an equally close
+                // larger-than-display resolution is available
+                if (size.height() < targetHeight) {
+                    optimalSizeIndex = i;
+                    minDiff = heightDiff;
+                }
             }
         }
         // Cannot find the one match the aspect ratio. This should not happen.
