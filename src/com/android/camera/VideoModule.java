@@ -927,8 +927,13 @@ public class VideoModule extends CameraModule
         // controller can set preview callbacks if needed. This has to happen before
         // preview is started as a workaround of the framework issue related to preview
         // callbacks that causes preview stretch and crash. (More details see b/12210027
-        // and b/12591410
-        mAppController.onPreviewReadyToStart();
+        // and b/12591410. Don't apply this to L, see b/16649297.
+        if (!ApiHelper.isLOrHigher()) {
+            Log.v(TAG, "calling onPreviewReadyToStart to set one shot callback");
+            mAppController.onPreviewReadyToStart();
+        } else {
+            Log.v(TAG, "on L, no one shot callback necessary");
+        }
         try {
             mCameraDevice.setPreviewTexture(surfaceTexture);
             mCameraDevice.startPreview();
