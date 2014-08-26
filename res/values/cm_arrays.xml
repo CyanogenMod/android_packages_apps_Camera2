@@ -72,6 +72,9 @@
         <item>@string/pref_camera_slow_shutter_entry_2s</item>
         <item>@string/pref_camera_slow_shutter_entry_4s</item>
         <item>@string/pref_camera_slow_shutter_entry_8s</item>
+        <item>@string/pref_camera_slow_shutter_entry_16s</item>
+        <item>@string/pref_camera_slow_shutter_entry_32s</item>
+        <item>@string/pref_camera_slow_shutter_entry_64s</item>
         -->
     </string-array>
 
@@ -85,6 +88,9 @@
         <item>2000000</item>
         <item>4000000</item>
         <item>8000000</item>
+        <item>16000000</item>
+        <item>32000000</item>
+        <item>64000000</item>
         -->
     </string-array>
 
