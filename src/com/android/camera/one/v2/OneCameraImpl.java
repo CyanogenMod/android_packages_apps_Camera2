@@ -85,7 +85,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     /** If true, will write data about each capture request to disk. */
     private static final boolean DEBUG_WRITE_CAPTURE_DATA = DebugPropertyHelper.writeCaptureData();
     /** If true, will log per-frame AF info. */
-    private static final boolean DEBUG_FOCUS_LOG = DebugPropertyHelper.showFocusDebugLog();
+    private static final boolean DEBUG_FOCUS_LOG = DebugPropertyHelper.showFrameDebugLog();
 
     /** Default JPEG encoding quality. */
     private static final Byte JPEG_QUALITY = 90;

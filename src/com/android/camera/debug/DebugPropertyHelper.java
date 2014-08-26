@@ -29,10 +29,14 @@ public class DebugPropertyHelper {
 
     /** Switch between PhotoModule and the new CaptureModule. */
     private static final String PROP_ENABLE_CAPTURE_MODULE = PREFIX + ".newcapture";
-    /** Enable additional focus logging. */
-    private static final String PROP_FOCUS_DEBUG_LOG = PREFIX + ".frame_log";
-    /** Enable additional debug UI to show AE, AF, Face detection states */
-    private static final String PROP_3A_DEBUG_UI = PREFIX + ".debug_ui";
+    /** Enable frame-by-frame focus logging. */
+    private static final String PROP_FRAME_LOG = PREFIX + ".frame_log";
+    /**
+     * Enable additional capture debug UI.
+     * For API1/Photomodule: show faces.
+     * For API2/Capturemodule: show faces, AF state, AE/AF precise regions.
+     */
+    private static final String PROP_CAPTURE_DEBUG_UI = PREFIX + ".debug_ui";
     /** Write data about each capture request to disk. */
     private static final String PROP_WRITE_CAPTURE_DATA = PREFIX + ".capture_write";
 
@@ -44,16 +48,12 @@ public class DebugPropertyHelper {
         return ALL_3A_DEBUG_ON || isPropertyOn(PROP_ENABLE_CAPTURE_MODULE);
     }
 
-    public static boolean showFocusDebugLog() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_FOCUS_DEBUG_LOG);
+    public static boolean showFrameDebugLog() {
+        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_FRAME_LOG);
     }
 
-    public static boolean showFocusDebugUI() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_3A_DEBUG_UI);
-    }
-
-    public static boolean showFaceDebugUI() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_3A_DEBUG_UI);
+    public static boolean showCaptureDebugUI() {
+        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_CAPTURE_DEBUG_UI);
     }
 
     public static boolean writeCaptureData() {
