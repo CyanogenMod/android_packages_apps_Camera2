@@ -500,6 +500,7 @@ public class CaptureModule extends CameraModule
         getServices().getRemoteShutterListener().onModuleReady(this);
         // TODO: Check if we can really take a photo right now (memory, camera
         // state, ... ).
+        mAppController.getCameraAppUI().enableModeOptions();
         mAppController.setShutterEnabled(true);
     }
 
@@ -709,6 +710,9 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onReadyStateChanged(boolean readyForCapture) {
+        if (readyForCapture) {
+            mAppController.getCameraAppUI().enableModeOptions();
+        }
         mAppController.setShutterEnabled(readyForCapture);
     }
 
@@ -725,6 +729,8 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onPictureTaken(CaptureSession session) {
+        mAppController.getCameraAppUI().enableModeOptions();
+        mAppController.getCameraAppUI().setShutterButtonEnabled(true);
     }
 
     @Override
