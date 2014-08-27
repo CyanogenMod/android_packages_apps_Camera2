@@ -424,12 +424,12 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
 
     public void onPreviewStarted() {
         mState = STATE_IDLE;
+        resetTouchFocus();
     }
 
     public void onPreviewStopped() {
         // If auto focus was in progress, it would have been stopped.
         mState = STATE_IDLE;
-        resetTouchFocus();
         updateFocusUI();
     }
 
@@ -590,6 +590,9 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         // Initialize mFocusArea.
         mFocusArea = null;
         mMeteringArea = null;
+        // This will cause current module to call getFocusAreas() and
+        // getMeteringAreas() and send updated regions to camera.
+        mListener.setFocusParameters();
 
         if (mTouchCoordinate != null) {
             UsageStatistics.instance().tapToFocus(mTouchCoordinate,
