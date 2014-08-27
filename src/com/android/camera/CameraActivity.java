@@ -2008,8 +2008,12 @@ public class CameraActivity extends Activity
             @Override
             protected void onPostExecute(Long bytes) {
                 updateStorageHint(bytes);
-                if (callback != null) {
+                // This callback returns after I/O to check disk, so we could be
+                // pausing and shutting down. If so, don't bother invoking.
+                if (callback != null && !mPaused) {
                     callback.onStorageUpdateDone(bytes);
+                } else {
+                    Log.v(TAG, "ignoring storage callback after activity pause");
                 }
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
