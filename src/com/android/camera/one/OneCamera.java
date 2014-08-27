@@ -18,6 +18,7 @@ package com.android.camera.one;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.view.Surface;
 
@@ -215,7 +216,8 @@ public interface OneCamera {
         public int heading = Integer.MIN_VALUE;
         /** Flash mode for this capture. */
         public Flash flashMode = Flash.AUTO;
-        // TODO: Add Location
+        /** The location of this capture. */
+        public Location location = null;
 
         /** Set this to provide a debug folder for this capture. */
         public File debugDataFolder;
