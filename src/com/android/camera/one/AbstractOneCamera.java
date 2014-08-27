@@ -17,6 +17,9 @@
 package com.android.camera.one;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * A common abstract {@link OneCamera} implementation that contains some utility
@@ -28,6 +31,12 @@ public abstract class AbstractOneCamera implements OneCamera {
     protected CameraErrorListener mCameraErrorListener;
     protected FocusStateListener mFocusStateListener;
     protected ReadyStateChangedListener mReadyStateChangedListener;
+
+    /**
+     * Number of characters from the end of the device serial number used to
+     * construct folder names for debugging output.
+     */
+    static final int DEBUG_FOLDER_SERIAL_LENGTH = 4;
 
     @Override
     public final void setCameraErrorListener(CameraErrorListener listener) {
@@ -47,6 +56,10 @@ public abstract class AbstractOneCamera implements OneCamera {
     /**
      * Create a directory we can use to store debugging information during Gcam
      * captures.
+     * <br />
+     * The directory created is [root]/[folderName]/SSSS_YYYYMMDD_HHMMSS_XXX,
+     * where 'SSSS' are the last 'DEBUG_FOLDER_SERIAL_LENGTH' digits of the
+     * devices serial number, and 'XXX' are milliseconds of the timestamp.
      *
      * @param root the root into which we put a session-specific sub-directory.
      * @param folderName the sub-folder within 'root' where the data should be
@@ -62,8 +75,25 @@ public abstract class AbstractOneCamera implements OneCamera {
             throw new RuntimeException("Gcam debug directory not valid or doesn't exist: "
                     + root.getAbsolutePath());
         }
-        File destFolder = (new File(new File(root, folderName),
-                String.valueOf(System.currentTimeMillis())));
+
+        String serialSubstring = "";
+        String serial = android.os.Build.SERIAL;
+        if (serial != null) {
+            int length = serial.length();
+
+            if (length > DEBUG_FOLDER_SERIAL_LENGTH) {
+                serialSubstring = serial.substring(length - DEBUG_FOLDER_SERIAL_LENGTH, length);
+            } else {
+                serialSubstring = serial;
+            }
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        String currentDateAndTime = simpleDateFormat.format(new Date());
+
+        String burstFolderName = String.format("%s_%s", serialSubstring, currentDateAndTime);
+        File destFolder = new File(new File(root, folderName), burstFolderName);
         if (!destFolder.mkdirs()) {
             throw new RuntimeException("Could not create Gcam debug data folder.");
         }
