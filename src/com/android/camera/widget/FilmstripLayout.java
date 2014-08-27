@@ -327,7 +327,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             mSwipeTrend = (((int) dx) >> 1) + (mSwipeTrend >> 1);
             if (dx < 0 && mFilmstripContentLayout.getTranslationX() == 0) {
                 mBackgroundDrawable.setOffset(0);
-                FilmstripLayout.this.onSwipeOutBegin();
             }
 
             // When we start translating the filmstrip in, we want the left edge of the
