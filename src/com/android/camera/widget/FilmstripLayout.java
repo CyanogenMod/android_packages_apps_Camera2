@@ -20,7 +20,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -45,8 +44,6 @@ import com.android.camera2.R;
 public class FilmstripLayout extends FrameLayout implements FilmstripContentPanel {
 
     private static final long DEFAULT_DURATION_MS = 200;
-    private static final int ANIM_DIRECTION_IN = 1;
-    private static final int ANIM_DIRECTION_OUT = 2;
 
     /**
      * The layout containing the {@link com.android.camera.widget.FilmstripView}
@@ -59,11 +56,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private final ValueAnimator mFilmstripAnimator = ValueAnimator.ofFloat(null);
     private int mSwipeTrend;
     private MyBackgroundDrawable mBackgroundDrawable;
-    private int mAnimationDirection;
     private Handler mHandler;
-    // There are two versions of background. The hiding background is simply a
-    // solid black rectangle, the other is the quantum paper version.
-    private boolean mDrawHidingBackground;
     // We use this to record the current translation position instead of using
     // the real value because we might set the translation before onMeasure()
     // thus getMeasuredWidth() can be 0.
@@ -83,9 +76,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
                 if (mFilmstripContentTranslationProgress != 0f) {
                     mFilmstripView.getController().goToFilmstrip();
                     setVisibility(INVISIBLE);
-                    setDrawHidingBackground(false);
                 } else {
-                    setDrawHidingBackground(true);
                     notifyShown();
                 }
             }
@@ -269,12 +260,13 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     }
 
     public void hideFilmstrip() {
-        mAnimationDirection = ANIM_DIRECTION_OUT;
+        // run the same view show/hides and animations
+        // that happen with a swipe gesture.
+        onSwipeOutBegin();
         runAnimation(mFilmstripContentTranslationProgress, 1f);
     }
 
     public void showFilmstrip() {
-        mAnimationDirection = ANIM_DIRECTION_IN;
         setVisibility(VISIBLE);
         runAnimation(mFilmstripContentTranslationProgress, 0f);
     }
@@ -290,10 +282,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         }
         mFilmstripAnimator.setFloatValues(begin, end);
         mFilmstripAnimator.start();
-    }
-
-    private void setDrawHidingBackground(boolean hiding) {
-        mDrawHidingBackground = hiding;
     }
 
     private void translateContentLayout(float fraction) {
@@ -501,23 +489,9 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             if (translation == width) {
                 return;
             }
-            canvas.drawColor(Color.argb((int) (127 * (width - translation) / width), 0, 0, 0));
-            if (mDrawHidingBackground) {
-                drawHiding(canvas);
-            } else {
-                drawShowing(canvas);
-            }
-        }
 
-        private void drawHiding(Canvas canvas) {
-            setAlpha(1.0f - mFilmstripContentTranslationProgress);
-            canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint);
-        }
-
-        private void drawShowing(Canvas canvas) {
             setAlpha(1.0f - mFilmstripContentTranslationProgress);
             canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint);
         }
     }
-
 }

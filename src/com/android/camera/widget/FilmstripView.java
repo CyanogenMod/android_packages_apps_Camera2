@@ -647,7 +647,7 @@ public class FilmstripView extends ViewGroup {
     }
 
     private void recycleView(View view, int dataId) {
-        final int viewType = (int) view.getTag(R.id.mediadata_tag_viewtype);
+        final int viewType = (Integer) view.getTag(R.id.mediadata_tag_viewtype);
         if (viewType > 0) {
             Queue<View> recycledViewsForType = recycledViews.get(viewType);
             if (recycledViewsForType == null) {
