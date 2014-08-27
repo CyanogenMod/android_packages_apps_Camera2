@@ -27,12 +27,12 @@
         android:layout_marginLeft="16dp"
         android:layout_weight="1">
         <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/remember_location_title"
-        android:textSize="22sp"
-        android:textColor="@color/dialog_text_color"
-        android:layout_marginBottom="28dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remember_location_title"
+            android:textSize="22sp"
+            android:textColor="@color/dialog_text_color"
+            android:layout_marginBottom="28dp" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
