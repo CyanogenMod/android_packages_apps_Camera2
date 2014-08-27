@@ -200,10 +200,8 @@ public class CaptureModuleUI implements
         mFocusUI.onFocusFailed();
     }
 
-    public void setAutoFocusTarget(int x, int y) {
-        // TODO: refactor.
-        boolean isPassiveScan = true;
-        mFocusUI.setFocusPosition(x, y, isPassiveScan);
+    public void setAutoFocusTarget(int x, int y, boolean isPassiveScan, int afSize, int aeSize) {
+        mFocusUI.setFocusPosition(x, y, isPassiveScan, afSize, aeSize);
     }
 
     public void clearAutoFocusIndicator() {
