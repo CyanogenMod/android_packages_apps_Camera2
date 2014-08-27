@@ -1311,6 +1311,10 @@ public class VideoModule extends CameraModule
                 } else {
                     //??
                     //if (!mCameraDevice.waitDone()) return;
+                    if (mPaused == true) {
+                        Log.v(TAG, "in storage callback after module paused");
+                        return;
+                    }
                     mCurrentVideoUri = null;
 
                     initializeRecorder();
