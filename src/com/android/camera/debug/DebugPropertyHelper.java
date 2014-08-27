@@ -22,6 +22,9 @@ public class DebugPropertyHelper {
     /** Override for 3A properties. */
     private static final boolean ALL_3A_DEBUG_ON = false;
 
+    /** Make app start with CaptureModule + ZSL. */
+    private static final boolean FORCE_ZSL_APP = false;
+
     private static final String OFF_VALUE = "0";
     private static final String ON_VALUE = "1";
 
@@ -37,6 +40,8 @@ public class DebugPropertyHelper {
      * For API2/Capturemodule: show faces, AF state, AE/AF precise regions.
      */
     private static final String PROP_CAPTURE_DEBUG_UI = PREFIX + ".debug_ui";
+    /** Switch between OneCameraImpl and OneCameraZslImpl. */
+    private static final String PROP_ENABLE_ZSL = PREFIX + ".zsl";
     /** Write data about each capture request to disk. */
     private static final String PROP_WRITE_CAPTURE_DATA = PREFIX + ".capture_write";
 
@@ -45,7 +50,11 @@ public class DebugPropertyHelper {
     }
 
     public static boolean isCaptureModuleEnabled() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_ENABLE_CAPTURE_MODULE);
+        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_ENABLE_CAPTURE_MODULE) || FORCE_ZSL_APP;
+    }
+
+    public static boolean isZslEnabled() {
+        return isPropertyOn(PROP_ENABLE_ZSL) || FORCE_ZSL_APP;
     }
 
     public static boolean showFrameDebugLog() {
