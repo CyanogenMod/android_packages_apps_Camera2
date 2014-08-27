@@ -471,7 +471,7 @@
         <item>@drawable/ic_camera_blanket</item>
         <item>@drawable/ic_video_blanket</item>
         <item>@drawable/ic_refocus_blanket</item>
-        <item>@drawable/ic_photo_sphere_blanket</item>
+        <item>@drawable/ic_photosphere_blanket</item>
         <item>@drawable/ic_pano_blanket</item>
         <item>@drawable/ic_camera_blanket</item>
         <item>@drawable/ic_camera_blanket</item>
@@ -481,18 +481,18 @@
         <item>@drawable/ic_camera_normal</item>
         <item>@drawable/ic_video_normal</item>
         <item>@drawable/ic_refocus_normal</item>
-        <item>@drawable/ic_photo_sphere_normal</item>
+        <item>@drawable/ic_photosphere_normal</item>
         <item>@drawable/ic_panorama_normal</item>
         <item>@drawable/ic_camera_normal</item>
     </array>
 
     <array name="camera_mode_shutter_icon">
-        <item>@drawable/ic_camera</item>
-        <item>@drawable/ic_video</item>
-        <item>@drawable/ic_refocus</item>
+        <item>@drawable/ic_capture_camera</item>
+        <item>@drawable/ic_capture_video</item>
+        <item>@drawable/ic_capture_refocus</item>
         <item>@null</item>
-        <item>@drawable/ic_panorama</item>
-        <item>@drawable/ic_camera</item>
+        <item>@drawable/ic_capture_panorama</item>
+        <item>@drawable/ic_capture_camera</item>
     </array>
 
     <!-- These must correspond in order to the entries in CameraProfile. -->
