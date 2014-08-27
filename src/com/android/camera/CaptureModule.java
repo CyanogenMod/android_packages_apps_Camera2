@@ -202,7 +202,8 @@ public class CaptureModule extends CameraModule
 
     /** Persistence of Tap to Focus target UI after scan complete. */
     private static final int FOCUS_HOLD_UI_MILLIS = 500;
-
+    /** Worst case persistence of TTF target UI. */
+    private static final int FOCUS_UI_TIMEOUT_MILLIS = 2000;
     /** Accelerometer data. */
     private final float[] mGData = new float[3];
     /** Magnetic sensor data. */
@@ -628,6 +629,15 @@ public class CaptureModule extends CameraModule
         // Show UI immediately even though scan has not started yet.
         mUI.setAutoFocusTarget(x, y);
         mUI.showAutoFocusInProgress();
+
+        // TODO: Consider removing after TTF implemented in all OneCameras.
+        mMainHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mTapToFocusInProgress = false;
+                mMainHandler.post(mHideAutoFocusTargetRunnable);
+            }
+        }, FOCUS_UI_TIMEOUT_MILLIS);
 
         // Normalize coordinates to [0,1] per CameraOne API.
         float points[] = new float[2];
