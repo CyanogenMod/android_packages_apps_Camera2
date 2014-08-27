@@ -36,6 +36,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
+import android.widget.Toast;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
@@ -62,6 +63,7 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
@@ -503,6 +505,14 @@ public class CaptureModule extends CameraModule
         // state, ... ).
         mAppController.getCameraAppUI().enableModeOptions();
         mAppController.setShutterEnabled(true);
+
+        // TODO: Remove once Gcam is properly tuned on Shamu and ready for
+        // quality feedback.
+        if (mStickyGcamCamera && ApiHelper.IS_NEXUS_6) {
+            Toast.makeText(mContext,
+                    "Shamu HDR+ still in tuning, don't file image quality issues yet",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
