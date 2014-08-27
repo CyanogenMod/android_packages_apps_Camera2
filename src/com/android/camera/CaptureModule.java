@@ -315,10 +315,6 @@ public class CaptureModule extends CameraModule
         mSensorManager = (SensorManager) (mContext.getSystemService(Context.SENSOR_SERVICE));
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
-        if (mPreviewTexture != null) {
-            initSurface(mPreviewTexture);
-        }
     }
 
     @Override
@@ -420,54 +416,7 @@ public class CaptureModule extends CameraModule
     public void initSurface(final SurfaceTexture surface) {
         mPreviewTexture = surface;
         closeCamera();
-
-        // Only enable HDR on the back camera
-        boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
-        mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
-                new OpenCallback() {
-                    @Override
-                    public void onFailure() {
-                        Log.e(TAG, "Could not open camera.");
-                        mCamera = null;
-                        mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
-                    }
-
-                    @Override
-                    public void onCameraOpened(final OneCamera camera) {
-                        Log.d(TAG, "onCameraOpened: " + camera);
-                        mCamera = camera;
-                        updatePreviewBufferDimension();
-
-                        // If the surface texture is not destroyed, it may have
-                        // the last frame lingering. We need to hold off setting
-                        // transform until preview is started.
-                        resetDefaultBufferSize();
-                        mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
-                        Log.d(TAG, "starting preview ...");
-
-                        // TODO: Consider rolling these two calls into one.
-                        camera.startPreview(new Surface(surface), new CaptureReadyCallback() {
-
-                            @Override
-                            public void onSetupFailed() {
-                                Log.e(TAG, "Could not set up preview.");
-                                mCamera.close(null);
-                                mCamera = null;
-                                // TODO: Show an error message and exit.
-                            }
-
-                            @Override
-                            public void onReadyForCapture() {
-                                Log.d(TAG, "Ready for capture.");
-                                onPreviewStarted();
-                                // Enable zooming after preview has started.
-                                mUI.initializeZoom(mCamera.getMaxZoom());
-                                mCamera.setFocusStateListener(CaptureModule.this);
-                                mCamera.setReadyStateChangedListener(CaptureModule.this);
-                            }
-                        });
-                    }
-                });
+        openCameraAndStartPreview();
     }
 
     @Override
@@ -479,6 +428,7 @@ public class CaptureModule extends CameraModule
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         Log.d(TAG, "onSurfaceTextureDestroyed");
+        mPreviewTexture = null;
         closeCamera();
         return true;
     }
@@ -540,6 +490,13 @@ public class CaptureModule extends CameraModule
         if (mMagneticSensor != null) {
             mSensorManager.registerListener(this, mMagneticSensor,
                     SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        // This means we are resuming with an existing preview texture. This
+        // means we will never get the onSurfaceTextureAvailable call. So we
+        // have to open the camera and start the preview here.
+        if (mPreviewTexture != null) {
+            initSurface(mPreviewTexture);
         }
     }
 
@@ -1131,6 +1088,60 @@ public class CaptureModule extends CameraModule
                 mPreviewTexture.setDefaultBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
             }
         }
+    }
+
+    /**
+     * Open camera and start the preview.
+     */
+    private void openCameraAndStartPreview() {
+        // Only enable HDR on the back camera
+        boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
+        mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
+                new OpenCallback() {
+                    @Override
+                    public void onFailure() {
+                        Log.e(TAG, "Could not open camera.");
+                        mCamera = null;
+                        mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+                    }
+
+                    @Override
+                    public void onCameraOpened(final OneCamera camera) {
+                        Log.d(TAG, "onCameraOpened: " + camera);
+                        mCamera = camera;
+                        updatePreviewBufferDimension();
+
+                        // If the surface texture is not destroyed, it may have
+                        // the last frame lingering. We need to hold off setting
+                        // transform until preview is started.
+                        resetDefaultBufferSize();
+                        mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
+                        Log.d(TAG, "starting preview ...");
+
+                        // TODO: Consider rolling these two calls into one.
+                        camera.startPreview(new Surface(mPreviewTexture),
+                                new CaptureReadyCallback() {
+                                    @Override
+                                    public void onSetupFailed() {
+                                        Log.e(TAG, "Could not set up preview.");
+                                        mCamera.close(null);
+                                        mCamera = null;
+                                        // TODO: Show an error message and exit.
+                                    }
+
+                                    @Override
+                                    public void onReadyForCapture() {
+                                        Log.d(TAG, "Ready for capture.");
+                                        onPreviewStarted();
+                                        // Enable zooming after preview has
+                                        // started.
+                                        mUI.initializeZoom(mCamera.getMaxZoom());
+                                        mCamera.setFocusStateListener(CaptureModule.this);
+                                        mCamera.setReadyStateChangedListener(CaptureModule.this);
+                                    }
+                                });
+                    }
+                });
     }
 
     private void closeCamera() {
