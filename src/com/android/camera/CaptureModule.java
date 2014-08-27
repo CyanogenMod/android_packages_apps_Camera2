@@ -27,6 +27,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -41,6 +42,7 @@ import android.widget.Toast;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
+import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
@@ -84,7 +86,7 @@ import java.io.File;
  * <ul>
  * <li>Server-side logging
  * <li>Focusing
- * <li>Show location dialog
+ * <li>Show location dialog on first start
  * <li>Show resolution dialog on certain devices
  * <li>Store location
  * <li>Timer
@@ -157,8 +159,9 @@ public class CaptureModule extends CameraModule
     private final Object mDimensionLock = new Object();
 
     /**
-     * Sticky Gcam mode is when this module's sole purpose it to be the Gcam mode.
-     * If true, the device uses {@link PhotoModule} for normal picture taking.
+     * Sticky Gcam mode is when this module's sole purpose it to be the Gcam
+     * mode. If true, the device uses {@link PhotoModule} for normal picture
+     * taking.
      */
     private final boolean mStickyGcamCamera;
 
@@ -206,6 +209,13 @@ public class CaptureModule extends CameraModule
     private static final int FOCUS_HOLD_UI_MILLIS = 500;
     /** Worst case persistence of TTF target UI. */
     private static final int FOCUS_UI_TIMEOUT_MILLIS = 2000;
+    /** Sensor manager we use to get the heading of the device. */
+    private SensorManager mSensorManager;
+    /** Accelerometer. */
+    private Sensor mAccelerometerSensor;
+    /** Compass. */
+    private Sensor mMagneticSensor;
+
     /** Accelerometer data. */
     private final float[] mGData = new float[3];
     /** Magnetic sensor data. */
@@ -214,6 +224,9 @@ public class CaptureModule extends CameraModule
     private final float[] mR = new float[16];
     /** Current compass heading. */
     private int mHeading = -1;
+
+    /** Used to fetch and embed the location into captured images. */
+    private LocationManager mLocationManager;
 
     /** Whether the module is paused right now. */
     private boolean mPaused;
@@ -290,6 +303,7 @@ public class CaptureModule extends CameraModule
         mIsResumeFromLockScreen = isResumeFromLockscreen(activity);
         mMainHandler = new Handler(activity.getMainLooper());
         mCameraManager = mAppController.getCameraManager();
+        mLocationManager = mAppController.getLocationManager();
         mDisplayRotation = CameraUtil.getDisplayRotation(mContext);
         mCameraFacing = getFacingFromCameraId(mSettingsManager.getInteger(
                 mAppController.getModuleScope(),
@@ -298,6 +312,10 @@ public class CaptureModule extends CameraModule
                 mLayoutListener);
         mAppController.setPreviewStatusListener(mUI);
         mPreviewTexture = mAppController.getCameraAppUI().getSurfaceTexture();
+        mSensorManager = (SensorManager) (mContext.getSystemService(Context.SENSOR_SERVICE));
+        mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
         if (mPreviewTexture != null) {
             initSurface(mPreviewTexture);
         }
@@ -319,14 +337,13 @@ public class CaptureModule extends CameraModule
         if (mCamera == null) {
             return;
         }
+        Location location = mLocationManager.getCurrentLocation();
 
         // Set up the capture session.
         long sessionTime = System.currentTimeMillis();
         String title = CameraUtil.createJpegName(sessionTime);
         CaptureSession session = getServices().getCaptureSessionManager()
-                .createNewSession(title, sessionTime, null);
-
-        // TODO: Add location.
+                .createNewSession(title, sessionTime, location);
 
         // Set up the parameters for this capture.
         PhotoCaptureParameters params = new PhotoCaptureParameters();
@@ -336,6 +353,7 @@ public class CaptureModule extends CameraModule
         params.flashMode = getFlashModeFromSettings();
         params.heading = mHeading;
         params.debugDataFolder = mDebugDataDir;
+        params.location = location;
 
         // Take the picture.
         mCamera.takePicture(params, session);
@@ -368,6 +386,7 @@ public class CaptureModule extends CameraModule
         SensorManager.getRotationMatrix(mR, null, mGData, mMData);
         SensorManager.getOrientation(mR, orientation);
         mHeading = (int) (orientation[0] * 180f / Math.PI) % 360;
+
         if (mHeading < 0) {
             mHeading += 360;
         }
@@ -513,6 +532,15 @@ public class CaptureModule extends CameraModule
                     "Shamu HDR+ still in tuning, don't file image quality issues yet",
                     Toast.LENGTH_SHORT).show();
         }
+        // Get events from the accelerometer and magnetic sensor.
+        if (mAccelerometerSensor != null) {
+            mSensorManager.registerListener(this, mAccelerometerSensor,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        if (mMagneticSensor != null) {
+            mSensorManager.registerListener(this, mMagneticSensor,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override
@@ -522,6 +550,14 @@ public class CaptureModule extends CameraModule
         closeCamera();
         // Remove delayed resume trigger, if it hasn't been executed yet.
         mMainHandler.removeCallbacksAndMessages(null);
+
+        // Unregister the sensors.
+        if (mAccelerometerSensor != null) {
+            mSensorManager.unregisterListener(this, mAccelerometerSensor);
+        }
+        if (mMagneticSensor != null) {
+            mSensorManager.unregisterListener(this, mMagneticSensor);
+        }
     }
 
     @Override
