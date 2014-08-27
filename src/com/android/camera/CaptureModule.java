@@ -599,11 +599,29 @@ public class CaptureModule extends CameraModule
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                if (event.getRepeatCount() == 0) {
+                    onShutterButtonClick();
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                // Prevent default.
+                return true;
+        }
         return false;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                onShutterButtonClick();
+                return true;
+        }
         return false;
     }
 
