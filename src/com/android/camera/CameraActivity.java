@@ -123,7 +123,6 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Callback;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.FeedbackHelper;
 import com.android.camera.util.GalleryHelper;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.GoogleHelpHelper;
@@ -245,8 +244,6 @@ public class CameraActivity extends Activity
 
     private PeekAnimationHandler mPeekAnimationHandler;
     private HandlerThread mPeekAnimationThread;
-
-    private FeedbackHelper mFeedbackHelper;
 
     private Intent mGalleryIntent;
     private long mOnCreateTime;
@@ -1474,9 +1471,6 @@ public class CameraActivity extends Activity
         getContentResolver().registerContentObserver(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
                 mLocalVideosObserver);
-        if (FeedbackHelper.feedbackAvailable()) {
-            mFeedbackHelper = new FeedbackHelper(mAppContext);
-        }
         mMemoryManager = getServices().getMemoryManager();
 
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
@@ -1836,9 +1830,6 @@ public class CameraActivity extends Activity
     protected void onStop() {
         mIsActivityRunning = false;
         mPanoramaViewHelper.onStop();
-        if (mFeedbackHelper != null) {
-            mFeedbackHelper.stopFeedback();
-        }
 
         mLocationManager.disconnect();
         super.onStop();
