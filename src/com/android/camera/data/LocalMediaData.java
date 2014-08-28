@@ -29,12 +29,14 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -352,6 +354,9 @@ public abstract class LocalMediaData implements LocalData {
         private static final int mSupportedDataActions =
                 DATA_ACTION_DELETE | DATA_ACTION_EDIT | DATA_ACTION_SHARE;
 
+        private static final int JPEG_COMPRESS_QUALITY = 90;
+        private static final BitmapEncoder JPEG_ENCODER = new BitmapEncoder(null, JPEG_COMPRESS_QUALITY);
+
         /** from MediaStore, can only be 0, 90, 180, 270 */
         private final int mOrientation;
         /** @see #getSignature() */
@@ -530,14 +535,18 @@ public abstract class LocalMediaData implements LocalData {
                 return;
             }
 
-            DrawableRequestBuilder<Uri> request = Glide.with(context)
+            BitmapRequestBuilder<Uri, Bitmap> request = Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
+                .asBitmap()
+                .encoder(JPEG_ENCODER)
                 .placeholder(placeHolderResourceId)
                 .fitCenter();
             if (full) {
                 request.thumbnail(Glide.with(context)
                         .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
                             mOrientation)
+                        .asBitmap()
+                        .encoder(JPEG_ENCODER)
                         .override(thumbWidth, thumbHeight)
                         .fitCenter())
                     .override(Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE),
@@ -546,6 +555,8 @@ public abstract class LocalMediaData implements LocalData {
                 request.thumbnail(Glide.with(context)
                         .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
                             mOrientation)
+                        .asBitmap()
+                        .encoder(JPEG_ENCODER)
                         .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                     .override(thumbWidth, thumbHeight);
             }
