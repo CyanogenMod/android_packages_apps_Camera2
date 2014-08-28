@@ -502,6 +502,6 @@ public class SettingsManager {
      */
     public void remove(String scope, String key) {
         SharedPreferences preferences = getPreferencesFromScope(scope);
-        preferences.edit().remove(key);
+        preferences.edit().remove(key).apply();
     }
 }
