@@ -102,7 +102,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      * Callback for saving an image.
      */
     public interface ImageCaptureListener {
-        /**
+         /**
          * Called with the {@link Image} and associated
          * {@link TotalCaptureResult}. A typical implementation would save this
          * to disk.
@@ -232,6 +232,23 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      * taking too long to return.
      */
     private static final long DEBUG_MAX_IMAGE_CALLBACK_DUR = 25;
+
+    /**
+     * If spacing between onCaptureCompleted() callbacks is lower than this
+     * value, camera operations at the Java level have stalled, and are now
+     * catching up. In milliseconds.
+     */
+    private static final long DEBUG_INTERFRAME_STALL_WARNING = 5;
+
+    /**
+     * Last called to onCaptureCompleted() in SystemClock.uptimeMillis().
+     */
+    private long mDebugLastOnCaptureCompletedMillis = 0;
+
+    /**
+     * Number of frames in a row exceeding DEBUG_INTERFRAME_STALL_WARNING.
+     */
+    private long mDebugStalledFrameCount = 0;
 
     /**
      * Stores the ring-buffer of captured images.<br>
@@ -402,6 +419,16 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
     public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
             final TotalCaptureResult result) {
         final long timestamp = result.get(TotalCaptureResult.SENSOR_TIMESTAMP);
+
+        // Detect camera thread stall.
+        long now = SystemClock.uptimeMillis();
+        if (now - mDebugLastOnCaptureCompletedMillis < DEBUG_INTERFRAME_STALL_WARNING) {
+            Log.e(TAG, "Camera thread has stalled for " + ++mDebugStalledFrameCount +
+                    " frames at # " + result.getFrameNumber() + ".");
+        } else {
+            mDebugStalledFrameCount = 0;
+        }
+        mDebugLastOnCaptureCompletedMillis = now;
 
         // Find the CapturedImage in the ring-buffer and attach the
         // TotalCaptureResult to it.

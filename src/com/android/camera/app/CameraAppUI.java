@@ -1472,9 +1472,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     /**
      * Starts the pre-capture animation.
+     *
+     * @param shortFlash show shortest possible flash instead of regular long version.
      */
-    public void startPreCaptureAnimation() {
-        mCaptureOverlay.startFlashAnimation();
+    public void startPreCaptureAnimation(boolean shortFlash) {
+        mCaptureOverlay.startFlashAnimation(shortFlash);
     }
 
     /**
