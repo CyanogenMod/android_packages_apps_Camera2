@@ -80,7 +80,7 @@ public abstract class SettingsUpgrader {
      */
     protected boolean removeBoolean(SharedPreferences oldPreferencesLocation, String key) {
         boolean value = oldPreferencesLocation.getBoolean(key, false);
-        oldPreferencesLocation.edit().remove(key);
+        oldPreferencesLocation.edit().remove(key).apply();
         return value;
     }
 
@@ -94,7 +94,7 @@ public abstract class SettingsUpgrader {
      */
     protected int removeInteger(SharedPreferences oldPreferencesLocation, String key) {
         int value = oldPreferencesLocation.getInt(key, 0);
-        oldPreferencesLocation.edit().remove(key);
+        oldPreferencesLocation.edit().remove(key).apply();
         return value;
     }
 
