@@ -251,6 +251,9 @@ public class CameraActivity extends Activity
     private Menu mActionBarMenu;
     private Preloader<Integer, AsyncTask> mPreloader;
 
+    /** Can be used to play custom sounds. */
+    private SoundPlayer mSoundPlayer;
+
     private static final int LIGHTS_OUT_DELAY_MS = 4000;
     private final int BASE_SYS_UI_VISIBILITY =
         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -283,7 +286,7 @@ public class CameraActivity extends Activity
         }
     };
 
-    private ActionBar.OnMenuVisibilityListener mOnMenuVisibilityListener =
+    private final ActionBar.OnMenuVisibilityListener mOnMenuVisibilityListener =
             new ActionBar.OnMenuVisibilityListener() {
         @Override
         public void onMenuVisibilityChanged(boolean isVisible) {
@@ -1317,6 +1320,7 @@ public class CameraActivity extends Activity
 
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
+        mSoundPlayer = new SoundPlayer(mAppContext);
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
@@ -1855,6 +1859,7 @@ public class CameraActivity extends Activity
         mButtonManager = null;
         CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
         CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
+        mSoundPlayer.release();
         super.onDestroy();
     }
 
@@ -2173,6 +2178,11 @@ public class CameraActivity extends Activity
             mButtonManager = new ButtonManager(this);
         }
         return mButtonManager;
+    }
+
+    @Override
+    public SoundPlayer getSoundPlayer() {
+        return mSoundPlayer;
     }
 
     /**
