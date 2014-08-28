@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
+import com.android.camera.SoundPlayer;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.SettingsManager;
@@ -366,6 +367,9 @@ public interface AppController {
      * Returns the {@link com.android.camera.ButtonManager}.
      */
     public ButtonManager getButtonManager();
+
+    /** Returns a sound player that can be used to play custom sounds. */
+    public SoundPlayer getSoundPlayer();
 
     /** Whether auto-rotate is enabled.*/
     public boolean isAutoRotateScreen();
