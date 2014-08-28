@@ -584,8 +584,9 @@ public class CaptureModule extends CameraModule
         // TODO: Enable once we support this.
         bottomBarSpec.enableSelfTimer = false;
         bottomBarSpec.showSelfTimer = false;
-        // TODO: Deal with e.g. HDR+ if it doesn't support it.
-        // bottomBarSpec.enableFlash = true;
+        if (!mHdrEnabled) {
+            bottomBarSpec.enableFlash = true;
+        }
         return bottomBarSpec;
     }
 
