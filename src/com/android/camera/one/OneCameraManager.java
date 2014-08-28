@@ -88,7 +88,7 @@ public abstract class OneCameraManager {
                 .getMaxAllowedNativeMemoryAllocation();
         if (cameraManager != null && isCamera2Supported(cameraManager)) {
             return new com.android.camera.one.v2.OneCameraManagerImpl(cameraManager, maxMemoryMB,
-                    displayMetrics);
+                    displayMetrics, activity.getSoundPlayer());
         } else {
             return new com.android.camera.one.v1.OneCameraManagerImpl();
         }
