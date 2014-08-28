@@ -19,6 +19,8 @@ package com.android.camera.one.v2;
 import android.annotation.TargetApi;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult.Key;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
@@ -35,8 +37,11 @@ import com.android.camera.util.ConcurrentSharedRingBuffer.Selector;
 import com.android.camera.util.ConcurrentSharedRingBuffer.SwapTask;
 import com.android.camera.util.Task;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,6 +74,29 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
     }
 
     /**
+     * Callback for listening to changes to individual metadata values.
+     */
+    public static interface MetadataChangeListener {
+        /**
+         * This will be called whenever a metadata value changes.
+         * Implementations should not take too much time to execute since this
+         * will be called faster than the camera's frame rate.
+         *
+         * @param key the {@link CaptureResult} key this listener listens for.
+         * @param second the previous value, or null if no such value existed.
+         *            The type will be that associated with the
+         *            {@link android.hardware.camera2.CaptureResult.Key} this
+         *            listener is bound to.
+         * @param newValue the new value. The type will be that associated with
+         *            the {@link android.hardware.camera2.CaptureResult.Key}
+         *            this listener is bound to.
+         * @param result the CaptureResult containing the new value
+         */
+        public void onImageMetadataChange(Key<?> key, Object second, Object newValue,
+                CaptureResult result);
+    }
+
+    /**
      * Callback for saving an image.
      */
     public interface ImageCaptureListener {
@@ -77,7 +105,8 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
          * {@link TotalCaptureResult}. A typical implementation would save this
          * to disk.
          * <p>
-         * Note: Implementations must not close the image.
+         * Note: Implementations must be thread-safe and must not close the
+         * image.
          * </p>
          */
         public void onImageCaptured(Image image, TotalCaptureResult captureResult);
@@ -212,34 +241,144 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
     /** Track the number of open images for debugging purposes. */
     private final AtomicInteger mNumOpenImages = new AtomicInteger(0);
 
-    /** The executor on which to invoke {@link ImageCaptureListener} listeners. */
-    private final Executor mCaptureExecutor;
+    /** The executor on which to invoke listeners. */
+    private final Handler mListenerHandler;
 
-    private ImageCaptureManager.ImageCaptureListener mPendingImageCaptureCallback;
+    /**
+     * The set of constraints which must be satisfied for a newly acquired image
+     * to be captured and sent to {@link mPendingImageCaptureCallback}. null if
+     * there is no pending capture request.
+     */
     private List<ImageCaptureManager.CapturedImageConstraint> mPendingImageCaptureConstraints;
+
+    /**
+     * The callback to be invoked upon successfully capturing a newly-acquired
+     * image which satisfies {@link mPendingImageCaptureConstraints}. null if
+     * there is no pending capture request.
+     */
+    private ImageCaptureManager.ImageCaptureListener mPendingImageCaptureCallback;
+
+    /**
+     * Map from CaptureResult key to the frame number of the capture result
+     * containing the most recent value for this key and the most recent value
+     * of the key.
+     */
+    private final Map<Key<?>, Pair<Long, Object>>
+            mMetadata = new ConcurrentHashMap<CaptureResult.Key<?>, Pair<Long, Object>>();
+
+    /**
+     * The set of callbacks to be invoked when an entry in {@link mMetadata} is
+     * changed.
+     */
+    private final Map<Key<?>, Set<MetadataChangeListener>>
+            mMetadataChangeListeners = new ConcurrentHashMap<Key<?>, Set<MetadataChangeListener>>();
 
     /**
      * @param maxImages the maximum number of images provided by the
      *            {@link ImageReader}. This must be greater than 2.
+     * @param listenerHandler the handler on which to invoke listeners. Note
+     *            that this should probably be on a different thread than the
+     *            one used for camera operations, such as capture requests and
+     *            OnImageAvailable listeners, to avoid stalling the preview.
      */
-    ImageCaptureManager(int maxImages, Executor captureExecutor) {
+    ImageCaptureManager(int maxImages, Handler listenerHandler) {
         // Ensure that there are always 2 images available for the framework to
         // continue processing frames.
         // TODO Could we make this tighter?
         mCapturedImageBuffer = new ConcurrentSharedRingBuffer<ImageCaptureManager.CapturedImage>(
                 maxImages - 2);
 
-        mCaptureExecutor = captureExecutor;
+        mListenerHandler = listenerHandler;
     }
 
-    public void setListener(Handler handler, final CaptureReadyListener listener) {
-        mCapturedImageBuffer.setListener(handler,
+    /**
+     * See {@link CaptureReadyListener}.
+     */
+    public void setCaptureReadyListener(final CaptureReadyListener listener) {
+        mCapturedImageBuffer.setListener(mListenerHandler,
                 new PinStateListener() {
                 @Override
                     public void onPinStateChange(boolean pinsAvailable) {
                         listener.onReadyStateChange(pinsAvailable);
                     }
                 });
+    }
+
+    /**
+     * Adds a metadata stream listener associated with the given key.
+     *
+     * @param key the key of the metadata to track.
+     * @param listener the listener to be invoked when the value associated with
+     *            key changes.
+     */
+    public <T> void addMetadataChangeListener(Key<T> key, MetadataChangeListener listener) {
+        if (!mMetadataChangeListeners.containsKey(key)) {
+            // Listeners may be added to this set from a different thread than
+            // that which must iterate over this set to invoke the listeners.
+            // Therefore, we need a thread save hash set.
+            mMetadataChangeListeners.put(key,
+                    Collections.newSetFromMap(new ConcurrentHashMap<
+                            ImageCaptureManager.MetadataChangeListener, Boolean>()));
+        }
+        mMetadataChangeListeners.get(key).add(listener);
+    }
+
+    /**
+     * Removes the metadata stream listener associated with the given key.
+     *
+     * @param key the key associated with the metadata to track.
+     * @param listener the listener to be invoked when the value associated with
+     *            key changes.
+     * @return true if the listener was removed, false if no such listener had
+     *         been added.
+     */
+    public <T> boolean removeMetadataChangeListener(Key<T> key, MetadataChangeListener listener) {
+        if (!mMetadataChangeListeners.containsKey(key)) {
+            return false;
+        } else {
+            return mMetadataChangeListeners.get(key).remove(listener);
+        }
+    }
+
+    @Override
+    public void onCaptureProgressed(CameraCaptureSession session, CaptureRequest request,
+            final CaptureResult partialResult) {
+        long frameNumber = partialResult.getFrameNumber();
+
+        // Update mMetadata for whichever keys are present, if this frame is
+        // supplying newer values.
+        for (final Key<?> key : partialResult.getKeys()) {
+            Pair<Long, Object> oldEntry = mMetadata.get(key);
+            final Object oldValue = (oldEntry != null) ? oldEntry.second : null;
+
+            boolean newerValueAlreadyExists = oldEntry != null
+                    && frameNumber < oldEntry.first;
+            if (newerValueAlreadyExists) {
+                continue;
+            }
+
+            final Object newValue = partialResult.get(key);
+            mMetadata.put(key, new Pair<Long, Object>(frameNumber, newValue));
+
+            // If the value has changed, call the appropriate listeners, if
+            // any exist.
+            if (oldValue == newValue || !mMetadataChangeListeners.containsKey(key)) {
+                continue;
+            }
+
+            for (final MetadataChangeListener listener :
+                    mMetadataChangeListeners.get(key)) {
+                Log.v(TAG, "Dispatching to metadata change listener for key: "
+                        + key.toString());
+                mListenerHandler.post(new Runnable() {
+                        @Override
+                    public void run() {
+                        listener.onImageMetadataChange(key, oldValue, newValue,
+                                partialResult);
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -332,8 +471,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
             long totTime = endTime - startTime;
             if (totTime > DEBUG_MAX_IMAGE_CALLBACK_DUR) {
                 // If it takes too long to swap elements, we will start skipping
-                // preview frames,
-                // resulting in visible jank
+                // preview frames, resulting in visible jank.
                 Log.v(TAG, "onImageAvailable() took " + totTime + "ms");
             }
         }
@@ -465,8 +603,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
         }
 
         // Acquire a lock (pin) on the most recent (greatest-timestamp) image in
-        // the ring buffer
-        // which satisfies our constraints.
+        // the ring buffer which satisfies our constraints.
         // Note that this must be released as soon as we are done with it.
         final Pair<Long, CapturedImage> toCapture = mCapturedImageBuffer.tryPinGreatestSelected(
                 selector);
@@ -490,7 +627,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
             return false;
         } else {
             try {
-                mCaptureExecutor.execute(new Runnable() {
+                mListenerHandler.post(new Runnable() {
                         @Override
                     public void run() {
                         try {
