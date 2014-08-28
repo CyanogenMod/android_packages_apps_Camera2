@@ -566,7 +566,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
                 // autoFocus call is not required.
                 mUI.onFocusStarted();
             }
-        } else if (mState == STATE_FOCUSING || mState == STATE_FOCUSING_SNAP_ON_FINISH) {
+        } else if (mState == STATE_FOCUSING) {
             mUI.onFocusStarted();
         } else {
             if (mFocusMode == CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
