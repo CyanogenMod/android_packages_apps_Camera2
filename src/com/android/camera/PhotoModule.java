@@ -1428,11 +1428,11 @@ public class PhotoModule
                         new JpegPictureCallback(loc));
             }
         } else {
+            setCameraState(SNAPSHOT_IN_PROGRESS);
             mCameraDevice.takePicture(mHandler,
                     new ShutterCallback(!animateBefore),
                     mRawPictureCallback, mPostViewPictureCallback,
                     new JpegPictureCallback(loc));
-            setCameraState(SNAPSHOT_IN_PROGRESS);
         }
 
         mNamedImages.nameNewImage(mCaptureStartTime);
