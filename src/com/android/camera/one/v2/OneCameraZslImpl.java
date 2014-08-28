@@ -28,6 +28,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult.Key;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
@@ -38,7 +39,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
+import android.os.SystemClock;
 import android.support.v4.util.Pools;
 import android.view.Surface;
 
@@ -53,6 +54,7 @@ import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
+import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.JpegUtilNative;
@@ -69,8 +71,8 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * {@link OneCamera} implementation directly on top of the Camera2 API with zero
  * shutter lag.<br>
- * TODO: Implement Autofocus and flash.<br>
- * TODO: Make shutter button state reflect the actual limitations.<br>
+ * TODO: Update shutter button state appropriately when not able to capture ZSL
+ * frames.<br>
  * TODO: Determine what the maximum number of full YUV capture frames is.
  */
 @TargetApi(Build.VERSION_CODES.L)
@@ -86,13 +88,26 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * TODO: Determine this number dynamically based on available memory and the
      * size of frames.
      */
-    private static final int MAX_CAPTURE_IMAGES = 9;
+    private static final int MAX_CAPTURE_IMAGES = 10;
     /**
      * True if zero-shutter-lag images should be captured. Some devices produce
      * lower-quality images for the high-frequency stream, so we may wish to
      * disable ZSL in that case.
      */
     private static final boolean ZSL_ENABLED = true;
+
+    /**
+     * Tags which may be used in CaptureRequests.
+     */
+    private static enum RequestTag {
+        /**
+         * Indicates that the request was explicitly sent for a single
+         * high-quality still capture. Unlike other requests, such as the
+         * repeating (ZSL) stream and AF/AE triggers, requests with this tag
+         * should always be saved.
+         */
+        EXPLICIT_CAPTURE
+    };
 
     /**
      * Set to ImageFormat.JPEG to use the hardware encoder, or
@@ -106,15 +121,27 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private static final float METERING_REGION_WEIGHT = 0.25f;
     /** Duration to hold after manual focus tap. */
     private static final int FOCUS_HOLD_MILLIS = 3000;
+    /**
+     * Token for callbacks posted to {@link mCameraHandler} to resume continuous
+     * AF.
+     */
+    private static final String FOCUS_RESUME_CALLBACK_TOKEN = "RESUME_CONTINUOUS_AF";
     /** Zero weight 3A region, to reset regions per API. */
     MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[] {
             new MeteringRectangle(0, 0, 1, 1, 0)
     };
 
-    /** Thread on which camera operations are running. */
+    /**
+     * Thread on which high-priority camera operations, such as grabbing preview
+     * frames for the viewfinder, are running.
+     */
     private final HandlerThread mCameraThread;
     /** Handler of the {@link #mCameraThread}. */
     private final Handler mCameraHandler;
+
+    /** Thread on which low-priority camera listeners are running. */
+    private final HandlerThread mCameraListenerThread;
+    private final Handler mCameraListenerHandler;
 
     /** The characteristics of this camera. */
     private final CameraCharacteristics mCharacteristics;
@@ -164,6 +191,46 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private MeteringRectangle[] m3ARegions = ZERO_WEIGHT_3A_REGION;
 
     /**
+     * An {@link ImageCaptureListener} which will compress and save an image to
+     * disk.
+     */
+    private class ImageCaptureTask implements ImageCaptureListener {
+        private final PhotoCaptureParameters mParams;
+        private final CaptureSession mSession;
+
+        public ImageCaptureTask(PhotoCaptureParameters parameters,
+                CaptureSession session) {
+            mParams = parameters;
+            mSession = session;
+        }
+
+        @Override
+        public void onImageCaptured(Image image, TotalCaptureResult
+                captureResult) {
+            long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
+
+            // We should only capture the image if it's more recent than the
+            // latest one. Synchronization is necessary since this method is
+            // called on {@link #mImageSaverThreadPool}.
+            synchronized (mLastCapturedImageTimestamp) {
+                if (timestamp > mLastCapturedImageTimestamp.get()) {
+                    mLastCapturedImageTimestamp.set(timestamp);
+                } else {
+                    // There was a more recent (or identical) image which has
+                    // begun being saved, so abort.
+                    return;
+                }
+            }
+
+            // TODO Add callback to CaptureModule here to flash the screen.
+            mSession.startEmpty();
+            savePicture(image, mParams, mSession);
+            mParams.callback.onPictureTaken(mSession);
+            Log.v(TAG, "Image saved.  Frame number = " + captureResult.getFrameNumber());
+        }
+    }
+
+    /**
      * Instantiates a new camera based on Camera 2 API.
      *
      * @param device The underlying Camera 2 device.
@@ -171,6 +238,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * @param pictureSize the size of the final image to be taken.
      */
     OneCameraZslImpl(CameraDevice device, CameraCharacteristics characteristics, Size pictureSize) {
+        Log.v(TAG, "Creating new OneCameraZslImpl");
+
         mDevice = device;
         mCharacteristics = characteristics;
         mFullSizeAspectRatio = calculateFullSizeAspectRatio(characteristics);
@@ -181,26 +250,43 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mCameraThread.start();
         mCameraHandler = new Handler(mCameraThread.getLooper());
 
-        mCaptureImageReader = ImageReader.newInstance(pictureSize.getWidth(),
-                pictureSize.getHeight(),
-                sCaptureImageFormat, MAX_CAPTURE_IMAGES);
+        mCameraListenerThread = new HandlerThread("OneCamera2-Listener");
+        mCameraListenerThread.start();
+        mCameraListenerHandler = new Handler(mCameraListenerThread.getLooper());
 
         // TODO: Encoding on multiple cores results in preview jank due to
         // excessive GC.
         int numEncodingCores = CameraUtil.getNumCpuCores();
-
         mImageSaverThreadPool = new ThreadPoolExecutor(numEncodingCores, numEncodingCores, 10,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
-        mCaptureManager = new ImageCaptureManager(MAX_CAPTURE_IMAGES, mImageSaverThreadPool);
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        mCaptureManager.setListener(handler, new ImageCaptureManager.CaptureReadyListener() {
+        mCaptureManager = new ImageCaptureManager(MAX_CAPTURE_IMAGES, mCameraListenerHandler);
+        mCaptureManager.setCaptureReadyListener(new ImageCaptureManager.CaptureReadyListener() {
                 @Override
             public void onReadyStateChange(boolean capturePossible) {
                 broadcastReadyState(capturePossible);
             }
         });
+        // Listen for changes to auto focus state and dispatch to
+        // mFocusStateListener.
+        mCaptureManager.addMetadataChangeListener(CaptureResult.CONTROL_AF_STATE,
+                new ImageCaptureManager.MetadataChangeListener() {
+                @Override
+                    public void onImageMetadataChange(Key<?> key, Object oldValue, Object newValue,
+                            CaptureResult result) {
+                        mFocusStateListener.onFocusStatusUpdate(
+                                AutoFocusHelper.modeFromCamera2Mode(
+                                        result.get(CaptureResult.CONTROL_AF_MODE)),
+                                AutoFocusHelper.stateFromCamera2State(
+                                        result.get(CaptureResult.CONTROL_AF_STATE)));
+                    }
+                });
+
+        // Allocate the image reader to store all images received from the
+        // camera.
+        mCaptureImageReader = ImageReader.newInstance(pictureSize.getWidth(),
+                pictureSize.getHeight(),
+                sCaptureImageFormat, MAX_CAPTURE_IMAGES);
 
         mCaptureImageReader.setOnImageAvailableListener(mCaptureManager, mCameraHandler);
     }
@@ -211,148 +297,147 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     @Override
     public void takePicture(final PhotoCaptureParameters params, final CaptureSession session) {
         params.checkSanity();
-        boolean capturedPreviousFrame = false;
-
-        // TODO: Flash is not currently supported.
-        params.flashMode = Flash.OFF;
 
         boolean useZSL = ZSL_ENABLED;
 
-        if (params.flashMode == Flash.ON) {
-            useZSL = false;
-        }
+        // We will only capture images from the zsl ring-buffer which satisfy
+        // this constraint.
+        ArrayList<ImageCaptureManager.CapturedImageConstraint> zslConstraints = new ArrayList<
+                ImageCaptureManager.CapturedImageConstraint>();
+        zslConstraints.add(new ImageCaptureManager.CapturedImageConstraint() {
+                @Override
+            public boolean satisfiesConstraint(TotalCaptureResult captureResult) {
+                Object tag = captureResult.getRequest().getTag();
+                Long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
+                Integer lensState = captureResult.get(CaptureResult.LENS_STATE);
+                Integer flashState = captureResult.get(CaptureResult.FLASH_STATE);
+                Integer flashMode = captureResult.get(CaptureResult.FLASH_MODE);
+                Integer aeState = captureResult.get(CaptureResult.CONTROL_AE_STATE);
+                Integer afState = captureResult.get(CaptureResult.CONTROL_AF_STATE);
+                Integer awbState = captureResult.get(CaptureResult.CONTROL_AWB_STATE);
+
+                if (timestamp <= mLastCapturedImageTimestamp.get()) {
+                    // Don't save frames older than the most
+                    // recently-captured frame.
+                    // TODO This technically has a race condition in which
+                    // duplicate frames may be saved, but if a user is
+                    // tapping at >30Hz, duplicate images may be what they
+                    // expect.
+                    return false;
+                }
+
+                if (lensState == CaptureResult.LENS_STATE_MOVING) {
+                    // If we know the lens was moving, don't use this image.
+                    return false;
+                }
+
+                if (aeState == CaptureResult.CONTROL_AE_STATE_SEARCHING
+                        || aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
+                    return false;
+                }
+                switch (params.flashMode) {
+                    case OFF:
+                        break;
+                    case ON:
+                        if (flashState != CaptureResult.FLASH_STATE_FIRED
+                                || flashMode != CaptureResult.FLASH_MODE_SINGLE) {
+                            return false;
+                        }
+                        break;
+                    case AUTO:
+                        if (aeState == CaptureResult.CONTROL_AE_STATE_FLASH_REQUIRED
+                                && flashState != CaptureResult.FLASH_STATE_FIRED) {
+                            return false;
+                        }
+                        break;
+                }
+
+                if (afState == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
+                        || afState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN) {
+                    return false;
+                }
+
+                if (awbState == CaptureResult.CONTROL_AWB_STATE_SEARCHING) {
+                    return false;
+                }
+
+                return true;
+            }
+        });
+
+        // This constraint lets us capture images which have been explicitly
+        // requested. See {@link RequestTag.EXPLICIT_CAPTURE}.
+        ArrayList<ImageCaptureManager.CapturedImageConstraint> singleCaptureConstraint = new ArrayList<
+                ImageCaptureManager.CapturedImageConstraint>();
+        singleCaptureConstraint.add(new ImageCaptureManager.CapturedImageConstraint() {
+                @Override
+            public boolean satisfiesConstraint(TotalCaptureResult captureResult) {
+                Object tag = captureResult.getRequest().getTag();
+                return tag == RequestTag.EXPLICIT_CAPTURE;
+            }
+        });
 
         // If we can use ZSL, try to save a previously-captured frame, if an
         // acceptable one exists in the buffer.
-        if (!useZSL) {
-            // TODO: If we can't save a previous frame, create a new capture
-            // request to do what we need (e.g. flash) and call
-            // captureNextImage().
-            return;
-        } else {
-            ArrayList<ImageCaptureManager.CapturedImageConstraint> constraints = new ArrayList<
-                    ImageCaptureManager.CapturedImageConstraint>();
-
-            // Only capture a previous frame from the ring-buffer if it
-            // satisfies this constraint.
-            constraints.add(new ImageCaptureManager.CapturedImageConstraint() {
-                    @Override
-                public boolean satisfiesConstraint(TotalCaptureResult captureResult) {
-                    Long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
-                    Integer lensState = captureResult.get(CaptureResult.LENS_STATE);
-                    Integer flashState = captureResult.get(CaptureResult.FLASH_STATE);
-                    Integer aeState = captureResult.get(CaptureResult.CONTROL_AE_STATE);
-                    Integer afState = captureResult.get(CaptureResult.CONTROL_AF_STATE);
-                    Integer awbState = captureResult.get(CaptureResult.CONTROL_AWB_STATE);
-
-                    if (timestamp <= mLastCapturedImageTimestamp.get()) {
-                        // Don't save frames older than the most
-                        // recently-captured frame. Note that this technically
-                        // has a race condition in which duplicate frames may be
-                        // saved, but if a user is tapping at >30Hz, duplicate
-                        // images may be what they expect.
-                        // The race condition arises since we get the last
-                        // timestamp here, but don't write to this until the
-                        // ImageCaptureListener is invoked (on
-                        // {@link #mImageSaverThreadPool}) from the call to
-                        // tryCaptureImage().
-                        return false;
-                    }
-
-                    if (lensState == CaptureResult.LENS_STATE_MOVING) {
-                        // If we know the lens was moving, don't use this image.
-                        return false;
-                    }
-
-                    if (aeState == CaptureResult.CONTROL_AE_STATE_SEARCHING
-                            || aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
-                        return false;
-                    }
-                    switch (params.flashMode) {
-                        case ON:
-                            if (flashState != CaptureResult.FLASH_STATE_FIRED) {
-                                return false;
-                            }
-                            break;
-                        case AUTO:
-                            if (aeState == CaptureResult.CONTROL_AE_STATE_FLASH_REQUIRED) {
-                                return false;
-                            }
-                            break;
-                        case OFF:
-                        default:
-                            break;
-                    }
-
-                    if (afState == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
-                            || afState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN) {
-                        return false;
-                    }
-
-                    if (awbState == CaptureResult.CONTROL_AWB_STATE_SEARCHING) {
-                        return false;
-                    }
-
-                    return true;
-                }
-            });
-
-            capturedPreviousFrame = mCaptureManager.tryCaptureExistingImage(
-                    new ImageCaptureListener() {
-                    @Override
-                        public void onImageCaptured(Image image, TotalCaptureResult captureResult) {
-                            long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
-
-                            // TODO: Add callback to CaptureModule here to flash
-                            // the screen.
-
-                            // Atomic max (multiple captures may be starting
-                            // around the same time in the thread pool).
-                            long value = timestamp;
-                            while (value > mLastCapturedImageTimestamp.get()) {
-                                value = mLastCapturedImageTimestamp.getAndSet(value);
-                            }
-
-                            session.startEmpty();
-                            savePicture(image, params, session);
-                            params.callback.onPictureTaken(session);
-                            Log.v(TAG, "Image saved: "
-                                    + captureResult.get(CaptureResult.SENSOR_TIMESTAMP));
-                        }
-                    }, constraints);
-
+        if (useZSL) {
+            boolean capturedPreviousFrame = mCaptureManager.tryCaptureExistingImage(
+                    new ImageCaptureTask(params, session), zslConstraints);
             if (capturedPreviousFrame) {
                 Log.v(TAG, "Saving previous frame");
             } else {
-                Log.v(TAG, "No good frame Available.  Capturing next available good frame.");
-
+                Log.v(TAG, "No good image Available.  Capturing next available good image.");
                 // If there was no good frame available in the ring buffer
                 // already, capture the next good image.
-                // TODO: Disable the shutter button until this image is
-                // captured.
-                mCaptureManager.captureNextImage(new ImageCaptureListener() {
-                        @Override
-                    public void onImageCaptured(Image image, TotalCaptureResult
-                            captureResult) {
-                        long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
+                // TODO Disable the shutter button until this image is captured.
 
-                        // TODO: Add callback to CaptureModule here to flash the
-                        // screen.
+                if (params.flashMode == Flash.ON || params.flashMode == Flash.AUTO) {
+                    // We must issue a request for a single capture using the
+                    // flash, including an AE precapture trigger.
 
-                        // Atomic max (multiple captures may be starting around
-                        // the same time in the thread pool).
-                        long value = timestamp;
-                        while (value > mLastCapturedImageTimestamp.get()) {
-                            value = mLastCapturedImageTimestamp.getAndSet(value);
-                        }
+                    // The following sets up a sequence of events which will
+                    // occur in reverse order to the associated method
+                    // calls:
+                    // 1. Send a request to trigger the Auto Exposure Precapture
+                    // 2. Wait for the AE_STATE to leave the PRECAPTURE state,
+                    // and then send a request for a single image, with the
+                    // appropriate flash settings.
+                    // 3. Capture the next appropriate image, which should be
+                    // the one we requested in (2).
 
-                        session.startEmpty();
-                        savePicture(image, params, session);
-                        params.callback.onPictureTaken(session);
-                        Log.v(TAG, "Image saved: " + timestamp);
-                    }
-                }, constraints);
+                    mCaptureManager.captureNextImage(new ImageCaptureTask(params, session),
+                            singleCaptureConstraint);
+
+                    mCaptureManager.addMetadataChangeListener(CaptureResult.CONTROL_AE_STATE,
+                            new MetadataChangeListener() {
+                            @Override
+                                public void onImageMetadataChange(Key<?> key, Object oldValue,
+                                        Object newValue, CaptureResult result) {
+                                    Log.v(TAG, "AE State Changed");
+                                    if (oldValue.equals(
+                                            Integer.valueOf(
+                                                    CaptureResult.CONTROL_AE_STATE_PRECAPTURE))) {
+                                        mCaptureManager.removeMetadataChangeListener(key, this);
+                                        sendSingleRequest(params);
+                                    }
+                                }
+                            });
+
+                    sendAutoExposureTriggerRequest(params.flashMode);
+                } else {
+                    // We may get here if, for example, the auto focus is in the
+                    // middle of a scan.
+                    // If the flash is off, we should just wait for the next
+                    // image that arrives. This will have minimal delay since we
+                    // do not need to send a new capture request.
+                    mCaptureManager.captureNextImage(new ImageCaptureTask(params, session),
+                            zslConstraints);
+                }
             }
+        } else {
+            // TODO If we can't save a previous frame, create a new capture
+            // request to do what we need (e.g. flash) and call
+            // captureNextImage().
+            throw new UnsupportedOperationException("Non-ZSL capture not yet supported");
         }
     }
 
@@ -499,7 +584,15 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     @Override
                 public void onConfigured(CameraCaptureSession session) {
                     mCaptureSession = session;
-                    repeatingPreviewWithReadyListener(listener);
+                    m3ARegions = ZERO_WEIGHT_3A_REGION;
+                    mZoomValue = 1f;
+                    mCropRegion = cropRegionForZoom(mZoomValue);
+                    boolean success = sendRepeatingCaptureRequest();
+                    if (success) {
+                        listener.onReadyForCapture();
+                    } else {
+                        listener.onSetupFailed();
+                    }
                 }
 
                     @Override
@@ -516,41 +609,230 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         }
     }
 
+    private void addRegionsToCaptureRequestBuilder(CaptureRequest.Builder builder) {
+        builder.set(CaptureRequest.CONTROL_AE_REGIONS, m3ARegions);
+        builder.set(CaptureRequest.CONTROL_AF_REGIONS, m3ARegions);
+        builder.set(CaptureRequest.SCALER_CROP_REGION, mCropRegion);
+    }
+
+    private void addFlashToCaptureRequestBuilder(CaptureRequest.Builder builder, Flash flashMode) {
+        switch (flashMode) {
+            case ON:
+                builder.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+                builder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_SINGLE);
+                break;
+            case OFF:
+                builder.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.CONTROL_AE_MODE_ON);
+                builder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+                break;
+            case AUTO:
+                builder.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                break;
+        }
+    }
+
     /**
-     * Request preview capture stream with AF_MODE_CONTINUOUS_PICTURE.
+     * Request a stream of images.
      *
-     * @param readyListener called when request was build and sent, or if
-     *            setting up the request failed.
+     * @return true if successful, false if there was an error submitting the
+     *         capture request.
      */
-    private void repeatingPreviewWithReadyListener(CaptureReadyCallback readyListener) {
+    private boolean sendRepeatingCaptureRequest() {
+        Log.v(TAG, "sendRepeatingCaptureRequest()");
         try {
-            CaptureRequest.Builder builder = mDevice.
-                    createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+            CaptureRequest.Builder builder;
+            if (ZSL_ENABLED) {
+                builder = mDevice.
+                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+            } else {
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            }
 
             builder.addTarget(mPreviewSurface);
+
+            if (ZSL_ENABLED) {
+                builder.addTarget(mCaptureImageReader.getSurface());
+            }
+
+            builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+
+            builder.set(CaptureRequest.CONTROL_AF_MODE,
+                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+
+            builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+            builder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+
+            addRegionsToCaptureRequestBuilder(builder);
+
+            mCaptureSession.setRepeatingRequest(builder.build(), mCaptureManager,
+                    mCameraHandler);
+            return true;
+        } catch (CameraAccessException e) {
+            if (ZSL_ENABLED) {
+                Log.v(TAG, "Could not execute zero-shutter-lag repeating request.", e);
+            } else {
+                Log.v(TAG, "Could not execute preview request.", e);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Request a single image.
+     *
+     * @return true if successful, false if there was an error submitting the
+     *         capture request.
+     */
+    private boolean sendSingleRequest(OneCamera.PhotoCaptureParameters params) {
+        Log.v(TAG, "sendSingleRequest()");
+        try {
+            CaptureRequest.Builder builder;
+            builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+
+            builder.addTarget(mPreviewSurface);
+
+            // Always add this surface for single image capture requests.
             builder.addTarget(mCaptureImageReader.getSurface());
+
+            builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+
+            addFlashToCaptureRequestBuilder(builder, params.flashMode);
+            addRegionsToCaptureRequestBuilder(builder);
+
+            builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
+            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+
+            // Tag this as a special request which should be saved.
+            builder.setTag(RequestTag.EXPLICIT_CAPTURE);
+
+            if (sCaptureImageFormat == ImageFormat.JPEG) {
+                builder.set(CaptureRequest.JPEG_QUALITY, (byte) (JPEG_QUALITY));
+                builder.set(CaptureRequest.JPEG_ORIENTATION,
+                        CameraUtil.getJpegRotation(params.orientation, mCharacteristics));
+            }
+
+            mCaptureSession.capture(builder.build(), mCaptureManager,
+                    mCameraHandler);
+            return true;
+        } catch (CameraAccessException e) {
+            Log.v(TAG, "Could not execute single still capture request.", e);
+            return false;
+        }
+    }
+
+    private boolean sendAutoExposureTriggerRequest(Flash flashMode) {
+        Log.v(TAG, "sendAutoExposureTriggerRequest()");
+        try {
+            CaptureRequest.Builder builder;
+            if (ZSL_ENABLED) {
+                builder = mDevice.
+                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+            } else {
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            }
+
+            builder.addTarget(mPreviewSurface);
+
+            if (ZSL_ENABLED) {
+                builder.addTarget(mCaptureImageReader.getSurface());
+            }
+
+            builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+
+            builder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+
+            addRegionsToCaptureRequestBuilder(builder);
+            addFlashToCaptureRequestBuilder(builder, flashMode);
+
+            mCaptureSession.capture(builder.build(), mCaptureManager,
+                    mCameraHandler);
+
+            return true;
+        } catch (CameraAccessException e) {
+            Log.v(TAG, "Could not execute auto exposure trigger request.", e);
+            return false;
+        }
+    }
+
+    /**
+     */
+    private boolean sendAutoFocusTriggerRequest() {
+        Log.v(TAG, "sendAutoFocusTriggerRequest()");
+        try {
+            CaptureRequest.Builder builder;
+            if (ZSL_ENABLED) {
+                builder = mDevice.
+                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+            } else {
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            }
+
+            builder.addTarget(mPreviewSurface);
+
+            if (ZSL_ENABLED) {
+                builder.addTarget(mCaptureImageReader.getSurface());
+            }
+
+            builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+
+            addRegionsToCaptureRequestBuilder(builder);
+
+            builder.set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
+            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
+
+            mCaptureSession.capture(builder.build(), mCaptureManager,
+                    mCameraHandler);
+
+            return true;
+        } catch (CameraAccessException e) {
+            Log.v(TAG, "Could not execute auto focus trigger request.", e);
+            return false;
+        }
+    }
+
+    /**
+     * Like {@link #sendRepeatingCaptureRequest()}, but with the focus held
+     * constant.
+     *
+     * @return true if successful, false if there was an error submitting the
+     *         capture request.
+     */
+    private boolean sendAutoFocusHoldRequest() {
+        Log.v(TAG, "sendAutoFocusHoldRequest()");
+        try {
+            CaptureRequest.Builder builder;
+            if (ZSL_ENABLED) {
+                builder = mDevice.
+                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+            } else {
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            }
+
+            builder.addTarget(mPreviewSurface);
+
+            if (ZSL_ENABLED) {
+                builder.addTarget(mCaptureImageReader.getSurface());
+            }
 
             builder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
-            // TODO: implement touch to focus, CONTROL_AF_MODE_AUTO, AF_TRIGGER
-            builder.set(CaptureRequest.CONTROL_AF_MODE,
-                    CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            builder.set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
+            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
 
-            builder.set(CaptureRequest.CONTROL_AE_REGIONS, m3ARegions);
-            builder.set(CaptureRequest.CONTROL_AF_REGIONS, m3ARegions);
-            builder.set(CaptureRequest.CONTROL_AWB_REGIONS, m3ARegions);
-            builder.set(CaptureRequest.SCALER_CROP_REGION, mCropRegion);
+            addRegionsToCaptureRequestBuilder(builder);
+            // TODO: This should fire the torch, if appropriate.
 
             mCaptureSession.setRepeatingRequest(builder.build(), mCaptureManager, mCameraHandler);
 
-            if (readyListener != null) {
-                readyListener.onReadyForCapture();
-            }
-        } catch (CameraAccessException ex) {
-            Log.e(TAG, "Could not access camera setting up preview.", ex);
-            if (readyListener != null) {
-                readyListener.onSetupFailed();
-            }
+            return true;
+        } catch (CameraAccessException e) {
+            Log.v(TAG, "Could not execute auto focus hold request.", e);
+            return false;
         }
     }
 
@@ -611,12 +893,35 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         }
     }
 
+    private void startAFCycle() {
+        // Clean up any existing AF cycle's pending callbacks.
+        mCameraHandler.removeCallbacksAndMessages(FOCUS_RESUME_CALLBACK_TOKEN);
+
+        // Send a single CONTROL_AF_TRIGGER_START capture request.
+        sendAutoFocusTriggerRequest();
+
+        // Immediately send a request for a regular preview stream, but with
+        // CONTROL_AF_MODE_AUTO set so that the focus remains constant after the
+        // AF cycle completes.
+        sendAutoFocusHoldRequest();
+
+        // Waits FOCUS_HOLD_MILLIS milliseconds before sending a request for a
+        // regular preview stream to resume.
+        mCameraHandler.postAtTime(new Runnable() {
+                @Override
+            public void run() {
+                sendRepeatingCaptureRequest();
+            }
+        }, FOCUS_RESUME_CALLBACK_TOKEN, SystemClock.uptimeMillis() + FOCUS_HOLD_MILLIS);
+    }
+
     /**
      * @see com.android.camera.one.OneCamera#triggerAutoFocus()
      */
     @Override
     public void triggerAutoFocus() {
-        // TODO: Auto focus not yet implemented.
+        m3ARegions = ZERO_WEIGHT_3A_REGION;
+        startAFCycle();
     }
 
     /**
@@ -663,7 +968,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         m3ARegions = new MeteringRectangle[] {
                 new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, weight) };
 
-        repeatingPreviewWithReadyListener(null);
+        startAFCycle();
     }
 
     @Override
@@ -682,7 +987,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     public void setZoom(float zoom) {
         mZoomValue = zoom;
         mCropRegion = cropRegionForZoom(zoom);
-        repeatingPreviewWithReadyListener(null);
+        sendRepeatingCaptureRequest();
     }
 
     private Rect cropRegionForZoom(float zoom) {
