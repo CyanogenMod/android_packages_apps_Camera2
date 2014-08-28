@@ -266,12 +266,6 @@ public class CaptureModule extends CameraModule
     private final File mDebugDataDir;
 
     /** CLEAN UP START */
-    // private SoundPool mSoundPool;
-    // private int mCaptureStartSoundId;
-    // private static final int NO_SOUND_STREAM = -999;
-    // private final int mCaptureStartSoundStreamId = NO_SOUND_STREAM;
-    // private int mCaptureDoneSoundId;
-    // private SoundClips.Player mSoundPlayer;
     // private boolean mFirstLayout;
     // private int[] mTargetFPSRanges;
     // private float mZoomValue;
