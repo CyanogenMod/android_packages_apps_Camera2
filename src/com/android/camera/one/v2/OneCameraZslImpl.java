@@ -196,12 +196,19 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * <li>We must not be in the process of capturing a single, high-quality,
      * image.</li>
      * </ol>
-     * The {@link ConjunctionListenerMux} handles the thread-safe logic of
-     * dispatching whenever the logical AND of these constraints changes.
      */
-    private final ConjunctionListenerMux mReadyStateManager = new ConjunctionListenerMux(2);
-    private static final int READY_STATE_MANAGER_CAPTURE_MANAGER_READY = 0;
-    private static final int READY_STATE_MANAGER_EXPLICIT_CAPTURE_NOT_IN_PROGRESS = 1;
+    private static enum ReadyStateRequirement {
+        CAPTURE_MANAGER_READY,
+        CAPTURE_NOT_IN_PROGRESS
+    }
+
+    /**
+     * Handles the thread-safe logic of dispatching whenever the logical AND of
+     * these constraints changes.
+     */
+    private final ConjunctionListenerMux<ReadyStateRequirement>
+            mReadyStateManager = new ConjunctionListenerMux<ReadyStateRequirement>(
+                    ReadyStateRequirement.class);
 
     /**
      * An {@link ImageCaptureListener} which will compress and save an image to
@@ -236,7 +243,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             }
 
             mReadyStateManager.setInput(
-                    READY_STATE_MANAGER_EXPLICIT_CAPTURE_NOT_IN_PROGRESS, true);
+                    ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, true);
 
             // TODO Add callback to CaptureModule here to flash the screen.
             mSession.startEmpty();
@@ -281,7 +288,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mCaptureManager.setCaptureReadyListener(new ImageCaptureManager.CaptureReadyListener() {
                 @Override
             public void onReadyStateChange(boolean capturePossible) {
-                mReadyStateManager.setInput(READY_STATE_MANAGER_CAPTURE_MANAGER_READY,
+                mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_MANAGER_READY,
                         capturePossible);
             }
         });
@@ -325,7 +332,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         params.checkSanity();
 
         mReadyStateManager.setInput(
-                READY_STATE_MANAGER_EXPLICIT_CAPTURE_NOT_IN_PROGRESS, false);
+                ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, false);
 
         boolean useZSL = ZSL_ENABLED;
 
