@@ -976,7 +976,8 @@ public class CameraUtil {
                 Intent intent = IntentHelper.getVideoPlayerIntent(uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
                         .putExtra(KEY_TREAT_UP_AS_BACK, true);
-                activity.startActivityForResult(intent, CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
             } else {
                 // In order not to send out any intent to be intercepted and
                 // show the lock screen immediately, we just let the secure
@@ -1008,8 +1009,8 @@ public class CameraUtil {
                     MAPS_CLASS_NAME);
             Intent mapsIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(uri)).setComponent(compName);
-            activity.startActivityForResult(mapsIntent,
-                    CameraActivity.REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+            mapsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(mapsIntent);
         } catch (ActivityNotFoundException e) {
             // Use the "geo intent" if no GMM is installed
             Log.e(TAG, "GMM activity not found!", e);
