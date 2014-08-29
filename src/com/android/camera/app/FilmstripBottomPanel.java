@@ -269,16 +269,17 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     }
 
     public void show() {
-        int offset = mLayout.getHeight();
-        mLayout.setTranslationY(offset);
-        mLayout.animate().translationY(0).setDuration(ANIM_DURATION)
-                .setInterpolator(Gusterpolator.INSTANCE);
+        if (mLayout.getTranslationY() > 0) {
+            mLayout.animate().translationY(0).setDuration(ANIM_DURATION)
+                    .setInterpolator(Gusterpolator.INSTANCE);
+        }
     }
 
     public void hide() {
         int offset = mLayout.getHeight();
-        mLayout.setTranslationY(0);
-        mLayout.animate().translationY(offset).setDuration(ANIM_DURATION)
-                .setInterpolator(Gusterpolator.INSTANCE);
+        if (mLayout.getTranslationY() < offset) {
+            mLayout.animate().translationY(offset).setDuration(ANIM_DURATION)
+                    .setInterpolator(Gusterpolator.INSTANCE);
+        }
     }
 }
