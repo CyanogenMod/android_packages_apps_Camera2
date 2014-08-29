@@ -42,14 +42,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Implements {@link ImageReader.OnImageAvailableListener} and
- * {@link CameraCapturesession.CaptureListener} to store the results of capture
- * requests (both {@link Image}s and {@link TotalCaptureResult}s in a
- * ring-buffer from which they may be saved.<br>
+ * Implements {@link android.media.ImageReader.OnImageAvailableListener} and
+ * {@link android.hardware.camera2.CameraCaptureSession.CaptureListener} to
+ * store the results of capture requests (both {@link Image}s and
+ * {@link TotalCaptureResult}s in a ring-buffer from which they may be saved.
+ * <br>
  * This also manages the lifecycle of {@link Image}s within the application as
  * they are passed in from the lower-level camera2 API.
  */
@@ -114,7 +116,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
 
     /**
      * Callback for placing constraints on which images to capture. See
-     * {@link #tryCaptureExistingImage} and {@link captureNextImage}.
+     * {@link #tryCaptureExistingImage} and {@link #captureNextImage}.
      */
     public static interface CapturedImageConstraint {
         /**
@@ -241,19 +243,30 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
     /** Track the number of open images for debugging purposes. */
     private final AtomicInteger mNumOpenImages = new AtomicInteger(0);
 
-    /** The executor on which to invoke listeners. */
+    /**
+     * The handler used to invoke light-weight listeners:
+     * {@link CaptureReadyListener} and {@link MetadataChangeListener}.
+     */
     private final Handler mListenerHandler;
 
     /**
+     * The executor used to invoke {@link ImageCaptureListener}. Note that this
+     * is different from mListenerHandler because a typical ImageCaptureListener
+     * will compress the image to jpeg, and we may wish to execute these tasks
+     * on multiple threads.
+     */
+    private final Executor mImageCaptureListenerExecutor;
+
+    /**
      * The set of constraints which must be satisfied for a newly acquired image
-     * to be captured and sent to {@link mPendingImageCaptureCallback}. null if
+     * to be captured and sent to {@link #mPendingImageCaptureCallback}. null if
      * there is no pending capture request.
      */
     private List<ImageCaptureManager.CapturedImageConstraint> mPendingImageCaptureConstraints;
 
     /**
      * The callback to be invoked upon successfully capturing a newly-acquired
-     * image which satisfies {@link mPendingImageCaptureConstraints}. null if
+     * image which satisfies {@link #mPendingImageCaptureConstraints}. null if
      * there is no pending capture request.
      */
     private ImageCaptureManager.ImageCaptureListener mPendingImageCaptureCallback;
@@ -267,7 +280,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
             mMetadata = new ConcurrentHashMap<CaptureResult.Key<?>, Pair<Long, Object>>();
 
     /**
-     * The set of callbacks to be invoked when an entry in {@link mMetadata} is
+     * The set of callbacks to be invoked when an entry in {@link #mMetadata} is
      * changed.
      */
     private final Map<Key<?>, Set<MetadataChangeListener>>
@@ -280,8 +293,11 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      *            that this should probably be on a different thread than the
      *            one used for camera operations, such as capture requests and
      *            OnImageAvailable listeners, to avoid stalling the preview.
+     * @param imageCaptureListenerExecutor the executor on which to invoke image
+     *            capture listeners, {@link ImageCaptureListener}.
      */
-    ImageCaptureManager(int maxImages, Handler listenerHandler) {
+    ImageCaptureManager(int maxImages, Handler listenerHandler,
+            Executor imageCaptureListenerExecutor) {
         // Ensure that there are always 2 images available for the framework to
         // continue processing frames.
         // TODO Could we make this tighter?
@@ -289,6 +305,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
                 maxImages - 2);
 
         mListenerHandler = listenerHandler;
+        mImageCaptureListenerExecutor = imageCaptureListenerExecutor;
     }
 
     /**
@@ -627,7 +644,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
             return false;
         } else {
             try {
-                mListenerHandler.post(new Runnable() {
+                mImageCaptureListenerExecutor.execute(new Runnable() {
                         @Override
                     public void run() {
                         try {
