@@ -18,6 +18,7 @@ package com.android.camera.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ import java.util.List;
  * single listener to be invoked upon change in the conjunction (logical AND) of
  * all inputs.
  */
-public class ConjunctionListenerMux {
+public class ConjunctionListenerMux<Input extends Enum<Input>> {
     /**
      * Callback for listening to changes to the conjunction of all inputs.
      */
@@ -43,7 +44,7 @@ public class ConjunctionListenerMux {
     /** Mutex for mValues and mState. */
     private final Object mLock = new Object();
     /** Stores the current input state. */
-    private final ArrayList<Boolean> mInputs;
+    private final EnumMap<Input, Boolean> mInputs;
     /** The current output state */
     private boolean mOutput;
     /**
@@ -75,9 +76,9 @@ public class ConjunctionListenerMux {
      * @param newValue the new value of the input.
      * @return The new output.
      */
-    public boolean setInput(int index, boolean newValue) {
+    public boolean setInput(Input input, boolean newValue) {
         synchronized (mLock) {
-            mInputs.set(index, newValue);
+            mInputs.put(input, newValue);
 
             // If the new input value is the same as the existing output,
             // then nothing will change.
@@ -88,7 +89,7 @@ public class ConjunctionListenerMux {
 
                 // Recompute the output by AND'ing all the inputs.
                 mOutput = true;
-                for (Boolean b : mInputs) {
+                for (Boolean b : mInputs.values()) {
                     mOutput &= b;
                 }
 
@@ -104,10 +105,11 @@ public class ConjunctionListenerMux {
         }
     }
 
-    public ConjunctionListenerMux(int numInputs) {
-        mInputs = new ArrayList<Boolean>(numInputs);
-        for (int i = 0; i < numInputs; i++) {
-            mInputs.add(false);
+    public ConjunctionListenerMux(Class<Input> clazz) {
+        mInputs = new EnumMap<Input, Boolean>(clazz);
+
+        for (Input i : clazz.getEnumConstants()) {
+            mInputs.put(i, false);
         }
 
         mOutput = false;
