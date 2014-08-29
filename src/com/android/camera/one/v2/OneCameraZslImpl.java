@@ -57,6 +57,7 @@ import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.ConjunctionListenerMux;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
 
@@ -71,8 +72,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * {@link OneCamera} implementation directly on top of the Camera2 API with zero
  * shutter lag.<br>
- * TODO: Update shutter button state appropriately when not able to capture ZSL
- * frames.<br>
  * TODO: Determine what the maximum number of full YUV capture frames is.
  */
 @TargetApi(Build.VERSION_CODES.L)
@@ -107,7 +106,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
          * should always be saved.
          */
         EXPLICIT_CAPTURE
-    };
+    }
 
     /**
      * Set to ImageFormat.JPEG to use the hardware encoder, or
@@ -122,8 +121,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     /** Duration to hold after manual focus tap. */
     private static final int FOCUS_HOLD_MILLIS = 3000;
     /**
-     * Token for callbacks posted to {@link mCameraHandler} to resume continuous
-     * AF.
+     * Token for callbacks posted to {@link #mCameraHandler} to resume
+     * continuous AF.
      */
     private static final String FOCUS_RESUME_CALLBACK_TOKEN = "RESUME_CONTINUOUS_AF";
     /** Zero weight 3A region, to reset regions per API. */
@@ -191,6 +190,20 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private MeteringRectangle[] m3ARegions = ZERO_WEIGHT_3A_REGION;
 
     /**
+     * Ready state depends on two things:<br>
+     * <ol>
+     * <li>{@link #mCaptureManager} must be ready.</li>
+     * <li>We must not be in the process of capturing a single, high-quality,
+     * image.</li>
+     * </ol>
+     * The {@link ConjunctionListenerMux} handles the thread-safe logic of
+     * dispatching whenever the logical AND of these constraints changes.
+     */
+    private final ConjunctionListenerMux mReadyStateManager = new ConjunctionListenerMux(2);
+    private static final int READY_STATE_MANAGER_CAPTURE_MANAGER_READY = 0;
+    private static final int READY_STATE_MANAGER_EXPLICIT_CAPTURE_NOT_IN_PROGRESS = 1;
+
+    /**
      * An {@link ImageCaptureListener} which will compress and save an image to
      * disk.
      */
@@ -221,6 +234,9 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     return;
                 }
             }
+
+            mReadyStateManager.setInput(
+                    READY_STATE_MANAGER_EXPLICIT_CAPTURE_NOT_IN_PROGRESS, true);
 
             // TODO Add callback to CaptureModule here to flash the screen.
             mSession.startEmpty();
@@ -260,13 +276,23 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mImageSaverThreadPool = new ThreadPoolExecutor(numEncodingCores, numEncodingCores, 10,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
-        mCaptureManager = new ImageCaptureManager(MAX_CAPTURE_IMAGES, mCameraListenerHandler);
+        mCaptureManager = new ImageCaptureManager(MAX_CAPTURE_IMAGES, mCameraListenerHandler,
+                mImageSaverThreadPool);
         mCaptureManager.setCaptureReadyListener(new ImageCaptureManager.CaptureReadyListener() {
                 @Override
             public void onReadyStateChange(boolean capturePossible) {
-                broadcastReadyState(capturePossible);
+                mReadyStateManager.setInput(READY_STATE_MANAGER_CAPTURE_MANAGER_READY,
+                        capturePossible);
             }
         });
+
+        mReadyStateManager.addListener(new ConjunctionListenerMux.OutputChangeListener() {
+                @Override
+            public void onOutputChange(boolean state) {
+                broadcastReadyState(state);
+            }
+        });
+
         // Listen for changes to auto focus state and dispatch to
         // mFocusStateListener.
         mCaptureManager.addMetadataChangeListener(CaptureResult.CONTROL_AF_STATE,
@@ -298,6 +324,9 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     public void takePicture(final PhotoCaptureParameters params, final CaptureSession session) {
         params.checkSanity();
 
+        mReadyStateManager.setInput(
+                READY_STATE_MANAGER_EXPLICIT_CAPTURE_NOT_IN_PROGRESS, false);
+
         boolean useZSL = ZSL_ENABLED;
 
         // We will only capture images from the zsl ring-buffer which satisfy
@@ -307,7 +336,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         zslConstraints.add(new ImageCaptureManager.CapturedImageConstraint() {
                 @Override
             public boolean satisfiesConstraint(TotalCaptureResult captureResult) {
-                Object tag = captureResult.getRequest().getTag();
                 Long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
                 Integer lensState = captureResult.get(CaptureResult.LENS_STATE);
                 Integer flashState = captureResult.get(CaptureResult.FLASH_STATE);
@@ -364,7 +392,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 return true;
             }
         });
-
         // This constraint lets us capture images which have been explicitly
         // requested. See {@link RequestTag.EXPLICIT_CAPTURE}.
         ArrayList<ImageCaptureManager.CapturedImageConstraint> singleCaptureConstraint = new ArrayList<
@@ -853,7 +880,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * Given an image reader, extracts the JPEG image bytes and then closes the
      * reader.
      *
-     * @param reader the reader to read the JPEG data from.
+     * @param img the image from which to extract jpeg bytes or compress to
+     *            jpeg.
      * @return The bytes of the JPEG image. Newly allocated.
      */
     private byte[] acquireJpegBytes(Image img) {
