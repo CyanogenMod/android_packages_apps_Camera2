@@ -50,7 +50,6 @@ import com.android.camera.debug.Log.Tag;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
-import com.android.camera.one.OneCamera.AutoFocusMode;
 import com.android.camera.one.OneCamera.AutoFocusState;
 import com.android.camera.one.OneCamera.CaptureReadyCallback;
 import com.android.camera.one.OneCamera.Facing;
@@ -58,6 +57,7 @@ import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.OneCameraManagerImpl;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
@@ -119,25 +119,17 @@ public class CaptureModule extends CameraModule
     };
 
     /**
-     * Show AF target in center of preview and start animation.
-     */
-    Runnable mShowAutoFocusTargetInCenterRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mUI.setAutoFocusTarget(((int) (mPreviewArea.left + mPreviewArea.right)) / 2,
-                    ((int) (mPreviewArea.top + mPreviewArea.bottom)) / 2);
-            mUI.showAutoFocusInProgress();
-        }
-    };
-
-    /**
      * Hide AF target UI element.
      */
     Runnable mHideAutoFocusTargetRunnable = new Runnable() {
         @Override
         public void run() {
-            // showAutoFocusSuccess() just hides the AF UI.
-            mUI.showAutoFocusSuccess();
+            // For debug UI off, showAutoFocusSuccess() just hides the AF UI.
+            if (mFocusedAtEnd) {
+                mUI.showAutoFocusSuccess();
+            } else {
+                mUI.showAutoFocusFailure();
+            }
         }
     };
 
@@ -203,12 +195,14 @@ public class CaptureModule extends CameraModule
     private float mZoomValue = 1f;
 
     /** True if in AF tap-to-focus sequence. */
-    private boolean mTapToFocusInProgress = false;
+    private boolean mTapToFocusWaitForActiveScan = false;
 
     /** Persistence of Tap to Focus target UI after scan complete. */
-    private static final int FOCUS_HOLD_UI_MILLIS = 500;
+    private static final int FOCUS_HOLD_UI_MILLIS = 0;
     /** Worst case persistence of TTF target UI. */
     private static final int FOCUS_UI_TIMEOUT_MILLIS = 2000;
+    /** Results from last tap to focus scan */
+    private boolean mFocusedAtEnd;
     /** Sensor manager we use to get the heading of the device. */
     private SensorManager mSensorManager;
     /** Accelerometer. */
@@ -641,16 +635,20 @@ public class CaptureModule extends CameraModule
     // PhotoModule uses FocusOverlayManager which uses API1/portability
     // logic and coordinates.
     private void triggerFocusAtScreenCoord(int x, int y) {
-        mTapToFocusInProgress = true;
+        mTapToFocusWaitForActiveScan = true;
         // Show UI immediately even though scan has not started yet.
-        mUI.setAutoFocusTarget(x, y);
+        float minEdge = Math.min(mPreviewArea.width(), mPreviewArea.height());
+        mUI.setAutoFocusTarget(x, y, false,
+                (int) (Settings3A.getAutoFocusRegionWidth() * mZoomValue * minEdge),
+                (int) (Settings3A.getMeteringRegionWidth() * mZoomValue * minEdge));
         mUI.showAutoFocusInProgress();
 
-        // TODO: Consider removing after TTF implemented in all OneCameras.
+        // Cancel any scheduled auto focus target UI actions.
+        mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+        // Timeout in case camera fails to stop (unlikely).
         mMainHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mTapToFocusInProgress = false;
                 mMainHandler.post(mHideAutoFocusTargetRunnable);
             }
         }, FOCUS_UI_TIMEOUT_MILLIS);
@@ -676,61 +674,55 @@ public class CaptureModule extends CameraModule
     }
 
     /**
-     * This AF status listener does two things:
-     * <ol>
-     * <li>Ends tap-to-focus period when mode goes from AUTO to
-     * CONTINUOUS_PICTURE.</li>
-     * <li>Updates AF UI if tap-to-focus is not in progress.</li>
-     * </ol>
+     * Show AF target in center of preview.
+     */
+    private void setAutoFocusTargetPassive() {
+        float minEdge = Math.min(mPreviewArea.width(), mPreviewArea.height());
+        mUI.setAutoFocusTarget((int) mPreviewArea.centerX(), (int) mPreviewArea.centerY(),
+                true,
+                (int) (Settings3A.getAutoFocusRegionWidth() * mZoomValue * minEdge),
+                (int) (Settings3A.getMeteringRegionWidth() * mZoomValue * minEdge));
+    }
+
+    /**
+     * Update UI based on AF state changes.
      */
     @Override
-    public void onFocusStatusUpdate(final AutoFocusMode mode, final AutoFocusState state) {
-        Log.v(TAG, "AF status is mode:" + mode + " state:" + state);
+    public void onFocusStatusUpdate(final AutoFocusState state) {
+        Log.v(TAG, "AF status is state:" + state);
 
-        if (CAPTURE_DEBUG_UI) {
-            // TODO: Add debug circle radius+color UI to FocusOverlay.
-            // mMainHandler.post(...)
-        }
-
-        // If mTapToFocusInProgress, clear UI.
-        if (mTapToFocusInProgress) {
-            // Clear UI on return to CONTINUOUS_PICTURE (debug mode).
-            if (CAPTURE_DEBUG_UI) {
-                if (mode == AutoFocusMode.CONTINUOUS_PICTURE) {
-                    mTapToFocusInProgress = false;
+        switch (state) {
+            case PASSIVE_SCAN:
+                mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setAutoFocusTargetPassive();
+                        mUI.showAutoFocusInProgress();
+                    }
+                });
+                break;
+            case ACTIVE_SCAN:
+                mTapToFocusWaitForActiveScan = false;
+                break;
+            case PASSIVE_FOCUSED:
+            case PASSIVE_UNFOCUSED:
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setAutoFocusTargetPassive();
+                        mMainHandler.post(mHideAutoFocusTargetRunnable);
+                    }
+                });
+                break;
+            case ACTIVE_FOCUSED:
+            case ACTIVE_UNFOCUSED:
+                if (!mTapToFocusWaitForActiveScan) {
+                    mFocusedAtEnd = state != AutoFocusState.ACTIVE_UNFOCUSED;
                     mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
                     mMainHandler.post(mHideAutoFocusTargetRunnable);
                 }
-            } else { // Clear UI FOCUS_HOLD_UI_MILLIS after scan end (normal).
-                if (mode == AutoFocusMode.AUTO && (state == AutoFocusState.STOPPED_FOCUSED ||
-                        state == AutoFocusState.STOPPED_UNFOCUSED)) {
-                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTapToFocusInProgress = false;
-                            mMainHandler.post(mHideAutoFocusTargetRunnable);
-                        }
-                    }, FOCUS_HOLD_UI_MILLIS);
-                }
-            }
-        }
-
-        // Use the OneCamera auto focus callbacks to show the UI, except for
-        // tap to focus where we show UI right away at touch, and then turn
-        // it off early at 0.5 sec, before the focus lock expires at 3 sec.
-        if (!mTapToFocusInProgress) {
-            switch (state) {
-                case SCANNING:
-                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-                    mMainHandler.post(mShowAutoFocusTargetInCenterRunnable);
-                    break;
-                case STOPPED_FOCUSED:
-                case STOPPED_UNFOCUSED:
-                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-                    mMainHandler.post(mHideAutoFocusTargetRunnable);
-                    break;
-            }
+                break;
         }
     }
 
