@@ -20,12 +20,14 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -46,6 +48,7 @@ import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.ui.FilmstripGestureRecognizer;
 import com.android.camera.ui.ZoomView;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
@@ -938,8 +941,17 @@ public class FilmstripView extends ViewGroup {
             }
             mViewItem[i].bringViewToFront();
         }
-        // ZoomView is a special case to always be in the front.
+        // ZoomView is a special case to always be in the front. In L set to
+        // max elevation to make sure ZoomView is above other elevated views.
         bringChildToFront(mZoomView);
+        if (ApiHelper.isLOrHigher()) {
+            setMaxElevation(mZoomView);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.L)
+    private void setMaxElevation(View v) {
+        v.setElevation(Float.MAX_VALUE);
     }
 
     /**

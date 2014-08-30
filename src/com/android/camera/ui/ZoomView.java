@@ -73,7 +73,7 @@ public class ZoomView extends ImageView {
             try {
                 isForDimensions.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "exception closing dimensions inputstream", e);
             }
             if (imageSize == null) {
                 return null;
@@ -125,7 +125,6 @@ public class ZoomView extends ImageView {
             }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
-
             if ((mOrientation + 360) % 180 == 0) {
                 options.inSampleSize = getSampleFactor(region.width(), region.height());
             } else {
