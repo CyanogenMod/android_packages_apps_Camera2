@@ -16,18 +16,23 @@
 
 package com.android.camera.one.v2;
 
+import android.graphics.Rect;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
 
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.Settings3A;
 
 /**
- * Helper class to implement autofocus and 3A in camera2-based
+ * Helper class to implement auto focus and 3A in camera2-based
  * {@link com.android.camera.one.OneCamera} implementations.
  */
 public class AutoFocusHelper {
-
     private static final Log.Tag TAG = new Log.Tag("OneCameraAFHelp");
+
+    private static final int METERING_WEIGHT = Settings3A.getCamera2MeteringWeight();
 
     /**
      * Convert reported camera2 AF state to OneCamera AutoFocusState.
@@ -35,43 +40,51 @@ public class AutoFocusHelper {
     public static OneCamera.AutoFocusState stateFromCamera2State(int state) {
         switch (state) {
             case CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN:
+                return OneCamera.AutoFocusState.ACTIVE_SCAN;
             case CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN:
-                return OneCamera.AutoFocusState.SCANNING;
+                return OneCamera.AutoFocusState.PASSIVE_SCAN;
             case CaptureResult.CONTROL_AF_STATE_PASSIVE_FOCUSED:
+                return OneCamera.AutoFocusState.PASSIVE_FOCUSED;
             case CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED:
-                return OneCamera.AutoFocusState.STOPPED_FOCUSED;
+                return OneCamera.AutoFocusState.ACTIVE_FOCUSED;
             case CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED:
+                return OneCamera.AutoFocusState.PASSIVE_UNFOCUSED;
             case CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED:
-                return OneCamera.AutoFocusState.STOPPED_UNFOCUSED;
+                return OneCamera.AutoFocusState.ACTIVE_UNFOCUSED;
             default:
                 return OneCamera.AutoFocusState.INACTIVE;
         }
     }
 
     /**
-     * Convert reported camera2 AF state to OneCamera AutoFocusMode.
+     * Complain if CONTROL_AF_STATE is not present in result.
+     * Could indicate bug in API implementation.
      */
-    public static OneCamera.AutoFocusMode modeFromCamera2Mode(int mode) {
-        if (mode == CaptureResult.CONTROL_AF_MODE_AUTO) {
-            return OneCamera.AutoFocusMode.AUTO;
-        } else {
-            // CONTROL_AF_MODE_CONTINUOUS_PICTURE is the other mode used.
-            return OneCamera.AutoFocusMode.CONTINUOUS_PICTURE;
+    public static boolean checkControlAfState(CaptureResult result) {
+        boolean missing = result.get(CaptureResult.CONTROL_AF_STATE) == null;
+        if (missing) {
+            // throw new IllegalStateException("CaptureResult missing CONTROL_AF_STATE.");
+            Log.e(TAG, "\n!!!! TotalCaptureResult missing CONTROL_AF_STATE. !!!!\n ");
         }
+        return !missing;
     }
 
-    public static void logExtraFocusInfo(CaptureResult result) {
-        // Nexus 5 has a bug where CONTROL_AF_STATE is missing sometimes.
-        if (result.get(CaptureResult.CONTROL_AF_STATE) == null) {
-            // throw new
-            // IllegalStateException("CaptureResult missing CONTROL_AF_STATE.");
-            Log.e(TAG, "\n!!!! TotalCaptureResult missing CONTROL_AF_STATE. !!!!\n ");
-            return;
-        }
-        if (result.get(CaptureResult.LENS_STATE) == null) {
-            // throw new
-            // IllegalStateException("CaptureResult missing LENS_STATE.");
+    /**
+     * Complain if LENS_STATE is not present in result.
+     * Could indicate bug in API implementation.
+     */
+    public static boolean checkLensState(CaptureResult result) {
+        boolean missing = result.get(CaptureResult.LENS_STATE) == null;
+        if (missing) {
+            // throw new IllegalStateException("CaptureResult missing LENS_STATE.");
             Log.e(TAG, "\n!!!! TotalCaptureResult missing LENS_STATE. !!!!\n ");
+        }
+        return !missing;
+    }
+
+
+    public static void logExtraFocusInfo(CaptureResult result) {
+        if(!checkControlAfState(result) || !checkLensState(result)) {
             return;
         }
 
@@ -83,6 +96,51 @@ public class AutoFocusHelper {
                 lensStateToString(result.get(CaptureResult.LENS_STATE)),
                 (tag == null) ? "" : "[" + tag +"]"
         ));
+    }
+
+    /** Compute 3A regions for a sensor-referenced touch coordinate. */
+    private static MeteringRectangle[] regionsForSensorCoord(int xc, int yc, float width,
+                                                             Rect cropRegion) {
+        float minCropEdge = (float) Math.min(cropRegion.width(), cropRegion.height());
+        int delta = (int) (0.5 * width * minCropEdge);
+        Rect region = new Rect(xc - delta, yc - delta, xc + delta, yc + delta);
+        // Make sure region is inside the sensor area.
+        if (!region.intersect(cropRegion)) {
+            region = cropRegion;
+        }
+        return new MeteringRectangle[]{new MeteringRectangle(region, METERING_WEIGHT)};
+    }
+
+    /**
+     * Return AF region(s) for a sensor-referenced touch coordinate.
+     *
+     * @return AF region(s).
+     */
+    public static MeteringRectangle[] afRegionsForSensorCoord(int xc, int yc, Rect cropRegion) {
+        return regionsForSensorCoord(xc, yc, Settings3A.getAutoFocusRegionWidth(), cropRegion);
+    }
+
+    /**
+     * Return AE region(s) for a sensor-referenced touch coordinate.
+     *
+     * @return AE region(s).
+     */
+    public static MeteringRectangle[] aeRegionsForSensorCoord(int xc, int yc, Rect cropRegion) {
+        return regionsForSensorCoord(xc, yc, Settings3A.getMeteringRegionWidth(), cropRegion);
+    }
+
+    /**
+     * Calculates sensor crop region for a zoom level (zoom >= 1.0).
+     *
+     * @return Crop region.
+     */
+    public static Rect cropRegionForZoom(CameraCharacteristics characteristics, float zoom) {
+        Rect sensor = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+        int xCenter = sensor.width() / 2;
+        int yCenter = sensor.height() / 2;
+        int xDelta = (int) (0.5f * sensor.width() / zoom);
+        int yDelta = (int) (0.5f * sensor.height() / zoom);
+        return new Rect(xCenter - xDelta, yCenter - yDelta, xCenter + xDelta, yCenter + yDelta);
     }
 
     /**
