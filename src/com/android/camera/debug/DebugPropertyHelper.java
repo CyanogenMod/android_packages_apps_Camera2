@@ -19,9 +19,6 @@ package com.android.camera.debug;
 import com.android.camera.util.SystemProperties;
 
 public class DebugPropertyHelper {
-    /** Override for 3A properties. */
-    private static final boolean ALL_3A_DEBUG_ON = false;
-
     /** Make app start with CaptureModule + ZSL. */
     private static final boolean FORCE_ZSL_APP = false;
 
@@ -50,7 +47,7 @@ public class DebugPropertyHelper {
     }
 
     public static boolean isCaptureModuleEnabled() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_ENABLE_CAPTURE_MODULE) || FORCE_ZSL_APP;
+        return isPropertyOn(PROP_ENABLE_CAPTURE_MODULE) || FORCE_ZSL_APP;
     }
 
     public static boolean isZslEnabled() {
@@ -58,11 +55,11 @@ public class DebugPropertyHelper {
     }
 
     public static boolean showFrameDebugLog() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_FRAME_LOG);
+        return isPropertyOn(PROP_FRAME_LOG);
     }
 
     public static boolean showCaptureDebugUI() {
-        return ALL_3A_DEBUG_ON || isPropertyOn(PROP_CAPTURE_DEBUG_UI);
+        return isPropertyOn(PROP_CAPTURE_DEBUG_UI);
     }
 
     public static boolean writeCaptureData() {

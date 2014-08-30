@@ -29,6 +29,7 @@ import android.os.Message;
 import com.android.camera.app.AppController;
 import com.android.camera.app.MotionManager;
 import com.android.camera.debug.Log;
+import com.android.camera.one.Settings3A;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
@@ -67,16 +68,11 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private static final Log.Tag TAG = new Log.Tag("FocusOverlayMgr");
 
     private static final int RESET_TOUCH_FOCUS = 0;
-    private static final int RESET_TOUCH_FOCUS_DELAY = 4000;
-    /**
-     * Size of AF region as multiple of shortest edge.
-     * Was 0.125 * longest edge prior to L release.
-     * TODO: Move to GservicesHelper
-     */
-    private static final float AF_REGION_BOX = 0.2f;
 
-    /** How much wider the touch metering area is relative to the AF area. */
-    public static final float AE_MULTIPLIER = 1.5f;
+    private static final int RESET_TOUCH_FOCUS_DELAY_MILLIS = Settings3A.getFocusHoldMillis();
+
+    public static final float AF_REGION_BOX = Settings3A.getAutoFocusRegionWidth();
+    public static final float AE_REGION_BOX = Settings3A.getMeteringRegionWidth();
 
     private int mState = STATE_IDLE;
     private static final int STATE_IDLE = 0; // Focus is not active.
@@ -300,7 +296,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             // while.
             if (mFocusArea != null) {
                 mFocusLocked = true;
-                mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+                mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY_MILLIS);
             }
             if (shutterButtonPressed) {
                 // Lock AE & AWB so users can half-press shutter and recompose.
@@ -349,11 +345,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
 
     /** Returns width of metering region in pixels. */
     private int getAERegionEdge() {
-        // Convert the coordinates to driver format.
-        // AE area is bigger by AE_MULTIPLIER because exposure is sensitive and
-        // easy to over- or underexposure if area is too small.
-        return (int) (Math.min(mPreviewRect.width(), mPreviewRect.height()) * AF_REGION_BOX
-                * AE_MULTIPLIER);
+        return (int) (Math.min(mPreviewRect.width(), mPreviewRect.height()) * AE_REGION_BOX);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -418,7 +410,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             updateFocusUI();
             // Reset the metering area in 4 seconds.
             mHandler.removeMessages(RESET_TOUCH_FOCUS);
-            mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+            mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY_MILLIS);
         }
     }
 
