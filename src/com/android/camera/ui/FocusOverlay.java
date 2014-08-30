@@ -136,6 +136,7 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         if (getVisibility() != VISIBLE) {
             setVisibility(VISIBLE);
         }
+        invalidate();
     }
 
     @Override

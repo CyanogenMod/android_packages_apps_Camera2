@@ -19,7 +19,6 @@ package com.android.camera.one.v2;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -53,6 +52,7 @@ import com.android.camera.exif.Rational;
 import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
+import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.session.CaptureSession;
@@ -114,21 +114,13 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * formats are supported.
      */
     private static final int sCaptureImageFormat = ImageFormat.YUV_420_888;
-    /** Width and height of touch metering region as fraction of longest edge. */
-    private static final float METERING_REGION_EDGE = 0.1f;
-    /** Metering region weight between 0 and 1. */
-    private static final float METERING_REGION_WEIGHT = 0.25f;
-    /** Duration to hold after manual focus tap. */
-    private static final int FOCUS_HOLD_MILLIS = 3000;
     /**
      * Token for callbacks posted to {@link #mCameraHandler} to resume
      * continuous AF.
      */
     private static final String FOCUS_RESUME_CALLBACK_TOKEN = "RESUME_CONTINUOUS_AF";
     /** Zero weight 3A region, to reset regions per API. */
-    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[] {
-            new MeteringRectangle(0, 0, 1, 1, 0)
-    };
+    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = Settings3A.getZeroWeightRegion();
 
     /**
      * Thread on which high-priority camera operations, such as grabbing preview
@@ -187,7 +179,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     /** Current crop region: set from mZoomValue. */
     private Rect mCropRegion;
     /** Current AE, AF, and AWB regions */
-    private MeteringRectangle[] m3ARegions = ZERO_WEIGHT_3A_REGION;
+    private MeteringRectangle[] mAFRegions = ZERO_WEIGHT_3A_REGION;
+    private MeteringRectangle[] mAERegions = ZERO_WEIGHT_3A_REGION;
 
     /**
      * Ready state depends on two things:<br>
@@ -308,8 +301,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     public void onImageMetadataChange(Key<?> key, Object oldValue, Object newValue,
                             CaptureResult result) {
                         mFocusStateListener.onFocusStatusUpdate(
-                                AutoFocusHelper.modeFromCamera2Mode(
-                                        result.get(CaptureResult.CONTROL_AF_MODE)),
                                 AutoFocusHelper.stateFromCamera2State(
                                         result.get(CaptureResult.CONTROL_AF_STATE)));
                     }
@@ -618,7 +609,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     @Override
                 public void onConfigured(CameraCaptureSession session) {
                     mCaptureSession = session;
-                    m3ARegions = ZERO_WEIGHT_3A_REGION;
+                    mAFRegions = ZERO_WEIGHT_3A_REGION;
+                    mAERegions = ZERO_WEIGHT_3A_REGION;
                     mZoomValue = 1f;
                     mCropRegion = cropRegionForZoom(mZoomValue);
                     boolean success = sendRepeatingCaptureRequest();
@@ -644,8 +636,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     }
 
     private void addRegionsToCaptureRequestBuilder(CaptureRequest.Builder builder) {
-        builder.set(CaptureRequest.CONTROL_AE_REGIONS, m3ARegions);
-        builder.set(CaptureRequest.CONTROL_AF_REGIONS, m3ARegions);
+        builder.set(CaptureRequest.CONTROL_AE_REGIONS, mAERegions);
+        builder.set(CaptureRequest.CONTROL_AF_REGIONS, mAFRegions);
         builder.set(CaptureRequest.SCALER_CROP_REGION, mCropRegion);
     }
 
@@ -940,23 +932,17 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         // AF cycle completes.
         sendAutoFocusHoldRequest();
 
-        // Waits FOCUS_HOLD_MILLIS milliseconds before sending a request for a
-        // regular preview stream to resume.
+        // Waits Settings3A.getFocusHoldMillis() milliseconds before sending
+        // a request for a regular preview stream to resume.
         mCameraHandler.postAtTime(new Runnable() {
-                @Override
+            @Override
             public void run() {
+                mAERegions = ZERO_WEIGHT_3A_REGION;
+                mAFRegions = ZERO_WEIGHT_3A_REGION;
                 sendRepeatingCaptureRequest();
             }
-        }, FOCUS_RESUME_CALLBACK_TOKEN, SystemClock.uptimeMillis() + FOCUS_HOLD_MILLIS);
-    }
-
-    /**
-     * @see com.android.camera.one.OneCamera#triggerAutoFocus()
-     */
-    @Override
-    public void triggerAutoFocus() {
-        m3ARegions = ZERO_WEIGHT_3A_REGION;
-        startAFCycle();
+        }, FOCUS_RESUME_CALLBACK_TOKEN,
+                SystemClock.uptimeMillis() + Settings3A.getFocusHoldMillis());
     }
 
     /**
@@ -965,43 +951,12 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      */
     @Override
     public void triggerFocusAndMeterAtPoint(float nx, float ny) {
-        Log.v(TAG, "triggerFocusAndMeterAtPoint(" + nx + "," + ny + ")");
-        float points[] = new float[] {
-                nx, ny
-        };
-        // Make sure the points are in [0,1] range.
-        points[0] = CameraUtil.clamp(points[0], 0f, 1f);
-        points[1] = CameraUtil.clamp(points[1], 0f, 1f);
+        // xc, yc is center of tap point in sensor coordinate system.
+        int xc = mCropRegion.left + (int) (mCropRegion.width() * ny);
+        int yc = mCropRegion.top + (int) (mCropRegion.height() * (1f - nx));
 
-        // Shrink points towards center if zoomed.
-        if (mZoomValue > 1f) {
-            Matrix zoomMatrix = new Matrix();
-            zoomMatrix.postScale(1f / mZoomValue, 1f / mZoomValue, 0.5f, 0.5f);
-            zoomMatrix.mapPoints(points);
-        }
-
-        // TODO: Make this work when preview aspect ratio != sensor aspect
-        // ratio.
-        Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-        int edge = (int) (METERING_REGION_EDGE * Math.max(sensor.width(), sensor.height()));
-        // x0 and y0 in sensor coordinate system, rotated 90 degrees from
-        // portrait.
-        int x0 = (int) (sensor.width() * points[1]);
-        int y0 = (int) (sensor.height() * (1f - points[0]));
-        int x1 = x0 + edge;
-        int y1 = y0 + edge;
-
-        // Make sure regions are inside the sensor area.
-        x0 = CameraUtil.clamp(x0, 0, sensor.width() - 1);
-        x1 = CameraUtil.clamp(x1, 0, sensor.width() - 1);
-        y0 = CameraUtil.clamp(y0, 0, sensor.height() - 1);
-        y1 = CameraUtil.clamp(y1, 0, sensor.height() - 1);
-        int weight = (int) ((1 - METERING_REGION_WEIGHT) * MeteringRectangle.METERING_WEIGHT_MIN
-                + METERING_REGION_WEIGHT * MeteringRectangle.METERING_WEIGHT_MAX);
-
-        Log.v(TAG, "sensor 3A @ x0=" + x0 + " y0=" + y0 + " dx=" + (x1 - x0) + " dy=" + (y1 - y0));
-        m3ARegions = new MeteringRectangle[] {
-                new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, weight) };
+        mAERegions = AutoFocusHelper.aeRegionsForSensorCoord(xc, yc, mCropRegion);
+        mAFRegions = AutoFocusHelper.afRegionsForSensorCoord(xc, yc, mCropRegion);
 
         startAFCycle();
     }
@@ -1026,12 +981,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     }
 
     private Rect cropRegionForZoom(float zoom) {
-        Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-        float zoomWidth = sensor.width() / zoom;
-        float zoomHeight = sensor.height() / zoom;
-        float zoomLeft = (sensor.width() - zoomWidth) / 2;
-        float zoomTop = (sensor.height() - zoomHeight) / 2;
-        return new Rect((int) zoomLeft, (int) zoomTop, (int) (zoomLeft + zoomWidth),
-                (int) (zoomTop + zoomHeight));
+        return AutoFocusHelper.cropRegionForZoom(mCharacteristics, zoom);
     }
 }

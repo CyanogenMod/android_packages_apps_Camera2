@@ -40,23 +40,32 @@ public interface OneCamera {
     }
 
     /**
-     * Auto focus system status.
+     * Auto focus system status; 1:1 mapping from camera2 AF_STATE.
      * <ul>
      * <li>{@link #INACTIVE}</li>
-     * <li>{@link #SCANNING}</li>
-     * <li>{@link #STOPPED_FOCUSED}</li>
-     * <li>{@link #STOPPED_UNFOCUSED}</li>
+     * <li>{@link #ACTIVE_SCAN}</li>
+     * <li>{@link #ACTIVE_FOCUSED}</li>
+     * <li>{@link #ACTIVE_UNFOCUSED}</li>
+     * <li>{@link #PASSIVE_SCAN}</li>
+     * <li>{@link #PASSIVE_FOCUSED}</li>
+     * <li>{@link #PASSIVE_UNFOCUSED}</li>
      * </ul>
      */
     public static enum AutoFocusState {
         /** Indicates AF system is inactive for some reason (could be an error). */
         INACTIVE,
-        /** Indicates scan in progress. */
-        SCANNING,
-        /** Indicates scan success (camera in focus). */
-        STOPPED_FOCUSED,
-        /** Indicates scan or other failure. */
-        STOPPED_UNFOCUSED
+        /** Indicates active scan in progress. */
+        ACTIVE_SCAN,
+        /** Indicates active scan success (in focus). */
+        ACTIVE_FOCUSED,
+        /** Indicates active scan failure (not in focus). */
+        ACTIVE_UNFOCUSED,
+        /** Indicates passive scan in progress. */
+        PASSIVE_SCAN,
+        /** Indicates passive scan success (in focus). */
+        PASSIVE_FOCUSED,
+        /** Indicates passive scan failure (not in focus). */
+        PASSIVE_UNFOCUSED
     }
 
     /**
@@ -185,12 +194,11 @@ public interface OneCamera {
      */
     public static interface FocusStateListener {
         /**
-         * Called when mode or state of auto focus system changes.
+         * Called when state of auto focus system changes.
          *
-         * @param mode Is manual AF trigger cycle active.
-         * @param state Current state: scanning, focused, not focused, inactive.
+         * @param state Current auto focus state.
          */
-        public void onFocusStatusUpdate(AutoFocusMode mode, AutoFocusState state);
+        public void onFocusStatusUpdate(AutoFocusState state);
     }
 
     /**
@@ -245,11 +253,6 @@ public interface OneCamera {
             }
         }
     }
-
-    /**
-     * Triggers auto focus scan for default ROI.
-     */
-    public void triggerAutoFocus();
 
     /**
      * Meters and triggers auto focus scan with ROI around tap point.
