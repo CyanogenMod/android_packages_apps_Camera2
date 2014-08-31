@@ -582,7 +582,15 @@ public class PhotoUI implements PieListener,
     public void updateOnScreenIndicators(Camera.Parameters params,
             PreferenceGroup group, ComboPreferences prefs) {
         if (params == null || group == null) return;
-        mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
+        String scene = params.getSceneMode();
+        // use the scene indicator for beautify/slowshutter since they
+        // will never coexist with scenemodes or hdr
+        if (CameraSettings.isBeautyModeEnabled(params)) {
+            scene = "beauty";
+        } else if (CameraSettings.isSlowShutterEnabled(params)) {
+            scene = "slow";
+        }
+        mOnScreenIndicators.updateSceneOnScreenIndicator(scene);
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
