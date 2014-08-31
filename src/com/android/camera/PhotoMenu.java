@@ -211,9 +211,26 @@ public class PhotoMenu extends PieController
             more.addItem(item);
         }
         // white balance
-        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
-            item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
+        final ListPreference whiteBalancePref =
+                group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
+        if (whiteBalancePref != null) {
+            item = makeItem(R.drawable.ic_wb_auto);
+            item.setLabel(res.getString(
+                    R.string.pref_camera_whitebalance_label).toUpperCase(locale));
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    LayoutInflater inflater = mActivity.getLayoutInflater();
+                    ListPrefSettingPopup popup = (ListPrefSettingPopup) inflater.inflate(
+                            R.layout.list_pref_setting_popup, null, false);
+                    popup.initialize(whiteBalancePref);
+                    popup.setSettingChangedListener(PhotoMenu.this);
+                    mUI.dismissPopup();
+                    mPopup = popup;
+                    mPopupStatus = POPUP_SECOND_LEVEL;
+                    mUI.showPopup(mPopup);
+                }
+            });
             more.addItem(item);
         }
         // scene mode
