@@ -72,7 +72,7 @@ public class OnScreenIndicators {
         updateExposureOnScreenIndicator(0);
         updateFlashOnScreenIndicator(Parameters.FLASH_MODE_OFF);
         updateSceneOnScreenIndicator(Parameters.SCENE_MODE_AUTO);
-        updateWBIndicator(2);
+        updateWBIndicator(0);
         updateTimerIndicator(false);
         updateLocationIndicator(false);
     }

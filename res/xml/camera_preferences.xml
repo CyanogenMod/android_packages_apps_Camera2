@@ -37,15 +37,12 @@
             camera:title="@string/pref_camera_scenemode_title"
             camera:entries="@array/pref_camera_scenemode_entries"
             camera:entryValues="@array/pref_camera_scenemode_entryvalues" />
-    <IconListPreference
+    <ListPreference
             camera:key="pref_camera_whitebalance_key"
             camera:defaultValue="@string/pref_camera_whitebalance_default"
             camera:title="@string/pref_camera_whitebalance_title"
-            camera:icons="@array/whitebalance_icons"
-            camera:largeIcons="@array/whitebalance_largeicons"
             camera:entries="@array/pref_camera_whitebalance_entries"
-            camera:entryValues="@array/pref_camera_whitebalance_entryvalues"
-            camera:labelList="@array/pref_camera_whitebalance_labels" />
+            camera:entryValues="@array/pref_camera_whitebalance_entryvalues" />
     <RecordLocationPreference
             camera:key="pref_camera_recordlocation_key"
             camera:defaultValue="@string/pref_camera_recordlocation_default"
