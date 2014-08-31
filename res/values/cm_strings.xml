@@ -178,8 +178,6 @@
     <string name="camera_menu_enhance_label">ENHANCE</string>
     <string name="camera_menu_slow_shutter_label">SLOW SHUTTER</string>
     <string name="camera_menu_beauty_mode_label">BEAUTIFY</string>
-    <string name="camera_menu_colorize_label">COLORIZE</string>
-    <string name="camera_menu_effects_label">EFFECTS</string>
     <string name="camera_menu_asd_label">SMART SCENE</string>
 
     <!-- More Settings screen, power button title -->
