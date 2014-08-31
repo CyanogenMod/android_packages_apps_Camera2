@@ -52,7 +52,7 @@
     <!-- Default auto exposure setting. Do not translate. -->
     <string name="pref_camera_autoexposure_default" translatable="false">frame-average</string>
     <!-- Settings screen, Select auto exposure title -->
-    <string name="pref_camera_autoexposure_title">Auto Exposure mode</string>
+    <string name="pref_camera_autoexposure_title">Auto Exposure</string>
 
     <!-- Settings screen, auto exposure dialog radio button choices -->
     <string name="pref_camera_autoexposure_entry_frameaverage">Frame average</string>
@@ -74,9 +74,6 @@
 
     <!-- Default video encoder setting. A numerical value. -->
     <string name="pref_camera_videoencoder_default" translatable="false">h264</string>
-
-    <!-- Settings screen, Video encoder dialog title -->
-    <string name="pref_camera_videoencoder_dialogtitle">Video codec</string>
 
     <!-- Default audio encoder setting. A numerical value. -->
     <string name="pref_camera_audioencoder_default" translatable="false">aac</string>
@@ -106,16 +103,12 @@
     <string name="pref_camera_skinToneEnhancement_title">Skin tone enhancement</string>
 
     <!-- Settings screen, Skin Tone Enhancement radio button choices -->
-    <string name="pref_camera_skinToneEnhancement_entry_enable">Enable</string>
-    <string name="pref_camera_skinToneEnhancement_entry_disable">Disable</string>
+    <string name="pref_camera_skinToneEnhancement_entry_enable">On</string>
+    <string name="pref_camera_skinToneEnhancement_entry_disable">Off</string>
 
     <!-- Skin Tone Enhancement entry values. Do not translate. -->
     <string name="pref_camera_skinToneEnhancement_value_enable" translatable="false">enable</string>
     <string name="pref_camera_skinToneEnhancement_value_disable" translatable="false">disable</string>
-
-    <!-- Settings screen, setting title text for ZSL-->
-    <string name="pref_camera_zsl_title">Zero Shutter Lag (ZSL)</string>
-    <string name="pref_camera_zsl_default" translatable="false">off</string>
 
     <!-- Default selectable zone af setting. Do not translate. -->
     <string name="pref_camera_selectablezoneaf_default" translatable="false">auto</string>
@@ -134,13 +127,6 @@
     <string name="pref_camera_selectablezoneaf_value_spotmetering" translatable="false">spot-metering</string>
     <string name="pref_camera_selectablezoneaf_value_centerweighted" translatable="false">center-weighted</string>
     <string name="pref_camera_selectablezoneaf_value_frameaverage" translatable="false">frame-average</string>
-
-    <!-- Settings screen, ZSL location dialog choices -->
-    <string name="pref_camera_zsl_entry_off">Off</string>
-    <string name="pref_camera_zsl_entry_on">On</string>
-
-    <string name="pref_camera_zsl_value_off" translatable="false">off</string>
-    <string name="pref_camera_zsl_value_on" translatable="false">on</string>
 
     <!-- Settings screen, Video HDR location dialog choices -->
     <string name="pref_camera_video_hdr_entry_off">Off</string>
@@ -171,11 +157,8 @@
     <string name="pref_camera_redeyereduction_title">Red eye reduction</string>
 
     <!-- Settings menu, redeye reduction choices -->
-    <string name="pref_camera_redeyereduction_entry_enable">Enable</string>
-    <string name="pref_camera_redeyereduction_entry_disable">Disable</string>
-
-    <!-- Default mce setting. Do not translate. -->
-    <string name="pref_camera_mce_default" translatable="false">enable</string>
+    <string name="pref_camera_redeyereduction_entry_enable">On</string>
+    <string name="pref_camera_redeyereduction_entry_disable">Off</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported resolution for HFR mode -->
     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
@@ -184,12 +167,7 @@
     <string name="error_app_unsupported_hfr_codec">Only H.264 video encoding is supported when HFR is on</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
-     <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
-
-    <!--The message is shown in dialog when the raw snapshot is selected in zsl mode-->
-    <string name="error_app_unsupported_raw">Raw picture format is not supported in ZSL mode</string>
-
-    <string name="error_app_unsupported_hdr_zsl">HDR is not supported in ZSL mode</string>
+    <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
 
     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
     <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
@@ -200,17 +178,6 @@
 
     <string name="pref_camera_ae_bracket_hdr_entry_on">On</string>
     <string name="pref_camera_ae_bracket_hdr_entry_off">Off</string>
-
-    <string name="err_app_unsupport_ae_bracket_code">AE Bracketing is not supported yet</string>
-
-    <!-- The messsage shown if user selects a snapshot resolution lower than the current video size. -->
-    <string name="snapshot_lower_than_video">Video snapshot size is lower than video size, capping to video size. Please select a resolution higher or equal to the current video size.</string>
-
-    <!-- The messsage shown if user selects a snapshot resolution in low power mode. -->
-    <string name="snapshotsize_low_powermode">Changing picture size is not supported in Low Power mode, video size snapshot will be taken. Please select Normal Power mode to allow changing picture size.</string>
-
-    <!-- The messsage shown if user tries to take snapshot during D1/QCIF resolution. -->
-    <string name="snapshot_qcif_and_d1">Only video size snapshot is supported for this resolution.</string>
 
     <!-- Default hfr setting. Do not translate. -->
     <string name="pref_camera_hfr_default" translatable="false">off</string>
@@ -231,7 +198,7 @@
     <string name="pref_camera_hfr_value_4x" translatable="false">120</string>
 
     <!-- Denoise Settings screen, setting title text -->
-    <string name="pref_camera_denoise_title">Wavelet Denoise mode</string>
+    <string name="pref_camera_denoise_title">Denoise</string>
     <string name="pref_camera_denoise_default" translatable="false">denoise-off</string>
 
     <!-- Denoise Settings screen, Record location dialog choices -->
@@ -309,7 +276,7 @@
     <string name="pref_camera_touchafaec_entry_on">On</string>
 
     <!-- Select DIS title -->
-    <string name="pref_camera_dis_title">Digital Image Stabilization</string>
+    <string name="pref_camera_dis_title">Video stabilization</string>
     <string name="pref_camera_dis_default" translatable="false">disable</string>
 
     <!-- DIS choices -->
@@ -376,10 +343,6 @@
 
     <!-- Settings screen, Select saturation title -->
     <string name="pref_camera_saturation_title">Saturation</string>
-
-    <!-- Default picture quality setting. See
-         pref_camera_jpegquality_entryvalues for possible values -->
-    <string name="pref_camera_jpegquality_default" translatable="false">85</string>
 
     <!-- Default Picture format setting. Do not translate. -->
     <string name="pref_camera_picture_format_default" translatable="false">jpeg</string>
@@ -532,6 +495,11 @@
     <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12grbg" translatable="false">bayer-ideal-plain16-12grbg</string>
     <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12rggb" translatable="false">bayer-ideal-plain16-12rggb</string>
     <string name="pref_camera_picture_format_value_raw_bayer_ideal_plain16_12bggr" translatable="false">bayer-ideal-plain16-12bggr</string>
+
+    <!-- Default picture quality setting. See
+         pref_camera_jpegquality_entryvalues for possible values -->
+    <string name="pref_camera_jpegquality_default" translatable="false">85</string>
+
     <!-- Settings screen, Picture quality title -->
     <string name="pref_camera_jpegquality_title">Picture quality</string>
 
@@ -550,23 +518,12 @@
     <string name="pref_camera_histogram_title">Histogram</string>
 
     <!-- Settings screen, Histogram radio button choices -->
-    <string name="pref_camera_histogram_entry_enable">Enable</string>
-    <string name="pref_camera_histogram_entry_disable">Disable</string>
+    <string name="pref_camera_histogram_entry_enable">On</string>
+    <string name="pref_camera_histogram_entry_disable">Off</string>
 
     <!-- Histogram entry values. Do not translate. -->
     <string name="pref_camera_histogram_value_enable" translatable="false">enable</string>
     <string name="pref_camera_histogram_value_disable" translatable="false">disable</string>
-
-    <string name="pref_camera_picturesize_entry_1920x1080">1080p</string>
-    <string name="pref_camera_picturesize_entry_1280x768" translatable="false">WXGA</string>
-    <string name="pref_camera_picturesize_entry_1280x720">720p</string>
-    <string name="pref_camera_picturesize_entry_800x600" translatable="false">SVGA</string>
-    <string name="pref_camera_picturesize_entry_800x480" translatable="false">WVGA</string>
-    <string name="pref_camera_picturesize_entry_352x288" translatable="false">CIF</string>
-    <string name="pref_camera_picturesize_entry_176x144" translatable="false">QCIF</string>
-
-    <string name="pref_camera_focusmode_entry_normal">Normal</string>
-    <string name="pref_camera_focusmode_entry_continuous">Continuous</string>
 
     <!-- Default auto scene detection setting. -->
     <string name="pref_camera_scenedetect_default" translatable="false">off</string>
@@ -575,12 +532,9 @@
     <string name="pref_camera_scenedetect_title">Auto Scene Detection</string>
 
     <!-- Settings menu, auto scene detection choices -->
-    <string name="pref_camera_scenedetect_entry_off">Off</string>
     <!-- Scene detection set to on - supports backlight and snow cloudy detection. -->
     <string name="pref_camera_scenedetect_entry_on">On</string>
-
-    <!-- Toast showing error if invalid size selected for  time lapse  [CHAR LIMIT=65] -->
-    <string name="time_lapse_error">Invalid video-size for time-lapse recording.</string>
+    <string name="pref_camera_scenedetect_entry_off">Off</string>
 
     <string name="pref_camera_videosnapsize_default" translatable="false">1920x1080</string>
 </resources>
