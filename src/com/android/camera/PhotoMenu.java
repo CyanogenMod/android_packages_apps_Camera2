@@ -202,9 +202,16 @@ public class PhotoMenu extends PieController
             more.addItem(item);
         }
         // white balance
-        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
-            item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
+        final ListPreference whiteBalancePref =
+                group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
+        if (whiteBalancePref != null) {
+            item = makeListItem(CameraSettings.KEY_WHITE_BALANCE);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(whiteBalancePref);
+                }
+            });
             more.addItem(item);
         }
         // scene mode
