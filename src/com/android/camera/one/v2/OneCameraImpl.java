@@ -99,7 +99,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     /** Duration to hold after manual focus tap. */
     private static final int FOCUS_HOLD_MILLIS = Settings3A.getFocusHoldMillis();
     /** Zero weight 3A region, to reset regions per API. */
-    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = Settings3A.getZeroWeightRegion();
+    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = AutoFocusHelper.getZeroWeightRegion();
 
     /**
      * CaptureRequest tags.
