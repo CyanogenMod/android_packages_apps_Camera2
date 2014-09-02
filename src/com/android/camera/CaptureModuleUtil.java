@@ -64,14 +64,12 @@ public class CaptureModuleUtil {
                 count++;
             }
         }
-        ArrayList<com.android.ex.camera2.portability.Size> camera1Sizes =
-                new ArrayList<com.android.ex.camera2.portability.Size>(count);
+        ArrayList<Size> camera1Sizes = new ArrayList<Size>(count);
 
         // Set array of all sizes with height <= 1080p
         for (Size s : sizes) {
             if (s.getHeight() <= MAX_ASPECT_HEIGHT) {
-                camera1Sizes.add(
-                        new com.android.ex.camera2.portability.Size(s.getWidth(), s.getHeight()));
+                camera1Sizes.add(new Size(s.getWidth(), s.getHeight()));
             }
         }
 
@@ -82,9 +80,9 @@ public class CaptureModuleUtil {
             return null;
         }
 
-        com.android.ex.camera2.portability.Size optimal = camera1Sizes.get(optimalIndex);
+        Size optimal = camera1Sizes.get(optimalIndex);
         for (Size s : sizes) {
-            if (s.getWidth() == optimal.width() && s.getHeight() == optimal.height()) {
+            if (s.getWidth() == optimal.getWidth() && s.getHeight() == optimal.getHeight()) {
                 return s;
             }
         }
