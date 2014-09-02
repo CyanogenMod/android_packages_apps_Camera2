@@ -2070,6 +2070,7 @@ public class PhotoModule
                 }
                 return false;
             case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
                 if (mFirstTimeInitialized && event.getRepeatCount() == 0) {
                     onShutterButtonClick();
                 }
