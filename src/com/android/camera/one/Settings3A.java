@@ -16,8 +16,6 @@
 
 package com.android.camera.one;
 
-import android.hardware.camera2.params.MeteringRectangle;
-
 /**
  * Contains 3A parameters common to all camera flavors.
  * TODO: Move to GservicesHelper.
@@ -40,16 +38,6 @@ public class Settings3A {
     /** Metering region weight between 0 and 1. */
     private static final float REGION_WEIGHT = 0.25f;
 
-    /** camera2 API metering region weight. */
-    private static final int CAMERA2_REGION_WEIGHT = (int)
-            (((1 - REGION_WEIGHT) * MeteringRectangle.METERING_WEIGHT_MIN +
-                    REGION_WEIGHT * MeteringRectangle.METERING_WEIGHT_MAX));
-
-    /** Zero weight 3A region, to reset regions per API. */
-    private static final MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[]{
-            new MeteringRectangle(0, 0, 0, 0, 0)
-    };
-
     /** Duration to hold after manual tap to focus. */
     private static final int FOCUS_HOLD_MILLIS = 3000;
 
@@ -62,12 +50,8 @@ public class Settings3A {
         return AE_REGION_BOX;
     }
 
-    public static int getCamera2MeteringWeight() {
-        return CAMERA2_REGION_WEIGHT;
-    }
-
-    public static MeteringRectangle[] getZeroWeightRegion() {
-        return ZERO_WEIGHT_3A_REGION;
+    public static float getMeteringRegionWeight() {
+        return REGION_WEIGHT;
     }
 
     public static int getFocusHoldMillis() {
