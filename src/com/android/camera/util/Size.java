@@ -16,6 +16,11 @@
 
 package com.android.camera.util;
 
+import android.graphics.Point;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Simple size class until we are 'L' only and can use android.util.Size.
  */
@@ -29,6 +34,19 @@ public class Size {
             converted[i] = new Size(sizes[i].getWidth(), sizes[i].getHeight());
         }
         return converted;
+    }
+
+    public static List<Size> convert(List<com.android.ex.camera2.portability.Size> sizes) {
+        ArrayList<Size> converted = new ArrayList<>(sizes.size());
+        for (com.android.ex.camera2.portability.Size size : sizes) {
+            converted.add(new Size(size.width(), size.height()));
+        }
+        return converted;
+    }
+
+    public Size(Point point) {
+        this.width = point.x;
+        this.height = point.y;
     }
 
     public Size(android.util.Size size) {
