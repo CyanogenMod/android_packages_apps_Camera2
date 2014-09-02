@@ -120,7 +120,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      */
     private static final String FOCUS_RESUME_CALLBACK_TOKEN = "RESUME_CONTINUOUS_AF";
     /** Zero weight 3A region, to reset regions per API. */
-    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = Settings3A.getZeroWeightRegion();
+    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = AutoFocusHelper.getZeroWeightRegion();
 
     /**
      * Thread on which high-priority camera operations, such as grabbing preview
