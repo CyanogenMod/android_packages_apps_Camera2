@@ -32,7 +32,19 @@ import com.android.camera.one.Settings3A;
 public class AutoFocusHelper {
     private static final Log.Tag TAG = new Log.Tag("OneCameraAFHelp");
 
-    private static final int METERING_WEIGHT = Settings3A.getCamera2MeteringWeight();
+    /** camera2 API metering region weight. */
+    private static final int CAMERA2_REGION_WEIGHT = (int)
+            (((1 - Settings3A.getMeteringRegionWeight()) * MeteringRectangle.METERING_WEIGHT_MIN +
+                    Settings3A.getMeteringRegionWeight() * MeteringRectangle.METERING_WEIGHT_MAX));
+
+    /** Zero weight 3A region, to reset regions per API. */
+    private static final MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[]{
+            new MeteringRectangle(0, 0, 0, 0, 0)
+    };
+
+    public static MeteringRectangle[] getZeroWeightRegion() {
+        return ZERO_WEIGHT_3A_REGION;
+    }
 
     /**
      * Convert reported camera2 AF state to OneCamera AutoFocusState.
@@ -108,7 +120,7 @@ public class AutoFocusHelper {
         if (!region.intersect(cropRegion)) {
             region = cropRegion;
         }
-        return new MeteringRectangle[]{new MeteringRectangle(region, METERING_WEIGHT)};
+        return new MeteringRectangle[]{new MeteringRectangle(region, CAMERA2_REGION_WEIGHT)};
     }
 
     /**
