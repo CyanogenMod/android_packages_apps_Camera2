@@ -18,7 +18,6 @@ package com.android.camera.one.v2;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -49,7 +48,7 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.OneCamera;
-import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
+import com.android.camera.one.Settings3A;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.CaptureDataSerializer;
@@ -97,16 +96,10 @@ public class OneCameraImpl extends AbstractOneCamera {
      */
     private static final int sCaptureImageFormat = ImageFormat.YUV_420_888;
 
-    /** Width and height of touch metering region as fraction of longest edge. */
-    private static final float METERING_REGION_EDGE = 0.1f;
-    /** Metering region weight between 0 and 1. */
-    private static final float METERING_REGION_WEIGHT = 0.25f;
     /** Duration to hold after manual focus tap. */
-    private static final int FOCUS_HOLD_MILLIS = 3000;
+    private static final int FOCUS_HOLD_MILLIS = Settings3A.getFocusHoldMillis();
     /** Zero weight 3A region, to reset regions per API. */
-    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[]{
-            new MeteringRectangle(0, 0, 1, 1, 0)
-    };
+    MeteringRectangle[] ZERO_WEIGHT_3A_REGION = Settings3A.getZeroWeightRegion();
 
     /**
      * CaptureRequest tags.
@@ -128,10 +121,6 @@ public class OneCameraImpl extends AbstractOneCamera {
     private int mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
     /** Last OneCamera.AutoFocusState reported. */
     private AutoFocusState mLastResultAFState = AutoFocusState.INACTIVE;
-    /** Last OneCamera.AutoFocusMode reported. */
-    private AutoFocusMode mLastResultAFMode = AutoFocusMode.CONTINUOUS_PICTURE;
-    /** Flag to take a picture when in AUTO mode and the lens is stopped. */
-    private boolean mTakePictureWhenLensStoppedAndAuto = false;
     /** Flag to take a picture when the lens is stopped. */
     private boolean mTakePictureWhenLensIsStopped = false;
     /** Takes a (delayed) picture with appropriate parameters. */
@@ -142,7 +131,8 @@ public class OneCameraImpl extends AbstractOneCamera {
     private final Runnable mReturnToContinuousAFRunnable = new Runnable() {
         @Override
         public void run() {
-            m3ARegions = ZERO_WEIGHT_3A_REGION;
+            mAFRegions = ZERO_WEIGHT_3A_REGION;
+            mAERegions = ZERO_WEIGHT_3A_REGION;
             mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
             repeatingPreview(null);
         }
@@ -152,10 +142,11 @@ public class OneCameraImpl extends AbstractOneCamera {
     private float mZoomValue = 1f;
     /** Current crop region: set from mZoomValue. */
     private Rect mCropRegion;
-    /** Current AE and AF regions */
-    private MeteringRectangle[] m3ARegions = ZERO_WEIGHT_3A_REGION;
-    /** If partial results was OK, don't need to process total result. */
-    private boolean mAutoFocusStateListenerPartialOK = false;
+    /** Current AF and AE regions */
+    private MeteringRectangle[] mAFRegions = ZERO_WEIGHT_3A_REGION;
+    private MeteringRectangle[] mAERegions = ZERO_WEIGHT_3A_REGION;
+    /** Last frame for which CONTROL_AF_STATE was received. */
+    private long mLastControlAfStateFrameNumber = 0;
 
     /**
      * Common listener for preview frame metadata.
@@ -168,16 +159,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                 public void onCaptureProgressed(CameraCaptureSession session,
                         CaptureRequest request,
                         CaptureResult partialResult) {
-
-                    if (partialResult.get(CaptureResult.CONTROL_AF_STATE) != null) {
-                        mAutoFocusStateListenerPartialOK = true;
-                        autofocusStateChangeDispatcher(partialResult);
-                        if (DEBUG_FOCUS_LOG) {
-                            //AutoFocusHelper.logExtraFocusInfo(partialResult);
-                        }
-                    } else {
-                        mAutoFocusStateListenerPartialOK = false;
-                    }
+                    autofocusStateChangeDispatcher(partialResult);
                     super.onCaptureProgressed(session, request, partialResult);
                 }
 
@@ -185,8 +167,11 @@ public class OneCameraImpl extends AbstractOneCamera {
                 public void onCaptureCompleted(CameraCaptureSession session,
                         CaptureRequest request,
                         TotalCaptureResult result) {
-                    if (!mAutoFocusStateListenerPartialOK) {
-                        autofocusStateChangeDispatcher(result);
+                    autofocusStateChangeDispatcher(result);
+                    // This checks for a HAL implementation error where TotalCaptureResult
+                    // is missing CONTROL_AF_STATE.  This should not happen.
+                    if (result.get(CaptureResult.CONTROL_AF_STATE) == null) {
+                        AutoFocusHelper.checkControlAfState(result);
                     }
                     if (DEBUG_FOCUS_LOG) {
                         AutoFocusHelper.logExtraFocusInfo(result);
@@ -270,13 +255,12 @@ public class OneCameraImpl extends AbstractOneCamera {
      */
     @Override
     public void takePicture(final PhotoCaptureParameters params, final CaptureSession session) {
-        if (mTakePictureWhenLensStoppedAndAuto || mTakePictureWhenLensIsStopped) {
-            // Do not do anything when a picture is already in progress
-            // that is waiting for a 3A to finish.
+        // Do not do anything when a picture is already requested.
+        if (mTakePictureWhenLensIsStopped) {
             return;
         }
 
-        // Wait until the picture comes back.
+        // Not ready until the picture comes back.
         broadcastReadyState(false);
 
         mTakePictureRunnable = new Runnable() {
@@ -287,27 +271,14 @@ public class OneCameraImpl extends AbstractOneCamera {
         };
         mTakePictureStartMillis = SystemClock.uptimeMillis();
 
-        // TODO: First, check to see if we need to run pre-capture (flash).
-
-        if (false /*a picture is available from the ZSL ring buffer*/) {
-
-            // Process the ZSL picture and return that.
-            // TODO: Insert ZSL code here.
-
-        } else if (mLastResultAFMode == AutoFocusMode.CONTINUOUS_PICTURE
-                && mLastResultAFState == AutoFocusState.STOPPED_UNFOCUSED) {
-            // If in CONTINUOUS_PICTURE + unfocused, trigger an AF scan then
-            // take a picture.
-            Log.v(TAG, "Unfocused: Triggering auto focus scan.");
-            mTakePictureWhenLensStoppedAndAuto = true;
-            m3ARegions = ZERO_WEIGHT_3A_REGION;
-            sendAutoFocusTriggerCaptureRequest(RequestTag.PRESHOT_TRIGGERED_AF);
-        } else if (mLastResultAFState == AutoFocusState.SCANNING) {
-            // If scanning, wait until the scan is done, then take the picture.
+        // This class implements a very simple version of AF, which
+        // only delays capture if the lens is scanning.
+        if (mLastResultAFState == AutoFocusState.ACTIVE_SCAN) {
             Log.v(TAG, "Waiting until scan is done before taking shot.");
             mTakePictureWhenLensIsStopped = true;
         } else {
-            // TODO: Run CONTROL_AF_TRIGGER_START and wait until lens locks.
+            // We could do CONTROL_AF_TRIGGER_START and wait until lens locks,
+            // but this would slow down the capture.
             takePictureNow(params, session);
         }
     }
@@ -335,8 +306,6 @@ public class OneCameraImpl extends AbstractOneCamera {
 
             builder.addTarget(mPreviewSurface);
             builder.addTarget(mCaptureImageReader.getSurface());
-            // TODO: Fix this.
-            applyFlashMode(params.flashMode, builder);
             CaptureRequest request = builder.build();
 
             if (DEBUG_WRITE_CAPTURE_DATA) {
@@ -504,7 +473,8 @@ public class OneCameraImpl extends AbstractOneCamera {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     mCaptureSession = session;
-                    m3ARegions = ZERO_WEIGHT_3A_REGION;
+                    mAFRegions = ZERO_WEIGHT_3A_REGION;
+                    mAERegions = ZERO_WEIGHT_3A_REGION;
                     mZoomValue = 1f;
                     mCropRegion = cropRegionForZoom(mZoomValue);
                     boolean success = repeatingPreview(null);
@@ -535,11 +505,16 @@ public class OneCameraImpl extends AbstractOneCamera {
      * @param builder Build for the CaptureRequest
      */
     private void addBaselineCaptureKeysToRequest(CaptureRequest.Builder builder) {
-        builder.set(CaptureRequest.CONTROL_AF_REGIONS, m3ARegions);
-        builder.set(CaptureRequest.CONTROL_AE_REGIONS, m3ARegions);
+        builder.set(CaptureRequest.CONTROL_AF_REGIONS, mAFRegions);
+        builder.set(CaptureRequest.CONTROL_AE_REGIONS, mAERegions);
         builder.set(CaptureRequest.SCALER_CROP_REGION, mCropRegion);
         builder.set(CaptureRequest.CONTROL_AF_MODE, mControlAFMode);
         builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
+        // Enable face detection
+        builder.set(CaptureRequest.STATISTICS_FACE_DETECT_MODE,
+                CaptureRequest.STATISTICS_FACE_DETECT_MODE_FULL);
+        builder.set(CaptureRequest.CONTROL_SCENE_MODE,
+                CaptureRequest.CONTROL_SCENE_MODE_FACE_PRIORITY);
     }
 
     /**
@@ -601,96 +576,48 @@ public class OneCameraImpl extends AbstractOneCamera {
      * This method takes appropriate action if camera2 AF state changes.
      * <ol>
      * <li>Reports changes in camera2 AF state to OneCamera.FocusStateListener.</li>
-     * <li>Take picture after AF scan.</li>
-     * <li>TODO: Take picture after AE_PRECAPTURE sequence for flash.</li>
+     * <li>Take picture after AF scan if mTakePictureWhenLensIsStopped true.</li>
      * </ol>
      */
     private void autofocusStateChangeDispatcher(CaptureResult result) {
-        Integer nativeAFControlState = result.get(CaptureResult.CONTROL_AF_STATE);
-        Integer nativeAFControlMode = result.get(CaptureResult.CONTROL_AF_MODE);
-        Object tag = result.getRequest().getTag();
+        if (result.getFrameNumber() < mLastControlAfStateFrameNumber ||
+                result.get(CaptureResult.CONTROL_AF_STATE) == null) {
+            return;
+        }
+        mLastControlAfStateFrameNumber = result.getFrameNumber();
 
         // Convert to OneCamera mode and state.
-        AutoFocusMode resultAFMode = AutoFocusHelper.modeFromCamera2Mode(nativeAFControlMode);
-        AutoFocusState resultAFState = AutoFocusHelper.stateFromCamera2State(nativeAFControlState);
+        AutoFocusState resultAFState = AutoFocusHelper.
+                stateFromCamera2State(result.get(CaptureResult.CONTROL_AF_STATE));
 
-        boolean lensIsStopped = (resultAFState == AutoFocusState.STOPPED_FOCUSED ||
-                resultAFState == AutoFocusState.STOPPED_UNFOCUSED);
-        if (tag == RequestTag.PRESHOT_TRIGGERED_AF && lensIsStopped &&
-                mTakePictureWhenLensStoppedAndAuto) {
-            // Take the shot.
-            mCameraHandler.post(mTakePictureRunnable);
-            // Return to passive scanning.
-            mCameraHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    m3ARegions = ZERO_WEIGHT_3A_REGION;
-                    mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
-                    repeatingPreview(null);
-                }
-            });
-            mTakePictureWhenLensStoppedAndAuto = false;
-        }
+        // TODO: Consider using LENS_STATE.
+        boolean lensIsStopped = resultAFState == AutoFocusState.ACTIVE_FOCUSED ||
+                resultAFState == AutoFocusState.ACTIVE_UNFOCUSED ||
+                resultAFState == AutoFocusState.PASSIVE_FOCUSED ||
+                resultAFState == AutoFocusState.PASSIVE_UNFOCUSED;
+
         if (mTakePictureWhenLensIsStopped && lensIsStopped) {
             // Take the shot.
             mCameraHandler.post(mTakePictureRunnable);
             mTakePictureWhenLensIsStopped = false;
         }
 
-        // Report state change when mode or state has changed.
-        if (resultAFState != mLastResultAFState || resultAFMode != mLastResultAFMode
-                && mFocusStateListener != null) {
-            mFocusStateListener.onFocusStatusUpdate(resultAFMode, resultAFState);
+        // Report state change when AF state has changed.
+        if (resultAFState != mLastResultAFState && mFocusStateListener != null) {
+            mFocusStateListener.onFocusStatusUpdate(resultAFState);
         }
         mLastResultAFState = resultAFState;
-        mLastResultAFMode = resultAFMode;
-    }
-
-    @Override
-    public void triggerAutoFocus() {
-        Log.v(TAG, "triggerAutoFocus()");
-        m3ARegions = ZERO_WEIGHT_3A_REGION;
-        sendAutoFocusTriggerCaptureRequest(null);
     }
 
     @Override
     public void triggerFocusAndMeterAtPoint(float nx, float ny) {
-        Log.v(TAG, "triggerFocusAndMeterAtPoint(" + nx + "," + ny + ")");
-        float points[] = new float[] {
-                nx, ny
-        };
-        // Make sure the points are in [0,1] range.
-        points[0] = CameraUtil.clamp(points[0], 0f, 1f);
-        points[1] = CameraUtil.clamp(points[1], 0f, 1f);
+        // xc, yc is center of tap point in sensor coordinate system.
+        int xc = mCropRegion.left + (int) (mCropRegion.width() * ny);
+        int yc = mCropRegion.top + (int) (mCropRegion.height() * (1f - nx));
 
-        // Shrink points towards center if zoomed.
-        if (mZoomValue > 1f) {
-            Matrix zoomMatrix = new Matrix();
-            zoomMatrix.postScale(1f / mZoomValue, 1f / mZoomValue, 0.5f, 0.5f);
-            zoomMatrix.mapPoints(points);
-        }
+        mAERegions = AutoFocusHelper.aeRegionsForSensorCoord(xc, yc, mCropRegion);
+        mAFRegions = AutoFocusHelper.afRegionsForSensorCoord(xc, yc, mCropRegion);
 
-        // TODO: Make this work when preview aspect ratio != sensor aspect
-        // ratio.
-        Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-        int edge = (int) (METERING_REGION_EDGE * Math.max(sensor.width(), sensor.height()));
-        // x0 and y0 in sensor coordinate system, rotated 90 degrees from
-        // portrait.
-        int x0 = (int) (sensor.width() * points[1]);
-        int y0 = (int) (sensor.height() * (1f - points[0]));
-        int x1 = x0 + edge;
-        int y1 = y0 + edge;
-
-        // Make sure regions are inside the sensor area.
-        x0 = CameraUtil.clamp(x0, 0, sensor.width() - 1);
-        x1 = CameraUtil.clamp(x1, 0, sensor.width() - 1);
-        y0 = CameraUtil.clamp(y0, 0, sensor.height() - 1);
-        y1 = CameraUtil.clamp(y1, 0, sensor.height() - 1);
-        int wt = (int) ((1 - METERING_REGION_WEIGHT) * MeteringRectangle.METERING_WEIGHT_MIN
-                + METERING_REGION_WEIGHT * MeteringRectangle.METERING_WEIGHT_MAX);
-
-        Log.v(TAG, "sensor 3A @ x0=" + x0 + " y0=" + y0 + " dx=" + (x1 - x0) + " dy=" + (y1 - y0));
-        m3ARegions = new MeteringRectangle[]{new MeteringRectangle(x0, y0, x1 - x0, y1 - y0, wt)};
         sendAutoFocusTriggerCaptureRequest(RequestTag.TAP_TO_FOCUS);
     }
 
@@ -714,13 +641,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     private Rect cropRegionForZoom(float zoom) {
-        Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-        float zoomWidth = sensor.width() / zoom;
-        float zoomHeight = sensor.height() / zoom;
-        float zoomLeft = (sensor.width() - zoomWidth) / 2;
-        float zoomTop = (sensor.height() - zoomHeight) / 2;
-        return new Rect((int) zoomLeft, (int) zoomTop, (int) (zoomLeft + zoomWidth),
-                (int) (zoomTop + zoomHeight));
+        return AutoFocusHelper.cropRegionForZoom(mCharacteristics, zoom);
     }
 
     /**
@@ -771,28 +692,5 @@ public class OneCameraImpl extends AbstractOneCamera {
         buffer.rewind();
         img.close();
         return imageBytes;
-    }
-
-    private void applyFlashMode(Flash flashMode, CaptureRequest.Builder requestBuilder) {
-        switch (flashMode) {
-            case ON:
-                Log.d(TAG, "Flash mode ON");
-                requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                        CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-                requestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_SINGLE);
-                break;
-            case OFF:
-                Log.d(TAG, "Flash mode OFF");
-                requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                        CaptureRequest.CONTROL_AE_MODE_ON);
-                requestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
-                break;
-            case AUTO:
-            default:
-                Log.d(TAG, "Flash mode AUTO");
-                requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                        CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-                break;
-        }
     }
 }
