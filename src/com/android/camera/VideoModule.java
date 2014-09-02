@@ -1203,6 +1203,7 @@ public class VideoModule implements CameraModule,
                 }
                 return true;
             case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
                 if (event.getRepeatCount() == 0) {
                     mUI.clickShutter();
                 }
@@ -1241,6 +1242,7 @@ public class VideoModule implements CameraModule,
                 }
                 return true;
             case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
                 mUI.pressShutter(false);
                 return true;
             case KeyEvent.KEYCODE_POWER:
