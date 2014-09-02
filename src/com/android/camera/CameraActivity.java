@@ -175,14 +175,6 @@ public class CameraActivity extends Activity
     public static final String MODULE_SCOPE_PREFIX = "_preferences_module_";
     public static final String CAMERA_SCOPE_PREFIX = "_preferences_camera_";
 
-    /**
-     * Request code from an activity we started that indicated that we do not
-     * want to reset the view to the preview in onResume.
-     */
-    public static final int REQ_CODE_DONT_SWITCH_TO_PREVIEW = 142;
-
-    public static final int REQ_CODE_GCAM_DEBUG_POSTCAPTURE = 999;
-
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000; // 2 mins.
     private static final int MAX_PEEK_BITMAP_PIXELS = 1600000; // 1.6 * 4 MBs.
@@ -976,7 +968,11 @@ public class CameraActivity extends Activity
 
     @Override
     public void launchActivityByIntent(Intent intent) {
-        startActivityForResult(intent, REQ_CODE_DONT_SWITCH_TO_PREVIEW);
+        // Starting from L, we prefer not to start edit activity within camera's task.
+        mResetToPreviewOnResume = false;
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
     }
 
     @Override
@@ -1637,15 +1633,6 @@ public class CameraActivity extends Activity
         UsageStatistics.instance().backgrounded();
 
         super.onPause();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQ_CODE_DONT_SWITCH_TO_PREVIEW) {
-            mResetToPreviewOnResume = false;
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 
     @Override
