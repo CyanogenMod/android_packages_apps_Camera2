@@ -1121,8 +1121,11 @@ public class WideAnglePanoramaModule
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
                 return true;
             case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
                 if (event.getRepeatCount() == 0) {
                     onShutterButtonClick();
                 }
@@ -1138,6 +1141,8 @@ public class WideAnglePanoramaModule
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
                 if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
                     onShutterButtonClick();
                 }
