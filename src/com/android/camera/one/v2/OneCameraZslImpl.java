@@ -309,31 +309,39 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         // Allocate the image reader to store all images received from the
         // camera.
         if (pictureSize == null) {
-            // If no picture size is specified, use the largest supported size.
-            StreamConfigurationMap configs = characteristics.get(
-                    CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            android.util.Size[] supportedSizes = configs.getOutputSizes(sCaptureImageFormat);
-
-            // Find the largest supported size.
-            android.util.Size largestSupportedSize = supportedSizes[0];
-            long largestSupportedSizePixels = largestSupportedSize.getWidth()
-                    * largestSupportedSize.getHeight();
-            for (int i = 0; i < supportedSizes.length; i++) {
-                long numPixels = supportedSizes[i].getWidth() * supportedSizes[i].getHeight();
-                if (numPixels > largestSupportedSizePixels) {
-                    largestSupportedSize = supportedSizes[i];
-                    largestSupportedSizePixels = numPixels;
-                }
-            }
-
-            pictureSize = new Size(largestSupportedSize.getWidth(),
-                    largestSupportedSize.getHeight());
+            // TODO The default should be selected by the caller, and
+            // pictureSize should never be null.
+            pictureSize = getDefaultPictureSize();
         }
         mCaptureImageReader = ImageReader.newInstance(pictureSize.getWidth(),
                 pictureSize.getHeight(),
                 sCaptureImageFormat, MAX_CAPTURE_IMAGES);
 
         mCaptureImageReader.setOnImageAvailableListener(mCaptureManager, mCameraHandler);
+    }
+
+    /**
+     * @return The largest supported picture size.
+     */
+    public Size getDefaultPictureSize() {
+        StreamConfigurationMap configs = mCharacteristics.get(
+                CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        android.util.Size[] supportedSizes = configs.getOutputSizes(sCaptureImageFormat);
+
+        // Find the largest supported size.
+        android.util.Size largestSupportedSize = supportedSizes[0];
+        long largestSupportedSizePixels = largestSupportedSize.getWidth()
+                * largestSupportedSize.getHeight();
+        for (int i = 0; i < supportedSizes.length; i++) {
+            long numPixels = supportedSizes[i].getWidth() * supportedSizes[i].getHeight();
+            if (numPixels > largestSupportedSizePixels) {
+                largestSupportedSize = supportedSizes[i];
+                largestSupportedSizePixels = numPixels;
+            }
+        }
+
+        return new Size(largestSupportedSize.getWidth(),
+                largestSupportedSize.getHeight());
     }
 
     /**
@@ -984,6 +992,11 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
     @Override
     public Size pickPreviewSize(Size pictureSize, Context context) {
+        if (pictureSize == null) {
+            // TODO The default should be selected by the caller, and
+            // pictureSize should never be null.
+            pictureSize = getDefaultPictureSize();
+        }
         float pictureAspectRatio = pictureSize.getWidth() / (float) pictureSize.getHeight();
         return CaptureModuleUtil.getOptimalPreviewSize(context, getSupportedSizes(),
                 pictureAspectRatio);
