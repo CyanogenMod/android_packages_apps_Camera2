@@ -18,7 +18,6 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -73,7 +72,6 @@ public class BottomBar extends FrameLayout {
 
     private boolean mDrawCircle;
     private final float mCircleRadius;
-    private final RectF mRect = new RectF();
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
     private final boolean mIsOsVersionL;
@@ -86,6 +84,8 @@ public class BottomBar extends FrameLayout {
     // a reference to the shutter background's first contained drawable
     // if it's a color drawable (for all other modes)
     private ColorDrawable mColorDrawable;
+
+    private RectF mRect = new RectF();
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -129,10 +129,12 @@ public class BottomBar extends FrameLayout {
         if (mAnimatedCircleDrawable != null) {
             mAnimatedCircleDrawable.setColor(color);
             mAnimatedCircleDrawable.setAlpha(alpha);
+            invalidateDrawable(mAnimatedCircleDrawable);
             invalidate();
         } else if (mColorDrawable != null) {
             mColorDrawable.setColor(color);
             mColorDrawable.setAlpha(alpha);
+            invalidateDrawable(mColorDrawable);
             invalidate();
         }
 
@@ -177,17 +179,17 @@ public class BottomBar extends FrameLayout {
 
     @Override
     public void onFinishInflate() {
-        mCaptureLayout
-        = (FrameLayout) findViewById(R.id.bottombar_capture);
-        mCancelLayout
-        = (FrameLayout) findViewById(R.id.bottombar_cancel);
+        mCaptureLayout =
+                (FrameLayout) findViewById(R.id.bottombar_capture);
+        mCancelLayout =
+                (FrameLayout) findViewById(R.id.bottombar_cancel);
         mCancelLayout.setVisibility(View.GONE);
 
-        mIntentReviewLayout
-        = (TopRightWeightedLayout) findViewById(R.id.bottombar_intent_review);
+        mIntentReviewLayout =
+                (TopRightWeightedLayout) findViewById(R.id.bottombar_intent_review);
 
-        mShutterButton
-        = (ShutterButton) findViewById(R.id.shutter_button);
+        mShutterButton =
+                (ShutterButton) findViewById(R.id.shutter_button);
         mShutterButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -197,6 +199,7 @@ public class BottomBar extends FrameLayout {
                         MotionEvent.ACTION_CANCEL == event.getActionMasked()) {
                     setCaptureButtonUp();
                 } else if (MotionEvent.ACTION_MOVE == event.getActionMasked()) {
+                    mRect.set(0, 0, getWidth(), getHeight());
                     if (!mRect.contains(event.getX(), event.getY())) {
                         setCaptureButtonUp();
                     }
@@ -205,8 +208,8 @@ public class BottomBar extends FrameLayout {
             }
         });
 
-        mCancelButton
-        = (ImageButton) findViewById(R.id.shutter_cancel_button);
+        mCancelButton =
+                (ImageButton) findViewById(R.id.shutter_cancel_button);
         mCancelButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -216,6 +219,7 @@ public class BottomBar extends FrameLayout {
                         MotionEvent.ACTION_CANCEL == event.getActionMasked()) {
                     setCancelButtonUp();
                 } else if (MotionEvent.ACTION_MOVE == event.getActionMasked()) {
+                    mRect.set(0, 0, getWidth(), getHeight());
                     if (!mRect.contains(event.getX(), event.getY())) {
                         setCancelButtonUp();
                     }
@@ -332,11 +336,6 @@ public class BottomBar extends FrameLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return true;
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
     }
 
     @Override
