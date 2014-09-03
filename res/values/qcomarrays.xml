@@ -548,17 +548,6 @@
          <item>@string/pref_camera_selectablezoneaf_value_frameaverage</item>
     </string-array>
 
-    <!-- ZSL dialog box entries -->
-    <string-array name="pref_camera_zsl_entries" translatable="false">
-    <item>@string/pref_camera_zsl_entry_off</item>
-    <item>@string/pref_camera_zsl_entry_on</item>
-    </string-array>
-
-    <string-array name="pref_camera_zsl_entryvalues" translatable="false">
-    <item>@string/pref_camera_zsl_value_off</item>
-    <item>@string/pref_camera_zsl_value_on</item>
-    </string-array>
-
     <!-- Video HDR dialog box entries -->
     <string-array name="pref_camera_video_hdr_entries" translatable="false">
         <item>@string/pref_camera_video_hdr_entry_off</item>

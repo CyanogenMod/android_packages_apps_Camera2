@@ -300,6 +300,7 @@ public class CameraSettings {
         //Qcom Preference add here
         ListPreference powerMode = group.findPreference(KEY_POWER_MODE);
         ListPreference colorEffect = group.findPreference(KEY_COLOR_EFFECT);
+        ListPreference camcorderColorEffect = group.findPreference(KEY_VIDEOCAMERA_COLOR_EFFECT);
         ListPreference faceDetection = group.findPreference(KEY_FACE_DETECTION);
         ListPreference selectableZoneAf = group.findPreference(KEY_SELECTABLE_ZONE_AF);
         ListPreference saturation = group.findPreference(KEY_SATURATION);
@@ -346,6 +347,11 @@ public class CameraSettings {
         if (colorEffect != null) {
             filterUnsupportedOptions(group,
                     colorEffect, mParameters.getSupportedColorEffects());
+        }
+
+        if (camcorderColorEffect != null) {
+            filterUnsupportedOptions(group,
+                    camcorderColorEffect, mParameters.getSupportedColorEffects());
         }
 
         if (aeBracketing != null) {
@@ -949,6 +955,10 @@ public class CameraSettings {
 
     public static boolean isBeautyModeSupported(Parameters params) {
         return params.get("face-beautify") != null;
+    }
+
+    public static boolean isBeautyModeEnabled(Parameters params) {
+        return isBeautyModeSupported(params) && (Integer.valueOf(params.get("face-beautify")) > 0);
     }
 
     /**
