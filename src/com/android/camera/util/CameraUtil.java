@@ -57,7 +57,6 @@ import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraSettings;
-import com.android.ex.camera2.portability.Size;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -81,22 +80,30 @@ public class CameraUtil {
     public static final String KEY_RETURN_DATA = "return-data";
     public static final String KEY_SHOW_WHEN_LOCKED = "showWhenLocked";
 
-    // Orientation hysteresis amount used in rounding, in degrees
+    /** Orientation hysteresis amount used in rounding, in degrees. */
     public static final int ORIENTATION_HYSTERESIS = 5;
 
     public static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
-    // See android.hardware.Camera.ACTION_NEW_PICTURE.
+    /** See android.hardware.Camera.ACTION_NEW_PICTURE. */
     public static final String ACTION_NEW_PICTURE = "android.hardware.action.NEW_PICTURE";
-    // See android.hardware.Camera.ACTION_NEW_VIDEO.
+    /** See android.hardware.Camera.ACTION_NEW_VIDEO. */
     public static final String ACTION_NEW_VIDEO = "android.hardware.action.NEW_VIDEO";
 
-    // Broadcast Action: The camera application has become active in picture-taking mode.
+    /**
+     * Broadcast Action: The camera application has become active in
+     * picture-taking mode.
+     */
     public static final String ACTION_CAMERA_STARTED = "com.android.camera.action.CAMERA_STARTED";
-    // Broadcast Action: The camera application is no longer in active picture-taking mode.
+    /**
+     * Broadcast Action: The camera application is no longer in active
+     * picture-taking mode.
+     */
     public static final String ACTION_CAMERA_STOPPED = "com.android.camera.action.CAMERA_STOPPED";
-    // When the camera application is active in picture-taking mode, it listens for this intent,
-    // which upon receipt will trigger the shutter to capture a new picture, as if the user had
-    // pressed the shutter button.
+    /**
+     * When the camera application is active in picture-taking mode, it listens
+     * for this intent, which upon receipt will trigger the shutter to capture a
+     * new picture, as if the user had pressed the shutter button.
+     */
     public static final String ACTION_CAMERA_SHUTTER_CLICK =
             "com.android.camera.action.SHUTTER_CLICK";
 
@@ -107,7 +114,7 @@ public class CameraUtil {
     /** Has to be in sync with the receiving MovieActivity. */
     public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
 
-    // Private intent extras. Test only.
+    /** Private intent extras. Test only. */
     private static final String EXTRAS_CAMERA_FACING =
             "android.intent.extras.CAMERA_FACING";
 
@@ -131,14 +138,18 @@ public class CameraUtil {
         return Math.round(sPixelDensity * dp);
     }
 
-    // Rotates the bitmap by the specified degree.
-    // If a new bitmap is created, the original bitmap is recycled.
+    /**
+     * Rotates the bitmap by the specified degree. If a new bitmap is created,
+     * the original bitmap is recycled.
+     */
     public static Bitmap rotate(Bitmap b, int degrees) {
         return rotateAndMirror(b, degrees, false);
     }
 
-    // Rotates and/or mirrors the bitmap. If a new bitmap is created, the
-    // original bitmap is recycled.
+    /**
+     * Rotates and/or mirrors the bitmap. If a new bitmap is created, the
+     * original bitmap is recycled.
+     */
     public static Bitmap rotateAndMirror(Bitmap b, int degrees, boolean mirror) {
         if ((degrees != 0 || mirror) && b != null) {
             Matrix m = new Matrix();
@@ -175,29 +186,26 @@ public class CameraUtil {
         return b;
     }
 
-    /*
-     * Compute the sample size as a function of minSideLength
-     * and maxNumOfPixels.
-     * minSideLength is used to specify that minimal width or height of a
-     * bitmap.
-     * maxNumOfPixels is used to specify the maximal size in pixels that is
-     * tolerable in terms of memory usage.
-     *
-     * The function returns a sample size based on the constraints.
-     * Both size and minSideLength can be passed in as -1
-     * which indicates no care of the corresponding constraint.
-     * The functions prefers returning a sample size that
-     * generates a smaller bitmap, unless minSideLength = -1.
-     *
+    /**
+     * Compute the sample size as a function of minSideLength and
+     * maxNumOfPixels. minSideLength is used to specify that minimal width or
+     * height of a bitmap. maxNumOfPixels is used to specify the maximal size in
+     * pixels that is tolerable in terms of memory usage. The function returns a
+     * sample size based on the constraints.
+     * <p>
+     * Both size and minSideLength can be passed in as -1 which indicates no
+     * care of the corresponding constraint. The functions prefers returning a
+     * sample size that generates a smaller bitmap, unless minSideLength = -1.
+     * <p>
      * Also, the function rounds up the sample size to a power of 2 or multiple
-     * of 8 because BitmapFactory only honors sample size this way.
-     * For example, BitmapFactory downsamples an image by 2 even though the
-     * request is 3. So we round up the sample size to avoid OOM.
+     * of 8 because BitmapFactory only honors sample size this way. For example,
+     * BitmapFactory downsamples an image by 2 even though the request is 3. So
+     * we round up the sample size to avoid OOM.
      */
     public static int computeSampleSize(BitmapFactory.Options options,
-            int minSideLength, int maxNumOfPixels) {
+    int minSideLength, int maxNumOfPixels) {
         int initialSize = computeInitialSampleSize(options, minSideLength,
-                maxNumOfPixels);
+      maxNumOfPixels);
 
         int roundedSize;
         if (initialSize <= 8) {
@@ -221,7 +229,7 @@ public class CameraUtil {
                 (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
         int upperBound = (minSideLength < 0) ? 128 :
                 (int) Math.min(Math.floor(w / minSideLength),
-                Math.floor(h / minSideLength));
+                        Math.floor(h / minSideLength));
 
         if (upperBound < lowerBound) {
             // return the larger one when there is no overlapping zone.
@@ -281,16 +289,16 @@ public class CameraUtil {
     public static void showErrorAndFinish(final Activity activity, int msgId) {
         DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                activity.finish();
-            }
-        };
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                };
         TypedValue out = new TypedValue();
         activity.getTheme().resolveAttribute(android.R.attr.alertDialogIcon, out, true);
-        // some crash reports indicate users leave app prior to this dialog appearing,
-        // so check to ensure that the activity is not shutting down before attempting
-        // to attach a dialog to the window manager.
+        // Some crash reports indicate users leave app prior to this dialog
+        // appearing, so check to ensure that the activity is not shutting down
+        // before attempting to attach a dialog to the window manager.
         if (!activity.isFinishing()) {
             new AlertDialog.Builder(activity)
                     .setCancelable(false)
@@ -349,6 +357,48 @@ public class CameraUtil {
         return x;
     }
 
+    /**
+     * Linear interpolation between a and b by the fraction t. t = 0 --> a, t =
+     * 1 --> b.
+     */
+    public static float lerp(float a, float b, float t) {
+        return a + t * (b - a);
+    }
+
+    /**
+     * Given a size, return the largest size with the given aspectRatio that
+     * maximally fits into the bounding rectangle of the original Size.
+     *
+     * @param size the original Size to crop
+     * @param aspectRatio the target aspect ratio
+     * @return the largest Size with the given aspect ratio that is smaller than
+     *         or equal to the original Size.
+     */
+    public static Size constrainToAspectRatio(Size size, float aspectRatio) {
+        float width = size.getWidth();
+        float height = size.getHeight();
+
+        float currentAspectRatio = width * 1.0f / height;
+
+        if (currentAspectRatio > aspectRatio) {
+            // chop longer side
+            if (width > height) {
+                width = height * aspectRatio;
+            } else {
+                height = width / aspectRatio;
+            }
+        } else if (currentAspectRatio < aspectRatio) {
+            // chop shorter side
+            if (width < height) {
+                width = height * aspectRatio;
+            } else {
+                height = width / aspectRatio;
+            }
+        }
+
+        return new Size((int) width, (int) height);
+    }
+
     public static int getDisplayRotation(Context context) {
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -397,8 +447,8 @@ public class CameraUtil {
             changeOrientation = true;
         } else {
             int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min( dist, 360 - dist );
-            changeOrientation = ( dist >= 45 + ORIENTATION_HYSTERESIS );
+            dist = Math.min(dist, 360 - dist);
+            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
         }
         if (changeOrientation) {
             return ((orientation + 45) / 90 * 90) % 360;
@@ -414,10 +464,15 @@ public class CameraUtil {
         return new Size(res);
     }
 
-    public static Size getOptimalPreviewSize(Context context,
-            List<Size> sizes, double targetRatio) {
-        int optimalPickIndex = getOptimalPreviewSizeIndex(context, sizes, targetRatio);
-        return (optimalPickIndex == -1) ? null : sizes.get(optimalPickIndex);
+    public static com.android.ex.camera2.portability.Size getOptimalPreviewSize(Context context,
+            List<com.android.ex.camera2.portability.Size> sizes, double targetRatio) {
+        int optimalPickIndex = getOptimalPreviewSizeIndex(context, Size.convert(sizes),
+                targetRatio);
+        if (optimalPickIndex == -1) {
+            return null;
+        } else {
+            return sizes.get(optimalPickIndex);
+        }
     }
 
     public static int getOptimalPreviewSizeIndex(Context context,
@@ -437,23 +492,23 @@ public class CameraUtil {
         // new overlay will be created before the old one closed, which causes
         // an exception. For now, just get the screen size.
         Size defaultDisplaySize = getDefaultDisplaySize(context);
-        int targetHeight = Math.min(defaultDisplaySize.width(), defaultDisplaySize.height());
+        int targetHeight = Math.min(defaultDisplaySize.getWidth(), defaultDisplaySize.getHeight());
         // Try to find an size match aspect ratio and size
         for (int i = 0; i < sizes.size(); i++) {
             Size size = sizes.get(i);
-            double ratio = (double) size.width() / size.height();
+            double ratio = (double) size.getWidth() / size.getHeight();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
             }
 
-            double heightDiff = Math.abs(size.height() - targetHeight);
+            double heightDiff = Math.abs(size.getHeight() - targetHeight);
             if (heightDiff < minDiff) {
                 optimalSizeIndex = i;
                 minDiff = heightDiff;
             } else if (heightDiff == minDiff) {
                 // Prefer resolutions smaller-than-display when an equally close
                 // larger-than-display resolution is available
-                if (size.height() < targetHeight) {
+                if (size.getHeight() < targetHeight) {
                     optimalSizeIndex = i;
                     minDiff = heightDiff;
                 }
@@ -466,28 +521,28 @@ public class CameraUtil {
             minDiff = Double.MAX_VALUE;
             for (int i = 0; i < sizes.size(); i++) {
                 Size size = sizes.get(i);
-                if (Math.abs(size.height() - targetHeight) < minDiff) {
+                if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
                     optimalSizeIndex = i;
-                    minDiff = Math.abs(size.height() - targetHeight);
+                    minDiff = Math.abs(size.getHeight() - targetHeight);
                 }
             }
         }
         return optimalSizeIndex;
     }
 
-    // Returns the largest picture size which matches the given aspect ratio.
-    public static Size getOptimalVideoSnapshotPictureSize(
-            List<Size> sizes, double targetRatio) {
+    /** Returns the largest picture size which matches the given aspect ratio. */
+    public static com.android.ex.camera2.portability.Size getOptimalVideoSnapshotPictureSize(
+            List<com.android.ex.camera2.portability.Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.001;
         if (sizes == null) {
             return null;
         }
 
-        Size optimalSize = null;
+        com.android.ex.camera2.portability.Size optimalSize = null;
 
         // Try to find a size matches aspect ratio and has the largest width
-        for (Size size : sizes) {
+        for (com.android.ex.camera2.portability.Size size : sizes) {
             double ratio = (double) size.width() / size.height();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
                 continue;
@@ -497,11 +552,11 @@ public class CameraUtil {
             }
         }
 
-        // Cannot find one that matches the aspect ratio. This should not happen.
-        // Ignore the requirement.
+        // Cannot find one that matches the aspect ratio. This should not
+        // happen. Ignore the requirement.
         if (optimalSize == null) {
             Log.w(TAG, "No picture size match the aspect ratio");
-            for (Size size : sizes) {
+            for (com.android.ex.camera2.portability.Size size : sizes) {
                 if (optimalSize == null || size.width() > optimalSize.width()) {
                     optimalSize = size;
                 }
@@ -803,9 +858,9 @@ public class CameraUtil {
      * Generates a 1d Gaussian mask of the input array size, and store the mask
      * in the input array.
      *
-     * @param mask empty array of size n, where n will be used as the size of the
-     *             Gaussian mask, and the array will be populated with the values
-     *             of the mask.
+     * @param mask empty array of size n, where n will be used as the size of
+     *            the Gaussian mask, and the array will be populated with the
+     *            values of the mask.
      */
     private static void getGaussianMask(float[] mask) {
         int len = mask.length;
@@ -831,15 +886,18 @@ public class CameraUtil {
     }
 
     /**
-     * Add two pixels together where the second pixel will be applied with a weight.
+     * Add two pixels together where the second pixel will be applied with a
+     * weight.
      *
      * @param pixel pixel color value of weight 1
      * @param newPixel second pixel color value where the weight will be applied
-     * @param weight a float weight that will be applied to the second pixel color
+     * @param weight a float weight that will be applied to the second pixel
+     *            color
      * @return the weighted addition of the two pixels
      */
     public static int addPixel(int pixel, int newPixel, float weight) {
-        // TODO: scale weight to [0, 1024] to avoid casting to float and back to int.
+        // TODO: scale weight to [0, 1024] to avoid casting to float and back to
+        // int.
         int r = ((pixel & 0x00ff0000) + (int) ((newPixel & 0x00ff0000) * weight)) & 0x00ff0000;
         int g = ((pixel & 0x0000ff00) + (int) ((newPixel & 0x0000ff00) * weight)) & 0x0000ff00;
         int b = ((pixel & 0x000000ff) + (int) ((newPixel & 0x000000ff) * weight)) & 0x000000ff;
@@ -847,8 +905,9 @@ public class CameraUtil {
     }
 
     /**
-     * Apply blur to the input image represented in an array of colors and put the
-     * output image, in the form of an array of colors, into the output array.
+     * Apply blur to the input image represented in an array of colors and put
+     * the output image, in the form of an array of colors, into the output
+     * array.
      *
      * @param src source array of colors
      * @param out output array of colors after the blur
@@ -864,15 +923,15 @@ public class CameraUtil {
 
         int[] tmp = new int[src.length];
 
-        // Apply the 1d Gaussian mask horizontally to the image and put the intermediate
-        // results in a temporary array.
+        // Apply the 1d Gaussian mask horizontally to the image and put the
+        // intermediat results in a temporary array.
         int rowPointer = 0;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 int sum = 0;
                 for (int i = 0; i < k.length; i++) {
                     int dx = x + i - off;
-                    dx = clamp(dx, 0,  w - 1);
+                    dx = clamp(dx, 0, w - 1);
                     sum = addPixel(sum, src[rowPointer + dx], k[i]);
                 }
                 tmp[x + rowPointer] = sum;
@@ -903,13 +962,12 @@ public class CameraUtil {
      *
      * @param imageWidth The original width.
      * @param imageHeight The original height.
-     * @param imageRotation The clockwise rotation in degrees of the image
-     *                      which the original dimension comes from.
+     * @param imageRotation The clockwise rotation in degrees of the image which
+     *            the original dimension comes from.
      * @param boundWidth The width of the bound.
      * @param boundHeight The height of the bound.
-     *
      * @returns The final width/height stored in Point.x/Point.y to fill the
-     * bounds and preserve image aspect ratio.
+     *          bounds and preserve image aspect ratio.
      */
     public static Point resizeToFill(int imageWidth, int imageHeight, int imageRotation,
             int boundWidth, int boundHeight) {
@@ -971,7 +1029,7 @@ public class CameraUtil {
 
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
-            boolean isSecureCamera = ((CameraActivity)activity).isSecureCamera();
+            boolean isSecureCamera = ((CameraActivity) activity).isSecureCamera();
             if (!isSecureCamera) {
                 Intent intent = IntentHelper.getVideoPlayerIntent(uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
@@ -1024,8 +1082,8 @@ public class CameraUtil {
      * Dumps the stack trace.
      *
      * @param level How many levels of the stack are dumped. 0 means all.
-     * @return A {@link java.lang.String} of all the output with newline
-     * between each.
+     * @return A {@link java.lang.String} of all the output with newline between
+     *         each.
      */
     public static String dumpStackTrace(int level) {
         StackTraceElement[] elems = Thread.currentThread().getStackTrace();
@@ -1100,7 +1158,8 @@ public class CameraUtil {
      *
      * @param modeIndex index of the mode
      * @param context current context
-     * @return mode content description if the index is valid, otherwise a new empty string
+     * @return mode content description if the index is valid, otherwise a new
+     *         empty string
      */
     public static String getCameraModeContentDescription(int modeIndex, Context context) {
         String[] cameraModesDesc = context.getResources()
@@ -1122,7 +1181,7 @@ public class CameraUtil {
     public static int getCameraShutterIconId(int modeIndex, Context context) {
         // Find the camera mode icon using id
         TypedArray shutterIcons = context.getResources()
-              .obtainTypedArray(R.array.camera_mode_shutter_icon);
+                .obtainTypedArray(R.array.camera_mode_shutter_icon);
         if (modeIndex < 0 || modeIndex >= shutterIcons.length()) {
             Log.e(TAG, "Invalid mode index: " + modeIndex);
             throw new IllegalStateException("Invalid mode index: " + modeIndex);
