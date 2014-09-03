@@ -48,8 +48,6 @@ import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraSettings;
 
-import java.util.List;
-
 public class PhotoUI implements PreviewStatusListener,
     CameraAgent.CameraFaceDetectionCallback, PreviewStatusListener.PreviewAreaChangedListener {
 
