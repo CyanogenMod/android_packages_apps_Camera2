@@ -1333,8 +1333,12 @@ public class CameraActivity extends Activity
         setContentView(R.layout.activity_main);
 
         mActionBar = getActionBar();
-        // set actionbar background to complete transparent
-        mActionBar.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        // set actionbar background to 100% or 50% transparent
+        if (ApiHelper.isLOrHigher()) {
+            mActionBar.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        } else {
+            mActionBar.setBackgroundDrawable(new ColorDrawable(0x80000000));
+        }
         mActionBar.addOnMenuVisibilityListener(mOnMenuVisibilityListener);
 
         mMainHandler = new MainHandler(this, getMainLooper());
@@ -1697,8 +1701,7 @@ public class CameraActivity extends Activity
         UsageStatistics.instance().foregrounded(source, currentUserInterfaceMode());
 
         mGalleryIntent = IntentHelper.getGalleryIntent(mAppContext);
-        boolean isOsVersionL = mAppContext.getResources().getBoolean(R.bool.is_os_version_l);
-        if (isOsVersionL) {
+        if (ApiHelper.isLOrHigher()) {
             // hide the up affordance for L devices, it's not very Materially
             mActionBar.setDisplayShowHomeEnabled(false);
         }
