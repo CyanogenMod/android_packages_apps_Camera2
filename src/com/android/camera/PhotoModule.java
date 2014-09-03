@@ -29,9 +29,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.media.AudioManager;
 import android.media.CameraProfile;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -250,7 +248,7 @@ public class PhotoModule
     private FocusOverlayManager mFocusManager;
 
     private final int mGcamModeIndex;
-    private final CountdownSoundPlayer mCountdownSoundPlayer = new CountdownSoundPlayer();
+    private SoundPlayer mCountdownSoundPlayer;
 
     private CameraCapabilities.SceneMode mSceneMode;
 
@@ -451,6 +449,7 @@ public class PhotoModule
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
         mUI.setCountdownFinishedListener(this);
+        mCountdownSoundPlayer = new SoundPlayer(mAppController.getAndroidContext());
 
         // TODO: Make this a part of app controller API.
         View cancelButton = mActivity.findViewById(R.id.shutter_cancel_button);
@@ -1546,7 +1545,11 @@ public class PhotoModule
 
     @Override
     public void onRemainingSecondsChanged(int remainingSeconds) {
-        mCountdownSoundPlayer.onRemainingSecondsChanged(remainingSeconds);
+        if (remainingSeconds == 1) {
+            mCountdownSoundPlayer.play(R.raw.beep_twice, 0.6f);
+        } else if (remainingSeconds == 2 || remainingSeconds == 3) {
+            mCountdownSoundPlayer.play(R.raw.beep_once, 0.6f);
+        }
     }
 
     @Override
@@ -1569,7 +1572,8 @@ public class PhotoModule
         }
         Log.v(TAG, "Executing onResumeTasks.");
 
-        mCountdownSoundPlayer.loadSounds();
+        mCountdownSoundPlayer.loadSound(R.raw.beep_once);
+        mCountdownSoundPlayer.loadSound(R.raw.beep_twice);
         if (mFocusManager != null) {
             // If camera is not open when resume is called, focus manager will
             // not be initialized yet, in which case it will start listening to
@@ -2389,43 +2393,5 @@ public class PhotoModule
                 focusAndCapture();
             }
         });
-    }
-
-    /**
-     * This class manages the loading/releasing/playing of the sounds needed for
-     * countdown timer.
-     */
-    private class CountdownSoundPlayer {
-        private SoundPool mSoundPool;
-        private int mBeepOnce;
-        private int mBeepTwice;
-
-        void loadSounds() {
-            // Load the beeps.
-            if (mSoundPool == null) {
-                mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
-                mBeepOnce = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_once, 1);
-                mBeepTwice = mSoundPool.load(mAppController.getAndroidContext(), R.raw.beep_twice, 1);
-            }
-        }
-
-        void onRemainingSecondsChanged(int newVal) {
-            if (mSoundPool == null) {
-                Log.e(TAG, "Cannot play sound - they have not been loaded.");
-                return;
-            }
-            if (newVal == 1) {
-                mSoundPool.play(mBeepTwice, 1.0f, 1.0f, 0, 0, 1.0f);
-            } else if (newVal == 2 || newVal == 3) {
-                mSoundPool.play(mBeepOnce, 1.0f, 1.0f, 0, 0, 1.0f);
-            }
-        }
-
-        void release() {
-            if (mSoundPool != null) {
-                mSoundPool.release();
-                mSoundPool = null;
-            }
-        }
     }
 }

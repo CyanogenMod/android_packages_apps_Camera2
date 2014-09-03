@@ -63,6 +63,7 @@ import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
@@ -85,17 +86,17 @@ import java.io.File;
  * TODO:
  * <ul>
  * <li>Server-side logging
- * <li>Focusing
+ * <li>Focusing (managed by OneCamera implementations)
  * <li>Show location dialog on first start
  * <li>Show resolution dialog on certain devices
  * <li>Store location
- * <li>Timer
  * <li>Capture intent
  * </ul>
  */
 public class CaptureModule extends CameraModule
         implements MediaSaver.QueueListener,
         ModuleController,
+        CountDownView.OnCountDownStatusListener,
         OneCamera.PictureCallback,
         OneCamera.FocusStateListener,
         OneCamera.ReadyStateChangedListener,
@@ -193,6 +194,10 @@ public class CaptureModule extends CameraModule
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
     /** Current zoom value. */
     private float mZoomValue = 1f;
+    /** Current duration of capture timer in seconds. */
+    private int mTimerDuration;
+    // TODO: Get image capture intent UI working.
+    private boolean mIsImageCaptureIntent;
 
     /** True if in AF tap-to-focus sequence. */
     private boolean mTapToFocusWaitForActiveScan = false;
@@ -221,6 +226,8 @@ public class CaptureModule extends CameraModule
 
     /** Used to fetch and embed the location into captured images. */
     private LocationManager mLocationManager;
+    /** Plays sounds for countdown timer. */
+    private SoundPlayer mCountdownSoundPlayer;
 
     /** Whether the module is paused right now. */
     private boolean mPaused;
@@ -303,6 +310,11 @@ public class CaptureModule extends CameraModule
         mSensorManager = (SensorManager) (mContext.getSystemService(Context.SENSOR_SERVICE));
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mCountdownSoundPlayer = new SoundPlayer(mContext);
+
+        String action = activity.getIntent().getAction();
+        mIsImageCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
+                || CameraActivity.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
     }
 
     @Override
@@ -317,10 +329,26 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onShutterButtonClick() {
-        // TODO: Add focusing.
         if (mCamera == null) {
             return;
         }
+
+        int countDownDuration = mSettingsManager
+                .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
+        mTimerDuration = countDownDuration;
+        if (countDownDuration > 0) {
+            // Start count down.
+            mAppController.getCameraAppUI().transitionToCancel();
+            mAppController.getCameraAppUI().hideModeOptions();
+            mUI.setCountdownFinishedListener(this);
+            mUI.startCountdown(countDownDuration);
+            // Will take picture later via listener callback.
+        } else {
+            takePictureNow();
+        }
+    }
+
+    private void takePictureNow() {
         Location location = mLocationManager.getCurrentLocation();
 
         // Set up the capture session.
@@ -339,13 +367,36 @@ public class CaptureModule extends CameraModule
         params.debugDataFolder = mDebugDataDir;
         params.location = location;
 
-        // Take the picture.
         mCamera.takePicture(params, session);
+    }
+
+    @Override
+    public void onCountDownFinished() {
+        if (mIsImageCaptureIntent) {
+            mAppController.getCameraAppUI().transitionToIntentReviewLayout();
+        } else {
+            mAppController.getCameraAppUI().transitionToCapture();
+        }
+        mAppController.getCameraAppUI().showModeOptions();
+        if (mPaused) {
+            return;
+        }
+        takePictureNow();
+    }
+
+    @Override
+    public void onRemainingSecondsChanged(int remainingSeconds){
+        if (remainingSeconds == 1) {
+            mCountdownSoundPlayer.play(R.raw.beep_twice, 0.6f);
+        } else if (remainingSeconds == 2 || remainingSeconds == 3) {
+            mCountdownSoundPlayer.play(R.raw.beep_once, 0.6f);
+        }
     }
 
     @Override
     public void onPreviewAreaChanged(RectF previewArea) {
         mPreviewArea = previewArea;
+        mUI.onPreviewAreaChanged(previewArea);
         // mUI.updatePreviewAreaRect(previewArea);
         // mUI.positionProgressOverlay(previewArea);
     }
@@ -486,6 +537,9 @@ public class CaptureModule extends CameraModule
         if (mPreviewTexture != null) {
             initSurface(mPreviewTexture);
         }
+
+        mCountdownSoundPlayer.loadSound(R.raw.beep_once);
+        mCountdownSoundPlayer.loadSound(R.raw.beep_twice);
     }
 
     @Override
@@ -493,6 +547,7 @@ public class CaptureModule extends CameraModule
         mPaused = true;
         resetTextureBufferSize();
         closeCamera();
+        mCountdownSoundPlayer.release();
         // Remove delayed resume trigger, if it hasn't been executed yet.
         mMainHandler.removeCallbacksAndMessages(null);
 
@@ -575,9 +630,8 @@ public class CaptureModule extends CameraModule
         bottomBarSpec.cameraCallback = getCameraCallback();
         bottomBarSpec.enableHdr = GcamHelper.hasGcamCapture();
         bottomBarSpec.hdrCallback = getHdrButtonCallback();
-        // TODO: Enable once we support this.
-        bottomBarSpec.enableSelfTimer = false;
-        bottomBarSpec.showSelfTimer = false;
+        bottomBarSpec.enableSelfTimer = true;
+        bottomBarSpec.showSelfTimer = true;
         if (!mHdrEnabled) {
             bottomBarSpec.enableFlash = true;
         }
