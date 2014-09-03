@@ -315,6 +315,13 @@ public class CaptureModule extends CameraModule
         String action = activity.getIntent().getAction();
         mIsImageCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
                 || CameraActivity.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
+        View cancelButton = activity.findViewById(R.id.shutter_cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelCountDown();
+            }
+        });
     }
 
     @Override
@@ -393,12 +400,21 @@ public class CaptureModule extends CameraModule
         }
     }
 
+    private void cancelCountDown() {
+        if (mUI.isCountingDown()) {
+            // Cancel on-going countdown.
+            mUI.cancelCountDown();
+        }
+        mAppController.getCameraAppUI().showModeOptions();
+        mAppController.getCameraAppUI().transitionToCapture();
+    }
+
     @Override
     public void onPreviewAreaChanged(RectF previewArea) {
         mPreviewArea = previewArea;
         mUI.onPreviewAreaChanged(previewArea);
         // mUI.updatePreviewAreaRect(previewArea);
-        // mUI.positionProgressOverlay(previewArea);
+        mUI.positionProgressOverlay(previewArea);
     }
 
     @Override
@@ -545,9 +561,11 @@ public class CaptureModule extends CameraModule
     @Override
     public void pause() {
         mPaused = true;
+        cancelCountDown();
         resetTextureBufferSize();
         closeCamera();
-        mCountdownSoundPlayer.release();
+        mCountdownSoundPlayer.unloadSound(R.raw.beep_once);
+        mCountdownSoundPlayer.unloadSound(R.raw.beep_twice);
         // Remove delayed resume trigger, if it hasn't been executed yet.
         mMainHandler.removeCallbacksAndMessages(null);
 
@@ -562,6 +580,7 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void destroy() {
+        mCountdownSoundPlayer.release();
     }
 
     @Override
@@ -648,7 +667,9 @@ public class CaptureModule extends CameraModule
         switch (keyCode) {
             case KeyEvent.KEYCODE_CAMERA:
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                if (event.getRepeatCount() == 0) {
+                if (mUI.isCountingDown()) {
+                    cancelCountDown();
+                } else if (event.getRepeatCount() == 0) {
                     onShutterButtonClick();
                 }
                 return true;
