@@ -20,7 +20,7 @@ import com.android.camera.util.SystemProperties;
 
 public class DebugPropertyHelper {
     /** Make app start with CaptureModule + ZSL. */
-    private static final boolean FORCE_ZSL_APP = false;
+    private static final boolean FORCE_ZSL_APP = true;
 
     private static final String OFF_VALUE = "0";
     private static final String ON_VALUE = "1";
