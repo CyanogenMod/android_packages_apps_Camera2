@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.android.camera.debug.Log;
+import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewOverlay.OnZoomChangedListener;
 import com.android.camera.ui.PreviewStatusListener;
@@ -51,7 +52,6 @@ public class CaptureModuleUI implements
     private final ProgressOverlay mProgressOverlay;
     private final View.OnLayoutChangeListener mLayoutListener;
     private final TextureView mPreviewView;
-    private final ImageView mPreviewThumb;
 
     private final GestureDetector.OnGestureListener mPreviewGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -61,6 +61,8 @@ public class CaptureModuleUI implements
         }
     };
     private final FocusOverlayManager.FocusUI mFocusUI;
+    private final CountDownView mCountdownView;
+
     private int mPreviewAreaWidth;
     private int mPreviewAreaHeight;
 
@@ -82,6 +84,11 @@ public class CaptureModuleUI implements
         public void onZoomEnd() {
         }
     };
+
+    public void onPreviewAreaChanged(RectF previewArea) {
+        // TODO: mFaceView.onPreviewAreaChanged(previewArea);
+        mCountdownView.onPreviewAreaChanged(previewArea);
+    }
 
     @Override
     public void onPreviewLayoutChanged(View v, int left, int top, int right,
@@ -134,16 +141,8 @@ public class CaptureModuleUI implements
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mProgressOverlay = (ProgressOverlay) mRootView.findViewById(R.id.progress_overlay);
 
-        mPreviewThumb = (ImageView) mRootView.findViewById(R.id.gcam_preview_thumb);
-        mPreviewThumb.setScaleType(ImageView.ScaleType.MATRIX);
-        mPreviewThumb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.gotoGallery();
-            }
-        });
-
         mFocusUI = (FocusOverlayManager.FocusUI) mRootView.findViewById(R.id.focus_overlay);
+        mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
     }
 
     @Override
@@ -209,6 +208,36 @@ public class CaptureModuleUI implements
     }
 
     public void clearAutoFocusIndicator(boolean waitUntilProgressIsHidden) {
+    }
+
+    /**
+     * Starts the countdown timer.
+     *
+     * @param sec seconds to countdown
+     */
+    public void startCountdown(int sec) {
+        mCountdownView.startCountDown(sec);
+    }
+
+    /**
+     * Sets a listener that gets notified when the countdown is finished.
+     */
+    public void setCountdownFinishedListener(CountDownView.OnCountDownStatusListener listener) {
+        mCountdownView.setCountDownStatusListener(listener);
+    }
+
+    /**
+     * Returns whether the countdown is on-going.
+     */
+    public boolean isCountingDown() {
+        return mCountdownView.isCountingDown();
+    }
+
+    /**
+     * Cancels the on-going countdown, if any.
+     */
+    public void cancelCountDown() {
+        mCountdownView.cancelCountDown();
     }
 
     /**
