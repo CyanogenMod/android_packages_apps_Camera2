@@ -271,7 +271,14 @@ public interface AppController {
     /********************** Capture animation **********************/
 
     /**
-     * Starts the pre-capture animation.
+     * Starts the pre-capture animation with optional shorter flash.
+     *
+     * @param shortFlash true for shorter flash (faster cameras).
+     */
+    public void startPreCaptureAnimation(boolean shortFlash);
+
+    /**
+     * Starts normal pre-capture animation.
      */
     public void startPreCaptureAnimation();
 
