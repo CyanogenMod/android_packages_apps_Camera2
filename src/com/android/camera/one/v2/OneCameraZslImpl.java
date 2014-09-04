@@ -34,6 +34,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CameraProfile;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaActionSound;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -182,6 +183,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private MeteringRectangle[] mAFRegions = ZERO_WEIGHT_3A_REGION;
     private MeteringRectangle[] mAERegions = ZERO_WEIGHT_3A_REGION;
 
+    private MediaActionSound mMediaActionSound = new MediaActionSound();
+
     /**
      * Ready state (typically displayed by the UI shutter-button) depends on two
      * things:<br>
@@ -246,7 +249,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             mReadyStateManager.setInput(
                     ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, true);
 
-            // TODO Add callback to CaptureModule here to flash the screen.
             mSession.startEmpty();
             savePicture(image, mParams, mSession);
             mParams.callback.onPictureTaken(mSession);
@@ -319,6 +321,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 sCaptureImageFormat, MAX_CAPTURE_IMAGES);
 
         mCaptureImageReader.setOnImageAvailableListener(mCaptureManager, mCameraHandler);
+        mMediaActionSound.load(MediaActionSound.SHUTTER_CLICK);
     }
 
     /**
@@ -343,6 +346,14 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
         return new Size(largestSupportedSize.getWidth(),
                 largestSupportedSize.getHeight());
+    }
+
+
+    private void onShutterInvokeUI(final PhotoCaptureParameters params) {
+        // Tell CaptureModule shutter has occurred so it can flash the screen.
+        params.callback.onQuickExpose();
+        // Play shutter click sound.
+        mMediaActionSound.play(MediaActionSound.SHUTTER_CLICK);
     }
 
     /**
@@ -439,6 +450,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     new ImageCaptureTask(params, session), zslConstraints);
             if (capturedPreviousFrame) {
                 Log.v(TAG, "Saving previous frame");
+                onShutterInvokeUI(params);
             } else {
                 Log.v(TAG, "No good image Available.  Capturing next available good image.");
                 // If there was no good frame available in the ring buffer
@@ -473,6 +485,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                                                     CaptureResult.CONTROL_AE_STATE_PRECAPTURE))) {
                                         mCaptureManager.removeMetadataChangeListener(key, this);
                                         sendSingleRequest(params);
+                                        // TODO: Delay this until onCaptureStarted().
+                                        onShutterInvokeUI(params);
                                     }
                                 }
                             });
