@@ -116,7 +116,7 @@ public class SettingsManager {
      */
     protected SharedPreferences openPreferences(String scope) {
         SharedPreferences preferences = mContext.getSharedPreferences(
-            scope, Context.MODE_PRIVATE);
+            mPackageName + scope, Context.MODE_PRIVATE);
 
         for (OnSharedPreferenceChangeListener listener : mSharedPreferenceListeners) {
             preferences.registerOnSharedPreferenceChangeListener(listener);
