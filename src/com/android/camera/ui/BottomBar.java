@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.ShutterButton;
 import com.android.camera.debug.Log;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
@@ -74,7 +75,6 @@ public class BottomBar extends FrameLayout {
     private final float mCircleRadius;
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
-    private final boolean mIsOsVersionL;
     // for Android L, these backgrounds are RippleDrawables (ISA LayerDrawable)
     // pre-L, they're plain old LayerDrawables
     private final LayerDrawable[] mShutterButtonBackgrounds;
@@ -95,8 +95,6 @@ public class BottomBar extends FrameLayout {
                 .getInteger(R.integer.bottom_bar_background_alpha_overlay);
         mBackgroundAlphaDefault = getResources()
                 .getInteger(R.integer.bottom_bar_background_alpha);
-
-        mIsOsVersionL = context.getResources().getBoolean(R.bool.is_os_version_l);
 
         // preload all the drawable BGs
         TypedArray ar = context.getResources()
@@ -129,13 +127,9 @@ public class BottomBar extends FrameLayout {
         if (mAnimatedCircleDrawable != null) {
             mAnimatedCircleDrawable.setColor(color);
             mAnimatedCircleDrawable.setAlpha(alpha);
-            invalidateDrawable(mAnimatedCircleDrawable);
-            invalidate();
         } else if (mColorDrawable != null) {
             mColorDrawable.setColor(color);
             mColorDrawable.setAlpha(alpha);
-            invalidateDrawable(mColorDrawable);
-            invalidate();
         }
 
         if (mIntentReviewLayout != null) {
@@ -153,7 +147,7 @@ public class BottomBar extends FrameLayout {
     private void setCancelBackgroundColor(int alpha, int color) {
         LayerDrawable layerDrawable = (LayerDrawable) mCancelButton.getBackground();
         ColorDrawable colorDrawable = (ColorDrawable) layerDrawable.getDrawable(0);
-        if (!mIsOsVersionL) {
+        if (!ApiHelper.isLOrHigher()) {
             colorDrawable.setColor(color);
         }
         colorDrawable.setAlpha(alpha);
@@ -164,7 +158,7 @@ public class BottomBar extends FrameLayout {
     }
 
     private void setCaptureButtonDown() {
-        if (!mIsOsVersionL) {
+        if (!ApiHelper.isLOrHigher()) {
             setPaintColor(mBackgroundAlpha, mBackgroundPressedColor);
         }
     }
@@ -346,7 +340,7 @@ public class BottomBar extends FrameLayout {
     }
 
     private void setBackgroundPressedColor(int color) {
-        if (mIsOsVersionL) {
+        if (ApiHelper.isLOrHigher()) {
             // not supported (setting a color on a RippleDrawable is hard =[ )
         } else {
             mBackgroundPressedColor = color;
