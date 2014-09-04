@@ -307,15 +307,11 @@ public class VideoUI implements PieRenderer.PieListener,
             }
         } else {
             if (width > height) {
-                scaledTextureWidth = Math.max(width,
-                        (int) (height * mAspectRatio));
-                scaledTextureHeight = Math.max(height,
-                        (int)(width / mAspectRatio));
+                scaledTextureWidth = Math.max(width, height * mAspectRatio);
+                scaledTextureHeight = Math.max(height, width / mAspectRatio);
             } else {
-                scaledTextureWidth = Math.max(width,
-                        (int) (height / mAspectRatio));
-                scaledTextureHeight = Math.max(height,
-                        (int) (width * mAspectRatio));
+                scaledTextureWidth = Math.max(width, height / mAspectRatio);
+                scaledTextureHeight = Math.max(height, width * mAspectRatio);
             }
         }
 
