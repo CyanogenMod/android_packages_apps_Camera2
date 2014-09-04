@@ -1102,8 +1102,13 @@ public class CameraActivity extends Activity
     }
 
     @Override
+    public void startPreCaptureAnimation(boolean shortFlash) {
+        mCameraAppUI.startPreCaptureAnimation(shortFlash);
+    }
+
+    @Override
     public void startPreCaptureAnimation() {
-        mCameraAppUI.startPreCaptureAnimation();
+        mCameraAppUI.startPreCaptureAnimation(false);
     }
 
     @Override

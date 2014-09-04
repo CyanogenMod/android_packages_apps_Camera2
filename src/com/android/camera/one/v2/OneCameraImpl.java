@@ -125,6 +125,8 @@ public class OneCameraImpl extends AbstractOneCamera {
     private boolean mTakePictureWhenLensIsStopped = false;
     /** Takes a (delayed) picture with appropriate parameters. */
     private Runnable mTakePictureRunnable;
+    /** Keep PictureCallback for last requested capture. */
+    private PictureCallback mLastPictureCallback = null;
     /** Last time takePicture() was called in uptimeMillis. */
     private long mTakePictureStartMillis;
     /** Runnable that returns to CONTROL_AF_MODE = AF_CONTINUOUS_PICTURE. */
@@ -153,6 +155,14 @@ public class OneCameraImpl extends AbstractOneCamera {
      */
     private final CameraCaptureSession.CaptureListener mAutoFocusStateListener = new
             CameraCaptureSession.CaptureListener() {
+                @Override
+                public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request,
+                                             long timestamp) {
+                    if (request.getTag() == RequestTag.CAPTURE && mLastPictureCallback != null) {
+                        mLastPictureCallback.onQuickExpose();
+                    }
+                }
+
                 // AF state information is sometimes available 1 frame before
                 // onCaptureCompleted(), so we take advantage of that.
                 @Override
@@ -269,6 +279,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                 takePictureNow(params, session);
             }
         };
+        mLastPictureCallback = params.callback;
         mTakePictureStartMillis = SystemClock.uptimeMillis();
 
         // This class implements a very simple version of AF, which

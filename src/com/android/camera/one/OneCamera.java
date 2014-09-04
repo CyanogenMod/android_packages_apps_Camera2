@@ -143,6 +143,13 @@ public interface OneCamera {
      */
     public static interface PictureCallback {
         /**
+         * Called near the the when an image is being exposed for cameras which
+         * are exposing a single frame, so that a UI can be presented for the
+         * capture.
+         */
+        public void onQuickExpose();
+
+        /**
          * Called when a thumbnail image is provided before the final image is
          * finished.
          */
