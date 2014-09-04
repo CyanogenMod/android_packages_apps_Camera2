@@ -152,7 +152,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"အရှေ့ကင်မရာ"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"နောက်ကင်မရာ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ကောင်းပြီ"</string>
-    <string name="dialog_cancel" msgid="692365061128351656">"ပယ်ဖျက်သည်"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"နေတော့"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD ကဒ်တွင် နေရာလွတ် နည်းနေပါပြီ။ ကွာလတီ ဆက်တင် ပြောင်းခြင်း သို့မဟုတ် ပုံအချို့ သို့မဟုတ် တခြားဖိုင်များအား ဖျက်ခြင်းလုပ်ပါ"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"အရွယ်ကန့်သတ်မှုကျော်လွန်"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"အရမ်းမြန်"</string>
@@ -182,7 +182,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"အသုံးမကျသောမျက်နှာများ"</string>
     <string name="effect_background" msgid="1358432220077975015">"နောက်ခံ"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"ရှပ်တာ"</string>
-    <string name="accessibility_cancel_button" msgid="5679989494636116448">"ပယ်ဖျက်သည်"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"နေတော့"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"မီနူးခလုတ်"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s မှတ်သားကွက်"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"ဓာတ်ပုံသို့ပြောင်းရန်"</string>
@@ -274,7 +274,7 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ချဲ့ချုံ့ရန်"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"လှည့်ရန်"</string>
     <string name="photo_editor" msgid="1521994560971367225">"ဓာတ်ပုံပြင်သောအရာ"</string>
-    <string name="crop_save" msgid="2841974981340098579">"သိမ်းဆည်းရန်"</string>
+    <string name="crop_save" msgid="2841974981340098579">"သိမ်းပါ"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"ပုံတင်လို့မရပါ!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Filmstrip မြင်ကွင်း"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"နောက်ခံ ရွေးနေစဉ်"</string>
@@ -313,7 +313,7 @@
     <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၃ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၁၀ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ပိုမိုရွေးချယ်စရာများ"</string>
-    <string name="cancel_button_description" msgid="3801167024006905033">"ပယ်ဖျက်သည်"</string>
+    <string name="cancel_button_description" msgid="3801167024006905033">"နေတော့"</string>
     <string name="done_button_description" msgid="1334963435441544592">"ပြီးပါပြီ"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ပြန်ရိုက်ကူးပါ"</string>
     <string name="share_button_description" msgid="5108508790540832053">"မျှဝေခြင်း"</string>
