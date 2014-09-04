@@ -183,12 +183,15 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private MeteringRectangle[] mAERegions = ZERO_WEIGHT_3A_REGION;
 
     /**
-     * Ready state depends on two things:<br>
+     * Ready state (typically displayed by the UI shutter-button) depends on two
+     * things:<br>
      * <ol>
      * <li>{@link #mCaptureManager} must be ready.</li>
      * <li>We must not be in the process of capturing a single, high-quality,
      * image.</li>
      * </ol>
+     * See {@link ConjunctionListenerMux} and {@link #mReadyStateManager} for
+     * details of how this is managed.
      */
     private static enum ReadyStateRequirement {
         CAPTURE_MANAGER_READY,
@@ -201,7 +204,12 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      */
     private final ConjunctionListenerMux<ReadyStateRequirement>
             mReadyStateManager = new ConjunctionListenerMux<ReadyStateRequirement>(
-                    ReadyStateRequirement.class);
+                    ReadyStateRequirement.class, new ConjunctionListenerMux.OutputChangeListener() {
+                            @Override
+                        public void onOutputChange(boolean state) {
+                            broadcastReadyState(state);
+                        }
+                    });
 
     /**
      * An {@link ImageCaptureListener} which will compress and save an image to
@@ -283,13 +291,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             public void onReadyStateChange(boolean capturePossible) {
                 mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_MANAGER_READY,
                         capturePossible);
-            }
-        });
-
-        mReadyStateManager.addListener(new ConjunctionListenerMux.OutputChangeListener() {
-                @Override
-            public void onOutputChange(boolean state) {
-                broadcastReadyState(state);
             }
         });
 
@@ -644,6 +645,9 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     mCropRegion = cropRegionForZoom(mZoomValue);
                     boolean success = sendRepeatingCaptureRequest();
                     if (success) {
+                        mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS,
+                                true);
+                        mReadyStateManager.notifyListeners();
                         listener.onReadyForCapture();
                     } else {
                         listener.onSetupFailed();
