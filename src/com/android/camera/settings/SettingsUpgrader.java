@@ -30,6 +30,15 @@ public abstract class SettingsUpgrader {
     private final String mVersionKey;
     private final int mTargetVersion;
 
+    // These values were in use by the original preferences management, before
+    // SettingsManager, to represent string-based booleans via typed string
+    // resource arrays. We no longer utilize such value arrays, and reference
+    // these constants only within SettingsUpgraders to convert to new string-
+    // based booleans.
+    protected static final String OLD_SETTINGS_VALUE_NONE = "none";
+    protected static final String OLD_SETTINGS_VALUE_ON = "on";
+    protected static final String OLD_SETTINGS_VALUE_OFF = "off";
+
     public SettingsUpgrader(String versionKey, int targetVersion) {
         mVersionKey = versionKey;
         mTargetVersion = targetVersion;
@@ -94,6 +103,20 @@ public abstract class SettingsUpgrader {
      */
     protected int removeInteger(SharedPreferences oldPreferencesLocation, String key) {
         int value = oldPreferencesLocation.getInt(key, 0);
+        oldPreferencesLocation.edit().remove(key).apply();
+        return value;
+    }
+
+    /**
+     * A helper function that is used to remove a setting stored as a String,
+     * and return the value that was removed.
+     * <p>
+     * This is used in the upgrade path to change all underlying
+     * SharedPreferences values to Strings. It can be used by third party
+     * modules to upgrade their boolean settings to Strings.
+     */
+    protected String removeString(SharedPreferences oldPreferencesLocation, String key) {
+        String value = oldPreferencesLocation.getString(key, null);
         oldPreferencesLocation.edit().remove(key).apply();
         return value;
     }
