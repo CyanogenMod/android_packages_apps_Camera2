@@ -252,10 +252,9 @@ public class IndicatorIconController
         if (buttonManager.isEnabled(ButtonManager.BUTTON_EXPOSURE_COMPENSATION)
                 && buttonManager.isVisible(ButtonManager.BUTTON_EXPOSURE_COMPENSATION)) {
 
-            String compString = mController.getSettingsManager().getString(
-                mController.getCameraScope(), Keys.KEY_EXPOSURE);
-            int comp = Math.round(
-                    Integer.parseInt(compString) * buttonManager.getExposureCompensationStep());
+            int compValue = mController.getSettingsManager().getInteger(
+                    mController.getCameraScope(), Keys.KEY_EXPOSURE);
+            int comp = Math.round(compValue * buttonManager.getExposureCompensationStep());
 
             // Turn on the appropriate indicator.
             switch (comp) {
