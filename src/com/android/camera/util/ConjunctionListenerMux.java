@@ -95,14 +95,17 @@ public class ConjunctionListenerMux<Input extends Enum<Input>> {
 
                 // If the output has changed, notify the listeners.
                 if (oldOutput != mOutput) {
-                    for (OutputChangeListener listener : mListeners) {
-                        listener.onOutputChange(mOutput);
-                    }
+                    notifyListeners();
                 }
 
                 return mOutput;
             }
         }
+    }
+
+    public ConjunctionListenerMux(Class<Input> clazz, OutputChangeListener listener) {
+        this(clazz);
+        addListener(listener);
     }
 
     public ConjunctionListenerMux(Class<Input> clazz) {
@@ -113,5 +116,17 @@ public class ConjunctionListenerMux<Input extends Enum<Input>> {
         }
 
         mOutput = false;
+    }
+
+    /**
+     * Notifies all listeners of the current state, regardless of whether or not
+     * it has actually changed.
+     */
+    public void notifyListeners() {
+        synchronized (mLock) {
+            for (OutputChangeListener listener : mListeners) {
+                listener.onOutputChange(mOutput);
+            }
+        }
     }
 }
