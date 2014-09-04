@@ -75,6 +75,7 @@ public class CameraPerformanceTracker {
                 sInstance.mAppResumeTime = currentTime;
                 break;
             case FIRST_PREVIEW_FRAME:
+                Log.d(TAG, "First preview frame received");
                 if (sInstance.mFirstPreviewFrameLatencyColdStart == UNSET) {
                     // Cold start.
                     sInstance.mFirstPreviewFrameLatencyColdStart =
