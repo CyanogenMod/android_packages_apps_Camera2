@@ -392,7 +392,7 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onRemainingSecondsChanged(int remainingSeconds){
+    public void onRemainingSecondsChanged(int remainingSeconds) {
         if (remainingSeconds == 1) {
             mCountdownSoundPlayer.play(R.raw.beep_twice, 0.6f);
         } else if (remainingSeconds == 2 || remainingSeconds == 3) {
@@ -407,6 +407,17 @@ public class CaptureModule extends CameraModule
         }
         mAppController.getCameraAppUI().showModeOptions();
         mAppController.getCameraAppUI().transitionToCapture();
+    }
+
+    @Override
+    public void onQuickExpose() {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // Starts the short version of the capture animation UI.
+                mAppController.startPreCaptureAnimation(true);
+            }
+        });
     }
 
     @Override
