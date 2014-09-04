@@ -117,14 +117,17 @@ public class AppUpgrader extends SettingsUpgrader {
                     SettingsUtil.CAMERA_FACING_FRONT);
             upgradeCameraSizeSetting(settingsManager, context, infos,
                     SettingsUtil.CAMERA_FACING_BACK);
+            // We changed size handling and aspect ratio placement, put user
+            // back into Camera mode this time to ensure they see the ratio
+            // chooser if applicable.
+            settingsManager.remove(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_STARTUP_MODULE_INDEX);
         }
 
         if (lastVersion < CAMERA_MODULE_SETTINGS_FILES_RENAMED_VERSION) {
             upgradeCameraSettingsFiles(settingsManager, context);
             upgradeModuleSettingsFiles(settingsManager, context,
                     mAppController);
-            settingsManager.remove(SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_STARTUP_MODULE_INDEX);
         }
 
         if (lastVersion < CAMERA_SETTINGS_SELECTED_MODULE_INDEX) {
@@ -229,6 +232,31 @@ public class AppUpgrader extends SettingsUpgrader {
             settingsManager.set(SettingsManager.SCOPE_GLOBAL,
                     Keys.KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING, shouldShowSettingsButtonCling);
         }
+
+        // HDR plus on setting: String on/off -> String, from old global.
+        if (oldGlobalPreferences.contains(Keys.KEY_CAMERA_HDR_PLUS)) {
+            String hdrPlus = removeString(oldGlobalPreferences, Keys.KEY_CAMERA_HDR_PLUS);
+            if (OLD_SETTINGS_VALUE_ON.equals(hdrPlus)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, true);
+            }
+        }
+
+        // HDR on setting: String on/off -> String, from old global.
+        if (oldGlobalPreferences.contains(Keys.KEY_CAMERA_HDR)) {
+            String hdrPlus = removeString(oldGlobalPreferences, Keys.KEY_CAMERA_HDR);
+            if (OLD_SETTINGS_VALUE_ON.equals(hdrPlus)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR, true);
+            }
+        }
+
+        // Grid on setting: String on/off -> String, from old global.
+        if (oldGlobalPreferences.contains(Keys.KEY_CAMERA_GRID_LINES)) {
+            String hdrPlus = removeString(oldGlobalPreferences, Keys.KEY_CAMERA_GRID_LINES);
+            if (OLD_SETTINGS_VALUE_ON.equals(hdrPlus)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_GRID_LINES,
+                        true);
+            }
+        }
     }
 
     /**
@@ -236,7 +264,9 @@ public class AppUpgrader extends SettingsUpgrader {
      * again if it was originally set to false.
      */
     private void forceLocationChoice(SettingsManager settingsManager) {
-        // Show the location dialog on upgrade if
+        SharedPreferences oldGlobalPreferences =
+                settingsManager.openPreferences(OLD_GLOBAL_PREFERENCES_FILENAME);
+       // Show the location dialog on upgrade if
         // (a) the user has never set this option (status quo).
         // (b) the user opt'ed out previously.
         if (settingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
@@ -246,6 +276,14 @@ public class AppUpgrader extends SettingsUpgrader {
             if (!settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
                     Keys.KEY_RECORD_LOCATION)) {
                 settingsManager.remove(SettingsManager.SCOPE_GLOBAL, Keys.KEY_RECORD_LOCATION);
+            }
+        } else if (oldGlobalPreferences.contains(Keys.KEY_RECORD_LOCATION)) {
+            // Location is not set, check to see if we're upgrading from
+            // a different source file.
+            String location = removeString(oldGlobalPreferences, Keys.KEY_RECORD_LOCATION);
+            if (OLD_SETTINGS_VALUE_ON.equals(location)) {
+                    settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_RECORD_LOCATION,
+                            true);
             }
         }
     }
