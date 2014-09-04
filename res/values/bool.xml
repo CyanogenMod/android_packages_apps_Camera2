@@ -15,5 +15,4 @@
 -->
 <resources>
     <bool name="show_action_bar_title">false</bool>
-    <bool name="is_os_version_l">false</bool>
 </resources>
