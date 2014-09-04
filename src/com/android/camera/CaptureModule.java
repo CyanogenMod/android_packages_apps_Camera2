@@ -288,8 +288,6 @@ public class CaptureModule extends CameraModule
         mSettingsManager.addListener(this);
         mDebugDataDir = mContext.getExternalCacheDir();
         mStickyGcamCamera = stickyHdr;
-        // TODO: Read HDR setting from user preferences.
-        mHdrEnabled = stickyHdr;
     }
 
     @Override
@@ -557,6 +555,8 @@ public class CaptureModule extends CameraModule
             mSensorManager.registerListener(this, mMagneticSensor,
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
+        mHdrEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS) == 1;
 
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
@@ -1249,11 +1249,8 @@ public class CaptureModule extends CameraModule
         if (mPaused) {
             return;
         }
-        // TODO: Un-comment once we have timer back.
-        // cancelCountDown();
-
+        cancelCountDown();
         mAppController.freezeScreenUntilPreviewReady();
-
         initSurface(mPreviewTexture);
 
         // TODO: Un-comment once we have focus back.
