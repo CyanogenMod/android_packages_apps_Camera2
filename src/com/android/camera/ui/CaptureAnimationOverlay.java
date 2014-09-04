@@ -44,13 +44,14 @@ public class CaptureAnimationOverlay extends View
     implements PreviewStatusListener.PreviewAreaChangedListener {
     private final static Log.Tag TAG = new Log.Tag("CaptureAnimOverlay");
 
-    private final static int FLASH_ALPHA_BEFORE_SHRINK = 180;
-    private final static int FLASH_ALPHA_AFTER_SHRINK = 50;
     private final static int FLASH_COLOR = Color.WHITE;
 
     private static final float FLASH_MAX_ALPHA = 0.85f;
     private static final long FLASH_FULL_DURATION_MS = 65;
     private static final long FLASH_DECREASE_DURATION_MS = 150;
+    private static final float SHORT_FLASH_MAX_ALPHA = 0.75f;
+    private static final long SHORT_FLASH_FULL_DURATION_MS = 34;
+    private static final long SHORT_FLASH_DECREASE_DURATION_MS = 100;
 
     private RectF mPreviewArea = new RectF();
 
@@ -97,21 +98,36 @@ public class CaptureAnimationOverlay extends View
 
     /**
      * Start flash animation.
+     *
+     * @param shortFlash show shortest possible flash instead of regular long version.
      */
-    public void startFlashAnimation() {
+    public void startFlashAnimation(boolean shortFlash) {
         if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
             mFlashAnimation.cancel();
         }
+        float maxAlpha;
 
-        ValueAnimator flashAnim1 = ValueAnimator.ofFloat(FLASH_MAX_ALPHA, FLASH_MAX_ALPHA);
-        ValueAnimator flashAnim2 = ValueAnimator.ofFloat(FLASH_MAX_ALPHA, .0f);
-        flashAnim1.setDuration(FLASH_FULL_DURATION_MS);
-        flashAnim2.setDuration(FLASH_DECREASE_DURATION_MS);
+        if (shortFlash) {
+            maxAlpha = SHORT_FLASH_MAX_ALPHA;
+        } else {
+            maxAlpha = FLASH_MAX_ALPHA;
+        }
+
+        ValueAnimator flashAnim1 = ValueAnimator.ofFloat(maxAlpha, maxAlpha);
+        ValueAnimator flashAnim2 = ValueAnimator.ofFloat(maxAlpha, .0f);
+
+        if (shortFlash) {
+            flashAnim1.setDuration(SHORT_FLASH_FULL_DURATION_MS);
+            flashAnim2.setDuration(SHORT_FLASH_DECREASE_DURATION_MS);
+        } else {
+            flashAnim1.setDuration(FLASH_FULL_DURATION_MS);
+            flashAnim2.setDuration(FLASH_DECREASE_DURATION_MS);
+        }
+
         flashAnim1.addUpdateListener(mFlashAnimUpdateListener);
         flashAnim2.addUpdateListener(mFlashAnimUpdateListener);
         flashAnim1.setInterpolator(mFlashAnimInterpolator);
         flashAnim2.setInterpolator(mFlashAnimInterpolator);
-
 
         mFlashAnimation = new AnimatorSet();
         mFlashAnimation.play(flashAnim1).before(flashAnim2);
