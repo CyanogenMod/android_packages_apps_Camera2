@@ -641,7 +641,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             outputSurfaces.add(previewSurface);
             outputSurfaces.add(mCaptureImageReader.getSurface());
 
-            mDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+            mDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateListener() {
                     @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
                     listener.onSetupFailed();
