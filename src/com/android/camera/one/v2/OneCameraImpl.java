@@ -153,8 +153,8 @@ public class OneCameraImpl extends AbstractOneCamera {
     /**
      * Common listener for preview frame metadata.
      */
-    private final CameraCaptureSession.CaptureCallback mAutoFocusStateListener = new
-            CameraCaptureSession.CaptureCallback() {
+    private final CameraCaptureSession.CaptureListener mAutoFocusStateListener = new
+            CameraCaptureSession.CaptureListener() {
                 @Override
                 public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request,
                                              long timestamp) {
@@ -474,7 +474,7 @@ public class OneCameraImpl extends AbstractOneCamera {
             outputSurfaces.add(previewSurface);
             outputSurfaces.add(mCaptureImageReader.getSurface());
 
-            mDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+            mDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateListener() {
 
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
