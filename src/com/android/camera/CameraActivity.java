@@ -473,7 +473,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onCameraOpened(CameraAgent.CameraProxy camera) {
+        Log.v(TAG, "onCameraOpened");
         if (mPaused) {
+            Log.v(TAG, "received onCameraOpened but activity is paused");
             return;
         }
         /**
@@ -506,7 +508,10 @@ public class CameraActivity extends Activity
         if (mCurrentModule != null) {
             resetExposureCompensationToDefault(camera);
             mCurrentModule.onCameraAvailable(camera);
+        } else {
+            Log.v(TAG, "mCurrentModule null, not invoking onCameraAvailable");
         }
+        Log.v(TAG, "invoking onChangeCamera");
         mCameraAppUI.onChangeCamera();
     }
 
