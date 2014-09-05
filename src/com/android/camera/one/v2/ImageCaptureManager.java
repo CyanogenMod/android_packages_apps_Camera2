@@ -50,7 +50,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Implements {@link android.media.ImageReader.OnImageAvailableListener} and
  * {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback} to
  * store the results of capture requests (both {@link Image}s and
- * {@link TotalCaptureResult}s in a ring-buffer from which they may be saved.
+ * {@link TotalCaptureResult}s in a ring-buffer from which they may be saved. 
  * <br>
  * This also manages the lifecycle of {@link Image}s within the application as
  * they are passed in from the lower-level camera2 API.
@@ -102,7 +102,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
      * Callback for saving an image.
      */
     public interface ImageCaptureListener {
-         /**
+        /**
          * Called with the {@link Image} and associated
          * {@link TotalCaptureResult}. A typical implementation would save this
          * to disk.
