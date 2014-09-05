@@ -48,7 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Implements {@link android.media.ImageReader.OnImageAvailableListener} and
- * {@link android.hardware.camera2.CameraCaptureSession.CaptureListener} to
+ * {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback} to
  * store the results of capture requests (both {@link Image}s and
  * {@link TotalCaptureResult}s in a ring-buffer from which they may be saved.
  * <br>
@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * they are passed in from the lower-level camera2 API.
  */
 @TargetApi(Build.VERSION_CODES.L)
-public class ImageCaptureManager extends CameraCaptureSession.CaptureListener implements
+public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback implements
         ImageReader.OnImageAvailableListener {
     /**
      * Callback to listen for changes to the ability to capture an existing
@@ -276,7 +276,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
 
     /**
      * The set of constraints which must be satisfied for a newly acquired image
-     * to be captured and sent to {@link #mPendingImageCaptureCallback}. null if
+     * to be captured and sent to {@link #mPendingImageCaptureListener}. null if
      * there is no pending capture request.
      */
     private List<ImageCaptureManager.CapturedImageConstraint> mPendingImageCaptureConstraints;
@@ -286,7 +286,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      * image which satisfies {@link #mPendingImageCaptureConstraints}. null if
      * there is no pending capture request.
      */
-    private ImageCaptureManager.ImageCaptureListener mPendingImageCaptureCallback;
+    private ImageCaptureManager.ImageCaptureListener mPendingImageCaptureListener;
 
     /**
      * Map from CaptureResult key to the frame number of the capture result
@@ -310,11 +310,11 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      *            that this should probably be on a different thread than the
      *            one used for camera operations, such as capture requests and
      *            OnImageAvailable listeners, to avoid stalling the preview.
-     * @param imageCaptureListenerExecutor the executor on which to invoke image
+     * @param imageCaptureCallbackExecutor the executor on which to invoke image
      *            capture listeners, {@link ImageCaptureListener}.
      */
     ImageCaptureManager(int maxImages, Handler listenerHandler,
-            Executor imageCaptureListenerExecutor) {
+            Executor imageCaptureCallbackExecutor) {
         // Ensure that there are always 2 images available for the framework to
         // continue processing frames.
         // TODO Could we make this tighter?
@@ -322,7 +322,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
                 maxImages - 2);
 
         mListenerHandler = listenerHandler;
-        mImageCaptureListenerExecutor = imageCaptureListenerExecutor;
+        mImageCaptureListenerExecutor = imageCaptureCallbackExecutor;
     }
 
     /**
@@ -551,7 +551,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      */
     public void captureNextImage(final ImageCaptureListener onImageCaptured,
             final List<CapturedImageConstraint> constraints) {
-        mPendingImageCaptureCallback = onImageCaptured;
+        mPendingImageCaptureListener = onImageCaptured;
         mPendingImageCaptureConstraints = constraints;
     }
 
@@ -562,7 +562,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
      *            should be captured if appropriate and possible.
      */
     private void tryExecutePendingCaptureRequest(long newImageTimestamp) {
-        if (mPendingImageCaptureCallback != null) {
+        if (mPendingImageCaptureListener != null) {
             final Pair<Long, CapturedImage> pinnedImage = mCapturedImageBuffer.tryPin(
                     newImageTimestamp);
             if (pinnedImage != null) {
@@ -588,11 +588,11 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureListener im
                 // If we get here, the image satisfies all the necessary
                 // constraints.
 
-                if (tryExecuteCaptureOrRelease(pinnedImage, mPendingImageCaptureCallback)) {
+                if (tryExecuteCaptureOrRelease(pinnedImage, mPendingImageCaptureListener)) {
                     // If we successfully handed the image off to the callback,
                     // remove the pending
                     // capture request.
-                    mPendingImageCaptureCallback = null;
+                    mPendingImageCaptureListener = null;
                     mPendingImageCaptureConstraints = null;
                 }
             }
