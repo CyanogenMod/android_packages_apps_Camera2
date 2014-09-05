@@ -475,7 +475,11 @@ public class CameraActivity extends Activity
     public void onCameraOpened(CameraAgent.CameraProxy camera) {
         Log.v(TAG, "onCameraOpened");
         if (mPaused) {
-            Log.v(TAG, "received onCameraOpened but activity is paused");
+            // We've paused, but just asynchronously opened the camera. Close it
+            // because we should be releasing the camera when paused to allow
+            // other apps to access it.
+            Log.v(TAG, "received onCameraOpened but activity is paused, closing Camera");
+            mCameraController.closeCamera(false);
             return;
         }
         /**
