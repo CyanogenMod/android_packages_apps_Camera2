@@ -88,7 +88,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * TODO: Determine this number dynamically based on available memory and the
      * size of frames.
      */
-    private static final int MAX_CAPTURE_IMAGES = 10;
+    private static final int MAX_CAPTURE_IMAGES = 20;
     /**
      * True if zero-shutter-lag images should be captured. Some devices produce
      * lower-quality images for the high-frequency stream, so we may wish to
@@ -382,6 +382,25 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 Integer aeState = captureResult.get(CaptureResult.CONTROL_AE_STATE);
                 Integer afState = captureResult.get(CaptureResult.CONTROL_AF_STATE);
                 Integer awbState = captureResult.get(CaptureResult.CONTROL_AWB_STATE);
+
+                if (lensState == null) {
+                    lensState = CaptureResult.LENS_STATE_STATIONARY;
+                }
+                if (flashState == null) {
+                    flashState = CaptureResult.FLASH_STATE_UNAVAILABLE;
+                }
+                if (flashMode == null) {
+                    flashMode = CaptureResult.FLASH_MODE_OFF;
+                }
+                if (aeState == null) {
+                    aeState = CaptureResult.CONTROL_AE_STATE_INACTIVE;
+                }
+                if (afState == null) {
+                    afState = CaptureResult.CONTROL_AF_STATE_INACTIVE;
+                }
+                if (awbState == null) {
+                    awbState = CaptureResult.CONTROL_AWB_STATE_INACTIVE;
+                }
 
                 if (timestamp <= mLastCapturedImageTimestamp.get()) {
                     // Don't save frames older than the most
