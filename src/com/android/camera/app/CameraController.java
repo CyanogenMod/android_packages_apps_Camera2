@@ -17,15 +17,14 @@
 package com.android.camera.app;
 
 import android.content.Context;
-import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.camera.CameraDisabledException;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
-import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
+import com.android.ex.camera2.portability.CameraDeviceInfo;
 
 /**
  * A class which implements {@link com.android.camera.app.CameraProvider} used
@@ -206,6 +205,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
 
     @Override
     public void requestCamera(int id, boolean useNewApi) {
+        Log.v(TAG, "requestCamera");
         // Based on
         // (mRequestingCameraId == id, mRequestingCameraId == EMPTY_REQUEST),
         // we have (T, T), (T, F), (F, T), (F, F).
@@ -230,6 +230,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             // No camera yet.
             checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
         } else if (mCameraProxy.getCameraId() != id || mUsingNewApi != useNewApi) {
+            Log.v(TAG, "different camera already opened, closing then reopening");
             // Already has camera opened, and is switching cameras and/or APIs.
             if (mUsingNewApi) {
                 mCameraAgentNg.closeCamera(mCameraProxy, true);
@@ -296,6 +297,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
 
     private static void checkAndOpenCamera(Context context, CameraAgent cameraManager,
             final int cameraId, Handler handler, final CameraAgent.CameraOpenCallback cb) {
+        Log.v(TAG, "checkAndOpenCamera");
         try {
             CameraUtil.throwIfCameraDisabled(context);
             cameraManager.openCamera(handler, cameraId, cb);
