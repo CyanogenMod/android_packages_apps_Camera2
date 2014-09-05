@@ -1,17 +1,15 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package com.android.camera.one.v2;
@@ -63,6 +61,7 @@ import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
 
 import java.nio.ByteBuffer;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -80,10 +79,10 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private static final Tag TAG = new Tag("OneCameraZslImpl2");
 
     /** Default JPEG encoding quality. */
-    private static final int JPEG_QUALITY = CameraProfile.getJpegEncodingQualityParameter(
-            CameraProfile.QUALITY_HIGH);
+    private static final int JPEG_QUALITY =
+            CameraProfile.getJpegEncodingQualityParameter(CameraProfile.QUALITY_HIGH);
     /**
-     * The maximum number of images to store in the full-size ZSL ring buffer.
+     * The maximum number of images to store in the full-size ZSL ring buffer. 
      * <br>
      * TODO: Determine this number dynamically based on available memory and the
      * size of frames.
@@ -172,8 +171,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private final ThreadPoolExecutor mImageSaverThreadPool;
 
     /** Pool of native byte buffers on which to store jpeg-encoded images. */
-    private final Pools.SynchronizedPool<ByteBuffer> mJpegByteBufferPool = new
-            Pools.SynchronizedPool<ByteBuffer>(64);
+    private final Pools.SynchronizedPool<ByteBuffer> mJpegByteBufferPool =
+            new Pools.SynchronizedPool<ByteBuffer>(64);
 
     /** Current zoom value. 1.0 is no zoom. */
     private float mZoomValue = 1f;
@@ -197,8 +196,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * details of how this is managed.
      */
     private static enum ReadyStateRequirement {
-        CAPTURE_MANAGER_READY,
-        CAPTURE_NOT_IN_PROGRESS
+        CAPTURE_MANAGER_READY, CAPTURE_NOT_IN_PROGRESS
     }
 
     /**
@@ -222,15 +220,13 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         private final PhotoCaptureParameters mParams;
         private final CaptureSession mSession;
 
-        public ImageCaptureTask(PhotoCaptureParameters parameters,
-                CaptureSession session) {
+        public ImageCaptureTask(PhotoCaptureParameters parameters, CaptureSession session) {
             mParams = parameters;
             mSession = session;
         }
 
         @Override
-        public void onImageCaptured(Image image, TotalCaptureResult
-                captureResult) {
+        public void onImageCaptured(Image image, TotalCaptureResult captureResult) {
             long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
 
             // We should only capture the image if it's more recent than the
@@ -246,8 +242,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 }
             }
 
-            mReadyStateManager.setInput(
-                    ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, true);
+            mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, true);
 
             mSession.startEmpty();
             savePicture(image, mParams, mSession);
@@ -286,8 +281,9 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mImageSaverThreadPool = new ThreadPoolExecutor(numEncodingCores, numEncodingCores, 10,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
-        mCaptureManager = new ImageCaptureManager(MAX_CAPTURE_IMAGES, mCameraListenerHandler,
-                mImageSaverThreadPool);
+        mCaptureManager =
+                new ImageCaptureManager(MAX_CAPTURE_IMAGES, mCameraListenerHandler,
+                        mImageSaverThreadPool);
         mCaptureManager.setCaptureReadyListener(new ImageCaptureManager.CaptureReadyListener() {
                 @Override
             public void onReadyStateChange(boolean capturePossible) {
@@ -303,9 +299,12 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 @Override
                     public void onImageMetadataChange(Key<?> key, Object oldValue, Object newValue,
                             CaptureResult result) {
-                        mFocusStateListener.onFocusStatusUpdate(
-                                AutoFocusHelper.stateFromCamera2State(
-                                        result.get(CaptureResult.CONTROL_AF_STATE)));
+                        FocusStateListener listener = mFocusStateListener;
+                        if (listener != null) {
+                            listener.onFocusStatusUpdate(
+                                    AutoFocusHelper.stateFromCamera2State(
+                                            result.get(CaptureResult.CONTROL_AF_STATE)));
+                        }
                     }
                 });
 
@@ -328,14 +327,14 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * @return The largest supported picture size.
      */
     public Size getDefaultPictureSize() {
-        StreamConfigurationMap configs = mCharacteristics.get(
-                CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        StreamConfigurationMap configs =
+                mCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         android.util.Size[] supportedSizes = configs.getOutputSizes(sCaptureImageFormat);
 
         // Find the largest supported size.
         android.util.Size largestSupportedSize = supportedSizes[0];
-        long largestSupportedSizePixels = largestSupportedSize.getWidth()
-                * largestSupportedSize.getHeight();
+        long largestSupportedSizePixels =
+                largestSupportedSize.getWidth() * largestSupportedSize.getHeight();
         for (int i = 0; i < supportedSizes.length; i++) {
             long numPixels = supportedSizes[i].getWidth() * supportedSizes[i].getHeight();
             if (numPixels > largestSupportedSizePixels) {
@@ -344,10 +343,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             }
         }
 
-        return new Size(largestSupportedSize.getWidth(),
-                largestSupportedSize.getHeight());
+        return new Size(largestSupportedSize.getWidth(), largestSupportedSize.getHeight());
     }
-
 
     private void onShutterInvokeUI(final PhotoCaptureParameters params) {
         // Tell CaptureModule shutter has occurred so it can flash the screen.
@@ -363,15 +360,14 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     public void takePicture(final PhotoCaptureParameters params, final CaptureSession session) {
         params.checkSanity();
 
-        mReadyStateManager.setInput(
-                ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, false);
+        mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, false);
 
         boolean useZSL = ZSL_ENABLED;
 
         // We will only capture images from the zsl ring-buffer which satisfy
         // this constraint.
-        ArrayList<ImageCaptureManager.CapturedImageConstraint> zslConstraints = new ArrayList<
-                ImageCaptureManager.CapturedImageConstraint>();
+        ArrayList<ImageCaptureManager.CapturedImageConstraint> zslConstraints =
+                new ArrayList<ImageCaptureManager.CapturedImageConstraint>();
         zslConstraints.add(new ImageCaptureManager.CapturedImageConstraint() {
                 @Override
             public boolean satisfiesConstraint(TotalCaptureResult captureResult) {
@@ -433,8 +429,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         });
         // This constraint lets us capture images which have been explicitly
         // requested. See {@link RequestTag.EXPLICIT_CAPTURE}.
-        ArrayList<ImageCaptureManager.CapturedImageConstraint> singleCaptureConstraint = new ArrayList<
-                ImageCaptureManager.CapturedImageConstraint>();
+        ArrayList<ImageCaptureManager.CapturedImageConstraint> singleCaptureConstraint =
+                new ArrayList<ImageCaptureManager.CapturedImageConstraint>();
         singleCaptureConstraint.add(new ImageCaptureManager.CapturedImageConstraint() {
                 @Override
             public boolean satisfiesConstraint(TotalCaptureResult captureResult) {
@@ -478,14 +474,15 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                             new MetadataChangeListener() {
                             @Override
                                 public void onImageMetadataChange(Key<?> key, Object oldValue,
-                                        Object newValue, CaptureResult result) {
+                                        Object newValue,
+                                        CaptureResult result) {
                                     Log.v(TAG, "AE State Changed");
-                                    if (oldValue.equals(
-                                            Integer.valueOf(
-                                                    CaptureResult.CONTROL_AE_STATE_PRECAPTURE))) {
+                                    if (oldValue.equals(Integer.valueOf(
+                                            CaptureResult.CONTROL_AE_STATE_PRECAPTURE))) {
                                         mCaptureManager.removeMetadataChangeListener(key, this);
                                         sendSingleRequest(params);
-                                        // TODO: Delay this until onCaptureStarted().
+                                        // TODO: Delay this until
+                                        // onCaptureStarted().
                                         onShutterInvokeUI(params);
                                     }
                                 }
@@ -551,8 +548,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
     @Override
     public Size[] getSupportedSizes() {
-        StreamConfigurationMap config = mCharacteristics
-                .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        StreamConfigurationMap config =
+                mCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         return Size.convert(config.getOutputSizes(sCaptureImageFormat));
     }
 
@@ -577,34 +574,34 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             CaptureSession session) {
         int heading = captureParams.heading;
 
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int rotation = 0;
+        int degrees = (captureParams.orientation + 270) % 360;
         ExifInterface exif = null;
 
         exif = new ExifInterface();
         // TODO: Add more exif tags here.
 
-        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_X_DIMENSION, width));
-        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_Y_DIMENSION, height));
+        Size size = getImageSizeForOrientation(image.getWidth(), image.getHeight(),
+                degrees);
 
-        // TODO: Handle rotation correctly.
+        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_X_DIMENSION, size.getWidth()));
+        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_Y_DIMENSION, size.getHeight()));
+
+        exif.setTag(
+                exif.buildTag(ExifInterface.TAG_ORIENTATION, ExifInterface.Orientation.TOP_LEFT));
 
         // Set GPS heading direction based on sensor, if location is on.
         if (heading >= 0) {
-            ExifTag directionRefTag = exif.buildTag(
-                    ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
+            ExifTag directionRefTag = exif.buildTag(ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
                     ExifInterface.GpsTrackRef.MAGNETIC_DIRECTION);
-            ExifTag directionTag = exif.buildTag(
-                    ExifInterface.TAG_GPS_IMG_DIRECTION,
-                    new Rational(heading, 1));
+            ExifTag directionTag =
+                    exif.buildTag(ExifInterface.TAG_GPS_IMG_DIRECTION, new Rational(heading, 1));
             exif.setTag(directionRefTag);
             exif.setTag(directionTag);
         }
-
-        session.saveAndFinish(acquireJpegBytes(image), width, height, rotation, exif,
-                new OnMediaSavedListener() {
-                @Override
+        // TODO Find out why this is off by -90 degrees.
+        session.saveAndFinish(acquireJpegBytes(image, degrees),
+                size.getWidth(), size.getHeight(), 0, exif, new OnMediaSavedListener() {
+                        @Override
                     public void onMediaSaved(Uri uri) {
                         captureParams.callback.onPictureSaved(uri);
                     }
@@ -696,8 +693,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 builder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_SINGLE);
                 break;
             case OFF:
-                builder.set(CaptureRequest.CONTROL_AE_MODE,
-                        CaptureRequest.CONTROL_AE_MODE_ON);
+                builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
                 builder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
                 break;
             case AUTO:
@@ -718,8 +714,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         try {
             CaptureRequest.Builder builder;
             if (ZSL_ENABLED) {
-                builder = mDevice.
-                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
             } else {
                 builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             }
@@ -741,8 +736,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
             addRegionsToCaptureRequestBuilder(builder);
 
-            mCaptureSession.setRepeatingRequest(builder.build(), mCaptureManager,
-                    mCameraHandler);
+            mCaptureSession.setRepeatingRequest(builder.build(), mCaptureManager, mCameraHandler);
             return true;
         } catch (CameraAccessException e) {
             if (ZSL_ENABLED) {
@@ -788,8 +782,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                         CameraUtil.getJpegRotation(params.orientation, mCharacteristics));
             }
 
-            mCaptureSession.capture(builder.build(), mCaptureManager,
-                    mCameraHandler);
+            mCaptureSession.capture(builder.build(), mCaptureManager, mCameraHandler);
             return true;
         } catch (CameraAccessException e) {
             Log.v(TAG, "Could not execute single still capture request.", e);
@@ -802,8 +795,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         try {
             CaptureRequest.Builder builder;
             if (ZSL_ENABLED) {
-                builder = mDevice.
-                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
             } else {
                 builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             }
@@ -822,8 +814,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             addRegionsToCaptureRequestBuilder(builder);
             addFlashToCaptureRequestBuilder(builder, flashMode);
 
-            mCaptureSession.capture(builder.build(), mCaptureManager,
-                    mCameraHandler);
+            mCaptureSession.capture(builder.build(), mCaptureManager, mCameraHandler);
 
             return true;
         } catch (CameraAccessException e) {
@@ -839,8 +830,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         try {
             CaptureRequest.Builder builder;
             if (ZSL_ENABLED) {
-                builder = mDevice.
-                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
             } else {
                 builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             }
@@ -858,8 +848,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             builder.set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
             builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
 
-            mCaptureSession.capture(builder.build(), mCaptureManager,
-                    mCameraHandler);
+            mCaptureSession.capture(builder.build(), mCaptureManager, mCameraHandler);
 
             return true;
         } catch (CameraAccessException e) {
@@ -880,8 +869,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         try {
             CaptureRequest.Builder builder;
             if (ZSL_ENABLED) {
-                builder = mDevice.
-                        createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+                builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
             } else {
                 builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             }
@@ -917,9 +905,28 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      *         size.
      */
     private static double calculateFullSizeAspectRatio(CameraCharacteristics characteristics) {
-        Rect activeArraySize =
-                characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+        Rect activeArraySize = characteristics.get(
+                CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
         return (double) activeArraySize.width() / activeArraySize.height();
+    }
+
+    /**
+     * @param originalWidth the width of the original image captured from the
+     *            camera
+     * @param originalHeight the height of the original image captured from the
+     *            camera
+     * @param orientation the rotation to apply, in degrees.
+     * @return The size of the final rotated image
+     */
+    private Size getImageSizeForOrientation(int originalWidth, int originalHeight,
+            int orientation) {
+        if (orientation == 0 || orientation == 180) {
+            return new Size(originalWidth, originalHeight);
+        } else if (orientation == 90 || orientation == 270) {
+            return new Size(originalHeight, originalWidth);
+        } else {
+            throw new InvalidParameterException("Orientation not supported.");
+        }
     }
 
     /**
@@ -928,9 +935,11 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      *
      * @param img the image from which to extract jpeg bytes or compress to
      *            jpeg.
+     * @param degrees the angle to rotate the image, in degrees.  Rotation is
+     *            only applied to YUV images.
      * @return The bytes of the JPEG image. Newly allocated.
      */
-    private byte[] acquireJpegBytes(Image img) {
+    private byte[] acquireJpegBytes(Image img, int degrees) {
         ByteBuffer buffer;
 
         if (img.getFormat() == ImageFormat.JPEG) {
@@ -947,7 +956,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 buffer = ByteBuffer.allocateDirect(img.getWidth() * img.getHeight() * 3);
             }
 
-            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img, buffer, JPEG_QUALITY);
+            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img, buffer, JPEG_QUALITY,
+                    degrees);
 
             if (numBytes < 0) {
                 throw new RuntimeException("Error compressing jpeg.");
