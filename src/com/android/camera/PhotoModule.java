@@ -679,6 +679,7 @@ public class PhotoModule
      * device, using {@link GservicesHelper} to choose between API-1 and API-2.
      */
     private void requestCameraOpen() {
+        Log.v(TAG, "requestCameraOpen");
         mActivity.getCameraProvider().requestCamera(mCameraId,
                 GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity));
     }
@@ -1354,6 +1355,7 @@ public class PhotoModule
 
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
+        Log.v(TAG, "onCameraAvailable");
         if (mPaused) {
             return;
         }
