@@ -63,7 +63,10 @@ import com.android.camera.util.Size;
 import java.nio.ByteBuffer;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -162,10 +165,11 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private ImageCaptureManager mCaptureManager;
 
     /**
-     * The sensor timestamp (which may not be relative to the system time) of
-     * the most recently captured image.
+     * The sensor timestamps (which may not be relative to the system time) of
+     * the most recently captured images.
      */
-    private final AtomicLong mLastCapturedImageTimestamp = new AtomicLong(0);
+    private final Set<Long> mCapturedImageTimestamps = Collections.synchronizedSet(
+            new HashSet<Long>());
 
     /** Thread pool for performing slow jpeg encoding and saving tasks. */
     private final ThreadPoolExecutor mImageSaverThreadPool;
@@ -229,16 +233,31 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         public void onImageCaptured(Image image, TotalCaptureResult captureResult) {
             long timestamp = captureResult.get(CaptureResult.SENSOR_TIMESTAMP);
 
-            // We should only capture the image if it's more recent than the
-            // latest one. Synchronization is necessary since this method is
-            // called on {@link #mImageSaverThreadPool}.
-            synchronized (mLastCapturedImageTimestamp) {
-                if (timestamp > mLastCapturedImageTimestamp.get()) {
-                    mLastCapturedImageTimestamp.set(timestamp);
+            // We should only capture the image if it hasn't been captured
+            // before. Synchronization is necessary since
+            // mCapturedImageTimestamps is read & modified elsewhere.
+            synchronized (mCapturedImageTimestamps) {
+                if (!mCapturedImageTimestamps.contains(timestamp)) {
+                    mCapturedImageTimestamps.add(timestamp);
                 } else {
                     // There was a more recent (or identical) image which has
                     // begun being saved, so abort.
                     return;
+                }
+
+                // Clear out old timestamps from the set.
+                // We must keep old timestamps in the set a little longer (a
+                // factor of 2 seems adequate) to ensure they are cleared out of
+                // the ring buffer before their timestamp is removed from the
+                // set.
+                long maxTimestamps = MAX_CAPTURE_IMAGES * 2;
+                if (mCapturedImageTimestamps.size() > maxTimestamps) {
+                    ArrayList<Long> timestamps = new ArrayList<Long>(mCapturedImageTimestamps);
+                    Collections.sort(timestamps);
+                    for (int i = 0; i < timestamps.size()
+                            && mCapturedImageTimestamps.size() > maxTimestamps; i++) {
+                        mCapturedImageTimestamps.remove(timestamps.get(i));
+                    }
                 }
             }
 
@@ -398,14 +417,11 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     awbState = CaptureResult.CONTROL_AWB_STATE_INACTIVE;
                 }
 
-                if (timestamp <= mLastCapturedImageTimestamp.get()) {
-                    // Don't save frames older than the most
-                    // recently-captured frame.
-                    // TODO This technically has a race condition in which
-                    // duplicate frames may be saved, but if a user is
-                    // tapping at >30Hz, duplicate images may be what they
-                    // expect.
-                    return false;
+                synchronized (mCapturedImageTimestamps) {
+                    if (mCapturedImageTimestamps.contains(timestamp)) {
+                        // Don't save frames which we've already saved.
+                        return false;
+                    }
                 }
 
                 if (lensState == CaptureResult.LENS_STATE_MOVING) {
@@ -954,7 +970,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      *
      * @param img the image from which to extract jpeg bytes or compress to
      *            jpeg.
-     * @param degrees the angle to rotate the image, in degrees.  Rotation is
+     * @param degrees the angle to rotate the image, in degrees. Rotation is
      *            only applied to YUV images.
      * @return The bytes of the JPEG image. Newly allocated.
      */
