@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2;
 
+import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -36,6 +37,8 @@ import com.android.camera.util.Size;
  */
 public class OneCameraManagerImpl extends OneCameraManager {
     private static final Tag TAG = new Tag("OneCameraMgrImpl2");
+
+    private final Context mContext;
     private final CameraManager mCameraManager;
     private final int mMaxMemoryMB;
     private final DisplayMetrics mDisplayMetrics;
@@ -48,8 +51,9 @@ public class OneCameraManagerImpl extends OneCameraManager {
      * @param maxMemoryMB maximum amount of memory opened cameras should consume
      *            during capture and processing, in megabytes.
      */
-    public OneCameraManagerImpl(CameraManager cameraManager, int maxMemoryMB,
+    public OneCameraManagerImpl(Context context, CameraManager cameraManager, int maxMemoryMB,
             DisplayMetrics displayMetrics, SoundPlayer soundPlayer) {
+        mContext = context;
         mCameraManager = cameraManager;
         mMaxMemoryMB = maxMemoryMB;
         mDisplayMetrics = displayMetrics;
@@ -80,7 +84,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
                         CameraCharacteristics characteristics = mCameraManager
                                 .getCameraCharacteristics(device.getId());
                         // TODO: Set boolean based on whether HDR+ is enabled.
-                        OneCamera oneCamera = OneCameraCreator.create(useHdr, device,
+                        OneCamera oneCamera = OneCameraCreator.create(mContext, useHdr, device,
                                 characteristics, pictureSize, mMaxMemoryMB, mDisplayMetrics,
                                 mSoundPlayer);
                         openCallback.onCameraOpened(oneCamera);
