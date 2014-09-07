@@ -305,7 +305,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                             CaptureResult result) {
                         mFocusStateListener.onFocusStatusUpdate(
                                 AutoFocusHelper.stateFromCamera2State(
-                                        result.get(CaptureResult.CONTROL_AF_STATE)));
+                                        result.get(CaptureResult.CONTROL_AF_STATE)),
+                                result.getFrameNumber());
                     }
                 });
 

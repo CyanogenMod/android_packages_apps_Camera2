@@ -25,7 +25,6 @@ import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.android.camera.debug.Log;
 import com.android.camera.ui.CountDownView;
@@ -33,7 +32,6 @@ import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewOverlay.OnZoomChangedListener;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.ProgressOverlay;
-import com.android.camera.util.UsageStatistics;
 import com.android.camera2.R;
 
 /**
@@ -197,6 +195,14 @@ public class CaptureModuleUI implements
 
     public void showAutoFocusFailure() {
         mFocusUI.onFocusFailed();
+    }
+
+    public void setPassiveFocusSuccess(boolean success) {
+        mFocusUI.setPassiveFocusSuccess(success);
+    }
+
+    public void showDebugMessage(String message) {
+        mFocusUI.showDebugMessage(message);
     }
 
     public void setAutoFocusTarget(int x, int y, boolean isPassiveScan, int afSize, int aeSize) {

@@ -615,7 +615,7 @@ public class OneCameraImpl extends AbstractOneCamera {
 
         // Report state change when AF state has changed.
         if (resultAFState != mLastResultAFState && mFocusStateListener != null) {
-            mFocusStateListener.onFocusStatusUpdate(resultAFState);
+            mFocusStateListener.onFocusStatusUpdate(resultAFState, result.getFrameNumber());
         }
         mLastResultAFState = resultAFState;
     }
