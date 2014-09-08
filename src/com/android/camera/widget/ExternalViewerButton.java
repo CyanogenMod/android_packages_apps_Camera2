@@ -110,7 +110,7 @@ public class ExternalViewerButton extends ImageButton {
     /**
      * Sets all the clings to be invisible.
      */
-    private void hideClings() {
+    public void hideClings() {
         for (int i = 0; i < mClingMap.size(); i++) {
             mClingMap.valueAt(i).setVisibility(View.INVISIBLE);
         }
@@ -134,11 +134,12 @@ public class ExternalViewerButton extends ImageButton {
      * Updates the visibility of clings based on whether the button is currently
      * shown.
      */
-    private void updateClingVisibility() {
+    public void updateClingVisibility() {
         hideClings();
         if (isShown()) {
-            View cling = mClingMap.get(mState);
+            Cling cling = mClingMap.get(mState);
             if (cling != null) {
+                cling.adjustPosition();
                 cling.setVisibility(View.VISIBLE);
             }
         }
