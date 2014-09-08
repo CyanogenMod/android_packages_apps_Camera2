@@ -1420,9 +1420,11 @@ public class PhotoModule
                     outputStream.write(data);
                     outputStream.close();
 
+                    Log.v(TAG, "saved result to URI: " + mSaveUri);
                     mActivity.setResultEx(Activity.RESULT_OK);
                     mActivity.finish();
                 } catch (IOException ex) {
+                    Log.w(TAG, "exception saving result to URI: " + mSaveUri, ex);
                     // ignore exception
                 } finally {
                     CameraUtil.closeSilently(outputStream);
@@ -1432,6 +1434,7 @@ public class PhotoModule
                 int orientation = Exif.getOrientation(exif);
                 Bitmap bitmap = CameraUtil.makeBitmap(data, 50 * 1024);
                 bitmap = CameraUtil.rotate(bitmap, orientation);
+                Log.v(TAG, "inlined bitmap into capture intent result");
                 mActivity.setResultEx(Activity.RESULT_OK,
                         new Intent("inline-data").putExtra("data", bitmap));
                 mActivity.finish();
@@ -1447,11 +1450,14 @@ public class PhotoModule
                 tempStream.write(data);
                 tempStream.close();
                 tempUri = Uri.fromFile(path);
+                Log.v(TAG, "wrote temp file for cropping to: " + sTempCropFilename);
             } catch (FileNotFoundException ex) {
+                Log.w(TAG, "error writing temp cropping file to: " + sTempCropFilename, ex);
                 mActivity.setResultEx(Activity.RESULT_CANCELED);
                 mActivity.finish();
                 return;
             } catch (IOException ex) {
+                Log.w(TAG, "error writing temp cropping file to: " + sTempCropFilename, ex);
                 mActivity.setResultEx(Activity.RESULT_CANCELED);
                 mActivity.finish();
                 return;
@@ -1464,6 +1470,7 @@ public class PhotoModule
                 newExtras.putString("circleCrop", "true");
             }
             if (mSaveUri != null) {
+                Log.v(TAG, "setting output of cropped file to: " + mSaveUri);
                 newExtras.putParcelable(MediaStore.EXTRA_OUTPUT, mSaveUri);
             } else {
                 newExtras.putBoolean(CameraUtil.KEY_RETURN_DATA, true);
@@ -1478,7 +1485,7 @@ public class PhotoModule
 
             cropIntent.setData(tempUri);
             cropIntent.putExtras(newExtras);
-
+            Log.v(TAG, "starting CROP intent for capture");
             mActivity.startActivityForResult(cropIntent, REQUEST_CROP);
         }
     }
