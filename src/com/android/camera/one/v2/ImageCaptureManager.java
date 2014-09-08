@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * they are passed in from the lower-level camera2 API.
  */
 @TargetApi(Build.VERSION_CODES.L)
-public class ImageCaptureManager extends CameraCaptureSession.CaptureListener implements
+public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback implements
         ImageReader.OnImageAvailableListener {
     /**
      * Callback to listen for changes to the ability to capture an existing
