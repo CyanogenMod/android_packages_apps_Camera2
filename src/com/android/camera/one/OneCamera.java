@@ -204,8 +204,9 @@ public interface OneCamera {
          * Called when state of auto focus system changes.
          *
          * @param state Current auto focus state.
+         * @param frameNumber Frame number if available.
          */
-        public void onFocusStatusUpdate(AutoFocusState state);
+        public void onFocusStatusUpdate(AutoFocusState state, long frameNumber);
     }
 
     /**
