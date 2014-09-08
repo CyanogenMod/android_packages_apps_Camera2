@@ -318,12 +318,19 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 @Override
                     public void onImageMetadataChange(Key<?> key, Object oldValue, Object newValue,
                             CaptureResult result) {
+<<<<<<< HEAD
                         FocusStateListener listener = mFocusStateListener;
                         if (listener != null) {
                             listener.onFocusStatusUpdate(
                                     AutoFocusHelper.stateFromCamera2State(
                                             result.get(CaptureResult.CONTROL_AF_STATE)));
                         }
+=======
+                        mFocusStateListener.onFocusStatusUpdate(
+                                AutoFocusHelper.stateFromCamera2State(
+                                        result.get(CaptureResult.CONTROL_AF_STATE)),
+                                result.getFrameNumber());
+>>>>>>> 6281a794
                     }
                 });
 

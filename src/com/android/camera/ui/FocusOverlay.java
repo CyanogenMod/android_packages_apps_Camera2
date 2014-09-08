@@ -48,15 +48,16 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
     private final Rect mBounds = new Rect();
     private final ValueAnimator mFocusAnimation = new ValueAnimator();
 
-    private Paint mDebugPaint;
-    private Paint mDebugAEPaint;
+    private Paint mDebugSolidPaint;
+    private Paint mDebugCornersPaint;
+    private Paint mDebugTextPaint;
     private int mDebugStartColor;
-    private int mDebugPassiveColor;
     private int mDebugSuccessColor;
     private int mDebugFailColor;
-    private Rect mFocusDebugAFRect;
-    private Rect mFocusDebugAERect;
+    private Rect mFocusDebugSolidRect;
+    private Rect mFocusDebugCornersRect;
     private boolean mIsPassiveScan;
+    private String mDebugMessage;
 
     private int mPositionX;
     private int mPositionY;
@@ -75,18 +76,20 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         if (CAPTURE_DEBUG_UI) {
             Resources res = getResources();
             mDebugStartColor = res.getColor(R.color.focus_debug);
-            mDebugPassiveColor = res.getColor(R.color.focus_debug_light);
             mDebugSuccessColor = res.getColor(R.color.focus_debug_success);
             mDebugFailColor = res.getColor(R.color.focus_debug_fail);
-            mDebugPaint = new Paint();
-            mDebugPaint.setColor(res.getColor(R.color.focus_debug));
-            mDebugPaint.setAntiAlias(true);
-            mDebugPaint.setStyle(Paint.Style.STROKE);
-            mDebugPaint.setStrokeWidth(res.getDimension(R.dimen.focus_debug_stroke));
-            mDebugAEPaint = new Paint(mDebugPaint);
-            mDebugAEPaint.setColor(res.getColor(R.color.focus_debug));
-            mFocusDebugAFRect = new Rect();
-            mFocusDebugAERect = new Rect();
+            mDebugTextPaint= new Paint();
+            mDebugTextPaint.setColor(res.getColor(R.color.focus_debug_text));
+            mDebugTextPaint.setStyle(Paint.Style.FILL);
+            mDebugSolidPaint = new Paint();
+            mDebugSolidPaint.setColor(res.getColor(R.color.focus_debug));
+            mDebugSolidPaint.setAntiAlias(true);
+            mDebugSolidPaint.setStyle(Paint.Style.STROKE);
+            mDebugSolidPaint.setStrokeWidth(res.getDimension(R.dimen.focus_debug_stroke));
+            mDebugCornersPaint = new Paint(mDebugSolidPaint);
+            mDebugCornersPaint.setColor(res.getColor(R.color.focus_debug));
+            mFocusDebugSolidRect = new Rect();
+            mFocusDebugCornersRect = new Rect();
         }
     }
 
@@ -122,15 +125,24 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
 
         if (CAPTURE_DEBUG_UI) {
             mFocusOuterRing.setBounds(0, 0, 0, 0);
-            mFocusDebugAFRect.set(x - aFsize / 2, y - aFsize / 2, x + aFsize / 2, y + aFsize / 2);
-            // If AE region is different size than AF region and active scan.
-            if (aFsize != aEsize && !isPassiveScan) {
-                mFocusDebugAERect.set(x - aEsize / 2, y - aEsize / 2, x + aEsize / 2,
-                        y + aEsize / 2);
+            if (isPassiveScan) {
+                // Use AE rect only.
+                mFocusDebugSolidRect.setEmpty();
+                int avg = (aFsize + aEsize) / 2;
+                mFocusDebugCornersRect.set(x - avg / 2, y - avg / 2, x + avg / 2, y + avg / 2);
             } else {
-                mFocusDebugAERect.set(0, 0, 0, 0);
+                mFocusDebugSolidRect.set(x - aFsize / 2, y - aFsize / 2, x + aFsize / 2,
+                        y + aFsize / 2);
+                // If AE region is different size than AF region and active scan.
+                if (aFsize != aEsize) {
+                    mFocusDebugCornersRect.set(x - aEsize / 2, y - aEsize / 2, x + aEsize / 2,
+                            y + aEsize / 2);
+                } else {
+                    mFocusDebugCornersRect.setEmpty();
+                }
             }
-            mDebugPaint.setColor(isPassiveScan ? mDebugPassiveColor : mDebugStartColor);
+            mDebugSolidPaint.setColor(mDebugStartColor);
+            mDebugCornersPaint.setColor(mDebugStartColor);
         }
 
         if (getVisibility() != VISIBLE) {
@@ -139,6 +151,15 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
         invalidate();
     }
 
+    /**
+     * This is called in:
+     * <ul>
+     * <li>API1 non-CAF after autoFocus().</li>
+     * <li>API1 CAF mode for onAutoFocusMoving(true).</li>
+     * <li>API2 for transition to ACTIVE_SCANNING or PASSIVE_SCANNING.</li>
+     * <ul>
+     * TODO after PhotoModule/GcamModule deprecation: Do not use this for CAF.
+     */
     @Override
     public void onFocusStarted() {
         mShowIndicator = true;
@@ -152,26 +173,66 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
             }
         });
         mFocusAnimation.start();
+        if (CAPTURE_DEBUG_UI) {
+            mDebugMessage = null;
+        }
     }
 
+    /**
+     * This is called in:
+     * <ul>
+     * <li>API1 non-CAF for onAutoFocus(true).</li>
+     * <li>API2 non-CAF for transition to FOCUSED_LOCKED.</li>
+     * <li>API1 CAF mode for onAutoFocusMoving(false).</li>
+     * <ul>
+     * TODO after PhotoModule/GcamModule deprecation: Do not use this for CAF.
+     */
     @Override
     public void onFocusSucceeded() {
         mFocusAnimation.cancel();
         mShowIndicator = false;
         if (CAPTURE_DEBUG_UI && !mIsPassiveScan) {
-            mDebugPaint.setColor(mDebugSuccessColor);
+            mDebugSolidPaint.setColor(mDebugSuccessColor);
         }
         invalidate();
     }
 
+    /**
+     * This is called in:
+     * <ul>
+     * <li>API1 non-CAF for onAutoFocus(false).</li>
+     * <li>API2 non-CAF for transition to NOT_FOCUSED_LOCKED.</li>
+     * <ul>
+     */
     @Override
     public void onFocusFailed() {
         mFocusAnimation.cancel();
         mShowIndicator = false;
         if (CAPTURE_DEBUG_UI && !mIsPassiveScan) {
-            mDebugPaint.setColor(mDebugFailColor);
+            mDebugSolidPaint.setColor(mDebugFailColor);
         }
         invalidate();
+    }
+
+    /**
+     * This is called in:
+     * API2 for CAF state changes to PASSIVE_FOCUSED or PASSIVE_UNFOCUSED.
+     */
+    @Override
+    public void setPassiveFocusSuccess(boolean success) {
+        mFocusAnimation.cancel();
+        mShowIndicator = false;
+        if (CAPTURE_DEBUG_UI) {
+            mDebugCornersPaint.setColor(success ? mDebugSuccessColor : mDebugFailColor);
+        }
+        invalidate();
+    }
+
+    @Override
+    public void showDebugMessage(String message) {
+        if (CAPTURE_DEBUG_UI) {
+            mDebugMessage = message;
+        }
     }
 
     @Override
@@ -195,18 +256,23 @@ public class FocusOverlay extends View implements FocusOverlayManager.FocusUI {
             mFocusIndicator.draw(canvas);
             canvas.restore();
         }
-        if (CAPTURE_DEBUG_UI && mFocusDebugAFRect != null) {
-            canvas.drawRect(mFocusDebugAFRect, mDebugPaint);
-            float delta = 0.1f * mFocusDebugAERect.width();
-            float left = mFocusDebugAERect.left;
-            float top = mFocusDebugAERect.top;
-            float right = mFocusDebugAERect.right;
-            float bot = mFocusDebugAERect.bottom;
+        if (CAPTURE_DEBUG_UI) {
+            canvas.drawRect(mFocusDebugSolidRect, mDebugSolidPaint);
+            float delta = 0.1f * mFocusDebugCornersRect.width();
+            float left = mFocusDebugCornersRect.left;
+            float top = mFocusDebugCornersRect.top;
+            float right = mFocusDebugCornersRect.right;
+            float bot = mFocusDebugCornersRect.bottom;
 
-            canvas.drawLines(new float[]{left, top + delta, left, top, left, top, left + delta, top}, mDebugAEPaint);
-            canvas.drawLines(new float[]{right, top + delta, right, top, right, top, right - delta, top}, mDebugAEPaint);
-            canvas.drawLines(new float[]{left, bot - delta, left, bot, left, bot, left + delta, bot}, mDebugAEPaint);
-            canvas.drawLines(new float[]{right, bot - delta, right, bot, right, bot, right - delta, bot}, mDebugAEPaint);
+            canvas.drawLines(new float[]{left, top + delta, left, top, left, top, left + delta, top}, mDebugCornersPaint);
+            canvas.drawLines(new float[]{right, top + delta, right, top, right, top, right - delta, top}, mDebugCornersPaint);
+            canvas.drawLines(new float[]{left, bot - delta, left, bot, left, bot, left + delta, bot}, mDebugCornersPaint);
+            canvas.drawLines(new float[]{right, bot - delta, right, bot, right, bot, right - delta, bot}, mDebugCornersPaint);
+
+            if (mDebugMessage != null) {
+                mDebugTextPaint.setTextSize(40);
+                canvas.drawText(mDebugMessage, left - 4, bot + 44, mDebugTextPaint);
+            }
         }
     }
 }
