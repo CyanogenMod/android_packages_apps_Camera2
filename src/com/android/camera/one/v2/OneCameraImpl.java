@@ -157,7 +157,7 @@ public class OneCameraImpl extends AbstractOneCamera {
             CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request,
-                                             long timestamp) {
+                                             long timestamp, long frameNumber) {
                     if (request.getTag() == RequestTag.CAPTURE && mLastPictureCallback != null) {
                         mLastPictureCallback.onQuickExpose();
                     }
