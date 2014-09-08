@@ -37,6 +37,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
@@ -917,9 +918,14 @@ public class VideoModule extends CameraModule
         }
         try {
             mCameraDevice.setPreviewTexture(surfaceTexture);
-            mCameraDevice.startPreview();
+            mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
+                    new CameraAgent.CameraStartPreviewCallback() {
+                @Override
+                public void onPreviewStarted() {
+                    VideoModule.this.onPreviewStarted();
+                }
+            });
             mPreviewing = true;
-            onPreviewStarted();
         } catch (Throwable ex) {
             closeCamera();
             throw new RuntimeException("startPreview failed", ex);
