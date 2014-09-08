@@ -16,6 +16,9 @@
 
 package com.android.camera.app;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -269,17 +272,29 @@ class FilmstripBottomPanel implements CameraAppUI.BottomPanel {
     }
 
     public void show() {
-        if (mLayout.getTranslationY() > 0) {
-            mLayout.animate().translationY(0).setDuration(ANIM_DURATION)
-                    .setInterpolator(Gusterpolator.INSTANCE);
-        }
+        ObjectAnimator animator = ObjectAnimator
+                .ofFloat(mLayout, "translationY", mLayout.getHeight(), 0.0f);
+        animator.setDuration(ANIM_DURATION);
+        animator.setInterpolator(Gusterpolator.INSTANCE);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mViewButton.updateClingVisibility();
+            }
+        });
+        mViewButton.hideClings();
+        animator.start();
     }
 
     public void hide() {
         int offset = mLayout.getHeight();
         if (mLayout.getTranslationY() < offset) {
-            mLayout.animate().translationY(offset).setDuration(ANIM_DURATION)
-                    .setInterpolator(Gusterpolator.INSTANCE);
+            ObjectAnimator animator = ObjectAnimator
+                    .ofFloat(mLayout, "translationY", mLayout.getTranslationY(), offset);
+            animator.setDuration(ANIM_DURATION);
+            animator.setInterpolator(Gusterpolator.INSTANCE);
+            mViewButton.hideClings();
+            animator.start();
         }
     }
 }

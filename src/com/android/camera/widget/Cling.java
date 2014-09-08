@@ -76,7 +76,7 @@ public class Cling extends TextView {
     /**
      * Adjust the translation of the cling to stay on top of the reference view.
      */
-    private void adjustPosition() {
+    public void adjustPosition() {
         if (mReferenceView == null) {
             return;
         }
