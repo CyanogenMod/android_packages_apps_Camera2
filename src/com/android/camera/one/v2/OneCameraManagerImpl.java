@@ -66,7 +66,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
         try {
             final String cameraId = getCameraId(facing);
             Log.i(TAG, "Opening Camera ID " + cameraId);
-            mCameraManager.openCamera(cameraId, new CameraDevice.StateListener() {
+            mCameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
 
                 @Override
                 public void onDisconnected(CameraDevice device) {
