@@ -834,7 +834,6 @@ public class CaptureModule extends CameraModule
     @Override
     public void onPictureTaken(CaptureSession session) {
         mAppController.getCameraAppUI().enableModeOptions();
-        mAppController.getCameraAppUI().setShutterButtonEnabled(true);
     }
 
     @Override
