@@ -30,6 +30,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
@@ -201,6 +202,10 @@ public class CaptureModule extends CameraModule
 
     /** True if in AF tap-to-focus sequence. */
     private boolean mTapToFocusWaitForActiveScan = false;
+    /** Records beginning frame of each AF scan. */
+    private long mAutoFocusScanStartFrame = -1;
+    /** Records beginning time of each AF scan in uptimeMillis. */
+    private long mAutoFocusScanStartTime;
 
     /** Persistence of Tap to Focus target UI after scan complete. */
     private static final int FOCUS_HOLD_UI_MILLIS = 0;
@@ -768,13 +773,14 @@ public class CaptureModule extends CameraModule
                 true,
                 (int) (Settings3A.getAutoFocusRegionWidth() * mZoomValue * minEdge),
                 (int) (Settings3A.getMeteringRegionWidth() * mZoomValue * minEdge));
+        mUI.showAutoFocusInProgress();
     }
 
     /**
      * Update UI based on AF state changes.
      */
     @Override
-    public void onFocusStatusUpdate(final AutoFocusState state) {
+    public void onFocusStatusUpdate(final AutoFocusState state, long frameNumber) {
         Log.v(TAG, "AF status is state:" + state);
 
         switch (state) {
@@ -784,7 +790,6 @@ public class CaptureModule extends CameraModule
                     @Override
                     public void run() {
                         setAutoFocusTargetPassive();
-                        mUI.showAutoFocusInProgress();
                     }
                 });
                 break;
@@ -796,8 +801,7 @@ public class CaptureModule extends CameraModule
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        setAutoFocusTargetPassive();
-                        mMainHandler.post(mHideAutoFocusTargetRunnable);
+                        mUI.setPassiveFocusSuccess(state == AutoFocusState.PASSIVE_FOCUSED);
                     }
                 });
                 break;
@@ -807,6 +811,40 @@ public class CaptureModule extends CameraModule
                     mFocusedAtEnd = state != AutoFocusState.ACTIVE_UNFOCUSED;
                     mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
                     mMainHandler.post(mHideAutoFocusTargetRunnable);
+                }
+                break;
+        }
+
+        if (CAPTURE_DEBUG_UI) {
+            measureAutoFocusScans(state, frameNumber);
+        }
+    }
+
+    private void measureAutoFocusScans(final AutoFocusState state, long frameNumber) {
+        // Log AF scan lengths.
+        boolean passive = false;
+        switch (state) {
+            case PASSIVE_SCAN:
+            case ACTIVE_SCAN:
+                if (mAutoFocusScanStartFrame == -1) {
+                    mAutoFocusScanStartFrame = frameNumber;
+                    mAutoFocusScanStartTime = SystemClock.uptimeMillis();
+                }
+                break;
+            case PASSIVE_FOCUSED:
+            case PASSIVE_UNFOCUSED:
+                passive = true;
+            case ACTIVE_FOCUSED:
+            case ACTIVE_UNFOCUSED:
+                if (mAutoFocusScanStartFrame != -1) {
+                    long frames = frameNumber - mAutoFocusScanStartFrame;
+                    long dt = SystemClock.uptimeMillis() - mAutoFocusScanStartTime;
+                    int fps = Math.round(frames * 1000f / dt);
+                    String report = String.format("%s scan: fps=%d frames=%d",
+                            passive ? "CAF" : "AF", fps, frames);
+                    Log.v(TAG, report);
+                    mUI.showDebugMessage(String.format("%d / %d", frames, fps));
+                    mAutoFocusScanStartFrame = -1;
                 }
                 break;
         }
