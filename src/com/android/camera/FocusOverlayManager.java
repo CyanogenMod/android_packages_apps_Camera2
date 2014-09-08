@@ -118,6 +118,8 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         public void onFocusStarted();
         public void onFocusSucceeded();
         public void onFocusFailed();
+        public void setPassiveFocusSuccess(boolean success);
+        public void showDebugMessage(String message);
         public void pauseFaceDetection();
         public void resumeFaceDetection();
     }
