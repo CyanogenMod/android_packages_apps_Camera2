@@ -90,7 +90,7 @@
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"ကင်မရာရိုက်ကူးမှုဆက်တင်များ"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"ပုံအရွယ်အစား"</string>
     <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"ကြီးမားသော"</string>
-    <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"အလယ်အလတ်"</string>
+    <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"အတော်အသင့်"</string>
     <string name="pref_camera_picturesize_entry_small" msgid="2991239656622539068">"သေးငယ်သော"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"အာရုံစိုက်နေခြင်း"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"အလိုအလျောက်"</string>
@@ -285,7 +285,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"ကြားမြင့်ချိန်"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"ထောင့်ကျယ်"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"မြင်ကွင်းကျယ်"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"မှန်ဘလူးအားဝေဝါးခြင်း"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"မှန်ဘီလူးဝါးဝါး"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"ကင်မရာစနစ်အားပြောင်းရန်"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"ဗီဒီယိုကင်မရာသို့ပြောင်းရန်"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Photo Sphereစနစ်အားပြောင်းရန်"</string>
