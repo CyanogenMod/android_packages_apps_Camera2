@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">AMÉLIORER</string>
   <string name="camera_menu_slow_shutter_label">OBTURATION LENTE</string>
   <string name="camera_menu_beauty_mode_label">EMBELLIR</string>
-  <string name="camera_menu_colorize_label">COLORER</string>
-  <string name="camera_menu_effects_label">EFFETS</string>
   <string name="camera_menu_asd_label">SCÈNE INTELLIGENTE</string>
   <string name="pref_camera_power_shutter_title">Bouton marche</string>
   <string name="pref_superzoom_title">Magnifier</string>

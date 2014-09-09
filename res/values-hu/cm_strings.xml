@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">KIEMELÉS</string>
   <string name="camera_menu_slow_shutter_label">HOSSZÚ ZÁRIDŐ</string>
   <string name="camera_menu_beauty_mode_label">EFFEKTEK</string>
-  <string name="camera_menu_colorize_label">SZÍNEZÉS</string>
-  <string name="camera_menu_effects_label">EFFEKTEK</string>
   <string name="camera_menu_asd_label">OKOS KÉP</string>
   <string name="pref_camera_power_shutter_title">Bekapcsoló gombbal exponálás</string>
   <string name="pref_superzoom_title">Nagyítás</string>

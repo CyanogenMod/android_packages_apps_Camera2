@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">補正</string>
   <string name="camera_menu_slow_shutter_label">スローシャッター</string>
   <string name="camera_menu_beauty_mode_label">ビューティー化</string>
-  <string name="camera_menu_colorize_label">カラー化</string>
-  <string name="camera_menu_effects_label">効果</string>
   <string name="camera_menu_asd_label">スマートシーン</string>
   <string name="pref_camera_power_shutter_title">電源シャッター</string>
   <string name="pref_superzoom_title">拡大</string>

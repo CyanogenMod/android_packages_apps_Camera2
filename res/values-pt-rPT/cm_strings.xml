@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">MELHORAR</string>
   <string name="camera_menu_slow_shutter_label">DISPARO LENTO</string>
   <string name="camera_menu_beauty_mode_label">EMBELEZAR</string>
-  <string name="camera_menu_colorize_label">COLORIR</string>
-  <string name="camera_menu_effects_label">EFEITOS</string>
   <string name="camera_menu_asd_label">CENA INTELIGENTE</string>
   <string name="pref_camera_power_shutter_title">Disparar com botão de ligar</string>
   <string name="pref_superzoom_title">Ampliar</string>

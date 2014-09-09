@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">增强</string>
   <string name="camera_menu_slow_shutter_label">低速快门</string>
   <string name="camera_menu_beauty_mode_label">美肤</string>
-  <string name="camera_menu_colorize_label">着色</string>
-  <string name="camera_menu_effects_label">效果</string>
   <string name="camera_menu_asd_label">智能场景</string>
   <string name="pref_camera_power_shutter_title">电源键快门</string>
   <string name="pref_superzoom_title">放大</string>

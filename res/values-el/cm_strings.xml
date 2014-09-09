@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">ΒΕΛΤΙΩΣΗ</string>
   <string name="camera_menu_slow_shutter_label">ΑΡΓΟ ΚΛΕΙΣΤΡΟ</string>
   <string name="camera_menu_beauty_mode_label">ΟΜΟΡΦΙΑ</string>
-  <string name="camera_menu_colorize_label">ΧΡΩΜΑΤΙΣΜΟΣ</string>
-  <string name="camera_menu_effects_label">ΕΦΕ</string>
   <string name="camera_menu_asd_label">ΕΞΥΠΝΗ ΣΚΗΝΗ</string>
   <string name="pref_camera_power_shutter_title">Κλείστρο power</string>
   <string name="pref_superzoom_title">Μεγέθυνση</string>

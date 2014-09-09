@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">VERBETER</string>
   <string name="camera_menu_slow_shutter_label">STADIGE SLUITER</string>
   <string name="camera_menu_beauty_mode_label">VERFRAAI</string>
-  <string name="camera_menu_colorize_label">VERKLEUR</string>
-  <string name="camera_menu_effects_label">EFFEKTE</string>
   <string name="camera_menu_asd_label">MOOI TONEEL</string>
   <string name="pref_camera_power_shutter_title">Krag knoppie</string>
   <string name="pref_superzoom_title">Vergroot</string>
