@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">VERBESSERN</string>
   <string name="camera_menu_slow_shutter_label">LANGE BELICHTEN</string>
   <string name="camera_menu_beauty_mode_label">VERSCHÖNERN</string>
-  <string name="camera_menu_colorize_label">EINFÄRBEN</string>
-  <string name="camera_menu_effects_label">EFFEKTE</string>
   <string name="camera_menu_asd_label">AUTOM. SZENE</string>
   <string name="pref_camera_power_shutter_title">Auslöser</string>
   <string name="pref_superzoom_title">Vergrößern</string>

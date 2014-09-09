@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">උසස් කරන්න</string>
   <string name="camera_menu_slow_shutter_label">ප්‍රමාදී ශටරය</string>
   <string name="camera_menu_beauty_mode_label">ලස්සණ කිරීම</string>
-  <string name="camera_menu_colorize_label">පැහැගැන්වීම</string>
-  <string name="camera_menu_effects_label">ප්‍රතිවිපාක</string>
   <string name="camera_menu_asd_label">දැකුම්කලු දර්ශනය</string>
   <string name="pref_camera_power_shutter_title">බල ශටරය</string>
   <string name="pref_superzoom_title">විශාලනය කරන්න</string>

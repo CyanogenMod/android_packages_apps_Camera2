@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">ПОКРАЩЕННЯ</string>
   <string name="camera_menu_slow_shutter_label">ПОВІЛЬНИЙ ЗАТВОР</string>
   <string name="camera_menu_beauty_mode_label">ПОКРАЩЕННЯ</string>
-  <string name="camera_menu_colorize_label">РОЗФАРБУВАТИ</string>
-  <string name="camera_menu_effects_label">ЕФЕКТИ</string>
   <string name="camera_menu_asd_label">РОЗПІЗНАВАННЯ УМОВИ ЗЙОМКИ</string>
   <string name="pref_camera_power_shutter_title">Зйомка кноп. живлення</string>
   <string name="pref_superzoom_title">Збільшення</string>

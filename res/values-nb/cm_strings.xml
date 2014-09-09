@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">FORBEDRE</string>
   <string name="camera_menu_slow_shutter_label">LANGSOM LUKKER</string>
   <string name="camera_menu_beauty_mode_label">FORSKJØNNE</string>
-  <string name="camera_menu_colorize_label">FARGELEGGE</string>
-  <string name="camera_menu_effects_label">EFFEKTER</string>
   <string name="camera_menu_asd_label">SMART SCENE</string>
   <string name="pref_camera_power_shutter_title">Påknapp som utløser</string>
   <string name="pref_superzoom_title">Forstørre</string>

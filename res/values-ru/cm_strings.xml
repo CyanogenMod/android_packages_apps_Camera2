@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">УЛУЧШЕНИЕ</string>
   <string name="camera_menu_slow_shutter_label">ДЛИТ. ВЫДЕРЖКА</string>
   <string name="camera_menu_beauty_mode_label">АВТОУЛУЧШЕНИЕ</string>
-  <string name="camera_menu_colorize_label">ОКРАСКА</string>
-  <string name="camera_menu_effects_label">ЭФФЕКТЫ</string>
   <string name="camera_menu_asd_label">РАСПОЗН. УСЛОВИЙ СЪЕМКИ</string>
   <string name="pref_camera_power_shutter_title">Съёмка кн. питания</string>
   <string name="pref_superzoom_title">Увеличение</string>

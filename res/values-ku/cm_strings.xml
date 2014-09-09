@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">زیادکردن</string>
   <string name="camera_menu_slow_shutter_label">وێنه‌گرتنێکی خاوتر</string>
   <string name="camera_menu_beauty_mode_label">جوانکاری</string>
-  <string name="camera_menu_colorize_label">ڕه‌نگاوڕه‌نگ</string>
-  <string name="camera_menu_effects_label">کاریگه‌رییه‌کان</string>
   <string name="camera_menu_asd_label">دیمه‌نی به‌هێز</string>
   <string name="pref_camera_power_shutter_title">هێزی وێنه‌ گیره‌ر</string>
   <string name="pref_superzoom_title">زه‌ڕه‌بین</string>

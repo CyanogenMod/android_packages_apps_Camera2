@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">ПОБОЉШАЊЕ</string>
   <string name="camera_menu_slow_shutter_label">СПОРИ ОКИДАЧ</string>
   <string name="camera_menu_beauty_mode_label">УЛЕПШАВАЊЕ</string>
-  <string name="camera_menu_colorize_label">ОБОЈЕНОСТ</string>
-  <string name="camera_menu_effects_label">ЕФЕКТИ</string>
   <string name="camera_menu_asd_label">ПАМЕТНА СЦЕНА</string>
   <string name="pref_camera_power_shutter_title">Алтернативни окидач</string>
   <string name="pref_superzoom_title">Увеличај</string>

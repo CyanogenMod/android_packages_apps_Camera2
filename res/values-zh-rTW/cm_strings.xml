@@ -69,6 +69,7 @@
   <string name="pref_camera_focusmode_entry_facedetect">臉部偵測</string>
   <string name="pref_camera_focusmode_entry_facepriority">臉部優先</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">超焦距</string>
+  <string name="pref_camera_burst_entry_off">關閉</string>
   <string name="pref_camera_burst_entry_5">5 連拍</string>
   <string name="pref_camera_burst_entry_10">10 連拍</string>
   <string name="pref_camera_burst_entry_15">15 連拍</string>

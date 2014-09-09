@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">İYİLEŞTİR</string>
   <string name="camera_menu_slow_shutter_label">YAVAŞ ENSTANTANE</string>
   <string name="camera_menu_beauty_mode_label">GÜZELLİK</string>
-  <string name="camera_menu_colorize_label">RENKLENDİR</string>
-  <string name="camera_menu_effects_label">EFEKTLER</string>
   <string name="camera_menu_asd_label">AKILLI SAHNE</string>
   <string name="pref_camera_power_shutter_title">Güç tuşuyla çek</string>
   <string name="pref_superzoom_title">Büyüt</string>

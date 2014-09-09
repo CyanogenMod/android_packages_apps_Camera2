@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">VYLEPŠIT</string>
   <string name="camera_menu_slow_shutter_label">POMALÁ ZÁVĚRKA</string>
   <string name="camera_menu_beauty_mode_label">ZKRÁŠLENÍ</string>
-  <string name="camera_menu_colorize_label">OBARVENÍ</string>
-  <string name="camera_menu_effects_label">EFEKTY</string>
   <string name="camera_menu_asd_label">CHYTRÁ SCÉNA</string>
   <string name="pref_camera_power_shutter_title">Spoušť tlačítkem vypnutí</string>
   <string name="pref_superzoom_title">Zvětšit</string>

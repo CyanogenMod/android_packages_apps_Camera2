@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">MEYORES</string>
   <string name="camera_menu_slow_shutter_label">OBTURADOR LENTU</string>
   <string name="camera_menu_beauty_mode_label">EMBELLECER</string>
-  <string name="camera_menu_colorize_label">DAR COLOR</string>
-  <string name="camera_menu_effects_label">EFEUTOS</string>
   <string name="camera_menu_asd_label">ESCENA INTELIXENTE</string>
   <string name="pref_camera_power_shutter_title">Disparador c/botón d\'encendíu</string>
   <string name="pref_superzoom_title">Ampliar</string>

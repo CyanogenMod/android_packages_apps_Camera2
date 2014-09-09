@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">HOBEKUNTZAK</string>
   <string name="camera_menu_slow_shutter_label">OBTURADORE MOTELA</string>
   <string name="camera_menu_beauty_mode_label">EDERTU</string>
-  <string name="camera_menu_colorize_label">KOLOREATU</string>
-  <string name="camera_menu_effects_label">EFEKTUAK</string>
   <string name="camera_menu_asd_label">ESZENA ADIMENTSUA</string>
   <string name="pref_camera_power_shutter_title">Ordezko kliskagailua</string>
   <string name="pref_superzoom_title">Zoom-a</string>

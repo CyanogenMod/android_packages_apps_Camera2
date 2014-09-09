@@ -125,8 +125,6 @@
   <string name="camera_menu_enhance_label">MILLORA</string>
   <string name="camera_menu_slow_shutter_label">OBTURADOR LENT</string>
   <string name="camera_menu_beauty_mode_label">FES BONIC</string>
-  <string name="camera_menu_colorize_label">ACOLOREIX</string>
-  <string name="camera_menu_effects_label">EFECTES</string>
   <string name="camera_menu_asd_label">ESCENA INTEL·LIGENT</string>
   <string name="pref_camera_power_shutter_title">Obturador ràpid</string>
   <string name="pref_superzoom_title">Magnifica</string>
