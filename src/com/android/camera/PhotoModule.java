@@ -999,6 +999,18 @@ public class PhotoModule
         int xOffset = (originalWidth - newWidth)/2;
         int yOffset = (originalHeight - newHeight)/2;
 
+        // For some reason L needs this to work.
+        // This code is only run on the Nexus 5.
+        // TODO: Determine why this is needed.
+        if (Build.VERSION.SDK_INT >= 21 || Build.VERSION.CODENAME.equals("L")) {
+            Log.v(TAG,"xOffset = " + xOffset);
+            Log.v(TAG,"yOffset = " + yOffset);
+            xOffset *= 2;
+            yOffset = 0;
+            Log.v(TAG,"new xOffset = " + xOffset);
+            Log.v(TAG,"new yOffset = " + yOffset);
+        }
+
         if (xOffset < 0 || yOffset < 0) {
             return dataBundle;
         }
