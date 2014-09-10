@@ -80,6 +80,7 @@ import com.android.ex.camera2.portability.CameraAgent.CameraAFMoveCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 import com.android.ex.camera2.portability.CameraAgent.CameraShutterCallback;
+import com.android.ex.camera2.portability.CameraAgent.CameraStartPreviewCallback;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
@@ -1965,10 +1966,14 @@ public class PhotoModule
         mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
         Log.i(TAG, "startPreview");
-        mCameraDevice.startPreview();
+        mCameraDevice.startPreviewWithCallback(mHandler, new CameraStartPreviewCallback() {
+                @Override
+                public void onPreviewStarted() {
+                    mFocusManager.onPreviewStarted();
+                    PhotoModule.this.onPreviewStarted();
+                }
+        });
 
-        mFocusManager.onPreviewStarted();
-        onPreviewStarted();
         SessionStatsCollector.instance().previewActive(true);
         if (mSnapshotOnIdle) {
             mHandler.post(mDoSnapRunnable);
