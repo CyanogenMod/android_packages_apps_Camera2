@@ -1288,20 +1288,17 @@ public class PhotoModule
             animateAfterShutter();
         }
 
-        // Set rotation and gps data.
-        int orientation;
-
-        if (mActivity.isAutoRotateScreen()) {
-            orientation = mDisplayRotation;
-        } else {
-            orientation = mOrientation;
-        }
-        Characteristics info =
-                mActivity.getCameraProvider().getCharacteristics(mCameraId);
-        mJpegRotation = info.getJpegOrientation(orientation);
         Location loc = mActivity.getLocationManager().getCurrentLocation();
         CameraUtil.setGpsParameters(mCameraSettings, loc);
         mCameraDevice.applySettings(mCameraSettings);
+
+        // Set JPEG orientation. Even if screen UI is locked in portrait, camera orientation should
+        // still match device orientation (e.g., users should always get landscape photos while
+        // capturing by putting device in landscape.)
+        int orientation = mActivity.isAutoRotateScreen() ? mDisplayRotation : mOrientation;
+        Characteristics info = mActivity.getCameraProvider().getCharacteristics(mCameraId);
+        mJpegRotation = info.getJpegOrientation(orientation);
+        mCameraDevice.setJpegOrientation(mJpegRotation);
 
         // We don't want user to press the button again while taking a
         // multi-second HDR photo.
@@ -1344,13 +1341,14 @@ public class PhotoModule
 
     @Override
     public void onOrientationChanged(int orientation) {
-        // We keep the last known orientation. So if the user first orient
-        // the camera then point the camera to floor or sky, we still have
-        // the correct orientation.
         if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
             return;
         }
-        mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+
+        // TODO: Document orientation compute logic and unify them in OrientationManagerImpl.
+        // b/17443789
+        // Flip to counter-clockwise orientation.
+        mOrientation = (360 - orientation) % 360;
     }
 
     @Override
