@@ -195,8 +195,10 @@ public class OrientationManagerImpl implements OrientationManager {
             if (orientation == ORIENTATION_UNKNOWN) {
                 return;
             }
+            // TODO: We have two copies of the rounding method: one is CameraUtil.roundOrientation
+            // and the other is OrientationManagerImpl.roundOrientation. The same computation is
+            // done twice when orientation is changed. We should remove the duplicate. b/17440795
             final int roundedOrientation = roundOrientation(orientation, 0);
-
             for (OrientationChangeCallback l : mListeners) {
                 l.postOrientationChangeCallback(roundedOrientation);
             }
