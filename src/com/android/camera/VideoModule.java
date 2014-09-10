@@ -609,9 +609,8 @@ public class VideoModule extends CameraModule
     private void startPlayVideoActivity() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(mCurrentVideoUri, convertOutputFormatToMimeType(mProfile.fileFormat));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
-            mActivity.startActivity(intent);
+            mActivity.launchActivityByIntent(intent);
         } catch (ActivityNotFoundException ex) {
             Log.e(TAG, "Couldn't view video " + mCurrentVideoUri, ex);
         }

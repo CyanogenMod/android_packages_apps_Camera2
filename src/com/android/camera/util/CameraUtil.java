@@ -1029,13 +1029,13 @@ public class CameraUtil {
 
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
-            boolean isSecureCamera = ((CameraActivity) activity).isSecureCamera();
+            CameraActivity cameraActivity = (CameraActivity)activity;
+            boolean isSecureCamera = cameraActivity.isSecureCamera();
             if (!isSecureCamera) {
                 Intent intent = IntentHelper.getVideoPlayerIntent(uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
                         .putExtra(KEY_TREAT_UP_AS_BACK, true);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                activity.startActivity(intent);
+                cameraActivity.launchActivityByIntent(intent);
             } else {
                 // In order not to send out any intent to be intercepted and
                 // show the lock screen immediately, we just let the secure
