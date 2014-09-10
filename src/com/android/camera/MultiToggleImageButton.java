@@ -123,6 +123,17 @@ public class MultiToggleImageButton extends ImageButton {
      * @param callListener should the state change listener be called?
      */
     public void setState(final int state, final boolean callListener) {
+        // TODO: animate button transitions, b/17414652
+        setStateInternal(state, callListener);
+    }
+
+    /**
+     * Set the current button state via an animated transition.
+     *
+     * @param state
+     * @param callListener
+     */
+    private void setStateAnimatedInternal(final int state, final boolean callListener) {
         if (mState == state || mState == UNSET) {
             setStateInternal(state, callListener);
             return;
