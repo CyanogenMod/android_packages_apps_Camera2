@@ -484,6 +484,7 @@ public class PhotoModule
 
     private void onPreviewStarted() {
         mAppController.onPreviewStarted();
+        mAppController.setShutterEnabled(true);
         setCameraState(IDLE);
         startFaceDetection();
         settingsFirstRun();
