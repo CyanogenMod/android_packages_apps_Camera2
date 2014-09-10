@@ -19,6 +19,7 @@ package com.android.camera.settings;
 import android.content.Context;
 
 import com.android.camera.app.LocationManager;
+import com.android.camera.util.ApiHelper;
 import com.android.camera2.R;
 
 /**
@@ -102,13 +103,31 @@ public class Keys {
             context.getString(R.string.pref_camera_focusmode_default),
             context.getResources().getStringArray(R.array.pref_camera_focusmode_entryvalues));
 
-        settingsManager.setDefaults(KEY_VIDEO_QUALITY_BACK,
-            context.getString(R.string.pref_video_quality_large),
+        String videoQualityBackDefaultValue = context.getString(R.string.pref_video_quality_large);
+        // TODO: We tweaked the default setting based on model string which is not ideal. Detecting
+        // CamcorderProfile capability is a better way to get this job done. However,
+        // |CamcorderProfile.hasProfile| needs camera id info. We need a way to provide camera id to
+        // this method. b/17445274
+        // Don't set the default resolution to be large if the device supports 4k video.
+        if (ApiHelper.IS_NEXUS_6) {
+            videoQualityBackDefaultValue = context.getString(R.string.pref_video_quality_medium);
+        }
+        settingsManager.setDefaults(
+            KEY_VIDEO_QUALITY_BACK,
+            videoQualityBackDefaultValue,
             context.getResources().getStringArray(R.array.pref_video_quality_entryvalues));
+        if (!settingsManager.isSet(SettingsManager.SCOPE_GLOBAL, Keys.KEY_VIDEO_QUALITY_BACK)) {
+            settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL,
+                                         Keys.KEY_VIDEO_QUALITY_BACK);
+        }
 
         settingsManager.setDefaults(KEY_VIDEO_QUALITY_FRONT,
             context.getString(R.string.pref_video_quality_large),
             context.getResources().getStringArray(R.array.pref_video_quality_entryvalues));
+        if (!settingsManager.isSet(SettingsManager.SCOPE_GLOBAL, Keys.KEY_VIDEO_QUALITY_FRONT)) {
+            settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL,
+                                         Keys.KEY_VIDEO_QUALITY_FRONT);
+        }
 
         settingsManager.setDefaults(KEY_JPEG_QUALITY,
             context.getString(R.string.pref_camera_jpeg_quality_normal),
