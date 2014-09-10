@@ -202,7 +202,7 @@ public class OneCameraImpl extends AbstractOneCamera {
      * The aspect ratio (width/height) of the full resolution for this camera.
      * Usually the native aspect ratio of this camera.
      */
-    private final double mFullSizeAspectRatio;
+    private final float mFullSizeAspectRatio;
     /** The Camera2 API capture session currently active. */
     private CameraCaptureSession mCaptureSession;
     /** The surface onto which to render the preview. */
@@ -344,7 +344,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     @Override
-    public void setViewFinderSize(int width, int height) {
+    public void setViewfinderSize(int width, int height) {
         throw new RuntimeException("Not implemented yet.");
     }
 
@@ -383,7 +383,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     @Override
-    public double getFullSizeAspectRatio() {
+    public float getFullSizeAspectRatio() {
         return mFullSizeAspectRatio;
     }
 
@@ -662,10 +662,10 @@ public class OneCameraImpl extends AbstractOneCamera {
      * @return The aspect ration, in terms of width/height of the full capture
      *         size.
      */
-    private static double calculateFullSizeAspectRatio(CameraCharacteristics characteristics) {
+    private static float calculateFullSizeAspectRatio(CameraCharacteristics characteristics) {
         Rect activeArraySize =
                 characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-        return (double) activeArraySize.width() / activeArraySize.height();
+        return ((float)(activeArraySize.width())) / activeArraySize.height();
     }
 
     /**
