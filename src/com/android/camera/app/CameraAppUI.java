@@ -815,6 +815,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * in.
      */
     public void freezeScreenUntilPreviewReady() {
+        Log.v(TAG, "freezeScreenUntilPreviewReady");
         mModeTransitionView.setupModeCover(mCameraModuleScreenShotProvider
                 .getScreenShot(DOWN_SAMPLE_RATE_FOR_SCREENSHOT));
         mHideCoverRunnable = new Runnable() {
@@ -1340,6 +1341,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Gets called when preview is started.
      */
     public void onPreviewStarted() {
+        Log.v(TAG, "onPreviewStarted");
         if (mModeCoverState == COVER_SHOWN) {
             mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
         }
@@ -1350,6 +1352,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * Gets notified when next preview frame comes in.
      */
     public void onNewPreviewFrame() {
+        Log.v(TAG, "onNewPreviewFrame");
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
         hideModeCover();
         mModeCoverState = COVER_HIDDEN;
@@ -1579,6 +1582,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         mSurface = surface;
         if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
+            Log.v(TAG, "hiding cover via onSurfaceTextureUpdated");
             CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
             hideModeCover();
             mModeCoverState = COVER_HIDDEN;
