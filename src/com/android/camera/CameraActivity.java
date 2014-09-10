@@ -1007,8 +1007,7 @@ public class CameraActivity extends Activity
             // some automated scenarios, just return it as a valid separate scope
             // this could cause user issues, so log a stack trace noting the call path
             // which resulted in this scenario.
-            Log.w(TAG, "getting camera scope with no open camera, using id: " + currentCameraId,
-                    new Exception());
+            Log.w(TAG, "getting camera scope with no open camera, using id: " + currentCameraId);
         }
         return CAMERA_SCOPE_PREFIX + Integer.toString(currentCameraId);
     }
