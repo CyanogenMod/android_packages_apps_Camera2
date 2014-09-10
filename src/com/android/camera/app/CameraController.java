@@ -233,9 +233,9 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             Log.v(TAG, "different camera already opened, closing then reopening");
             // Already has camera opened, and is switching cameras and/or APIs.
             if (mUsingNewApi) {
-                mCameraAgentNg.closeCamera(mCameraProxy, true);
+                mCameraAgentNg.closeCamera(mCameraProxy, false);
             } else {
-                mCameraAgent.closeCamera(mCameraProxy, true);
+                mCameraAgent.closeCamera(mCameraProxy, false);
             }
             checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
         } else {
