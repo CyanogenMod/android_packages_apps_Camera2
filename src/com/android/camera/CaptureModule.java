@@ -603,7 +603,11 @@ public class CaptureModule extends CameraModule
         if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
             return;
         }
-        mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+
+        // TODO: Document orientation compute logic and unify them in OrientationManagerImpl.
+        // b/17443789
+        // Flip to counter-clockwise orientation.
+        mOrientation = (360 - orientation) % 360;
     }
 
     @Override
