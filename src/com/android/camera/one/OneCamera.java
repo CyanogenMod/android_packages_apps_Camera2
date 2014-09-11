@@ -310,7 +310,7 @@ public interface OneCamera {
      * The preview size requested from the camera device will depend on this as
      * well as the requested photo/video aspect ratio.
      */
-    public void setViewFinderSize(int width, int height);
+    public void setViewfinderSize(int width, int height);
 
     /**
      * @return Whether this camera supports flash.
@@ -341,7 +341,7 @@ public interface OneCamera {
      * @return The aspect ratio of the full size capture (usually the native
      *         resolution of the camera).
      */
-    public double getFullSizeAspectRatio();
+    public float getFullSizeAspectRatio();
 
     /**
      * @return Whether this camera is facing to the back.
