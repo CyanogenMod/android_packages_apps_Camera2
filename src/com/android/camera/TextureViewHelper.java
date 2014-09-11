@@ -92,6 +92,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
                                int oldTop, int oldRight, int oldBottom) {
+        Log.v(TAG, "onLayoutChange");
         int width = right - left;
         int height = bottom - top;
         int rotation = CameraUtil.getDisplayRotation(mPreview.getContext());
@@ -122,6 +123,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     }
 
     public void updateAspectRatio(float aspectRatio) {
+        Log.v(TAG, "updateAspectRatio");
         if (aspectRatio <= 0) {
             Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
             return;
@@ -134,7 +136,9 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     }
 
     private void setAspectRatio(float aspectRatio) {
+        Log.v(TAG, "setAspectRatio: " + aspectRatio);
         if (mAspectRatio != aspectRatio) {
+            Log.v(TAG, "aspect ratio changed from: " + mAspectRatio);
             mAspectRatio = aspectRatio;
             onAspectRatioChanged();
         }
@@ -238,6 +242,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
      * @return Whether {@code mAutoAdjustTransform}.
      */
     private boolean updateTransform() {
+        Log.v(TAG, "updateTransform");
         if (!mAutoAdjustTransform) {
             return false;
         }
