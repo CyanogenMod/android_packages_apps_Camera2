@@ -264,7 +264,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Nastavit dobu v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítávání spouště fotoaparátu"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Pamatovat, kde byly fotky pořízeny?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Přidejte do fotek a videí označení míst, kde jste je pořídili.\n\nOstatní aplikace budou mít k těmto informacím přístup společně s přístupem k uloženým obrázkům."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Přidejte do fotek a videí označení míst, kde jste je pořídili.\n\nOstatní aplikace budou mít k těmto informacím přístup společně s přístupem k uloženým obrázkům."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Díky, nemám zájem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ano"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"DALŠÍ MOŽNOSTI"</string>
@@ -355,8 +355,8 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"Pokročilé"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ruční expozice"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"V Nastavení můžete změnit rozlišení a kvalitu nebo vyzkoušet pokročilé funkce."</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"Výběr velikosti fotky"</string>
-    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Později to můžete změnit v Nastavení."</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Vyberte velikost fotky"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Poměr stran můžete později změnit v Nastaveních."</string>
     <string name="share_to" msgid="5144911209144798122">"Sdílet na"</string>
     <string name="edit_with" msgid="615569327230783971">"Upravit ve službě"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"DALŠÍ"</string>
