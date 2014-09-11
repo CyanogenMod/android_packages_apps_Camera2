@@ -1698,6 +1698,7 @@ public class VideoModule extends CameraModule
         mSwitchingCamera = false;
         mPreferenceRead = false;
         getServices().getMemoryManager().removeListener(this);
+        mUI.onPause();
     }
 
     @Override

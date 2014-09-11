@@ -534,6 +534,8 @@ public class PhotoUI implements PreviewStatusListener,
         if (mDialog != null) {
             mDialog.dismiss();
         }
+        // recalculate aspect ratio when restarting.
+        mAspectRatio = 0.0f;
     }
 
     public void clearFaces() {
