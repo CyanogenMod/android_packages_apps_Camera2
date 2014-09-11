@@ -54,7 +54,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="@dimen/shutter_offset"
             android:clickable="true"
             android:contentDescription="@string/accessibility_shutter_button"
             android:focusable="true"
