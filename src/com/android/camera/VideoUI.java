@@ -308,4 +308,9 @@ public class VideoUI implements PreviewStatusListener {
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
+
+    public void onPause() {
+        // recalculate aspect ratio when restarting.
+        mAspectRatio = 0.0f;
+    }
 }
