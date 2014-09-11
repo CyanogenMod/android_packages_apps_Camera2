@@ -2136,6 +2136,7 @@ public class PhotoModule
                 (double) size.width() / size.height());
         Size original = mCameraSettings.getCurrentPreviewSize();
         if (!optimalSize.equals(original)) {
+            Log.v(TAG, "setting preview size");
             mCameraSettings.setPreviewSize(optimalSize);
 
             // Zoom related settings will be changed for different preview
@@ -2150,10 +2151,11 @@ public class PhotoModule
         }
 
         if (optimalSize.width() != 0 && optimalSize.height() != 0) {
+            Log.v(TAG, "updating aspect ratio");
             mUI.updatePreviewAspectRatio((float) optimalSize.width()
                     / (float) optimalSize.height());
         }
-        Log.i(TAG, "Preview size is " + optimalSize);
+        Log.d(TAG, "Preview size is " + optimalSize);
     }
 
     private void updateParametersPictureQuality() {
