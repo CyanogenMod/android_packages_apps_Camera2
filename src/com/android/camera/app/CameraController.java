@@ -22,6 +22,7 @@ import android.os.Handler;
 import com.android.camera.CameraDisabledException;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GservicesHelper;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
@@ -230,12 +231,14 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             // No camera yet.
             checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
         } else if (mCameraProxy.getCameraId() != id || mUsingNewApi != useNewApi) {
+            boolean syncClose = GservicesHelper.useCamera2ApiThroughPortabilityLayer(mContext);
             Log.v(TAG, "different camera already opened, closing then reopening");
             // Already has camera opened, and is switching cameras and/or APIs.
             if (mUsingNewApi) {
-                mCameraAgentNg.closeCamera(mCameraProxy, false);
+                mCameraAgentNg.closeCamera(mCameraProxy, true);
             } else {
-                mCameraAgent.closeCamera(mCameraProxy, false);
+                // if using API2 ensure API1 usage is also synced
+                mCameraAgent.closeCamera(mCameraProxy, syncClose);
             }
             checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
         } else {
