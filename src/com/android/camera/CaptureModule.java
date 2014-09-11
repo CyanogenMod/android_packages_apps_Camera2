@@ -665,6 +665,10 @@ public class CaptureModule extends CameraModule
         if (!mHdrEnabled) {
             bottomBarSpec.enableFlash = true;
         }
+        // Added to handle case of CaptureModule being used only for Gcam.
+        if (mStickyGcamCamera) {
+            bottomBarSpec.enableFlash = false;
+        }
         return bottomBarSpec;
     }
 
