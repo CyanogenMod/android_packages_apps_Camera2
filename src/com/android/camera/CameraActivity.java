@@ -248,7 +248,7 @@ public class CameraActivity extends Activity
 
     private static final int LIGHTS_OUT_DELAY_MS = 4000;
     private final int BASE_SYS_UI_VISIBILITY =
-            View.SYSTEM_UI_FLAG_FULLSCREEN
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
     private final Runnable mLightsOutRunnable = new Runnable() {
         @Override
