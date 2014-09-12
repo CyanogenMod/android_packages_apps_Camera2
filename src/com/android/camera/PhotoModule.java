@@ -160,6 +160,13 @@ public class PhotoModule
     private boolean mAwbLockSupported;
     private boolean mContinuousFocusSupported;
 
+    /*
+     * If true, attempts to start the preview will be denied.  This ensures that
+     * we never call startPreview multiple times when making changes to
+     * settings.
+     */
+    private boolean mStartPreviewLock = false;
+
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
@@ -1383,12 +1390,21 @@ public class PhotoModule
 
         // Do camera parameter dependent initialization.
         mCameraSettings = mCameraDevice.getSettings();
-        setCameraParameters(UPDATE_PARAM_ALL);
-        // Set a listener which updates camera parameters based
-        // on changed settings.
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.addListener(this);
-        mCameraPreviewParamsReady = true;
+        // HACK: The call to setCameraParameters(UPDATE_PARAM_ALL) may
+        // eventually recurse back into startPreview().
+        // To avoid calling startPreview() twice, first acquire
+        // mStartPreviewLock.
+        mStartPreviewLock = true;
+        try {
+            setCameraParameters(UPDATE_PARAM_ALL);
+            // Set a listener which updates camera parameters based
+            // on changed settings.
+            SettingsManager settingsManager = mActivity.getSettingsManager();
+            settingsManager.addListener(this);
+            mCameraPreviewParamsReady = true;
+        } finally {
+            mStartPreviewLock = false;
+        }
 
         startPreview();
 
@@ -1945,33 +1961,46 @@ public class PhotoModule
      * The start/stop preview should only run on the UI thread.
      */
     private void startPreview() {
-        if (!checkPreviewPreconditions()) {
+        // HACK: The call to setCameraParameters(UPDATE_PARAM_ALL) may
+        // eventually recurse back into startPreview().
+        // To avoid calling startPreview() twice, we must acquire
+        // mStartPreviewLock.
+        if (mStartPreviewLock) {
+            // do nothing
             return;
         }
-
-        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
-        setDisplayOrientation();
-
-        if (!mSnapshotOnIdle) {
-            // If the focus mode is continuous autofocus, call cancelAutoFocus
-            // to resume it because it may have been paused by autoFocus call.
-            if (mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()) ==
-                    CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
-                mCameraDevice.cancelAutoFocus();
+        mStartPreviewLock = true;
+        try {
+            if (!checkPreviewPreconditions()) {
+                return;
             }
-            mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
-        }
-        setCameraParameters(UPDATE_PARAM_ALL);
-        mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
-        Log.i(TAG, "startPreview");
-        mCameraDevice.startPreview();
+            mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
+            setDisplayOrientation();
 
-        mFocusManager.onPreviewStarted();
-        onPreviewStarted();
-        SessionStatsCollector.instance().previewActive(true);
-        if (mSnapshotOnIdle) {
-            mHandler.post(mDoSnapRunnable);
+            if (!mSnapshotOnIdle) {
+                // If the focus mode is continuous autofocus, call cancelAutoFocus
+                // to resume it because it may have been paused by autoFocus call.
+                if (mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()) ==
+                        CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
+                    mCameraDevice.cancelAutoFocus();
+                }
+                mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
+            }
+            setCameraParameters(UPDATE_PARAM_ALL);
+            mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
+
+            Log.i(TAG, "startPreview");
+            mCameraDevice.startPreview();
+
+            mFocusManager.onPreviewStarted();
+            onPreviewStarted();
+            SessionStatsCollector.instance().previewActive(true);
+            if (mSnapshotOnIdle) {
+                mHandler.post(mDoSnapRunnable);
+            }
+        } finally {
+            mStartPreviewLock = false;
         }
     }
 
