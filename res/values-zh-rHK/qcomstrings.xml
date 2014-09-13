@@ -30,7 +30,7 @@
   <string name="pref_camera_videoencoder_title">視訊編解碼器</string>
   <string name="pref_camera_audioencoder_title">音訊解碼器</string>
   <string name="pref_camera_video_duration_title">影片長度</string>
-  <string name="pref_camera_video_duration_entry_mms">30 秒 (多媒體簡訊)</string>
+  <string name="pref_camera_video_duration_entry_mms">30 秒 (多媒體短訊)</string>
   <string name="pref_camera_video_duration_entry_10">10 分鐘</string>
   <string name="pref_camera_video_duration_entry_30">30 分鐘</string>
   <string name="pref_camera_skinToneEnhancement_title">膚色色調強化</string>

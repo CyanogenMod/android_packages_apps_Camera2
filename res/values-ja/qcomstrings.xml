@@ -23,7 +23,7 @@
 <resources>
   <string name="pref_camera_powermode_title">電源モード</string>
   <string name="pref_camera_powermode_entry_lp">低電力</string>
-  <string name="pref_camera_powermode_entry_np">標準電力</string>
+  <string name="pref_camera_powermode_entry_np">標準の電力</string>
   <string name="pref_camera_autoexposure_title">自動露出</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">フレームアベレージ</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">中央部重点測光</string>
