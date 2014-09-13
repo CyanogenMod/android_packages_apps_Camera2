@@ -52,7 +52,7 @@
   <string name="path">ڕێچکە</string>
   <string name="width">پانیی</string>
   <string name="height">بەرزیی</string>
-  <string name="orientation">ئاراستە</string>
+  <string name="orientation">باری پیشاندان</string>
   <string name="duration">ماوه‌</string>
   <string name="mimetype">جۆری MIME</string>
   <string name="file_size">قەبارەی فایل</string>
