@@ -113,13 +113,14 @@
     <string name="pref_camera_scenemode_entry_whiteboard">Whiteboard</string>
 
     <!-- Settings screen, focus mode -->
-    <string name="pref_camera_focusmode_entry_continuouspicture">Continuous picture</string>
+    <string name="pref_camera_focusmode_entry_continuouspicture">Continuous</string>
     <string name="pref_camera_focusmode_entry_extended">Extended</string>
     <string name="pref_camera_focusmode_entry_facedetect">Face detect</string>
     <string name="pref_camera_focusmode_entry_facepriority">Face priority</string>
     <string name="pref_camera_focusmode_entry_fixed">Fixed</string>
     <string name="pref_camera_focusmode_entry_portrait">Portrait</string>
     <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
+    <string name="pref_camera_focusmode_entry_manual">Manual</string>
 
     <!-- Color effects -->
     <string name="pref_camera_coloreffect_entry_washed">Washed</string>
