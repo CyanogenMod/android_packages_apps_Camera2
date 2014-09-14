@@ -21,8 +21,4 @@
     android:layout_gravity="bottom|right"
     android:layout_marginRight="8dip"
     android:layout_marginBottom="8dip"
-    android:paddingLeft="8dip"
-    android:paddingRight="8dip"
-    android:paddingTop="16dip"
-    android:paddingBottom="16dip"
     android:background="#80000000" />
