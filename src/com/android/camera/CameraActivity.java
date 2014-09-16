@@ -1857,7 +1857,6 @@ public class CameraActivity extends Activity
         mModeListView.setVisibilityChangedListener(null);
         mCameraController = null;
         mSettingsManager = null;
-        mCameraAppUI = null;
         mOrientationManager = null;
         mButtonManager = null;
         CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
