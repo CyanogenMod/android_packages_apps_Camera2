@@ -1413,6 +1413,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 mModeListView.startModeSelectionAnimation();
             }
         };
+        mShutterButton.setAlpha(ShutterButton.ALPHA_WHEN_ENABLED);
         mModeCoverState = COVER_SHOWN;
 
         int lastIndex = mController.getCurrentModuleIndex();
