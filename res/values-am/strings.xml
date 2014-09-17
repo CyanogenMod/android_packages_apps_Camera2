@@ -277,7 +277,7 @@
     <string name="crop_save" msgid="2841974981340098579">"አስቀምጥ"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"ምስሉን መጫን አልተቻለም!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"የድርድር ፊልም እይታ"</string>
-    <string name="setting_wallpaper" msgid="2397759659347872725">"የግድግዳ ወረቀት በማዘጋጀት ላይ"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"ልጣፍ  በማዘጋጀት ላይ"</string>
     <string name="mode_settings" msgid="2021937261522670921">"ቅንብሮች"</string>
     <string name="mode_camera" msgid="279763925715250603">"ካሜራ"</string>
     <string name="mode_video" msgid="8633929034048169139">"ቪዲዮ"</string>
