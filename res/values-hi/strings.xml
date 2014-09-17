@@ -152,7 +152,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"सामने का कैमरा"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"पीछे का कैमरा"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ठीक"</string>
-    <string name="dialog_cancel" msgid="692365061128351656">"रद्द करें"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"रहने दें"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"आपके SD कार्ड में स्थान कम है. गुणवत्ता सेटिंग बदलें या कुछ चित्र या अन्य फ़ाइलें हटाएं."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"आकार सीमा तक पहुंच गए."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"बहुत तेज़"</string>
@@ -182,7 +182,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"मज़ाकिया चेहरे"</string>
     <string name="effect_background" msgid="1358432220077975015">"पृष्ठभूमि"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"शटर"</string>
-    <string name="accessibility_cancel_button" msgid="5679989494636116448">"रद्द करें"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"रहने दें"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"मेनू बटन"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s चेक बॉक्स"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"फ़ोटो पर स्‍विच करें"</string>
@@ -191,7 +191,7 @@
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphere पर स्‍विच करें"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"उच्‍च गुणवत्ता पर स्विच करें"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"फिर से फ़ोकस पर स्विच करें"</string>
-    <string name="accessibility_review_cancel" msgid="5462850829869569629">"समीक्षा रद्द करें"</string>
+    <string name="accessibility_review_cancel" msgid="5462850829869569629">"समीक्षा ना करें"</string>
     <string name="accessibility_review_ok" msgid="3486465319880320270">"समीक्षा पूर्ण"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"समीक्षा रीटेक"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"विकल्प"</string>
@@ -313,7 +313,7 @@
     <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"काउंटडाउन टाइमर अवधि 3 सेकंड पर सेट है"</string>
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"काउंटडाउन टाइमर अवधि 10 सेकंड पर सेट है"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"अधिक विकल्प"</string>
-    <string name="cancel_button_description" msgid="3801167024006905033">"रद्द करें"</string>
+    <string name="cancel_button_description" msgid="3801167024006905033">"रहने दें"</string>
     <string name="done_button_description" msgid="1334963435441544592">"पूर्ण"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"फिर से लें"</string>
     <string name="share_button_description" msgid="5108508790540832053">"साझा करें"</string>
@@ -339,7 +339,7 @@
     <string name="pref_category_general" msgid="6737748849700581019">"सामान्य सेटिंग"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"रिज़ॉल्यूशन और गुणवत्ता"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"संक्षिप्त विवरण"</string>
-    <string name="pref_title_build_version" msgid="481489988124832651">"बिल्ड संस्करण"</string>
+    <string name="pref_title_build_version" msgid="481489988124832651">"बिल्ड वर्शन"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"निम्न"</string>
     <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"उच्च"</string>
     <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
@@ -359,7 +359,7 @@
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"आप इसे बाद में सेटिंग में बदल सकते हैं."</string>
     <string name="share_to" msgid="5144911209144798122">"इनसे साझा करें:"</string>
     <string name="edit_with" msgid="615569327230783971">"इससे संपादित करें:"</string>
-    <string name="startup_dialog_button_next" msgid="1011831256978228993">"अगला"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"आगे"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ठीक है, समझ लिया"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"पूर्ण सेंसर \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"काटा गया सेंसर \n(16:9)"</string>
