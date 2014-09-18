@@ -18,6 +18,7 @@ package com.android.camera;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -25,6 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
@@ -58,7 +60,7 @@ public class MultiToggleImageButton extends ImageButton {
     public static final int ANIM_DIRECTION_VERTICAL = 0;
     public static final int ANIM_DIRECTION_HORIZONTAL = 1;
 
-    private static final int AINM_DURATION_MS = 250;
+    private static final int ANIM_DURATION_MS = 250;
     private static final int UNSET = -1;
 
     private OnStateChangeListener mOnStateChangeListener;
@@ -69,6 +71,8 @@ public class MultiToggleImageButton extends ImageButton {
     private boolean mClickEnabled = true;
     private int mParentSize;
     private int mAnimDirection;
+    private Matrix mMatrix = new Matrix();
+    private ValueAnimator mAnimator;
 
     public MultiToggleImageButton(Context context) {
         super(context);
@@ -123,8 +127,7 @@ public class MultiToggleImageButton extends ImageButton {
      * @param callListener should the state change listener be called?
      */
     public void setState(final int state, final boolean callListener) {
-        // TODO: animate button transitions, b/17414652
-        setStateInternal(state, callListener);
+        setStateAnimatedInternal(state, callListener);
     }
 
     /**
@@ -143,60 +146,47 @@ public class MultiToggleImageButton extends ImageButton {
             return;
         }
 
-        Bitmap bitmap = combine(mState, state);
-        if (bitmap == null) {
-            setStateInternal(state, callListener);
-            return;
-        }
-
-        setImageBitmap(bitmap);
-        final Matrix matrix = new Matrix();
-
-        int offset;
-        if (mAnimDirection == ANIM_DIRECTION_VERTICAL) {
-            offset = (mParentSize+getHeight())/2;
-        } else if (mAnimDirection == ANIM_DIRECTION_HORIZONTAL) {
-            offset = (mParentSize+getWidth())/2;
-        } else {
-            return;
-        }
-
-        ValueAnimator animator = ValueAnimator.ofFloat(-offset, 0.0f);
-        animator.setDuration(AINM_DURATION_MS);
-        animator.setInterpolator(Gusterpolator.INSTANCE);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        new AsyncTask<Integer, Void, Bitmap>() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                matrix.reset();
-                if (mAnimDirection == ANIM_DIRECTION_VERTICAL) {
-                    matrix.setTranslate(0.0f, (Float) animation.getAnimatedValue());
-                } else if (mAnimDirection == ANIM_DIRECTION_HORIZONTAL) {
-                    matrix.setTranslate((Float) animation.getAnimatedValue(), 0.0f);
+            protected Bitmap doInBackground(Integer... params) {
+                return combine(params[0], params[1]);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap == null) {
+                    setStateInternal(state, callListener);
+                } else {
+                    setImageBitmap(bitmap);
+
+                    int offset;
+                    if (mAnimDirection == ANIM_DIRECTION_VERTICAL) {
+                        offset = (mParentSize+getHeight())/2;
+                    } else if (mAnimDirection == ANIM_DIRECTION_HORIZONTAL) {
+                        offset = (mParentSize+getWidth())/2;
+                    } else {
+                        return;
+                    }
+
+                    mAnimator.setFloatValues(-offset, 0.0f);
+                    AnimatorSet s = new AnimatorSet();
+                    s.play(mAnimator);
+                    s.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            setClickEnabled(false);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            setStateInternal(state, callListener);
+                            setClickEnabled(true);
+                        }
+                    });
+                    s.start();
                 }
-
-                setImageMatrix(matrix);
-                invalidate();
             }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                setClickEnabled(false);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                setStateInternal(state, callListener);
-                setClickEnabled(true);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                setStateInternal(state, callListener);
-                setClickEnabled(true);
-            }
-        });
-        animator.start();
+        }.execute(mState, state);
     }
 
     /**
@@ -251,6 +241,24 @@ public class MultiToggleImageButton extends ImageButton {
             }
         });
         setScaleType(ImageView.ScaleType.MATRIX);
+
+        mAnimator = ValueAnimator.ofFloat(0.0f, 0.0f);
+        mAnimator.setDuration(ANIM_DURATION_MS);
+        mAnimator.setInterpolator(Gusterpolator.INSTANCE);
+        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mMatrix.reset();
+                if (mAnimDirection == ANIM_DIRECTION_VERTICAL) {
+                    mMatrix.setTranslate(0.0f, (Float) animation.getAnimatedValue());
+                } else if (mAnimDirection == ANIM_DIRECTION_HORIZONTAL) {
+                    mMatrix.setTranslate((Float) animation.getAnimatedValue(), 0.0f);
+                }
+
+                setImageMatrix(mMatrix);
+                invalidate();
+            }
+        });
     }
 
     private void parseAttributes(Context context, AttributeSet attrs) {

@@ -34,16 +34,13 @@ import com.android.camera2.R;
  * whereas a state list drawable would require a different drawable for each state.
  */
 public class ModeIconView extends View {
-    private boolean mHighlightIsOn = false;
     private final GradientDrawable mBackground;
-    private final GradientDrawable mHoverDrawable;
 
     private final int mIconBackgroundSize;
     private int mHighlightColor;
     private final int mBackgroundDefaultColor;
     private final int mIconDrawableSize;
     private Drawable mIconDrawable = null;
-    private boolean mSelected = false;
 
     public ModeIconView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,13 +50,8 @@ public class ModeIconView extends View {
         mBackground = (GradientDrawable) getResources()
                 .getDrawable(R.drawable.mode_icon_background).mutate();
         mBackground.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
-        mHoverDrawable = (GradientDrawable) getResources()
-                .getDrawable(R.drawable.mode_icon_background).mutate();
-        mHoverDrawable.setBounds(0, 0, mIconBackgroundSize, mIconBackgroundSize);
         mIconDrawableSize = getResources().getDimensionPixelSize(
                 R.dimen.mode_selector_icon_drawable_size);
-
-        mHoverDrawable.setColor(getResources().getColor(R.color.mode_icon_hover_highlight));
     }
 
     /**
@@ -83,11 +75,7 @@ public class ModeIconView extends View {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mHighlightIsOn && !mSelected) {
-            mHoverDrawable.draw(canvas);
-        } else {
-            mBackground.draw(canvas);
-        }
+        mBackground.draw(canvas);
         if (mIconDrawable != null) {
             mIconDrawable.draw(canvas);
         }
@@ -117,24 +105,10 @@ public class ModeIconView extends View {
     public void setSelected(boolean selected) {
         if (selected) {
             mBackground.setColor(mHighlightColor);
-            mHighlightIsOn = false;
         } else {
             mBackground.setColor(mBackgroundDefaultColor);
         }
 
-        mSelected = selected;
-        invalidate();
-    }
-
-    /**
-     * This gets called when the highlighted state is changed. When highlighted,
-     * a ring shaped drawable of a solid pre-defined color will be drawn on top
-     * of the background drawable to indicate highlight state.
-     *
-     * @param highlighted true when highlighted, false otherwise.
-     */
-    public void setHighlighted(boolean highlighted) {
-        mHighlightIsOn = highlighted;
         invalidate();
     }
 

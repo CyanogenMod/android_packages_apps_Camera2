@@ -945,7 +945,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     mController.getQuickSwitchToModuleId(currentModuleIndex);
             if (currentModuleIndex != moduleToTransitionTo) {
                 mAppRootView.redirectTouchEventsTo(mModeTransitionView);
-
                 int shadeColorId = R.color.mode_cover_default_color;
                 int iconRes = CameraUtil.getCameraModeCoverIconResId(moduleToTransitionTo,
                         mController.getAndroidContext());
@@ -966,11 +965,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                         }
                     }
                 };
-                if (mSwipeState == SWIPE_UP) {
-                    mModeTransitionView.prepareToPullUpShade(shadeColorId, iconRes, listener);
-                } else {
-                    mModeTransitionView.prepareToPullDownShade(shadeColorId, iconRes, listener);
-                }
             }
         } else if (swipeState == SWIPE_LEFT) {
             // Pass the touch sequence to filmstrip layout.
@@ -1355,7 +1349,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         Log.v(TAG, "onNewPreviewFrame");
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
         hideModeCover();
-        mModeCoverState = COVER_HIDDEN;
     }
 
     /**
@@ -1429,13 +1422,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     private void updateModeSpecificUIColors() {
-        // set up UI colors to match the current mode
-        /*
-        int colorId = CameraUtil.getCameraThemeColorId(mController.getCurrentModuleIndex(),
-                mController.getAndroidContext());
-        int pressedColor = mController.getAndroidContext().getResources().getColor(colorId);
-        setBottomBarPressedColor(pressedColor);
-        */
         setBottomBarColorsForModeIndex(mController.getCurrentModuleIndex());
     }
 
@@ -1582,14 +1568,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         mSurface = surface;
+        if (mPreviewStatusListener != null) {
+            mPreviewStatusListener.onSurfaceTextureUpdated(surface);
+        }
         if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
             Log.v(TAG, "hiding cover via onSurfaceTextureUpdated");
             CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
             hideModeCover();
-            mModeCoverState = COVER_HIDDEN;
-        }
-        if (mPreviewStatusListener != null) {
-            mPreviewStatusListener.onSurfaceTextureUpdated(surface);
         }
     }
 

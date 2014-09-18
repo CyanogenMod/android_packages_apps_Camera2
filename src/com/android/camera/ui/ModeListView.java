@@ -826,12 +826,11 @@ public class ModeListView extends FrameLayout
      * be revealed through a pinhole animation. After all the animations finish,
      * mode list will transition into fully hidden state.
      */
-    private class SelectedState extends  ModeListState {
+    private class SelectedState extends ModeListState {
         public SelectedState(ModeSelectorItem selectedItem) {
             final int modeId = selectedItem.getModeId();
             // Un-highlight all the modes.
             for (int i = 0; i < mModeSelectorItems.length; i++) {
-                mModeSelectorItems[i].setHighlighted(false);
                 mModeSelectorItems[i].setSelected(false);
             }
 
@@ -1501,7 +1500,6 @@ public class ModeListView extends FrameLayout
             if (mModeSelectorItems != null) {
                 // When becoming invisible/gone after initializing mode selector items.
                 for (int i = 0; i < mModeSelectorItems.length; i++) {
-                    mModeSelectorItems[i].setHighlighted(false);
                     mModeSelectorItems[i].setSelected(false);
                 }
             }
@@ -1906,6 +1904,8 @@ public class ModeListView extends FrameLayout
         private int mPeepHoleCenterY = UNSET;
         private float mRadius = 0f;
         private ValueAnimator mPeepHoleAnimator;
+        private ValueAnimator mFadeOutAlphaAnimator;
+        private ValueAnimator mRevealAlphaAnimator;
         private Bitmap mBackground;
         private Bitmap mBackgroundOverlay;
 
@@ -1923,6 +1923,107 @@ public class ModeListView extends FrameLayout
 
             mCoverPaint.setColor(0);
             mCoverPaint.setAlpha(0);
+
+            setupAnimators();
+        }
+
+        private void setupAnimators() {
+            mFadeOutAlphaAnimator = ValueAnimator.ofInt(0, 255);
+            mFadeOutAlphaAnimator.setDuration(100);
+            mFadeOutAlphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            mFadeOutAlphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mCoverPaint.setAlpha((Integer) animation.getAnimatedValue());
+                    invalidate();
+                }
+            });
+            mFadeOutAlphaAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Sets a HW layer on the view for the animation.
+                    setLayerType(LAYER_TYPE_HARDWARE, null);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    // Sets the layer type back to NONE as a workaround for b/12594617.
+                    setLayerType(LAYER_TYPE_NONE, null);
+                }
+            });
+
+            /////////////////
+
+            mRevealAlphaAnimator = ValueAnimator.ofInt(255, 0);
+            mRevealAlphaAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
+            mRevealAlphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            mRevealAlphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int alpha = (Integer) animation.getAnimatedValue();
+                    mCirclePaint.setAlpha(alpha);
+                    mCoverPaint.setAlpha(alpha);
+                }
+            });
+            mRevealAlphaAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Sets a HW layer on the view for the animation.
+                    setLayerType(LAYER_TYPE_HARDWARE, null);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    // Sets the layer type back to NONE as a workaround for b/12594617.
+                    setLayerType(LAYER_TYPE_NONE, null);
+                }
+            });
+
+            ////////////////
+
+            int horizontalDistanceToFarEdge = Math.max(mPeepHoleCenterX, mWidth - mPeepHoleCenterX);
+            int verticalDistanceToFarEdge = Math.max(mPeepHoleCenterY, mHeight - mPeepHoleCenterY);
+            int endRadius = (int) (Math.sqrt(horizontalDistanceToFarEdge * horizontalDistanceToFarEdge
+                    + verticalDistanceToFarEdge * verticalDistanceToFarEdge));
+            int startRadius = getResources().getDimensionPixelSize(
+                    R.dimen.mode_selector_icon_block_width) / 2;
+
+            mPeepHoleAnimator = ValueAnimator.ofFloat(startRadius, endRadius);
+            mPeepHoleAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
+            mPeepHoleAnimator.setInterpolator(Gusterpolator.INSTANCE);
+            mPeepHoleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    // Modify mask by enlarging the hole
+                    mRadius = (Float) mPeepHoleAnimator.getAnimatedValue();
+                    invalidate();
+                }
+            });
+            mPeepHoleAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    // Sets a HW layer on the view for the animation.
+                    setLayerType(LAYER_TYPE_HARDWARE, null);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    // Sets the layer type back to NONE as a workaround for b/12594617.
+                    setLayerType(LAYER_TYPE_NONE, null);
+                }
+            });
+
+            ////////////////
+            int size = getContext().getResources()
+                    .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
+            mCircleDrawable = new TouchCircleDrawable(getContext().getResources());
+            mCircleDrawable.setSize(size, size);
+            mCircleDrawable.setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    invalidate();
+                }
+            });
         }
 
         @Override
@@ -1934,6 +2035,16 @@ public class ModeListView extends FrameLayout
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             return true;
+        }
+
+        @Override
+        public void drawForeground(Canvas canvas) {
+            // Draw the circle in clear mode
+            if (mPeepHoleAnimator != null) {
+                // Draw a transparent circle using clear mode
+                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mMaskPaint);
+                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mCirclePaint);
+            }
         }
 
         public void setAnimationStartingPosition(int x, int y) {
@@ -1978,16 +2089,6 @@ public class ModeListView extends FrameLayout
         }
 
         @Override
-        public void drawForeground(Canvas canvas) {
-            // Draw the circle in clear mode
-            if (mPeepHoleAnimator != null) {
-                // Draw a transparent circle using clear mode
-                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mMaskPaint);
-                canvas.drawCircle(mPeepHoleCenterX, mPeepHoleCenterY, mRadius, mCirclePaint);
-            }
-        }
-
-        @Override
         public boolean shouldDrawSuper() {
             // No need to draw super when mBackgroundOverlay is being drawn, as
             // background overlay already contains what's drawn in super.
@@ -2000,36 +2101,11 @@ public class ModeListView extends FrameLayout
             mCoverPaint.setColor(0);
             mCoverPaint.setAlpha(0);
 
-            ValueAnimator alphaAnimator = ValueAnimator.ofInt(0, 255);
-            alphaAnimator.setDuration(100);
-            alphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
-            alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    mCoverPaint.setAlpha((Integer) animation.getAnimatedValue());
-                    invalidate();
-                }
-            });
-            if (listener != null) {
-                alphaAnimator.addListener(listener);
-            }
-
-            int size = getContext().getResources()
-                    .getDimensionPixelSize(R.dimen.mode_selector_icon_block_width);
-            mCircleDrawable = new TouchCircleDrawable(getContext().getResources());
             mCircleDrawable.setIconDrawable(
                     selectedItem.getIcon().getIconDrawableClone(),
                     selectedItem.getIcon().getIconDrawableSize());
-            mCircleDrawable.setSize(size, size);
             mCircleDrawable.setCenter(new Point(x, y));
             mCircleDrawable.setColor(selectedItem.getHighlightColor());
-            mCircleDrawable.setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    invalidate();
-                }
-            });
-
             mCircleDrawable.setAnimatorListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -2046,8 +2122,16 @@ public class ModeListView extends FrameLayout
                     });
                 }
             });
+
+            // add fade out animator to a set, so we can freely add
+            // the listener without having to worry about listener dupes
+            AnimatorSet s = new AnimatorSet();
+            s.play(mFadeOutAlphaAnimator);
+            if (listener != null) {
+                s.addListener(listener);
+            }
             mCircleDrawable.animate();
-            alphaAnimator.start();
+            s.start();
         }
 
         @Override
@@ -2060,73 +2144,18 @@ public class ModeListView extends FrameLayout
                 mPeepHoleCenterY = mHeight / 2;
             }
 
-            int horizontalDistanceToFarEdge = Math.max(mPeepHoleCenterX, mWidth - mPeepHoleCenterX);
-            int verticalDistanceToFarEdge = Math.max(mPeepHoleCenterY, mHeight - mPeepHoleCenterY);
-            int endRadius = (int) (Math.sqrt(horizontalDistanceToFarEdge * horizontalDistanceToFarEdge
-                    + verticalDistanceToFarEdge * verticalDistanceToFarEdge));
-            int startRadius = getResources().getDimensionPixelSize(
-                    R.dimen.mode_selector_icon_block_width) / 2;
-
-            mPeepHoleAnimator = ValueAnimator.ofFloat(startRadius, endRadius);
-            mPeepHoleAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
-            mPeepHoleAnimator.setInterpolator(Gusterpolator.INSTANCE);
-            mPeepHoleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    // Modify mask by enlarging the hole
-                    mRadius = (Float) mPeepHoleAnimator.getAnimatedValue();
-                    invalidate();
-                }
-            });
-
-            if (listener != null) {
-                mPeepHoleAnimator.addListener(listener);
-            }
-
-            mPeepHoleAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    // Sets a HW layer on the view for the animation.
-                    setLayerType(LAYER_TYPE_HARDWARE, null);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    // Sets the layer type back to NONE as a workaround for b/12594617.
-                    setLayerType(LAYER_TYPE_NONE, null);
-                }
-            });
-
             mCirclePaint.setAlpha(255);
             mCoverPaint.setAlpha(255);
-            ValueAnimator alphaAnimator = ValueAnimator.ofInt(255, 0);
-            alphaAnimator.setDuration(PEEP_HOLE_ANIMATION_DURATION_MS);
-            alphaAnimator.setInterpolator(Gusterpolator.INSTANCE);
-            alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int alpha = (Integer) animation.getAnimatedValue();
-                    mCirclePaint.setAlpha(alpha);
-                    mCoverPaint.setAlpha(alpha);
-                }
-            });
-            alphaAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    // Sets a HW layer on the view for the animation.
-                    setLayerType(LAYER_TYPE_HARDWARE, null);
-                }
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    // Sets the layer type back to NONE as a workaround for b/12594617.
-                    setLayerType(LAYER_TYPE_NONE, null);
-                }
-            });
-
-
-            mPeepHoleAnimator.start();
-            alphaAnimator.start();
+            // add peephole and reveal animators to a set, so we can
+            // freely add the listener without having to worry about
+            // listener dupes
+            AnimatorSet s = new AnimatorSet();
+            s.play(mPeepHoleAnimator).with(mRevealAlphaAnimator);
+            if (listener != null) {
+                s.addListener(listener);
+            }
+            s.start();
         }
 
         @Override
