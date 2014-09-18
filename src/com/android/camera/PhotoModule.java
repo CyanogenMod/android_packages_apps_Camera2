@@ -75,6 +75,7 @@ import com.android.camera.util.SessionStatsCollector;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera2.R;
+import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFMoveCallback;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
@@ -1991,14 +1992,18 @@ public class PhotoModule
             mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
             Log.i(TAG, "startPreview");
-            mCameraDevice.startPreview();
-
-            mFocusManager.onPreviewStarted();
-            onPreviewStarted();
-            SessionStatsCollector.instance().previewActive(true);
-            if (mSnapshotOnIdle) {
-                mHandler.post(mDoSnapRunnable);
-            }
+            mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
+                    new CameraAgent.CameraStartPreviewCallback() {
+                @Override
+                public void onPreviewStarted() {
+                    mFocusManager.onPreviewStarted();
+                    PhotoModule.this.onPreviewStarted();
+                    SessionStatsCollector.instance().previewActive(true);
+                    if (mSnapshotOnIdle) {
+                        mHandler.post(mDoSnapRunnable);
+                    }
+                }
+            });
         } finally {
             mStartPreviewLock = false;
         }

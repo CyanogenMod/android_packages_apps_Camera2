@@ -42,11 +42,6 @@ import com.android.camera2.R;
  * we display the view partially.
  */
 class ModeSelectorItem extends FrameLayout {
-    // Drawing modes that defines how the TextView should be drawn when there
-    // is not enough space to draw the whole TextView.
-    public static final int FLY_IN = 1;
-    public static final int FLY_OUT = 2;
-
     private TextView mText;
     private ModeIconView mIcon;
     private int mVisibleWidth = 0;
@@ -99,10 +94,6 @@ class ModeSelectorItem extends FrameLayout {
         mListener = listener;
     }
 
-    public void setHighlighted(boolean highlighted) {
-        mIcon.setHighlighted(highlighted);
-    }
-
     @Override
     public void setSelected(boolean selected) {
         mIcon.setSelected(selected);
@@ -119,13 +110,6 @@ class ModeSelectorItem extends FrameLayout {
     public boolean onTouchEvent(MotionEvent ev) {
         super.onTouchEvent(ev);
         return false;
-    }
-
-    @Override
-    public void setPressed(boolean pressed) {
-        super.setPressed(pressed);
-        // When pressed state changes, highlight the icon.
-        mIcon.setHighlighted(pressed);
     }
 
     /**
