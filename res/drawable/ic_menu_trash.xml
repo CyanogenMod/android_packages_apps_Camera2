@@ -16,7 +16,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false"
-          android:drawable="@drawable/ic_discard_disabled" />
+          android:drawable="@drawable/ic_trash_disabled" />
     <item android:state_enabled="true"
-          android:drawable="@drawable/ic_discard_normal" />
+          android:drawable="@drawable/ic_trash_normal" />
 </selector>
