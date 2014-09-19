@@ -1992,18 +1992,27 @@ public class PhotoModule
             mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
             Log.i(TAG, "startPreview");
-            mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
-                    new CameraAgent.CameraStartPreviewCallback() {
-                @Override
-                public void onPreviewStarted() {
-                    mFocusManager.onPreviewStarted();
-                    PhotoModule.this.onPreviewStarted();
-                    SessionStatsCollector.instance().previewActive(true);
-                    if (mSnapshotOnIdle) {
-                        mHandler.post(mDoSnapRunnable);
+            // If we're using API2 in portability layers, don't use startPreviewWithCallback()
+            // b/17576554
+            CameraAgent.CameraStartPreviewCallback startPreviewCallback =
+                new CameraAgent.CameraStartPreviewCallback() {
+                    @Override
+                    public void onPreviewStarted() {
+                        mFocusManager.onPreviewStarted();
+                        PhotoModule.this.onPreviewStarted();
+                        SessionStatsCollector.instance().previewActive(true);
+                        if (mSnapshotOnIdle) {
+                            mHandler.post(mDoSnapRunnable);
+                        }
                     }
-                }
-            });
+                };
+            if (GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity)) {
+                mCameraDevice.startPreview();
+                startPreviewCallback.onPreviewStarted();
+            } else {
+                mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
+                        startPreviewCallback);
+            }
         } finally {
             mStartPreviewLock = false;
         }
