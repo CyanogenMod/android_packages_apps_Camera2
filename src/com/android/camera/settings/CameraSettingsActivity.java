@@ -86,6 +86,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private String[] mCamcorderProfileNames;
         private CameraDeviceInfo mInfos;
         private final String mPrefKey;
+        private boolean mGetSubPrefAsRoot = true;
 
         // Selected resolutions for the different cameras and sizes.
         private SelectedPictureSizes mOldPictureSizesBack;
@@ -104,11 +105,13 @@ public class CameraSettingsActivity extends FragmentActivity {
             super.onCreate(savedInstanceState);
             Context context = this.getActivity().getApplicationContext();
             addPreferencesFromResource(R.xml.camera_preferences);
-            // Only add the additional preferences when in the main settings
-            // view, and not in the sub-preferences screens.
-            if (mPrefKey == null) {
-                CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
-            }
+
+            // Allow the Helper to edit the full preference hierarchy, not the sub
+            // tree we may show as root. See {@link #getPreferenceScreen()}.
+            mGetSubPrefAsRoot = false;
+            CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
+            mGetSubPrefAsRoot = true;
+
             mCamcorderProfileNames = getResources().getStringArray(R.array.camcorder_profile_names);
             mInfos = CameraAgentFactory
                     .getAndroidCameraAgent(context, CameraAgentFactory.CameraApi.API_1)
@@ -170,7 +173,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         @Override
         public PreferenceScreen getPreferenceScreen() {
             PreferenceScreen root = super.getPreferenceScreen();
-            if (mPrefKey == null || root == null) {
+            if (!mGetSubPrefAsRoot || mPrefKey == null || root == null) {
                 return root;
             } else {
                 PreferenceScreen match = findByKey(root, mPrefKey);
