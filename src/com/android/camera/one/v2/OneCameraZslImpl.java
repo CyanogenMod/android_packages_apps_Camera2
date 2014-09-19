@@ -1045,12 +1045,10 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      */
     @Override
     public void triggerFocusAndMeterAtPoint(float nx, float ny) {
-        // xc, yc is center of tap point in sensor coordinate system.
-        int xc = mCropRegion.left + (int) (mCropRegion.width() * ny);
-        int yc = mCropRegion.top + (int) (mCropRegion.height() * (1f - nx));
-
-        mAERegions = AutoFocusHelper.aeRegionsForSensorCoord(xc, yc, mCropRegion);
-        mAFRegions = AutoFocusHelper.afRegionsForSensorCoord(xc, yc, mCropRegion);
+        int sensorOrientation = mCharacteristics.get(
+            CameraCharacteristics.SENSOR_ORIENTATION);
+        mAERegions = AutoFocusHelper.aeRegionsForNormalizedCoord(nx, ny, mCropRegion, sensorOrientation);
+        mAFRegions = AutoFocusHelper.afRegionsForNormalizedCoord(nx, ny, mCropRegion, sensorOrientation);
 
         startAFCycle();
     }
