@@ -2110,6 +2110,12 @@ public class PhotoModule
     }
 
     private void updateCameraParametersPreference() {
+        // some monkey tests can get here when shutting the app down
+        // make sure mCameraDevice is still valid, b/17580046
+        if (mCameraDevice == null) {
+            return;
+        }
+
         setAutoExposureLockIfSupported();
         setAutoWhiteBalanceLockIfSupported();
         setFocusAreasIfSupported();
