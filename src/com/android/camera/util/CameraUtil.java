@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.camera2.CameraCharacteristics;
@@ -322,6 +323,7 @@ public class CameraUtil {
     }
 
     public static int nextPowerOf2(int n) {
+        // TODO: what happens if n is negative or already a power of 2?
         n -= 1;
         n |= n >>> 16;
         n |= n >>> 8;
@@ -337,6 +339,10 @@ public class CameraUtil {
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
+    /**
+     * Clamps x to between min and max (inclusive on both ends, x = min --> min,
+     * x = max --> max).
+     */
     public static int clamp(int x, int min, int max) {
         if (x > max) {
             return max;
@@ -347,6 +353,10 @@ public class CameraUtil {
         return x;
     }
 
+    /**
+     * Clamps x to between min and max (inclusive on both ends, x = min --> min,
+     * x = max --> max).
+     */
     public static float clamp(float x, float min, float max) {
         if (x > max) {
             return max;
@@ -363,6 +373,31 @@ public class CameraUtil {
      */
     public static float lerp(float a, float b, float t) {
         return a + t * (b - a);
+    }
+
+    /**
+     * Given (nx, ny) \in [0, 1]^2, in the display's portrait coordinate system,
+     * returns normalized sensor coordinates \in [0, 1]^2 depending on how
+     * the sensor's orientation \in {0, 90, 180, 270}.
+     *
+     * <p>
+     * Returns null if sensorOrientation is not one of the above.
+     * </p>
+     */
+    public static PointF normalizedSensorCoordsForNormalizedDisplayCoords(
+        float nx, float ny, int sensorOrientation) {
+        switch (sensorOrientation) {
+        case 0:
+            return new PointF(nx, ny);
+        case 90:
+            return new PointF(ny, 1.0f - nx);
+        case 180:
+            return new PointF(1.0f - nx, 1.0f - ny);
+        case 270:
+            return new PointF(1.0f - ny, nx);
+        default:
+            return null;
+        }
     }
 
     /**
