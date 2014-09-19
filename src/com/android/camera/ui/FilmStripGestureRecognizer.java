@@ -18,6 +18,8 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.view.GestureDetector;
+import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
@@ -31,6 +33,7 @@ public class FilmStripGestureRecognizer {
         boolean onSingleTapUp(float x, float y);
         boolean onDoubleTap(float x, float y);
         boolean onScroll(float x, float y, float dx, float dy);
+        boolean onMouseScroll(float hscroll, float vscroll);
         boolean onFling(float velocityX, float velocityY);
         boolean onScaleBegin(float focusX, float focusY);
         boolean onScale(float focusX, float focusY, float scale);
@@ -58,6 +61,23 @@ public class FilmStripGestureRecognizer {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             mListener.onUp(event.getX(), event.getY());
         }
+    }
+
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_SCROLL: {
+                    final float hscroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+                    final float vscroll = -event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+
+                    if (hscroll != 0.0f || vscroll != 0.0f) {
+                        mListener.onMouseScroll(hscroll, vscroll);
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     private class MyGestureListener
