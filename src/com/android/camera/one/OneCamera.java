@@ -265,11 +265,11 @@ public interface OneCamera {
     /**
      * Meters and triggers auto focus scan with ROI around tap point.
      * <p/>
-     * Normalized coordinates are referenced to portrait preview window with 0,0
-     * top left and 1,1 bottom right. Rotation has no effect.
+     * Normalized coordinates are referenced to portrait preview window with
+     * (0, 0) top left and (1, 1) bottom right. Rotation has no effect.
      *
      * @param nx normalized x coordinate.
-     * @param nx normalized y coordinate.
+     * @param ny normalized y coordinate.
      */
     public void triggerFocusAndMeterAtPoint(float nx, float ny);
 

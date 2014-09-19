@@ -23,24 +23,82 @@ package com.android.camera.one;
 public class Settings3A {
 
     /**
-     * Width of touch AF region relative to shortest edge at 1.0 zoom.
-     * Was 0.125 * longest edge prior to L release.
+     * Width of touch AF region in [0,1] relative to shorter edge of the current
+     * crop region. Multiply this number by the number of pixels along the
+     * shorter edge of the current crop region's width to get a value in pixels.
+     *
+     * <p>
+     * This value has been tested on Nexus 5 and Shamu, but will need to be
+     * tuned per device depending on how its ISP interprets the metering box and weight.
+     * </p>
+     *
+     * <p>
+     * Values prior to L release:
+     * Normal mode: 0.125 * longest edge
+     * Gcam: Fixed at 300px x 300px.
+     * </p>
      */
     private static final float AF_REGION_BOX = 0.2f;
 
     /**
-     * Width of touch metering region relative to shortest edge at 1.0 zoom.
-     * Larger than {@link #AF_REGION_BOX} because exposure is sensitive and it is
-     * easy to over- or underexposure if area is too small.
+     * Width of touch metering region in [0,1] relative to shorter edge of the
+     * current crop region. Multiply this number by the number of pixels along
+     * shorter edge of the current crop region's width to get a value in pixels.
+     *
+     * <p>
+     * This value has been tested on Nexus 5 and Shamu, but will need to be
+     * tuned per device depending on how its ISP interprets the metering box and weight.
+     * </p>
+     *
+     * <p>
+     * Values prior to L release:
+     * Normal mode: 0.1875 * longest edge
+     * Gcam: Fixed at 300px x 300px.
+     * </p>
      */
     private static final float AE_REGION_BOX = 0.3f;
 
-    /** Metering region weight between 0 and 1. */
-    private static final float REGION_WEIGHT = 0.25f;
+    /** Metering region weight between 0 and 1.
+     *
+     * <p>
+     * This value has been tested on Nexus 5 and Shamu, but will need to be
+     * tuned per device depending on how its ISP interprets the metering box and weight.
+     * </p>
+     */
+    private static final float REGION_WEIGHT = 0.022f;
 
     /** Duration to hold after manual tap to focus. */
     private static final int FOCUS_HOLD_MILLIS = 3000;
 
+    /**
+     * Width of touch metering region in [0,1] relative to shorter edge of the
+     * current crop region. Multiply this number by the number of pixels along
+     * shorter edge of the current crop region's width to get a value in pixels.
+     *
+     * <p>
+     * This value has been tested on Nexus 5 and Shamu, but will need to be
+     * tuned per device depending on how its ISP interprets the metering box and weight.
+     * </p>
+     *
+     * <p>
+     * Was fixed at 300px x 300px prior to L release.
+     * </p>
+     */
+    private static final float GCAM_METERING_REGION_FRACTION = 0.1225f;
+
+    /**
+     * Weight of a touch metering region, in [0, \inf).
+     *
+     * <p>
+     * This value has been tested on Nexus 5 and Shamu, but will need to be
+     * tuned per device.
+     * </p>
+     *
+     * <p>
+     * Was fixed at 15.0f prior to L release.
+     * </p>
+     */
+    private static final float GCAM_METERING_REGION_WEIGHT = 22.0f;
 
     public static float getAutoFocusRegionWidth() {
         return AF_REGION_BOX;
@@ -52,6 +110,14 @@ public class Settings3A {
 
     public static float getMeteringRegionWeight() {
         return REGION_WEIGHT;
+    }
+
+    public static float getGcamMeteringRegionFraction() {
+        return GCAM_METERING_REGION_FRACTION;
+    }
+
+    public static float getGcamMeteringRegionWeight() {
+        return GCAM_METERING_REGION_WEIGHT;
     }
 
     public static int getFocusHoldMillis() {
