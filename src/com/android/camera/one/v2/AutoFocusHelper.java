@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2;
 
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureResult;
@@ -24,6 +25,7 @@ import android.hardware.camera2.params.MeteringRectangle;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.Settings3A;
+import com.android.camera.util.CameraUtil;
 
 /**
  * Helper class to implement auto focus and 3A in camera2-based
@@ -34,8 +36,8 @@ public class AutoFocusHelper {
 
     /** camera2 API metering region weight. */
     private static final int CAMERA2_REGION_WEIGHT = (int)
-            (((1 - Settings3A.getMeteringRegionWeight()) * MeteringRectangle.METERING_WEIGHT_MIN +
-                    Settings3A.getMeteringRegionWeight() * MeteringRectangle.METERING_WEIGHT_MAX));
+        (CameraUtil.lerp(MeteringRectangle.METERING_WEIGHT_MIN, MeteringRectangle.METERING_WEIGHT_MAX,
+                        Settings3A.getMeteringRegionWeight()));
 
     /** Zero weight 3A region, to reset regions per API. */
     private static final MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[]{
@@ -110,35 +112,79 @@ public class AutoFocusHelper {
         ));
     }
 
-    /** Compute 3A regions for a sensor-referenced touch coordinate. */
-    private static MeteringRectangle[] regionsForSensorCoord(int xc, int yc, float width,
-                                                             Rect cropRegion) {
-        float minCropEdge = (float) Math.min(cropRegion.width(), cropRegion.height());
-        int delta = (int) (0.5 * width * minCropEdge);
-        Rect region = new Rect(xc - delta, yc - delta, xc + delta, yc + delta);
-        // Make sure region is inside the sensor area.
-        if (!region.intersect(cropRegion)) {
-            region = cropRegion;
-        }
-        return new MeteringRectangle[]{new MeteringRectangle(region, CAMERA2_REGION_WEIGHT)};
+    /** Compute 3A regions for a sensor-referenced touch coordinate.
+     * Returns a MeteringRectangle[] with length 1.
+     *
+     * @param nx x coordinate of the touch point, in normalized portrait coordinates.
+     * @param ny y coordinate of the touch point, in normalized portrait coordinates.
+     * @param fraction Fraction in [0,1]. Multiplied by min(cropRegion.width(), cropRegion.height())
+     *             to determine the side length of the square MeteringRectangle.
+     * @param cropRegion Crop region of the image.
+     * @param sensorOrientation sensor orientation as defined by
+     *             CameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION).
+     *
+     * */
+    private static MeteringRectangle[] regionsForNormalizedCoord(float nx, float ny, float fraction,
+        final Rect cropRegion, int sensorOrientation) {
+        // Compute half side length in pixels.
+        int minCropEdge = Math.min(cropRegion.width(), cropRegion.height());
+        int halfSideLength = (int) (0.5f * fraction * minCropEdge);
+
+        // Compute the output MeteringRectangle in sensor space.
+        // nx, ny is normalized to the screen.
+        // Crop region itself is specified in sensor coordinates.
+
+        // Normalized coordinates, now rotated into sensor space.
+        PointF nsc = CameraUtil.normalizedSensorCoordsForNormalizedDisplayCoords(
+            nx, ny, sensorOrientation);
+
+        int xCenterSensor = (int)(cropRegion.left + nsc.x * cropRegion.width());
+        int yCenterSensor = (int)(cropRegion.top + nsc.y * cropRegion.height());
+
+        Rect meteringRegion = new Rect(xCenterSensor - halfSideLength,
+            yCenterSensor - halfSideLength,
+            xCenterSensor + halfSideLength,
+            yCenterSensor + halfSideLength);
+
+        // Clamp meteringRegion to cropRegion.
+        meteringRegion.left = CameraUtil.clamp(meteringRegion.left, cropRegion.left, cropRegion.right);
+        meteringRegion.top = CameraUtil.clamp(meteringRegion.top, cropRegion.top, cropRegion.bottom);
+        meteringRegion.right = CameraUtil.clamp(meteringRegion.right, cropRegion.left, cropRegion.right);
+        meteringRegion.bottom = CameraUtil.clamp(meteringRegion.bottom, cropRegion.top, cropRegion.bottom);
+
+        return new MeteringRectangle[]{new MeteringRectangle(meteringRegion, CAMERA2_REGION_WEIGHT)};
     }
 
     /**
      * Return AF region(s) for a sensor-referenced touch coordinate.
      *
+     * <p>
+     * Normalized coordinates are referenced to portrait preview window with
+     * (0, 0) top left and (1, 1) bottom right. Rotation has no effect.
+     * </p>
+     *
      * @return AF region(s).
      */
-    public static MeteringRectangle[] afRegionsForSensorCoord(int xc, int yc, Rect cropRegion) {
-        return regionsForSensorCoord(xc, yc, Settings3A.getAutoFocusRegionWidth(), cropRegion);
+    public static MeteringRectangle[] afRegionsForNormalizedCoord(float nx,
+        float ny, final Rect cropRegion, int sensorOrientation) {
+        return regionsForNormalizedCoord(nx, ny, Settings3A.getAutoFocusRegionWidth(),
+            cropRegion, sensorOrientation);
     }
 
     /**
      * Return AE region(s) for a sensor-referenced touch coordinate.
      *
+     * <p>
+     * Normalized coordinates are referenced to portrait preview window with
+     * (0, 0) top left and (1, 1) bottom right. Rotation has no effect.
+     * </p>
+     *
      * @return AE region(s).
      */
-    public static MeteringRectangle[] aeRegionsForSensorCoord(int xc, int yc, Rect cropRegion) {
-        return regionsForSensorCoord(xc, yc, Settings3A.getMeteringRegionWidth(), cropRegion);
+    public static MeteringRectangle[] aeRegionsForNormalizedCoord(float nx,
+        float ny, final Rect cropRegion, int sensorOrientation) {
+        return regionsForNormalizedCoord(nx, ny, Settings3A.getMeteringRegionWidth(),
+            cropRegion, sensorOrientation);
     }
 
     /**
