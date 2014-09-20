@@ -362,6 +362,14 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         }
 
         @Override
+        public boolean onMouseScroll(float hscroll, float vscroll) {
+            if (mFilmstripContentTranslationProgress == 0f) {
+                return mFilmstripGestureListener.onMouseScroll(hscroll, vscroll);
+            }
+            return false;
+        }
+
+        @Override
         public boolean onSingleTapUp(float x, float y) {
             if (mFilmstripContentTranslationProgress == 0f) {
                 return mFilmstripGestureListener.onSingleTapUp(x, y);
