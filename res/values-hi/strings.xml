@@ -76,7 +76,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"कैमरा चुनें"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"पीछे का कैमरा"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"सामने का कैमरा"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"स्थान सहेजें"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"स्थान जोड़ें"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"स्थान"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"काउंटडाउन टाइमर"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -274,7 +274,7 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ज़ूम करें"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"घुमाएं"</string>
     <string name="photo_editor" msgid="1521994560971367225">"फ़ोटो संपादक"</string>
-    <string name="crop_save" msgid="2841974981340098579">"सहेजें"</string>
+    <string name="crop_save" msgid="2841974981340098579">"जोड़ें"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"चित्र लोड नहीं हो सकता!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"फ़िल्मस्ट्रिप दृश्य"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"वॉलपेपर सेट हो रहा है"</string>
