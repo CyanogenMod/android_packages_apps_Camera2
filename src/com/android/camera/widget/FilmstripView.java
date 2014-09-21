@@ -797,8 +797,12 @@ public class FilmstripView extends ViewGroup {
             return null;
         }
 
-        int width = Math.round(mScale * getWidth());
-        int height = Math.round(mScale * getHeight());
+        // Always scale by fixed filmstrip scale, since we only show items when
+        // in filmstrip. Preloading images with a different scale and bounds
+        // interferes with caching.
+        int width = Math.round(FILM_STRIP_SCALE * getWidth());
+        int height = Math.round(FILM_STRIP_SCALE * getHeight());
+        Log.v(TAG, "suggesting item bounds: " + width + "x" + height);
         mDataAdapter.suggestViewSizeBound(width, height);
 
         data.prepare();
