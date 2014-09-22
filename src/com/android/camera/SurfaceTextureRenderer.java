@@ -96,10 +96,10 @@ public class SurfaceTextureRenderer {
         mEglHandler.post(new Runnable() {
             @Override
             public void run() {
-                mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
-                mEgl.eglDestroyContext(mEglDisplay, mEglContext);
                 mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE,
                         EGL10.EGL_NO_CONTEXT);
+                mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
+                mEgl.eglDestroyContext(mEglDisplay, mEglContext);
                 mEgl.eglTerminate(mEglDisplay);
                 mEglSurface = null;
                 mEglContext = null;
