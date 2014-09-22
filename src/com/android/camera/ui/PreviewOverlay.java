@@ -198,15 +198,6 @@ public class PreviewOverlay extends View
                 if (ev.getPointerCount() > 1) {
                     mDeltaX = ev.getX(1) - ev.getX(0);
                     mDeltaY = ev.getY(1) - ev.getY(0);
-                    if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
-                        if (!mZoomProcessor.isVisible()) {
-                            mZoomProcessor.showZoomUI();
-                        }
-                    } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
-                        if (mZoomProcessor.isVisible()) {
-                            mZoomProcessor.hideZoomUI();
-                        }
-                    }
                 }
                 return handled;
             }
@@ -309,8 +300,12 @@ public class PreviewOverlay extends View
         public boolean onScale(ScaleGestureDetector detector) {
             final float sf = detector.getScaleFactor();
             mCurrentRatio = (0.33f + mCurrentRatio) * sf * sf - 0.33f;
-            if (mCurrentRatio < mMinRatio) mCurrentRatio = mMinRatio;
-            if (mCurrentRatio > mMaxRatio) mCurrentRatio = mMaxRatio;
+            if (mCurrentRatio < mMinRatio) {
+                mCurrentRatio = mMinRatio;
+            }
+            if (mCurrentRatio > mMaxRatio) {
+                mCurrentRatio = mMaxRatio;
+            }
 
             // Only call the listener with a certain frequency. This is
             // necessary because these listeners will make repeated
@@ -331,10 +326,10 @@ public class PreviewOverlay extends View
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
+            mZoomProcessor.showZoomUI();
             if (mZoomListener == null) {
                 return false;
             }
-            mVisible = true;
             if (mZoomListener != null) {
                 mZoomListener.onZoomStart();
             }
@@ -345,7 +340,7 @@ public class PreviewOverlay extends View
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-            mVisible = false;
+            mZoomProcessor.hideZoomUI();
             if (mZoomListener != null) {
                 mZoomListener.onZoomEnd();
             }
