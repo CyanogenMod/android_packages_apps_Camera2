@@ -535,32 +535,50 @@ public abstract class LocalMediaData implements LocalData {
                 return;
             }
 
-            BitmapRequestBuilder<Uri, Bitmap> request = Glide.with(context)
+            final int overrideWidth;
+            final int overrideHeight;
+            final BitmapRequestBuilder<Uri, Bitmap> thumbnailRequest;
+            if (full) {
+                // Load up to the maximum size Bitmap we can render.
+                overrideWidth = Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE);
+                overrideHeight = Math.min(getHeight(), MAXIMUM_TEXTURE_SIZE);
+
+                // Load two thumbnails, first the small low quality thumb from the media store,
+                // then a medium quality thumbWidth/thumbHeight image. Using two thumbnails ensures
+                // we don't flicker to grey while we load the maximum size image.
+                thumbnailRequest = loadUri(context)
+                    .override(thumbWidth, thumbHeight)
+                    .fitCenter()
+                    .thumbnail(loadMediaStoreThumb(context));
+            } else {
+                // Load a medium quality thumbWidth/thumbHeight image.
+                overrideWidth = thumbWidth;
+                overrideHeight = thumbHeight;
+
+                // Load a single small low quality thumbnail from the media store.
+                thumbnailRequest = loadMediaStoreThumb(context);
+            }
+
+            loadUri(context)
+                .placeholder(placeHolderResourceId)
+                .fitCenter()
+                .override(overrideWidth, overrideHeight)
+                .thumbnail(thumbnailRequest)
+                .into(imageView);
+        }
+
+        /** Loads a thumbnail with a size targeted to use MediaStore.Images.Thumbnails. */
+        private BitmapRequestBuilder<Uri, Bitmap> loadMediaStoreThumb(Context context) {
+            return loadUri(context)
+                .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
+        }
+
+        /** Loads an image using a MediaStore Uri with our default options. */
+        private BitmapRequestBuilder<Uri, Bitmap> loadUri(Context context) {
+            return Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
                 .asBitmap()
-                .encoder(JPEG_ENCODER)
-                .placeholder(placeHolderResourceId)
-                .fitCenter();
-            if (full) {
-                request.thumbnail(Glide.with(context)
-                        .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
-                            mOrientation)
-                        .asBitmap()
-                        .encoder(JPEG_ENCODER)
-                        .override(thumbWidth, thumbHeight)
-                        .fitCenter())
-                    .override(Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE),
-                        Math.min(getHeight(), MAXIMUM_TEXTURE_SIZE));
-            } else {
-                request.thumbnail(Glide.with(context)
-                        .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
-                            mOrientation)
-                        .asBitmap()
-                        .encoder(JPEG_ENCODER)
-                        .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
-                    .override(thumbWidth, thumbHeight);
-            }
-            request.into(imageView);
+                .encoder(JPEG_ENCODER);
         }
 
         @Override
