@@ -2321,7 +2321,11 @@ public class PhotoModule
             updateCameraParametersPreference();
         }
 
-        mCameraDevice.applySettings(mCameraSettings);
+        // some monkey tests can get here when shutting the app down
+        // make sure mCameraDevice is still valid, b/17604028
+        if (mCameraDevice != null) {
+            mCameraDevice.applySettings(mCameraSettings);
+        }
     }
 
     // If the Camera is idle, update the parameters immediately, otherwise
