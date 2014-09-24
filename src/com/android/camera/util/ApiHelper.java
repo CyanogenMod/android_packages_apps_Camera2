@@ -54,6 +54,7 @@ public class ApiHelper {
 
     public static final boolean HAS_HIDEYBARS = isKitKatOrHigher();
 
+    public static final boolean IS_NEXUS_4 = "mako".equalsIgnoreCase(Build.DEVICE);
     public static final boolean IS_NEXUS_5 = "LGE".equalsIgnoreCase(Build.MANUFACTURER)
             && "hammerhead".equalsIgnoreCase(Build.DEVICE);
     public static final boolean IS_NEXUS_6 = "motorola".equalsIgnoreCase(Build.MANUFACTURER)
