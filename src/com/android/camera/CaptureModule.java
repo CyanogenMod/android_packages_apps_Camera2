@@ -395,9 +395,9 @@ public class CaptureModule extends CameraModule
     @Override
     public void onRemainingSecondsChanged(int remainingSeconds) {
         if (remainingSeconds == 1) {
-            mCountdownSoundPlayer.play(R.raw.beep_twice, 0.6f);
+            mCountdownSoundPlayer.play(R.raw.timer_final_second, 0.6f);
         } else if (remainingSeconds == 2 || remainingSeconds == 3) {
-            mCountdownSoundPlayer.play(R.raw.beep_once, 0.6f);
+            mCountdownSoundPlayer.play(R.raw.timer_increment, 0.6f);
         }
     }
 
@@ -561,8 +561,8 @@ public class CaptureModule extends CameraModule
             initSurface(mPreviewTexture);
         }
 
-        mCountdownSoundPlayer.loadSound(R.raw.beep_once);
-        mCountdownSoundPlayer.loadSound(R.raw.beep_twice);
+        mCountdownSoundPlayer.loadSound(R.raw.timer_final_second);
+        mCountdownSoundPlayer.loadSound(R.raw.timer_increment);
     }
 
     @Override
@@ -571,8 +571,8 @@ public class CaptureModule extends CameraModule
         cancelCountDown();
         resetTextureBufferSize();
         closeCamera();
-        mCountdownSoundPlayer.unloadSound(R.raw.beep_once);
-        mCountdownSoundPlayer.unloadSound(R.raw.beep_twice);
+        mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
+        mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
         mMainHandler.removeCallbacksAndMessages(null);
 
