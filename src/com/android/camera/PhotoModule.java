@@ -2182,15 +2182,17 @@ public class PhotoModule
                 (double) size.width() / size.height());
         Size original = mCameraSettings.getCurrentPreviewSize();
         if (!optimalSize.equals(original)) {
-            Log.v(TAG, "setting preview size");
+            Log.v(TAG, "setting preview size. optimal: " + optimalSize + "original: " + original);
             mCameraSettings.setPreviewSize(optimalSize);
 
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
             if (mHandler.getLooper() == Looper.myLooper()) {
+                Log.v(TAG, "matched looper, setting up preview");
                 // On UI thread only, not when camera starts up
                 setupPreview();
             } else {
+                Log.v(TAG, "no looper match, directly applying settings");
                 mCameraDevice.applySettings(mCameraSettings);
             }
             mCameraSettings = mCameraDevice.getSettings();
