@@ -39,7 +39,9 @@ import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.GservicesHelper;
 import com.android.camera.widget.AspectRatioDialogLayout;
 import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera.widget.LocationDialogLayout;
@@ -451,8 +453,10 @@ public class PhotoUI implements PreviewStatusListener,
      *         intro dialog on.
      */
     private boolean showAspectRatioDialogOnThisDevice() {
-        // We only want to show that dialog on N4 and N5
-        return "hammerhead".equals(Build.DEVICE) || "mako".equals(Build.DEVICE);
+        // We only want to show that dialog on N4/N5/N6
+        // Don't show if using API2 portability, b/17462976
+        return !GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity) &&
+                (ApiHelper.IS_NEXUS_4 || ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6);
     }
 
     public void initializeZoom(CameraCapabilities capabilities, CameraSettings settings) {
