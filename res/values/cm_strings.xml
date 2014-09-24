@@ -143,7 +143,6 @@
 
     <!-- Touch-to-focus duration settings -->
     <string name="pref_camera_focustime_title">Touch focus duration</string>
-    <string name="pref_camera_focustime_summary">Select duration for touch focus</string>
     <string name="pref_camera_focustime_default" translatable="false">5000</string>
 
     <!-- Settings screen, Timer mode entries -->
@@ -183,7 +182,6 @@
     <string name="pref_camera_asd_default" translatable="false">@string/setting_off_value</string>
 
     <string name="camera_menu_enhance_label">ENHANCE</string>
-    <string name="camera_menu_slow_shutter_label">SLOW SHUTTER</string>
     <string name="camera_menu_beauty_mode_label">BEAUTIFY</string>
     <string name="camera_menu_asd_label">SMART SCENE</string>
 

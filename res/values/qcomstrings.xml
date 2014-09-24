@@ -170,9 +170,6 @@
     <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
 
     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
-    <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
-    <string name="pref_camera_ae_bracket_hdr_value_ae_bracket" translatable="false">AE-Bracket</string>
-
     <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
     <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
 
