@@ -114,13 +114,15 @@ public class SoundClips {
         private static final int[] SOUND_RES = { // Soundtrack res IDs.
                 R.raw.focus_complete,
                 R.raw.video_record,
+                R.raw.video_record,
+                R.raw.shutter
         };
 
         // ID returned by load() should be non-zero.
         private static final int ID_NOT_LOADED = 0;
 
         // Maps a sound action to the id;
-        private final int[] mSoundRes = {0, 1, 1, 1};
+        private final int[] mSoundRes = {0, 1, 2, 3};
         // Store the context for lazy loading.
         private Context mContext;
         // mSoundPool is created every time load() is called and cleared every
