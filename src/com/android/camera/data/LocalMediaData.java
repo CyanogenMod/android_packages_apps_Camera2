@@ -73,6 +73,10 @@ public abstract class LocalMediaData implements LocalData {
     protected final double mLongitude;
     protected final Bundle mMetaData;
 
+    private static final int JPEG_COMPRESS_QUALITY = 90;
+    private static final BitmapEncoder JPEG_ENCODER =
+            new BitmapEncoder(Bitmap.CompressFormat.JPEG, JPEG_COMPRESS_QUALITY);
+
     /**
      * Used for thumbnail loading optimization. True if this data has a
      * corresponding visible view.
@@ -353,9 +357,6 @@ public abstract class LocalMediaData implements LocalData {
         private static final int mSupportedUIActions = ACTION_DEMOTE | ACTION_PROMOTE | ACTION_ZOOM;
         private static final int mSupportedDataActions =
                 DATA_ACTION_DELETE | DATA_ACTION_EDIT | DATA_ACTION_SHARE;
-
-        private static final int JPEG_COMPRESS_QUALITY = 90;
-        private static final BitmapEncoder JPEG_ENCODER = new BitmapEncoder(null, JPEG_COMPRESS_QUALITY);
 
         /** from MediaStore, can only be 0, 90, 180, 270 */
         private final int mOrientation;
@@ -802,8 +803,12 @@ public abstract class LocalMediaData implements LocalData {
 
             Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
+                .asBitmap()
+                .encoder(JPEG_ENCODER)
                 .thumbnail(Glide.with(context)
                     .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
+                    .asBitmap()
+                    .encoder(JPEG_ENCODER)
                     .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                 .placeholder(placeHolderResourceId)
                 .fitCenter()
