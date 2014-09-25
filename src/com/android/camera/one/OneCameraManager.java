@@ -20,6 +20,7 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -58,22 +59,11 @@ public abstract class OneCameraManager {
     public abstract boolean hasCameraFacing(Facing facing);
 
     /**
-     * Singleton camera manager to be used throughout the app.
-     */
-    private static OneCameraManager sCameraManager;
-
-    /**
-     * Returns a camera manager that is based on Camera2 API, if available, or
+     * Creates a camera manager that is based on Camera2 API, if available, or
      * otherwise uses the portability layer API.
-     * <p>
-     * The instance is created the first time this method is called and cached
-     * in a singleton thereafter, so successive calls are cheap.
      */
     public static OneCameraManager get(CameraActivity activity) {
-        if (sCameraManager == null) {
-            sCameraManager = create(activity);
-        }
-        return sCameraManager;
+        return create(activity);
     }
 
     /**
@@ -105,6 +95,9 @@ public abstract class OneCameraManager {
      *         HALs.
      */
     private static boolean isCamera2Supported(CameraManager cameraManager) {
+        if (Build.VERSION.SDK_INT < 21) {
+            return false;
+        }
         try {
             final String id = cameraManager.getCameraIdList()[0];
             // TODO: We should check for all the flags we need to ensure the
