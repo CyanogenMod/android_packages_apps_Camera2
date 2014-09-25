@@ -128,10 +128,6 @@ public class PhotoModule
     private static final int UPDATE_PARAM_PREFERENCE = 4;
     private static final int UPDATE_PARAM_ALL = -1;
 
-    // This is the delay before we execute onResume tasks when coming
-    // from the lock screen, to allow time for onPause to execute.
-    private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
-
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
 
     private CameraActivity mActivity;
@@ -284,13 +280,6 @@ public class PhotoModule
                 }
             };
     private boolean mShouldResizeTo16x9 = false;
-
-    private final Runnable mResumeTaskRunnable = new Runnable() {
-        @Override
-        public void run() {
-            onResumeTasks();
-        }
-    };
 
     /**
      * We keep the flash setting before entering scene modes (HDR)
@@ -1597,11 +1586,9 @@ public class PhotoModule
         focusAndCapture();
     }
 
-    private void onResumeTasks() {
-        if (mPaused) {
-            return;
-        }
-        Log.v(TAG, "Executing onResumeTasks.");
+    @Override
+    public void resume() {
+        mPaused = false;
 
         mCountdownSoundPlayer.loadSound(R.raw.timer_final_second);
         mCountdownSoundPlayer.loadSound(R.raw.timer_increment);
@@ -1701,27 +1688,8 @@ public class PhotoModule
     }
 
     @Override
-    public void resume() {
-        mPaused = false;
-
-        // Add delay on resume from lock screen only, in order to to speed up
-        // the onResume --> onPause --> onResume cycle from lock screen.
-        // Don't do always because letting go of thread can cause delay.
-        if (isResumeFromLockscreen()) {
-            Log.v(TAG, "On resume, from lock screen.");
-            // Note: onPauseAfterSuper() will delete this runnable, so we will
-            // at most have 1 copy queued up.
-            mHandler.postDelayed(mResumeTaskRunnable, ON_RESUME_TASKS_DELAY_MSEC);
-        } else {
-            Log.v(TAG, "On resume.");
-            onResumeTasks();
-        }
-    }
-
-    @Override
     public void pause() {
         mPaused = true;
-        mHandler.removeCallbacks(mResumeTaskRunnable);
         getServices().getRemoteShutterListener().onModuleExit();
         SessionStatsCollector.instance().sessionActive(false);
 
