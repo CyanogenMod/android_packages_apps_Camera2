@@ -122,10 +122,9 @@ public class AutoFocusHelper {
      * @param cropRegion Crop region of the image.
      * @param sensorOrientation sensor orientation as defined by
      *             CameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION).
-     *
-     * */
-    private static MeteringRectangle[] regionsForNormalizedCoord(float nx, float ny, float fraction,
-        final Rect cropRegion, int sensorOrientation) {
+     */
+    private static MeteringRectangle[] regionsForNormalizedCoord(float nx, float ny,
+        float fraction, final Rect cropRegion, int sensorOrientation) {
         // Compute half side length in pixels.
         int minCropEdge = Math.min(cropRegion.width(), cropRegion.height());
         int halfSideLength = (int) (0.5f * fraction * minCropEdge);
@@ -184,6 +183,22 @@ public class AutoFocusHelper {
     public static MeteringRectangle[] aeRegionsForNormalizedCoord(float nx,
         float ny, final Rect cropRegion, int sensorOrientation) {
         return regionsForNormalizedCoord(nx, ny, Settings3A.getMeteringRegionWidth(),
+            cropRegion, sensorOrientation);
+    }
+
+    /**
+     * [Gcam mode only]: Return AE region(s) for a sensor-referenced touch coordinate.
+     *
+     * <p>
+     * Normalized coordinates are referenced to portrait preview window with
+     * (0, 0) top left and (1, 1) bottom right. Rotation has no effect.
+     * </p>
+     *
+     * @return AE region(s).
+     */
+    public static MeteringRectangle[] gcamAERegionsForNormalizedCoord(float nx,
+        float ny, final Rect cropRegion, int sensorOrientation) {
+        return regionsForNormalizedCoord(nx, ny, Settings3A.getGcamMeteringRegionFraction(),
             cropRegion, sensorOrientation);
     }
 
