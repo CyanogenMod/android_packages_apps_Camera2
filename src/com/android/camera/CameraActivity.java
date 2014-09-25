@@ -194,6 +194,7 @@ public class CameraActivity extends Activity
      */
     private LocalDataAdapter mDataAdapter;
 
+    private OneCameraManager mCameraManager;
     private SettingsManager mSettingsManager;
     private ModeListView mModeListView;
     private boolean mModeListVisible = false;
@@ -1260,7 +1261,7 @@ public class CameraActivity extends Activity
 
     @Override
     public OneCameraManager getCameraManager() {
-        return OneCameraManager.get(this);
+        return mCameraManager;
     }
 
     private void removeData(int dataID) {
@@ -1330,6 +1331,8 @@ public class CameraActivity extends Activity
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
         mSoundPlayer = new SoundPlayer(mAppContext);
+
+        mCameraManager = OneCameraManager.get(this);
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
