@@ -22,9 +22,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
 import com.android.camera.Storage;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +72,8 @@ public class LocalSessionData implements LocalData {
         int currentVersion = Storage.getJpegVersionForSession(mUri);
         Glide.with(context)
             .loadFromImage(jpegData, mUri.toString() + currentVersion)
+            .asBitmap()
+            .format(DecodeFormat.PREFER_RGB_565)
             .fitCenter()
             .into(imageView);
 
