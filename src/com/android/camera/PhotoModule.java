@@ -749,7 +749,9 @@ public class PhotoModule
                                             CameraCapabilities.SceneMode.AUTO));
                         }
                         updateParametersSceneMode();
-                        mCameraDevice.applySettings(mCameraSettings);
+                        if (mCameraDevice != null) {
+                            mCameraDevice.applySettings(mCameraSettings);
+                        }
                         updateSceneMode();
                     }
                 }
@@ -906,7 +908,7 @@ public class PhotoModule
 
     @Override
     public void startFaceDetection() {
-        if (mFaceDetectionStarted) {
+        if (mFaceDetectionStarted || mCameraDevice == null) {
             return;
         }
         if (mCameraCapabilities.getMaxNumOfFacesSupported() > 0) {
@@ -920,7 +922,7 @@ public class PhotoModule
 
     @Override
     public void stopFaceDetection() {
-        if (!mFaceDetectionStarted) {
+        if (!mFaceDetectionStarted || mCameraDevice == null) {
             return;
         }
         if (mCameraCapabilities.getMaxNumOfFacesSupported() > 0) {
@@ -1970,7 +1972,7 @@ public class PhotoModule
         // eventually recurse back into startPreview().
         // To avoid calling startPreview() twice, we must acquire
         // mStartPreviewLock.
-        if (mStartPreviewLock) {
+        if (mStartPreviewLock || mCameraDevice == null) {
             // do nothing
             return;
         }
@@ -2155,6 +2157,10 @@ public class PhotoModule
     }
 
     private void updateParametersPictureSize() {
+        if (mCameraDevice == null) {
+            return;
+        }
+
         SettingsManager settingsManager = mActivity.getSettingsManager();
         String pictureSizeKey = isCameraFrontFacing() ? Keys.KEY_PICTURE_SIZE_FRONT
             : Keys.KEY_PICTURE_SIZE_BACK;
@@ -2284,6 +2290,9 @@ public class PhotoModule
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void updateAutoFocusMoveCallback() {
+        if (mCameraDevice == null) {
+            return;
+        }
         if (mCameraSettings.getCurrentFocusMode() ==
                 CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
             mCameraDevice.setAutoFocusMoveCallback(mHandler,
@@ -2327,8 +2336,6 @@ public class PhotoModule
             updateCameraParametersPreference();
         }
 
-        // some monkey tests can get here when shutting the app down
-        // make sure mCameraDevice is still valid, b/17604028
         if (mCameraDevice != null) {
             mCameraDevice.applySettings(mCameraSettings);
         }
