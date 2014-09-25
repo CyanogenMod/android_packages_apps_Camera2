@@ -1356,10 +1356,12 @@ public class PhotoModule
             CameraCapabilities.FocusMode focusMode) {
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FLASH_MODE,
-                            stringifier.stringify(flashMode));
+        if (!CameraCapabilities.FlashMode.NO_FLASH.equals(flashMode)) {
+            settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FLASH_MODE,
+                    stringifier.stringify(flashMode));
+        }
         settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FOCUS_MODE,
-                            stringifier.stringify(focusMode));
+                stringifier.stringify(focusMode));
     }
 
     @Override
