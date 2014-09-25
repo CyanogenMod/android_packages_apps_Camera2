@@ -1881,7 +1881,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         buttonManager.setToInitialState();
 
         /** Standard mode options */
-        if (hardwareSpec.isFrontCameraSupported()) {
+        if (mController.getCameraProvider().getNumberOfCameras() > 1 &&
+                hardwareSpec.isFrontCameraSupported()) {
             if (bottomBarSpec.enableCamera) {
                 buttonManager.initializeButton(ButtonManager.BUTTON_CAMERA,
                         bottomBarSpec.cameraCallback);
