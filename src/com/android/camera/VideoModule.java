@@ -414,7 +414,7 @@ public class VideoModule extends CameraModule
         }
         if (!mIsVideoCaptureIntent) {
             if (!mMediaRecorderRecording || mPaused || mSnapshotInProgress
-                    || !mAppController.isShutterEnabled()) {
+                    || !mAppController.isShutterEnabled() || mCameraDevice == null) {
                 return;
             }
 
@@ -432,7 +432,7 @@ public class VideoModule extends CameraModule
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
      private void updateAutoFocusMoveCallback() {
-        if (mPaused) {
+        if (mPaused || mCameraDevice == null) {
             return;
         }
 
@@ -587,6 +587,10 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
+        if (cameraProxy == null) {
+            Log.w(TAG, "onCameraAvailable returns a null CameraProxy object");
+            return;
+        }
         mCameraDevice = cameraProxy;
         mCameraCapabilities = mCameraDevice.getCapabilities();
         mCameraSettings = mCameraDevice.getSettings();
@@ -946,7 +950,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public void stopPreview() {
-        if (!mPreviewing) {
+        if (!mPreviewing || mCameraDevice == null) {
             return;
         }
         mCameraDevice.stopPreview();
@@ -1085,8 +1089,10 @@ public class VideoModule extends CameraModule
         mMediaRecorder = new MediaRecorder();
 
         // Unlock the camera object before passing it to media recorder.
-        mCameraDevice.unlock();
-        mMediaRecorder.setCamera(mCameraDevice.getCamera());
+        if (mCameraDevice != null) {
+            mCameraDevice.unlock();
+            mMediaRecorder.setCamera(mCameraDevice.getCamera());
+        }
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mMediaRecorder.setProfile(mProfile);
@@ -1297,8 +1303,10 @@ public class VideoModule extends CameraModule
                 if (bytes <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
                     Log.w(TAG, "Storage issue, ignore the start request");
                 } else {
-                    //??
-                    //if (!mCameraDevice.waitDone()) return;
+                    if (mCameraDevice == null) {
+                        Log.v(TAG, "in storage callback after camera closed");
+                        return;
+                    }
                     if (mPaused == true) {
                         Log.v(TAG, "in storage callback after module paused");
                         return;
@@ -1438,7 +1446,7 @@ public class VideoModule extends CameraModule
 
         mAppController.getCameraAppUI().showModeOptions();
         mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
-        if (!mPaused) {
+        if (!mPaused && mCameraDevice != null) {
             setFocusParameters();
             mCameraDevice.lock();
             if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
@@ -1598,10 +1606,12 @@ public class VideoModule extends CameraModule
                 CameraProfile.QUALITY_HIGH);
         mCameraSettings.setPhotoJpegCompressionQuality(jpegQuality);
 
-        mCameraDevice.applySettings(mCameraSettings);
-        // Nexus 5 through KitKat 4.4.2 requires a second call to
-        // .setParameters() for frame rate settings to take effect.
-        mCameraDevice.applySettings(mCameraSettings);
+        if (mCameraDevice != null) {
+            mCameraDevice.applySettings(mCameraSettings);
+            // Nexus 5 through KitKat 4.4.2 requires a second call to
+            // .setParameters() for frame rate settings to take effect.
+            mCameraDevice.applySettings(mCameraSettings);
+        }
 
         // Update UI based on the new parameters.
         mUI.updateOnScreenIndicators(mCameraSettings);
@@ -1811,7 +1821,9 @@ public class VideoModule extends CameraModule
                 mParameters.setFlashMode(flashMode);
             }
         }*/
-        mCameraDevice.applySettings(mCameraSettings);
+        if (mCameraDevice != null) {
+            mCameraDevice.applySettings(mCameraSettings);
+        }
         mUI.updateOnScreenIndicators(mCameraSettings);
     }
 
@@ -1914,13 +1926,17 @@ public class VideoModule extends CameraModule
     /***********************FocusOverlayManager Listener****************************/
     @Override
     public void autoFocus() {
-        mCameraDevice.autoFocus(mHandler, mAutoFocusCallback);
+        if (mCameraDevice != null) {
+            mCameraDevice.autoFocus(mHandler, mAutoFocusCallback);
+        }
     }
 
     @Override
     public void cancelAutoFocus() {
-        mCameraDevice.cancelAutoFocus();
-        setFocusParameters();
+        if (mCameraDevice != null) {
+            mCameraDevice.cancelAutoFocus();
+            setFocusParameters();
+        }
     }
 
     @Override
@@ -1940,8 +1956,9 @@ public class VideoModule extends CameraModule
 
     @Override
     public void setFocusParameters() {
-        updateFocusParameters();
-        mCameraDevice.applySettings(mCameraSettings);
+        if (mCameraDevice != null) {
+            updateFocusParameters();
+            mCameraDevice.applySettings(mCameraSettings);
+        }
     }
-
 }
