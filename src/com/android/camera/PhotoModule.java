@@ -1808,6 +1808,9 @@ public class PhotoModule
 
     @Override
     public void autoFocus() {
+        if (mCameraDevice == null) {
+            return;
+        }
         Log.v(TAG,"Starting auto focus");
         mFocusStartTime = System.currentTimeMillis();
         mCameraDevice.autoFocus(mHandler, mAutoFocusCallback);
@@ -1817,6 +1820,9 @@ public class PhotoModule
 
     @Override
     public void cancelAutoFocus() {
+        if (mCameraDevice == null) {
+            return;
+        }
         mCameraDevice.cancelAutoFocus();
         setCameraState(IDLE);
         setCameraParameters(UPDATE_PARAM_PREFERENCE);
