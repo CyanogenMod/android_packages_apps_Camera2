@@ -21,6 +21,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 
 import com.android.camera.SoundPlayer;
@@ -62,44 +63,81 @@ public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
     public void open(Facing facing, final boolean useHdr, final Size pictureSize,
-            final OpenCallback openCallback) {
+            final OpenCallback openCallback, Handler handler) {
         try {
             final String cameraId = getCameraId(facing);
             Log.i(TAG, "Opening Camera ID " + cameraId);
             mCameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
+                // We may get multiple calls to StateCallback, but only the
+                // first callback indicates the status of the camera-opening
+                // operation.  For example, we may receive onOpened() and later
+                // onClosed(), but only the first should be relayed to
+                // openCallback.
+                private boolean isFirstCallback = true;
 
                 @Override
                 public void onDisconnected(CameraDevice device) {
-                    // TODO, Re-route through the camera instance?
+                    if (isFirstCallback) {
+                        isFirstCallback = false;
+                        // If the camera is disconnected before it is opened
+                        // then we must call close.
+                        device.close();
+                        openCallback.onCameraClosed();
+                    }
+                }
+
+                @Override
+                public void onClosed(CameraDevice device) {
+                    if (isFirstCallback) {
+                        isFirstCallback = false;
+                        openCallback.onCameraClosed();
+                    }
                 }
 
                 @Override
                 public void onError(CameraDevice device, int error) {
-                    openCallback.onFailure();
+                    if (isFirstCallback) {
+                        isFirstCallback = false;
+                        device.close();
+                        openCallback.onFailure();
+                    }
                 }
 
                 @Override
                 public void onOpened(CameraDevice device) {
-                    try {
-                        CameraCharacteristics characteristics = mCameraManager
-                                .getCameraCharacteristics(device.getId());
-                        // TODO: Set boolean based on whether HDR+ is enabled.
-                        OneCamera oneCamera = OneCameraCreator.create(mContext, useHdr, device,
-                                characteristics, pictureSize, mMaxMemoryMB, mDisplayMetrics,
-                                mSoundPlayer);
-                        openCallback.onCameraOpened(oneCamera);
-                    } catch (CameraAccessException e) {
-                        Log.d(TAG, "Could not get camera characteristics");
-                        openCallback.onFailure();
+                    if (isFirstCallback) {
+                        isFirstCallback = false;
+                        try {
+                            CameraCharacteristics characteristics = mCameraManager
+                                    .getCameraCharacteristics(device.getId());
+                            // TODO: Set boolean based on whether HDR+ is enabled.
+                            OneCamera oneCamera = OneCameraCreator.create(mContext, useHdr, device,
+                                    characteristics, pictureSize, mMaxMemoryMB, mDisplayMetrics,
+                                    mSoundPlayer);
+                            openCallback.onCameraOpened(oneCamera);
+                        } catch (CameraAccessException e) {
+                            Log.d(TAG, "Could not get camera characteristics");
+                            openCallback.onFailure();
+                        }
                     }
                 }
-            }, null);
+            }, handler);
         } catch (CameraAccessException ex) {
             Log.e(TAG, "Could not open camera. " + ex.getMessage());
-            openCallback.onFailure();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    openCallback.onFailure();
+                }
+            });
         } catch (UnsupportedOperationException ex) {
             Log.e(TAG, "Could not open camera. " + ex.getMessage());
-            openCallback.onFailure();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    openCallback.onFailure();
+                }
+            });
         }
     }
 
