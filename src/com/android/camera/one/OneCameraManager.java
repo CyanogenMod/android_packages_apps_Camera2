@@ -21,6 +21,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -42,6 +43,9 @@ public abstract class OneCameraManager {
      * Attempts to open the camera facing the given direction with the given
      * capture size.
      *
+     * Exactly one call will always be made to a single method in the provided
+     * {@link OpenCallback}.
+     *
      * @param facing which camera to open. The first camera found in the given
      *            direction will be opened.
      * @param enableHdr if an HDR feature exists, open a camera that supports it
@@ -49,9 +53,10 @@ public abstract class OneCameraManager {
      *            sizes.
      * @param callback this listener is called when the camera was opened or
      *            when it failed to open.
+     * @param handler the handler on which callback methods are invoked.
      */
     public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
-            OpenCallback callback);
+            OpenCallback callback, Handler handler);
 
     /**
      * Returns whether the device has a camera facing the given direction.
