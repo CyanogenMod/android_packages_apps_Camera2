@@ -98,6 +98,12 @@ public interface OneCamera {
          * Called if opening the camera failed.
          */
         public void onFailure();
+
+        /**
+         * Called if the camera is closed or disconnected while attempting to
+         * open.
+         */
+        public void onCameraClosed();
     }
 
     /**
