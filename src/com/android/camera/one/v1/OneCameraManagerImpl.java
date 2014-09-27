@@ -16,6 +16,8 @@
 
 package com.android.camera.one.v1;
 
+import android.os.Handler;
+
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraManager;
@@ -28,7 +30,7 @@ import com.android.camera.util.Size;
 public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
-    public void open(Facing facing, boolean enableHdr, Size pictureSize, OpenCallback callback) {
+    public void open(Facing facing, boolean enableHdr, Size pictureSize, OpenCallback callback, Handler handler) {
         throw new RuntimeException("Not implemented yet.");
     }
 
