@@ -30,6 +30,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
@@ -74,6 +75,8 @@ import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
 import java.io.File;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * New Capture module that is made to support photo and video capture on top of
@@ -145,6 +148,9 @@ public class CaptureModule extends CameraModule
      */
     private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
+    /** Timeout for camera open/close operations. */
+    private static final int CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS = 2500;
+
     /** System Properties switch to enable debugging focus UI. */
     private static final boolean CAPTURE_DEBUG_UI = DebugPropertyHelper.showCaptureDebugUI();
 
@@ -170,8 +176,10 @@ public class CaptureModule extends CameraModule
     private CaptureModuleUI mUI;
     /** The camera manager used to open cameras. */
     private OneCameraManager mCameraManager;
-    /** The currently opened camera device. */
+    /** The currently opened camera device, or null if the camera is closed. */
     private OneCamera mCamera;
+    /** Held when opening or closing the camera. */
+    private final Semaphore mCameraOpenCloseLock = new Semaphore(1);
     /** The direction the currently opened camera is facing to. */
     private Facing mCameraFacing = Facing.BACK;
     /** Whether HDR is currently enabled. */
@@ -247,6 +255,8 @@ public class CaptureModule extends CameraModule
 
     /** Main thread handler. */
     private Handler mMainHandler;
+    /** Handler thread for camera-related operations. */
+    private Handler mCameraHandler;
 
     /** Current display rotation in degrees. */
     private int mDisplayRotation;
@@ -298,6 +308,9 @@ public class CaptureModule extends CameraModule
         Log.d(TAG, "init");
         mIsResumeFromLockScreen = isResumeFromLockscreen(activity);
         mMainHandler = new Handler(activity.getMainLooper());
+        HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
+        thread.start();
+        mCameraHandler = new Handler(thread.getLooper());
         mCameraManager = mAppController.getCameraManager();
         mLocationManager = mAppController.getLocationManager();
         mDisplayRotation = CameraUtil.getDisplayRotation(mContext);
@@ -588,6 +601,7 @@ public class CaptureModule extends CameraModule
     @Override
     public void destroy() {
         mCountdownSoundPlayer.release();
+        mCameraHandler.getLooper().quitSafely();
     }
 
     @Override
@@ -725,6 +739,11 @@ public class CaptureModule extends CameraModule
     // PhotoModule uses FocusOverlayManager which uses API1/portability
     // logic and coordinates.
     private void triggerFocusAtScreenCoord(int x, int y) {
+        if (mCamera == null) {
+            // If we receive this after the camera is closed, do nothing.
+            return;
+        }
+
         mTapToFocusWaitForActiveScan = true;
         // Show UI immediately even though scan has not started yet.
         float minEdge = Math.min(mPreviewArea.width(), mPreviewArea.height());
@@ -1205,13 +1224,34 @@ public class CaptureModule extends CameraModule
     private void openCameraAndStartPreview() {
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
+
+        try {
+            // TODO Given the current design, we cannot guarantee that one of
+            // CaptureReadyCallback.onSetupFailed or onReadyForCapture will
+            // be called (see below), so it's possible that
+            // mCameraOpenCloseLock.release() is never called under extremely
+            // rare cases.  If we leak the lock, this timeout ensures that we at
+            // least crash so we don't deadlock the app.
+            if (!mCameraOpenCloseLock.tryAcquire(CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
+                throw new RuntimeException("Time out waiting to acquire camera-open lock.");
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
+        }
         mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
                 new OpenCallback() {
                     @Override
                     public void onFailure() {
                         Log.e(TAG, "Could not open camera.");
                         mCamera = null;
+                        mCameraOpenCloseLock.release();
                         mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+                    }
+
+                    @Override
+                    public void onCameraClosed() {
+                        mCamera = null;
+                        mCameraOpenCloseLock.release();
                     }
 
                     @Override
@@ -1232,32 +1272,67 @@ public class CaptureModule extends CameraModule
                                 new CaptureReadyCallback() {
                                     @Override
                                     public void onSetupFailed() {
+                                        // We must release this lock here, before posting
+                                        // to the main handler since we may be blocked
+                                        // in pause(), getting ready to close the camera.
+                                        mCameraOpenCloseLock.release();
                                         Log.e(TAG, "Could not set up preview.");
-                                        mCamera.close(null);
-                                        mCamera = null;
-                                        // TODO: Show an error message and exit.
+                                        mMainHandler.post(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               if (mCamera == null) {
+                                                   Log.d(TAG, "Camera closed, aborting.");
+                                                   return;
+                                               }
+                                               mCamera.close(null);
+                                               mCamera = null;
+                                               // TODO: Show an error message and exit.
+                                           }
+                                        });
                                     }
 
                                     @Override
                                     public void onReadyForCapture() {
-                                        Log.d(TAG, "Ready for capture.");
-                                        onPreviewStarted();
-                                        // Enable zooming after preview has
-                                        // started.
-                                        mUI.initializeZoom(mCamera.getMaxZoom());
-                                        mCamera.setFocusStateListener(CaptureModule.this);
-                                        mCamera.setReadyStateChangedListener(CaptureModule.this);
+                                        // We must release this lock here, before posting
+                                        // to the main handler since we may be blocked
+                                        // in pause(), getting ready to close the camera.
+                                        mCameraOpenCloseLock.release();
+                                        mMainHandler.post(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               Log.d(TAG, "Ready for capture.");
+                                               if (mCamera == null) {
+                                                   Log.d(TAG, "Camera closed, aborting.");
+                                                   return;
+                                               }
+                                               onPreviewStarted();
+                                               // Enable zooming after preview has
+                                               // started.
+                                               mUI.initializeZoom(mCamera.getMaxZoom());
+                                               mCamera.setFocusStateListener(CaptureModule.this);
+                                               mCamera.setReadyStateChangedListener(CaptureModule.this);
+                                           }
+                                        });
                                     }
                                 });
                     }
-                });
+                }, mCameraHandler);
     }
 
     private void closeCamera() {
-        if (mCamera != null) {
-            mCamera.setFocusStateListener(null);
-            mCamera.close(null);
-            mCamera = null;
+        try {
+            mCameraOpenCloseLock.acquire();
+        } catch(InterruptedException e) {
+            throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
+        }
+        try {
+            if (mCamera != null) {
+                mCamera.setFocusStateListener(null);
+                mCamera.close(null);
+                mCamera = null;
+            }
+        } finally {
+            mCameraOpenCloseLock.release();
         }
     }
 
