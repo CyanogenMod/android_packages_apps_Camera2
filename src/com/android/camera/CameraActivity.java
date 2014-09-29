@@ -1324,7 +1324,7 @@ public class CameraActivity extends Activity
         super.onCreate(state);
         if (!Glide.isSetup()) {
             Glide.setup(new GlideBuilder(this)
-                .setResizeService(new FifoPriorityThreadPoolExecutor(1)));
+                .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
             Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);
         }
 
