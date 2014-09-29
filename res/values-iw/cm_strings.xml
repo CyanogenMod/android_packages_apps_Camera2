@@ -103,7 +103,6 @@
   <string name="pref_camera_burst_entry_15">15 צילומים</string>
   <string name="pref_camera_burst_entry_20">20 צילומים</string>
   <string name="pref_camera_focustime_title">משך פוקוס</string>
-  <string name="pref_camera_focustime_summary">בחר משך פוקוס</string>
   <string name="pref_camera_focustime_entry_5">5ש</string>
   <string name="pref_camera_focustime_entry_10">10ש</string>
   <string name="pref_camera_focustime_entry_15">15ש</string>
@@ -123,7 +122,6 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 שניות</string>
   <string name="pref_camera_storage_title">זיכרון</string>
   <string name="camera_menu_enhance_label">שפר</string>
-  <string name="camera_menu_slow_shutter_label">צמצם איטי</string>
   <string name="camera_menu_beauty_mode_label">יפייף</string>
   <string name="camera_menu_asd_label">סצנה חכמה</string>
   <string name="pref_camera_power_shutter_title">לחצן צילום</string>

@@ -49,13 +49,14 @@
   <string name="title">ناونیشان</string>
   <string name="description">پێناسه</string>
   <string name="time">کات</string>
+  <string name="location">شوێن</string>
   <string name="path">ڕێچکە</string>
   <string name="width">پانیی</string>
   <string name="height">بەرزیی</string>
   <string name="orientation">باری پیشاندان</string>
   <string name="duration">ماوه‌</string>
   <string name="mimetype">جۆری MIME</string>
-  <string name="file_size">قەبارەی فایل</string>
+  <string name="file_size">قەبارەی پەڕگە</string>
   <string name="maker">دروستکەر</string>
   <string name="model">مۆدێل</string>
   <string name="flash">فلاش</string>
@@ -77,6 +78,7 @@
   <string name="camera_error_title">هەڵەی کامێرا</string>
   <string name="cannot_connect_camera">ناتوانرێت به‌ کامێراوه‌ ببه‌سرێت.</string>
   <string name="camera_disabled">کامێرا لەکارخراوه‌ به‌ هۆکاری ئاسایشی.</string>
+  <string name="wait">تکایە چاوەڕێبه‌\u2026</string>
   <string name="no_storage" product="default">کارتی دەرەکیی تێبکە پێش بەکارهێنانی کامێراکە.</string>
   <string name="preparing_sd" product="default">ئامادەکردنی کارتی دەرەکی\u2026</string>
   <string name="access_sd_fail" product="default">کارتی دەرەکی ناخوێنێته‌وه‌.</string>
@@ -112,26 +114,34 @@
   <string name="pref_camera_picturesize_entry_vga">VGA</string>
   <string name="pref_camera_picturesize_entry_qvga">QVGA</string>
   <string name="pref_camera_focusmode_title">باری سەرنج</string>
+  <string name="pref_camera_focusmode_entry_auto">خۆکار</string>
   <string name="pref_camera_focusmode_entry_infinity">ناكۆتايى</string>
   <string name="pref_camera_focusmode_entry_macro">ماکرۆ</string>
+  <string name="pref_camera_focusmode_label_auto">خۆکار</string>
   <string name="pref_camera_focusmode_label_infinity">ناکۆتا</string>
   <string name="pref_camera_focusmode_label_macro">ماکرۆ</string>
   <string name="pref_camera_flashmode_title">باری فلاش</string>
   <string name="pref_camera_flashmode_label">باری فلاش</string>
+  <string name="pref_camera_flashmode_entry_auto">خۆکار</string>
+  <string name="pref_camera_flashmode_entry_on">داگیرسان</string>
   <string name="pref_camera_flashmode_entry_off">کوژانه‌وه‌</string>
   <string name="pref_camera_flashmode_label_auto">فلاشی خۆکار</string>
   <string name="pref_camera_flashmode_label_on">داگیرسانی فلاش</string>
   <string name="pref_camera_flashmode_label_off">کوژانه‌وه‌ی فلاش</string>
+  <string name="pref_camera_whitebalance_title">هاوسەنگیی سپی</string>
   <string name="pref_camera_whitebalance_label">هاوسه‌نگیی سپێتی</string>
+  <string name="pref_camera_whitebalance_entry_auto">خۆکار</string>
   <string name="pref_camera_whitebalance_entry_incandescent">درەوشاوە</string>
   <string name="pref_camera_whitebalance_entry_daylight">ڕۆژی ڕووناک</string>
   <string name="pref_camera_whitebalance_entry_fluorescent">تيشكاوى</string>
   <string name="pref_camera_whitebalance_entry_cloudy">هەورین</string>
+  <string name="pref_camera_whitebalance_label_auto">خۆکار</string>
   <string name="pref_camera_whitebalance_label_incandescent">درەوشاوە</string>
   <string name="pref_camera_whitebalance_label_daylight">ڕۆژی ڕووناک</string>
   <string name="pref_camera_whitebalance_label_fluorescent">تيشكاوى</string>
   <string name="pref_camera_whitebalance_label_cloudy">هەورین</string>
   <string name="pref_camera_scenemode_title">باری دیمه‌ن</string>
+  <string name="pref_camera_scenemode_entry_auto">خۆکار</string>
   <string name="pref_camera_scenemode_entry_hdr_plus">HDR+</string>
   <string name="pref_camera_scenemode_entry_hdr">HDR</string>
   <string name="pref_camera_scenemode_entry_turn_hdr_plus_on">داگیرسانی HDR+</string>
@@ -169,6 +179,7 @@
   <string name="pano_dialog_title">پانۆراما</string>
   <string name="pano_capture_indication">گرتنی پانۆراما</string>
   <string name="pano_dialog_waiting_previous">چاوەڕێکردن بۆ پانۆرامای پێشوو</string>
+  <string name="pano_review_saving_indication_str">پاشەکەوتی\u2026</string>
   <string name="pano_review_rendering">کارپێکردنی پانۆراما</string>
   <string name="tap_to_focus">په‌نجه‌ی سه‌رنج داگره‌.</string>
   <string name="pref_video_effect_title">کاریگه‌رییه‌کان</string>
@@ -260,6 +271,7 @@
   <string name="saving_tiny_planet">پاشەکەوتی هه‌ساره‌ی ورد &#8230;</string>
   <string name="tiny_planet_zoom">زووم</string>
   <string name="tiny_planet_rotate">سووڕانەوە</string>
+  <string name="crop_save">پاشەکەوت</string>
   <string name="cannot_load_image">ناتوانێت وێنە دابەزێنێت!</string>
   <string name="switch_photo_filmstrip">پیشاندانی سینه‌مایی</string>
   <string name="setting_wallpaper">ڕێکخستنی پێشینه‌</string>

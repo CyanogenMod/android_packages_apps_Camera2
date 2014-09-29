@@ -20,6 +20,7 @@
   <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 MP</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 MP</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 MP</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 MP</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 MP</string>
   <string name="pref_camera_picturesize_entry_10mp">10 MP</string>
@@ -103,7 +104,6 @@
   <string name="pref_camera_burst_entry_15">15 nuotraukų</string>
   <string name="pref_camera_burst_entry_20">20 nuotraukų</string>
   <string name="pref_camera_focustime_title">Fokusavimo trukmė</string>
-  <string name="pref_camera_focustime_summary">Pasirinkite fokusavimo trukmę</string>
   <string name="pref_camera_focustime_entry_5">5 sek.</string>
   <string name="pref_camera_focustime_entry_10">10 sek.</string>
   <string name="pref_camera_focustime_entry_15">15 sek.</string>
@@ -121,9 +121,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 sek.</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sek.</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 sek.</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 sek.</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 sek.</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 sek.</string>
   <string name="pref_camera_storage_title">Saugykla</string>
   <string name="camera_menu_enhance_label">GERINTI</string>
-  <string name="camera_menu_slow_shutter_label">ILGAS IŠLAIKYMAS</string>
   <string name="camera_menu_beauty_mode_label">PAGRAŽINTI</string>
   <string name="camera_menu_asd_label">SUMANI SCENA</string>
   <string name="pref_camera_power_shutter_title">Fotografavimo mygtukas</string>

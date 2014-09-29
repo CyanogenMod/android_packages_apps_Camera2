@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">El vídeo de alta velocidad no está soportado para la resolución seleccionada</string>
   <string name="error_app_unsupported_hfr_codec">Solamente está soportado el códec H264 con el modo de vídeo de alta velocidad activado</string>
   <string name="error_app_unsupported">Resolución de vídeo no soportada para este tipo de códec</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">Exposición HDR</string>
   <string name="pref_camera_ae_bracket_hdr_title">Exposición HDR automática</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Activada</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Desactivada</string>

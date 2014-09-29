@@ -103,7 +103,6 @@
   <string name="pref_camera_burst_entry_15">15 знімків</string>
   <string name="pref_camera_burst_entry_20">20 знімків</string>
   <string name="pref_camera_focustime_title">Фокус дотиком</string>
-  <string name="pref_camera_focustime_summary">Виберіть тривалість фокуса дотиком</string>
   <string name="pref_camera_focustime_entry_5">5с</string>
   <string name="pref_camera_focustime_entry_10">10с</string>
   <string name="pref_camera_focustime_entry_15">15с</string>
@@ -123,7 +122,6 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 секунд</string>
   <string name="pref_camera_storage_title">Сховище</string>
   <string name="camera_menu_enhance_label">ПОКРАЩЕННЯ</string>
-  <string name="camera_menu_slow_shutter_label">ПОВІЛЬНИЙ ЗАТВОР</string>
   <string name="camera_menu_beauty_mode_label">ПОКРАЩЕННЯ</string>
   <string name="camera_menu_asd_label">РОЗПІЗНАВАННЯ УМОВИ ЗЙОМКИ</string>
   <string name="pref_camera_power_shutter_title">Зйомка кноп. живлення</string>

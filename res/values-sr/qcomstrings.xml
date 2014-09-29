@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR није подржан за изабрану резолуцију</string>
   <string name="error_app_unsupported_hfr_codec">Само H.264 видео кодирање је подржано када је HFR укључен</string>
   <string name="error_app_unsupported">Неподржана видео резолуција за овај тип кодека</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-држач</string>
   <string name="pref_camera_ae_bracket_hdr_title">Држање аутоматске експозиције</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Укључено</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Искључено</string>

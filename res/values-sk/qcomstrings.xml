@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR nie je podporované pre vybrané rozlíšenie</string>
   <string name="error_app_unsupported_hfr_codec">Kódovanie videa H.264 je podporované iba pri zapnutom HFR</string>
   <string name="error_app_unsupported">Nepodporované rozlíšenie videa pre tento typ kodeka</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">Autobracketing</string>
   <string name="pref_camera_ae_bracket_hdr_title">Automatické posúvanie expozície</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Zap.</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Vypnuté</string>

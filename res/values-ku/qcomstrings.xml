@@ -49,7 +49,6 @@
   <string name="error_app_unsupported_hfr">HFR کار ناکات بۆ کوالێتی ده‌ستنیشانکراو</string>
   <string name="error_app_unsupported_hfr_codec">ته‌نیا H.264 کارده‌کات کاتێک HFR چالاک کرابێت</string>
   <string name="error_app_unsupported">ئه‌م کوالێتی ڤیدیۆیه‌ کارناکات بۆ جۆری لێده‌ره‌که‌</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">که‌وانه‌ی AE</string>
   <string name="pref_camera_ae_bracket_hdr_title">خۆکارانه‌ ڕووناکیدانی که‌وانه‌</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">چالاکردن</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">ناچالاکردن</string>

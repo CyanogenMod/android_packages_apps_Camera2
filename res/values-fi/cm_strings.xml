@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_12mp">18 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_10mp">10 megapikseliä</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9,7 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_9mp">9 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8,2 megapikseliä</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 megapikseliä</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 kuvaa</string>
   <string name="pref_camera_burst_entry_20">20 kuvaa</string>
   <string name="pref_camera_focustime_title">Kosketustarkennuksen kesto</string>
-  <string name="pref_camera_focustime_summary">Valitse kosketustarkennuksen kesto</string>
   <string name="pref_camera_focustime_entry_5">5s</string>
   <string name="pref_camera_focustime_entry_10">10s</string>
   <string name="pref_camera_focustime_entry_15">15s</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 sekuntia</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekuntia</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 sekuntia</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 sekuntia</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 sekuntia</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 sekuntia</string>
   <string name="pref_camera_storage_title">Tallennustila</string>
   <string name="camera_menu_enhance_label">PARANNUS</string>
-  <string name="camera_menu_slow_shutter_label">HIDAS SULJIN</string>
   <string name="camera_menu_beauty_mode_label">KAUNISTUS</string>
   <string name="camera_menu_asd_label">ÄLYKÄS KOHTAUS</string>
   <string name="pref_camera_power_shutter_title">Kuvaus virtanäppäimellä</string>

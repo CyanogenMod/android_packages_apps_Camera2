@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR ไม่สนับสนุนความละเอียดที่เลือก</string>
   <string name="error_app_unsupported_hfr_codec">เข้ารหัสได้เฉพาะ H.264 เมื่อเปิด HFR</string>
   <string name="error_app_unsupported">ไม่รองรับขนาดที่เลือกสำหรับการเข้ารหัสนี้</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
   <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">เปิด</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">ปิด</string>

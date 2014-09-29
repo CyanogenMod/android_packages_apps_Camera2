@@ -103,7 +103,6 @@
   <string name="pref_camera_burst_entry_15">15 kliskatze</string>
   <string name="pref_camera_burst_entry_20">20 kliskatze</string>
   <string name="pref_camera_focustime_title">Enfokearen iraupena</string>
-  <string name="pref_camera_focustime_summary">Pantaila ikutzearen enfokearen iraupena aukeratu</string>
   <string name="pref_camera_focustime_entry_5">5 segundu</string>
   <string name="pref_camera_focustime_entry_10">10 segundu</string>
   <string name="pref_camera_focustime_entry_15">15 segundu</string>
@@ -123,7 +122,6 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 segundu</string>
   <string name="pref_camera_storage_title">Biltegiratzea</string>
   <string name="camera_menu_enhance_label">HOBEKUNTZAK</string>
-  <string name="camera_menu_slow_shutter_label">OBTURADORE MOTELA</string>
   <string name="camera_menu_beauty_mode_label">EDERTU</string>
   <string name="camera_menu_asd_label">ESZENA ADIMENTSUA</string>
   <string name="pref_camera_power_shutter_title">Ordezko kliskagailua</string>

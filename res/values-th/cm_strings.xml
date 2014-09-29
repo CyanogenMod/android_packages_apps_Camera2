@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 ล้านพิกเซล</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_10mp">10 ล้านพิกเซล</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_9mp">9 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 ล้านพิกเซล</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7 ล้านพิกเซล</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 รูป</string>
   <string name="pref_camera_burst_entry_20">20 รูป</string>
   <string name="pref_camera_focustime_title">ระยะเวลาโฟกัสจากการแตะ</string>
-  <string name="pref_camera_focustime_summary">เลือกระยะเวลาโฟกัสจากการแตะ</string>
   <string name="pref_camera_focustime_entry_5">5 วินาที</string>
   <string name="pref_camera_focustime_entry_10">10 วินาที</string>
   <string name="pref_camera_focustime_entry_15">15 วินาที</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 วินาที</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 วินาที</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 วินาที</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 วินาที</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 วินาที</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 วินาที</string>
   <string name="pref_camera_storage_title">แหล่งเก็บข้อมูล</string>
   <string name="camera_menu_enhance_label">เสริมสร้าง</string>
-  <string name="camera_menu_slow_shutter_label">ชัตเตอร์ช้า</string>
   <string name="camera_menu_beauty_mode_label">ตกแต่ง</string>
   <string name="camera_menu_asd_label">สมาร์ทซีน</string>
   <string name="pref_camera_power_shutter_title">ชัตเตอร์ปุ่มเพาเวอร์</string>

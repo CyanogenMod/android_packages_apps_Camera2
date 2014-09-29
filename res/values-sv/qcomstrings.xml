@@ -49,7 +49,6 @@
   <string name="error_app_unsupported_hfr">HFR fungerar inte med vald upplösning</string>
   <string name="error_app_unsupported_hfr_codec">Endast H.264-kodning fungerar med HFR</string>
   <string name="error_app_unsupported">Videoupplösningen fungerar inte med denna kodek</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracketing</string>
   <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">På</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Av</string>
@@ -92,6 +91,7 @@
   <string name="pref_camera_touchafaec_title">AF/AEC vid pekning</string>
   <string name="pref_camera_touchafaec_entry_off">Av</string>
   <string name="pref_camera_touchafaec_entry_on">På</string>
+  <string name="pref_camera_dis_title">Videostabilisering</string>
   <string name="pref_camera_dis_entry_off">Av</string>
   <string name="pref_camera_dis_entry_on">På</string>
   <string name="pref_camera_facerc_title">Ansiktsigenkänning</string>
@@ -138,6 +138,8 @@
   <string name="pref_camera_jpegquality_entry_4">95%</string>
   <string name="pref_camera_jpegquality_entry_5">100%</string>
   <string name="pref_camera_histogram_title">Histogram</string>
+  <string name="pref_camera_histogram_entry_enable">På</string>
+  <string name="pref_camera_histogram_entry_disable">Av</string>
   <string name="pref_camera_scenedetect_title">Automatisk scendetektion</string>
   <string name="pref_camera_scenedetect_entry_on">På</string>
   <string name="pref_camera_scenedetect_entry_off">Av</string>
