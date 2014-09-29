@@ -495,6 +495,7 @@ public class PhotoModule
     public void init(CameraActivity activity, View parent) {
         mActivity = activity;
         mRootView = parent;
+        mUI = new PhotoUI(activity, this, parent);
         mPreferences = new ComboPreferences(mActivity);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = getPreferredCameraId(mPreferences);
@@ -523,7 +524,6 @@ public class PhotoModule
             mOpenCameraThread = new OpenCameraThread();
             mOpenCameraThread.start();
         }
-        mUI = new PhotoUI(activity, this, parent);
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = new LocationManager(mActivity, mUI);
