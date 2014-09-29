@@ -1895,7 +1895,7 @@ public class ModeListView extends FrameLayout
     private class PeepholeAnimationEffect extends AnimationEffects {
 
         private final static int UNSET = -1;
-        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
+        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 500;
 
         private final Paint mMaskPaint = new Paint();
         private final RectF mBackgroundDrawArea = new RectF();
