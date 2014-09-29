@@ -30,26 +30,32 @@
         android:id="@+id/retake_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|center_vertical"
-        android:paddingLeft="24dp"
+        android:layout_gravity="center"
+        android:padding="24dp"
         android:src="@drawable/ic_back"
         android:background="@null"
         android:contentDescription="@string/retake_button_description" />
-      <ImageButton
-        android:id="@+id/done_button"
+      <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/ic_confirm"
         android:layout_weight="1"
-        android:background="@null"
-        android:contentDescription="@string/done_button_description" />
+        android:background="@null" >
+        <ImageButton
+          android:id="@+id/done_button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:src="@drawable/ic_confirm"
+          android:background="@null"
+          android:contentDescription="@string/done_button_description" />
+      </FrameLayout>
       <ImageButton
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
-        android:paddingRight="24dp"
+        android:layout_gravity="center"
+        android:padding="24dp"
         android:src="@drawable/ic_cancel"
         android:background="@null"
         android:contentDescription="@string/cancel_button_description" />

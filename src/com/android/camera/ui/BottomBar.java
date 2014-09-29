@@ -18,6 +18,7 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -222,6 +224,32 @@ public class BottomBar extends FrameLayout {
             }
         });
 
+        extendTouchAreaToMatchParent(R.id.done_button);
+    }
+
+    private void extendTouchAreaToMatchParent(int id) {
+        final View button = findViewById(id);
+        final View parent = (View) button.getParent();
+
+        parent.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect parentRect = new Rect();
+                parent.getHitRect(parentRect);
+                Rect buttonRect = new Rect();
+                button.getHitRect(buttonRect);
+
+                int widthDiff = parentRect.width() - buttonRect.width();
+                int heightDiff = parentRect.height() - buttonRect.height();
+
+                buttonRect.left -= widthDiff/2;
+                buttonRect.right += widthDiff/2;
+                buttonRect.top -= heightDiff/2;
+                buttonRect.bottom += heightDiff/2;
+
+                parent.setTouchDelegate(new TouchDelegate(buttonRect, button));
+            }
+        });
     }
 
     /**
