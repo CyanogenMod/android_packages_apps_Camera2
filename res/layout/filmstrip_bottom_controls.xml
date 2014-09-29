@@ -45,7 +45,7 @@
             <ImageButton
                 android:id="@+id/filmstrip_bottom_control_share"
                 style="@style/FilmstripBottomControlButton"
-                android:src="@drawable/ic_menu_share"
+                android:src="@drawable/ic_share"
                 android:visibility="invisible"
                 android:contentDescription="@string/share_button_description" />
 

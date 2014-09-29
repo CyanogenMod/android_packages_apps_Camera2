@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 The Android Open Source Project
+<!-- Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,9 +14,16 @@
      limitations under the License.
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false"
-          android:drawable="@drawable/ic_share_disabled" />
-    <item android:state_enabled="true"
-          android:drawable="@drawable/ic_share_normal" />
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+          android:constantSize="true">
+    <item android:state_enabled="false">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/ic_share_disabled" />
+    </item>
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/ic_share_normal" />
+    </item>
 </selector>
