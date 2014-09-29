@@ -1060,7 +1060,7 @@ public class VideoModule extends CameraModule
 
     // Prepares media recorder.
     private void initializeRecorder() {
-        Log.i(TAG, "initializeRecorder");
+        Log.i(TAG, "initializeRecorder: " + Thread.currentThread());
         // If the mCameraDevice is null, then this activity is going to finish
         if (mCameraDevice == null) {
             return;
@@ -1087,12 +1087,9 @@ public class VideoModule extends CameraModule
             requestedSizeLimit = myExtras.getLong(MediaStore.EXTRA_SIZE_LIMIT);
         }
         mMediaRecorder = new MediaRecorder();
-
         // Unlock the camera object before passing it to media recorder.
-        if (mCameraDevice != null) {
-            mCameraDevice.unlock();
-            mMediaRecorder.setCamera(mCameraDevice.getCamera());
-        }
+        mCameraDevice.unlock();
+        mMediaRecorder.setCamera(mCameraDevice.getCamera());
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mMediaRecorder.setProfile(mProfile);
@@ -1291,7 +1288,7 @@ public class VideoModule extends CameraModule
     }
 
     private void startVideoRecording() {
-        Log.i(TAG, "startVideoRecording");
+        Log.i(TAG, "startVideoRecording: " + Thread.currentThread());
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
@@ -1311,6 +1308,15 @@ public class VideoModule extends CameraModule
                         Log.v(TAG, "in storage callback after module paused");
                         return;
                     }
+
+                    // Monkey is so fast so it could trigger startVideoRecording twice. To prevent
+                    // app crash (b/17313985), do nothing here for the second storage-checking
+                    // callback because recording is already started.
+                    if (mMediaRecorderRecording) {
+                        Log.v(TAG, "in storage callback after recording started");
+                        return;
+                    }
+
                     mCurrentVideoUri = null;
 
                     initializeRecorder();
@@ -1395,6 +1401,14 @@ public class VideoModule extends CameraModule
 
     private boolean stopVideoRecording() {
         Log.i(TAG, "stopVideoRecording");
+
+        // Do nothing if camera device is still capturing photo. Monkey test can trigger app crashes
+        // (b/17313985) without this check. Crash could also be reproduced by continuously tapping
+        // on shutter button and preview with two fingers.
+        if (mSnapshotInProgress) {
+            return true;
+        }
+
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
         mUI.showVideoRecordingHints(true);
