@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR word nie ondersteun vir geselekteerde resolusie</string>
   <string name="error_app_unsupported_hfr_codec">Slegs H264 video kodering word ondersteun wanneer HFR AAN is</string>
   <string name="error_app_unsupported">Onondersteunde video resolusie vir hierdie tipe enkodeerder</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Afdeling</string>
   <string name="pref_camera_ae_bracket_hdr_title">Auto beligting afbakening</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Aan</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Af</string>

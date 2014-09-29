@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">Daug kadrų per sekundę (HFR) nepalaiko pasirinktos rezoliucijos</string>
   <string name="error_app_unsupported_hfr_codec">Kai daug kadrų per sekundę (HFR) yra įjungta, palaikomas tik H264 vaizdo iškodavimas</string>
   <string name="error_app_unsupported">Nepalaikoma vaizdo rezoliucija šiam iškodavimo tipui</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AI - Korekcija</string>
   <string name="pref_camera_ae_bracket_hdr_title">Automatinio išlaikymo korekcija</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Įjungta</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Išjungta</string>

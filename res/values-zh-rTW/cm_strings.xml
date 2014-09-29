@@ -92,7 +92,6 @@
   <string name="pref_camera_slow_shutter_entry_4s">4 秒</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 秒</string>
   <string name="pref_camera_storage_title">儲存空間</string>
-  <string name="camera_menu_slow_shutter_label">慢速快門</string>
   <string name="pref_camera_power_shutter_title">電源快門</string>
   <string name="pref_superzoom_title">放大</string>
 </resources>

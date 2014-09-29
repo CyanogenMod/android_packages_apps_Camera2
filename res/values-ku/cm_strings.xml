@@ -103,7 +103,6 @@
   <string name="pref_camera_burst_entry_15">15 گرتن</string>
   <string name="pref_camera_burst_entry_20">20 گرتن</string>
   <string name="pref_camera_focustime_title">ماوه‌ی ده‌ستلێدان بۆ سه‌رنجدان(فۆکوس)</string>
-  <string name="pref_camera_focustime_summary">ده‌ستنیشانکردنی ماوه‌ی ده‌ستلێدان بۆ سه‌رنجدان(فۆکوس)</string>
   <string name="pref_camera_focustime_entry_5">5چرکه‌</string>
   <string name="pref_camera_focustime_entry_10">10چرکه‌</string>
   <string name="pref_camera_focustime_entry_15">15چرکه‌</string>
@@ -123,7 +122,6 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 چرکه‌</string>
   <string name="pref_camera_storage_title">بیرگەی</string>
   <string name="camera_menu_enhance_label">زیادکردن</string>
-  <string name="camera_menu_slow_shutter_label">وێنه‌گرتنێکی خاوتر</string>
   <string name="camera_menu_beauty_mode_label">جوانکاری</string>
   <string name="camera_menu_asd_label">دیمه‌نی به‌هێز</string>
   <string name="pref_camera_power_shutter_title">هێزی وێنه‌ گیره‌ر</string>

@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18M piksel</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8M piksel</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7M piksel</string>
+  <string name="pref_camera_picturesize_entry_12mp">12M piksel</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5M piksel</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4M piksel</string>
   <string name="pref_camera_picturesize_entry_10mp">10M piksel</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 Megapiksel</string>
   <string name="pref_camera_picturesize_entry_9mp">9M piksel</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2M piksel</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7M piksel</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 poz</string>
   <string name="pref_camera_burst_entry_20">20 poz</string>
   <string name="pref_camera_focustime_title">Dokunarak odaklama süresi</string>
-  <string name="pref_camera_focustime_summary">Dokunarak odaklama için süreyi seçin</string>
   <string name="pref_camera_focustime_entry_5">5 sn</string>
   <string name="pref_camera_focustime_entry_10">10 sn</string>
   <string name="pref_camera_focustime_entry_15">15 sn</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 saniye</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 saniye</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 saniye</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 saniye</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 saniye</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 saniye</string>
   <string name="pref_camera_storage_title">Depolama</string>
   <string name="camera_menu_enhance_label">İYİLEŞTİR</string>
-  <string name="camera_menu_slow_shutter_label">YAVAŞ ENSTANTANE</string>
   <string name="camera_menu_beauty_mode_label">GÜZELLİK</string>
   <string name="camera_menu_asd_label">AKILLI SAHNE</string>
   <string name="pref_camera_power_shutter_title">Güç tuşuyla çek</string>

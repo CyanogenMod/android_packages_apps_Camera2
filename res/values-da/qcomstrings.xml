@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR understøttes ikke for den valgte opløsning</string>
   <string name="error_app_unsupported_hfr_codec">Kun H.264-videokodning understøttes med HFR aktiveret</string>
   <string name="error_app_unsupported">Ikke understøttet videoopløsning for denne codectype</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-bracketing</string>
   <string name="pref_camera_ae_bracket_hdr_title">Autoeksponerings-bracketing</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Til</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Fra</string>

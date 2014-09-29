@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR не підтримується на цьому розширенні</string>
   <string name="error_app_unsupported_hfr_codec">Пришвидшена зйомка доступна тільки з кодеком H.264</string>
   <string name="error_app_unsupported">Відеокодек не підтримує це розширення</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">Автобрекетинг</string>
   <string name="pref_camera_ae_bracket_hdr_title">Брекетинг автоекспозиції</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Увімк.</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Вимкн.</string>

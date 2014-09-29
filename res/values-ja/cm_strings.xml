@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_12mp">12メガピクセル</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5メガピクセル</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4メガピクセル</string>
   <string name="pref_camera_picturesize_entry_10mp">10メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7メガピクセル</string>
   <string name="pref_camera_picturesize_entry_9mp">9メガピクセル</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2メガピクセル</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7メガピクセル</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15枚</string>
   <string name="pref_camera_burst_entry_20">20枚</string>
   <string name="pref_camera_focustime_title">タッチフォーカスの長さ</string>
-  <string name="pref_camera_focustime_summary">タッチフォーカスの長さを選択</string>
   <string name="pref_camera_focustime_entry_5">5秒</string>
   <string name="pref_camera_focustime_entry_10">10秒</string>
   <string name="pref_camera_focustime_entry_15">15秒</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2秒</string>
   <string name="pref_camera_slow_shutter_entry_4s">4秒</string>
   <string name="pref_camera_slow_shutter_entry_8s">8秒</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16秒</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32秒</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64秒</string>
   <string name="pref_camera_storage_title">ストレージ</string>
   <string name="camera_menu_enhance_label">補正</string>
-  <string name="camera_menu_slow_shutter_label">スローシャッター</string>
   <string name="camera_menu_beauty_mode_label">ビューティー化</string>
   <string name="camera_menu_asd_label">スマートシーン</string>
   <string name="pref_camera_power_shutter_title">電源シャッター</string>

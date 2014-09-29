@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 мегапиксела</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_10mp">10 мегапиксела</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_9mp">9 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 мегапиксела</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7 мегапиксела</string>
@@ -40,12 +42,12 @@
   <string name="pref_camera_picturesize_entry_nhd">nHD</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
-  <string name="pref_camera_scenemode_entry_antimotionblur">Редукција замагљивања покрета</string>
+  <string name="pref_camera_scenemode_entry_antimotionblur">Редукција замагљеног покрета</string>
   <string name="pref_camera_scenemode_entry_aqua">Вода</string>
   <string name="pref_camera_scenemode_entry_ar">Измењена реалност</string>
   <string name="pref_camera_scenemode_entry_asd">Најбољи хитац</string>
   <string name="pref_camera_scenemode_entry_baby">Беба</string>
-  <string name="pref_camera_scenemode_entry_backgroundblur">Замагљивање позадине</string>
+  <string name="pref_camera_scenemode_entry_backgroundblur">Замагљена позадина</string>
   <string name="pref_camera_scenemode_entry_backlight">Позадинско светло</string>
   <string name="pref_camera_scenemode_entry_backlightportrait">Портрет позадинског светла</string>
   <string name="pref_camera_scenemode_entry_barcode">Баркод</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 снимака</string>
   <string name="pref_camera_burst_entry_20">20 снимака</string>
   <string name="pref_camera_focustime_title">Трајање додирног фокуса</string>
-  <string name="pref_camera_focustime_summary">Изабери трајање за додирни фокус</string>
   <string name="pref_camera_focustime_entry_5">5с</string>
   <string name="pref_camera_focustime_entry_10">10с</string>
   <string name="pref_camera_focustime_entry_15">15с</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 секунде</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 секунде</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 секунди</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 секунди</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 секунде</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 секунде</string>
   <string name="pref_camera_storage_title">Складиште</string>
   <string name="camera_menu_enhance_label">ПОБОЉШАЊЕ</string>
-  <string name="camera_menu_slow_shutter_label">СПОРИ ОКИДАЧ</string>
   <string name="camera_menu_beauty_mode_label">УЛЕПШАВАЊЕ</string>
   <string name="camera_menu_asd_label">ПАМЕТНА СЦЕНА</string>
   <string name="pref_camera_power_shutter_title">Алтернативни окидач</string>

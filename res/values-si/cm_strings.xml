@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">මෙගා පික්සල 18</string>
   <string name="pref_camera_picturesize_entry_12_8mp">මෙගා පික්සල 12.8</string>
   <string name="pref_camera_picturesize_entry_12_7mp">මෙගා පික්සල 12.7</string>
+  <string name="pref_camera_picturesize_entry_12mp">මෙගා පික්සල 12</string>
   <string name="pref_camera_picturesize_entry_11_5mp">මෙගා පික්සල 11.5</string>
   <string name="pref_camera_picturesize_entry_10_4mp">මෙගා පික්සල 10.4</string>
   <string name="pref_camera_picturesize_entry_10mp">මෙගා පික්සල 10</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">මෙගා පික්සල 9.7</string>
   <string name="pref_camera_picturesize_entry_9mp">මෙගා පික්සල 9</string>
   <string name="pref_camera_picturesize_entry_8_2mp">මෙගා පික්සල 8.2</string>
   <string name="pref_camera_picturesize_entry_7_7mp">මෙගා පික්සල 7.7</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">දර්ශන ඛණ්ඩ 15</string>
   <string name="pref_camera_burst_entry_20">දර්ශන ඛණ්ඩ 20</string>
   <string name="pref_camera_focustime_title">අල්වා නාභිගතකිරීමේ කාලය</string>
-  <string name="pref_camera_focustime_summary">අල්වා නාභිගතකිරීමට අවශ්‍ය කාලය තෝරන්න</string>
   <string name="pref_camera_focustime_entry_5">තත් 5</string>
   <string name="pref_camera_focustime_entry_10">තත් 10</string>
   <string name="pref_camera_focustime_entry_15">තත් 15</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">තත්පර 2</string>
   <string name="pref_camera_slow_shutter_entry_4s">තත්පර 4</string>
   <string name="pref_camera_slow_shutter_entry_8s">තත්පර 8</string>
+  <string name="pref_camera_slow_shutter_entry_16s">තත්පර 16</string>
+  <string name="pref_camera_slow_shutter_entry_32s">තත්පර 32</string>
+  <string name="pref_camera_slow_shutter_entry_64s">තත්පර 64</string>
   <string name="pref_camera_storage_title">ආචයනය</string>
   <string name="camera_menu_enhance_label">උසස් කරන්න</string>
-  <string name="camera_menu_slow_shutter_label">ප්‍රමාදී ශටරය</string>
   <string name="camera_menu_beauty_mode_label">ලස්සණ කිරීම</string>
   <string name="camera_menu_asd_label">දැකුම්කලු දර්ශනය</string>
   <string name="pref_camera_power_shutter_title">බල ශටරය</string>

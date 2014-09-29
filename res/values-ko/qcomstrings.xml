@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">선택된 해상도에서 HFR은 지원되지 않습니다</string>
   <string name="error_app_unsupported_hfr_codec">HFR이 켜져 있어야 H.264 인코딩이 가능합니다</string>
   <string name="error_app_unsupported">이 코덱이 지원하지 않는 해상도입니다</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE 브래킷</string>
   <string name="pref_camera_ae_bracket_hdr_title">자동 노출 브래킷</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">켜짐</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">꺼짐</string>

@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">選択された解像度ではHFRはサポートされていません</string>
   <string name="error_app_unsupported_hfr_codec">HFRがONのときはH.264ビデオエンコードのみサポートされています</string>
   <string name="error_app_unsupported">このコーデックの種類ではサポートされていない動画の解像度です</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AEブラケット</string>
   <string name="pref_camera_ae_bracket_hdr_title">自動露出ブラケット</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">ON</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">OFF</string>
@@ -139,7 +138,7 @@
   <string name="pref_camera_picture_format_title">写真の形式</string>
   <string name="pref_camera_jpegquality_title">写真の画質</string>
   <string name="pref_camera_jpegquality_entry_0">55%</string>
-  <string name="pref_camera_jpegquality_entry_1">65%</string>
+  <string name="pref_camera_jpegquality_entry_1">65%（標準）</string>
   <string name="pref_camera_jpegquality_entry_2">75%</string>
   <string name="pref_camera_jpegquality_entry_3">85%</string>
   <string name="pref_camera_jpegquality_entry_4">95%</string>

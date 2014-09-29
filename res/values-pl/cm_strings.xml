@@ -20,6 +20,7 @@
   <string name="pref_camera_picturesize_entry_18mp">18 Mpix</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mpix</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 Mpix</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 Mpix</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 Mpix</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 Mpix</string>
   <string name="pref_camera_picturesize_entry_10mp">10 Mpix</string>
@@ -103,7 +104,6 @@
   <string name="pref_camera_burst_entry_15">15 zdjęć</string>
   <string name="pref_camera_burst_entry_20">20 zdjęć</string>
   <string name="pref_camera_focustime_title">Czas ustawiania ostrości</string>
-  <string name="pref_camera_focustime_summary">Określ czas ustawiania ostrości dotykiem</string>
   <string name="pref_camera_focustime_entry_5">5 sekund</string>
   <string name="pref_camera_focustime_entry_10">10 sekund</string>
   <string name="pref_camera_focustime_entry_15">15 sekund</string>
@@ -121,9 +121,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 sekundy</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekundy</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 sekund</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 sekund</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 sekundy</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 sekundy</string>
   <string name="pref_camera_storage_title">Pamięć</string>
   <string name="camera_menu_enhance_label">POPRAWKI</string>
-  <string name="camera_menu_slow_shutter_label">SPOWOLNIENIE MIGAWKI</string>
   <string name="camera_menu_beauty_mode_label">UPIĘKSZANIE</string>
   <string name="camera_menu_asd_label">ROZPOZNAWANIE SCENY</string>
   <string name="pref_camera_power_shutter_title">Migawka przyciskiem zasilania</string>
