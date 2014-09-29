@@ -850,14 +850,14 @@ public class ExifInterface {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void writeExif(byte[] jpeg, String exifOutFileName) throws FileNotFoundException,
+    public int writeExif(byte[] jpeg, String exifOutFileName) throws FileNotFoundException,
             IOException {
         if (jpeg == null || exifOutFileName == null) {
             throw new IllegalArgumentException(NULL_ARGUMENT_STRING);
         }
-        OutputStream s = null;
+        ExifOutputStream s = null;
         try {
-            s = getExifWriterStream(exifOutFileName);
+            s = (ExifOutputStream) getExifWriterStream(exifOutFileName);
             s.write(jpeg, 0, jpeg.length);
             s.flush();
         } catch (IOException e) {
@@ -865,6 +865,7 @@ public class ExifInterface {
             throw e;
         }
         s.close();
+        return s.size();
     }
 
     /**

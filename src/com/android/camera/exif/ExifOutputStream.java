@@ -82,6 +82,8 @@ class ExifOutputStream extends FilterOutputStream {
     private ByteBuffer mBuffer = ByteBuffer.allocate(4);
     private final ExifInterface mInterface;
 
+    private int mSize = 0;
+
     protected ExifOutputStream(OutputStream ou, ExifInterface iRef) {
         super(new BufferedOutputStream(ou, STREAMBUFFER_SIZE));
         mInterface = iRef;
@@ -127,6 +129,7 @@ class ExifOutputStream extends FilterOutputStream {
             if (mByteToCopy > 0) {
                 int byteToProcess = length > mByteToCopy ? mByteToCopy : length;
                 out.write(buffer, offset, byteToProcess);
+                mSize += byteToProcess;
                 length -= byteToProcess;
                 mByteToCopy -= byteToProcess;
                 offset += byteToProcess;
@@ -147,6 +150,7 @@ class ExifOutputStream extends FilterOutputStream {
                         throw new IOException("Not a valid jpeg image, cannot write exif");
                     }
                     out.write(mBuffer.array(), 0, 2);
+                    mSize += 2;
                     mState = STATE_FRAME_HEADER;
                     mBuffer.rewind();
                     writeExifData();
@@ -162,6 +166,7 @@ class ExifOutputStream extends FilterOutputStream {
                         short tag = mBuffer.getShort();
                         if (tag == JpegHeader.EOI) {
                             out.write(mBuffer.array(), 0, 2);
+                            mSize += 2;
                             mBuffer.rewind();
                         }
                     }
@@ -175,9 +180,11 @@ class ExifOutputStream extends FilterOutputStream {
                         mState = STATE_JPEG_DATA;
                     } else if (!JpegHeader.isSofMarker(marker)) {
                         out.write(mBuffer.array(), 0, 4);
+                        mSize += 4;
                         mByteToCopy = (mBuffer.getShort() & 0x0000ffff) - 2;
                     } else {
                         out.write(mBuffer.array(), 0, 4);
+                        mSize += 4;
                         mState = STATE_JPEG_DATA;
                     }
                     mBuffer.rewind();
@@ -185,6 +192,7 @@ class ExifOutputStream extends FilterOutputStream {
         }
         if (length > 0) {
             out.write(buffer, offset, length);
+            mSize += length;
         }
     }
 
@@ -238,6 +246,7 @@ class ExifOutputStream extends FilterOutputStream {
         for (ExifTag t : nullTags) {
             mExifData.addTag(t);
         }
+        mSize += dataOutputStream.size();
     }
 
     private ArrayList<ExifTag> stripNullValueTags(ExifData data) {
@@ -514,5 +523,9 @@ class ExifOutputStream extends FilterOutputStream {
                 }
                 break;
         }
+    }
+
+    int size() {
+        return mSize;
     }
 }
