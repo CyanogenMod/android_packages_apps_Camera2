@@ -364,7 +364,7 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s মেগাপিক্সেল"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s মেগাপিক্সেল"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"পুনঃফোকাস করার জন্য এখানে স্পর্শ করুন"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"অগ্রগণ্য"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"আরো বিকল্প"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ম্যানুয়াল এক্সপোজার"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"সেটিংস-এ, রেজোলিউশন এবং গুণমান পরিবর্তন করুন, বা উন্নত বৈশিষ্ট্যগুলি ব্যবহার করে দেখুন৷"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ফটোর আকার চয়ন করুন"</string>

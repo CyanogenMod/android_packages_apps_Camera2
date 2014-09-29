@@ -264,7 +264,7 @@
     <string name="set_duration" msgid="1638453882581604341">"வினாடியில் கால அளவை அமை"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"படத்தை எடுப்பதற்கான நேரக் கணிப்பான்"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"பட இருப்பிடங்களை நினைவில் வைக்கவா?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"உங்கள் படங்கள் மற்றும் வீடியோக்கள் எடுக்கப்பட்ட இடங்களில் குறியிடவும்.\n\nபிற பயன்பாடுகள், சேமிக்கப்பட்ட படங்களுடனான இந்தத் தகவலை அணுகலாம்."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"உங்கள் படங்கள், வீடியோக்கள் எடுக்கப்பட்ட இடங்களைக் குறியிடவும்.\n\nபிற பயன்பாடுகள், சேமிக்கப்பட்ட படங்களுடனான இந்தத் தகவலை அணுகலாம்."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"நன்றி, வேண்டாம்"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ஆம்"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"மேலும் விருப்பங்கள்"</string>
@@ -352,7 +352,7 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s மெகாபிக்சல்கள்"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s மெகாபிக்சல்கள்"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"மறுகவனம் செலுத்த, இங்கு தொடவும்"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"மேம்பட்ட"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"மேம்பட்டவை"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"பயனராக வெளிக்காட்டுதல்"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"அமைப்புகளில், தெளிவுத்திறனையும் தரத்தையும் மாற்றவும் அல்லது மேம்பட்ட அம்சங்களை முயற்சிக்கவும்."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"பட அளவைத் தேர்வுசெய்க"</string>
