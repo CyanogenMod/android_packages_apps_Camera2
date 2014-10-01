@@ -225,7 +225,7 @@ public class IndicatorIconController
         ButtonManager buttonManager = mController.getButtonManager();
         if (buttonManager.isPanoEnabled()) {
             setIndicatorState(SettingsManager.SCOPE_GLOBAL,
-                              Keys.KEY_CAMERA_HDR_PLUS, mPanoIndicator,
+                              Keys.KEY_CAMERA_PANO_ORIENTATION, mPanoIndicator,
                               mPanoIndicatorIcons, true);
         } else {
             changeVisibility(mPanoIndicator, View.GONE);
