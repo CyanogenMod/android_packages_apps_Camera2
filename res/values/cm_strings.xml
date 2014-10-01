@@ -23,12 +23,16 @@
     <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixels</string>
     <!-- Settings screen, dialog choice for 12.7 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_12_7mp">12.7M pixels</string>
+    <!-- Settings screen, dialog choice for 12 megapixels picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_12mp">12M pixels</string>
     <!-- Settings screen, dialog choice for 11.5 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
     <!-- Settings screen, dialog choice for 10.4 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
     <!-- Settings screen, dialog choice for 10 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
+    <!-- Settings screen, dialog choice for 9.7 megapixels picture size [CHAR LIMIT=15] -->
+    <string name="pref_camera_picturesize_entry_9_7mp">9.7M pixels</string>
     <!-- Settings screen, dialog choice for 9 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
     <!-- Settings screen, dialog choice for 8.2 megapixels picture size [CHAR LIMIT=15] -->
@@ -109,13 +113,14 @@
     <string name="pref_camera_scenemode_entry_whiteboard">Whiteboard</string>
 
     <!-- Settings screen, focus mode -->
-    <string name="pref_camera_focusmode_entry_continuouspicture">Continuous picture</string>
+    <string name="pref_camera_focusmode_entry_continuouspicture">Continuous</string>
     <string name="pref_camera_focusmode_entry_extended">Extended</string>
     <string name="pref_camera_focusmode_entry_facedetect">Face detect</string>
     <string name="pref_camera_focusmode_entry_facepriority">Face priority</string>
     <string name="pref_camera_focusmode_entry_fixed">Fixed</string>
     <string name="pref_camera_focusmode_entry_portrait">Portrait</string>
     <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
+    <string name="pref_camera_focusmode_entry_manual">Manual</string>
 
     <!-- Color effects -->
     <string name="pref_camera_coloreffect_entry_washed">Washed</string>
@@ -139,7 +144,6 @@
 
     <!-- Touch-to-focus duration settings -->
     <string name="pref_camera_focustime_title">Touch focus duration</string>
-    <string name="pref_camera_focustime_summary">Select duration for touch focus</string>
     <string name="pref_camera_focustime_default" translatable="false">5000</string>
 
     <!-- Settings screen, Timer mode entries -->
@@ -168,6 +172,9 @@
     <string name="pref_camera_slow_shutter_entry_2s">2 seconds</string>
     <string name="pref_camera_slow_shutter_entry_4s">4 seconds</string>
     <string name="pref_camera_slow_shutter_entry_8s">8 seconds</string>
+    <string name="pref_camera_slow_shutter_entry_16s">16 seconds</string>
+    <string name="pref_camera_slow_shutter_entry_32s">32 seconds</string>
+    <string name="pref_camera_slow_shutter_entry_64s">64 seconds</string>
 
     <!-- More Settings screen, storage title -->
     <string name="pref_camera_storage_title">Storage</string>
@@ -176,7 +183,6 @@
     <string name="pref_camera_asd_default" translatable="false">@string/setting_off_value</string>
 
     <string name="camera_menu_enhance_label">ENHANCE</string>
-    <string name="camera_menu_slow_shutter_label">SLOW SHUTTER</string>
     <string name="camera_menu_beauty_mode_label">BEAUTIFY</string>
     <string name="camera_menu_asd_label">SMART SCENE</string>
 

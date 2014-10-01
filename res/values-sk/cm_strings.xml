@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 Mpx</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mpx</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 Mpx</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 Mpx</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 Mpx</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 Mpx</string>
   <string name="pref_camera_picturesize_entry_10mp">10 Mpx</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 Mpx</string>
   <string name="pref_camera_picturesize_entry_9mp">9 Mpx</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8,2 Mpx</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 Mpx</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 záberov</string>
   <string name="pref_camera_burst_entry_20">20 záberov</string>
   <string name="pref_camera_focustime_title">Trvanie zaostrenia dotykom</string>
-  <string name="pref_camera_focustime_summary">Vyberte trvanie zaostrenia dotykom</string>
   <string name="pref_camera_focustime_entry_5">5 sekúnd</string>
   <string name="pref_camera_focustime_entry_10">10 sekúnd</string>
   <string name="pref_camera_focustime_entry_15">15 sekúnd</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 sekundy</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekundy</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 sekúnd</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 sekúnd</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 sekúnd</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 sekúnd</string>
   <string name="pref_camera_storage_title">Ukladací priestor</string>
   <string name="camera_menu_enhance_label">VYLEPŠENIE</string>
-  <string name="camera_menu_slow_shutter_label">POMALÁ UZÁVIERKA</string>
   <string name="camera_menu_beauty_mode_label">SKRÁŠLENIE</string>
   <string name="camera_menu_asd_label">INTELIGENTNÁ SCÉNA</string>
   <string name="pref_camera_power_shutter_title">Uzávierka tlačidlom napájania</string>

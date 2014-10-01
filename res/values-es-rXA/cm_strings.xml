@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18M pixels</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixels</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7M pixels</string>
+  <string name="pref_camera_picturesize_entry_12mp">12M pixels</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
   <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7M pixels</string>
   <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 semeyes</string>
   <string name="pref_camera_burst_entry_20">20 semeyes</string>
   <string name="pref_camera_focustime_title">Duración del enfoque</string>
-  <string name="pref_camera_focustime_summary">Seleicionar la duración del enfoque</string>
   <string name="pref_camera_focustime_entry_5">5 s</string>
   <string name="pref_camera_focustime_entry_10">10 s</string>
   <string name="pref_camera_focustime_entry_15">15 s</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 segundos</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 segundos</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 segundos</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 segundos</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 segundos</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 segundos</string>
   <string name="pref_camera_storage_title">Almacenamientu</string>
   <string name="camera_menu_enhance_label">MEYORES</string>
-  <string name="camera_menu_slow_shutter_label">OBTURADOR LENTU</string>
   <string name="camera_menu_beauty_mode_label">EMBELLECER</string>
   <string name="camera_menu_asd_label">ESCENA INTELIXENTE</string>
   <string name="pref_camera_power_shutter_title">Disparador c/botón d\'encendíu</string>

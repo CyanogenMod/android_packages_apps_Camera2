@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">HFR:ää ei tueta valitulla resoluutiolla</string>
   <string name="error_app_unsupported_hfr_codec">Vain H.264 videokoodaus on tuettu kun HFR on käytössä</string>
   <string name="error_app_unsupported">Videon resoluutiota ei tueta tällä koodaustyypillä</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-kiinnitys</string>
   <string name="pref_camera_ae_bracket_hdr_title">Automaattisen valotuksen kiinnitys</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Päällä</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Pois käytöstä</string>

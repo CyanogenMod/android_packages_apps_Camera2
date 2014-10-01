@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">1800만 화소</string>
   <string name="pref_camera_picturesize_entry_12_8mp">1280만 화소</string>
   <string name="pref_camera_picturesize_entry_12_7mp">1270만 화소</string>
+  <string name="pref_camera_picturesize_entry_12mp">1200만 화소</string>
   <string name="pref_camera_picturesize_entry_11_5mp">1150만 화소</string>
   <string name="pref_camera_picturesize_entry_10_4mp">1040만 화소</string>
   <string name="pref_camera_picturesize_entry_10mp">1000만 화소</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">970만 화소</string>
   <string name="pref_camera_picturesize_entry_9mp">900만 화소</string>
   <string name="pref_camera_picturesize_entry_8_2mp">820만 화소</string>
   <string name="pref_camera_picturesize_entry_7_7mp">770만 화소</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15장</string>
   <string name="pref_camera_burst_entry_20">20장</string>
   <string name="pref_camera_focustime_title">터치 초점 지속시간</string>
-  <string name="pref_camera_focustime_summary">터치 초점 지속시간 선택</string>
   <string name="pref_camera_focustime_entry_5">5초</string>
   <string name="pref_camera_focustime_entry_10">10초</string>
   <string name="pref_camera_focustime_entry_15">15초</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2초</string>
   <string name="pref_camera_slow_shutter_entry_4s">4초</string>
   <string name="pref_camera_slow_shutter_entry_8s">8초</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16초</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32초</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64초</string>
   <string name="pref_camera_storage_title">저장소</string>
   <string name="camera_menu_enhance_label">향상</string>
-  <string name="camera_menu_slow_shutter_label">느린 셔터</string>
   <string name="camera_menu_beauty_mode_label">피부 보정</string>
   <string name="camera_menu_asd_label">스마트 씬</string>
   <string name="pref_camera_power_shutter_title">전원 셔터</string>

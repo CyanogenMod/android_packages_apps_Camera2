@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/shutter_offset"
         android:contentDescription="@string/accessibility_shutter_button"
         android:scaleType="center"
         android:src="@drawable/btn_new_shutter" />
@@ -36,7 +35,7 @@
         android:layout_height="64dip"
         android:layout_above="@id/shutter_button"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="27dip"
+        android:layout_marginRight="19dip"
         android:layout_marginBottom="4dip"
         layout="@layout/menu_indicators_keyguard" />
 
@@ -45,7 +44,7 @@
         style="@style/SwitcherButton"
         android:layout_below="@id/shutter_button"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="23dip"
+        android:layout_marginRight="15dip"
         android:contentDescription="@string/accessibility_mode_picker"
         android:scaleType="center"
         android:src="@drawable/ic_switch_camera" />
@@ -55,7 +54,7 @@
         style="@style/SwitcherButton"
         android:layout_below="@id/shutter_button"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="23dip"
+        android:layout_marginRight="15dip"
         android:contentDescription="@string/accessibility_mode_picker"
         android:scaleType="center"
         android:src="@drawable/ic_switcher_menu_indicator" />

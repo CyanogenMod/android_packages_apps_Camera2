@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
- * Copyright (C) 2013 The CyanogenMod Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,8 +94,26 @@ public class PhotoMenu extends PieController
             enhance.addItem(item);
         }
         // slow shutter
-        if (group.findPreference(CameraSettings.KEY_SLOW_SHUTTER) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_SLOW_SHUTTER, true);
+        final ListPreference slowShutterPref =
+                group.findPreference(CameraSettings.KEY_SLOW_SHUTTER);
+        if (slowShutterPref != null) {
+            item = makeItem(R.drawable.ic_slowshutter_off);
+            item.setLabel(res.getString(
+                    R.string.pref_camera_slow_shutter_title).toUpperCase(locale));
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    ListPrefSettingPopup popup =
+                            (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
+                            R.layout.list_pref_setting_popup, null, false);
+                    popup.initialize(slowShutterPref);
+                    popup.setSettingChangedListener(PhotoMenu.this);
+                    mUI.dismissPopup();
+                    mPopup = popup;
+                    mPopupStatus = POPUP_SECOND_LEVEL;
+                    mUI.showPopup(mPopup);
+                }
+            });
             enhance.addItem(item);
         }
         // auto scene detection

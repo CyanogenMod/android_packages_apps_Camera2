@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">El videu d\'alta velocidá nun ta sofitáu pa la resolución esbillada</string>
   <string name="error_app_unsupported_hfr_codec">Cuando\'l HFR ta activáu, namái ta sofitada la codificación de videu H.264</string>
   <string name="error_app_unsupported">Resolución de videu non sofitada nesti tipu de codificador</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">AE-Bracket</string>
   <string name="pref_camera_ae_bracket_hdr_title">Esposición HDR automática</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Activada</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Desactivada</string>

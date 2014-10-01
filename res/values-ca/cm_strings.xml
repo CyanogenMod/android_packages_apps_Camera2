@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 Mp</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mp</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 Mp</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 Mp</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 Mp</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 Mp</string>
   <string name="pref_camera_picturesize_entry_10mp">10 Mp</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9,7 Mp</string>
   <string name="pref_camera_picturesize_entry_9mp">9 Mp</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8,2 Mp</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 Mp</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 fotos</string>
   <string name="pref_camera_burst_entry_20">20 fotos</string>
   <string name="pref_camera_focustime_title">Duració del focus tàctil</string>
-  <string name="pref_camera_focustime_summary">Selecciona la duració del focus tàctil</string>
   <string name="pref_camera_focustime_entry_5">5s</string>
   <string name="pref_camera_focustime_entry_10">10s</string>
   <string name="pref_camera_focustime_entry_15">15s</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 segons</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 segons</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 segons</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 segons</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 segons</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 segons</string>
   <string name="pref_camera_storage_title">Emmagatzematge</string>
   <string name="camera_menu_enhance_label">MILLORA</string>
-  <string name="camera_menu_slow_shutter_label">OBTURADOR LENT</string>
   <string name="camera_menu_beauty_mode_label">FES BONIC</string>
   <string name="camera_menu_asd_label">ESCENA INTEL·LIGENT</string>
   <string name="pref_camera_power_shutter_title">Obturador ràpid</string>

@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 M pieksels</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 M pieksels</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 M pieksels</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 M pieksels</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 M pieksels</string>
   <string name="pref_camera_picturesize_entry_10mp">10 M pieksels</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 M pieksels</string>
   <string name="pref_camera_picturesize_entry_9mp">9 M pieksels</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 M pieksels</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7 M pieksels</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 skote</string>
   <string name="pref_camera_burst_entry_20">20 skote</string>
   <string name="pref_camera_focustime_title">Duur van raak fokus</string>
-  <string name="pref_camera_focustime_summary">Kies tydsduur vir raak fokus</string>
   <string name="pref_camera_focustime_entry_5">5s</string>
   <string name="pref_camera_focustime_entry_10">10s</string>
   <string name="pref_camera_focustime_entry_15">15s</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 sekondes</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 sekondes</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 sekondes</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 sekondes</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 sekondes</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 sekondes</string>
   <string name="pref_camera_storage_title">Berging</string>
   <string name="camera_menu_enhance_label">VERBETER</string>
-  <string name="camera_menu_slow_shutter_label">STADIGE SLUITER</string>
   <string name="camera_menu_beauty_mode_label">VERFRAAI</string>
   <string name="camera_menu_asd_label">MOOI TONEEL</string>
   <string name="pref_camera_power_shutter_title">Krag knoppie</string>

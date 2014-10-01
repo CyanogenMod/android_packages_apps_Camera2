@@ -20,6 +20,7 @@
   <string name="pref_camera_picturesize_entry_18mp">18 M piksel</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 M piksel</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 M piksel</string>
+  <string name="pref_camera_picturesize_entry_12mp">12M piksel</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 M piksel</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 M piksel</string>
   <string name="pref_camera_picturesize_entry_10mp">10 M piksel</string>
@@ -103,7 +104,6 @@
   <string name="pref_camera_burst_entry_15">15 bidikan</string>
   <string name="pref_camera_burst_entry_20">20 bidikan</string>
   <string name="pref_camera_focustime_title">Durasi fokus sentuhan</string>
-  <string name="pref_camera_focustime_summary">Pilih durasi untuk fokus sentuh</string>
   <string name="pref_camera_focustime_entry_5">5det</string>
   <string name="pref_camera_focustime_entry_10">10det</string>
   <string name="pref_camera_focustime_entry_15">15det</string>
@@ -121,9 +121,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 detik</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 detik</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 detik</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 detik</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 detik</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 detik</string>
   <string name="pref_camera_storage_title">Penyimpanan</string>
   <string name="camera_menu_enhance_label">TINGKATKAN</string>
-  <string name="camera_menu_slow_shutter_label">BIDIK LAMBAT</string>
   <string name="camera_menu_beauty_mode_label">PERCANTIK</string>
   <string name="camera_menu_asd_label">ADEGAN PINTAR</string>
   <string name="pref_camera_power_shutter_title">Bidik tombol power</string>

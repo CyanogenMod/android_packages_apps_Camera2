@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">Abiadura handiko bideoa ez dago baliagarri aukeraturiko erresoluzioan</string>
   <string name="error_app_unsupported_hfr_codec">Abiadura handiko bideo moduan H264 kodek-a bakarrik dago onartuta</string>
   <string name="error_app_unsupported">Kodek honentzako baliagarria ez den bideo erresoluzioa</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">HDR esposizioa</string>
   <string name="pref_camera_ae_bracket_hdr_title">HDR esposizio automatikoa</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">Gaituta</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">Ezgaituta</string>

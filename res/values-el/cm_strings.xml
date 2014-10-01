@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 MP</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 MP</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 MP</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 MP</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 MP</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 MP</string>
   <string name="pref_camera_picturesize_entry_10mp">10 MP</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 MP</string>
   <string name="pref_camera_picturesize_entry_9mp">9 MP</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 MP</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7 MP</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 λήψεις</string>
   <string name="pref_camera_burst_entry_20">20 λήψεις</string>
   <string name="pref_camera_focustime_title">Διάρκεια εστίασης αφής</string>
-  <string name="pref_camera_focustime_summary">Επιλέξτε διάρκεια για την εστίαση αφής</string>
   <string name="pref_camera_focustime_entry_5">5δ</string>
   <string name="pref_camera_focustime_entry_10">10δ</string>
   <string name="pref_camera_focustime_entry_15">15δ</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 δευτ.</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 δευτ.</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 δευτ.</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 δευτερόλεπτα</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 δευτερόλεπτα</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 δευτερόλεπτα</string>
   <string name="pref_camera_storage_title">Αποθ. χώρος</string>
   <string name="camera_menu_enhance_label">ΒΕΛΤΙΩΣΗ</string>
-  <string name="camera_menu_slow_shutter_label">ΑΡΓΟ ΚΛΕΙΣΤΡΟ</string>
   <string name="camera_menu_beauty_mode_label">ΟΜΟΡΦΙΑ</string>
   <string name="camera_menu_asd_label">ΕΞΥΠΝΗ ΣΚΗΝΗ</string>
   <string name="pref_camera_power_shutter_title">Κλείστρο power</string>

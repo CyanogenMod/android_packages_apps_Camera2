@@ -54,7 +54,6 @@
   <string name="error_app_unsupported_hfr">选择的分辨率不支持高帧率</string>
   <string name="error_app_unsupported_hfr_codec">开启高帧率时仅支持 H.264 视频编码</string>
   <string name="error_app_unsupported">视频分辨率不支持此编解码器类型</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_ae_bracket">自动包围曝光</string>
   <string name="pref_camera_ae_bracket_hdr_title">自动包围曝光</string>
   <string name="pref_camera_ae_bracket_hdr_entry_on">开启</string>
   <string name="pref_camera_ae_bracket_hdr_entry_off">关闭</string>

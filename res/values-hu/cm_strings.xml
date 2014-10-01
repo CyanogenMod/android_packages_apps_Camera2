@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 megapixel</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapixel</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 megapixel</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 megapixel</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 megapixel</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 megapixel</string>
   <string name="pref_camera_picturesize_entry_10mp">10 megapixel</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9,7 megapixel</string>
   <string name="pref_camera_picturesize_entry_9mp">9 megapixel</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8,2 megapixel</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 megapixel</string>
@@ -103,7 +105,6 @@
   <string name="pref_camera_burst_entry_15">15 kép</string>
   <string name="pref_camera_burst_entry_20">20 kép</string>
   <string name="pref_camera_focustime_title">Fókusz tartás</string>
-  <string name="pref_camera_focustime_summary">Válassza ki a fókusz tartás idejét</string>
   <string name="pref_camera_focustime_entry_5">5 mp</string>
   <string name="pref_camera_focustime_entry_10">10 mp</string>
   <string name="pref_camera_focustime_entry_15">15 mp</string>
@@ -121,9 +122,11 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 másodperc</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 másodperc</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 másodperc</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 másodperc</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 másodperc</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 másodperc</string>
   <string name="pref_camera_storage_title">Tárhely</string>
   <string name="camera_menu_enhance_label">KIEMELÉS</string>
-  <string name="camera_menu_slow_shutter_label">HOSSZÚ ZÁRIDŐ</string>
   <string name="camera_menu_beauty_mode_label">EFFEKTEK</string>
   <string name="camera_menu_asd_label">OKOS KÉP</string>
   <string name="pref_camera_power_shutter_title">Bekapcsoló gombbal exponálás</string>
