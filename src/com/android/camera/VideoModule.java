@@ -699,7 +699,9 @@ public class VideoModule extends CameraModule
             startVideoRecording();
         }
         mAppController.setShutterEnabled(false);
-        mFocusManager.onShutterUp(mCameraSettings.getCurrentFocusMode());
+        if (mCameraSettings != null) {
+            mFocusManager.onShutterUp(mCameraSettings.getCurrentFocusMode());
+        }
 
         // Keep the shutter button disabled when in video capture intent
         // mode and recording is stopped. It'll be re-enabled when
@@ -950,9 +952,16 @@ public class VideoModule extends CameraModule
 
     @Override
     public void stopPreview() {
-        if (!mPreviewing || mCameraDevice == null) {
+        if (!mPreviewing) {
+            Log.v(TAG, "Skip stopPreview since it's not mPreviewing");
             return;
         }
+        if (mCameraDevice == null) {
+            Log.v(TAG, "Skip stopPreview since mCameraDevice is null");
+            return;
+        }
+
+        Log.v(TAG, "stopPreview");
         mCameraDevice.stopPreview();
         if (mFocusManager != null) {
             mFocusManager.onPreviewStopped();
@@ -1400,14 +1409,14 @@ public class VideoModule extends CameraModule
     }
 
     private boolean stopVideoRecording() {
-        Log.i(TAG, "stopVideoRecording");
-
         // Do nothing if camera device is still capturing photo. Monkey test can trigger app crashes
         // (b/17313985) without this check. Crash could also be reproduced by continuously tapping
         // on shutter button and preview with two fingers.
         if (mSnapshotInProgress) {
+            Log.v(TAG, "Skip stopVideoRecording since snapshot in progress");
             return true;
         }
+        Log.v(TAG, "stopVideoRecording");
 
         mUI.setSwipingEnabled(true);
         mUI.showFocusUI(true);
@@ -1438,6 +1447,10 @@ public class VideoModule extends CameraModule
             // during recording. Release the camera as soon as possible because
             // face unlock or other applications may need to use the camera.
             if (mPaused) {
+                // b/16300704: Monkey is fast so it could pause the module while recording.
+                // stopPreview should definitely be called before switching off.
+                stopPreview();
+
                 closeCamera();
             }
 
