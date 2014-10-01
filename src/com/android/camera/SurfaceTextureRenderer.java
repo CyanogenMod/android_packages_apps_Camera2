@@ -44,6 +44,8 @@ public class SurfaceTextureRenderer {
     private EGL10 mEgl;
     private GL10 mGl;
 
+    private volatile boolean mDrawPending = false;
+
     private final Handler mEglHandler;
     private final FrameDrawer mFrameDrawer;
 
@@ -55,31 +57,12 @@ public class SurfaceTextureRenderer {
                 if (mEglDisplay != null && mEglSurface != null) {
                     mFrameDrawer.onDrawFrame(mGl);
                     mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+                    mDrawPending = false;
                 }
                 mRenderLock.notifyAll();
             }
         }
     };
-
-    public class RenderThread extends Thread {
-        private Boolean mRenderStopped = false;
-
-        @Override
-        public void run() {
-            while (true) {
-                synchronized (mRenderStopped) {
-                    if (mRenderStopped) return;
-                }
-                draw(true);
-            }
-        }
-
-        public void stopRender() {
-            synchronized (mRenderStopped) {
-                mRenderStopped = true;
-            }
-        }
-    }
 
     public SurfaceTextureRenderer(SurfaceTexture tex,
             Handler handler, FrameDrawer renderer) {
@@ -87,10 +70,6 @@ public class SurfaceTextureRenderer {
         mFrameDrawer = renderer;
 
         initialize(tex);
-    }
-
-    public RenderThread createRenderThread() {
-        return new RenderThread();
     }
 
     public void release() {
@@ -116,12 +95,15 @@ public class SurfaceTextureRenderer {
      */
     public void draw(boolean sync) {
         synchronized (mRenderLock) {
-            mEglHandler.post(mRenderTask);
-            if (sync) {
-                try {
-                    mRenderLock.wait();
-                } catch (InterruptedException ex) {
-                    Log.v(TAG, "RenderLock.wait() interrupted");
+            if (!mDrawPending) {
+                mEglHandler.post(mRenderTask);
+                mDrawPending = true;
+                if (sync) {
+                    try {
+                        mRenderLock.wait();
+                    } catch (InterruptedException ex) {
+                        Log.v(TAG, "RenderLock.wait() interrupted");
+                    }
                 }
             }
         }
