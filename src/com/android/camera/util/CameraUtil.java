@@ -1102,7 +1102,7 @@ public class CameraUtil {
                     MAPS_CLASS_NAME);
             Intent mapsIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(uri)).setComponent(compName);
-            mapsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mapsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
             activity.startActivity(mapsIntent);
         } catch (ActivityNotFoundException e) {
             // Use the "geo intent" if no GMM is installed
