@@ -980,7 +980,7 @@ public class CameraActivity extends Activity
     public void launchActivityByIntent(Intent intent) {
         // Starting from L, we prefer not to start edit activity within camera's task.
         mResetToPreviewOnResume = false;
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
 
         startActivity(intent);
     }
