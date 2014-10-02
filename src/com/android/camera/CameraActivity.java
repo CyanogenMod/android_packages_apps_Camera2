@@ -1871,9 +1871,13 @@ public class CameraActivity extends Activity
         mSettingsManager = null;
         mOrientationManager = null;
         mButtonManager = null;
-        CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
-        CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
         mSoundPlayer.release();
+        try {
+            CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
+            CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "CameraAgentFactory exception during destroy", e);
+        }
         super.onDestroy();
     }
 
