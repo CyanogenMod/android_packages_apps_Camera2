@@ -240,6 +240,10 @@ public interface OneCamera {
         public Flash flashMode = Flash.AUTO;
         /** The location of this capture. */
         public Location location = null;
+        /** Zoom value. */
+        public float zoom = 1f;
+        /** Timer duration in seconds or null for no timer. */
+        public Float timerSeconds = null;
 
         /** Set this to provide a debug folder for this capture. */
         public File debugDataFolder;

@@ -387,6 +387,8 @@ public class CaptureModule extends CameraModule
         params.heading = mHeading;
         params.debugDataFolder = mDebugDataDir;
         params.location = location;
+        params.zoom = mZoomValue;
+        params.timerSeconds = mTimerDuration > 0 ? (float) mTimerDuration : null;
 
         mCamera.takePicture(params, session);
     }
