@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -44,10 +43,6 @@ import com.android.camera2.R;
 public class OnScreenHint {
     static final Log.Tag TAG = new Log.Tag("OnScreenHint");
 
-    int mGravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
-    int mX, mY;
-    float mHorizontalMargin;
-    float mVerticalMargin;
     View mView;
     View mNextView;
 
@@ -65,8 +60,6 @@ public class OnScreenHint {
      */
     private OnScreenHint(Activity activity) {
         mWM = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-        mY = activity.getResources().getDimensionPixelSize(
-                R.dimen.hint_y_offset);
 
         mParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -142,23 +135,10 @@ public class OnScreenHint {
             // remove the old view if necessary
             handleHide();
             mView = mNextView;
-            final int gravity = mGravity;
-            mParams.gravity = gravity;
-            if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK)
-                    == Gravity.FILL_HORIZONTAL) {
-                mParams.horizontalWeight = 1.0f;
-            }
-            if ((gravity & Gravity.VERTICAL_GRAVITY_MASK)
-                    == Gravity.FILL_VERTICAL) {
-                mParams.verticalWeight = 1.0f;
-            }
-            mParams.x = mX;
-            mParams.y = mY;
-            mParams.verticalMargin = mVerticalMargin;
-            mParams.horizontalMargin = mHorizontalMargin;
             if (mView.getParent() != null) {
                 mWM.removeView(mView);
             }
+
             mWM.addView(mView, mParams);
         }
     }
