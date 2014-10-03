@@ -20,7 +20,6 @@ package com.android.camera;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -128,6 +127,7 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
+import com.android.camera.util.QuickActivity;
 import com.android.camera.util.ReleaseDialogHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
@@ -154,7 +154,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class CameraActivity extends Activity
+public class CameraActivity extends QuickActivity
         implements AppController, CameraAgent.CameraOpenCallback,
         ShareActionProvider.OnShareTargetSelectedListener,
         OrientationManager.OnOrientationChangeListener {
@@ -1319,9 +1319,13 @@ public class CameraActivity extends Activity
             };
 
     @Override
-    public void onCreate(Bundle state) {
+    public void onNewIntentTasks(Intent intent) {
+        onModeSelected(getModeIndex());
+    }
+
+    @Override
+    public void onCreateTasks(Bundle state) {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
-        super.onCreate(state);
         if (!Glide.isSetup()) {
             Glide.setup(new GlideBuilder(this)
                 .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
@@ -1613,7 +1617,7 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onPause() {
+    public void onPauseTasks() {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
 
         /*
@@ -1660,12 +1664,10 @@ public class CameraActivity extends Activity
                 finish();
             }
         }
-
-        super.onPause();
     }
 
     @Override
-    public void onResume() {
+    public void onResumeTasks() {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
         Log.v(TAG, "Build info: " + Build.DISPLAY);
 
@@ -1732,7 +1734,6 @@ public class CameraActivity extends Activity
         }
 
         mOrientationManager.resume();
-        super.onResume();
         mPeekAnimationThread = new HandlerThread("Peek animation");
         mPeekAnimationThread.start();
         mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper());
@@ -1819,8 +1820,7 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onStartTasks() {
         mIsActivityRunning = true;
         mPanoramaViewHelper.onStart();
 
@@ -1846,16 +1846,15 @@ public class CameraActivity extends Activity
     }
 
     @Override
-    protected void onStop() {
+    protected void onStopTasks() {
         mIsActivityRunning = false;
         mPanoramaViewHelper.onStop();
 
         mLocationManager.disconnect();
-        super.onStop();
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyTasks() {
         if (mSecureCamera) {
             unregisterReceiver(mScreenOffReceiver);
         }
@@ -1878,7 +1877,6 @@ public class CameraActivity extends Activity
         } catch (RuntimeException e) {
             Log.e(TAG, "CameraAgentFactory exception during destroy", e);
         }
-        super.onDestroy();
     }
 
     @Override
@@ -2322,10 +2320,12 @@ public class CameraActivity extends Activity
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.hardResetSettings(mSettingsManager);
-        module.resume();
-        UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
-                NavigationChange.InteractionCause.BUTTON);
-        updatePreviewVisibility();
+        if (!mPaused) {
+            module.resume();
+            UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
+                    NavigationChange.InteractionCause.BUTTON);
+            updatePreviewVisibility();
+        }
     }
 
     private void closeModule(CameraModule module) {

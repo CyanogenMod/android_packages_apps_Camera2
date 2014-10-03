@@ -140,13 +140,6 @@ public class CaptureModule extends CameraModule
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
     /** Enable additional debug output. */
     private static final boolean DEBUG = true;
-    /**
-     * This is the delay before we execute onResume tasks when coming from the
-     * lock screen, to allow time for onPause to execute.
-     * <p>
-     * TODO: Make sure this value is in sync with what we see on L.
-     */
-    private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
     /** Timeout for camera open/close operations. */
     private static final int CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS = 2500;
@@ -243,16 +236,6 @@ public class CaptureModule extends CameraModule
     /** Whether the module is paused right now. */
     private boolean mPaused;
 
-    /** Whether this module was resumed from lockscreen capture intent. */
-    private boolean mIsResumeFromLockScreen = false;
-
-    private final Runnable mResumeTaskRunnable = new Runnable() {
-        @Override
-        public void run() {
-            onResumeTasks();
-        }
-    };
-
     /** Main thread handler. */
     private Handler mMainHandler;
     /** Handler thread for camera-related operations. */
@@ -306,7 +289,6 @@ public class CaptureModule extends CameraModule
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         Log.d(TAG, "init");
-        mIsResumeFromLockScreen = isResumeFromLockscreen(activity);
         mMainHandler = new Handler(activity.getMainLooper());
         HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
         thread.start();
@@ -532,21 +514,6 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void resume() {
-        // Add delay on resume from lock screen only, in order to to speed up
-        // the onResume --> onPause --> onResume cycle from lock screen.
-        // Don't do always because letting go of thread can cause delay.
-        if (mIsResumeFromLockScreen) {
-            Log.v(TAG, "Delayng onResumeTasks from lock screen. " + System.currentTimeMillis());
-            // Note: onPauseAfterSuper() will delete this runnable, so we will
-            // at most have 1 copy queued up.
-            mMainHandler.postDelayed(mResumeTaskRunnable, ON_RESUME_TASKS_DELAY_MSEC);
-        } else {
-            onResumeTasks();
-        }
-    }
-
-    private void onResumeTasks() {
-        Log.d(TAG, "onResumeTasks + " + System.currentTimeMillis());
         mPaused = false;
         mAppController.getCameraAppUI().onChangeCamera();
         mAppController.addPreviewAreaSizeChangedListener(this);
