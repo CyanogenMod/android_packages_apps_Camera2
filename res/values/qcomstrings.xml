@@ -515,8 +515,8 @@
     <string name="pref_camera_histogram_title">Histogram</string>
 
     <!-- Settings screen, Histogram radio button choices -->
-    <string name="pref_camera_histogram_entry_enable">On</string>
-    <string name="pref_camera_histogram_entry_disable">Off</string>
+    <string name="pref_camera_histogram_entry_enable">Enable</string>
+    <string name="pref_camera_histogram_entry_disable">Disable</string>
 
     <!-- Histogram entry values. Do not translate. -->
     <string name="pref_camera_histogram_value_enable" translatable="false">enable</string>
