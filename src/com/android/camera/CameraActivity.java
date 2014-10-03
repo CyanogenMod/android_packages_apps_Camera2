@@ -1985,6 +1985,17 @@ public class CameraActivity extends Activity
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isSecureCamera() && !ApiHelper.isLOrHigher()) {
+            // Compatibility pre-L: launching new activities right above
+            // lockscreen does not reliably work, only show help if not secure
+            menu.removeItem(R.id.action_help_and_feedback);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     protected long getStorageSpaceBytes() {
         synchronized (mStorageSpaceLock) {
             return mStorageSpaceBytes;
