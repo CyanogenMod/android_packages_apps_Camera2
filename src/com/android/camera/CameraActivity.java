@@ -1871,6 +1871,7 @@ public class CameraActivity extends QuickActivity
         mOrientationManager = null;
         mButtonManager = null;
         mSoundPlayer.release();
+        mCurrentModule.destroy();
         try {
             CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
             CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);

@@ -1703,7 +1703,8 @@ public class PhotoModule
         // (e.g. onResume -> onPause -> onResume).
         stopPreview();
         cancelCountDown();
-        mCountdownSoundPlayer.release();
+        mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
+        mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
 
         mNamedImages = null;
         // If we are in an image capture intent and has taken
@@ -1731,7 +1732,7 @@ public class PhotoModule
 
     @Override
     public void destroy() {
-        // TODO: implement this.
+        mCountdownSoundPlayer.release();
     }
 
     @Override
@@ -2423,43 +2424,5 @@ public class PhotoModule
                 focusAndCapture();
             }
         });
-    }
-
-    /**
-     * This class manages the loading/releasing/playing of the sounds needed for
-     * countdown timer.
-     */
-    private class CountdownSoundPlayer {
-        private SoundPool mSoundPool;
-        private int mTimerIncrement;
-        private int mTimerFinalSecond;
-
-        void loadSounds() {
-            // Load the sounds.
-            if (mSoundPool == null) {
-                mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
-                mTimerIncrement = mSoundPool.load(mAppController.getAndroidContext(), R.raw.timer_increment, 1);
-                mTimerFinalSecond = mSoundPool.load(mAppController.getAndroidContext(), R.raw.timer_final_second, 1);
-            }
-        }
-
-        void onRemainingSecondsChanged(int newVal) {
-            if (mSoundPool == null) {
-                Log.e(TAG, "Cannot play sound - they have not been loaded.");
-                return;
-            }
-            if (newVal == 1) {
-                mSoundPool.play(mTimerFinalSecond, 1.0f, 1.0f, 0, 0, 1.0f);
-            } else if (newVal == 2 || newVal == 3) {
-                mSoundPool.play(mTimerIncrement, 1.0f, 1.0f, 0, 0, 1.0f);
-            }
-        }
-
-        void release() {
-            if (mSoundPool != null) {
-                mSoundPool.release();
-                mSoundPool = null;
-            }
-        }
     }
 }
