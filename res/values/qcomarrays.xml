@@ -402,8 +402,8 @@
 
      <!-- Camera Preferences Histogram dialog box entries -->
      <string-array name="pref_camera_histogram_entries" translatable="false">
-          <item>@string/pref_camera_histogram_entry_enable</item>
           <item>@string/pref_camera_histogram_entry_disable</item>
+          <item>@string/pref_camera_histogram_entry_enable</item>
      </string-array>
 
      <!-- Video Preferences High Frame Rate dialog box entries -->
@@ -424,8 +424,8 @@
 
      <!-- Do not localize entryvalues -->
      <string-array name="pref_camera_histogram_entryvalues" translatable="false">
-          <item>@string/pref_camera_histogram_value_enable</item>
           <item>@string/pref_camera_histogram_value_disable</item>
+          <item>@string/pref_camera_histogram_value_enable</item>
      </string-array>
 
     <!-- Camera Preferences Face Detection dialog box entries -->
