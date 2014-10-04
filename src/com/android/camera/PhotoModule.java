@@ -159,13 +159,6 @@ public class PhotoModule
     private boolean mAwbLockSupported;
     private boolean mContinuousFocusSupported;
 
-    /*
-     * If true, attempts to start the preview will be denied.  This ensures that
-     * we never call startPreview multiple times when making changes to
-     * settings.
-     */
-    private boolean mStartPreviewLock = false;
-
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
@@ -613,6 +606,7 @@ public class PhotoModule
                     Keys.KEY_USER_SELECTED_ASPECT_RATIO);
                 Log.e(TAG, "aspect ratio after setting it to true=" + aspectRatio);
                 if (newAspectRatio != currentAspectRatio) {
+                    Log.i(TAG, "changing aspect ratio from dialog");
                     stopPreview();
                     startPreview();
                     mUI.setRunnableForNextFrame(dialogHandlingFinishedRunnable);
@@ -626,6 +620,7 @@ public class PhotoModule
 
     @Override
     public void onPreviewUIReady() {
+        Log.i(TAG, "onPreviewUIReady");
         startPreview();
     }
 
@@ -1026,6 +1021,7 @@ public class PhotoModule
 
         @Override
         public void onPictureTaken(final byte[] originalJpegData, final CameraProxy camera) {
+            Log.i(TAG, "onPictureTaken");
             mAppController.setShutterEnabled(true);
             if (mPaused) {
                 return;
@@ -1357,7 +1353,7 @@ public class PhotoModule
 
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
-        Log.v(TAG, "onCameraAvailable");
+        Log.i(TAG, "onCameraAvailable");
         if (mPaused) {
             return;
         }
@@ -1374,21 +1370,13 @@ public class PhotoModule
 
         // Do camera parameter dependent initialization.
         mCameraSettings = mCameraDevice.getSettings();
-        // HACK: The call to setCameraParameters(UPDATE_PARAM_ALL) may
-        // eventually recurse back into startPreview().
-        // To avoid calling startPreview() twice, first acquire
-        // mStartPreviewLock.
-        mStartPreviewLock = true;
-        try {
-            setCameraParameters(UPDATE_PARAM_ALL);
-            // Set a listener which updates camera parameters based
-            // on changed settings.
-            SettingsManager settingsManager = mActivity.getSettingsManager();
-            settingsManager.addListener(this);
-            mCameraPreviewParamsReady = true;
-        } finally {
-            mStartPreviewLock = false;
-        }
+
+        setCameraParameters(UPDATE_PARAM_ALL);
+        // Set a listener which updates camera parameters based
+        // on changed settings.
+        SettingsManager settingsManager = mActivity.getSettingsManager();
+        settingsManager.addListener(this);
+        mCameraPreviewParamsReady = true;
 
         startPreview();
 
@@ -1403,6 +1391,7 @@ public class PhotoModule
 
     @Override
     public void onCaptureRetake() {
+        Log.i(TAG, "onCaptureRetake");
         if (mPaused) {
             return;
         }
@@ -1896,6 +1885,7 @@ public class PhotoModule
 
     /** Only called by UI thread. */
     private void setupPreview() {
+        Log.i(TAG, "setupPreview");
         mFocusManager.resetTouchFocus();
         startPreview();
     }
@@ -1930,59 +1920,55 @@ public class PhotoModule
      * The start/stop preview should only run on the UI thread.
      */
     private void startPreview() {
-        // HACK: The call to setCameraParameters(UPDATE_PARAM_ALL) may
-        // eventually recurse back into startPreview().
-        // To avoid calling startPreview() twice, we must acquire
-        // mStartPreviewLock.
-        if (mStartPreviewLock || mCameraDevice == null) {
+        if (mCameraDevice == null) {
+            Log.i(TAG, "attempted to start preview before camera device");
             // do nothing
             return;
         }
-        mStartPreviewLock = true;
-        try {
-            if (!checkPreviewPreconditions()) {
-                return;
+
+        if (!checkPreviewPreconditions()) {
+            return;
+        }
+
+        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
+        setDisplayOrientation();
+
+        if (!mSnapshotOnIdle) {
+            // If the focus mode is continuous autofocus, call cancelAutoFocus
+            // to resume it because it may have been paused by autoFocus call.
+            if (mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()) ==
+                    CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
+                mCameraDevice.cancelAutoFocus();
             }
+            mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
+        }
+        setCameraParameters(UPDATE_PARAM_ALL);
 
-            mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
-            setDisplayOrientation();
+        updateParametersPictureSize();
 
-            if (!mSnapshotOnIdle) {
-                // If the focus mode is continuous autofocus, call cancelAutoFocus
-                // to resume it because it may have been paused by autoFocus call.
-                if (mFocusManager.getFocusMode(mCameraSettings.getCurrentFocusMode()) ==
-                        CameraCapabilities.FocusMode.CONTINUOUS_PICTURE) {
-                    mCameraDevice.cancelAutoFocus();
-                }
-                mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
-            }
-            setCameraParameters(UPDATE_PARAM_ALL);
-            mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
+        mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
-            Log.i(TAG, "startPreview");
-            // If we're using API2 in portability layers, don't use startPreviewWithCallback()
-            // b/17576554
-            CameraAgent.CameraStartPreviewCallback startPreviewCallback =
-                new CameraAgent.CameraStartPreviewCallback() {
-                    @Override
-                    public void onPreviewStarted() {
-                        mFocusManager.onPreviewStarted();
-                        PhotoModule.this.onPreviewStarted();
-                        SessionStatsCollector.instance().previewActive(true);
-                        if (mSnapshotOnIdle) {
-                            mHandler.post(mDoSnapRunnable);
-                        }
+        Log.i(TAG, "startPreview");
+        // If we're using API2 in portability layers, don't use startPreviewWithCallback()
+        // b/17576554
+        CameraAgent.CameraStartPreviewCallback startPreviewCallback =
+            new CameraAgent.CameraStartPreviewCallback() {
+                @Override
+                public void onPreviewStarted() {
+                    mFocusManager.onPreviewStarted();
+                    PhotoModule.this.onPreviewStarted();
+                    SessionStatsCollector.instance().previewActive(true);
+                    if (mSnapshotOnIdle) {
+                        mHandler.post(mDoSnapRunnable);
                     }
-                };
-            if (GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity)) {
-                mCameraDevice.startPreview();
-                startPreviewCallback.onPreviewStarted();
-            } else {
-                mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
-                        startPreviewCallback);
-            }
-        } finally {
-            mStartPreviewLock = false;
+                }
+            };
+        if (GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity)) {
+            mCameraDevice.startPreview();
+            startPreviewCallback.onPreviewStarted();
+        } else {
+            mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
+                    startPreviewCallback);
         }
     }
 
@@ -2098,9 +2084,6 @@ public class PhotoModule
                         CameraCapabilities.FocusMode.CONTINUOUS_PICTURE
         );
 
-        // Set picture size.
-        updateParametersPictureSize();
-
         // Set JPEG quality.
         updateParametersPictureQuality();
 
@@ -2118,8 +2101,14 @@ public class PhotoModule
         }
     }
 
+    /**
+     * This method sets picture size parameters. Size parameters should only be
+     * set when the preview is stopped, and so this method is only invoked in
+     * {@link #startPreview()} just before starting the preview.
+     */
     private void updateParametersPictureSize() {
         if (mCameraDevice == null) {
+            Log.w(TAG, "attempting to set picture size without caemra device");
             return;
         }
 
@@ -2155,16 +2144,7 @@ public class PhotoModule
             Log.v(TAG, "setting preview size. optimal: " + optimalSize + "original: " + original);
             mCameraSettings.setPreviewSize(optimalSize);
 
-            // Zoom related settings will be changed for different preview
-            // sizes, so set and read the parameters to get latest values
-            if (mHandler.getLooper() == Looper.myLooper()) {
-                Log.v(TAG, "matched looper, setting up preview");
-                // On UI thread only, not when camera starts up
-                setupPreview();
-            } else {
-                Log.v(TAG, "no looper match, directly applying settings");
-                mCameraDevice.applySettings(mCameraSettings);
-            }
+            mCameraDevice.applySettings(mCameraSettings);
             mCameraSettings = mCameraDevice.getSettings();
         }
 
