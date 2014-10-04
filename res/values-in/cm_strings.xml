@@ -83,7 +83,6 @@
   <string name="pref_camera_scenemode_entry_text">Teks</string>
   <string name="pref_camera_scenemode_entry_theatre">Teater</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Papan tulis putih</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Gambar bersambung</string>
   <string name="pref_camera_focusmode_entry_extended">Diperluas</string>
   <string name="pref_camera_focusmode_entry_facedetect">Deteksi wajah</string>
   <string name="pref_camera_focusmode_entry_facepriority">Prioritas wajah</string>

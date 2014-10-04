@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Texte</string>
   <string name="pref_camera_scenemode_entry_theatre">Théâtre</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Tableau blanc</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Photo continu</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Continu</string>
   <string name="pref_camera_focusmode_entry_extended">Étendu</string>
   <string name="pref_camera_focusmode_entry_facedetect">Détection de visage</string>
   <string name="pref_camera_focusmode_entry_facepriority">Priorité aux visages</string>
   <string name="pref_camera_focusmode_entry_fixed">Fixé</string>
   <string name="pref_camera_focusmode_entry_portrait">Portrait</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfocal</string>
+  <string name="pref_camera_focusmode_entry_manual">Manuel</string>
   <string name="pref_camera_coloreffect_entry_washed">Lavé</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Vintage chaud</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Vintage froid</string>

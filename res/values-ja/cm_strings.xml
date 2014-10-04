@@ -91,6 +91,7 @@
   <string name="pref_camera_focusmode_entry_fixed">固定</string>
   <string name="pref_camera_focusmode_entry_portrait">ポートレート</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">過焦点</string>
+  <string name="pref_camera_focusmode_entry_manual">マニュアル</string>
   <string name="pref_camera_coloreffect_entry_washed">ウォッシュ</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">暖色ビンテージ</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">寒色ビンテージ</string>

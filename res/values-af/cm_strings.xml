@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Teks</string>
   <string name="pref_camera_scenemode_entry_theatre">Teater</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Witbord</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Deurlopende prentjie</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Aaneenlopend</string>
   <string name="pref_camera_focusmode_entry_extended">Uitgebreide</string>
   <string name="pref_camera_focusmode_entry_facedetect">Herken gesig</string>
   <string name="pref_camera_focusmode_entry_facepriority">Gesig prioriteit</string>
   <string name="pref_camera_focusmode_entry_fixed">Vasgestel</string>
   <string name="pref_camera_focusmode_entry_portrait">Portret</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hiper fokaal</string>
+  <string name="pref_camera_focusmode_entry_manual">Handmatig</string>
   <string name="pref_camera_coloreffect_entry_washed">Gewas</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Verouderd warm</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Verouderd koud</string>

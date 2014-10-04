@@ -84,7 +84,6 @@
   <string name="pref_camera_scenemode_entry_text">Testo</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatro</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Lavagna bianca</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Scatti continui</string>
   <string name="pref_camera_focusmode_entry_extended">Esteso</string>
   <string name="pref_camera_focusmode_entry_facedetect">Rilevamento viso</string>
   <string name="pref_camera_focusmode_entry_facepriority">Priorità viso</string>

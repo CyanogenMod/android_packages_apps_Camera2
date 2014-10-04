@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">文本</string>
   <string name="pref_camera_scenemode_entry_theatre">剧场</string>
   <string name="pref_camera_scenemode_entry_whiteboard">白板</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">连拍图片</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">连续</string>
   <string name="pref_camera_focusmode_entry_extended">广角</string>
   <string name="pref_camera_focusmode_entry_facedetect">人脸识别</string>
   <string name="pref_camera_focusmode_entry_facepriority">人脸优先</string>
   <string name="pref_camera_focusmode_entry_fixed">固定</string>
   <string name="pref_camera_focusmode_entry_portrait">肖像</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">超焦距</string>
+  <string name="pref_camera_focusmode_entry_manual">手动</string>
   <string name="pref_camera_coloreffect_entry_washed">冲蚀</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">暖色仿古</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">冷色仿古</string>

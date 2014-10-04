@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">نص</string>
   <string name="pref_camera_scenemode_entry_theatre">مسرح</string>
   <string name="pref_camera_scenemode_entry_whiteboard">لوح المعلومات</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">صورة مستمرة</string>
   <string name="pref_camera_focusmode_entry_extended">مدد</string>
   <string name="pref_camera_focusmode_entry_facedetect">كشف الوجه</string>
   <string name="pref_camera_focusmode_entry_facepriority">أولوية الوجه</string>

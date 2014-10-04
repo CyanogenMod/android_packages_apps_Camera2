@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Text</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatre</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Pissarra blanca</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Fotografia contínua</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Continu</string>
   <string name="pref_camera_focusmode_entry_extended">Extès</string>
   <string name="pref_camera_focusmode_entry_facedetect">Detecció de cares</string>
   <string name="pref_camera_focusmode_entry_facepriority">Prioritat de cares</string>
   <string name="pref_camera_focusmode_entry_fixed">Fixat</string>
   <string name="pref_camera_focusmode_entry_portrait">Retrat</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hiperfocal</string>
+  <string name="pref_camera_focusmode_entry_manual">Manual</string>
   <string name="pref_camera_coloreffect_entry_washed">Rentat</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Vintage càlid</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Vintage fred</string>
