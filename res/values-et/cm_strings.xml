@@ -84,7 +84,6 @@
   <string name="pref_camera_scenemode_entry_text">Tekst</string>
   <string name="pref_camera_scenemode_entry_theatre">Teater</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Tahvel</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Liikuv pilt</string>
   <string name="pref_camera_focusmode_entry_extended">Laiendatud</string>
   <string name="pref_camera_focusmode_entry_facedetect">Näotuvastus</string>
   <string name="pref_camera_focusmode_entry_facepriority">Näo tähtsus</string>

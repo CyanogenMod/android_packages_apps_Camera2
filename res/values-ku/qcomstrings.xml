@@ -24,6 +24,7 @@
   <string name="pref_camera_powermode_title">باری هێز</string>
   <string name="pref_camera_powermode_entry_lp">هێزی نزم</string>
   <string name="pref_camera_powermode_entry_np">هێزی مامناوه‌ند</string>
+  <string name="pref_camera_autoexposure_title">پیشاندانی خۆکار</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">تێكڕای چوارچێوه‌</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">پانی ناوه‌ڕاست</string>
   <string name="pref_camera_autoexposure_entry_spotmetering">مه‌ترکردنی نیشانه‌</string>
@@ -34,6 +35,8 @@
   <string name="pref_camera_video_duration_entry_10">10 خوله‌ک</string>
   <string name="pref_camera_video_duration_entry_30">30 خوله‌ک</string>
   <string name="pref_camera_skinToneEnhancement_title">زیادکردنی جوانکاری ده‌موچاو</string>
+  <string name="pref_camera_skinToneEnhancement_entry_enable">داگیرسان</string>
+  <string name="pref_camera_skinToneEnhancement_entry_disable">کوژاندنه‌وه‌</string>
   <string name="pref_camera_selectablezoneaf_title">خۆکارانه‌ سه‌رنجدان</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">خۆکارانه‌</string>
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">مه‌ترکردنی نیشانه‌</string>
@@ -46,6 +49,8 @@
   <string name="pref_camera_facedetection_entry_off">ناچالاکردن</string>
   <string name="pref_camera_facedetection_entry_on">چالاکردن</string>
   <string name="pref_camera_redeyereduction_title">که‌مکردنه‌وه‌ی سووری چاو</string>
+  <string name="pref_camera_redeyereduction_entry_enable">داگیرسان</string>
+  <string name="pref_camera_redeyereduction_entry_disable">کوژاندنەوە</string>
   <string name="error_app_unsupported_hfr">HFR کار ناکات بۆ کوالێتی ده‌ستنیشانکراو</string>
   <string name="error_app_unsupported_hfr_codec">ته‌نیا H.264 کارده‌کات کاتێک HFR چالاک کرابێت</string>
   <string name="error_app_unsupported">ئه‌م کوالێتی ڤیدیۆیه‌ کارناکات بۆ جۆری لێده‌ره‌که‌</string>
@@ -57,6 +62,7 @@
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
+  <string name="pref_camera_denoise_title">ژاوەژاو لابردن</string>
   <string name="pref_camera_denoise_entry_off">ناچالاکردن</string>
   <string name="pref_camera_denoise_entry_on">چالاکردن</string>
   <string name="pref_camera_iso_title">ISO</string>
@@ -91,6 +97,7 @@
   <string name="pref_camera_touchafaec_title">په‌نجه‌لێدان AF\AEC</string>
   <string name="pref_camera_touchafaec_entry_off">ناچالاکردن</string>
   <string name="pref_camera_touchafaec_entry_on">چالاکردن</string>
+  <string name="pref_camera_dis_title">ڕاگیرکردنی ڤیدیۆ</string>
   <string name="pref_camera_dis_entry_off">ناچالاکردن</string>
   <string name="pref_camera_dis_entry_on">چالاکردن</string>
   <string name="pref_camera_facerc_title">ناسینه‌وه‌ی ڕوو</string>
@@ -137,6 +144,8 @@
   <string name="pref_camera_jpegquality_entry_4">%95</string>
   <string name="pref_camera_jpegquality_entry_5">100%</string>
   <string name="pref_camera_histogram_title">مێژوویی</string>
+  <string name="pref_camera_histogram_entry_enable">داگیرسان</string>
+  <string name="pref_camera_histogram_entry_disable">کوژاندنه‌وه‌</string>
   <string name="pref_camera_scenedetect_title">خۆکارانه‌ دۆزینه‌وه‌ی دیمه‌ن</string>
   <string name="pref_camera_scenedetect_entry_on">چالاکردن</string>
   <string name="pref_camera_scenedetect_entry_off">ناچالاکردن</string>

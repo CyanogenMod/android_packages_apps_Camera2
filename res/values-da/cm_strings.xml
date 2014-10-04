@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Tekst</string>
   <string name="pref_camera_scenemode_entry_theatre">Teater</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Hvid tavle</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Fortløbende billede</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Kontinuerlig</string>
   <string name="pref_camera_focusmode_entry_extended">Udvidet</string>
   <string name="pref_camera_focusmode_entry_facedetect">Ansigtsgenkendelse</string>
   <string name="pref_camera_focusmode_entry_facepriority">Ansigtsprioritet</string>
   <string name="pref_camera_focusmode_entry_fixed">Fast</string>
   <string name="pref_camera_focusmode_entry_portrait">Portræt</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfokal</string>
+  <string name="pref_camera_focusmode_entry_manual">Manuel</string>
   <string name="pref_camera_coloreffect_entry_washed">Udvasket</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Klassisk varm</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Klassisk kold</string>

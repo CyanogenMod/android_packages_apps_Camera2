@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">텍스트</string>
   <string name="pref_camera_scenemode_entry_theatre">극장</string>
   <string name="pref_camera_scenemode_entry_whiteboard">화이트보드</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">연속 촬영</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">연속</string>
   <string name="pref_camera_focusmode_entry_extended">확장</string>
   <string name="pref_camera_focusmode_entry_facedetect">얼굴 인식</string>
   <string name="pref_camera_focusmode_entry_facepriority">얼굴 우선</string>
   <string name="pref_camera_focusmode_entry_fixed">고정</string>
   <string name="pref_camera_focusmode_entry_portrait">인물</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">과초점</string>
+  <string name="pref_camera_focusmode_entry_manual">수동</string>
   <string name="pref_camera_coloreffect_entry_washed">탈색</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">빈티지 (따뜻하게)</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">빈티지 (차갑게)</string>

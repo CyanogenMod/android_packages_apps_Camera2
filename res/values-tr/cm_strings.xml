@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Metin</string>
   <string name="pref_camera_scenemode_entry_theatre">Sahne</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Beyaz tahta</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Sürekli çekim</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Devamlı</string>
   <string name="pref_camera_focusmode_entry_extended">Genişletilmiş</string>
   <string name="pref_camera_focusmode_entry_facedetect">Yüz algılama</string>
   <string name="pref_camera_focusmode_entry_facepriority">Yüz öncelikli</string>
   <string name="pref_camera_focusmode_entry_fixed">Sabit</string>
   <string name="pref_camera_focusmode_entry_portrait">Portre</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hiperodaklı</string>
+  <string name="pref_camera_focusmode_entry_manual">El ile</string>
   <string name="pref_camera_coloreffect_entry_washed">Soluk</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Eski sıcak</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Eski soğuk</string>

@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Текст</string>
   <string name="pref_camera_scenemode_entry_theatre">Позориште</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Белатабла</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Непрекидна слика</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Непрекидно</string>
   <string name="pref_camera_focusmode_entry_extended">Проширено</string>
   <string name="pref_camera_focusmode_entry_facedetect">Детекција лица</string>
   <string name="pref_camera_focusmode_entry_facepriority">Приоритет лица</string>
   <string name="pref_camera_focusmode_entry_fixed">Стабилно</string>
   <string name="pref_camera_focusmode_entry_portrait">Портрет</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Жижно</string>
+  <string name="pref_camera_focusmode_entry_manual">Ручно</string>
   <string name="pref_camera_coloreffect_entry_washed">Опрано</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Берба топло</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Берба хладно</string>

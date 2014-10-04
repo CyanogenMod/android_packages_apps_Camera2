@@ -91,6 +91,7 @@
   <string name="pref_camera_focusmode_entry_fixed">Σταθερή</string>
   <string name="pref_camera_focusmode_entry_portrait">Πορτραίτο</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Υπερ-εστίαση</string>
+  <string name="pref_camera_focusmode_entry_manual">Χειροκίνητη</string>
   <string name="pref_camera_coloreffect_entry_washed">Ξεθωριασμένο</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Vintage θερμό</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Vintage ψυχρό</string>

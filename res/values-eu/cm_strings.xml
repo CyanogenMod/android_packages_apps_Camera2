@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">Testua</string>
   <string name="pref_camera_scenemode_entry_theatre">Antzeztokia</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Arbela</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Etengabeko irudia</string>
   <string name="pref_camera_focusmode_entry_extended">Hedatua</string>
   <string name="pref_camera_focusmode_entry_facedetect">Aurpegi antzematea</string>
   <string name="pref_camera_focusmode_entry_facepriority">Aurpegiek lehentasuna</string>

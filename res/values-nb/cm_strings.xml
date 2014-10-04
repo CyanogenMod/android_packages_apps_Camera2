@@ -84,7 +84,6 @@
   <string name="pref_camera_scenemode_entry_text">Tekst</string>
   <string name="pref_camera_scenemode_entry_theatre">Teater</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Tavle</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Kontinuerlig bilde</string>
   <string name="pref_camera_focusmode_entry_extended">Utvidet</string>
   <string name="pref_camera_focusmode_entry_facedetect">Ansiktsoppdagelse</string>
   <string name="pref_camera_focusmode_entry_facepriority">Ansiktsprioritet</string>

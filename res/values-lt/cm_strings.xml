@@ -24,6 +24,7 @@
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 MP</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 MP</string>
   <string name="pref_camera_picturesize_entry_10mp">10 MP</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9,7 MP</string>
   <string name="pref_camera_picturesize_entry_9mp">9 MP</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8,2 MP</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 MP</string>
@@ -83,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Tekstas</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatras</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Lenta</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Kadrų serija</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Nuolatinis</string>
   <string name="pref_camera_focusmode_entry_extended">Išplėstas</string>
   <string name="pref_camera_focusmode_entry_facedetect">Veido aptikimas</string>
   <string name="pref_camera_focusmode_entry_facepriority">Veido pirmenybė</string>
   <string name="pref_camera_focusmode_entry_fixed">Fiksuotas</string>
   <string name="pref_camera_focusmode_entry_portrait">Portretas</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfokalinis</string>
+  <string name="pref_camera_focusmode_entry_manual">Rankinis</string>
   <string name="pref_camera_coloreffect_entry_washed">Išskalbtas</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Senamadiškas (šiltas)</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Senamadiškas (šaltas)</string>

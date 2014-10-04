@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">טקסט</string>
   <string name="pref_camera_scenemode_entry_theatre">תיאטרון</string>
   <string name="pref_camera_scenemode_entry_whiteboard">לוח ציור</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">תמונה רציפה</string>
   <string name="pref_camera_focusmode_entry_extended">מורחב</string>
   <string name="pref_camera_focusmode_entry_facedetect">זיהוי פנים</string>
   <string name="pref_camera_focusmode_entry_facepriority">עדיפות לפנים</string>

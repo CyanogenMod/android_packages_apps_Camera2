@@ -84,13 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">පෙළ</string>
   <string name="pref_camera_scenemode_entry_theatre">රඟමඩල</string>
   <string name="pref_camera_scenemode_entry_whiteboard">සුදු ලෑල්ල</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">අඛණ්ඩ ඦායාරූපය</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">අඛණ්ඩ</string>
   <string name="pref_camera_focusmode_entry_extended">විස්තෘත</string>
   <string name="pref_camera_focusmode_entry_facedetect">මුහුණ හඳුනාගැනීම</string>
   <string name="pref_camera_focusmode_entry_facepriority">මුහුණට ප්‍රමුඛතාව</string>
   <string name="pref_camera_focusmode_entry_fixed">ස්ථාවර</string>
   <string name="pref_camera_focusmode_entry_portrait">සිරස්</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">අති නාභිගත</string>
+  <string name="pref_camera_focusmode_entry_manual">හස්තීය</string>
   <string name="pref_camera_coloreffect_entry_washed">සේදූ</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">මිදී උණුසුම</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">මිදී සිසිලස</string>

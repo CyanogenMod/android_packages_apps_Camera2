@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">Text</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatru</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Placă-albă</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Poză continuă</string>
   <string name="pref_camera_focusmode_entry_extended">Extins</string>
   <string name="pref_camera_focusmode_entry_facedetect">Detectare față</string>
   <string name="pref_camera_focusmode_entry_facepriority">Prioritate față</string>
