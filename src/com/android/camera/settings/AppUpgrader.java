@@ -334,8 +334,12 @@ public class AppUpgrader extends SettingsUpgrader {
         Map<String, ?> entries = oldPrefs.getAll();
         for (Map.Entry<String, ?> entry : entries.entrySet()) {
             String key = entry.getKey();
-            String value = entry.getValue().toString();
-            newPrefs.edit().putString(key, value).apply();
+            Object value = entry.getValue();
+            if (value != null) {
+                newPrefs.edit().putString(key, String.valueOf(value)).apply();
+            } else {
+                Log.w(TAG, "skipped upgrade for null key " + key);
+            }
         }
     }
 
