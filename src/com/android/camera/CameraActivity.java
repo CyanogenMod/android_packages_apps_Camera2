@@ -1638,8 +1638,6 @@ public class CameraActivity extends Activity
         performDeletion();
         mCurrentModule.pause();
         mOrientationManager.pause();
-        // Close the camera and wait for the operation done.
-        mCameraController.closeCamera(true);
         mPanoramaViewHelper.onPause();
 
         mLocalImagesObserver.setForegroundChangeListener(null);
@@ -1651,6 +1649,17 @@ public class CameraActivity extends Activity
         mMotionManager.stop();
 
         UsageStatistics.instance().backgrounded();
+
+        // Close the camera and wait for the operation done. But if we time out
+        // via RuntimeException, just continue pausing, and request a finish().
+        try {
+            mCameraController.closeCamera(true);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Exception while closing camera", e);
+            if (!isFinishing()) {
+                finish();
+            }
+        }
 
         super.onPause();
     }
