@@ -433,7 +433,7 @@ public class SettingsManager {
      * to String occurs before this value is stored in SharedPreferences.
      */
     public void set(String scope, String key, int value) {
-        set(scope, key, Integer.toString(value));
+        set(scope, key, convert(value));
     }
 
     /**
@@ -442,7 +442,7 @@ public class SettingsManager {
      * stored in SharedPreferences.
      */
     public void set(String scope, String key, boolean value) {
-        set(scope, key, value ? "1" : "0");
+        set(scope, key, convert(value));
     }
 
     /**
@@ -503,5 +503,27 @@ public class SettingsManager {
     public void remove(String scope, String key) {
         SharedPreferences preferences = getPreferencesFromScope(scope);
         preferences.edit().remove(key).apply();
+    }
+
+    /**
+     * Package private conversion method to turn ints into preferred
+     * String storage format.
+     *
+     * @param value int to be stored in Settings
+     * @return String which represents the int
+     */
+    static String convert(int value) {
+        return Integer.toString(value);
+    }
+
+    /**
+     * Package private conversion method to turn booleans into preferred
+     * String storage format.
+     *
+     * @param value boolean to be stored in Settings
+     * @return String which represents the boolean
+     */
+    static String convert(boolean value) {
+        return value ? "1" : "0";
     }
 }
