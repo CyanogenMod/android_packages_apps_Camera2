@@ -77,11 +77,18 @@ public abstract class OneCameraManager {
      */
     private static OneCameraManager create(CameraActivity activity) {
         DisplayMetrics displayMetrics = getDisplayMetrics(activity);
-        CameraManager cameraManager = (CameraManager) activity
-                .getSystemService(Context.CAMERA_SERVICE);
-        int maxMemoryMB = activity.getServices().getMemoryManager()
-                .getMaxAllowedNativeMemoryAllocation();
+        CameraManager cameraManager = null;
+
+        try {
+            cameraManager = ApiHelper.HAS_CAMERA_2_API ? (CameraManager) activity
+                    .getSystemService(Context.CAMERA_SERVICE) : null;
+        } catch (IllegalStateException ex) {
+            cameraManager = null;
+            Log.e(TAG, "Could not get camera service v2", ex);
+        }
         if (cameraManager != null && isCamera2Supported(cameraManager)) {
+            int maxMemoryMB = activity.getServices().getMemoryManager()
+                    .getMaxAllowedNativeMemoryAllocation();
             return new com.android.camera.one.v2.OneCameraManagerImpl(
                     activity.getApplicationContext(), cameraManager, maxMemoryMB,
                     displayMetrics, activity.getSoundPlayer());
