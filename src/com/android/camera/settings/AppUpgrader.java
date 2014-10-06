@@ -60,8 +60,13 @@ public class AppUpgrader extends SettingsUpgrader {
     /**
      * With this version, the names of the files storing camera specific and
      * module specific settings changed.
+     * <p>
+     * NOTE: changed this from 4 to 6 to re-run on latest Glacier upgrade.
+     * Initial upgraders to Glacier will run conversion once as of the change.
+     * When re-run for early dogfooders, values will get overwritten but will
+     * all work.
      */
-    private static final int CAMERA_MODULE_SETTINGS_FILES_RENAMED_VERSION = 4;
+    private static final int CAMERA_MODULE_SETTINGS_FILES_RENAMED_VERSION = 6;
 
     /**
      * With this version, timelapse mode was removed and mode indices need to be
@@ -72,7 +77,7 @@ public class AppUpgrader extends SettingsUpgrader {
     /**
      * Increment this value whenever new AOSP UpgradeSteps need to be executed.
      */
-    public static final int APP_UPGRADE_VERSION = 5;
+    public static final int APP_UPGRADE_VERSION = 6;
 
     private final AppController mAppController;
 
@@ -322,6 +327,11 @@ public class AppUpgrader extends SettingsUpgrader {
      * SharedPreferences file to another SharedPreferences file, as Strings.
      * Settings that are not a known supported format (int/boolean/String)
      * are dropped with warning.
+     *
+     * This will normally be run only once but was used both for upgrade version
+     * 4 and 6 -- in 6 we repair issues with previous runs of the upgrader. So
+     * we make sure to remove entries from destination if the source isn't valid
+     * like a null or unsupported type.
      */
     private void copyPreferences(SharedPreferences oldPrefs,
             SharedPreferences newPrefs) {
@@ -330,7 +340,8 @@ public class AppUpgrader extends SettingsUpgrader {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value == null) {
-                Log.w(TAG, "skipped upgrade for null key " + key);
+                Log.w(TAG, "skipped upgrade and removing entry for null key " + key);
+                newPrefs.edit().remove(key).apply();
             } else if (value instanceof Boolean) {
                 String boolValue = SettingsManager.convert((Boolean) value);
                 newPrefs.edit().putString(key, boolValue).apply();
@@ -352,8 +363,9 @@ public class AppUpgrader extends SettingsUpgrader {
             } else if (value instanceof String){
                 newPrefs.edit().putString(key, (String) value).apply();
             } else {
-                Log.w(TAG,"skipped upgrade for unrecognized key type " +
-                        key + " : " + value.getClass());
+                Log.w(TAG,"skipped upgrade and removing entry for unrecognized "
+                        + "key type " + key + " : " + value.getClass());
+                newPrefs.edit().remove(key).apply();
             }
         }
     }
