@@ -34,8 +34,9 @@
         <item name="android:backgroundStacked">@null</item>
     </style>
 
-    <style name="Theme.CameraSettings" parent="@android:style/Theme.Material">
-       <item name="android:windowFullscreen">true</item>
+    <style name="Theme.CameraSettings" parent="@android:style/Theme.Material.Light.DarkActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:colorPrimary">@color/main_color_global</item>
     </style>
 
     <style name="FilmstripBottomControlButton">
