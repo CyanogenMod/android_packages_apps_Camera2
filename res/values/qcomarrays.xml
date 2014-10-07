@@ -104,6 +104,7 @@
         <item>@string/pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb</item>
         <item>@string/pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr</item>
     </string-array>
+
     <string-array name="pref_camera_picture_format_entryvalues" translatable="false">
         <item>@string/pref_camera_picture_format_value_jpeg</item>
         <item>@string/pref_camera_picture_format_value_raw</item>
@@ -400,12 +401,6 @@
          <item>auto</item>
      </string-array>
 
-     <!-- Camera Preferences Histogram dialog box entries -->
-     <string-array name="pref_camera_histogram_entries" translatable="false">
-          <item>@string/pref_camera_histogram_entry_disable</item>
-          <item>@string/pref_camera_histogram_entry_enable</item>
-     </string-array>
-
      <!-- Video Preferences High Frame Rate dialog box entries -->
      <string-array name="pref_camera_hfr_entries" translatable="false">
           <item>@string/pref_camera_hfr_entry_off</item>
@@ -422,7 +417,12 @@
           <item>@string/pref_camera_hfr_value_4x</item>
      </string-array>
 
-     <!-- Do not localize entryvalues -->
+     <!-- Camera Preferences Histogram dialog box entries -->
+     <string-array name="pref_camera_histogram_entries" translatable="false">
+          <item>@string/pref_camera_histogram_entry_disable</item>
+          <item>@string/pref_camera_histogram_entry_enable</item>
+     </string-array>
+
      <string-array name="pref_camera_histogram_entryvalues" translatable="false">
           <item>@string/pref_camera_histogram_value_disable</item>
           <item>@string/pref_camera_histogram_value_enable</item>
@@ -440,14 +440,14 @@
     </string-array>
 
     <!-- Camera Preferences Wavelet Denoise dialog box entries -->
+    <string-array name="pref_camera_denoise_entries" translatable="false">
+        <item>@string/pref_camera_denoise_entry_off</item>
+        <item>@string/pref_camera_denoise_entry_on</item>
+    </string-array>
+
     <string-array name="pref_camera_denoise_entryvalues" translatable="false">
         <item>denoise-off</item>
         <item>denoise-on</item>
-    </string-array>
-
-    <string-array name="pref_camera_denoise_entries" translatable="false">
-    <item>@string/pref_camera_denoise_entry_off</item>
-    <item>@string/pref_camera_denoise_entry_on</item>
     </string-array>
 
     <!-- Camera Preferences Auto Scene Detection dialog box entries -->
@@ -455,24 +455,26 @@
         <item>@string/pref_camera_scenedetect_entry_off</item>
         <item>@string/pref_camera_scenedetect_entry_on</item>
     </string-array>
+
     <string-array name="pref_camera_scenedetect_entryvalues" translatable="false">
         <item>off</item>
         <item>on</item>
     </string-array>
 
     <!-- Camera Preferences Auto Exposure dialog box entries -->
-     <string-array name="pref_camera_autoexposure_entries" translatable="false">
-         <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
-         <item>@string/pref_camera_autoexposure_entry_centerweighted</item>
-         <item>@string/pref_camera_autoexposure_entry_spotmetering</item>
-     </string-array>
+    <string-array name="pref_camera_autoexposure_entries" translatable="false">
+        <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
+        <item>@string/pref_camera_autoexposure_entry_centerweighted</item>
+        <item>@string/pref_camera_autoexposure_entry_spotmetering</item>
+    </string-array>
 
-     <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_autoexposure_entryvalues" translatable="false">
-         <item>@string/pref_camera_autoexposure_value_frameaverage</item>
-         <item>@string/pref_camera_autoexposure_value_centerweighted</item>
-         <item>@string/pref_camera_autoexposure_value_spotmetering</item>
-     </string-array>
+    <!-- Do not localize entryvalues -->
+    <string-array name="pref_camera_autoexposure_entryvalues" translatable="false">
+        <item>@string/pref_camera_autoexposure_value_frameaverage</item>
+        <item>@string/pref_camera_autoexposure_value_centerweighted</item>
+        <item>@string/pref_camera_autoexposure_value_spotmetering</item>
+    </string-array>
+
     <!-- Camera Preferences Video Encoder dialog box entries -->
     <string-array name="pref_camera_videoencoder_entries" translatable="false">
         <item>@string/pref_camera_videoencoder_entry_0</item>
@@ -506,33 +508,34 @@
 
     <!-- The numbers are in minutes, except -1 means the duration suitable for mms. -->
     <string-array name="pref_camera_video_duration_entryvalues" translatable="false">
-    <item>-1</item>
-    <item>10</item>
-    <item>30</item>
+        <item>-1</item>
+        <item>10</item>
+        <item>30</item>
     </string-array>
 
     <!-- Camera Preferences Skin Tone Enhancement dialog box entries -->
-     <string-array name="pref_camera_skinToneEnhancement_entries" translatable="false">
-          <item>@string/pref_camera_skinToneEnhancement_entry_enable</item>
-          <item>@string/pref_camera_skinToneEnhancement_entry_disable</item>
-     </string-array>
+    <string-array name="pref_camera_skinToneEnhancement_entries" translatable="false">
+         <item>@string/pref_camera_skinToneEnhancement_entry_disable</item>
+         <item>@string/pref_camera_skinToneEnhancement_entry_enable</item>
+    </string-array>
 
-     <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_skinToneEnhancement_entryvalues" translatable="false">
-          <item>@string/pref_camera_skinToneEnhancement_value_enable</item>
-          <item>@string/pref_camera_skinToneEnhancement_value_disable</item>
-     </string-array>
+    <!-- Do not localize entryvalues -->
+    <string-array name="pref_camera_skinToneEnhancement_entryvalues" translatable="false">
+         <item>@string/pref_camera_skinToneEnhancement_value_disable</item>
+         <item>@string/pref_camera_skinToneEnhancement_value_enable</item>
+    </string-array>
 
-     <!-- Camera Preferences Redeye Reduction dialog box entries -->
-     <string-array name="pref_camera_redeyereduction_entries" translatable="false">
-         <item>@string/pref_camera_redeyereduction_entry_enable</item>
-         <item>@string/pref_camera_redeyereduction_entry_disable</item>
-     </string-array>
+    <!-- Camera Preferences Redeye Reduction dialog box entries -->
+    <string-array name="pref_camera_redeyereduction_entries" translatable="false">
+        <item>@string/pref_camera_redeyereduction_entry_disable</item>
+        <item>@string/pref_camera_redeyereduction_entry_enable</item>
+    </string-array>
 
-     <string-array name="pref_camera_redeyereduction_entryvalues" translatable="false">
-         <item>enable</item>
-         <item>disable</item>
-     </string-array>
+    <string-array name="pref_camera_redeyereduction_entryvalues" translatable="false">
+        <item>disable</item>
+        <item>enable</item>
+    </string-array>
+
     <!-- Camera Preferences Selectable Zone AF dialog box entries -->
     <string-array name="pref_camera_selectablezoneaf_entries" translatable="false">
         <item>@string/pref_camera_selectablezoneaf_entry_auto</item>
@@ -559,4 +562,3 @@
         <item>@string/pref_camera_video_hdr_value_on</item>
     </string-array>
 </resources>
-

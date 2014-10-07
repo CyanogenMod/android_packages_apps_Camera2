@@ -103,12 +103,12 @@
     <string name="pref_camera_skinToneEnhancement_title">Skin tone enhancement</string>
 
     <!-- Settings screen, Skin Tone Enhancement radio button choices -->
-    <string name="pref_camera_skinToneEnhancement_entry_enable">On</string>
     <string name="pref_camera_skinToneEnhancement_entry_disable">Off</string>
+    <string name="pref_camera_skinToneEnhancement_entry_enable">On</string>
 
     <!-- Skin Tone Enhancement entry values. Do not translate. -->
-    <string name="pref_camera_skinToneEnhancement_value_enable" translatable="false">enable</string>
     <string name="pref_camera_skinToneEnhancement_value_disable" translatable="false">disable</string>
+    <string name="pref_camera_skinToneEnhancement_value_enable" translatable="false">enable</string>
 
     <!-- Default selectable zone af setting. Do not translate. -->
     <string name="pref_camera_selectablezoneaf_default" translatable="false">auto</string>
@@ -157,8 +157,8 @@
     <string name="pref_camera_redeyereduction_title">Red eye reduction</string>
 
     <!-- Settings menu, redeye reduction choices -->
-    <string name="pref_camera_redeyereduction_entry_enable">On</string>
     <string name="pref_camera_redeyereduction_entry_disable">Off</string>
+    <string name="pref_camera_redeyereduction_entry_enable">On</string>
 
     <!-- The message is shown in dialog when the app encounters an unsupported resolution for HFR mode -->
     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
@@ -173,8 +173,8 @@
     <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
     <string name="pref_camera_ae_bracket_hdr_default" translatable="false">Off</string>
 
-    <string name="pref_camera_ae_bracket_hdr_entry_on">On</string>
     <string name="pref_camera_ae_bracket_hdr_entry_off">Off</string>
+    <string name="pref_camera_ae_bracket_hdr_entry_on">On</string>
 
     <!-- Default hfr setting. Do not translate. -->
     <string name="pref_camera_hfr_default" translatable="false">off</string>
@@ -530,8 +530,8 @@
 
     <!-- Settings menu, auto scene detection choices -->
     <!-- Scene detection set to on - supports backlight and snow cloudy detection. -->
-    <string name="pref_camera_scenedetect_entry_on">On</string>
     <string name="pref_camera_scenedetect_entry_off">Off</string>
+    <string name="pref_camera_scenedetect_entry_on">On</string>
 
     <string name="pref_camera_videosnapsize_default" translatable="false">1920x1080</string>
 </resources>
