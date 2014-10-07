@@ -60,7 +60,7 @@
             camera:title="@string/pref_camera_picturesize_title"
             camera:entries="@array/pref_camera_picturesize_entries"
             camera:entryValues="@array/pref_camera_picturesize_entryvalues" />
-     <ListPreference
+    <ListPreference
             camera:key="pref_camera_storage_key"
             camera:title="@string/pref_camera_storage_title" />
     <ListPreference
@@ -225,7 +225,7 @@
             camera:defaultValue="@string/pref_camera_videosnapsize_default"
             camera:entries="@array/pref_camera_picturesize_entries"
             camera:entryValues="@array/pref_camera_picturesize_entryvalues" />
-     <ListPreference
+    <ListPreference
             camera:key="pref_camera_focustime_key"
             camera:defaultValue="@string/pref_camera_focustime_default"
             camera:title="@string/pref_camera_focustime_title"
