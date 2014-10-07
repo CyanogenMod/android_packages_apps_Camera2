@@ -40,12 +40,13 @@
         android:text="@string/photo_size_selection_title"
         android:textSize="22sp"
         android:textColor="@color/dialog_text_color"
-        android:layout_marginBottom="28dp" />
+        android:layout_margin="28dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
         android:layout_weight="1"
+        android:layout_margin="28dp"
         android:textSize="20sp"
         android:textColor="@color/dialog_text_color"
         android:gravity="center_horizontal"
