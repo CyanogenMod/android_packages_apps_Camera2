@@ -2068,9 +2068,15 @@ public class CameraActivity extends QuickActivity
             }
             mStorageHint.show();
             UsageStatistics.instance().storageWarning(storageSpace);
+
+            // Disable all user interactions,
+            mCameraAppUI.setDisableAllUserInteractions(true);
         } else if (mStorageHint != null) {
             mStorageHint.cancel();
             mStorageHint = null;
+
+            // Re-enable all user interactions.
+            mCameraAppUI.setDisableAllUserInteractions(false);
         }
     }
 

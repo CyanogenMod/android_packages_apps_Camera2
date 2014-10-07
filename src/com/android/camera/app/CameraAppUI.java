@@ -549,6 +549,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private boolean mAccessibilityEnabled;
     private final View mAccessibilityAffordances;
 
+    private boolean mDisableAllUserInteractions;
     /**
      * Provides current preview frame and the controls/overlay from the module that
      * are shown on top of the preview.
@@ -1390,7 +1391,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * method when a capture is "completed".  Unfortunately this differs
          * per module implementation.
          */
-        mModeOptionsOverlay.setToggleClickable(true);
+        if (!mDisableAllUserInteractions) {
+            mModeOptionsOverlay.setToggleClickable(true);
+        }
     }
 
     /**
@@ -1398,6 +1401,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void disableModeOptions() {
         mModeOptionsOverlay.setToggleClickable(false);
+    }
+
+    public void setDisableAllUserInteractions(boolean disable) {
+        if (disable) {
+            disableModeOptions();
+            setShutterButtonEnabled(false);
+            setSwipeEnabled(false);
+        } else {
+            enableModeOptions();
+            setShutterButtonEnabled(true);
+            setSwipeEnabled(true);
+        }
+        mDisableAllUserInteractions = disable;
     }
 
     /**
@@ -1722,13 +1738,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     public void setShutterButtonEnabled(final boolean enabled) {
-        mBottomBar.post(new Runnable() {
-
-            @Override
-            public void run() {
-                mBottomBar.setShutterButtonEnabled(enabled);
-            }
-        });
+        if (!mDisableAllUserInteractions) {
+            mBottomBar.post(new Runnable() {
+                @Override
+                public void run() {
+                    mBottomBar.setShutterButtonEnabled(enabled);
+                }
+            });
+        }
     }
 
     public void setShutterButtonImportantToA11y(boolean important) {
