@@ -66,16 +66,22 @@ public abstract class OneCameraManager {
     /**
      * Creates a camera manager that is based on Camera2 API, if available, or
      * otherwise uses the portability layer API.
+     *
+     * @throws OneCameraException Thrown if an error occurred while trying to
+     *             access the camera.
      */
-    public static OneCameraManager get(CameraActivity activity) {
+    public static OneCameraManager get(CameraActivity activity) throws OneCameraException {
         return create(activity);
     }
 
     /**
      * Creates a new camera manager that is based on Camera2 API, if available,
      * or otherwise uses the portability API.
+     *
+     * @throws OneCameraException Thrown if an error occurred while trying to
+     *             access the camera.
      */
-    private static OneCameraManager create(CameraActivity activity) {
+    private static OneCameraManager create(CameraActivity activity) throws OneCameraException {
         DisplayMetrics displayMetrics = getDisplayMetrics(activity);
         CameraManager cameraManager = null;
 
@@ -105,13 +111,20 @@ public abstract class OneCameraManager {
      *         HAL (such as the Nexus 4, 7 or 10), this method returns false. It
      *         only returns true, if Camera2 is fully supported through newer
      *         HALs.
+     * @throws OneCameraException Thrown if an error occurred while trying to
+     *             access the camera.
      */
-    private static boolean isCamera2Supported(CameraManager cameraManager) {
+    private static boolean isCamera2Supported(CameraManager cameraManager)
+            throws OneCameraException {
         if (!ApiHelper.HAS_CAMERA_2_API) {
             return false;
         }
         try {
-            final String id = cameraManager.getCameraIdList()[0];
+            String[] cameraIds = cameraManager.getCameraIdList();
+            if (cameraIds.length == 0) {
+                throw new OneCameraException("Camera 2 API supported but no devices available.");
+            }
+            final String id = cameraIds[0];
             // TODO: We should check for all the flags we need to ensure the
             // device is capable of taking Camera2 API shots. For now, let's
             // accept all device that are either 'partial' or 'full' devices
