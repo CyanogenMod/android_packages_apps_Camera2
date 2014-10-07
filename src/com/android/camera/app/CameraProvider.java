@@ -19,8 +19,8 @@ package com.android.camera.app;
 import android.hardware.Camera;
 import android.os.Handler;
 
-import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
 import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
+import com.android.ex.camera2.portability.CameraExceptionHandler;
 
 /**
  * An interface which defines the camera provider.
@@ -57,8 +57,7 @@ public interface CameraProvider {
      * Sets a callback for handling camera api runtime exceptions on
      * a handler.
      */
-    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
-            Handler handler);
+    public void setCameraExceptionHandler(CameraExceptionHandler exceptionHandler);
 
     /**
      * Get the {@link Characteristics} of the given camera.

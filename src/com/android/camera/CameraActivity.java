@@ -136,6 +136,7 @@ import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgentFactory;
+import com.android.ex.camera2.portability.CameraExceptionHandler;
 import com.android.ex.camera2.portability.CameraSettings;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -184,6 +185,13 @@ public class CameraActivity extends QuickActivity
 
     /** Should be used wherever a context is needed. */
     private Context mAppContext;
+
+    /**
+     * Camera fatal error handling:
+     * 1) Present error dialog to guide users to exit the app.
+     * 2) If users hit home button, onPause should just call finish() to exit the app.
+     */
+    private boolean mCameraFatalError = false;
 
     /**
      * Whether onResume should reset the view to the preview.
@@ -1309,11 +1317,25 @@ public class CameraActivity extends QuickActivity
         }
     }
 
-    private final CameraAgent.CameraExceptionCallback mCameraDefaultExceptionCallback
-        = new CameraAgent.CameraExceptionCallback() {
+    private final CameraExceptionHandler.CameraExceptionCallback mCameraExceptionCallback
+        = new CameraExceptionHandler.CameraExceptionCallback() {
                 @Override
-                public void onCameraException(RuntimeException e) {
-                    Log.e(TAG, "Camera Exception", e);
+                public void onCameraException(RuntimeException ex) {
+                    Log.e(TAG, "Camera Exception", ex);
+                    onFatalError(ex);
+                }
+                @Override
+                public void onDispatchThreadException(RuntimeException ex) {
+                    Log.e(TAG, "DispatchThread Exception", ex);
+                    onFatalError(ex);
+                }
+                private void onFatalError(RuntimeException ex) {
+                    mCameraFatalError = true;
+                    // If the activity receives exception during onPause, just exit the app.
+                    if (mPaused && !isFinishing()) {
+                        Log.v(TAG, "Fatal error during onPause, call Activity.finish()");
+                        finish();
+                    }
                     CameraUtil.showErrorAndFinish(CameraActivity.this,
                             R.string.cannot_connect_camera);
                 }
@@ -1372,8 +1394,8 @@ public class CameraActivity extends QuickActivity
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
                 CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.API_1),
                 CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.AUTO));
-        mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
-                mMainHandler);
+        mCameraController.setCameraExceptionHandler(
+                new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
         mModeListView.init(mModuleManager.getSupportedModeIndexList());
@@ -1661,16 +1683,14 @@ public class CameraActivity extends QuickActivity
 
         UsageStatistics.instance().backgrounded();
 
-        // Close the camera and wait for the operation done. But if we time out
-        // via RuntimeException, just continue pausing, and request a finish().
-        try {
-            mCameraController.closeCamera(true);
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Exception while closing camera", e);
-            if (!isFinishing()) {
-                finish();
-            }
+        // Camera is in fatal state. A fatal dialog is presented to users, but users just hit home
+        // button. Let's just kill the process.
+        if (mCameraFatalError && !isFinishing()) {
+            Log.v(TAG, "onPause when camera is in fatal state, call Activity.finish()");
+            finish();
         }
+        // Close the camera and wait for the operation done.
+        mCameraController.closeCamera(true);
     }
 
     @Override
@@ -1878,13 +1898,8 @@ public class CameraActivity extends QuickActivity
         mOrientationManager = null;
         mButtonManager = null;
         mSoundPlayer.release();
-        mCurrentModule.destroy();
-        try {
-            CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
-            CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
-        } catch (RuntimeException e) {
-            Log.e(TAG, "CameraAgentFactory exception during destroy", e);
-        }
+        CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
+        CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
     }
 
     @Override
